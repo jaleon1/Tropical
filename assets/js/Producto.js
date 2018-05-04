@@ -1,6 +1,6 @@
 class Producto {
     // Constructor
-    constructor(id, nombre, nombreAbreviado, descripcion, cantidad, precio, scancode, codigoRapido, fechaExpiracion) {
+    constructor(id, nombre, nombreAbreviado, descripcion, cantidad, precio, scancode, codigoRapido, fechaExpiracion, cat) {
         this.id = id || null;
         this.nombre = nombre || '';
         this.nombreAbreviado = nombreAbreviado || '';
@@ -10,11 +10,14 @@ class Producto {
         this.scancode = scancode || '';
         this.codigoRapido = codigoRapido || '';
         this.fechaExpiracion = fechaExpiracion || null;
+        this.listacategoria = cat || null;
     }
 
     //Getter
     get Read() {
-        var miAccion = this.id == null ? 'ReadAll' : 'Read';
+        var miAccion = this.id == null ?  'ReadAll'  : 'Read';
+        if(miAccion=='ReadAll' && $('#tableBody-Producto').length==0 )
+            return;
         $.ajax({
             type: "POST",
             url: "class/Producto.php",
@@ -33,7 +36,8 @@ class Producto {
 
     get Save() {
         $('#btnProducto').attr("disabled", "disabled");
-        var miAccion = producto.id == null ? 'Create' : 'Update';
+        //var miAccion = producto.id == null ? 'Create' : 'Update';
+        var miAccion = this.id == null ? 'Create' : 'Update';
         this.nombre = $("#nombre").val();
         this.nombreAbreviado = $("#nombreAbreviado").val();
         this.descripcion = $("#descripcion").val();
@@ -42,6 +46,7 @@ class Producto {
         this.scancode = $("#scancode").val();
         this.codigoRapido = $("#codigoRapido").val();
         this.fechaExpiracion = $("#fechaExpiracion").val() == "" ? null : moment($("#fechaExpiracion").val(), 'DD/MM/YYYY').unix(); // UTC TIMESTAMP
+        this.listacategoria = $('#categoria > option:selected').map(function () { return this.value; }).get();
         $.ajax({
             type: "POST",
             url: "class/Producto.php",
@@ -132,7 +137,7 @@ class Producto {
         $("#scancode").val('');
         $("#codigoRapido").val('');
         $("#fechaExpiracion").val('');
-        $("#categoria").val('optdef');
+        $('#categoria option').prop("selected", false);
     };
 
     ShowAll(e) {
@@ -153,17 +158,17 @@ class Producto {
                     <td>${item.cantidad}</td>
                     <td>${item.precio}</td>
                     <td class=" last">
-                        <a href="#" class="update" data-toggle="modal" data-target=".bs-example-modal-lg" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | 
-                        <a href="#" class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>
+                        <a href="#" class="update${item.id}" data-toggle="modal" data-target=".bs-example-modal-lg" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | 
+                        <a href="#" class="delete${item.id}"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>
                     </td>
                 </tr>
             `);
             // event Handler
-            $('.update').click(producto.UpdateEventHandler);
-            $('.delete').click(producto.DeleteEventHandler);
-        })        
+            $('.update'+item.id).click(producto.UpdateEventHandler);
+            $('.delete'+item.id).click(producto.DeleteEventHandler);
+        })
         //datatable         
-        if ( $.fn.dataTable.isDataTable( '#dsProducto' ) ) {
+        if ($.fn.dataTable.isDataTable('#dsProducto')) {
             var table = $('#dsProducto').DataTable();
             //table.destroy();
         }
@@ -172,11 +177,12 @@ class Producto {
                 paging: false
             } );
         }*/
-        else 
-            $('#dsProducto').DataTable( {
+        else
+            $('#dsProducto').DataTable({
                 columns: [
                     { title: "Check" },
-                    { title: "ID"
+                    {
+                        title: "ID"
                         //,visible: false
                     },
                     { title: "Nombre" },
@@ -184,10 +190,10 @@ class Producto {
                     { title: "Cantidad" },
                     { title: "Precio" },
                     { title: "Action" }
-                ],          
+                ],
                 paging: true,
                 search: true
-            } );
+            });
 
 
         // var dataTable =$("datatable").DataTable({ 
@@ -230,9 +236,10 @@ class Producto {
         // Limpia el controles
         this.ClearCtls();
         // carga objeto.
-        var data = JSON.parse(e)[0];
+        //var data = JSON.parse(e)[0];
+        var data = JSON.parse(e);
         producto = new Producto(data.id, data.nombre, data.nombreAbreviado, data.descripcion,
-            data.cantidad, data.precio, data.scancode, data.codigoRapido, data.fechaExpiracion);
+            data.cantidad, data.precio, data.scancode, data.codigoRapido, data.fechaExpiracion, data.listacategoria);
         // Asigna objeto a controles
         $("#id").val(producto.id);
         $("#nombre").val(producto.nombre);
@@ -245,6 +252,11 @@ class Producto {
         $("#fechaExpiracion").val(
             producto.fechaExpiracion == null ? null : moment(producto.fechaExpiracion, 'X').format('DD/MM/YYYY')
         );
+        //Categorías 
+        $.each(producto.listacategoria, function(i, item){
+            $('#categoria option[value=' + item.id + ']').prop("selected", true);
+        });
+        
     };
 
     DeleteEventHandler() {
@@ -283,6 +295,7 @@ class Producto {
         document.forms[0].onreset = function (e) {
             validator.reset();
         }
+
         //datepicker.js
         $('#dpfechaExpiracion').datetimepicker({
             format: 'DD/MM/YYYY'
