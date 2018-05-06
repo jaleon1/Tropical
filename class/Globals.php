@@ -1,6 +1,6 @@
 <?php
 class Globals {
-    const app = 'FACCR';
+    const app = 'TROPICAL';
     const version= '1.0';
     const cssversion= "1.0";
     static $config="";    

@@ -1,6 +1,6 @@
 class Bodega {
     // Constructor
-    constructor(id, nombre, nombreAbreviado, descripcion, ubicacion, contacto, telefono, tipo) {
+    constructor(id, nombre, descripcion, ubicacion, contacto, telefono, tipo) {
         this.id = id || null;
         this.nombre = nombre || '';
         this.descripcion = descripcion || '';
@@ -39,7 +39,7 @@ class Bodega {
         this.ubicacion = $("#ubicacion").val();
         this.contacto = $("#contacto").val();        
         this.telefono = $("#telefono").val();
-        this.tipo = $('#tipo > option:selected').map(function () { return this.value; }).get();
+        this.tipo = $('#tipo option:selected').val();
         $.ajax({
             type: "POST",
             url: "class/Bodega.php",
@@ -86,6 +86,23 @@ class Bodega {
                 bodega = new Bodega();
                 bodega.Read;
             });
+    }
+
+    get ListTipos() {
+        var miAccion= 'ListTipos';
+        $.ajax({
+            type: "POST",
+            url: "class/Bodega.php",
+            data: { 
+                action: miAccion
+            }
+        })
+        .done(function( e ) {
+            bodega.ShowList(e);
+        })    
+        .fail(function (e) {
+            bodega.showError(e);
+        });
     }
 
     // Methods
@@ -170,9 +187,8 @@ class Bodega {
                         //,visible: false
                     },
                     { title: "Nombre" },
-                    { title: "Código Rapido" },
-                    { title: "Cantidad" },
-                    { title: "Precio" },
+                    { title: "Descripcion" },
+                    { title: "Tipo" },
                     { title: "Action" }
                 ],
                 paging: true,
@@ -190,7 +206,6 @@ class Bodega {
         this.ClearCtls();
         // carga objeto.
         var data = JSON.parse(e)[0];
-        //var data = JSON.parse(e);
         bodega = new Bodega(data.id, data.nombre, data.descripcion, data.ubicacion, data.contacto, data.telefono, data.tipo);
         // Asigna objeto a controles
         $("#id").val(bodega.id);
@@ -199,8 +214,19 @@ class Bodega {
         $("#ubicacion").val(bodega.ubicacion);
         $("#contacto").val(bodega.contacto);
         $("#telefono").val(bodega.telefono);
-        //Categorías 
+        //fk 
         $('#tipo option[value=' + bodega.tipo + ']').prop("selected", true);        
+    };
+
+    ShowList(e) {
+        // carga lista con datos.
+        var data = JSON.parse(e);
+        // Recorre arreglo.
+        $.each(data, function (i, item) {
+                $('#tipo').append(`
+                    <option value=${item.id}>${item.nombre}</option>
+                `);
+        })
     };
 
     DeleteEventHandler() {
@@ -239,6 +265,7 @@ class Bodega {
         document.forms[0].onreset = function (e) {
             validator.reset();
         }
+
     };
 }
 
