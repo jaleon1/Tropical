@@ -6,7 +6,7 @@
     <script src="assets/js/jquery.min.js"></script>
     <script src="assets/js/Session.js"></script>
     <script>
-        //Session.Check();
+        Session.Check();
     </script>
     <!-- /End check -->
 
@@ -16,7 +16,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>FAC-CR | Inventario</title>
+    <title>Tropical Sno | Bodegas</title>
 
     <!-- Bootstrap -->
     <link href="assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -33,10 +33,10 @@
 
     <!-- Datatables -->
     <link href="../vendors/datatables.net-bs/css/dataTables.bootstrap.min.css" rel="stylesheet">
-    <link href="../vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css" rel="stylesheet">
+    <!-- <link href="../vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css" rel="stylesheet">
     <link href="../vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css" rel="stylesheet">
     <link href="../vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css" rel="stylesheet">
-    <link href="../vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css" rel="stylesheet">
+    <link href="../vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css" rel="stylesheet"> -->
 
     <!-- Custom Theme Style -->
     <link href="assets/css/custom.css" rel="stylesheet">
@@ -52,7 +52,7 @@
                     <div class="navbar nav_title" style="border: 0;">
                         <a href="index.html" class="site_title">
                             <i class="fa fa-paw"></i>
-                            <span>Fac-CR!</span>
+                            <span>Tropical Sno!</span>
                         </a>
                     </div>
 
@@ -80,29 +80,10 @@
                             <ul class="nav side-menu">
                                 <li>
                                     <a>
-                                        <i class="fa fa-home"></i> Home
+                                        <i class="fa fa-home"></i> home
                                         <span class="fa fa-chevron-down"></span>
                                     </a>
-                                    <ul class="nav child_menu">
-                                        <li>
-                                            <a href="index.html">Index</a>
-                                        </li>
-                                        <li>
-                                            <a href="Inventario.html">Inventario</a>
-                                        </li>
-                                        <li>
-                                            <a href="Producto.html">Nuevo Producto</a>
-                                        </li>
-                                        <li>
-                                            <a href="Categoria.html">Categorías</a>
-                                        </li>
-                                        <li>
-                                            <a href="Facturacion.html">Facturación</a>
-                                        </li>
-                                        <li>
-                                            <a href="Bodega.html">Bodega</a>
-                                        </li>
-                                    </ul>
+                                    <ul class="nav child_menu" id="call_menu"></ul>
                                 </li>
 
                             </ul>
@@ -121,7 +102,7 @@
                         <a data-toggle="tooltip" data-placement="top" title="Lock">
                             <span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
                         </a>
-                        <a data-toggle="tooltip" data-placement="top" title="Logout" onclick="Sesion.End();">
+                        <a data-toggle="tooltip" data-placement="top" title="Logout" onclick="Session.End();">
                             <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
                         </a>
                     </div>
@@ -165,7 +146,7 @@
                 <div class="">
                     <div class="page-title">
                         <div class="title_left">
-                            <h3>PRODUCTOS</h3>
+                            <h3>BODEGAS</h3>
                         </div>
 
                         <div class="title_right">
@@ -186,7 +167,7 @@
                         <div class="col-md-12 col-sm-12 col-xs-12">
                             <div class="x_panel">
                                 <div class="x_title">
-                                    <h2>Inventario</h2>
+                                    <h2>Lista</h2>
 
                                     <div class="clearfix"></div>
                                 </div>
@@ -216,7 +197,7 @@
                                                         </tr>
                                                     </thead>
 
-                                                    <tbody id="tableBody-Producto">
+                                                    <tbody id="tableBody-Bodega">
                                                         <!-- <tr role="row" class="odd">
                                                             <td class="sorting_1">Airi Satou</td>
                                                             <td>Accountant</td>
@@ -242,7 +223,7 @@
                                                     <button type="button" class="close" data-dismiss="modal">
                                                         <span aria-hidden="true">×</span>
                                                     </button>
-                                                    <h4 class="modal-title" id="myModalLabel">Editar Producto</h4>
+                                                    <h4 class="modal-title" id="myModalLabel">Editar Bodega</h4>
                                                 </div>
 
                                                 <div class="modal-body">
@@ -259,13 +240,6 @@
                                                             </div>
                                                         </div>
 
-                                                        <div class="item form-group ">
-                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="nombreAbreviado">Nombre Abreviado</label>
-                                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <input id="nombreAbreviado" class="form-control col-md-7 col-xs-12" name="nombreAbreviado" type="text" placeholder="Nombre como aparecerá en la factura">
-                                                            </div>
-                                                        </div>
-
                                                         <div class="item form-group">
                                                             <label class="control-label col-md-3 col-sm-3 col-xs-12" for="textarea">Descripción </label>
                                                             <div class="col-md-6 col-sm-6 col-xs-12">
@@ -274,62 +248,41 @@
                                                         </div>
 
                                                         <div class="item form-group">
-                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="cantidad">Cantidad
+                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="ubicacion">Ubicación
                                                                 <span class="required">*</span>
                                                             </label>
                                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <input type="number" id="cantidad" name="cantidad" required="required" data-validate-minmax="0,999999999" class="form-control col-md-7 col-xs-12">
+                                                                <input type="text" id="ubicacion" name="ubicacion" required="required" class="form-control col-md-7 col-xs-12">
                                                             </div>
                                                         </div>
 
                                                         <div class="item form-group">
-                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="precio">Precio unitario
-                                                                <span class="required">*</span>
-                                                            </label>
+                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="contacto">Contacto</label>
                                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <input type="number" id="precio" name="precio" required="required" data-validate-minmax="0,999999999" class="form-control col-md-7 col-xs-12">
+                                                                <input id="contacto" class="form-control col-md-7 col-xs-12" name="contacto" type="text" placeholder="Información de Contacto">
                                                             </div>
                                                         </div>
 
                                                         <div class="item form-group">
-                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="scancode">Código Escaneado</label>
+                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="telefono">Teléfono</label>
                                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <input id="scancode" class="form-control col-md-7 col-xs-12" name="scancode" type="text" placeholder="Código de barras">
+                                                                <input id="telefono" class="form-control col-md-7 col-xs-12" name="telefono" type="text" placeholder="Información de Contacto">
                                                             </div>
                                                         </div>
 
                                                         <div class="item form-group">
-                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="codigoRapido">Código Rápido </label>
+                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12">Tipo</label>
                                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <input id="codigoRapido" class="form-control col-md-7 col-xs-12" name="codigoRapido" type="text" placeholder="Definido por el usuario">
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="item form-group">
-                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12">Categorías (Multiple)</label>
-                                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <select class="select2_multiple form-control" multiple="multiple" id="categoria" name="categoria"></select>
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="item form-group">
-                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12">Fecha de Expiración</label>
-                                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <div class="input-group date" id="dpfechaExpiracion">
-                                                                    <input type="text" class="form-control optional" id="fechaExpiracion" name="fechaExpiracion" pattern="date" placeholder="dd/MM/AAAA"
-                                                                        data-inputmask="'mask': '99/99/9999'">
-                                                                    <span class="input-group-addon">
-                                                                        <span class="glyphicon glyphicon-calendar"></span>
-                                                                    </span>
-                                                                </div>
+                                                                <select class="select2_multiple form-control" id="tipo" name="tipo"></select>
                                                             </div>
                                                         </div>
 
                                                         <div class="ln_solid"></div>
+
                                                         <div class="form-group">
                                                             <div class="col-md-6 col-md-offset-3">
                                                                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                                                <button id="btnProducto" type="submit" class="btn btn-success">Submit</button>
+                                                                <button id="btnBodega" type="submit" class="btn btn-success">Submit</button>
                                                             </div>
                                                         </div>
                                                     </form>
@@ -356,8 +309,8 @@
             <!-- footer content -->
             <footer>
                 <div class="pull-right">
-                    Ventas y administración de Inventario
-                    <a href="http://faccr.com">Fac-CR</a>
+                    Sistema de Administración
+                    <a href="http://faccr.com">Tropical Sno</a>
                 </div>
                 <div class="clearfix"></div>
             </footer>
@@ -383,10 +336,7 @@
     <!-- Input mask -->
     <script src="assets/js/jquery.inputmask/jquery.inputmask.bundle.min.js"></script>
     <!-- JS Scripts -->
-    <script src="assets/js/Inventario.js"></script>
-    <script src="assets/js/Producto.js"></script>
-    <script src="assets/js/Categoria.js"></script>
-    <!-- Sweet Alert -->
+    <script src="assets/js/Bodega.js"></script>
     <script src="assets/js/sweetalert2.min.js"></script>
 
     <!-- Datatables -->
@@ -412,3 +362,12 @@
 </body>
 
 </html>
+
+<script>
+    $(document).ready(function () {
+        bodega.id = null;
+        bodega.Read;
+        bodega.ListTipos;
+        bodega.Init();
+    });
+</script>
