@@ -161,18 +161,22 @@ class Bodega {
                     </td>
                     <td class="itemId" >${item.id}</td>
                     <td>${item.nombre}</td>
-                    <td>${item.contacto}</td>
-                    <td>${item.telefono}</td>
+                    <td>${item.descripcion}</td>
                     <td>${item.tipo}</td>
-                    <td class=" last">
-                        <a href="#" class="update${item.id}" data-toggle="modal" data-target=".bs-example-modal-lg" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | 
-                        <a href="#" class="delete${item.id}"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>
-                    </td>
+                    ${item.nombre!='Primaria' ?
+                        `<td class=" last">
+                            <a href="#" id="update${item.id}" data-toggle="modal" data-target=".bs-example-modal-lg" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | 
+                            <a href="#" id="delete${item.id}"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>
+                        </td>`
+                    :
+                        `<td class=" last">No editable</td>`}
                 </tr>
             `);
             // event Handler
-            $('.update'+item.id).click(bodega.UpdateEventHandler);
-            $('.delete'+item.id).click(bodega.DeleteEventHandler);
+            if(i!=0){
+                $('#update'+item.id).click(bodega.UpdateEventHandler);
+                $('#delete'+item.id).click(bodega.DeleteEventHandler);
+            }
         })
         //datatable         
         if ($.fn.dataTable.isDataTable('#dsProducto')) {

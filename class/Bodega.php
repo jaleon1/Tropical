@@ -61,9 +61,9 @@ class Bodega{
 
     function ReadAll(){
         try {
-            $sql='SELECT id, nombre, descripcion
-                FROM     bodega       
-                ORDER BY nombre asc';
+            $sql='SELECT b.id, b.nombre, b.descripcion , t.nombre as tipo
+                FROM     bodega  b INNER JOIN tipobodega t on t.id = b.idtipobodega
+                ORDER BY b.nombre asc';
             $data= DATA::Ejecutar($sql);
             return $data;
         }     

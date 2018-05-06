@@ -80,30 +80,21 @@
                             <ul class="nav side-menu">
                                 <li>
                                     <a>
-                                        <i class="fa fa-home"></i> Home
+                                        <i class="fa fa-home"></i> home
                                         <span class="fa fa-chevron-down"></span>
                                     </a>
                                     <ul class="nav child_menu">
                                         <li>
-                                            <a href="index.html">Index</a>
-                                        </li>
-                                        <li>
-                                            <a href="Inventario.html">Inventario</a>
-                                        </li>
-                                        <li>
-                                            <a href="Producto.html">Nuevo Producto</a>
-                                        </li>
-                                        <li>
-                                            <a href="Categoria.html">Categorías</a>
+                                            <a href="Index.html">Index</a>
                                         </li>
                                         <li>
                                             <a href="Facturacion.html">Facturación</a>
                                         </li>
                                         <li>
-                                            <a href="Bodegas.html">Bodegas</a>
+                                            <a href="Bodega.html">Bodegas</a>
                                         </li>
                                         <li>
-                                            <a href="NuevaBodega.html">Nueva Bodega</a>
+                                            <a href="InventarioBodega.html">Nueva Bodega</a>
                                         </li>
                                     </ul>
                                 </li>
@@ -358,10 +349,7 @@
     <!-- Input mask -->
     <script src="assets/js/jquery.inputmask/jquery.inputmask.bundle.min.js"></script>
     <!-- JS Scripts -->
-    <script src="assets/js/Inventario.js"></script>
-    <script src="assets/js/Producto.js"></script>
-    <script src="assets/js/Categoria.js"></script>
-    <!-- Sweet Alert -->
+    <script src="assets/js/Bodega.js"></script>
     <script src="assets/js/sweetalert2.min.js"></script>
 
     <!-- Datatables -->
@@ -387,3 +375,12 @@
 </body>
 
 </html>
+
+<script>
+    $(document).ready(function () {
+        bodega.id = null;
+        bodega.Read;
+        bodega.ListTipos;
+        bodega.Init();
+    });
+</script>
