@@ -163,20 +163,21 @@ class Bodega {
                     <td>${item.nombre}</td>
                     <td>${item.descripcion}</td>
                     <td>${item.tipo}</td>
-                    ${item.nombre!='Primaria' ?
+                    ${item.nombre!='Primaria'?
                         `<td class=" last">
                             <a href="#" id="update${item.id}" data-toggle="modal" data-target=".bs-example-modal-lg" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | 
                             <a href="#" id="delete${item.id}"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>
                         </td>`
-                    :
-                        `<td class=" last">No editable</td>`}
+                    : 
+                        `<td class=" last">NO EDITABLE</td>`
+                    }
                 </tr>
             `);
             // event Handler
-            if(i!=0){
+            //if(i!=0){
                 $('#update'+item.id).click(bodega.UpdateEventHandler);
                 $('#delete'+item.id).click(bodega.DeleteEventHandler);
-            }
+            //}
         })
         //datatable         
         if ($.fn.dataTable.isDataTable('#dsProducto')) {

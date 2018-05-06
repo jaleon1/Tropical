@@ -78,7 +78,7 @@ class Bodega{
 
     function Read(){
         try {
-            $sql='SELECT b.id, b.nombre, b.descripcion, b.ubicacion, b.contacto, b.telefono, b.idtipobodega
+            $sql='SELECT b.id, b.nombre, b.descripcion, b.ubicacion, b.contacto, b.telefono, b.idtipobodega as tipo
                 FROM bodega  b
                 where b.id=:id';
             $param= array(':id'=>$this->id);
@@ -138,7 +138,7 @@ class Bodega{
     function Update(){
         try {
             $sql="UPDATE bodega 
-                SET nombre=:nombre, ubicacion=:ubicacion, descripcion= :descripcion, contacto=:contacto, telefono=:telefono, tipo=:tipo
+                SET nombre=:nombre, ubicacion=:ubicacion, descripcion= :descripcion, contacto=:contacto, telefono=:telefono, idtipobodega=:tipo
                 WHERE id=:id";
             $param= array(':id'=>$this->id, ':nombre'=>$this->nombre, ':ubicacion'=>$this->ubicacion, ':descripcion'=>$this->descripcion, 
                 ':contacto'=>$this->contacto, ':telefono'=>$this->telefono, ':tipo'=>$this->tipo);
