@@ -9,32 +9,33 @@ if (!isset($_SESSION))
 if(isset($_POST["action"])){
     $opt= $_POST["action"];
     unset($_POST['action']);
-    $producto= new Producto();
+    $insumo= new Insumo();
     switch($opt){
         case "ReadAll":
-            echo json_encode($producto->ReadAll());
+            echo json_encode($insumo->ReadAll());
             break;
         case "Read":
-            echo json_encode($producto->Read());
+            echo json_encode($insumo->Read());
             break;
         case "Create":
-            $producto->Create();
+            $insumo->Create();
             break;
         case "Update":
-            $producto->Update();
+            $insumo->Update();
             break;
         case "Delete":
-            $producto->Delete();
+            $insumo->Delete();
             break;   
     }
 }
 
-class Producto{
+class Insumo{
     public $id=null;
     public $nombre='';
     public $codigo='';
-    public $cantidad=0;
-    public $precio=0;
+    public $bueno=0;
+    public $danado=0;
+    public $costo=0;
 
     function __construct(){
         // identificador único
@@ -46,15 +47,16 @@ class Producto{
             $this->id= $obj["id"] ?? null;
             $this->nombre= $obj["nombre"] ?? '';
             $this->codigo= $obj["codigo"] ?? '';
-            $this->cantidad= $obj["cantidad"] ?? 0;            
-            $this->precio= $obj["precio"] ?? 0;
+            $this->bueno= $obj["bueno"] ?? 0;            
+            $this->danado= $obj["danado"] ?? 0;
+            $this->costo= $obj["costo"] ?? 0;
         }
     }
 
     function ReadAll(){
         try {
-            $sql='SELECT id, nombre, codigo, cantidad, precio
-                FROM     producto       
+            $sql='SELECT id, nombre, codigo, bueno, danado, costo
+                FROM     insumo       
                 ORDER BY nombre asc';
             $data= DATA::Ejecutar($sql);
             return $data;
@@ -70,8 +72,8 @@ class Producto{
 
     function Read(){
         try {
-            $sql='SELECT id, nombre, codigo, cantidad, precio
-                FROM producto  
+            $sql='SELECT id, nombre, codigo, bueno, danado, costo
+                FROM insumo  
                 where id=:id';
             $param= array(':id'=>$this->id);
             $data= DATA::Ejecutar($sql,$param);
@@ -81,17 +83,17 @@ class Producto{
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
-                'msg' => 'Error al cargar el producto'))
+                'msg' => 'Error al cargar el insumo'))
             );
         }
     }
 
     function Create(){
         try {
-            $sql="INSERT INTO producto   (id, nombre, codigo, cantidad, precio) VALUES (uuid(),:nombre, :codigo, :cantidad, :precio);";
+            $sql="INSERT INTO insumo   (id, nombre, codigo, bueno, danado, costo) VALUES (uuid(),:nombre, :codigo, :bueno, :danado, :costo);";
             //
-            $param= array(':nombre'=>$this->nombre, ':codigo'=>$this->codigo, ':cantidad'=>$this->cantidad, ':precio'=>$this->precio);
-            $data = DATA::Ejecutar($sql,$param, false);
+            $param= array(':nombre'=>$this->nombre, ':codigo'=>$this->codigo, ':bueno'=>$this->bueno, ':danado'=>$this->danado, ':costo'=>$this->costo);
+            $data = DATA::Ejecutar($sql,$param,false);
             if($data)
             {
                 //get id.
@@ -111,10 +113,10 @@ class Producto{
 
     function Update(){
         try {
-            $sql="UPDATE producto 
-                SET nombre=:nombre, codigo=:codigo, cantidad=:cantidad, precio=:precio
+            $sql="UPDATE insumo 
+                SET nombre=:nombre, codigo=:codigo, bueno=:bueno, danado=:danado, costo=:costo
                 WHERE id=:id";
-            $param= array(':id'=>$this->id, ':nombre'=>$this->nombre, ':codigo'=>$this->codigo, ':cantidad'=>$this->cantidad, ':precio'=>$this->precio);
+            $param= array(':id'=>$this->id, ':nombre'=>$this->nombre, ':codigo'=>$this->codigo, ':bueno'=>$this->bueno, ':danado'=>$this->danado, ':costo'=>$this->costo);
             $data = DATA::Ejecutar($sql,$param,false);
             if($data)
                 return true;
@@ -157,7 +159,7 @@ class Producto{
             //     $sessiondata['msg']='Registro en uso'; 
             //     return $sessiondata;           
             // }                    
-            $sql='DELETE FROM producto  
+            $sql='DELETE FROM insumo  
             WHERE id= :id';
             $param= array(':id'=>$this->id);
             $data= DATA::Ejecutar($sql, $param, false);
