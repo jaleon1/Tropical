@@ -54,6 +54,7 @@ var Session=  {
         $('#call_name').text(n);
     },
     setMenu(eventos){
+        $('#call_menu').html('');
         $.each(eventos, function (i, item) {
             $('#call_menu').append(`
                 <li>
@@ -79,11 +80,3 @@ var Session=  {
         });
     }
 }
-
-
-
-
-
-
-
-
