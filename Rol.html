@@ -16,7 +16,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>FAC-CR | Nuevo Usuario</title>
+    <title>FAC-CR | Nuevo Rol</title>
 
     <!-- Bootstrap -->
     <link href="assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -24,8 +24,6 @@
     <link href="assets/css/font-awesome/css/font-awesome.min.css" rel="stylesheet">
     <!-- NProgress -->
     <link href="assets/css/nprogress/nprogress.css" rel="stylesheet">
-    <!-- bootstrap-datetimepicker -->
-    <link href="assets/css/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css" rel="stylesheet">
     <!-- SweetAlert -->
     <link href="assets/css/sweetalert2.min.css" rel="stylesheet">
     <!-- Custom Theme Style -->
@@ -54,7 +52,7 @@
                     <!-- menu profile quick info -->
                     <div class="profile clearfix">
                         <div class="profile_pic">
-                            
+                            <img src="images/img.jpg" alt="..." class="img-circle profile_img">
                         </div>
                         <div class="profile_info">
                             <span>Bienvenido,</span>
@@ -139,7 +137,7 @@
                 <div class="">
                     <div class="page-title">
                         <div class="title_left">
-                            <h3>USUARIOS</h3>
+                            <h3>ROLES</h3>
                         </div>                        
                     </div>
 
@@ -149,72 +147,38 @@
                         <div class="col-md-12 col-sm-12 col-xs-12">
                             <div class="x_panel">
                                 <div class="x_title">
-                                    <h2>Nuevo Usuario</h2>
+                                    <h2>Nuevo Rol</h2>
                                     
                                     <div class="clearfix"></div>
                                 </div>
                                 <!--  CONTENIDO DE LA PAGINA -->
 
                                 <div class="x_content">
-                                    <form class="form-horizontal form-label-left" id="frmUsuario" method="POST" novalidate>
+                                    <form class="form-horizontal form-label-left" id="frmRol" method="POST" novalidate>
 
                                         <!-- <span class="section">Datos Generales</span> -->
 
                                         <div class="item form-group">
-                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="nombre">Nombre Completo
+                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="nombre">Nombre
                                                 <span class="required">*</span>
                                             </label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <input id="nombre" class="form-control col-md-7 col-xs-12" name="nombre" required="required" type="text" placeholder="Nombre completo Del usuario" data-validate-words="2">
+                                                <input id="nombre" class="form-control col-md-7 col-xs-12" name="nombre" required="required" type="text" placeholder="Nombre del Rol">
                                             </div>
                                         </div>
 
                                         <div class="item form-group">
-                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="username">Username
-                                                <span class="required">*</span>                                                
+                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="descripcion">Descripción
                                             </label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <input id="username" class="form-control col-md-7 col-xs-12" name="username" required="required" type="text" placeholder="Nombre Único de usuario" >                                                
+                                                <input id="descripcion" class="form-control col-md-7 col-xs-12" name="descripcion" type="text" >
                                             </div>
-                                            <span id="checkusername" class="fa"></span>
-                                        </div>
+                                        </div>                                       
 
                                         <div class="item form-group">
-                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="password">Password
-                                                <span class="required">*</span>
-                                            </label>
+                                            <label class="control-label col-md-3 col-sm-3 col-xs-12">Eventos (Multiple)</label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <input id="password" class="form-control col-md-7 col-xs-12" name="password" required="required" type="password" data-validate-length-range="6" placeholder="Mínimo 6 caracteres">
-                                            </div>
-                                        </div>
-
-                                        <div class="item form-group">
-                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="repetir">Repetir Password</label>
-                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <input id="repetir" class="form-control col-md-7 col-xs-12" name="repetir" type="password" placeholder="Repita el password" data-validate-linked="password" required="required">
-                                            </div>
-                                        </div>
-
-                                        <div class="item form-group">
-                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="email">Email</label>
-                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <input id="email" class="optional form-control col-md-7 col-xs-12" name="email" type="email" >
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label class="control-label col-md-3 col-sm-3 col-xs-12">Activo</label>
-                                            <div class="col-md-9 col-sm-9 col-xs-12">
-                                                <label>
-                                                  <input type="checkbox" class="js-switch" checked="" data-switchery="true" id="activo" name="activo">
-                                                </label>
-                                            </div>
-                                        </div>
-
-                                        <div class="item form-group">
-                                            <label class="control-label col-md-3 col-sm-3 col-xs-12">Roles (Multiple)</label>
-                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <select class="selectpicker show-menu-arrow form-control" multiple="multiple" id="rol" name="rol"></select>
+                                                <select class="selectpicker show-menu-arrow form-control" multiple id="evento" name="evento"></select>
                                             </div>
                                         </div>
                                         
@@ -223,7 +187,7 @@
                                         <div class="form-group">
                                             <div class="col-md-6 col-md-offset-3">
                                                 <button type="reset" class="btn btn-primary">Reset</button>
-                                                <button id="btnUsuario" type="submit" class="btn btn-success">Submit</button>
+                                                <button id="btnRol" type="submit" class="btn btn-success">Submit</button>
                                             </div>
                                         </div>
                                     </form>
@@ -239,7 +203,7 @@
             <!-- footer content -->
             <footer>
                 <div class="pull-right">
-                    Tropical SNO
+                    Ventas y administración de Inventario
                     <a href="http://faccr.com">Fac-CR</a>
                 </div>
                 <div class="clearfix"></div>
@@ -256,8 +220,6 @@
     <script src="assets/js/nprogress/nprogress.js"></script>
     <!-- Moment -->
     <script src="assets/js/moment.min.js"></script>
-    <!-- bootstrap-datetimepicker -->
-    <script src="assets/js/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js"></script>
     <!-- Custom Theme Scripts -->
     <script src="assets/js/custom.min.js"></script>
     <!-- Validator -->
@@ -265,22 +227,21 @@
     <!-- Input mask -->
     <script src="assets/js/jquery.inputmask/jquery.inputmask.bundle.min.js"></script>
     <!-- JS Scripts -->
-    <script src="assets/js/Usuario.js"></script>
     <script src="assets/js/Rol.js"></script>
+    <script src="assets/js/Evento.js"></script>
     <!-- Sweet Alert -->
     <script src="assets/js/sweetalert2.min.js"></script>
     <!-- Switchery -->
     <script src="assets/js/switchery/switchery.min.js"></script>
     <!-- Select -->
     <script src="assets/js/bootstrap-select.js"></script>
-
 </body>
 
 </html>
 
 <script>
     $(document).ready(function () {
-        usuario.Init();
-        rol.List;
+        rol.Init();
+        evento.List        
     });
 </script>
