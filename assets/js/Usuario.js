@@ -163,7 +163,7 @@ class Usuario {
         //style="display: none"
         $.each(data, function (i, item) {
             $('#tableBody-Usuario').append(`
-                <tr> 
+                <tr>
                     <td class="a-center ">
                         <input type="checkbox" class="flat" name="table_records">
                     </td>
