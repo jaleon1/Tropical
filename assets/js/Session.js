@@ -37,7 +37,7 @@ var Session=  {
                     break;
                 case 'invalido':
                     Session.state=false;
-                    location.href= 'login.html'; 
+                    location.href= 'login.indow.location'; 
                     break;
             }   
         })    

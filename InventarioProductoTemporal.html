@@ -165,7 +165,7 @@
                 <div class="">
                     <div class="page-title">
                         <div class="title_left">
-                            <h3>PRODUCTOS</h3>
+                            <h3>PRODUCTO TEMPORAL</h3>
                         </div>
 
                         <div class="title_right">
@@ -186,7 +186,7 @@
                         <div class="col-md-12 col-sm-12 col-xs-12">
                             <div class="x_panel">
                                 <div class="x_title">
-                                    <h2>Inventario Producto</h2>
+                                    <h2>Inventario Producto Temporal</h2>
                                     
                                     <div class="clearfix"></div>
                                 </div>
@@ -197,22 +197,15 @@
                                     <div id="datatable_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
                                         <div class="row">
                                             <div class="col-sm-12">
-                                                <table id="dsProducto" class="table table-striped jambo_table bulk_action" role="grid" aria-describedby="datatable_info">
+                                                <table id="dsProductoTemporal" class="table table-striped jambo_table bulk_action" role="grid" aria-describedby="datatable_info">
                                                     <thead>
                                                         <tr role="row" class="headings">
-                                                            <th><input type='checkbox' id='check-all' class='iCheck-helper'></th><th class='itemId'>ID</th><th>Nombre</th> <th>Código</th> <th>Cantidad</th>  <th>Precio</th> <th>Acción</th>
+                                                            <th><input type='checkbox' id='check-all' class='iCheck-helper'></th><th class='itemId'>ID</th><th>ID USUARIO</th><th>ID PRODUCTO</th><th>Producto</th> <th>Usuario</th> <th>Cantidad</th>  <th>Estado</th> <th>Acción</th>
                                                         </tr>
                                                     </thead>
 
-                                                    <tbody id="tableBody-Producto">
-                                                        <!-- <tr role="row" class="odd">
-                                                            <td class="sorting_1">Airi Satou</td>
-                                                            <td>Accountant</td>
-                                                            <td>Tokyo</td>
-                                                            <td>33</td>
-                                                            <td>2008/11/28</td>
-                                                            <td>$162,700</td>
-                                                        </tr> -->
+                                                    <tbody id="tableBody-ProductoTemporal">
+
                                                     </tbody>
 
                                                 </table>
@@ -230,53 +223,123 @@
                                                     <button type="button" class="close" data-dismiss="modal">
                                                         <span aria-hidden="true">×</span>
                                                     </button>
-                                                    <h4 class="modal-title" id="myModalLabel">Editar Producto</h4>
+                                                    <h4 class="modal-title" id="myModalLabel">Editar Producto Temporal</h4>
                                                 </div>
 
                                                 <div class="modal-body">
-                                                    <form class="form-horizontal form-label-left" id="frmProducto" novalidate>
+                                                    <form class="form-horizontal form-label-left" id="frmProductoTemporal" novalidate>
 
                                                         <span class="section">Datos Generales</span>
+                
+                                                        <div class="row">
+                                                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                                                <div class="x_panel">
+                                                                    <div class="x_title">
+                                                                        <h2>Insumos por Producto</h2>
+                                    
+                                                                        <div class="clearfix"></div>
+                                                                    </div>
+                                                                    <!--  CONTENIDO DE LA PAGINA -->
+                                    
+                                                                    <div class="x_content">
+                                                                        <form class="form-horizontal form-label-left" id="frmInsumoTemporal" method="POST" novalidate>
+                                                                            <span class="section">Selección de Insumos
+                                    
+                                                                            </span>
+                                                                            <div id="reportrange" class="pull-right">
+                                                                                <button id="btnAddInsumo" data-toggle="modal" data-target=".bs-example-modal-lg-insumo" type="button" class="btn btn-info btn-lg">+</button>    
+                                                                            </div>
+                                                                            <div class="row">
+                                                                                <div class="col-sm-12">
+                                                                                    <table id="dsInsumoProducto" class="table table-striped jambo_table bulk_action" role="grid" aria-describedby="datatable_info">
+                                                                                        <thead>
+                                                                                            <tr role="row" class="headings">
+                                                                                                
+                                                                                            </tr>
+                                                                                        </thead>
+                                    
+                                                                                        <tbody id="tableBody-InsumoProducto">
+                                                                    
+                                                                                        </tbody>
+                                    
+                                                                                    </table>
+                                                                                </div>
+                                                                            </div>
+                                    
+                                                                            <div class="ln_solid"></div>
+                                    
+                                                                            <div class="form-group">
+                                                                                <div class="col-md-6 col-md-offset-3">
+                                    
+                                                                                </div>
+                                                                            </div>
+                                                                        </form>
+                                                                    </div>
+                                                                    <!--  /CONTENIDO DE LA PAGINA -->
+                                    
+                                                                    
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                                                <div class="x_panel">
+                                                                    <div class="x_title">
+                                                                        <h2>Producto</h2>
+                                    
+                                                                        <div class="clearfix"></div>
+                                                                    </div>
+                                                                    <!--  CONTENIDO DE LA PAGINA -->
+                                    
+                                                                    <div class="x_content">
+                                                                        <form class="form-horizontal form-label-left" id="frmProductoTemporal" method="POST" novalidate>
+                                                                            <span class="section">Selección del Producto
+                                    
+                                                                            </span>
+                                                                            <div id="reportrange" class="pull-right">
+                                                                                <button id="btnAddProducto" data-toggle="modal" data-target=".bs-example-modal-lg-producto" type="button" class="btn btn-info btn-lg">+</button>    
+                                                                            </div>
+                                                                            <div class="row">
+                                                                                <div class="col-sm-12">
+                                                                                    <div class="item form-group">
+                                                                                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="nombre">Nombre
+                                                                                            <span class="required">*</span>
+                                                                                        </label>
+                                                                                        <div class="col-md-6 col-sm-6 col-xs-12">
+                                                                                            <input id="nombre" class="form-control col-md-7 col-xs-12" name="nombre" required="required" type="text" placeholder="Nombre del Producto"
+                                                                                                autofocus>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="item form-group ">
+                                                                                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="valor">Cantidad
+                                                                                            <span class="required">*</span>
+                                                                                        </label>
+                                                                                        <div class="col-md-6 col-sm-6 col-xs-12">
+                                                                                            <input id="cantidad" class="form-control col-md-7 col-xs-12" name="cantidad" required="required" type="text" placeholder="Cantidad Producto">
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                    
+                                                                            <div class="ln_solid"></div>
+                                    
+                                                                            <div class="form-group">
+                                                                                <div class="col-md-6 col-md-offset-3">
+                                                                                    <button type="reset" class="btn btn-primary">Reset</button>
+                                                                                    <button id="btnProductoTemporal" type="submit" class="btn btn-success">Guardar</button>
+                                                                                </div>
+                                                                            </div>
+                                                                        </form>
+                                                                    </div>
+                                                                    <!--  /CONTENIDO DE LA PAGINA -->
+                                    
+                                                                </div>
+                                                            </div>
+                                                        </div>
 
-                                                        <div class="item form-group">
-                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="nombre">Nombre
-                                                                <span class="required">*</span>
-                                                            </label>
-                                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <input id="nombre" class="form-control col-md-7 col-xs-12" name="nombre" required="required" type="text" placeholder="Nombre del Producto"
-                                                                    autofocus>
-                                                            </div>
-                                                        </div>
-                
-                                                        <div class="item form-group">
-                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="codigo">Codigo
-                                                                <span class="required">*</span>
-                                                            </label>
-                                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <input id="codigo" class="form-control col-md-7 col-xs-12" name="codigo" required="required" type="text" placeholder="Codigo del Producto"
-                                                                    autofocus>
-                                                            </div>
-                                                        </div>
-                
-                                                        <div class="item form-group ">
-                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="valor">Cantidad</label>
-                                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <input id="cantidad" class="form-control col-md-7 col-xs-12" name="cantidad" type="text" placeholder="Cantidad Producto">
-                                                            </div>
-                                                        </div>
-                
-                                                        <div class="item form-group ">
-                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="valor">Precio</label>
-                                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <input id="precio" class="form-control col-md-7 col-xs-12" name="precio" type="text" placeholder="Precio del Producto">
-                                                            </div>
-                                                        </div>
-                
                                                         <div class="ln_solid"></div>
                                                         <div class="form-group">
                                                             <div class="col-md-6 col-md-offset-3">
                                                                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                                                <button id="btnProducto" type="submit" class="btn btn-success">Submit</button>
+                                                                <button id="btnProductoTemporal" type="submit" class="btn btn-success">Submit</button>
                                                             </div>
                                                         </div>
                                                     </form>
@@ -331,7 +394,9 @@
     <script src="assets/js/jquery.inputmask/jquery.inputmask.bundle.min.js"></script>
     <!-- JS Scripts -->
     <!-- <script src="assets/js/InventarioProducto.js"></script> -->
+    <script src="assets/js/ProductoTemporal.js"></script>
     <script src="assets/js/Producto.js"></script>
+    <script src="assets/js/Insumo.js"></script>
     <!-- Sweet Alert -->
     <script src="assets/js/sweetalert2.min.js"></script>
 
@@ -375,9 +440,9 @@
     $(document).ready(function () {
         // if(!Session.state)
         //     return;
-        producto.id=null;
-        producto.Read;
-        producto.Init();
+        productotemporal.id=null;
+        productotemporal.Read;
+        productotemporal.Init();
         //
     });
 </script>

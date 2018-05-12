@@ -125,6 +125,8 @@ class Producto {
     };
 
     ShowAll(e) {
+        var url;
+        url = window.location.href;
         // Limpia el div que contiene la tabla.
         $('#tableBody-Producto').html("");
         // // Carga lista
@@ -134,7 +136,7 @@ class Producto {
             $('#tableBody-Producto').append(`
                 <tr> 
                     <td class="a-center ">
-                        <input type="checkbox" class="flat" name="table_records">
+                        <input id="chk-addproducto${item.id}" type="checkbox" class="flat" name="table_records">
                     </td>
                     <td class="itemId" >${item.id}</td>
                     <td>${item.nombre}</td>
@@ -150,6 +152,9 @@ class Producto {
             // event Handler
             $('.update').click(producto.UpdateEventHandler);
             $('.delete').click(producto.DeleteEventHandler);
+            if (url.indexOf("ProductoTemporal.html")!=-1) {
+                $('#chk-addproducto'+item.id).change(productotemporal.AddProductoEventHandler);
+            }
         })        
         //datatable         
         if ( $.fn.dataTable.isDataTable( '#dsProducto' ) ) {
@@ -163,51 +168,9 @@ class Producto {
         }*/
         else 
             $('#dsProducto').DataTable( {
-                columns: [
-                    { "sTitle": "<input type='checkbox' id='check-all' class='iCheck-helper' >" },
-                    { title: "ID"
-                        //,visible: false
-                    },
-                    { title: "Nombre" },
-                    { title: "Código Rapido" },
-                    { title: "Cantidad" },
-                    { title: "Precio" },
-                    { title: "Action" }
-                ],          
                 paging: true,
                 search: true
             } );
-
-
-        // var dataTable =$("datatable").DataTable({ 
-        //     "order": [[ 2, "asc" ]]
-        // } ); 
-
-        // var dataObject = {
-        //     data: [{
-        //         title: "ID"
-        //     }, {
-        //         title: "COUNTY"
-        //     }]
-        // };
-
-        // var columns = [];
-        // $.fn.dataTableExt.afnFiltering.push(
-        // function(oSettings, aData, iDataIndex) {
-        //     var keywords = $(".dataTables_filter input").val().split(' ');  
-        //     var matches = 0;
-        //     for (var k=0; k<keywords.length; k++) {
-        //         var keyword = keywords[k];
-        //         for (var col=0; col<aData.length; col++) {
-        //             if (aData[col].indexOf(keyword)>-1) {
-        //                 matches++;
-        //                 break;
-        //             }
-        //         }
-        //     }
-        //     return matches == keywords.length;
-        // }
-        // );
     };
 
     UpdateEventHandler() {
