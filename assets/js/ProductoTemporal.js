@@ -151,7 +151,7 @@ constructor(id, idproducto,  cantidad, estado, fecha, i) {
         $("#cantidad").val('');
         $("#nombre").val('');
         //datatable.
-        $('#tableBody-ProductoTemporal').html("");
+        $('#tableBody-InsumoProducto').html("");
     };
 
     ShowAll(e) {
