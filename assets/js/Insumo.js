@@ -128,6 +128,8 @@ class Insumo {
     };
 
     ShowAll(e) {
+        var url;
+        url = window.location.href;
         // Limpia el div que contiene la tabla.
         $('#tableBody-Insumo').html("");
         // // Carga lista
@@ -137,82 +139,49 @@ class Insumo {
             $('#tableBody-Insumo').append(`
                 <tr> 
                     <td class="a-center ">
-                        <input type="checkbox" class="flat" name="table_records">
+                        <input id="chk-addinsumo${item.id}" type="checkbox" class="flat" name="table_records">
                     </td>
-                    <td class="itemId" >${item.id}</td>
+                    <td class="itemId">${item.id}</td>
                     <td>${item.nombre}</td>
                     <td>${item.codigo}</td>
                     <td>${item.bueno}</td>
                     <td>${item.danado}</td>
                     <td>${item.costo}</td>
                     <td class=" last">
-                        <a href="#" class="update" data-toggle="modal" data-target=".bs-example-modal-lg" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | 
-                        <a href="#" class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>
+                        <a href="#" id="update" class="update" data-toggle="modal" data-target=".bs-example-modal-lg" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | 
+                        <a href="#" id="delete" class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>
                     </td>
                 </tr>
             `);
             // event Handler
-            $('.update').click(insumo.UpdateEventHandler);
-            $('.delete').click(insumo.DeleteEventHandler);
+            $(".update").click(insumo.UpdateEventHandler);
+            $(".delete").click(insumo.DeleteEventHandler);
+            if (url.indexOf("ProductoTemporal.html")!=-1) {
+                $('#chk-addinsumo'+item.id).change(productotemporal.AddInsumoEventHandler);
+            }
         })        
         //datatable         
         if ( $.fn.dataTable.isDataTable( '#dsInsumo' ) ) {
             var table = $('#dsInsumo').DataTable();
             //table.destroy();
         }
-        /*else {
-            table = $('#example').DataTable( {
-                paging: false
-            } );
-        }*/
         else 
             $('#dsInsumo').DataTable( {
-                columns: [
-                    { "sTitle": "<input type='checkbox' id='check-all' class='iCheck-helper' >" },
-                    { title: "ID"
-                        //,visible: false
-                    },
-                    { title: "Nombre" },
-                    { title: "Código" },
-                    { title: "Bueno" },
-                    { title: "Dañado" },
-                    { title: "Costo" },
-                    { title: "Action" }
-                ],          
+                // columns: [
+                //     { "sTitle": "<input type='checkbox' id='check-all' class='iCheck-helper' >" },
+                //     { title: "ID"
+                //     // ,visible: false
+                //     },
+                //     { title: "Nombre" },
+                //     { title: "Código" },
+                //     { title: "Bueno" },
+                //     { title: "Dañado" },
+                //     { title: "Costo" },
+                //     { title: "Action" }
+                // ],          
                 paging: true,
                 search: true
             } );
-
-
-        // var dataTable =$("datatable").DataTable({ 
-        //     "order": [[ 2, "asc" ]]
-        // } ); 
-
-        // var dataObject = {
-        //     data: [{
-        //         title: "ID"
-        //     }, {
-        //         title: "COUNTY"
-        //     }]
-        // };
-
-        // var columns = [];
-        // $.fn.dataTableExt.afnFiltering.push(
-        // function(oSettings, aData, iDataIndex) {
-        //     var keywords = $(".dataTables_filter input").val().split(' ');  
-        //     var matches = 0;
-        //     for (var k=0; k<keywords.length; k++) {
-        //         var keyword = keywords[k];
-        //         for (var col=0; col<aData.length; col++) {
-        //             if (aData[col].indexOf(keyword)>-1) {
-        //                 matches++;
-        //                 break;
-        //             }
-        //         }
-        //     }
-        //     return matches == keywords.length;
-        // }
-        // );
     };
 
     UpdateEventHandler() {
