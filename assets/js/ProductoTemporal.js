@@ -149,9 +149,9 @@ constructor(id, idproducto, idusuario, cantidad, estado, insumo) {
                     <td class="a-center ">
                         <input type="checkbox" class="flat" name="table_records">
                     </td>
-                    <td class="itemId" >${item.id}</td>
-                    <td class="itemId" >${item.idproducto}</td>
-                    <td class="itemId" >${item.idusuario}</td>
+                    <td class="itemId">${item.id}</td>
+                    <td>${item.idproducto}</td>
+                    <td>${item.idusuario}</td>
                     <td>${item.producto}</td>
                     <td>${item.usuario}</td>
                     <td>${item.cantidad}</td>
@@ -172,18 +172,20 @@ constructor(id, idproducto, idusuario, cantidad, estado, insumo) {
 
         }
         else 
-            $('#dsProductoTemporal').DataTable( {
-                columns: [
-                    { title: "Check" },
-                    { title: "ID"},
-                    { title: "IdProducto" },
-                    { title: "IdUsuario" },
-                    { title: "Cantidad" },
-                    { title: "Estado" }
-                ],          
-                paging: true,
-                search: true
-            } );
+            $('#dsProductoTemporal').DataTable( 
+            //     {
+            //     columns: [
+            //         { title: "Check" },
+            //         { title: "ID"},
+            //         { title: "IdProducto" },
+            //         { title: "IdUsuario" },
+            //         { title: "Cantidad" },
+            //         { title: "Estado" }
+            //     ],          
+            //     paging: true,
+            //     search: true
+            // }
+         );
     };
 
     AddTableInsumo(id,nombre) {
@@ -230,25 +232,27 @@ constructor(id, idproducto, idusuario, cantidad, estado, insumo) {
     }
 
     UpdateEventHandler() {
-        productotemporal.id = $(this).parents("tr").find(".itemId").text();  //Class itemId = ID del objeto.
+        // 
+        productotemporal.id = $(this).parents("tr").find(".itemId").text(); //Class itemId = ID del objeto.
         productotemporal.Read;
     };
 
     ShowItemData(e) {
         /*************************** LLENAR EL MODAL CON TODA LA INFO Y LOS ARRAYS DE INSUMOS Y CANTIDAD */
-        
+
         // Limpia el controles
         this.ClearCtls();
         // carga objeto.
         var data = JSON.parse(e);
-        productotemporal = new ProductoTemporal(data.id, data.idproducto, data.idusuario,
-            data.cantidad, data.estado);
+        // productotemporal = new ProductoTemporal(data[0].id, data[0].idproducto, data[0].producto, data[0].idusuario,
+        //     data[0].usuario,data[0].cantidad, data[0].estado, data.insumo, data.cantidadinsumo);
+        
         // Asigna objeto a controles
-        $("#id").val(productotemporal.id);
-        $("#idproducto").val(productotemporal.idproducto);
-        $("#idusuario").val(productotemporal.idusuario);
-        $("#estado").val(productotemporal.estado);
-        $("#cantidad").val(productotemporal.cantidad);
+        // $("#id").val(productotemporal.id);
+        $("#nombre").val(data[0].producto);
+        // $("#idusuario").val(productotemporal.usuario);
+        // $("#estado").val(productotemporal.estado);
+        $("#cantidad").val(data[0].cantidad);
     };
 
     DeleteEventHandler() {

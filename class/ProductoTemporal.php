@@ -39,7 +39,7 @@ class ProductoTemporal{
     public $insumo=[];
     public $cantidadinsumo=[];
 
-    public $insumos= array();
+    // public $insumos= array();
 
     function __construct(){
         // identificador único
@@ -55,10 +55,18 @@ class ProductoTemporal{
             $this->estado= $obj["estado"] ?? 0;
             $this->insumo=$obj["insumo"];
             $this->cantidadinsumo=$obj["cantidadinsumo"];
-            // if (isset($obj["insumos"] )) {
-            //     require_once("CategoriasXProducto.php");
+            //Insumos del Producto
+            if (isset($obj["insumos"] )) {
+                require_once("InsumoxProducto.php");
                 
-            // }
+                foreach ($obj["insumos"] as $idins) {
+                    $insprod= new InsumoxProducto();
+                    $insprod->idinsumo= $idins;
+                    $insprod->idproductotemporal= $this->id;
+                    // $insprod->cantidad= $this->cantidad
+                    array_push ($this->insumos, $insprod);
+                }
+            }
         }
     }
 
@@ -91,19 +99,19 @@ class ProductoTemporal{
     //                 $this->idproducto = $value['idproducto'];
     //                 $this->cantidad = $value['cantidad'];
     //                 $this->estado = $value['estado'];
-    //                 $this->insumo = $value['insumo'];
-    //                 $this->cantidadinsumo = $value['cantidadinsumo'];
+    //                 // $this->insumo = $value['insumo'];
+    //                 // $this->cantidadinsumo = $value['cantidadinsumo'];
     //                 //rol
-    //                 if($value['idrol']!=null){
-    //                     $rol->id = $value['idrol'];
-    //                     $rol->nombre = $value['nombrerol'];
-    //                     array_push ($this->listarol, $rol);
+    //                 if($value['idcategoria']!=null){
+    //                     $cat->id = $value['idcategoria'];
+    //                     $cat->nombre = $value['nombrecategoria'];
+    //                     array_push ($this->listacategoria, $cat);
     //                 }
     //             }
     //             else {
-    //                 $rol->id = $value['idrol'];
-    //                 $rol->nombre = $value['nombrerol'];
-    //                 array_push ($this->listarol, $rol);
+    //                 $cat->id = $value['idcategoria'];
+    //                 $cat->nombre = $value['nombrecategoria'];
+    //                 array_push ($this->listacategoria, $cat);
     //             }
     //         }
     //         return $this;
@@ -119,11 +127,13 @@ class ProductoTemporal{
 
     function Read(){
         try {
-            $sql='SELECT id, idproducto, idusuario, cantidad, estado
-                FROM productotemporal  
-                where id=:id';
+            $sql='SELECT pt.id, pt.idusuario, (SELECT nombre FROM usuario WHERE id=pt.idusuario) as usuario, pt.idproducto, 
+            (SELECT nombre FROM producto WHERE id=pt.idproducto) as producto, pt.cantidad, pt.estado, ip.idinsumo as insumo, 
+            ip.cantidad as cantidadinsumo FROM productotemporal pt INNER JOIN insumoxproducto ip on pt.id = ip.idproductotemporal 
+            where pt.id=:id';
             $param= array(':id'=>$this->id);
             $data= DATA::Ejecutar($sql,$param);
+
             return $data;
         }     
         catch(Exception $e) {
