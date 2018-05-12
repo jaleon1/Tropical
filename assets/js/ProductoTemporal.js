@@ -39,7 +39,7 @@ constructor(id, idproducto, idusuario, cantidad, estado, insumo) {
         this.idusuario = "1ed3a48c-3e44-11e8-9ddb-54ee75873a60";
         this.cantidad = $("#cantidad").val();
         this.estado = 1;
-        // this.insumo = productotemporal.insumo;
+        this.insumo = productotemporal.insumo;
         productotemporal.AddCantidadInsumo();
         this.cantidadinsumo = productotemporal.cantidadinsumo;
         //Recorrido datatable para guardar id de insumos
