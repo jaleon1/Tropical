@@ -1,7 +1,7 @@
 <?php 
 require_once("Conexion.php");
 
-class InsumoxProducto{
+class InsumosxProducto{
     public $idinsumo;
     public $idproductotemporal;
     public $cantidad;
@@ -10,8 +10,8 @@ class InsumoxProducto{
         try {
             $created = true;
             foreach ($obj as $insprod) {
-                $sql="INSERT INTO insumoxproducto   (id,idinsumo, idproductotemporal,cantidad)
-                VALUES (uuid(),:idinsumo, :idproductotemporal,:cantidad)";
+                $sql="INSERT INTO insumosxproducto   (id, idinsumo, idproductotemporal, cantidad)
+                VALUES (uuid(), :idinsumo, :idproductotemporal, :cantidad)";
                 //
                 $param= array(':idinsumo'=>$insprod->idinsumo, ':idproductotemporal'=>$insprod->idproductotemporal, 
                 ':cantidad'=>$insprod->cantidad);
@@ -42,7 +42,7 @@ class InsumoxProducto{
 
     public static function Delete($_idproductotemporal){
         try {                 
-            $sql='DELETE FROM insumoxproducto  
+            $sql='DELETE FROM insumosxproducto  
                 WHERE idproductotemporal= :idproductotemporal';
             $param= array(':idproductotemporal'=> $_idproductotemporal);
             $data= DATA::Ejecutar($sql, $param, false);

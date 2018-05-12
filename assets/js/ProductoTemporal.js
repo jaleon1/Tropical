@@ -1,13 +1,12 @@
 class ProductoTemporal {
     // Constructor
-constructor(id, idproducto, idusuario, cantidad, estado, insumo) {
+constructor(id, idproducto,  cantidad, estado, fecha, i) {
         this.id = id || null;
         this.idproducto = idproducto || '';
-        this.idusuario = idusuario || '';
         this.cantidad = cantidad || 0;
         this.estado = estado || 0;
-        this.insumo = [];
-        this.cantidadinsumo = [];
+        this.fecha = fecha || null;
+        this.listainsumo = i || [];
     }
 
     //Getter
@@ -32,18 +31,26 @@ constructor(id, idproducto, idusuario, cantidad, estado, insumo) {
     }
 
     get Save() {
+        if ($('#tableBody-InsumoProducto tr').length == 0){
+            swal({
+                type: 'info',
+                title: 'Debe agregar los Insumos del Producto...'                    
+            });
+            return;
+        }
         $('#btnProductoTemporal').attr("disabled", "disabled");
-        var miAccion = productotemporal.id == null ? 'Create' : 'Update';
         var miAccion = this.id == null ? 'Create' : 'Update';
         this.idproducto = productotemporal.idproducto;
-        this.idusuario = "1ed3a48c-3e44-11e8-9ddb-54ee75873a60";
         this.cantidad = $("#cantidad").val();
         this.estado = 1;
-        this.insumo = productotemporal.insumo;
-        productotemporal.AddCantidadInsumo();
-        this.cantidadinsumo = productotemporal.cantidadinsumo;
-        //Recorrido datatable para guardar id de insumos
-        
+        // lista de insumos
+
+        $('#tableBody-InsumoProducto tr').each(function() {
+            var objInsumo = new Object();
+            objInsumo. id= $(this).find('td:eq(0)').html();
+            objInsumo. cantidad= $(this).find('td:eq(2) input').val();
+            productotemporal.listainsumo.push(objInsumo);
+        });
         $.ajax({
             type: "POST",
             url: "class/ProductoTemporal.php",
@@ -61,7 +68,6 @@ constructor(id, idproducto, idusuario, cantidad, estado, insumo) {
                 productotemporal = new ProductoTemporal();
                 productotemporal.ClearCtls();
                 productotemporal.Read;
-                $("#idproducto").focus();
             });
     }
 
@@ -75,13 +81,30 @@ constructor(id, idproducto, idusuario, cantidad, estado, insumo) {
             }
         })
             .done(function () {
-                swal({
-                    //position: 'top-end',
-                    type: 'success',
-                    title: 'Eliminado!',
-                    showConfirmButton: false,
-                    timer: 1000
-                });
+                var data = JSON.parse(e);
+                if (data.status == 0)
+                    swal({
+                        //position: 'top-end',
+                        type: 'success',
+                        title: 'Eliminado!',
+                        showConfirmButton: false,
+                        timer: 1000
+                    });
+                else if (data.status == 1) {
+                    swal({
+                        type: 'error',
+                        title: 'No es posible eliminar...',
+                        text: 'El registro que intenta eliminar tiene objetos relacionados'                        
+                    });
+                }
+                else {
+                    swal({
+                        type: 'error',
+                        title: 'Ha ocurrido un error...',
+                        text: 'El registro no ha sido eliminado',
+                        footer: '<a href>Contacte a Soporte Técnico</a>',
+                    })
+                }
             })
             .fail(function (e) {
                 productotemporal.showError(e);
@@ -125,11 +148,10 @@ constructor(id, idproducto, idusuario, cantidad, estado, insumo) {
     };
 
     ClearCtls() {
-        $("#id").val('');
-        $("#idproducto").val('');
-        $("#idusuario").val('');
         $("#cantidad").val('');
-        $("#estado").val('');
+        $("#nombre").val('');
+        //datatable.
+        $('#tableBody-ProductoTemporal').html("");
     };
 
     ShowAll(e) {
@@ -190,18 +212,17 @@ constructor(id, idproducto, idusuario, cantidad, estado, insumo) {
 
     AddTableInsumo(id,nombre) {
         $('#tableBody-InsumoProducto').append(`
-            <tr id="row${id}"> 
+            <tr id="row"${id}> 
                 <td class="itemId" >${id}</td>
                 <td>${nombre}</td>
                 <td>
-                    <input id="cantidad${id}" class="form-control col-3" name="cantidad" type="text" placeholder="Cantidad de paquetes" autofocus="">
+                    <input id="cantidadInsumo" class="form-control col-3" name="cantidadInsumo" type="text" placeholder="Cantidad de paquetes" autofocus="" value="1">
                 </td>
                 <td class=" last">
-                    <a id ="delete_row${id}" class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>
+                    <a id ="delete_row${id}" onclick="productotemporal.DeleteInsumo(this)" > <i class="glyphicon glyphicon-trash" onclick="DeleteInsumo(this)"> </i> Eliminar </a>
                 </td>
             </tr>
         `);
-        $("#delete_row"+id).click(productotemporal.DeleteInsumo);
         //datatable         
         if ( $.fn.dataTable.isDataTable( '#dsProductoTemporal' ) ) {
             var table = $('#dsProductoTemporal').DataTable();
@@ -224,11 +245,9 @@ constructor(id, idproducto, idusuario, cantidad, estado, insumo) {
             } );
     };
 
-    DeleteInsumo(){
-        var id=$(this).closest('tr').children('td:first').text();
-        var posicion = productotemporal.insumo.indexOf(id);
-        productotemporal.insumo.splice(posicion,1);
-        $('#row'+id).remove();
+    DeleteInsumo(btn) {
+        var row = btn.parentNode.parentNode;
+        row.parentNode.removeChild(row);
     }
 
     UpdateEventHandler() {
@@ -280,6 +299,7 @@ constructor(id, idproducto, idusuario, cantidad, estado, insumo) {
         $("#nombre").val($(this).parents("tr").find("td:eq(2)").html());
         productotemporal.idproducto = $(this).parents("tr").find("td:eq(1)").html();
         $('#modal-producto').modal('toggle');
+        $("#cantidad").focus();
     }
 
     AddInsumoEventHandler(){
@@ -287,25 +307,19 @@ constructor(id, idproducto, idusuario, cantidad, estado, insumo) {
         var id=$(this).parents("tr").find("td:eq(1)").html();
         var nombre=$(this).parents("tr").find("td:eq(2)").html();
         if ($(this).is(':checked')) {
-            if (productotemporal.insumo.indexOf(id)!=-1){
+            if (productotemporal.listainsumo.indexOf(id)!=-1){
                 $(this).attr("checked",false);
                 return false;
             }
             else{
-                productotemporal.insumo.push(id);    
+                // productotemporal.listainsumo.push(id);
                 productotemporal.AddTableInsumo(id,nombre);
             }
         }
         else{
-            posicion = productotemporal.insumo.indexOf(id);
-            productotemporal.insumo.splice(posicion,1);
+            posicion = productotemporal.listainsumo.indexOf(id);
+            productotemporal.listainsumo.splice(posicion,1);
             $('#row'+id).remove();
-        }
-    }
-
-    AddCantidadInsumo(){
-        for (let i = 0; i < productotemporal.insumo.length; i++) {
-            productotemporal.cantidadinsumo[i] = $('#cantidad'+productotemporal.insumo[i]).val();
         }
     }
 
@@ -314,10 +328,10 @@ constructor(id, idproducto, idusuario, cantidad, estado, insumo) {
         var validator = new FormValidator({ "events": ['blur', 'input', 'change'] }, document.forms[0][0]);
         $('#frmProductoTemporal').submit(function (e) {
             e.preventDefault();
-            // var validatorResult = validator.checkAll(this);
-            // if (validatorResult.valid)
+            var validatorResult = validator.checkAll(this);
+            if (validatorResult.valid)
                 productotemporal.Save;
-            /*return false;*/
+            return false;
         });
 
         // on form "reset" event
@@ -326,9 +340,9 @@ constructor(id, idproducto, idusuario, cantidad, estado, insumo) {
         }
         
         //datepicker.js
-        $('#dpfechaExpiracion').datetimepicker({
-            format: 'DD/MM/YYYY'
-        });
+//         $('#dpfechaExpiracion').datetimepicker({
+//             format: 'DD/MM/YYYY'
+//         });
 
     };
 
