@@ -45,10 +45,10 @@ constructor(id, idproducto,  cantidad, estado, fecha, i) {
         this.estado = 1;
         // lista de insumos
 
-        $('#tableBody-InsumoProducto tr').each(function() {
+        $('#mys-InsumoProducto tr').each(function() {
             var objInsumo = new Object();
-            objInsumo. id= $(this).find('td:eq(0)').html();
-            objInsumo. cantidad= $(this).find('td:eq(2) input').val();
+            objInsumo.id= $(this).find('td:eq(0)').html();
+            objInsumo.cantidad= $(this).find('td:eq(2) input').val();
             productotemporal.listainsumo.push(objInsumo);
         });
         $.ajax({
