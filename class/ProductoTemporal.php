@@ -34,6 +34,8 @@ class ProductoTemporal{
     public $id=null;
     public $idproducto='';
     public $idusuario='';
+    public $usuario='';
+    public $producto='';
     public $cantidad=0;
     public $estado=0;
     public $listainsumo=[];
@@ -81,55 +83,43 @@ class ProductoTemporal{
             );
         }
     }
-    
-    // function Read(){
-    //     try {
-    //         $sql='SELECT pt.id, pt.idproducto, pt.cantidad, pt.estado, ip.idinsumo as insumo, ip.cantidad as cantidadinsumo 
-    //         FROM productotemporal pt INNER JOIN insumoxproducto ip on pt.id = ip.idproductotemporal where pt.id=:id';
-    //         $param= array(':id'=>$this->id);
-    //         $data= DATA::Ejecutar($sql,$param);     
-    //         foreach ($data as $key => $value){
-    //             if($key==0){
-    //                 $this->id = $value['id'];
-    //                 $this->idproducto = $value['idproducto'];
-    //                 $this->cantidad = $value['cantidad'];
-    //                 $this->estado = $value['estado'];
-    //                 // $this->insumo = $value['insumo'];
-    //                 // $this->cantidadinsumo = $value['cantidadinsumo'];
-    //                 //rol
-    //                 if($value['idcategoria']!=null){
-    //                     $cat->id = $value['idcategoria'];
-    //                     $cat->nombre = $value['nombrecategoria'];
-    //                     array_push ($this->listacategoria, $cat);
-    //                 }
-    //             }
-    //             else {
-    //                 $cat->id = $value['idcategoria'];
-    //                 $cat->nombre = $value['nombrecategoria'];
-    //                 array_push ($this->listacategoria, $cat);
-    //             }
-    //         }
-    //         return $this;
-    //     }     
-    //     catch(Exception $e) {
-    //         header('HTTP/1.0 400 Bad error');
-    //         die(json_encode(array(
-    //             'code' => $e->getCode() ,
-    //             'msg' => 'Error al cargar el usuario'))
-    //         );
-    //     }
-    // }
 
     function Read(){
         try {
-            $sql='SELECT pt.id, pt.idusuario, (SELECT nombre FROM usuario WHERE id=pt.idusuario) as usuario, pt.idproducto, 
-            (SELECT nombre FROM producto WHERE id=pt.idproducto) as producto, pt.cantidad, pt.estado, ip.idinsumo as insumo, 
-            ip.cantidad as cantidadinsumo FROM productotemporal pt INNER JOIN insumoxproducto ip on pt.id = ip.idproductotemporal 
-            where pt.id=:id';
-            $param= array(':id'=>$this->id);
-            $data= DATA::Ejecutar($sql,$param);
+            $productotemporal=null;
+            $insumosxproducto=null;
 
-            return $data;
+            $sql_productotemporal='SELECT id, idusuario, (SELECT nombre FROM usuario WHERE id=idusuario) AS usuario, idproducto, 
+            (SELECT nombre FROM producto WHERE id=idproducto) AS producto, cantidad, estado FROM productotemporal 
+            WHERE id=:id';
+            
+            $sql_insumosxproducto='SELECT id,idproductotemporal,idinsumo,(SELECT nombre FROM insumo WHERE id=idinsumo) AS nombre,cantidad FROM insumosxproducto WHERE idproductotemporal=:id';
+
+            $param= array(':id'=>$this->id);
+            $productotemporal = DATA::Ejecutar($sql_productotemporal,$param);
+            $insumosxproducto = DATA::Ejecutar($sql_insumosxproducto,$param);
+
+            $this->id = $productotemporal[0]['id'];
+            $this->idusuario = $productotemporal[0]['idusuario'];
+            $this->idproducto = $productotemporal[0]['idproducto'];
+            $this->usuario = $productotemporal[0]['usuario'];
+            $this->producto = $productotemporal[0]['producto'];
+            $this->cantidad = $productotemporal[0]['cantidad'];
+            $this->estado = $productotemporal[0]['estado'];
+            
+            foreach ($insumosxproducto as $key => $value){
+                require_once("InsumosxProducto.php");
+                $insprod = new InsumosxProducto();
+                
+                $insprod->id = $value['id'];
+                $insprod->idinsumo = $value['idinsumo'];
+                $insprod->nombre = $value['nombre'];
+                $insprod->idproductotemporal = $value['idproductotemporal'];
+                $insprod->cantidad = $value['cantidad'];
+                // $insprod->costo = $value['costo'];
+                array_push ($this->listainsumo, $insprod);
+            }
+            return $this;
         }     
         catch(Exception $e) {
             header('HTTP/1.0 400 Bad error');
@@ -147,6 +137,12 @@ class ProductoTemporal{
             //
             $param= array(':uuid'=>$this->id, ':idproducto'=>$this->idproducto, ':idusuario'=>$_SESSION['usersession']->id, ':cantidad'=>$this->cantidad, ':estado'=>$this->estado);
             $data = DATA::Ejecutar($sql,$param, false);
+
+            //Actualizar la cantidad de la tabla de insumos
+            // $sql="UPDATE insumo SET bueno=:bueno WHERE id=:id";
+            // $sql="UPDATE insumo SET bueno=:bueno WHERE id=:id";
+            // $data_insumo = DATA::Ejecutar($sql,$param, false);
+
             if($data)
             {
                 //save array obj

@@ -1,11 +1,14 @@
 class ProductoTemporal {
     // Constructor
-constructor(id, idproducto,  cantidad, estado, fecha, i) {
+constructor(id, idproducto, producto, idusuario, usuario,  cantidad, estado, i) {
         this.id = id || null;
         this.idproducto = idproducto || '';
+        this.producto = producto || '';
+        this.idusuario = idusuario || '';
+        this.usuario = usuario || '';
         this.cantidad = cantidad || 0;
         this.estado = estado || 0;
-        this.fecha = fecha || null;
+        // this.fecha = fecha || null;
         this.listainsumo = i || [];
     }
 
@@ -42,9 +45,9 @@ constructor(id, idproducto,  cantidad, estado, fecha, i) {
         var miAccion = this.id == null ? 'Create' : 'Update';
         this.idproducto = productotemporal.idproducto;
         this.cantidad = $("#cantidad").val();
-        this.estado = 1;
+        this.estado = 0;
         // lista de insumos
-
+        productotemporal.listainsumo = [];
         $('#tableBody-InsumoProducto tr').each(function() {
             var objInsumo = new Object();
             objInsumo. id= $(this).find('td:eq(0)').html();
@@ -116,6 +119,24 @@ constructor(id, idproducto,  cantidad, estado, fecha, i) {
     }
 
     // Methods
+
+    UpdateCantidadProducto(){
+        $.ajax({
+            type: "POST",
+            url: "class/Producto.php",
+            data: {
+                action: "UpdateCantidad",
+                id:$(this).parents("tr").find("td:eq(0)").html(),
+                idproducto:$(this).parents("tr").find("td:eq(1)").html(),
+                cantidad:$(this).parents("tr").find("td:eq(5)").html()
+            }
+        })
+            .done(alert("Prueba"))
+            .fail(function (e) {
+                productotemporal.showError(e);
+            });        
+    };
+
     Reload(e) {
         if (this.id == null)
             this.ShowAll(e);
@@ -162,18 +183,15 @@ constructor(id, idproducto,  cantidad, estado, fecha, i) {
         //style="display: none"
         var estado="EN PROCESO";
         $.each(data, function (i, item) {
-            if (item.estado=="1") 
+            if (item.estado=="0") 
                 estado="EN PROCESO";
             else
                 estado="TERMINADO";
             $('#tableBody-ProductoTemporal').append(`
                 <tr> 
-                    <td class="a-center ">
-                        <input type="checkbox" class="flat" name="table_records">
-                    </td>
                     <td class="itemId">${item.id}</td>
-                    <td>${item.idproducto}</td>
-                    <td>${item.idusuario}</td>
+                    <td class="itemIdx">${item.idproducto}</td>
+                    <td class="itemIdx">${item.idusuario}</td>
                     <td>${item.producto}</td>
                     <td>${item.usuario}</td>
                     <td>${item.cantidad}</td>
@@ -182,11 +200,14 @@ constructor(id, idproducto,  cantidad, estado, fecha, i) {
                         <a id="update${item.id}" class="update" data-toggle="modal" data-target=".bs-example-modal-lg" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | 
                         <a id="delete${item.id}" class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>
                     </td>
+                    <td class="a-center ">
+                    <input id="chkterminado${item.id}" type="checkbox" class="flat" name="table_records">
+                </td>
                 </tr>
             `);
             $('#update'+item.id).click(productotemporal.UpdateEventHandler);
             $('#delete'+item.id).click(productotemporal.DeleteEventHandler);
-
+            $('#chkterminado'+item.id).click(productotemporal.UpdateCantidadProducto);
         })        
         //datatable         
         if ( $.fn.dataTable.isDataTable( '#dsProductoTemporal' ) ) {
@@ -194,20 +215,7 @@ constructor(id, idproducto,  cantidad, estado, fecha, i) {
 
         }
         else 
-            $('#dsProductoTemporal').DataTable( 
-            //     {
-            //     columns: [
-            //         { title: "Check" },
-            //         { title: "ID"},
-            //         { title: "IdProducto" },
-            //         { title: "IdUsuario" },
-            //         { title: "Cantidad" },
-            //         { title: "Estado" }
-            //     ],          
-            //     paging: true,
-            //     search: true
-            // }
-         );
+            $('#dsProductoTemporal').DataTable();
     };
 
     AddTableInsumo(id,nombre) {
@@ -257,21 +265,52 @@ constructor(id, idproducto,  cantidad, estado, fecha, i) {
     };
 
     ShowItemData(e) {
-        /*************************** LLENAR EL MODAL CON TODA LA INFO Y LOS ARRAYS DE INSUMOS Y CANTIDAD */
-
         // Limpia el controles
         this.ClearCtls();
         // carga objeto.
         var data = JSON.parse(e);
-        // productotemporal = new ProductoTemporal(data[0].id, data[0].idproducto, data[0].producto, data[0].idusuario,
-        //     data[0].usuario,data[0].cantidad, data[0].estado, data.insumo, data.cantidadinsumo);
+    
+        productotemporal = new ProductoTemporal(data.id, data.idproducto, data.producto, data.idusuario,
+        data.usuario, data.cantidad, data.estado, data.listainsumo);
+
+        $.each(data.listainsumo, function (i, item) {
+            $('#tableBody-InsumoProducto').append(`
+                <tr id="row"${item.idinsumo}> 
+                    <td class="itemId" >${item.idinsumo}</td>
+                    <td>${item.nombre}</td>
+                    <td>
+                        <input id="cantidadInsumo" class="form-control col-3" name="cantidadInsumo" type="text" placeholder="${item.cantidad}" autofocus="" value="1">
+                    </td>
+                    <td class=" last">
+                        <a id ="delete_row${item.id}" onclick="productotemporal.DeleteInsumo(this)" > <i class="glyphicon glyphicon-trash" onclick="DeleteInsumo(this)"> </i> Eliminar </a>
+                    </td>
+                </tr>
+            `);
+            //datatable         
+            if ( $.fn.dataTable.isDataTable( '#dsProductoTemporal' ) ) {
+                var table = $('#dsProductoTemporal').DataTable();
+            }
+            else 
+                $('#dsProductoTemporal').DataTable( {
+                    // columns: [
+                    //     { title: "ID"},
+                    //     { title: "Nombre" },
+                    //     { title: "Cantidad" },
+                    //     { title: "Acción"}
+                    // ],
+                    columns: [
+                        { "width":"35%"},
+                        { "width":"35%"},
+                        { "width":"33%"},
+                    ],          
+                    paging: true,
+                    search: true
+                } );
+        })
         
         // Asigna objeto a controles
-        // $("#id").val(productotemporal.id);
-        $("#nombre").val(data[0].producto);
-        // $("#idusuario").val(productotemporal.usuario);
-        // $("#estado").val(productotemporal.estado);
-        $("#cantidad").val(data[0].cantidad);
+        $("#nombre").val(productotemporal.producto);
+        $("#cantidad").val(productotemporal.cantidad);
     };
 
     DeleteEventHandler() {
@@ -334,16 +373,18 @@ constructor(id, idproducto,  cantidad, estado, fecha, i) {
             return false;
         });
 
+        $('#frmInventarioProductoTemporal').submit(function (e) {
+            e.preventDefault();
+            var validatorResult = validator.checkAll(this);
+            if (validatorResult.valid)
+                productotemporal.Save;
+            return false;
+        });
+
         // on form "reset" event
         document.forms[0].onreset = function (e) {
             validator.reset();
         }
-        
-        //datepicker.js
-//         $('#dpfechaExpiracion').datetimepicker({
-//             format: 'DD/MM/YYYY'
-//         });
-
     };
 
     

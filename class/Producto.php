@@ -23,6 +23,9 @@ if(isset($_POST["action"])){
         case "Update":
             $producto->Update();
             break;
+        case "UpdateCantidad":
+            $producto->UpdateCantidad();
+            break;
         case "Delete":
             $producto->Delete();
             break;   
@@ -34,7 +37,7 @@ class Producto{
     public $nombre='';
     public $codigo='';
     public $cantidad=0;
-    public $precio=0;
+    public $costo=0;
 
     function __construct(){
         // identificador único
@@ -47,13 +50,13 @@ class Producto{
             $this->nombre= $obj["nombre"] ?? '';
             $this->codigo= $obj["codigo"] ?? '';
             $this->cantidad= $obj["cantidad"] ?? 0;            
-            $this->precio= $obj["precio"] ?? 0;
+            $this->costo= $obj["costo"] ?? 0;
         }
     }
 
     function ReadAll(){
         try {
-            $sql='SELECT id, nombre, codigo, cantidad, precio
+            $sql='SELECT id, nombre, codigo, cantidad, costo
                 FROM     producto       
                 ORDER BY nombre asc';
             $data= DATA::Ejecutar($sql);
@@ -70,7 +73,7 @@ class Producto{
 
     function Read(){
         try {
-            $sql='SELECT id, nombre, codigo, cantidad, precio
+            $sql='SELECT id, nombre, codigo, cantidad, costo
                 FROM producto  
                 where id=:id';
             $param= array(':id'=>$this->id);
@@ -88,9 +91,9 @@ class Producto{
 
     function Create(){
         try {
-            $sql="INSERT INTO producto   (id, nombre, codigo, cantidad, precio) VALUES (uuid(),:nombre, :codigo, :cantidad, :precio);";
+            $sql="INSERT INTO producto   (id, nombre, codigo, cantidad, costo) VALUES (uuid(),:nombre, :codigo, :cantidad, :costo);";
             //
-            $param= array(':nombre'=>$this->nombre, ':codigo'=>$this->codigo, ':cantidad'=>$this->cantidad, ':precio'=>$this->precio);
+            $param= array(':nombre'=>$this->nombre, ':codigo'=>$this->codigo, ':cantidad'=>$this->cantidad, ':costo'=>$this->costo);
             $data = DATA::Ejecutar($sql,$param, false);
             if($data)
             {
@@ -112,9 +115,9 @@ class Producto{
     function Update(){
         try {
             $sql="UPDATE producto 
-                SET nombre=:nombre, codigo=:codigo, cantidad=:cantidad, precio=:precio
+                SET nombre=:nombre, codigo=:codigo, cantidad=:cantidad, costo=:costo
                 WHERE id=:id";
-            $param= array(':id'=>$this->id, ':nombre'=>$this->nombre, ':codigo'=>$this->codigo, ':cantidad'=>$this->cantidad, ':precio'=>$this->precio);
+            $param= array(':id'=>$this->id, ':nombre'=>$this->nombre, ':codigo'=>$this->codigo, ':cantidad'=>$this->cantidad, ':costo'=>$this->costo);
             $data = DATA::Ejecutar($sql,$param,false);
             if($data)
                 return true;
@@ -127,7 +130,40 @@ class Producto{
                 'msg' => $e->getMessage()))
             );
         }
-    }   
+    }
+    
+    function UpdateCantidad(){
+        try {
+            /*
+
+            INSERTAR CANTIDAD PRODUCTO BODEGA PRINCIPAL
+
+            $param= array(':id'=>$_POST["idproducto"]);
+            $sql="SELECT cantidad FROM productosxbodega WHERE idproducto=:id";
+            $data=DATA::Ejecutar($sql,$param);
+            $cantidad = $data[0][0] + $_POST["cantidad"];
+            
+            $sql="UPDATE producto SET cantidad=:cantidad WHERE id=:id";
+            $param= array(':id'=>$_POST["idproducto"], ':cantidad'=>$cantidad);
+            $data = DATA::Ejecutar($sql,$param,false);
+            */
+            
+            $sql="UPDATE productotemporal SET estado=1 WHERE id=:id";
+            $param= array(':id'=>$_POST["id"]);
+            $data = DATA::Ejecutar($sql,$param,false);
+
+            if($data)
+                return true;
+            else throw new Exception('Error al guardar.', 123);
+        }     
+        catch(Exception $e) {
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }
+    }
 
     private function CheckRelatedItems(){
         try{

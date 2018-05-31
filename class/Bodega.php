@@ -155,7 +155,7 @@ class Bodega{
                 'msg' => $e->getMessage()))
             );
         }
-    }   
+    }
 
     private function CheckRelatedItems(){
         try{

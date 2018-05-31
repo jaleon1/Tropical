@@ -194,8 +194,8 @@ class Insumo {
         this.ClearCtls();
         // carga objeto.
         var data = JSON.parse(e)[0];
-        insumo = new Insumo(data.id, data.nombre, data.nombre,
-            data.bueno, data.danado, data.danado);
+        insumo = new Insumo(data.id, data.nombre, data.codigo,
+            data.bueno, data.danado, data.costo);
         // Asigna objeto a controles
         $("#id").val(insumo.id);
         $("#nombre").val(insumo.nombre);

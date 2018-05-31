@@ -218,6 +218,7 @@ class Usuario{
                 where u.id=:id';
             $param= array(':id'=>$this->id);
             $data= DATA::Ejecutar($sql,$param);     
+            
             foreach ($data as $key => $value){
                 require_once("Rol.php");
                 $rol= new Rol(); // crol del producto

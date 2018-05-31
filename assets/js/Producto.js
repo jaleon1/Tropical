@@ -1,11 +1,11 @@
 class Producto {
     // Constructor
-    constructor(id, nombre, codigo, cantidad, precio) {
+    constructor(id, nombre, codigo, cantidad, costo) {
         this.id = id || null;
         this.nombre = nombre || '';
         this.codigo = codigo || '';
         this.cantidad = cantidad || 0;
-        this.precio = precio || 0;
+        this.costo = costo || 0;
     }
 
     //Getter
@@ -35,7 +35,7 @@ class Producto {
         this.nombre = $("#nombre").val();
         this.codigo = $("#codigo").val();
         this.cantidad = $("#cantidad").val();
-        this.precio = $("#precio").val();
+        this.costo = $("#costo").val();
         $.ajax({
             type: "POST",
             url: "class/Producto.php",
@@ -121,7 +121,7 @@ class Producto {
         $("#nombre").val('');
         $("#codigo").val('');
         $("#cantidad").val('');
-        $("#precio").val('');
+        $("#costo").val('');
     };
 
     ShowAll(e) {
@@ -142,7 +142,7 @@ class Producto {
                     <td>${item.nombre}</td>
                     <td>${item.codigo}</td>
                     <td>${item.cantidad}</td>
-                    <td>${item.precio}</td>
+                    <td>${item.costo}</td>
                     <td class=" last">
                         <a href="#" class="update" data-toggle="modal" data-target=".bs-example-modal-lg" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | 
                         <a href="#" class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>
@@ -184,13 +184,13 @@ class Producto {
         // carga objeto.
         var data = JSON.parse(e)[0];
         producto = new Producto(data.id, data.nombre, data.nombre,
-            data.cantidad, data.precio);
+            data.cantidad, data.costo);
         // Asigna objeto a controles
         $("#id").val(producto.id);
         $("#nombre").val(producto.nombre);
         $("#codigo").val(producto.codigo);
         $("#cantidad").val(producto.cantidad);
-        $("#precio").val(producto.precio);
+        $("#costo").val(producto.costo);
     };
 
     DeleteEventHandler() {

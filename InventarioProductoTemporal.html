@@ -181,7 +181,7 @@
                                                 <table id="dsProductoTemporal" class="table table-striped jambo_table bulk_action" role="grid" aria-describedby="datatable_info">
                                                     <thead>
                                                         <tr role="row" class="headings">
-                                                            <th><input type='checkbox' id='check-all' class='iCheck-helper'></th><th class='itemId'>ID</th><th>ID USUARIO</th><th>ID PRODUCTO</th><th>Producto</th> <th>Usuario</th> <th>Cantidad</th>  <th>Estado</th> <th>Acción</th>
+                                                            <th class='itemId'>ID</th><th class='itemId'>ID USUARIO</th><th class='itemId'>ID PRODUCTO</th><th>Producto</th> <th>Usuario</th> <th>Cantidad</th>  <th>Estado</th> <th>Acción</th><th><input type='checkbox' id='check-all' class='iCheck-helper'>Terminar</th>
                                                         </tr>
                                                     </thead>
 
@@ -208,7 +208,7 @@
                                                 </div>
 
                                                 <div class="modal-body">
-                                                    <form class="form-horizontal form-label-left" id="frmProductoTemporal" novalidate>
+                                                    <form class="form-horizontal form-label-left" id="frmInventarioProductoTemporal" novalidate>
 
                                                         <span class="section">Datos Generales</span>
                 
@@ -304,8 +304,7 @@
                                     
                                                                             <div class="form-group">
                                                                                 <div class="col-md-6 col-md-offset-3">
-                                                                                    <button type="reset" class="btn btn-primary">Reset</button>
-                                                                                    <button id="btnProductoTemporal" type="submit" class="btn btn-success">Guardar</button>
+                                                                                        <button id="btnProductoTemporal" type="submit" class="btn btn-success">Guardar</button>
                                                                                 </div>
                                                                             </div>
                                                                         </form>
@@ -319,8 +318,7 @@
                                                         <div class="ln_solid"></div>
                                                         <div class="form-group">
                                                             <div class="col-md-6 col-md-offset-3">
-                                                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                                                <button id="btnProductoTemporal" type="submit" class="btn btn-success">Submit</button>
+                                                                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
                                                             </div>
                                                         </div>
                                                     </form>
@@ -332,8 +330,101 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="modal fade bs-example-modal-lg-insumo" tabindex="-1" role="dialog" aria-hidden="true">
+                                        <div class="modal-dialog modal-lg">
+                                            <div class="modal-content">
+                
+                                                <div class="modal-header">
+                                                    <button type="button" class="close" data-dismiss="modal">
+                                                        <span aria-hidden="true">×</span>
+                                                    </button>
+                                                    <h4 class="modal-title" id="myModalLabel">Seleccionar Insumo</h4>
+                                                </div>
+                
+                                                <div class="modal-body">
+                                                    <form class="form-horizontal form-label-left" id="frmInsumo" novalidate>
+        
+                                                        <span class="section">Insumos</span>
+                                                            <div id="datatable_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
+                                                                <div class="row">
+                                                                    <div class="col-sm-12">
+                                                                        <table id="dsInsumo" class="table table-striped jambo_table bulk_action" role="grid" aria-describedby="datatable_info">
+                                                                            <thead>
+                                                                                <tr role="row" class="headings">
+                                                                                    <th><input type='checkbox' id='check-all' class='iCheck-helper'></th><th class='itemId'>ID</th><th>Nombre</th> <th>Codigo</th> <th>Bueno</th>  <th>Malo</th> <th>Costo</th> <th>Acción</th>
+                                                                                </tr>
+                                                                            </thead>
+                
+                                                                            <tbody id="tableBody-Insumo">
+                                                                                
+                                                                            </tbody>
+                
+                                                                        </table>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        <div class="ln_solid"></div>
+                                                        
+                                                        <div class="form-group">
+                                                            <div class="col-md-6 col-md-offset-3">
+                                                                <!-- <button id="btnSalirModalInsumo" type="reset" class="btn btn-primary">Salir</button>-->
+                                                                <button type="button" class="btn btn-default" data-dismiss="modal" id="btnSalirModalInsumo" >Close</button>
+                                                            </div>
+                                                        </div>
+                
+                                                    </form>
+                                                </div>
+                
+                                                <div class="modal-footer">
+                                                </div>
+                
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="modal-producto" class="modal fade bs-example-modal-lg-producto" tabindex="-1" role="dialog" aria-hidden="true">
+                                        <div class="modal-dialog modal-lg">
+                                            <div class="modal-content">
+                
+                                                <div class="modal-header">
+                                                    <button type="button" class="close" data-dismiss="modal">
+                                                        <span aria-hidden="true">×</span>
+                                                    </button>
+                                                    <h4 class="modal-title" id="myModalLabel">Seleccionar Producto</h4>
+                                                </div>
+                
+                                                <div class="modal-body">
+                                                    <form class="form-horizontal form-label-left" id="frmProducto" novalidate>
+                
+                                                        <span class="section">Productos</span>
+                                                            <div id="datatable_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
+                                                                <div class="row">
+                                                                    <div class="col-sm-12">
+                                                                        <table id="dsProducto" class="table table-striped jambo_table bulk_action" role="grid" aria-describedby="datatable_info">
+                                                                            <thead>
+                                                                                <tr role="row" class="headings">
+                                                                                    <th><input type='checkbox' id='check-all' class='iCheck-helper'></th><th class='itemId'>ID</th><th>Nombre</th> <th>Código</th> <th>Cantidad</th>  <th>Precio</th> <th>Acción</th>
+                                                                                </tr>
+                                                                            </thead>
+                
+                                                                            <tbody id="tableBody-Producto">
+                                                                                
+                                                                            </tbody>
+                
+                                                                        </table>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        <div class="ln_solid"></div>
+                                                    </form>
+                                                </div>
+                
+                                                <div class="modal-footer">
+                                                </div>
+                
+                                            </div>
+                                        </div>
+                                    </div>
                                     <!-- /modal -->
-
                                 </div>
                                 <!--  /CONTENIDO DE LA PAGINA -->
 
@@ -425,5 +516,17 @@
         productotemporal.Read;
         productotemporal.Init();
         //
+    });
+    $(document).on('click', '#btnAddInsumo', function (event) {    
+        //alert("Prueba");
+        insumo.id=null;
+        insumo.Read;
+        insumo.Init();        
+    });
+    $(document).on('click', '#btnAddProducto', function (event) {    
+        //alert("Prueba");
+        producto.id=null;
+        producto.Read;
+        producto.Init();        
     });
 </script>
