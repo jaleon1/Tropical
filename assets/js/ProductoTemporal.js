@@ -47,11 +47,16 @@ constructor(id, idproducto, producto, idusuario, usuario,  cantidad, estado, i) 
         this.cantidad = $("#cantidad").val();
         this.estado = 0;
         // lista de insumos
+<<<<<<< HEAD
         productotemporal.listainsumo = [];
         $('#tableBody-InsumoProducto tr').each(function() {
+=======
+
+        $('#mys-InsumoProducto tr').each(function() {
+>>>>>>> 563e9f1833af5f32165e27d0782744a540842d2b
             var objInsumo = new Object();
-            objInsumo. id= $(this).find('td:eq(0)').html();
-            objInsumo. cantidad= $(this).find('td:eq(2) input').val();
+            objInsumo.id= $(this).find('td:eq(0)').html();
+            objInsumo.cantidad= $(this).find('td:eq(2) input').val();
             productotemporal.listainsumo.push(objInsumo);
         });
         $.ajax({
