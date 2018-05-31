@@ -148,8 +148,8 @@ class Insumo {
                     <td>${item.danado}</td>
                     <td>${item.costo}</td>
                     <td class=" last">
-                        <a href="#" id="update" class="update" data-toggle="modal" data-target=".bs-example-modal-lg" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | 
-                        <a href="#" id="delete" class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>
+                        <a  id="update" class="update" data-toggle="modal" data-target=".bs-example-modal-lg" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | 
+                        <a  id="delete" class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>
                     </td>
                 </tr>
             `);

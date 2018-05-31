@@ -8,33 +8,32 @@ if(isset($_POST["action"])){
     if (!isset($_SESSION))
         session_start();
     // Instance
-    $producto= new Producto();
+    $productosxbodega= new ProductosXBodega();
     switch($opt){
-        case "ReadAll":
-            echo json_encode($producto->ReadAll());
+        case "ReadAll": // todos los productos de una bodega
+            $productosxbodega->idbodega = $_POST["idbodega"]; // id de la bodega
+            echo json_encode($productosxbodega->ReadAll());
             break;
         case "Read":
-            echo json_encode($producto->Read());
+            echo json_encode($productosxbodega->Read());
             break;
         case "Create":
-            $producto->Create();
+            $productosxbodega->Create();
             break;
         case "Update":
-            $producto->Update();
-            break;
-        case "UpdateCantidad":
-            $producto->UpdateCantidad();
+            $productosxbodega->Update();
             break;
         case "Delete":
-            echo json_encode($producto->Delete());
+            echo json_encode($productosxbodega->Delete());
             break;   
     }
 }
 
-class Producto{
+class ProductosXBodega{
     public $id=null;
-    public $nombre='';
-    public $codigo='';
+    public $idbodega='';
+    public $idproducto='';
+    public $producto='';
     public $cantidad=0;
     public $costo=0;
 
@@ -46,19 +45,21 @@ class Producto{
         if(isset($_POST["obj"])){
             $obj= json_decode($_POST["obj"],true);
             $this->id= $obj["id"] ?? null;
-            $this->nombre= $obj["nombre"] ?? '';
-            $this->codigo= $obj["codigo"] ?? '';
-            $this->cantidad= $obj["cantidad"] ?? 0;            
+            $this->idbodega= $obj["idbodega"] ?? null;
+            $this->idproducto= $obj["idproducto"] ?? null;
+            $this->cantidad= $obj["cantidad"] ?? 0;      
             $this->costo= $obj["costo"] ?? 0;
         }
     }
 
     function ReadAll(){
         try {
-            $sql='SELECT id, nombre, codigo, cantidad, costo
-                FROM     producto       
-                ORDER BY nombre asc';
-            $data= DATA::Ejecutar($sql);
+            $sql='SELECT pb.id, idbodega, idproducto, nombre as producto, pb.cantidad, pb.costo
+                FROM     productosxbodega   pb INNER JOIN producto p on p.id=pb.idproducto
+                WHERE    idbodega= :idbodega
+                ORDER BY idbodega asc';
+            $param= array(':idbodega'=>$this->idbodega);
+            $data= DATA::Ejecutar($sql,$param);
             return $data;
         }     
         catch(Exception $e) {
@@ -72,9 +73,9 @@ class Producto{
 
     function Read(){
         try {
-            $sql='SELECT id, nombre, codigo, cantidad, costo
-                FROM producto  
-                where id=:id';
+            $sql='SELECT pb.id,pb.idbodega, pb.idproducto, pb.cantidad, pb.costo , p.nombre as producto
+                FROM productosxbodega pb INNER JOIN producto p on p.id=pb.idproducto
+                where pb.id=:id';
             $param= array(':id'=>$this->id);
             $data= DATA::Ejecutar($sql,$param);
             return $data;
@@ -83,21 +84,19 @@ class Producto{
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
-                'msg' => 'Error al cargar el producto'))
+                'msg' => 'Error al cargar el productosxbodega'))
             );
         }
     }
 
     function Create(){
         try {
-            $sql="INSERT INTO producto   (id, nombre, codigo, cantidad, costo) VALUES (uuid(),:nombre, :codigo, :cantidad, :costo);";
+            $sql="INSERT INTO productosxbodega (id, idbodega, idproducto, cantidad, costo) VALUES (uuid(),:idbodega, :idproducto, :cantidad, :costo);";
             //
-            $param= array(':nombre'=>$this->nombre, ':codigo'=>$this->codigo, ':cantidad'=>$this->cantidad, ':costo'=>$this->costo);
+            $param= array(':idbodega'=>$this->idbodega, ':idproducto'=>$this->idproducto, ':cantidad'=>$this->cantidad, ':costo'=>$this->costo);
             $data = DATA::Ejecutar($sql,$param, false);
             if($data)
             {
-                //get id.
-                //save array obj
                 return true;
             }
             else throw new Exception('Error al guardar.', 02);
@@ -113,10 +112,10 @@ class Producto{
 
     function Update(){
         try {
-            $sql="UPDATE producto 
-                SET nombre=:nombre, codigo=:codigo, cantidad=:cantidad, costo=:costo
+            $sql="UPDATE productosxbodega 
+                SET cantidad=:cantidad, costo=:costo
                 WHERE id=:id";
-            $param= array(':id'=>$this->id, ':nombre'=>$this->nombre, ':codigo'=>$this->codigo, ':cantidad'=>$this->cantidad, ':costo'=>$this->costo);
+            $param= array(':id'=>$this->id, ':cantidad'=>$this->cantidad, ':costo'=>$this->costo);
             $data = DATA::Ejecutar($sql,$param,false);
             if($data)
                 return true;
@@ -129,40 +128,7 @@ class Producto{
                 'msg' => $e->getMessage()))
             );
         }
-    }
-    
-    function UpdateCantidad(){
-        try {
-            /*
-
-            INSERTAR CANTIDAD PRODUCTO BODEGA PRINCIPAL
-
-            $param= array(':id'=>$_POST["idproducto"]);
-            $sql="SELECT cantidad FROM productosxbodega WHERE idproducto=:id";
-            $data=DATA::Ejecutar($sql,$param);
-            $cantidad = $data[0][0] + $_POST["cantidad"];
-            
-            $sql="UPDATE producto SET cantidad=:cantidad WHERE id=:id";
-            $param= array(':id'=>$_POST["idproducto"], ':cantidad'=>$cantidad);
-            $data = DATA::Ejecutar($sql,$param,false);
-            */
-            
-            $sql="UPDATE productotemporal SET estado=1 WHERE id=:id";
-            $param= array(':id'=>$_POST["id"]);
-            $data = DATA::Ejecutar($sql,$param,false);
-
-            if($data)
-                return true;
-            else throw new Exception('Error al guardar.', 123);
-        }     
-        catch(Exception $e) {
-            header('HTTP/1.0 400 Bad error');
-            die(json_encode(array(
-                'code' => $e->getCode() ,
-                'msg' => $e->getMessage()))
-            );
-        }
-    }
+    }   
 
     private function CheckRelatedItems(){
         try{
@@ -192,7 +158,7 @@ class Producto{
             //     $sessiondata['msg']='Registro en uso'; 
             //     return $sessiondata;           
             // }                    
-            $sql='DELETE FROM producto  
+            $sql='DELETE FROM productosxbodega  
             WHERE id= :id';
             $param= array(':id'=>$this->id);
             $data= DATA::Ejecutar($sql, $param, false);
@@ -210,7 +176,5 @@ class Producto{
     }
 
 }
-
-
 
 ?>
