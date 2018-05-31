@@ -165,26 +165,31 @@ class Bodega {
                     <td>${item.tipo}</td>
                     ${item.nombre!='Primaria'?
                         `<td class=" last">
-                            <a href="#" id="update${item.id}" data-toggle="modal" data-target=".bs-example-modal-lg" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | 
-                            <a href="#" id="delete${item.id}"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>
+                            <a id="update${item.id}" data-toggle="modal" data-target=".bs-bodega-modal-lg" > <i class="glyphicon glyphicon-edit" > </i> Editar | </a> 
+                            <a id="open${item.id}" data-toggle="modal" data-target=".bs-producto-modal-lg" > <i class="fa fa-book" > </i> Abrir | </a> 
+                            <a id="delete${item.id}"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>
                         </td>`
                     : 
-                        `<td class=" last">NO EDITABLE</td>`
+                        `<td class=" last">
+                            <a id="open${item.id}" data-toggle="modal" data-target=".bs-producto-modal-lg" > <i class="fa fa-book" > </i> Abrir | </a>
+                            <a id="additem${item.id}" data-toggle="modal" data-target=".bs-articulo-modal-lg" > <i class="fa fa-gear" > </i> Artículo | </a>
+                            <a id="senditem${item.id}" data-toggle="modal" data-target=".bs-send-modal-lg" > <i class="fa fa-reply-all" > </i> Enviar </a>
+                        </td>`
                     }
                 </tr>
             `);
-            // event Handler
-            //if(i!=0){
-                $('#update'+item.id).click(bodega.UpdateEventHandler);
-                $('#delete'+item.id).click(bodega.DeleteEventHandler);
-            //}
+            $('#update'+item.id).click(bodega.UpdateEventHandler);
+            $('#open'+item.id).click(bodega.OpenEventHandler);
+            $('#additem'+item.id).click(bodega.OpenEventHandler);
+            //$('#senditem'+item.id).click(bodega.OpenEventHandler);
+            $('#delete'+item.id).click(bodega.DeleteEventHandler);
         })
         //datatable         
-        if ($.fn.dataTable.isDataTable('#dsProducto')) {
-            var table = $('#dsProducto').DataTable();
+        if ($.fn.dataTable.isDataTable('#dsBodega')) {
+            var table = $('#dsBodega').DataTable();
         }
         else
-            $('#dsProducto').DataTable({
+            $('#dsBodega').DataTable({
                 columns: [
                     { title: "Check" },
                     {
@@ -199,6 +204,12 @@ class Bodega {
                 paging: true,
                 search: true
             });
+    };
+
+    OpenEventHandler() {
+        productobodega.idbodega = $(this).parents("tr").find(".itemId").text();  //Class itemId = ID del objeto.
+        $('#nombrebodega').text($(this).parents("tr").find("td").eq(2).text());
+        productobodega.Read;
     };
 
     UpdateEventHandler() {
@@ -257,8 +268,8 @@ class Bodega {
 
     Init() {
         // validator.js
-        var validator = new FormValidator({ "events": ['blur', 'input', 'change'] }, document.forms[0]);
-        $('#frmProducto').submit(function (e) {
+        var validator = new FormValidator({ "events": ['blur', 'input', 'change'] }, document.forms["frmBodega"]);
+        $('#frmBodega').submit(function (e) {
             e.preventDefault();
             var validatorResult = validator.checkAll(this);
             if (validatorResult.valid)
@@ -267,7 +278,7 @@ class Bodega {
         });
 
         // on form "reset" event
-        document.forms[0].onreset = function (e) {
+        document.forms["frmBodega"].onreset = function (e) {
             validator.reset();
         }
 

@@ -1,66 +1,65 @@
-class Producto {
+class ProductoBodega {
     // Constructor
-    constructor(id, nombre, codigo, cantidad, precio) {
+    constructor(id, idbodega, idproducto, producto, cantidad, costo) {
         this.id = id || null;
-        this.nombre = nombre || '';
-        this.codigo = codigo || '';
+        this.idbodega = idbodega || '';
+        this.idproducto = idproducto || '';
+        this.producto = producto || '';
         this.cantidad = cantidad || 0;
-        this.precio = precio || 0;
+        this.costo = costo || 0;
     }
 
     //Getter
     get Read() {
-        var miAccion = this.id == null ? 'ReadAll' : 'Read';
-        if(miAccion=='ReadAll' && $('#tableBody-Producto').length==0 )
+        var miAccion = this.id == null ?  'ReadAll'  : 'Read';
+        if(miAccion=='ReadAll' && $('#tableBody-ProductoBodega').length==0 )
             return;
         $.ajax({
             type: "POST",
-            url: "class/Producto.php",
+            url: "class/ProductosXBodega.php",
             data: {
                 action: miAccion,
-                id: this.id
+                id: this.id,
+                idbodega: this.idbodega
             }
         })
             .done(function (e) {
-                producto.Reload(e);
+                productobodega.Reload(e);
             })
             .fail(function (e) {
-                producto.showError(e);
+                productobodega.showError(e);
             });
     }
 
     get Save() {
-        $('#btnProducto').attr("disabled", "disabled");
+        $('#btnProductosXBodega').attr("disabled", "disabled");
         var miAccion = this.id == null ? 'Create' : 'Update';
-        this.nombre = $("#nombre").val();
-        this.codigo = $("#codigo").val();
         this.cantidad = $("#cantidad").val();
-        this.precio = $("#precio").val();
+        this.costo = $("#costo").val();
         $.ajax({
             type: "POST",
-            url: "class/Producto.php",
+            url: "class/ProductosXBodega.php",
             data: {
                 action: miAccion,
                 obj: JSON.stringify(this)
             }
         })
-            .done(producto.showInfo)
+            .done(productobodega.showInfo)
             .fail(function (e) {
-                producto.showError(e);
+                productobodega.showError(e);
             })
             .always(function () {
-                setTimeout('$("#btnProducto").removeAttr("disabled")', 1000);
-                producto = new Producto();
-                producto.ClearCtls();
-                producto.Read;
-                $("#nombre").focus();
+                setTimeout('$("#btnProductosXBodega").removeAttr("disabled")', 1000);
+                productobodega = new ProductoBodega();
+                productobodega.ClearCtls();
+                productobodega.Read;
             });
     }
 
     get Delete() {
         $.ajax({
             type: "POST",
-            url: "class/Producto.php",
+            url: "class/ProductosXBodega.php",
             data: {
                 action: 'Delete',
                 id: this.id
@@ -76,11 +75,11 @@ class Producto {
                 });
             })
             .fail(function (e) {
-                producto.showError(e);
+                productobodega.showError(e);
             })
             .always(function () {
-                producto = new Producto();
-                producto.Read;
+                productobodega = new ProductoBodega();
+                productobodega.Read;
             });
     }
 
@@ -117,65 +116,68 @@ class Producto {
     };
 
     ClearCtls() {
-        $("#id").val('');
-        $("#nombre").val('');
-        $("#codigo").val('');
+        $("#producto").val('');
         $("#cantidad").val('');
-        $("#precio").val('');
+        $("#costo").val('');
     };
 
     ShowAll(e) {
-        var url;
-        url = window.location.href;
         // Limpia el div que contiene la tabla.
-        $('#tableBody-Producto').html("");
-        // // Carga lista
+        $('#tableBody-ProductoBodega').html("");
+        // Carga lista
         var data = JSON.parse(e);
         //style="display: none"
         $.each(data, function (i, item) {
-            $('#tableBody-Producto').append(`
+            $('#tableBody-ProductoBodega').append(`
                 <tr> 
                     <td class="a-center ">
-                        <input id="chk-addproducto${item.id}" type="checkbox" class="flat" name="table_records">
+                        <input type="checkbox" class="flat" name="table_records">
                     </td>
                     <td class="itemId" >${item.id}</td>
-                    <td>${item.nombre}</td>
-                    <td>${item.codigo}</td>
+                    <td>${item.producto}</td>
                     <td>${item.cantidad}</td>
-                    <td>${item.precio}</td>
+                    <td>${item.costo}</td>
                     <td class=" last">
-                        <a  class="update" data-toggle="modal" data-target=".bs-example-modal-lg" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | 
-                        <a  class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>
+                        <a id="update${item.id}" data-toggle="modal" data-target=".bs-ProductoCantidad-modal-lg" > <i class="glyphicon glyphicon-edit" > </i> Editar |</a>                         
+                        <a id="delete${item.id}"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>
                     </td>
                 </tr>
             `);
-            // event Handler
-            $('.update').click(producto.UpdateEventHandler);
-            $('.delete').click(producto.DeleteEventHandler);
-            if (url.indexOf("ProductoTemporal.html")!=-1) {
-                $('#chk-addproducto'+item.id).change(productotemporal.AddProductoEventHandler);
-            }
-        })        
+            $('#update'+item.id).click(productobodega.UpdateEventHandler);
+            //$('#add'+item.id).click(productobodega.AddEventHandler);  abre ventana de agregar producto temporal.
+            $('#delete'+item.id).click(productobodega.DeleteEventHandler);
+        })
         //datatable         
-        if ( $.fn.dataTable.isDataTable( '#dsProducto' ) ) {
+        if ($.fn.dataTable.isDataTable('#dsProducto')) {
             var table = $('#dsProducto').DataTable();
-            //table.destroy();
         }
-        /*else {
-            table = $('#example').DataTable( {
-                paging: false
-            } );
-        }*/
-        else 
-            $('#dsProducto').DataTable( {
+        else
+            $('#dsProducto').DataTable({
+                columns: [
+                    { title: "Check" },
+                    {
+                        title: "ID"
+                        ,visible: false
+                    },
+                    { title: "Producto" },
+                    { title: "Cantidad" },
+                    { title: "Costo" },
+                    { title: "Action" }
+                ],
                 paging: true,
                 search: true
-            } );
+            });
+    };
+
+    AddEventHandler() {
+        // abre ventana para agregar producto temportal.
+        // productobodega.id = $(this).parents("tr").find(".itemId").text();  //Class itemId = ID del objeto.        
     };
 
     UpdateEventHandler() {
-        producto.id = $(this).parents("tr").find(".itemId").text();  //Class itemId = ID del objeto.
-        producto.Read;
+        productobodega.id = $(this).parents("tr").find(".itemId").text();  //Class itemId = ID del objeto.
+        // abre modal para editar la cantidad.
+        productobodega.Read;
     };
 
     ShowItemData(e) {
@@ -183,18 +185,16 @@ class Producto {
         this.ClearCtls();
         // carga objeto.
         var data = JSON.parse(e)[0];
-        producto = new Producto(data.id, data.nombre, data.nombre,
-            data.cantidad, data.precio);
+        productobodega = new ProductoBodega(data.id, data.idbodega, data.idproducto, data.producto, data.cantidad, data.costo);
         // Asigna objeto a controles
-        $("#id").val(producto.id);
-        $("#nombre").val(producto.nombre);
-        $("#codigo").val(producto.codigo);
-        $("#cantidad").val(producto.cantidad);
-        $("#precio").val(producto.precio);
+        //$("#id").val(productobodega.id);
+        $("#productonombre").val(productobodega.producto);
+        $("#cantidad").val(productobodega.cantidad);
+        $("#costo").val(productobodega.costo);
     };
 
     DeleteEventHandler() {
-        producto.id = $(this).parents("tr").find(".itemId").text();  //Class itemId = ID del objeto.
+        productobodega.id = $(this).parents("tr").find(".itemId").text();  //Class itemId = ID del objeto.
         // Mensaje de borrado:
         swal({
             title: 'Eliminar?',
@@ -209,33 +209,29 @@ class Producto {
             cancelButtonClass: 'btn btn-danger'
         }).then((result) => {
             if (result.value) {
-                producto.Delete;
+                productobodega.Delete;
             }
         })
     };
 
     Init() {
         // validator.js
-        var validator = new FormValidator({ "events": ['blur', 'input', 'change'] }, document.forms[0]);
-        $('#frmProducto').submit(function (e) {
+        var validator = new FormValidator({ "events": ['blur', 'input', 'change'] }, document.forms["frmProductosXBodega"]);
+        $('#frmProductosXBodega').submit(function (e) {
             e.preventDefault();
             var validatorResult = validator.checkAll(this);
             if (validatorResult.valid)
-                producto.Save;
+                productobodega.Save;
             return false;
         });
 
         // on form "reset" event
-        document.forms[0].onreset = function (e) {
+        document.forms["frmProductosXBodega"].onreset = function (e) {
             validator.reset();
         }
-        
-        // datepicker.js
-        // $('#dpfechaExpiracion').datetimepicker({
-        //     format: 'DD/MM/YYYY'
-        // });
+
     };
 }
 
 //Class Instance
-let producto = new Producto();
+let productobodega = new ProductoBodega();
