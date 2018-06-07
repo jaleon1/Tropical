@@ -166,21 +166,21 @@ class Bodega {
                     ${item.nombre!='Primaria'?
                         `<td class=" last">
                             <a id="update${item.id}" data-toggle="modal" data-target=".bs-bodega-modal-lg" > <i class="glyphicon glyphicon-edit" > </i> Editar | </a> 
-                            <a id="open${item.id}" data-toggle="modal" data-target=".bs-producto-modal-lg" > <i class="fa fa-book" > </i> Abrir | </a> 
+                            <a id="open${item.id}" data-toggle="modal" data-target=".bs-producto-modal-lg" > <i class="fa fa-book" > </i> Abrir | </a>
                             <a id="delete${item.id}"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>
                         </td>`
                     : 
                         `<td class=" last">
-                            <a id="open${item.id}" data-toggle="modal" data-target=".bs-producto-modal-lg" > <i class="fa fa-book" > </i> Abrir | </a>
-                            <a id="additem${item.id}" data-toggle="modal" data-target=".bs-articulo-modal-lg" > <i class="fa fa-gear" > </i> Artículo | </a>
-                            <a id="senditem${item.id}" data-toggle="modal" data-target=".bs-send-modal-lg" > <i class="fa fa-reply-all" > </i> Enviar </a>
+                            <a id="open${item.id}" data-toggle="modal" data-target=".bs-producto-modal-lg" > <i class="fa fa-book" > </i> Abrir </a>
+                            <!-- <a id="additem${item.id}" data-toggle="modal" data-target=".bs-articulo-modal-lg" > <i class="fa fa-gear" > </i> Artículo | </a> -->
+                            <!-- <a id="senditem${item.id}" data-toggle="modal" data-target=".bs-send-modal-lg" > <i class="fa fa-reply-all" > </i> Enviar </a> -->
                         </td>`
                     }
                 </tr>
             `);
             $('#update'+item.id).click(bodega.UpdateEventHandler);
             $('#open'+item.id).click(bodega.OpenEventHandler);
-            $('#additem'+item.id).click(bodega.OpenEventHandler);
+            //$('#additem'+item.id).click(bodega.OpenEventHandler);
             //$('#senditem'+item.id).click(bodega.OpenEventHandler);
             $('#delete'+item.id).click(bodega.DeleteEventHandler);
         })
