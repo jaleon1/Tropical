@@ -56,6 +56,31 @@ class ProductoBodega {
             });
     }
 
+    get UpdateValue() {
+        $('#btnCantidadCosto').attr("disabled", "disabled");
+        var miAccion = 'Update';
+        this.cantidad = $("#cantidad").val();
+        this.costo = $("#costo").val();
+        $.ajax({
+            type: "POST",
+            url: "class/ProductosXBodega.php",
+            data: {
+                action: miAccion,
+                obj: JSON.stringify(this)
+            }
+        })
+            .done(productobodega.showInfo)
+            .fail(function (e) {
+                productobodega.showError(e);
+            })
+            .always(function () {
+                setTimeout('$("#btnCantidadCosto").removeAttr("disabled")', 1000);
+                productobodega = new ProductoBodega();
+                productobodega.ClearCtls();
+                productobodega.Read;
+            });
+    }
+
     get Delete() {
         $.ajax({
             type: "POST",
@@ -143,8 +168,7 @@ class ProductoBodega {
                     </td>
                 </tr>
             `);
-            $('#update'+item.id).click(productobodega.UpdateEventHandler);
-            //$('#add'+item.id).click(productobodega.AddEventHandler);  abre ventana de agregar producto temporal.
+            $('#update'+item.id).click(productobodega.UpdateEventHandler);            
             $('#delete'+item.id).click(productobodega.DeleteEventHandler);
         })
         //datatable         
@@ -157,7 +181,7 @@ class ProductoBodega {
                     { title: "Check" },
                     {
                         title: "ID"
-                        ,visible: false
+                        // ,visible: false
                     },
                     { title: "Producto" },
                     { title: "Cantidad" },
@@ -167,15 +191,19 @@ class ProductoBodega {
                 paging: true,
                 search: true
             });
+        // agregar / editar producto temporal
+        $('#btnAddCantidadCosto').click(productobodega.AddEventHandler);
     };
 
     AddEventHandler() {
-        // abre ventana para agregar producto temportal.
-        // productobodega.id = $(this).parents("tr").find(".itemId").text();  //Class itemId = ID del objeto.        
+        // abre ventana para agregar/editar producto/articulo.        
+        //productobodega.id = $(this).parents("tr").find(".itemId").text();  //Class itemId = ID del objeto.        
+        $('#editarnombreproducto').text($('#productonombre').val());
+        $('#costoproductoagregar').val($('#costo').val());
     };
 
     UpdateEventHandler() {
-        productobodega.id = $(this).parents("tr").find(".itemId").text();  //Class itemId = ID del objeto.
+        productobodega.id = $(this).parents("tr").find(".itemId").text();  //Class itemId = ID del objeto.             
         // abre modal para editar la cantidad.
         productobodega.Read;
     };
@@ -230,6 +258,20 @@ class ProductoBodega {
             validator.reset();
         }
 
+        // validator.js
+        var validator = new FormValidator({ "events": ['blur', 'input', 'change'] }, document.forms["frmCantidadCostoxProducto"]);
+        $('#frmCantidadCostoxProducto').submit(function (e) {
+            e.preventDefault();
+            var validatorResult = validator.checkAll(this);
+            if (validatorResult.valid)
+                productobodega.Save;
+            return false;
+        });
+
+        // on form "reset" event
+        document.forms["frmCantidadCostoxProducto"].onreset = function (e) {
+            validator.reset();
+        }
     };
 }
 

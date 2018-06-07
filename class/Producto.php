@@ -16,6 +16,12 @@ if(isset($_POST["action"])){
         case "Read":
             echo json_encode($producto->Read());
             break;
+        case "ReadAllArticulo":
+            echo json_encode($producto->ReadAllArticulo());
+            break;
+        case "ReadArticulo":
+            echo json_encode($producto->ReadArticulo());
+            break;
         case "Create":
             $producto->Create();
             break;
@@ -35,8 +41,9 @@ class Producto{
     public $id=null;
     public $nombre='';
     public $codigo='';
-    public $cantidad=0;
-    public $costo=0;
+    public $articulo=0;
+    // public $cantidad=0;
+    // public $costo=0;
 
     function __construct(){
         // identificador único
@@ -48,15 +55,34 @@ class Producto{
             $this->id= $obj["id"] ?? null;
             $this->nombre= $obj["nombre"] ?? '';
             $this->codigo= $obj["codigo"] ?? '';
-            $this->cantidad= $obj["cantidad"] ?? 0;            
-            $this->costo= $obj["costo"] ?? 0;
+            $this->articulo= $obj["articulo"] ?? 0;
+            // $this->cantidad= $obj["cantidad"] ?? 0;            
+            // $this->costo= $obj["costo"] ?? 0;
         }
     }
 
     function ReadAll(){
         try {
-            $sql='SELECT id, nombre, codigo, cantidad, costo
+            $sql='SELECT id, nombre, codigo 
                 FROM     producto       
+                ORDER BY nombre asc';
+            $data= DATA::Ejecutar($sql);
+            return $data;
+        }     
+        catch(Exception $e) {
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar la lista'))
+            );
+        }
+    }
+
+    function ReadAllArticulo(){
+        try {
+            $sql='SELECT id, nombre, codigo 
+                FROM     producto       
+                WHERE articulo=1
                 ORDER BY nombre asc';
             $data= DATA::Ejecutar($sql);
             return $data;
@@ -72,7 +98,7 @@ class Producto{
 
     function Read(){
         try {
-            $sql='SELECT id, nombre, codigo, cantidad, costo
+            $sql='SELECT id, nombre, codigo, articulo
                 FROM producto  
                 where id=:id';
             $param= array(':id'=>$this->id);
@@ -90,9 +116,9 @@ class Producto{
 
     function Create(){
         try {
-            $sql="INSERT INTO producto   (id, nombre, codigo, cantidad, costo) VALUES (uuid(),:nombre, :codigo, :cantidad, :costo);";
+            $sql="INSERT INTO producto   (id, nombre, codigo, articulo ) VALUES (uuid(),:nombre, :codigo, :articulo );";
             //
-            $param= array(':nombre'=>$this->nombre, ':codigo'=>$this->codigo, ':cantidad'=>$this->cantidad, ':costo'=>$this->costo);
+        $param= array(':nombre'=>$this->nombre, ':codigo'=>$this->codigo, ':articulo'=>$this->articulo);
             $data = DATA::Ejecutar($sql,$param, false);
             if($data)
             {
@@ -114,9 +140,9 @@ class Producto{
     function Update(){
         try {
             $sql="UPDATE producto 
-                SET nombre=:nombre, codigo=:codigo, cantidad=:cantidad, costo=:costo
+                SET nombre=:nombre, codigo=:codigo, articulo= :articulo /*cantidad=:cantidad, costo=:costo*/
                 WHERE id=:id";
-            $param= array(':id'=>$this->id, ':nombre'=>$this->nombre, ':codigo'=>$this->codigo, ':cantidad'=>$this->cantidad, ':costo'=>$this->costo);
+            $param= array(':id'=>$this->id, ':nombre'=>$this->nombre, ':codigo'=>$this->codigo, ':articulo'=>$this->articulo /*':cantidad'=>$this->cantidad, ':costo'=>$this->costo*/);
             $data = DATA::Ejecutar($sql,$param,false);
             if($data)
                 return true;
