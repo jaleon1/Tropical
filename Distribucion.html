@@ -421,21 +421,15 @@
 
 <script>
     $(document).ready(function () {
-        // if(!Session.state)
-        //     return;
-        productotemporal.Init();
+        $(document).on('click', '#btnAddBodega', function (event) {
+            bodega.id = null;
+            bodega.Read;
+            bodega.Init();
+        });
+        $(document).on('click', '#btnAddProducto', function (event) {
+            producto.id = null;
+            producto.Read;
+            producto.Init();
+        });
     });
-
-    $(document).on('click', '#btnAddBodega', function (event) {
-        bodega.id = null;
-        bodega.Read;
-        bodega.Init();
-    });
-    $(document).on('click', '#btnAddProducto', function (event) {
-        producto.id = null;
-        producto.Read;
-        producto.Init();
-    });
-
-
 </script>
