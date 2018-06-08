@@ -1,11 +1,9 @@
 class Producto {
     // Constructor
-    constructor(id, nombre, codigo, cantidad, costo) {
+    constructor(id, nombre, codigo) {
         this.id = id || null;
         this.nombre = nombre || '';
         this.codigo = codigo || '';
-        this.cantidad = cantidad || 0;
-        this.costo = costo || 0;
     }
 
     //Getter
@@ -34,8 +32,6 @@ class Producto {
         var miAccion = this.id == null ? 'Create' : 'Update';
         this.nombre = $("#nombre").val();
         this.codigo = $("#codigo").val();
-        this.cantidad = $("#cantidad").val();
-        this.costo = $("#costo").val();
         $.ajax({
             type: "POST",
             url: "class/Producto.php",
@@ -120,8 +116,6 @@ class Producto {
         $("#id").val('');
         $("#nombre").val('');
         $("#codigo").val('');
-        $("#cantidad").val('');
-        $("#costo").val('');
     };
 
     ShowAll(e) {
@@ -141,8 +135,6 @@ class Producto {
                     <td class="itemId" >${item.id}</td>
                     <td>${item.nombre}</td>
                     <td>${item.codigo}</td>
-                    <td>${item.cantidad}</td>
-                    <td>${item.costo}</td>
                     <td class=" last">
                         <a  class="update" data-toggle="modal" data-target=".bs-example-modal-lg" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | 
                         <a  class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>
@@ -189,8 +181,6 @@ class Producto {
         $("#id").val(producto.id);
         $("#nombre").val(producto.nombre);
         $("#codigo").val(producto.codigo);
-        $("#cantidad").val(producto.cantidad);
-        $("#costo").val(producto.costo);
     };
 
     DeleteEventHandler() {
@@ -229,11 +219,6 @@ class Producto {
         document.forms[0].onreset = function (e) {
             validator.reset();
         }
-        
-        // datepicker.js
-        // $('#dpfechaExpiracion').datetimepicker({
-        //     format: 'DD/MM/YYYY'
-        // });
     };
 }
 
