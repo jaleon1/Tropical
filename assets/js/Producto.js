@@ -5,9 +5,8 @@ class Producto {
         this.nombre = nombre || '';
         this.codigo = codigo || '';
         this.articulo = articulo || 0; //1: articulo; 0: producto.
-        this.cantidad = cantidad || 0;
-        this.costo = costo || 0;
         this.listaArticulo = listaArticulo || [];
+
     }
 
     //Getter
@@ -56,9 +55,8 @@ class Producto {
         var miAccion = this.id == null ? 'Create' : 'Update';
         this.nombre = $("#nombre").val();
         this.codigo = $("#codigo").val();
-        // this.cantidad = $("#cantidad").val();
-        // this.costo = $("#costo").val();
         this.articulo = $("#articulo")[0].checked;
+
         $.ajax({
             type: "POST",
             url: "class/Producto.php",
@@ -192,8 +190,6 @@ class Producto {
         $("#nombre").val('');
         $("#codigo").val('');
         $("#articulo")[0].checked=false;     
-        // $("#cantidad").val('');
-        // $("#costo").val('');
     };
 
     ShowAll(e) {
@@ -213,7 +209,6 @@ class Producto {
                     <td class="itemId" >${item.id}</td>
                     <td>${item.nombre}</td>
                     <td>${item.codigo}</td>
-                                       
                     <td class=" last">
                         <a  class="update" data-toggle="modal" data-target=".bs-example-modal-lg" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | 
                         <a  class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>
@@ -257,6 +252,7 @@ class Producto {
         $("#id").val(producto.id);
         $("#nombre").val(producto.nombre);
         $("#codigo").val(producto.codigo);
+
         // checkbox
         if(producto.articulo==1){
             $("#articulo")[0].checked=true;
@@ -264,8 +260,6 @@ class Producto {
         else {
             $("#articulo")[0].checked=false;
         }
-        // $("#cantidad").val(producto.cantidad);
-        // $("#costo").val(producto.costo);
     };
 
     DeleteEventHandler() {
@@ -358,12 +352,7 @@ class Producto {
         if($('#frmProducto').length > 0 )
             document.forms["frmProducto"].onreset = function (e) {
                 validator.reset();
-            }
-        
-        // datepicker.js
-        // $('#dpfechaExpiracion').datetimepicker({
-        //     format: 'DD/MM/YYYY'
-        // });
+        } 
     };
 }
 

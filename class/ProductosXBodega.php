@@ -102,9 +102,10 @@ class ProductosXBodega{
 
     function Create(){
         try {
-            $sql="INSERT INTO productosxbodega (id, idbodega, idproducto, cantidad, costo) VALUES (uuid(),:idbodega, :idproducto, :cantidad, :costo);";
+            $sql="INSERT INTO productosxbodega (id, idbodega, idproducto, cantidad, costo) VALUES (uuid(),:idbodega, :idproducto, :cantidad, 
+            (SELECT SUM(costo) FROM insumosxproducto WHERE idproductotemporal=:idproductotemporal) );";
             //
-            $param= array(':idbodega'=>$this->idbodega, ':idproducto'=>$this->idproducto, ':cantidad'=>$this->cantidad, ':costo'=>$this->costo);
+            $param= array(':idbodega'=>$this->idbodega, ':idproducto'=>$this->idproducto, ':cantidad'=>$this->cantidad,':idproductotemporal'=>$_POST["idproductotemporal"]);
             $data = DATA::Ejecutar($sql,$param, false);
             if($data)
             {

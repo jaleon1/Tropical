@@ -61,6 +61,7 @@ class ProductoTemporal{
                     $insprod->idinsumo= $objInsumo['id'];
                     $insprod->idproductotemporal= $this->id;
                     $insprod->cantidad= $objInsumo['cantidad'];
+                    $insprod->costo= $objInsumo['costo'];
                     array_push ($this->listainsumo, $insprod);
                 }
             }
@@ -116,7 +117,7 @@ class ProductoTemporal{
                 $insprod->nombre = $value['nombre'];
                 $insprod->idproductotemporal = $value['idproductotemporal'];
                 $insprod->cantidad = $value['cantidad'];
-                // $insprod->costo = $value['costo'];
+                $insprod->costo = $value['costo'];
                 array_push ($this->listainsumo, $insprod);
             }
             return $this;

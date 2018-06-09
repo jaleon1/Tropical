@@ -8,7 +8,6 @@ constructor(id, idproducto, producto, idusuario, usuario,  cantidad, estado, i) 
         this.usuario = usuario || '';
         this.cantidad = cantidad || 0;
         this.estado = estado || 0;
-        // this.fecha = fecha || null;
         this.listainsumo = i || [];
     }
 
@@ -52,7 +51,9 @@ constructor(id, idproducto, producto, idusuario, usuario,  cantidad, estado, i) 
             var objInsumo = new Object();
             objInsumo.id= $(this).find('td:eq(0)').html();
             objInsumo.cantidad= $(this).find('td:eq(2) input').val();
+            objInsumo.costo= $(this).find('td:eq(3)').html();
             productotemporal.listainsumo.push(objInsumo);
+
         });
         $.ajax({
             type: "POST",
@@ -121,20 +122,11 @@ constructor(id, idproducto, producto, idusuario, usuario,  cantidad, estado, i) 
     // Methods
 
     UpdateCantidadProducto(){
-        $.ajax({
-            type: "POST",
-            url: "class/Producto.php",
-            data: {
-                action: "UpdateCantidad",
-                id:$(this).parents("tr").find("td:eq(0)").html(),
-                idproducto:$(this).parents("tr").find("td:eq(1)").html(),
-                cantidad:$(this).parents("tr").find("td:eq(5)").html()
-            }
-        })
-            .done(alert("Prueba"))
-            .fail(function (e) {
-                productotemporal.showError(e);
-            });        
+        productobodega.idproducto = $(this).parents("tr").find("td:eq(1)").html();
+        productobodega.cantidad = $(this).parents("tr").find("td:eq(5)").html();
+        productobodega.idbodega = '22a80c9e-5639-11e8-8242-54ee75873a00';
+        var idproductotemporal = $(this).parents("tr").find("td:eq(0)").html();
+        productobodega.SaveCantidad(idproductotemporal);        
     };
 
     Reload(e) {
@@ -190,8 +182,8 @@ constructor(id, idproducto, producto, idusuario, usuario,  cantidad, estado, i) 
             $('#tableBody-ProductoTemporal').append(`
                 <tr> 
                     <td class="itemId">${item.id}</td>
-                    <td class="itemIdx">${item.idproducto}</td>
-                    <td class="itemIdx">${item.idusuario}</td>
+                    <td class="oculto">${item.idproducto}</td>
+                    <td class="oculto">${item.idusuario}</td>
                     <td>${item.producto}</td>
                     <td>${item.usuario}</td>
                     <td>${item.cantidad}</td>
@@ -208,6 +200,7 @@ constructor(id, idproducto, producto, idusuario, usuario,  cantidad, estado, i) 
             $('#update'+item.id).click(productotemporal.UpdateEventHandler);
             $('#delete'+item.id).click(productotemporal.DeleteEventHandler);
             $('#chkterminado'+item.id).click(productotemporal.UpdateCantidadProducto);
+            
         })        
         //datatable         
         if ( $.fn.dataTable.isDataTable( '#dsProductoTemporal' ) ) {
@@ -218,7 +211,7 @@ constructor(id, idproducto, producto, idusuario, usuario,  cantidad, estado, i) 
             $('#dsProductoTemporal').DataTable();
     };
 
-    AddTableInsumo(id,nombre) {
+    AddTableInsumo(id,nombre,costo) {
         $('#tableBody-InsumoProducto').append(`
             <tr id="row"${id}> 
                 <td class="itemId" >${id}</td>
@@ -226,6 +219,7 @@ constructor(id, idproducto, producto, idusuario, usuario,  cantidad, estado, i) 
                 <td>
                     <input id="cantidadInsumo" class="form-control col-3" name="cantidadInsumo" type="text" placeholder="Cantidad de paquetes" autofocus="" value="1">
                 </td>
+                <td class=oculto>${costo}</td>
                 <td class=" last">
                     <a id ="delete_row${id}" onclick="productotemporal.DeleteInsumo(this)" > <i class="glyphicon glyphicon-trash" onclick="DeleteInsumo(this)"> </i> Eliminar </a>
                 </td>
@@ -237,12 +231,6 @@ constructor(id, idproducto, producto, idusuario, usuario,  cantidad, estado, i) 
         }
         else 
             $('#dsProductoTemporal').DataTable( {
-                // columns: [
-                //     { title: "ID"},
-                //     { title: "Nombre" },
-                //     { title: "Cantidad" },
-                //     { title: "Acción"}
-                // ],
                 columns: [
                     { "width":"35%"},
                     { "width":"35%"},
@@ -292,12 +280,6 @@ constructor(id, idproducto, producto, idusuario, usuario,  cantidad, estado, i) 
             }
             else 
                 $('#dsProductoTemporal').DataTable( {
-                    // columns: [
-                    //     { title: "ID"},
-                    //     { title: "Nombre" },
-                    //     { title: "Cantidad" },
-                    //     { title: "Acción"}
-                    // ],
                     columns: [
                         { "width":"35%"},
                         { "width":"35%"},
@@ -340,25 +322,26 @@ constructor(id, idproducto, producto, idusuario, usuario,  cantidad, estado, i) 
         $('#modal-producto').modal('toggle');
         $("#cantidad").focus();
     }
-
+    /* PENDIENTE */ 
     AddInsumoEventHandler(){
-        var posicion=null;
         var id=$(this).parents("tr").find("td:eq(1)").html();
         var nombre=$(this).parents("tr").find("td:eq(2)").html();
+        var costo=$(this).parents("tr").find("td:eq(6)").html();
+        var ids_indumos = [];
+
         if ($(this).is(':checked')) {
-            if (productotemporal.listainsumo.indexOf(id)!=-1){
-                $(this).attr("checked",false);
-                return false;
+            $('#tableBody-InsumoProducto tr').each(function() {
+                ids_indumos.push($(this).find('td:eq(0)').html());   
+            });
+            if (ids_indumos.length==0) {
+                productotemporal.AddTableInsumo(id,nombre,costo);
             }
             else{
-                // productotemporal.listainsumo.push(id);
-                productotemporal.AddTableInsumo(id,nombre);
+                if (ids_indumos.indexOf(id)!=-1) 
+                    $('#chk-addinsumo'+id).attr("checked",false);
+                else
+                    productotemporal.AddTableInsumo(id,nombre,costo);
             }
-        }
-        else{
-            posicion = productotemporal.listainsumo.indexOf(id);
-            productotemporal.listainsumo.splice(posicion,1);
-            $('#row'+id).remove();
         }
     }
 
