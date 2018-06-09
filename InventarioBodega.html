@@ -51,7 +51,7 @@
                 <div class="left_col scroll-view">
                     <div class="navbar nav_title" style="border: 0;">
                         <a href="index.html" class="site_title">
-                            <i class="fa fa-paw"></i>
+                            <i class="glyphicon glyphicon-share-alt"></i>
                             <span>Tropical Sno!</span>
                         </a>
                     </div>
@@ -284,12 +284,11 @@
                                                     <button type="button" class="close" data-dismiss="modal">
                                                         <span aria-hidden="true">×</span>
                                                     </button>
-                                                    <h4 class="modal-title" id="myModalLabel">Lista de Productos</h4>
+                                                    <h4 class="modal-title" id="nombrebodega"> BODEGA </h4>
                                                 </div>
 
                                                 <div class="modal-body">
-                                                        <span class="section" id="nombrebodega"> BODEGA XXXX </span>
-
+                                                        
                                                         <div id="datatable_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
                                                             <div class="row">
                                                                 <div class="col-sm-12">
@@ -310,6 +309,7 @@
                                                 </div>
 
                                                 <div class="modal-footer">
+
                                                 </div>
 
                                             </div>
@@ -326,13 +326,11 @@
                                                     <button type="button" class="close" data-dismiss="modal">
                                                         <span aria-hidden="true">×</span>
                                                     </button>
-                                                    <h4 class="modal-title" id="myModalLabel">Editar Cantidad</h4>
+                                                    <h4 class="modal-title" >Editar Producto / Artículo</h4>
                                                 </div>
 
                                                 <div class="modal-body">
                                                     <form class="form-horizontal form-label-left" id="frmProductosXBodega" novalidate>
-
-                                                        <span class="section">Producto</span>
 
                                                         <div class="item form-group">
                                                             <label class="control-label col-md-3 col-sm-3 col-xs-12" for="nombre">Producto
@@ -342,21 +340,21 @@
                                                                 <input id="productonombre" class="form-control col-md-7 col-xs-12" readonly name="productonombre" type="text" placeholder="Nombre completo Del producto">
                                                             </div>
                                                             <div id="reportrange" class="pull-right">
-                                                                <button id="btnAddInsumo" data-toggle="modal" data-target=".bs-listaproductos-modal-lg" type="button" class="btn btn-info btn-lg">+</button>    
+                                                                <button id="btnAddCantidadCosto" data-toggle="modal" data-target=".bs-cantidadcosto-modal-lg" type="button" class="btn btn-info btn-lg">+</button>    
                                                             </div>
                                                         </div>
 
                                                         <div class="item form-group ">
                                                             <label class="control-label col-md-3 col-sm-3 col-xs-12" for="valor">Cantidad</label>
                                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <input id="cantidad" class="form-control col-md-7 col-xs-12" name="cantidad" type="number" data-validate-minmax="0,999999999" placeholder="Cantidad Producto">
+                                                                <input id="cantidad" class="form-control col-md-7 col-xs-12"  name="cantidad" type="number" data-validate-minmax="0,999999999" placeholder="Cantidad Producto">
                                                             </div>
                                                         </div>
                 
                                                         <div class="item form-group ">
                                                             <label class="control-label col-md-3 col-sm-3 col-xs-12" for="valor">Costo</label>
                                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <input id="costo" class="form-control col-md-7 col-xs-12" name="costo" type="number" data-validate-minmax="0,999999999" placeholder="Costo del Producto">
+                                                                <input id="costo" class="form-control col-md-7 col-xs-12"  name="costo" type="number" data-validate-minmax="0,999999999" placeholder="Costo del Producto">
                                                             </div>
                                                         </div>                                                        
 
@@ -366,6 +364,66 @@
                                                             <div class="col-md-6 col-md-offset-3">
                                                                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                                                                 <button id="btnProductosXBodega" type="submit" class="btn btn-success">Submit</button>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+
+                                                <div class="modal-footer">
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- /modal -->
+
+                                    <!-- MODAL CANTIDAD - COSTO -->
+                                    <div class="modal fade bs-cantidadcosto-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
+                                        <div class="modal-dialog modal-lg">
+                                            <div class="modal-content">
+
+                                                <div class="modal-header">
+                                                    <button type="button" class="close" data-dismiss="modal">
+                                                        <span aria-hidden="true">×</span>
+                                                    </button>
+                                                    <h4 class="modal-title" id="editarnombreproducto">Agregar Cantidad/Costo</h4>
+                                                </div>
+
+                                                <div class="modal-body">
+                                                    <form class="form-horizontal form-label-left" id="frmCantidadCostoxProducto" novalidate>                                                        
+
+                                                        <!-- <div class="item form-group">
+                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="articulonombre">Artículo
+                                                                <span class="required">*</span>
+                                                            </label>
+                                                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                                                <input id="articulonombre" class="form-control col-md-7 col-xs-12" readonly name="articulonombre" type="text" placeholder="Nombre Del Artículo">
+                                                            </div>
+                                                            <div class="pull-right">
+                                                                <button id="btnAddarticulo" data-toggle="modal" data-target=".bs-listaarticulos-modal-lg" type="button" class="btn btn-info btn-lg">+</button>    
+                                                            </div>
+                                                        </div> -->
+
+                                                        <div class="item form-group ">
+                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="cantidadproductoagregar">Cantidad</label>
+                                                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                                                <input id="cantidadproductoagregar" class="form-control col-md-7 col-xs-12" value="0" name="cantidadproductoagregar" type="number" data-validate-minmax="0,999999999" placeholder="Cantidad a sumar">
+                                                            </div>
+                                                        </div>
+                
+                                                        <div class="item form-group ">
+                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="costoproductoagregar">Costo</label>
+                                                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                                                <input id="costoproductoagregar" class="form-control col-md-7 col-xs-12" value="0" name="costoproductoagregar" type="number" data-validate-minmax="0,999999999" placeholder="Costo del Producto">
+                                                            </div>
+                                                        </div>   
+
+                                                        <div class="ln_solid"></div>
+
+                                                        <div class="form-group">
+                                                            <div class="col-md-6 col-md-offset-3">
+                                                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                                <button id="btnCantidadCosto" type="submit" class="btn btn-success">Agregar</button>
                                                             </div>
                                                         </div>
                                                     </form>

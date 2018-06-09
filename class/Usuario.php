@@ -80,7 +80,7 @@ class Usuario{
             $this->username= $obj["username"] ?? '';
             $this->password= $obj["password"] ?? '';  
             $this->email= $obj["email"] ?? '';  
-            $this->activo= $obj["activo"] ?? '';  
+            $this->activo= $obj["activo"] ?? '';
             //roles del usuario.
             if(isset($obj["listarol"] )){
                 require_once("RolesXUsuario.php");

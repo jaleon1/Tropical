@@ -1,9 +1,12 @@
 class Producto {
     // Constructor
-    constructor(id, nombre, codigo) {
+    constructor(id, nombre, codigo, articulo, cantidad, costo, listaArticulo) {
         this.id = id || null;
         this.nombre = nombre || '';
         this.codigo = codigo || '';
+        this.articulo = articulo || 0; //1: articulo; 0: producto.
+        this.listaArticulo = listaArticulo || [];
+
     }
 
     //Getter
@@ -27,11 +30,33 @@ class Producto {
             });
     }
 
+    get ReadArticulo() {
+        var miAccion = this.id == null ? 'ReadAllArticulo' : 'ReadArticulo';
+        if(miAccion=='ReadAllArticulo' && $('#tableBody-Producto').length==0 )
+            return;
+        $.ajax({
+            type: "POST",
+            url: "class/Producto.php",
+            data: {
+                action: miAccion,
+                id: this.id
+            }
+        })
+            .done(function (e) {
+                producto.Reload(e);
+            })
+            .fail(function (e) {
+                producto.showError(e);
+            });
+    }
+
     get Save() {
         $('#btnProducto').attr("disabled", "disabled");
         var miAccion = this.id == null ? 'Create' : 'Update';
         this.nombre = $("#nombre").val();
         this.codigo = $("#codigo").val();
+        this.articulo = $("#articulo")[0].checked;
+
         $.ajax({
             type: "POST",
             url: "class/Producto.php",
@@ -52,6 +77,50 @@ class Producto {
                 $("#nombre").focus();
             });
     }
+
+    get AddArticuloBodega() {
+        if($('#tableBody-ArticuloBodega tr').length<1){
+            swal({
+                type: 'error',
+                title: 'Datos de los Artículos',
+                text: 'Debe agregar artículos a la lista',
+                showConfirmButton: false,
+                timer: 3000
+            });
+            return false;
+        }
+        $('#btnArticulo').attr("disabled", "disabled");
+        var miAccion = 'Create';
+        // obj
+        producto.listaArticulo = [];
+        $('#tableBody-ArticuloBodega tr').each(function() {
+            var objArticulo = new Object();
+            objArticulo.idbodega= '22a80c9e-5639-11e8-8242-54ee75873a00'; //id unico bodega principal.
+            objArticulo.idproducto= $(this).find('td:eq(0)').html();
+            objArticulo.cantidad= $(this).find('td:eq(2) input').val();
+            objArticulo.costo= $(this).find('td:eq(3) input').val();
+            producto.listaArticulo.push(objArticulo);
+        });
+        $.ajax({
+            type: "POST",
+            url: "class/ProductosXBodega.php",
+            data: {
+                action: miAccion,
+                obj: JSON.stringify(this)
+            }
+        })
+            .done(producto.showInfo)
+            .fail(function (e) {
+                producto.showError(e);
+            })
+            .always(function () {
+                setTimeout('$("#btnArticulo").removeAttr("disabled")', 1000);
+                producto = new Producto();
+                // limpia el ds
+                $('#tableBody-ArticuloBodega').html("");
+                producto.ReadArticulo;
+            });
+    }  
 
     get Delete() {
         $.ajax({
@@ -112,10 +181,15 @@ class Producto {
         })
     };
 
+    LimpiaArticulos(){
+        $('#tableBody-ArticuloBodega').html("");
+    };
+
     ClearCtls() {
         $("#id").val('');
         $("#nombre").val('');
         $("#codigo").val('');
+        $("#articulo")[0].checked=false;     
     };
 
     ShowAll(e) {
@@ -147,17 +221,14 @@ class Producto {
             if (url.indexOf("ProductoTemporal.html")!=-1) {
                 $('#chk-addproducto'+item.id).change(productotemporal.AddProductoEventHandler);
             }
+            if (url.indexOf("Articulo.html")!=-1) {
+                $('#chk-addproducto'+item.id).change(producto.AddArticuloEventHandler);
+            }
         })        
         //datatable         
         if ( $.fn.dataTable.isDataTable( '#dsProducto' ) ) {
             var table = $('#dsProducto').DataTable();
-            //table.destroy();
         }
-        /*else {
-            table = $('#example').DataTable( {
-                paging: false
-            } );
-        }*/
         else 
             $('#dsProducto').DataTable( {
                 paging: true,
@@ -175,12 +246,20 @@ class Producto {
         this.ClearCtls();
         // carga objeto.
         var data = JSON.parse(e)[0];
-        producto = new Producto(data.id, data.nombre, data.nombre,
-            data.cantidad, data.costo);
+        producto = new Producto(data.id, data.nombre, data.nombre, data.articulo);
+            // data.cantidad, data.costo);
         // Asigna objeto a controles
         $("#id").val(producto.id);
         $("#nombre").val(producto.nombre);
         $("#codigo").val(producto.codigo);
+
+        // checkbox
+        if(producto.articulo==1){
+            $("#articulo")[0].checked=true;
+        }
+        else {
+            $("#articulo")[0].checked=false;
+        }
     };
 
     DeleteEventHandler() {
@@ -204,9 +283,63 @@ class Producto {
         })
     };
 
+    AddArticuloEventHandler(){
+        var posicion=null;
+        var id=$(this).parents("tr").find("td:eq(1)").html();
+        var nombre=$(this).parents("tr").find("td:eq(2)").html();
+        var codigo=$(this).parents("tr").find("td:eq(3)").html();
+        if ($(this).is(':checked')) {
+            if (producto.listaArticulo.indexOf(id)!=-1){
+                $(this).attr("checked",false);
+                return false;
+            }
+            else{
+                producto.AddTableArticulo(id,nombre);
+            }
+        }
+        else{
+            posicion = producto.listaArticulo.indexOf(id);
+            producto.listaArticulo.splice(posicion,1);
+            $('#row'+id).remove();
+        }
+    };
+
+    AddTableArticulo(id,nombre) {
+        $('#tableBody-ArticuloBodega').append(`
+            <tr id="row"${id}> 
+                <td class="itemId" >${id}</td>
+                <td>${nombre}</td>
+                <td>
+                    <input id="cantidad" class="form-control col-3" name="cantidad" type="text" placeholder="Cantidad de artículos" autofocus="" value="1">
+                </td>
+                <td>
+                    <input id="costo" class="form-control col-3" name="costo" type="text" placeholder="Costo del artículo" autofocus="" value="0">
+                </td>
+                <td class=" last">
+                    <a id ="delete_row${id}" onclick="productotemporal.DeleteInsumo(this)" > <i class="glyphicon glyphicon-trash" onclick="DeleteInsumo(this)"> </i> Eliminar </a>
+                </td>
+            </tr>
+        `);
+        //datatable         
+        if ( $.fn.dataTable.isDataTable( '#dsArticulo' ) ) {
+            var table = $('#dsArticulo').DataTable();
+        }
+        else 
+            $('#dsArticulo').DataTable( {               
+                columns: [
+                    { "width":"40%"},
+                    { "width":"25%"},
+                    { "width":"25%"},
+                    { "width":"10%"}
+                ],          
+                paging: true,
+                search: true
+            } );
+    };
+
     Init() {
         // validator.js
-        var validator = new FormValidator({ "events": ['blur', 'input', 'change'] }, document.forms[0]);
+        var validator = new FormValidator({ "events": ['blur', 'input', 'change'] }, document.forms["frmProducto"]);
         $('#frmProducto').submit(function (e) {
             e.preventDefault();
             var validatorResult = validator.checkAll(this);
@@ -216,9 +349,10 @@ class Producto {
         });
 
         // on form "reset" event
-        document.forms[0].onreset = function (e) {
-            validator.reset();
-        }
+        if($('#frmProducto').length > 0 )
+            document.forms["frmProducto"].onreset = function (e) {
+                validator.reset();
+        } 
     };
 }
 

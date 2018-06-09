@@ -49,6 +49,17 @@ class ProductosXBodega{
             $this->idproducto= $obj["idproducto"] ?? null;
             $this->cantidad= $obj["cantidad"] ?? 0;      
             $this->costo= $obj["costo"] ?? 0;
+            // En caso de ser una lista de articulos para agregar
+            if(isset($obj["listaArticulo"] )){
+                foreach ($obj["listaArticulo"] as $articulo) {            
+                    $this->idbodega= $articulo['idbodega'];
+                    $this->idproducto= $articulo['idproducto'];
+                    $this->cantidad= $articulo['cantidad'];
+                    $this->costo= $articulo['costo'];
+                    $this->Create();
+                }
+                die( );
+            }
         }
     }
 

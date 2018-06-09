@@ -16,7 +16,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Tropical | Insumos</title>
+    <title>Tropical | Productos</title>
 
     <!-- Bootstrap -->
     <link href="assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -28,6 +28,12 @@
     <link href="assets/css/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css" rel="stylesheet">
     <!-- SweetAlert -->
     <link href="assets/css/sweetalert2.min.css" rel="stylesheet">
+    <!-- Datatables -->
+    <link href="../vendors/datatables.net-bs/css/dataTables.bootstrap.min.css" rel="stylesheet">
+    <link href="../vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css" rel="stylesheet">
+    <link href="../vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css" rel="stylesheet">
+    <link href="../vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css" rel="stylesheet">
+    <link href="../vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css" rel="stylesheet">
     <!-- Custom Theme Style -->
     <link href="assets/css/custom.css" rel="stylesheet">
 
@@ -64,10 +70,10 @@
 
                     <!-- sidebar menu -->
                     <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
-                        <div class="menu_section">
+                        <div class="menu_section active">
                             <h3>General</h3>
                             <ul class="nav side-menu">
-                                <li>
+                                <li class="active">
                                     <a>
                                         <i class="fa fa-home"></i> Home
                                         <span class="fa fa-chevron-down"></span>
@@ -135,18 +141,7 @@
                 <div class="">
                     <div class="page-title">
                         <div class="title_left">
-                            <h3>PRODUCTO CRUDO</h3>
-                        </div>
-
-                        <div class="title_right">
-                            <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
-                                <div class="input-group">
-                                    <input type="text" class="form-control" placeholder="Search for...">
-                                    <span class="input-group-btn">
-                                        <button class="btn btn-default" type="button">Go!</button>
-                                    </span>
-                                </div>
-                            </div>
+                            <h3>AGREGAR ARTÍCULOS</h3>
                         </div>
                     </div>
 
@@ -156,91 +151,96 @@
                         <div class="col-md-12 col-sm-12 col-xs-12">
                             <div class="x_panel">
                                 <div class="x_title">
-                                    <h2>Nuevo Insumo Crudo</h2>
-                                    <ul class="nav navbar-right panel_toolbox">
-                                        <li>
-                                            <a class="collapse-link">
-                                                <i class="fa fa-chevron-up"></i>
-                                            </a>
-                                        </li>
-                                        <li class="dropdown">
-                                            <a  class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-                                                <i class="fa fa-wrench"></i>
-                                            </a>
-                                            <ul class="dropdown-menu" role="menu">
-                                                <li>
-                                                    <a >Settings 1</a>
-                                                </li>
-                                                <li>
-                                                    <a >Settings 2</a>
-                                                </li>
-                                            </ul>
-                                        </li>
-                                        <li>
-                                            <a class="close-link">
-                                                <i class="fa fa-close"></i>
-                                            </a>
-                                        </li>
-                                    </ul>
+                                    <h2>Agregar Artículos</h2>
                                     <div class="clearfix"></div>
                                 </div>
                                 <!--  CONTENIDO DE LA PAGINA -->
 
                                 <div class="x_content">
-                                    <form class="form-horizontal form-label-left" id="frmInsumo" method="POST" novalidate>
-
-                                        <span class="section">Datos Generales</span>
-
-                                        <div class="item form-group">
-                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="nombre">Nombre
-                                                <span class="required">*</span>
-                                            </label>
-                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <input id="nombre" class="form-control col-md-7 col-xs-12" name="nombre" required="required" type="text" placeholder="Nombre del Insumo"
-                                                    autofocus>
+                                    <!-- <form class="form-horizontal form-label-left" id="frmArticulo" method="POST" novalidate> -->
+                                            <div class="pull-right">
+                                                <button id="btnAddArticulo" data-toggle="modal" data-target=".bs-listaArticulos-modal-lg" type="button" class="btn btn-info btn-lg">+</button>    
                                             </div>
-                                        </div>
 
-                                        <div class="item form-group">
-                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="codigo">Codigo
-                                                <span class="required">*</span>
-                                            </label>
-                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <input id="codigo" class="form-control col-md-7 col-xs-12" name="codigo" required="required" type="text" placeholder="Codigo del Insumo"
-                                                    autofocus>
-                                            </div>
-                                        </div>
-
-                                        <div class="item form-group ">
-                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="valor">Cantidad Bueno</label>
-                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <input id="bueno" class="form-control col-md-7 col-xs-12" name="malo" type="number" placeholder="Cantidad Insumo Bueno">
-                                            </div>
-                                        </div>
-
-                                        <div class="item form-group ">
-                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="valor">Cantidad Dañado</label>
-                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <input id="danado" class="form-control col-md-7 col-xs-12" name="danado" type="number" placeholder="Cantidad Insumo Dañado">
-                                            </div>
-                                        </div>
-
-                                        <div class="item form-group ">
-                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="valor">Costo</label>
-                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <input id="costo" class="form-control col-md-7 col-xs-12" name="costo" type="number" placeholder="Costo del Insumo">
-                                            </div>
-                                        </div>
+                                            <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <table id="dsArticulo" class="table table-striped jambo_table bulk_action" role="grid" aria-describedby="datatable_info"  >
+                                                            <thead>
+                                                                <tr role="row" class="headings">
+                                                                    
+                                                                </tr>
+                                                            </thead>
+        
+                                                            <tbody id="tableBody-ArticuloBodega">
+                                        
+                                                            </tbody>
+        
+                                                        </table>
+                                                    </div>
+                                                </div>
 
                                         <div class="ln_solid"></div>
 
                                         <div class="form-group">
                                             <div class="col-md-6 col-md-offset-3">
-                                                <button type="reset" class="btn btn-primary">Reset</button>
-                                                <button id="btnInsumo" type="submit" class="btn btn-success">Submit</button>
+                                                <button type="reset" class="btn btn-primary" onclick="producto.LimpiaArticulos()">Reset</button>
+                                                <button id="btnArticulo" type="submit" class="btn btn-success" onclick="producto.AddArticuloBodega;">Submit</button>
                                             </div>
                                         </div>
-                                    </form>
+                                    <!-- </form> -->
+
+                                     <!-- MODAL -->
+                                <div class="modal fade bs-listaArticulos-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
+                                        <div class="modal-dialog modal-lg">
+
+                                            <div class="modal-content">
+                
+                                                <div class="modal-header">
+                                                    <button type="button" class="close" data-dismiss="modal">
+                                                        <span aria-hidden="true">×</span>
+                                                    </button>
+                                                    <h4 class="modal-title" id="myModalLabel">Seleccionar Artículo</h4>
+                                                </div>
+                
+                                                <div class="modal-body">         
+                                                        
+                                                    <div id="datatable_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
+                                                        <div class="row">
+                                                            <div class="col-sm-12">
+                                                                <table id="dsProducto" class="table table-striped jambo_table bulk_action" role="grid" aria-describedby="datatable_info">
+                                                                    <thead>
+                                                                        <tr role="row" class="headings">
+                                                                            <th><input type='checkbox' id='check-all' class='iCheck-helper'></th><th class='itemId'>ID</th><th>Nombre</th> <th>Codigo</th> <th>Acción</th>
+                                                                        </tr>
+                                                                    </thead>
+        
+                                                                    <tbody id="tableBody-Producto">
+                                                                        
+                                                                    </tbody>
+        
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="ln_solid"></div>
+                                                    
+                                                    <div class="form-group">
+                                                        <div class="col-md-6 col-md-offset-3">
+                                                            <!-- <button id="btnSalirModalInsumo" type="reset" class="btn btn-primary">Salir</button>-->
+                                                            <button type="button" class="btn btn-default" data-dismiss="modal" id="btnSalirModalInsumo" >Close</button>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                
+                                                <div class="modal-footer">
+                                                </div>
+                
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--  /MODAL  -->
                                 </div>
                                 <!--  /CONTENIDO DE LA PAGINA -->
                             </div>
@@ -279,9 +279,11 @@
     <!-- Input mask -->
     <script src="assets/js/jquery.inputmask/jquery.inputmask.bundle.min.js"></script>
     <!-- JS Scripts -->
-    <script src="assets/js/Insumo.js"></script>
+    <script src="assets/js/Producto.js"></script>
     <!-- Sweet Alert -->
     <script src="assets/js/sweetalert2.min.js"></script>
+    <!-- Datatables -->
+    <script src="../vendors/datatables.net/js/jquery.dataTables.min.js"></script>
 
 </body>
 
@@ -289,6 +291,7 @@
 
 <script>
     $(document).ready(function () {
-        insumo.Init();
+        producto.Init();
+        producto.ReadArticulo;
     });
 </script>

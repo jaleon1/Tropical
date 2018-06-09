@@ -102,7 +102,7 @@ class Bodega{
                 ORDER BY nombre asc';
             $data= DATA::Ejecutar($sql);
             return $data;
-        }     
+        }
         catch(Exception $e) {
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
