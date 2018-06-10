@@ -49,14 +49,19 @@ class ProductosXBodega{
             $this->idproducto= $obj["idproducto"] ?? null;
             $this->cantidad= $obj["cantidad"] ?? 0;      
             $this->costo= $obj["costo"] ?? 0;
-            // En caso de ser una lista de articulos para agregar
-            if(isset($obj["listaArticulo"] )){
-                foreach ($obj["listaArticulo"] as $articulo) {            
-                    $this->idbodega= $articulo['idbodega'];
-                    $this->idproducto= $articulo['idproducto'];
-                    $this->cantidad= $articulo['cantidad'];
-                    $this->costo= $articulo['costo'];
+            // En caso de ser una lista de articulos para agregar O lista de productos por distribuir.
+            if(isset($obj["lista"] )){
+                foreach ($obj["lista"] as $item) {
+                    $this->id= $item['id'];            
+                    $this->idbodega= $item['idbodega'];
+                    $this->idproducto= $item['idproducto'];
+                    $this->cantidad= $item['cantidad'];
+                    $this->costo= $item['costo'];
                     $this->Create();
+                    // Si tiene ID de producto es porque viene de la bodega principal y debe restar
+                    if($this->id!=null){
+                        $this->RestarBodega($this->id, $this->cantidad);
+                    }
                 }
                 die( );
             }
@@ -178,6 +183,29 @@ class ProductosXBodega{
                 return $sessiondata['status']=0; 
             else throw new Exception('Error al eliminar.', 978);
         }
+        catch(Exception $e) {
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }
+    }
+
+    function RestarBodega($idPB, $cantidadrestar){
+        try {
+            $sql="UPDATE productosxbodega 
+                SET cantidad= cantidad - :cantidadrestar
+                WHERE id= :idPB";
+            //
+            $param= array(':id'=>$idPB, ':cantidadrestar'=>$cantidadrestar);
+            $data = DATA::Ejecutar($sql,$param, false);
+            if($data)
+            {
+                return true;
+            }
+            else throw new Exception('Error al guardar.', 02);
+        }     
         catch(Exception $e) {
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(

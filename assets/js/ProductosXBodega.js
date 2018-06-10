@@ -1,12 +1,13 @@
 class ProductoBodega {
     // Constructor
-    constructor(id, idbodega, idproducto, producto, cantidad, costo) {
+    constructor(id, idbodega, idproducto, producto, cantidad, costo, lista) {
         this.id = id || null;
         this.idbodega = idbodega || '';
         this.idproducto = idproducto || '';
         this.producto = producto || '';
         this.cantidad = cantidad || 0;
         this.costo = costo || 0;
+        this.lista = lista || [];
     }
 
     //Getter
@@ -33,9 +34,20 @@ class ProductoBodega {
 
     get Save() {
         $('#btnProductosXBodega').attr("disabled", "disabled");
-        var miAccion = this.id == null ? 'Create' : 'Update';
+        var miAccion = this.id == null ? 'Create' : 'Update';        
         this.cantidad = $("#cantidad").val();
         this.costo = $("#costo").val();
+        // obj
+        productobodega.lista = [];
+        $('#tableBody-listaProducto tr').each(function() {
+            var objlista = new Object();
+            objlista.idbodega= bodega.id; //bodega seleccionada en el modal.
+            objlista.id= $(this).find('td:eq(0)').html(); //id del producto seleccionado para mover.
+            objlista.idproducto= $(this).find('td:eq(1)').html();
+            objlista.cantidad= $(this).find('td:eq(3) input').val();
+            objlista.costo= $(this).find('td:eq(4) input').val();
+            productobodega.lista.push(objlista);
+        });
         $.ajax({
             type: "POST",
             url: "class/ProductosXBodega.php",
@@ -53,6 +65,7 @@ class ProductoBodega {
                 productobodega = new ProductoBodega();
                 productobodega.ClearCtls();
                 productobodega.Read;
+                productobodega.LimpiaLista();
             });
     }
   
@@ -164,6 +177,14 @@ class ProductoBodega {
         })
     };
 
+    LimpiaLista(){
+        $('#tableBody-listaProducto').html("");
+        //bodega
+        $("#nombre").val('');
+        $("#descripcion").val('');
+        $("#tipo").val('');
+    };
+
     ClearCtls() {
         $("#producto").val('');
         $("#cantidad").val('');
@@ -178,11 +199,12 @@ class ProductoBodega {
         //style="display: none"
         $.each(data, function (i, item) {
             $('#tableBody-ProductoBodega').append(`
-                <tr> 
+                <tr class='trproducto'> 
                     <td class="a-center ">
-                        <input type="checkbox" class="flat" name="table_records">
+                        <input id="chk-addproducto${item.id}" type="checkbox" class="flat" name="table_records">
                     </td>
                     <td class="itemId" >${item.id}</td>
+                    <td class="itemId" >${item.idproducto}</td>
                     <td>${item.producto}</td>
                     <td>${item.cantidad}</td>
                     <td>${item.costo}</td>
@@ -194,6 +216,10 @@ class ProductoBodega {
             `);
             $('#update'+item.id).click(productobodega.UpdateEventHandler);            
             $('#delete'+item.id).click(productobodega.DeleteEventHandler);
+            if (document.URL.indexOf("Distribucion.html")!=-1) {
+                $('#chk-addproducto'+item.id).change(productobodega.AddProductoEventHandler);
+                //$('.trproducto').dblclick(productobodega.AddProductoEventHandler);
+            }
         })
         //datatable         
         if ($.fn.dataTable.isDataTable('#dsProducto')) {
@@ -217,6 +243,64 @@ class ProductoBodega {
             });
         // agregar / editar producto temporal
         $('#btnAddCantidadCosto').click(productobodega.AddEventHandler);
+    };
+
+    AddProductoEventHandler(){
+        var posicion=null;
+        productobodega.id= $(this).parents("tr").find("td:eq(1)").html();
+        productobodega.idproducto=$(this).parents("tr").find("td:eq(2)").html();
+        productobodega.producto=$(this).parents("tr").find("td:eq(3)").html();
+        productobodega.cantidad= $(this).parents("tr").find("td:eq(4)").html()
+        productobodega.costo= $(this).parents("tr").find("td:eq(5)").html();  
+        //$(this).find('td:eq(0)').checked= true;
+        if ($(this).is(':checked')) {
+            if (productobodega.lista.indexOf(productobodega.id)!=-1){
+                $(this).attr("checked",false);
+                return false;
+            }
+            else{
+                productobodega.AddTableProducto(productobodega.id,productobodega.producto);
+            }
+        }
+        else{
+            posicion = productobodega.lista.indexOf(productobodega.id);
+            productobodega.lista.splice(posicion,1);
+            $('#row'+productobodega.id).remove();
+        }
+    };
+
+    AddTableProducto() {
+        $('#tableBody-listaProducto').append(`
+            <tr id="row"${productobodega.id}> 
+                <td class="itemId" >${productobodega.id}</td>
+                <td class="itemId" >${productobodega.idproducto}</td>
+                <td>${ productobodega.producto}</td>
+                <td>
+                    <input id="cantidad" class="form-control col-3" name="cantidad" type="number" placeholder="Cantidad de artículos" autofocus="" data-validate-minmax="1,${productobodega.cantidad}" value="1">
+                </td>
+                <td>
+                    <input id="costo" class="form-control col-3" name="costo" readonly type="text" placeholder="Costo del artículo" autofocus="" value="${ productobodega.costo}">
+                </td>
+                <td class=" last">
+                    <a id ="delete_row${productobodega.id}" onclick="productotemporal.DeleteInsumo(this)" > <i class="glyphicon glyphicon-trash" onclick="DeleteInsumo(this)"> </i> Eliminar </a>
+                </td>
+            </tr>
+        `);
+        //datatable         
+        if ( $.fn.dataTable.isDataTable( '#dsArticulo' ) ) {
+            var table = $('#dsArticulo').DataTable();
+        }
+        else 
+            $('#dsArticulo').DataTable( {
+                columns: [
+                    { "width":"40%"},
+                    { "width":"25%"},
+                    { "width":"25%"},
+                    { "width":"10%"}
+                ],          
+                paging: true,
+                search: true
+            } );
     };
 
     AddEventHandler() {
@@ -278,9 +362,10 @@ class ProductoBodega {
         });
 
         // on form "reset" event
-        document.forms["frmProductosXBodega"].onreset = function (e) {
-            validator.reset();
-        }
+        if($('#frmProductosXBodega').length > 0 )
+            document.forms["frmProductosXBodega"].onreset = function (e) {
+                validator.reset();
+            }
 
         // validator.js
         var validator = new FormValidator({ "events": ['blur', 'input', 'change'] }, document.forms["frmCantidadCostoxProducto"]);
@@ -293,9 +378,10 @@ class ProductoBodega {
         });
 
         // on form "reset" event
-        document.forms["frmCantidadCostoxProducto"].onreset = function (e) {
-            validator.reset();
-        }
+        if($('#frmCantidadCostoxProducto').length > 0 )
+            document.forms["frmCantidadCostoxProducto"].onreset = function (e) {
+                validator.reset();
+            }
     };
 }
 

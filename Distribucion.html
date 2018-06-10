@@ -168,7 +168,7 @@
                                 <!--  CONTENIDO DE LA PAGINA -->
 
                                 <div class="x_content">
-                                    <form class="form-horizontal form-label-left" id="frmProductoBodega" method="POST" novalidate>
+                                    <form class="form-horizontal form-label-left" id="frmProductosXBodega" method="POST" novalidate>
 
                                         <div id="reportrange" class="pull-right">
                                             <button id="btnAddProducto" data-toggle="modal" data-target=".bs-producto-modal-lg" type="button" class="btn btn-info btn-lg">+</button>
@@ -176,12 +176,12 @@
 
                                         <div class="row">
                                             <div class="col-sm-12">
-                                                <table id="dsProductoBodega" class="table table-striped jambo_table bulk_action" role="grid" aria-describedby="datatable_info">
+                                                <table id="dsArticulo" class="table table-striped jambo_table bulk_action" role="grid" aria-describedby="datatable_info">
                                                     <thead>
                                                         <tr role="row" class="headings"></tr>
                                                     </thead>
 
-                                                    <tbody id="tableBody-ProductoBodega">
+                                                    <tbody id="tableBody-listaProducto">
 
                                                     </tbody>
 
@@ -246,7 +246,7 @@
                                         <div class="form-group">
                                             <div class="col-md-6 col-md-offset-3">
                                                 <button type="reset" class="btn btn-primary">Reset</button>
-                                                <button id="btnProductoTemporal" type="submit" class="btn btn-success">Submit</button>
+                                                <button id="btnProductosXBodega" type="submit" class="btn btn-success">Submit</button>
                                             </div>
                                         </div>
                                     </form>
@@ -270,7 +270,7 @@
                                 <div class="modal-body">
                                     <form class="form-horizontal form-label-left" id="frmProductoSeleccionar" novalidate>
 
-                                        <span class="section">Insumos</span>
+                                        
                                         <div id="datatable_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
                                             <div class="row">
                                                 <div class="col-sm-12">
@@ -290,7 +290,7 @@
                                                             </tr>
                                                         </thead>
 
-                                                        <tbody id="tableBody-Producto">
+                                                        <tbody id="tableBody-ProductoBodega">
 
                                                         </tbody>
 
@@ -402,7 +402,7 @@
     <script src="assets/js/jquery.inputmask/jquery.inputmask.bundle.min.js"></script>
 
     <!-- JS Scripts -->
-    <script src="assets/js/Producto.js"></script>
+    <script src="assets/js/ProductosXBodega.js"></script>
     <script src="assets/js/Bodega.js"></script>
     <!-- Sweet Alert -->
     <script src="assets/js/sweetalert2.min.js"></script>
@@ -424,12 +424,24 @@
         $(document).on('click', '#btnAddBodega', function (event) {
             bodega.id = null;
             bodega.Read;
-            bodega.Init();
+            //bodega.Init();
         });
         $(document).on('click', '#btnAddProducto', function (event) {
-            producto.id = null;
-            producto.Read;
-            producto.Init();
+            productobodega.id = null; 
+            productobodega.idbodega= '22a80c9e-5639-11e8-8242-54ee75873a00';//id de la bodega primaria
+            $('tableBody-ProductoBodega').html('');
+            productobodega.Read;
+            //productobodega.Init();
+        });
+        $('#btnProductosXBodega').click(function(){
+            var validator = new FormValidator({ "events": ['blur', 'input', 'change'] }, document.forms["frmBodega"]);
+            $('#frmBodega').submit(function (e) {
+                e.preventDefault();
+                var validatorResult = validator.checkAll(this);
+                if (validatorResult.valid)
+                    productobodega.Save;
+                return false;
+            });
         });
     });
 </script>
