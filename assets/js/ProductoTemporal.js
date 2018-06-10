@@ -119,7 +119,6 @@ constructor(id, idproducto, producto, idusuario, usuario,  cantidad, estado, i) 
     }
 
     // Methods
-
     UpdateCantidadProducto(){
         $.ajax({
             type: "POST",
