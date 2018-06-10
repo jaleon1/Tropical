@@ -91,7 +91,7 @@ class Producto {
             return false;
         }
         $('#btnArticulo').attr("disabled", "disabled");
-        var miAccion = 'Create';
+        var miAccion = 'Add';
         // obj
         producto.lista = [];
         $('#tableBody-ArticuloBodega tr').each(function() {

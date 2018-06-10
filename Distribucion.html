@@ -433,15 +433,16 @@
             productobodega.Read;
             //productobodega.Init();
         });
-        $('#btnProductosXBodega').click(function(){
-            var validator = new FormValidator({ "events": ['blur', 'input', 'change'] }, document.forms["frmBodega"]);
-            $('#frmBodega').submit(function (e) {
+        var validator = new FormValidator({ "events": ['blur', 'input', 'change'] }, document.forms["frmBodega"]);
+        $('#frmBodega').submit(function (e) {
                 e.preventDefault();
                 var validatorResult = validator.checkAll(this);
                 if (validatorResult.valid)
-                    productobodega.Save;
+                    productobodega.Add;
                 return false;
             });
-        });
+//         $('#btnProductosXBodega').click(function(){            
+            
+//         });
     });
 </script>

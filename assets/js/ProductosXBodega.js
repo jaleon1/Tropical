@@ -37,6 +37,30 @@ class ProductoBodega {
         var miAccion = this.id == null ? 'Create' : 'Update';        
         this.cantidad = $("#cantidad").val();
         this.costo = $("#costo").val();
+        $.ajax({
+            type: "POST",
+            url: "class/ProductosXBodega.php",
+            data: {
+                action: miAccion,
+                obj: JSON.stringify(this)
+            }
+        })
+            .done(productobodega.showInfo)
+            .fail(function (e) {
+                productobodega.showError(e);
+            })
+            .always(function () {
+                setTimeout('$("#btnProductosXBodega").removeAttr("disabled")', 1000);
+                productobodega = new ProductoBodega();
+                productobodega.ClearCtls();
+                productobodega.Read;
+                productobodega.LimpiaLista();
+            });
+    }
+
+    get Add() {
+        $('#btnProductosXBodega').attr("disabled", "disabled");
+        var miAccion = 'Add';
         // obj
         productobodega.lista = [];
         $('#tableBody-listaProducto tr').each(function() {
