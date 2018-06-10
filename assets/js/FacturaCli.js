@@ -1,4 +1,4 @@
-class Factura {
+class FacturaCli {
     // Constructor
     constructor(id, cajero, producto, descuento, total, fechaCreacion, importe, t, idusuario, idcliente) {
         this.id = id || null;
@@ -24,27 +24,27 @@ class Factura {
 
 }
 
-let factura = new Factura();
+let facturaCli = new FacturaCli();
 
 // var t; //En esta variable se guarda la tabla de productos a facturar
 $(document).ready(function () {
-    $('#open_modal_fac').attr("disabled", true);
+    // $('#open_modal_fac').attr("disabled", true);
 
-    btnFormaPago()
+    // btnFormaPago()
 
     //Valida si se presiona enter -> carga el producto en la lista
     //si preciona "*" -> Quita el "*", pasa el punto de insercion a la cantidad y selecciona el valor para ser reemplazdo con el teclado
-    $("#p_searh").keyup(function(e) {
-        if(e.which == 13) {
-        // Acciones a realizar, por ej: enviar formulario.
-        LoadProducto();
-        }
-        if (e.which == 106) {
-            $("#p_searh")[0].value = "";
-            // se usa UltPrd xq es el UltimoProductoTocado (si la cantidad del producto es alterada no hay forma de saber cual fue el ultimo modificado.)
-            $("#cant_"+ producto.UltPrd).focus().select(); 
-        }
-    });
+    // $("#p_searh").keyup(function(e) {
+    //     if(e.which == 13) {
+    //     // Acciones a realizar, por ej: enviar formulario.
+    //     LoadProducto();
+    //     }
+    //     if (e.which == 106) {
+    //         $("#p_searh")[0].value = "";
+    //         // se usa UltPrd xq es el UltimoProductoTocado (si la cantidad del producto es alterada no hay forma de saber cual fue el ultimo modificado.)
+    //         $("#cant_"+ producto.UltPrd).focus().select(); 
+    //     }
+    // });
 
     // Recarga la página para limpiar todo
     $('#reload').click(function() {
@@ -52,84 +52,110 @@ $(document).ready(function () {
     });
 
     //Abre modal de modo de pago
-    $('#open_modal_fac').click(function(){
-        $('#total_pagar').empty();
-        $('#total_pagar').append("Total a Pagar: "+$("#total")[0].textContent );
-    });
+    // $('#open_modal_fac').click(function(){
+    //     $('#total_pagar').empty();
+    //     $('#total_pagar').append("Total a Pagar: "+$("#total")[0].textContent );
+    // });
 
     //Usa la variable t que es el datatable donde estan los productos
-    t = $('#prd').DataTable({
-        "ordering": false,
-        // "bSort": false,
-        "info":     false, //Quita el pie de pagina
-        "language": {
-            "infoEmpty": "No hay productos agregados",
-            "emptyTable": "No hay productos agregados",
-            "search": "Buscar En Factura" //Cambia el texto de Search
-        },
-        "columns": [
-            { "title": "id" },
-            { "title": "Codigo" },
-            { "title": "Descripcion" },
-            { "title": "Precio/U" },
-            { "title": "Cantidad" },
-            { "title": "Importe" }
-          ], // crea las columnas
-        "scrollY":        "190px",
+    // t = $('#t_prdXbdg').DataTable({
+    //     "ordering": false,
+    //     "searching": false,
+    //     "info":     false, //Quita el pie de pagina
+    //     "language": {
+    //         "infoEmpty": "No hay productos agregados2",
+    //         "emptyTable": "No hay productos agregados2",
+    //         "search": "Buscar En Factura" //Cambia el texto de Search
+    //     },
+    //     "columns": [
+    //         {   "width": "500 px" , 
+    //             "height": "20 px"}
+    //     ],
+        // "columns": [
+        //     { "title": "id" },
+        //     { "title": "Codigo" },
+        //     { "title": "Descripcion" },
+        //     { "title": "Precio/U" },
+        //     { "title": "Cantidad" },
+        //     { "title": "Importe" }
+        //   ], // crea las columnas
+        // "scrollY":        "190px",
         // "searching": false,
-        "scrollCollapse": true,
-        "paging":         false,
+        // "scrollCollapse": true,
+    //     "paging":         false,
 
 
 
-        "columnDefs": [ 
-            { 
-                "width": "2%", "targets": 0,
-                "visible": false,
-                "searchable": false
-            },
-            { 
-                "width": "10%", "targets": 3 
-            },
-            { 
-                "width": "5%", "targets": 4, 
-                "data": null,
-                "defaultContent": '<input class="cantidad form-control" type="number">'
-            },
-            { 
-                "width": "10%", "targets": 5 
-            }
-        ]
-    });
+    //     "columnDefs": [ 
+    //         {"sortable":false, "class":"spacer", "targets": 5}
+    //     ]
+    // });
 
-    t.columns.adjust().draw();
+    // t.columns.adjust().draw();
 
     $("#fecha").append(moment().format('MMM DD YYYY, h:mm:ss a'));
 
+    
+    LoadAllProducto();
+
 });
 
-// Carga el producto a la lista de la factura
-function LoadProducto() {
-    if ($("#p_searh").val() != ""){
-        producto.codigoRapido = $("#p_searh").val();  //Columna 0 de la fila seleccionda= ID.
-        producto.scancode = $("#p_searh").val();  //Columna 0 de la fila seleccionda= ID.
-        $.ajax({
-            type: "POST",
-            url: "class/Producto.php",
-            data: {
-                action: "ReadByCode",
-                obj: JSON.stringify(producto)
-            }
-        })
-        .done(function (e) {
-            CleanCtls();
-            ValidateProductFac(e);
-        })
-        .fail(function (e) {
-            showError(e);
-        });
-    }
+
+function LoadAllProducto() {
+    $.ajax({
+        type: "POST",
+        url: "class/ProductosXBodega.php",
+        data: {
+            action: "ReadAll",  
+            idbodega: "22a80c9e-5639-11e8-8242-54ee75873a00"
+        }
+    })
+    .done(function (e) {
+        DrawPrd(e);
+    })
+    .fail(function (e) {
+        showError(e);
+    });
+
 };
+
+function DrawPrd(e) {
+    productos = JSON.parse(e);
+    $.each( productos, function( item, value ) {
+    var prd = ` <button style="background-color:#${productos[item].bgColor};">
+                    <div class="btnPrd" style="color:#${productos[item].txtColor}";>
+                        <h5>${productos[item].producto}</h5>
+                    </div>
+                </button>`;
+        //${prd}
+        $('#prdXbdg').append(prd);    
+    });
+};
+
+
+//VALIDAR SI SE NECESITA
+// Carga el producto a la lista de la factura
+// function LoadProducto() {
+//     if ($("#p_searh").val() != ""){
+//         producto.codigoRapido = $("#p_searh").val();  //Columna 0 de la fila seleccionda= ID.
+//         producto.scancode = $("#p_searh").val();  //Columna 0 de la fila seleccionda= ID.
+//         $.ajax({
+//             type: "POST",
+//             url: "class/Producto.php",
+//             data: {
+//                 action: "ReadByCode",
+//                 obj: JSON.stringify(producto)
+//             }
+//         })
+//         .done(function (e) {
+//             CleanCtls();
+//             ValidateProductFac(e);
+//         })
+//         .fail(function (e) {
+//             showError(e);
+//         });
+//     }
+// };
 
 // valida que el producto nuevo a ingresar no este en la lista
 // si esta en la lista lo suma a la cantidad

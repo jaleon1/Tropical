@@ -1,13 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+
+<head>
+    <!-- check User session -->
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/Session.js"></script>
+    <script>
+        //Session.Check();
+    </script>
+    <!-- /End check -->
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <!-- Meta, title, CSS, favicons, etc. -->
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>FAC-CR | Facturación</title>
+    <title>Tropical | Facturación</title>
 
     <!-- Bootstrap -->
     <link href="assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -16,13 +24,11 @@
     <!-- NProgress -->
     <link href="assets/css/nprogress/nprogress.css" rel="stylesheet">
     <!-- iCheck -->
-   <link href="assets/css/iCheck/skins/flat/green.css" rel="stylesheet">
+    <link href="vendors/iCheck/skins/flat/green.css" rel="stylesheet">
     <!-- Custom Theme Style -->
-    <link href="assets/css/custom.min.css" rel="stylesheet">
+    <link href="assets/css/custom.css" rel="stylesheet">
     <!-- Custom Table Scroll -->
     <link href="assets/css/facturacion.css" rel="stylesheet">
-    <!-- Custom TablePRD -->
-    <link href="assets/css/datatables.net-bs/css/dataTables.bootstrap.min.css" rel="stylesheet">
     <!-- SweetAlert -->
     <link rel="stylesheet" href="assets/css/sweetalert2.min.css">
 
@@ -34,7 +40,10 @@
             <div class="col-md-3 left_col">
                 <div class="left_col scroll-view">
                     <div class="navbar nav_title" style="border: 0;">
-                        <a href="index.html" class="site_title"><i class="fa fa-paw"></i> <span>Fac-CR!</span></a>
+                        <a href="index.html" class="site_title">
+                            <i class="glyphicon glyphicon-share-alt"></i>
+                            <span>Tropical Sno!</span>
+                        </a>
                     </div>
 
                     <div class="clearfix"></div>
@@ -46,26 +55,25 @@
                         </div>
                         <div class="profile_info">
                             <span>Bienvenido,</span>
-                            <h2>Carlos</h2>
+                            <h2 id='call_name'></h2>
                         </div>
                         <div class="clearfix"></div>
                     </div>
                     <!-- /menu profile quick info -->
 
                     <br />
+
                     <!-- sidebar menu -->
                     <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
                         <div class="menu_section">
                             <h3>General</h3>
                             <ul class="nav side-menu">
-                                <li><a><i class="fa fa-home"></i> home <span class="fa fa-chevron-down"></span></a>
-                                    <ul class="nav child_menu">
-                                        <li><a href="index.html">Index</a></li>
-                                        <li><a href="inventario.html">Inventario</a></li>
-                                        <li><a href="producto.html">Nuevo Producto</a></li>
-                                        <li><a href="categoria.html">Categorías</a></li>
-                                        <li><a href="facturacion.html">Facturación</a></li>
-                                    </ul>
+                                <li>
+                                    <a>
+                                        <i class="fa fa-home"></i> home
+                                        <span class="fa fa-chevron-down"></span>
+                                    </a>
+                                    <ul class="nav child_menu" id="call_menu"></ul>
                                 </li>
 
                             </ul>
@@ -76,17 +84,17 @@
                     <!-- /menu footer buttons -->
                     <div class="sidebar-footer hidden-small">
                         <a data-toggle="tooltip" data-placement="top" title="Settings">
-                <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
-              </a>
+                            <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+                        </a>
                         <a data-toggle="tooltip" data-placement="top" title="FullScreen">
-                <span class="glyphicon glyphicon-fullscreen" aria-hidden="true"></span>
-              </a>
+                            <span class="glyphicon glyphicon-fullscreen" aria-hidden="true"></span>
+                        </a>
                         <a data-toggle="tooltip" data-placement="top" title="Lock">
-                <span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
-              </a>
-                        <a data-toggle="tooltip" data-placement="top" title="Logout" href="login.html">
-                <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
-              </a>
+                            <span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
+                        </a>
+                        <a data-toggle="tooltip" data-placement="top" title="Logout" onclick="Session.End();">
+                            <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
+                        </a>
                     </div>
                     <!-- /menu footer buttons -->
                 </div>
@@ -97,25 +105,23 @@
                 <div class="nav_menu">
                     <nav>
                         <div class="nav toggle">
-                            <a id="menu_toggle"><i class="fa fa-bars"></i></a>
+                            <a id="menu_toggle">
+                                <i class="fa fa-bars"></i>
+                            </a>
                         </div>
 
                         <ul class="nav navbar-nav navbar-right">
                             <li class="">
-                                <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                    <img src="images/user.png" alt="">Nombre usuario
-                    <span class=" fa fa-angle-down"></span>
-                  </a>
+                                <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false" id='call_username'>
+                                </a>
                                 <ul class="dropdown-menu dropdown-usermenu pull-right">
-                                    <li><a href="javascript:;"> Profile</a></li>
                                     <li>
-                                        <a href="javascript:;">
-                        <span class="badge bg-red pull-right">50%</span>
-                        <span>Settings</span>
-                      </a>
+                                        <a href="javascript:;"> Profile</a>
                                     </li>
-                                    <li><a href="javascript:;">Help</a></li>
-                                    <li><a href="login.html"><i class="fa fa-sign-out pull-right"></i> Log Out</a></li>
+                                    <li>
+                                        <a onclick="Session.End();"></a>
+                                        <i class="fa fa-sign-out pull-right"></i> Log Out</a>
+                                    </li>
                                 </ul>
                             </li>
 
@@ -132,9 +138,6 @@
                         <div class="title_left">
                             <h3>Facturación</h3>
                         </div>
-                        <div class="title_right">
-                            <h3 id="fecha" style="float:right"></h3>
-                        </div>
                     </div>
 
                     <div class="clearfix"></div>
@@ -142,11 +145,10 @@
                     <div class="row">
                         <div class="col-md-12 col-sm-12 col-xs-12">
                             <div class="x_panel">
-                                <!-- <div class="x_title">
-                                    <h2>Nueva Factura</h2>
-                                    <h2 id="fecha" style="float:right"></h2>
+                                <div class="x_title">
+                                    <h2>Nueva Factura #01567</h2>
                                     <div class="clearfix"></div>
-                                </div> -->
+                                </div>
                                 <div class="title_right">
                                     <div class="col-md-12 col-sm-12 col-xs-12 form-group pull-right top_search">
                                         <div class="input-group">
@@ -157,11 +159,11 @@
                                         </div>
                                     </div>
                                 </div>
-                                <!--  CONTENIDO DE LA PAGINA -->                                 
+                                <!--  CONTENIDO DE LA PAGINA -->
                                 <div class="x_content">
-                                    <div class="table-responsive">
-                                        <table id="prd" class="table table-striped jambo_table bulk_action">
-                                            <!-- <thead>
+                                    <div class="table-responsive table-fixed">
+                                        <table class="table table-striped jambo_table bulk_action">
+                                            <thead>
                                                 <tr class="headings">
                                                     <th>
                                                         <input type="checkbox" id="check-all" class="flat">
@@ -170,55 +172,57 @@
                                                     <th class="column-title">Descripción </th>
                                                     <th class="column-title">Precio/U </th>
                                                     <th class="column-title">Cantidad </th>
-                                                    <th class="column-title">Importe </th> -->
-                                                <!--<th class="column-title">Amount </th>
-                                                    <th class="column-title no-link last"><span class="nobr">Action</span>
-                                                    </th> -->
-                                                    <!-- <th class="bulk-actions" colspan="7">
-                                                    <a class="antoo" style="color:#fff; font-weight:500;">Acciones Masivas ( <span class="action-cnt"> </span> ) <i class="fa fa-chevron-down"></i></a>
+                                                    <th class="column-title">Importe </th>
+                                                    <!-- <th class="column-title">Amount </th>
+                                                <th class="column-title no-link last"><span class="nobr">Action</span>
+                                                </th> -->
+                                                    <th class="bulk-actions" colspan="7">
+                                                        <a class="antoo" style="color:#fff; font-weight:500;">Acciones Masivas (
+                                                            <span class="action-cnt"> </span> )
+                                                            <i class="fa fa-chevron-down"></i>
+                                                        </a>
                                                     </th>
                                                 </tr>
-                                            </thead> -->
+                                            </thead>
                                             <tbody id="productos">
-                                                                                                           
+
                                             </tbody>
                                         </table>
                                     </div>
                                 </div>
-
-                                <!--  CONTENIDO DE SUBTOTALES -->                                 
                                 <div class="row">
-                                    <div class="col-10 col-sm-7 col-md-6 col-lg-4 col-xl-4 offset-1 offset-sm-4 offset-lg-8 offset-xl-8 subtotales">
+                                    <div class="col-10 col-sm-7 col-md-6 col-lg-4 col-xl-4 offset-1 offset-sm-4 offset-lg-8 offset-xl-8">
                                         <div class="x_content">
                                             <div class="table-responsive">
                                                 <table class="table table-striped jambo_table bulk_action">
                                                     <tbody>
                                                         <tr class="even pointer">
-                                                            <td class="">SubTotal</td>
-                                                            <td class="">  </td>
-                                                            <td class="" id= "subtotal">¢0</td>
+                                                            <td class=" ">SubTotal</td>
+                                                            <td class=" "> </td>
+                                                            <td class=" ">¢75.000</td>
                                                         </tr>
                                                         <tr class="odd pointer">
-                                                            <td class="">Descuento</td>
-                                                            <td class="" id="desc_100">0%</td>
-                                                            <td class="" id="desc_val">¢0</td>
-                                                        </tr><tr class="even pointer">
-                                                                <td class="">Impuesto de Ventas</td>
-                                                                <td class="text-left" id="iv_100">13% </td>
-                                                                <td class="" id="iv_val">¢0</td>
+                                                            <td class=" ">Descuento</td>
+                                                            <td class=" ">5%</td>
+                                                            <td class=" ">¢1.200</td>
+                                                        </tr>
+                                                        <tr class="even pointer">
+                                                            <td class=" ">Impuesto de Ventas</td>
+                                                            <td class="text-left">13% </td>
+                                                            <td class=" ">¢75.000</td>
                                                         </tr>
                                                         <tr class="odd pointer">
-                                                            <td class="">TOTAL</td>
-                                                            <td class=""></td>
-                                                            <td class="" id="total">¢0</td>
+                                                            <td class=" ">TOTAL</td>
+                                                            <td class=" "></td>
+                                                            <td class=" ">¢1.200</td>
                                                         </tr>
-                                                    </tbody>                                                        
+                                                    </tbody>
                                                 </table>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <!--  CONTENIDO DE SUBTOTALES -->  
+                                <!--  /CONTENIDO DE LA PAGINA -->
                             </div>
                         </div>
                     </div>
@@ -228,60 +232,32 @@
                     <div class="ln_solid"></div>
                     <div class="form-group">
                         <div class="col-md-6 col-md-offset-3">
-                            <button type="submit" class="btn btn-primary" id="reload">Limpiar</button>
-                            <button type="button" class="btn btn-success" id="open_modal_fac" data-toggle="modal" data-target=".factura-modal-lg">Facturar</button>
+                            <button type="submit" class="btn btn-primary">Cancel</button>
+                            <button id="send" type="submit" class="btn btn-success">Submit</button>
                         </div>
                     </div>
-                </div>
-            </div>
-            <!-- /page content -->
 
-            <!-- footer content -->
-            <footer>
-                <div class="pull-right">
-                    Ventas y administración de Inventario <a href="http://faccr.com">Fac-CR</a>
                 </div>
-                <div class="clearfix"></div>
-            </footer>
-            <!-- /footer content -->
-        </div>
-    </div>
 
-    <!-- modals -->
-    <!-- Large modal -->
-    <div class="modal fade factura-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content modal-factura">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
-                    </button>
-                    <h4 class="modal-title" id="myModalLabel">Facturar</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div>
-                            <center>
-                                    <h1 id="total_pagar"></h1>    
-                            </center>
-                            
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div id="formapago">
-                           
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <div id="btn-formapago">
-                       
-                    </div>
-                </div>
             </div>
         </div>
     </div>
-  <!-- modals -->
-    <!-- Large modal -->
+    </div>
+    </div>
+    <!-- /page content -->
+
+    <!-- footer content -->
+    <footer>
+        <div class="pull-right">
+            Tropical SNO
+            <a href="http://faccr.com">Tropical Sno</a>
+        </div>
+        <div class="clearfix"></div>
+    </footer>
+    <!-- /footer content -->
+    </div>
+    </div>
+
 
     <!-- jQuery -->
     <script src="assets/js/jquery.min.js"></script>
@@ -290,9 +266,9 @@
     <!-- FastClick -->
     <script src="assets/js/fastclick/lib/fastclick.js"></script>
     <!-- NProgress -->
-    <script src="assets/js/nprogress/nprogress.js"></script>    
+    <script src="assets/js/nprogress/nprogress.js"></script>
     <!-- iCheck -->
-    <script src="assets/js/iCheck/icheck.min.js"></script>
+    <script src="vendors/iCheck/icheck.min.js"></script>
     <!-- Validator -->
     <script src="assets/js/validator.js"></script>
     <!-- Custom Theme Scripts -->
@@ -300,15 +276,10 @@
     <!-- Input mask -->
     <script src="assets/js/jquery.inputmask/jquery.inputmask.bundle.min.js"></script>
     <!-- JS Scripts -->
-    <script src="assets/js/Producto.js"></script>
     <script src="assets/js/Factura.js"></script>
-    <!-- JS dataTables -->
-    <script src="assets/js/jquery.dataTables.min.js"></script>
-    <script src="assets/js/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
-    <!-- JS Moments -->
-    <script src="assets/js/moment.min.js"></script>
     <!-- Sweet Alert -->
     <script src="assets/js/sweetalert2.min.js"></script>
 
 </body>
+
 </html>

@@ -25,6 +25,8 @@
     <link href="assets/css/datatables.net-bs/css/dataTables.bootstrap.min.css" rel="stylesheet">
     <!-- SweetAlert -->
     <link rel="stylesheet" href="assets/css/sweetalert2.min.css">
+    <!-- SweetAlert -->
+    <link rel="stylesheet" href="assets/css/facturaCli.css">
 
 </head>
 
@@ -128,121 +130,101 @@
             <!-- page content -->
             <div class="right_col" role="main">
                 <div class="">
-                    <div class="page-title">
-                        <div class="title_left">
-                            <h3>Facturación</h3>
-                        </div>
-                        <div class="title_right">
-                            <h3 id="fecha" style="float:right"></h3>
-                        </div>
-                    </div>
 
                     <div class="clearfix"></div>
 
-                    <div class="row">
-                        <div class="col-md-12 col-sm-12 col-xs-12">
-                            <div class="x_panel">
-                                <!-- <div class="x_title">
-                                    <h2>Nueva Factura</h2>
-                                    <h2 id="fecha" style="float:right"></h2>
-                                    <div class="clearfix"></div>
-                                </div> -->
-                                <div class="title_right">
-                                    <div class="col-md-12 col-sm-12 col-xs-12 form-group pull-right top_search">
-                                        <div class="input-group">
-                                            <input autofocus type="text" class="form-control" id="p_searh" placeholder="Ingresar Producto...">
-                                            <span class="input-group-btn">
-                                                <button class="btn btn-default" type="button">Buscar</button>
-                                            </span>
-                                        </div>
-                                    </div>
+                    <div class="row"> <!-- COLUMNA CON TOTALES + LISTA PRD -->
+                        <div class="col-md-3 col-xs-12">
+                            <div class="x_content">
+                                <div class="table-responsive">
+                                    <table class="table table-striped jambo_table bulk_action">
+                                        <tbody>
+                                            <tr class="even pointer">
+                                                <td class="">SubTotal</td>
+                                                <td class="">  </td>
+                                                <td class="" id= "subtotal">¢0</td>
+                                            </tr>
+                                            <tr class="even pointer">
+                                                    <td class="">Impuesto de Ventas</td>
+                                                    <td class="text-left" id="iv_100">13% </td>
+                                                    <td class="" id="iv_val">¢0</td>
+                                            </tr>
+                                            <tr class="odd pointer">
+                                                <td class="">TOTAL</td>
+                                                <td class=""></td>
+                                                <td class="" id="total">¢0</td>
+                                            </tr>
+                                        </tbody>                                                        
+                                    </table>
                                 </div>
-                                <!--  CONTENIDO DE LA PAGINA -->                                 
-                                <div class="x_content">
-                                    <div class="table-responsive">
-                                        <table id="prd" class="table table-striped jambo_table bulk_action">
-                                            <!-- <thead>
-                                                <tr class="headings">
-                                                    <th>
-                                                        <input type="checkbox" id="check-all" class="flat">
-                                                    </th>
-                                                    <th class="column-title">Codigo </th>
-                                                    <th class="column-title">Descripción </th>
-                                                    <th class="column-title">Precio/U </th>
-                                                    <th class="column-title">Cantidad </th>
-                                                    <th class="column-title">Importe </th> -->
-                                                <!--<th class="column-title">Amount </th>
-                                                    <th class="column-title no-link last"><span class="nobr">Action</span>
-                                                    </th> -->
-                                                    <!-- <th class="bulk-actions" colspan="7">
-                                                    <a class="antoo" style="color:#fff; font-weight:500;">Acciones Masivas ( <span class="action-cnt"> </span> ) <i class="fa fa-chevron-down"></i></a>
-                                                    </th>
-                                                </tr>
-                                            </thead> -->
-                                            <tbody id="productos">
-                                                                                                           
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-
-                                <!--  CONTENIDO DE SUBTOTALES -->                                 
-                                <div class="row">
-                                    <div class="col-10 col-sm-7 col-md-6 col-lg-4 col-xl-4 offset-1 offset-sm-4 offset-lg-8 offset-xl-8 subtotales">
-                                        <div class="x_content">
-                                            <div class="table-responsive">
-                                                <table class="table table-striped jambo_table bulk_action">
-                                                    <tbody>
-                                                        <tr class="even pointer">
-                                                            <td class="">SubTotal</td>
-                                                            <td class="">  </td>
-                                                            <td class="" id= "subtotal">¢0</td>
-                                                        </tr>
-                                                        <tr class="odd pointer">
-                                                            <td class="">Descuento</td>
-                                                            <td class="" id="desc_100">0%</td>
-                                                            <td class="" id="desc_val">¢0</td>
-                                                        </tr><tr class="even pointer">
-                                                                <td class="">Impuesto de Ventas</td>
-                                                                <td class="text-left" id="iv_100">13% </td>
-                                                                <td class="" id="iv_val">¢0</td>
-                                                        </tr>
-                                                        <tr class="odd pointer">
-                                                            <td class="">TOTAL</td>
-                                                            <td class=""></td>
-                                                            <td class="" id="total">¢0</td>
-                                                        </tr>
-                                                    </tbody>                                                        
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!--  CONTENIDO DE SUBTOTALES -->  
                             </div>
                         </div>
-                    </div>
 
+                        <div class="col-md-9 col-xs-12">
+                            <div class="row">
+                                <div class="x_panel">
+                                    <!--  CONTENIDO DE LA PAGINA -->                                 
+                                    <div class="x_content">
+                                        <h3 class="titleSize">TAMAÑO:</h3>
+                                        <button type="button" class="btn btn-info btn-lg btnSize">Grande</button>
+                                        <button type="button" class="btn btn-info btn-lg btnSize">Mediano</button> 
+                                    </div>
+                                </div>
+                                <div class="x_panel">
+                                    <!--  CONTENIDO DE LA PAGINA -->                                 
+                                    <div class="x_content">
+                                        <h3>SABORES:</h3>
+                                        <div id="prdXbdg">
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="x_panel">
+                                    <!--  CONTENIDO DE LA PAGINA -->                                 
+                                    <div class="x_content">
+                                        <h3>TOPPINGS:</h3>
+                                        <div id="size">
+                                            <button style="background-color:#d2691e;">
+                                                <div class="btnPrd" style="color:rgb(0, 0, 0)";>
+                                                    <h5>Chocolate</h5>
+                                                </div>
+                                            </button>
+                                            <button style="background-color:#e90c0c;">
+                                                <div class="btnPrd" style="color:rgb(0, 0, 0)";>
+                                                    <h5>Pulpa de Frutos Rojos</h5>
+                                                </div>
+                                            </button>
+                                            <button style="background: linear-gradient(to bottom right, rgb(217, 255, 0), #3f888f, red);">
+                                                <div class="btnPrd" style="color:rgb(71, 6, 77)";>
+                                                    <h5>Gomitas de Colores</h5>
+                                                </div>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>    
+                        </div>
+                    </div>
                     <div class="clearfix"></div>
 
-                    <div class="ln_solid"></div>
+                    <!-- <div class="ln_solid"></div>
                     <div class="form-group">
                         <div class="col-md-6 col-md-offset-3">
                             <button type="submit" class="btn btn-primary" id="reload">Limpiar</button>
                             <button type="button" class="btn btn-success" id="open_modal_fac" data-toggle="modal" data-target=".factura-modal-lg">Facturar</button>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
             </div>
             <!-- /page content -->
 
             <!-- footer content -->
-            <footer>
+            <!-- <footer>
                 <div class="pull-right">
                     Ventas y administración de Inventario <a href="http://faccr.com">Fac-CR</a>
                 </div>
                 <div class="clearfix"></div>
-            </footer>
+            </footer> -->
             <!-- /footer content -->
         </div>
     </div>
@@ -300,8 +282,8 @@
     <!-- Input mask -->
     <script src="assets/js/jquery.inputmask/jquery.inputmask.bundle.min.js"></script>
     <!-- JS Scripts -->
-    <script src="assets/js/Producto.js"></script>
-    <script src="assets/js/Factura.js"></script>
+    <script src="assets/js/ProductosXBodega.js"></script> <!--CAMBIAR por PxB-->
+    <script src="assets/js/Facturacli.js"></script>  <!--CAMBIAR por Facuracli-->
     <!-- JS dataTables -->
     <script src="assets/js/jquery.dataTables.min.js"></script>
     <script src="assets/js/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>

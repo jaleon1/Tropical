@@ -1,0 +1,17 @@
+.btnPrd {
+    height: 45px;
+    /* width: auto;
+    min-width: 55px; */
+    width: 75px;
+}
+.PrecioPrd {
+    margin: 0;
+}
+
+.btnSize {
+margin-left: 200px;
+}
+
+.titleSize {
+    position: absolute;
+}

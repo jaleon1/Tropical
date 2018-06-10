@@ -65,9 +65,10 @@ class ProductosXBodega{
 
     function ReadAll(){
         try {
-            $sql='SELECT pb.id, idbodega, idproducto, nombre as producto, pb.cantidad, pb.costo
+            $sql='SELECT pb.id, idbodega, idproducto, nombre as producto, pb.cantidad, pb.costo, p.bgColor, p.txtColor
                 FROM     productosxbodega   pb INNER JOIN producto p on p.id=pb.idproducto
                 WHERE    idbodega= :idbodega
+                AND		 p.articulo = "0"
                 ORDER BY idbodega asc';
             $param= array(':idbodega'=>$this->idbodega);
             $data= DATA::Ejecutar($sql,$param);
