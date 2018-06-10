@@ -51,11 +51,12 @@ class DATA {
                 else return $st;    
             } else {
                 self::$conn->rollback(); 
-                header('HTTP/1.0 400 Bad error');
+                /*header('HTTP/1.0 400 Bad error');
                 die(json_encode(array(
                     'code' => 'x01' ,
                     'msg' => 'Error de Ejecución'))
-                );
+                );*/
+                throw new Exception('Error al ejecutar.',00);
             }            
         } catch (Exception $e) {
             self::$conn->rollback(); 
