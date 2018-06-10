@@ -5,6 +5,7 @@ class InsumosxProducto{
     public $idinsumo;
     public $idproductotemporal;
     public $cantidad;
+    public $costo;
 
     public static function Create($obj){
         try {
@@ -23,10 +24,10 @@ class InsumosxProducto{
                 $data_insumo = DATA::Ejecutar($sql_insumo,$param_insumo,false);
                 
                 //Inserta en tabla intermedia insumos y productos
-                $sql="INSERT INTO insumosxproducto   (id, idinsumo, idproductotemporal, cantidad)
-                VALUES (uuid(), :idinsumo, :idproductotemporal, :cantidad)";
+                $sql="INSERT INTO insumosxproducto   (id, idinsumo, idproductotemporal, cantidad, costo)
+                VALUES (uuid(), :idinsumo, :idproductotemporal, :cantidad, :costo)";
                 $param= array(':idinsumo'=>$insprod->idinsumo, ':idproductotemporal'=>$insprod->idproductotemporal, 
-                ':cantidad'=>$insprod->cantidad);
+                ':cantidad'=>$insprod->cantidad, ':costo'=>$insprod->costo);
                 $data = DATA::Ejecutar($sql,$param,false);
                 
                 if(!$data and !$data_insumo)
