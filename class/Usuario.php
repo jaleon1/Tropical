@@ -129,7 +129,7 @@ class Usuario{
             //$this->password= $this->CreateHash();
             //..................>>>>
             //Check activo & password.
-            $sql= 'SELECT u.id, u.username, u.nombre, activo, password, idevento, e.nombre as nombreUrl, e.url
+            $sql= 'SELECT u.id, u.username, u.nombre, activo, password, idevento, e.nombre as nombreUrl, e.url, menupadre, submenupadre
             FROM usuario u inner join rolesxusuario ru on ru.idusuario = u.id
                 inner join eventosxrol er on er.idrol = ru.idrol
                 inner join evento e on e.id = er.idevento
@@ -158,12 +158,16 @@ class Usuario{
                                 $evento->id= $value['idevento'];
                                 $evento->nombre= $value['nombreUrl'];
                                 $evento->url= $value['url'];
+                                $evento->menupadre= $value['menupadre'];
+                                $evento->submenupadre= $value['submenupadre'];
                                 $this->eventos = array($evento);
                             }
                             else {
                                 $evento->id= $value['idevento'];
                                 $evento->nombre= $value['nombreUrl'];
                                 $evento->url= $value['url'];
+                                $evento->menupadre= $value['menupadre'];
+                                $evento->submenupadre= $value['submenupadre'];
                                 array_push ($this->eventos, $evento);
                             }                    
                         }

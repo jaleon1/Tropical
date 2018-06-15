@@ -41,7 +41,7 @@ var Session=  {
                     break;
             }   
         })    
-        .fail(function( e ) {        
+        .fail(function( e ) {
             showError(e);
             location.href= 'login.html';
         });
@@ -54,14 +54,65 @@ var Session=  {
         $('#call_name').text(n);
     },
     setMenu(eventos){
-        $('#call_menu').html('');
+        $('#menubox').html('');
+        $('#menubox').append(`
+            <li id="Inventario" style="display:none;">
+                <a>
+                    <i class="fa fa-reorder"></i> Inventario
+                    <span class="fa fa-chevron-down"></span>
+                </a>
+                <ul class="nav child_menu"></ul>
+            </li>
+            <li id="Facturacion" style="display:none;">
+                <a>
+                    <i class="fa fa-money"></i> Facturación
+                    <span class="fa fa-chevron-down"></span>
+                </a>
+                <ul class="nav child_menu"></ul>
+            </li>
+            <li id="Bodega" style="display:none;">
+                <a>
+                    <i class="fa fa-folder-open"></i> Bodega
+                    <span class="fa fa-chevron-down"></span>
+                </a>
+                <ul class="nav child_menu"></ul>
+            </li>
+            <li id="Sistema" style="display:none;">
+                <a> <i class="fa fa-cog"></i> Sistema
+                    <span class="fa fa-chevron-down"></span>
+                </a>
+                <ul class="nav child_menu"> <li>
+                    <a href="xxx">yyy</a>
+                </li> </ul>
+            </li>
+        `);
+        // menu segun permisos de usuario.
         $.each(eventos, function (i, item) {
-            $('#call_menu').append(`
+            $('#' + item.menupadre).css({'display':'block'});
+            $('#' + item.menupadre + ' ul.nav').css({'display':'block'});
+            $('#' + item.menupadre + ' ul.nav').append(`
                 <li>
                     <a href="${item.url}">${item.nombre}</a>
                 </li>
             `);
         });
+        
+        
+        
+        
+        
+
+
+
+        // $('#call_menu').html('');
+        // $('#call_menu').css({'display':'block'});
+        // $.each(eventos, function (i, item) {
+        //     $('#call_menu').append(`
+        //         <li>
+        //             <a href="${item.url}">${item.nombre}</a>
+        //         </li>
+        //     `);
+        // });
     },  
     End(){
         $.ajax({
