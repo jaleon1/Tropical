@@ -155,14 +155,15 @@ class Bodega {
         //style="display: none"
         $.each(data, function (i, item) {
             $('#tableBody-Bodega').append(`
-                <tr> 
+                <tr class='trbodega'> 
                     <td class="a-center ">
-                        <input type="checkbox" class="flat" name="table_records">
+                        <input id="chk-addbodega${item.id}" type="checkbox" class="flat" name="table_records">
                     </td>
                     <td class="itemId" >${item.id}</td>
                     <td>${item.nombre}</td>
                     <td>${item.descripcion}</td>
                     <td>${item.tipo}</td>
+
                     ${item.nombre!='Primaria'?
                         `<td class=" last">
                             <a id="update${item.id}" data-toggle="modal" data-target=".bs-bodega-modal-lg" > <i class="glyphicon glyphicon-edit" > </i> Editar | </a> 
@@ -179,10 +180,11 @@ class Bodega {
                 </tr>
             `);
             $('#update'+item.id).click(bodega.UpdateEventHandler);
-            $('#open'+item.id).click(bodega.OpenEventHandler);
-            //$('#additem'+item.id).click(bodega.OpenEventHandler);
-            //$('#senditem'+item.id).click(bodega.OpenEventHandler);
+            $('#open'+item.id).click(bodega.OpenEventHandler);            
             $('#delete'+item.id).click(bodega.DeleteEventHandler);
+            if (document.URL.indexOf("Distribucion.html")!=-1) {
+                $('.trbodega').dblclick(bodega.AddBodegaEventHandler);
+            }
         })
         //datatable         
         if ($.fn.dataTable.isDataTable('#dsBodega')) {
@@ -204,6 +206,18 @@ class Bodega {
                 paging: true,
                 search: true
             });
+    };
+
+    AddBodegaEventHandler(){
+        bodega.id=$(this).find('td:eq(1)').html();
+        bodega.nombre=$(this).find('td:eq(2)').html()
+        bodega.descripcion= $(this).find('td:eq(3)').html()
+        bodega.tipo= $(this).find('td:eq(4)').html()
+        //
+        $('#nombre').val(bodega.nombre);
+        $('#descripcion').val(bodega.descripcion);
+        $('#tipo').val(bodega.tipo);
+        $(".close").click();
     };
 
     OpenEventHandler() {

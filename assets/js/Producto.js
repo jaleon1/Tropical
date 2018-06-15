@@ -105,16 +105,16 @@ class Producto {
             return false;
         }
         $('#btnArticulo').attr("disabled", "disabled");
-        var miAccion = 'Create';
+        var miAccion = 'Add';
         // obj
-        producto.listaArticulo = [];
+        producto.lista = [];
         $('#tableBody-ArticuloBodega tr').each(function() {
             var objArticulo = new Object();
             objArticulo.idbodega= '22a80c9e-5639-11e8-8242-54ee75873a00'; //id unico bodega principal.
             objArticulo.idproducto= $(this).find('td:eq(0)').html();
             objArticulo.cantidad= $(this).find('td:eq(2) input').val();
             objArticulo.costo= $(this).find('td:eq(3) input').val();
-            producto.listaArticulo.push(objArticulo);
+            producto.lista.push(objArticulo);
         });
         $.ajax({
             type: "POST",
@@ -247,15 +247,22 @@ class Producto {
                         <a  class="update" data-toggle="modal" data-target=".bs-example-modal-lg" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | 
                         <a  class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>
                     </td>
+                    ${document.URL.indexOf("Producto.html")>=1 ?                                       
+                        `<td class=" last">
+                            <a  class="update" data-toggle="modal" data-target=".bs-example-modal-lg" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | 
+                            <a  class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>
+                        </td>`
+                    :   ``
+                                            }
                 </tr>
             `);
             // event Handler
             $('.update').click(producto.UpdateEventHandler);
             $('.delete').click(producto.DeleteEventHandler);
-            if (url.indexOf("ProductoTemporal.html")!=-1) {
+            if (document.URL.indexOf("ProductoTemporal.html")!=-1) {
                 $('#chk-addproducto'+item.id).change(productotemporal.AddProductoEventHandler);
             }
-            if (url.indexOf("Articulo.html")!=-1) {
+            if (document.URL.indexOf("Articulo.html")!=-1 || url.indexOf("Distribucion.html")!=-1) {
                 $('#chk-addproducto'+item.id).change(producto.AddArticuloEventHandler);
             }
         })        
@@ -332,7 +339,7 @@ class Producto {
         var nombre=$(this).parents("tr").find("td:eq(2)").html();
         var codigo=$(this).parents("tr").find("td:eq(3)").html();
         if ($(this).is(':checked')) {
-            if (producto.listaArticulo.indexOf(id)!=-1){
+            if (producto.lista.indexOf(id)!=-1){
                 $(this).attr("checked",false);
                 return false;
             }
@@ -341,8 +348,8 @@ class Producto {
             }
         }
         else{
-            posicion = producto.listaArticulo.indexOf(id);
-            producto.listaArticulo.splice(posicion,1);
+            posicion = producto.lista.indexOf(id);
+            producto.lista.splice(posicion,1);
             $('#row'+id).remove();
         }
     };

@@ -75,15 +75,9 @@
                     <!-- sidebar menu -->
                     <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
                         <div class="menu_section">
-                            <h3>General</h3>
-                            <ul class="nav side-menu">
-                                <li>
-                                    <a>
-                                        <i class="fa fa-home"></i> Home
-                                        <span class="fa fa-chevron-down"></span>
-                                    </a>
-                                    <ul class="nav child_menu" id="call_menu"></ul>
-                                </li>
+                            <h3>Menu</h3>
+                            <ul id="menubox" class="nav side-menu">
+                                
                             </ul>
                         </div>
                     </div>
@@ -120,7 +114,7 @@
 
                         <ul class="nav navbar-nav navbar-right">
                             <li class="">
-                                <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false" id='call_username' >
+                                <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false" id='call_username'>
                                 </a>
                                 <ul class="dropdown-menu dropdown-usermenu pull-right">
                                     <li>
@@ -150,9 +144,9 @@
                         <div class="title_right">
                             <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
                                 <div class="input-group">
-                                    
+
                                     <span class="input-group-btn">
-                                        
+
                                     </span>
                                 </div>
                             </div>
@@ -177,19 +171,19 @@
 
                                         </span>
                                         <div id="reportrange" class="pull-right">
-                                            <button id="btnAddInsumo" data-toggle="modal" data-target=".bs-example-modal-lg-insumo" type="button" class="btn btn-info btn-lg">+</button>    
+                                            <button id="btnAddInsumo" data-toggle="modal" data-target=".bs-example-modal-lg-insumo" type="button" class="btn btn-info btn-lg">+</button>
                                         </div>
                                         <div class="row">
                                             <div class="col-sm-12">
                                                 <table id="dsInsumoProducto" class="table table-striped jambo_table bulk_action" role="grid" aria-describedby="datatable_info">
                                                     <thead>
                                                         <tr role="row" class="headings">
-                                                            
+
                                                         </tr>
                                                     </thead>
 
                                                     <tbody id="tableBody-InsumoProducto">
-                                
+
                                                     </tbody>
 
                                                 </table>
@@ -207,7 +201,7 @@
                                 </div>
                                 <!--  /CONTENIDO DE LA PAGINA -->
 
-                                
+
                             </div>
                         </div>
                         <div class="col-md-6 col-sm-6 col-xs-12">
@@ -225,7 +219,7 @@
 
                                         </span>
                                         <div id="reportrange" class="pull-right">
-                                            <button id="btnAddProducto" data-toggle="modal" data-target=".bs-example-modal-lg-producto" type="button" class="btn btn-info btn-lg">+</button>    
+                                            <button id="btnAddProducto" data-toggle="modal" data-target=".bs-example-modal-lg-producto" type="button" class="btn btn-info btn-lg">+</button>
                                         </div>
                                         <div class="pull-right">
                                             <button id="btnAddUsuarioRecibe" data-toggle="modal" data-target=".bs-example-modal-lg-usuariorecibe" type="button" class="btn btn-info btn-lg">U</button>
@@ -246,7 +240,8 @@
                                                         <span class="required">*</span>
                                                     </label>
                                                     <div class="col-md-6 col-sm-6 col-xs-12">
-                                                        <input id="cantidad" class="form-control col-md-7 col-xs-12" name="cantidad" required="required"  type="number" data-validate-minmax="1,99999" placeholder="Cantidad a Producir">
+                                                        <input id="cantidad" class="form-control col-md-7 col-xs-12" name="cantidad" required="required" type="number" data-validate-minmax="1,99999"
+                                                            placeholder="Cantidad a Producir">
                                                     </div>
                                                 </div>
                                                 <div class="item form-group ">
@@ -272,11 +267,11 @@
                                 </div>
                                 <!--  /CONTENIDO DE LA PAGINA -->
 
-                                
+
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- MODAL -->
                     <div class="modal fade bs-example-modal-lg-insumo" tabindex="-1" role="dialog" aria-hidden="true">
                         <div class="modal-dialog modal-lg">
@@ -293,30 +288,39 @@
                                     <form class="form-horizontal form-label-left" id="frmProducto" novalidate>
 
                                         <span class="section">Insumos</span>
-                                            <div id="datatable_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
-                                                <div class="row">
-                                                    <div class="col-sm-12">
-                                                        <table id="dsInsumo" class="table table-striped jambo_table bulk_action" role="grid" aria-describedby="datatable_info">
-                                                            <thead>
-                                                                <tr role="row" class="headings">
-                                                                    <th><input type='checkbox' id='check-all' class='iCheck-helper'></th><th class='itemId'>ID</th><th>Nombre</th> <th>Codigo</th> <th>Bueno</th>  <th>Malo</th> <th>Costo</th> <th>Acción</th>
-                                                                </tr>
-                                                            </thead>
+                                        <div id="datatable_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <table id="dsInsumo" class="table table-striped jambo_table bulk_action" role="grid" aria-describedby="datatable_info">
+                                                        <thead>
+                                                            <tr role="row" class="headings">
+                                                                <th>
+                                                                    <input type='checkbox' id='check-all' class='iCheck-helper'>
+                                                                </th>
+                                                                <th class='itemId'>ID</th>
+                                                                <th>Nombre</th>
+                                                                <th>Codigo</th>
+                                                                <th>Bueno</th>
+                                                                <th>Malo</th>
+                                                                <th>Costo</th>
+                                                                <th>Acción</th>
+                                                            </tr>
+                                                        </thead>
 
-                                                            <tbody id="tableBody-Insumo">
-                                                                
-                                                            </tbody>
+                                                        <tbody id="tableBody-Insumo">
 
-                                                        </table>
-                                                    </div>
+                                                        </tbody>
+
+                                                    </table>
                                                 </div>
                                             </div>
+                                        </div>
                                         <div class="ln_solid"></div>
-                                        
+
                                         <div class="form-group">
                                             <div class="col-md-6 col-md-offset-3">
                                                 <!-- <button id="btnSalirModalInsumo" type="reset" class="btn btn-primary">Salir</button>-->
-                                                <button type="button" class="btn btn-default" data-dismiss="modal" id="btnSalirModalInsumo" >Close</button>
+                                                <button type="button" class="btn btn-default" data-dismiss="modal" id="btnSalirModalInsumo">Close</button>
                                             </div>
                                         </div>
 
@@ -344,24 +348,30 @@
                                     <form class="form-horizontal form-label-left" id="frmProducto" novalidate>
 
                                         <span class="section">Productos</span>
-                                            <div id="datatable_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
-                                                <div class="row">
-                                                    <div class="col-sm-12">
-                                                        <table id="dsProducto" class="table table-striped jambo_table bulk_action" role="grid" aria-describedby="datatable_info">
-                                                            <thead>
-                                                                <tr role="row" class="headings">
-                                                                    <th><input type='checkbox' id='check-all' class='iCheck-helper'></th><th class='itemId'>ID</th><th>Nombre</th> <th>Código</th> <th>Acción</th>
-                                                                </tr>
-                                                            </thead>
+                                        <div id="datatable_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <table id="dsProducto" class="table table-striped jambo_table bulk_action" role="grid" aria-describedby="datatable_info">
+                                                        <thead>
+                                                            <tr role="row" class="headings">
+                                                                <th>
+                                                                    <input type='checkbox' id='check-all' class='iCheck-helper'>
+                                                                </th>
+                                                                <th class='itemId'>ID</th>
+                                                                <th>Nombre</th>
+                                                                <th>Código</th>
+                                                                <th>Acción</th>
+                                                            </tr>
+                                                        </thead>
 
-                                                            <tbody id="tableBody-Producto">
-                                                                
-                                                            </tbody>
+                                                        <tbody id="tableBody-Producto">
 
-                                                        </table>
-                                                    </div>
+                                                        </tbody>
+
+                                                    </table>
                                                 </div>
                                             </div>
+                                        </div>
                                         <div class="ln_solid"></div>
                                     </form>
                                 </div>
@@ -429,16 +439,16 @@
         </div>
     </div>
 
-        <!-- Bootstrap -->
-        <script src="assets/bootstrap/js/bootstrap.min.js"></script>
-        <!-- FastClick -->
-        <script src="assets/js/fastclick/lib/fastclick.js"></script>
-        <!-- NProgress -->
-        <script src="assets/js/nprogress/nprogress.js"></script>
-        <!-- iCheck -->
-        <!-- <script src="assets/js/iCheck/icheck.min.js"></script> -->
-        <!-- Moment -->
-        <!-- <script src="assets/js/moment.min.js"></script>
+    <!-- Bootstrap -->
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <!-- FastClick -->
+    <script src="assets/js/fastclick/lib/fastclick.js"></script>
+    <!-- NProgress -->
+    <script src="assets/js/nprogress/nprogress.js"></script>
+    <!-- iCheck -->
+    <!-- <script src="assets/js/iCheck/icheck.min.js"></script> -->
+    <!-- Moment -->
+    <!-- <script src="assets/js/moment.min.js"></script>
         <script src="assets/js/moment-timezone.js"></script> -->
         <!-- bootstrap-datetimepicker -->
         <!-- <script src="assets/js/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js"></script> -->
@@ -473,18 +483,18 @@
         //     return;
         productotemporal.Init();
     });
-    
-    $(document).on('click', '#btnAddInsumo', function (event) {    
+
+    $(document).on('click', '#btnAddInsumo', function (event) {
         //alert("Prueba");
-        insumo.id=null;
+        insumo.id = null;
         insumo.Read;
-        insumo.Init();        
+        insumo.Init();
     });
-    $(document).on('click', '#btnAddProducto', function (event) {    
+    $(document).on('click', '#btnAddProducto', function (event) {
         //alert("Prueba");
-        producto.id=null;
+        producto.id = null;
         producto.Read;
-        producto.Init();        
+        producto.Init();
     });
     $(document).on('click', '#btnAddUsuarioRecibe', function (event) {    
         usuario.id = null;

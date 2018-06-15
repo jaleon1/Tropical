@@ -123,7 +123,6 @@ constructor(id, idproducto, producto, idusuario, idusuariorecibe, usuario, usuar
     }
 
     // Methods
-
     UpdateCantidadProducto(){
         productobodega.idproducto = $(this).parents("tr").find("td:eq(1)").html();
         productobodega.cantidad = $(this).parents("tr").find("td:eq(5)").html();
