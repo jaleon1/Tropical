@@ -20,6 +20,9 @@ if(isset($_POST["action"])){
         case "Create":
             $productosxbodega->Create();
             break;
+        case "Add":
+            $productosxbodega->Add();
+            break;
         case "Update":
             $productosxbodega->Update();
             break;
@@ -36,6 +39,7 @@ class ProductosXBodega{
     public $producto='';
     public $cantidad=0;
     public $costo=0;
+    public $lista=array();
 
     function __construct(){
         // identificador único
@@ -49,16 +53,20 @@ class ProductosXBodega{
             $this->idproducto= $obj["idproducto"] ?? null;
             $this->cantidad= $obj["cantidad"] ?? 0;      
             $this->costo= $obj["costo"] ?? 0;
-            // En caso de ser una lista de articulos para agregar
-            if(isset($obj["listaArticulo"] )){
-                foreach ($obj["listaArticulo"] as $articulo) {            
-                    $this->idbodega= $articulo['idbodega'];
-                    $this->idproducto= $articulo['idproducto'];
-                    $this->cantidad= $articulo['cantidad'];
-                    $this->costo= $articulo['costo'];
-                    $this->Create();
+            unset($_POST['obj']);
+            // En caso de ser una lista de articulos para agregar O lista de productos por distribuir.
+            if(isset($obj["lista"] )){
+                require_once("Producto.php");
+                foreach ($obj["lista"] as $item) {
+                    $prodTemp =  new Producto();
+                    $prodTemp->id= $item['id'];            
+                    $prodTemp->idbodega= $item['idbodega'];
+                    $prodTemp->idproducto= $item['idproducto'];
+                    $prodTemp->cantidad= $item['cantidad'];
+                    $prodTemp->costo= $item['costo'];
+                    array_push ($this->lista, $prodTemp);
                 }
-                die( );
+                unset($_POST['lista']);
             }
         }
     }
@@ -145,6 +153,32 @@ class ProductosXBodega{
         }
     }
 
+    function Add(){
+        try {
+            foreach ($this->lista as $producto) {
+                $sql="INSERT INTO productosxbodega (id, idbodega, idproducto, cantidad, costo) VALUES (uuid(),:idbodega, :idproducto, :cantidad, :costo);";
+                //
+                $param= array(':idbodega'=>$producto->idbodega, ':idproducto'=>$producto->idproducto, ':cantidad'=>$producto->cantidad, ':costo'=>$producto->costo);
+                $data = DATA::Ejecutar($sql,$param, false);
+                if($data){
+                    // Si tiene ID de producto es porque viene de la bodega principal y debe restar
+                    if($producto->id!=null)
+                        $this->RestarBodega($producto->id, $producto->cantidad );
+                }
+                else throw new Exception('Error al guardar.', 02);                
+            }   
+            //
+            return true;         
+        }     
+        catch(Exception $e) {
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }
+    }
+
     function Update(){
         try {
             $sql="UPDATE productosxbodega 
@@ -201,6 +235,26 @@ class ProductosXBodega{
                 return $sessiondata['status']=0; 
             else throw new Exception('Error al eliminar.', 978);
         }
+        catch(Exception $e) {
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }
+    }
+
+    function RestarBodega($idprob, $cantidad){
+        try {
+            $sql="UPDATE productosxbodega 
+                SET cantidad= cantidad - :cantidad
+                WHERE id= :id   ";
+            //
+            $param= array(':id'=>$idprob, ':cantidad'=> $cantidad);
+            $data = DATA::Ejecutar($sql,$param, false);
+            if(!$data)
+                throw new Exception('Error al guardar.', 02);
+        }     
         catch(Exception $e) {
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
