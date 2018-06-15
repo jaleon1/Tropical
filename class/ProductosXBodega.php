@@ -107,7 +107,10 @@ class ProductosXBodega{
             //
             $param= array(':idbodega'=>$this->idbodega, ':idproducto'=>$this->idproducto, ':cantidad'=>$this->cantidad,':idproductotemporal'=>$_POST["idproductotemporal"]);
             $data = DATA::Ejecutar($sql,$param, false);
-            if($data)
+            $sql2 = "UPDATE productotemporal SET estado=1 WHERE id=:idproductotemporal";
+            $param2=array(':idproductotemporal'=>$_POST["idproductotemporal"]);
+            $data2 = DATA::Ejecutar($sql2, $param2, false);
+            if($data && $data2)
             {
                 return true;
             }

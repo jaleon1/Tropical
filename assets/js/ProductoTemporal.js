@@ -1,11 +1,13 @@
 class ProductoTemporal {
     // Constructor
-constructor(id, idproducto, producto, idusuario, usuario,  cantidad, estado, i) {
+constructor(id, idproducto, producto, idusuario, idusuariorecibe, usuario, usuariorecibe,  cantidad, estado, i) {
         this.id = id || null;
         this.idproducto = idproducto || '';
         this.producto = producto || '';
         this.idusuario = idusuario || '';
+        this.idusuariorecibe = idusuariorecibe || '';
         this.usuario = usuario || '';
+        this.usuariorecibe = usuariorecibe || '';
         this.cantidad = cantidad || 0;
         this.estado = estado || 0;
         this.listainsumo = i || [];
@@ -45,6 +47,7 @@ constructor(id, idproducto, producto, idusuario, usuario,  cantidad, estado, i) 
         this.idproducto = productotemporal.idproducto;
         this.cantidad = $("#cantidad").val();
         this.estado = 0;
+        this.idusuariorecibe = productotemporal.idusuariorecibe;
         // lista de insumos
         productotemporal.listainsumo = [];
         $('#tableBody-InsumoProducto tr').each(function() {
@@ -184,8 +187,10 @@ constructor(id, idproducto, producto, idusuario, usuario,  cantidad, estado, i) 
                     <td class="itemId">${item.id}</td>
                     <td class="oculto">${item.idproducto}</td>
                     <td class="oculto">${item.idusuario}</td>
+                    <td class="oculto">${item.idusuariorecibe}</td>
                     <td>${item.producto}</td>
                     <td>${item.usuario}</td>
+                    <td>${item.usuariorecibe}</td>
                     <td>${item.cantidad}</td>
                     <td>${estado}</td>
                     <td class=" last">
@@ -258,8 +263,8 @@ constructor(id, idproducto, producto, idusuario, usuario,  cantidad, estado, i) 
         // carga objeto.
         var data = JSON.parse(e);
     
-        productotemporal = new ProductoTemporal(data.id, data.idproducto, data.producto, data.idusuario,
-        data.usuario, data.cantidad, data.estado, data.listainsumo);
+        productotemporal = new ProductoTemporal(data.id, data.idproducto, data.producto, data.idusuario, data.idusuariorecibe,
+        data.usuario, data.usuariorecibe, data.cantidad, data.estado, data.listainsumo);
 
         $.each(data.listainsumo, function (i, item) {
             $('#tableBody-InsumoProducto').append(`
@@ -293,6 +298,7 @@ constructor(id, idproducto, producto, idusuario, usuario,  cantidad, estado, i) 
         // Asigna objeto a controles
         $("#nombre").val(productotemporal.producto);
         $("#cantidad").val(productotemporal.cantidad);
+        $("#usuariorecibe").val(productotemporal.usuariorecibe);
     };
 
     DeleteEventHandler() {
@@ -315,6 +321,13 @@ constructor(id, idproducto, producto, idusuario, usuario,  cantidad, estado, i) 
             }
         })
     };
+
+    AddUserEventHandler(){
+        $("#usuariorecibe").val($(this).parents("tr").find("td:eq(2)").html());
+        productotemporal.idusuariorecibe = $(this).parents("tr").find("td:eq(1)").html();
+        $('#modal-usuariorecibe').modal('toggle');
+        $("#cantidad").focus();
+    }
 
     AddProductoEventHandler(){
         $("#nombre").val($(this).parents("tr").find("td:eq(2)").html());

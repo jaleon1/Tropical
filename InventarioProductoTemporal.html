@@ -181,7 +181,7 @@
                                                 <table id="dsProductoTemporal" class="table table-striped jambo_table bulk_action" role="grid" aria-describedby="datatable_info">
                                                     <thead>
                                                         <tr role="row" class="headings">
-                                                            <th class='itemId'>ID</th><th class='itemId'>ID USUARIO</th><th class='itemId'>ID PRODUCTO</th><th>Producto</th> <th>Usuario</th> <th>Cantidad</th>  <th>Estado</th> <th>Acción</th><th><input type='checkbox' id='check-all' class='iCheck-helper'>Terminar</th>
+                                                            <th class='itemId'>ID</th><th class='itemId'>ID USUARIO</th><th class='itemId'>ID USUARIO RECIBE</th><th class='itemId'>ID PRODUCTO</th><th>Producto</th> <th>Usuario Entrega</th> <th>Usuario Recibe</th> <th>Cantidad</th>  <th>Estado</th> <th>Acción</th><th><input type='checkbox' id='check-all' class='iCheck-helper'>Terminar</th>
                                                         </tr>
                                                     </thead>
 
@@ -295,6 +295,14 @@
                                                                                         </label>
                                                                                         <div class="col-md-6 col-sm-6 col-xs-12">
                                                                                             <input id="cantidad" class="form-control col-md-7 col-xs-12" name="cantidad" required="required" type="text" placeholder="Cantidad Producto">
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="item form-group ">
+                                                                                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="valor">Usuario Recibe
+                                                                                            <span class="required">*</span>
+                                                                                        </label>
+                                                                                        <div class="col-md-6 col-sm-6 col-xs-12">
+                                                                                            <input id="usuariorecibe" class="form-control col-md-7 col-xs-12" name="usuariorecibe" required="required" data-validate-minmax="1,99999" placeholder="Seleccione Usuario">
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
