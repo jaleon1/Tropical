@@ -83,6 +83,28 @@ class ProductosXBodega{
         }
     }
 
+
+    function ReadAllPrd_Bdg(){
+        try {
+            $sql='SELECT pb.id, idbodega, idproducto, nombre as producto, pb.cantidad, pb.costo, p.bgColor, p.txtColor
+                FROM     productosxbodega   pb INNER JOIN producto p on p.id=pb.idproducto
+                WHERE    idbodega= :idbodega
+                AND		 p.articulo = "0"
+                ORDER BY idbodega asc';
+            $param= array(':idbodega'=>$this->idbodega);
+            $data= DATA::Ejecutar($sql,$param);
+            return $data;
+        }     
+        catch(Exception $e) {
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar la lista'))
+            );
+        }
+    }
+
+
     function Read(){
         try {
             $sql='SELECT pb.id,pb.idbodega, pb.idproducto, pb.cantidad, pb.costo , p.nombre as producto

@@ -106,7 +106,7 @@ function LoadAllProducto() {
         type: "POST",
         url: "class/ProductosXBodega.php",
         data: {
-            action: "ReadAll",  
+            action: "ReadAllPrd_Bdg",  
             idbodega: "22a80c9e-5639-11e8-8242-54ee75873a00"
         }
     })
