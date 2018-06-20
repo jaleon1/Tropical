@@ -34,6 +34,9 @@ if(isset($_POST["action"])){
         case "Delete":
             echo json_encode($producto->Delete());
             break;   
+        case "ReadByCode":  
+            echo json_encode($producto->ReadByCode());
+            break;
     }
 }
 
@@ -59,7 +62,7 @@ class Producto{
 
     function ReadAll(){
         try {
-            $sql='SELECT id, nombre, codigo
+            $sql='SELECT id, nombre, codigo, descripcion, saldocosto, costopromedio, precioventa, esventa
                 FROM     producto       
                 ORDER BY nombre asc';
             $data= DATA::Ejecutar($sql);
@@ -76,7 +79,7 @@ class Producto{
   
     function ReadAllArticulo(){
         try {
-            $sql='SELECT id, nombre, codigo 
+            $sql='SELECT id, nombre, codigo, descripcion, saldocosto, costopromedio, precioventa, esventa
                 FROM     producto       
                 WHERE articulo=1
                 ORDER BY nombre asc';
@@ -94,7 +97,7 @@ class Producto{
 
     function Read(){
         try {
-            $sql='SELECT id, nombre, codigo, articulo
+            $sql='SELECT id, nombre, codigo, descripcion, saldocosto, costopromedio, precioventa, esventa
                 FROM producto  
                 where id=:id';
             $param= array(':id'=>$this->id);
@@ -230,6 +233,28 @@ class Producto{
             );
         }
     }
+
+    function ReadByCode(){
+        try{     
+            $sql="SELECT id, nombre, codigo, descripcion, saldocosto, costopromedio, precioventa, esventa
+                FROM producto 
+                WHERE codigo= :codigo";
+            $param= array(':codigo'=>$this->codigo);
+            $data= DATA::Ejecutar($sql,$param);
+            
+            if(count($data))
+                return $data;
+            else return false;
+        }
+        catch(Exception $e){
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }
+    }
+
 
 }
 

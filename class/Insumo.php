@@ -26,6 +26,9 @@ if(isset($_POST["action"])){
         case "Delete":
             $insumo->Delete();
             break;   
+        case "ReadByCode":  
+            echo json_encode($insumo->ReadByCode());
+            break;
     }
 }
 
@@ -168,6 +171,27 @@ class Insumo{
             else throw new Exception('Error al eliminar.', 978);
         }
         catch(Exception $e) {
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }
+    }
+
+    function ReadByCode(){
+        try{     
+            $sql="SELECT id, nombre, codigo, descripcion
+                FROM insumo
+                WHERE codigo= :codigo";
+            $param= array(':codigo'=>$this->codigo);
+            $data= DATA::Ejecutar($sql,$param);
+            
+            if(count($data))
+                return $data;
+            else return false;
+        }
+        catch(Exception $e){
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
