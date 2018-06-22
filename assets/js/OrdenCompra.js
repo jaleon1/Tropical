@@ -251,6 +251,7 @@ class OrdenCompra {
         $('td:eq(7) input.display', rowNode).attr({id: ("subtotal_d"+insumo.codigo)});   
         //t.order([0, 'desc']).draw();
         t.columns.adjust().draw();
+        ordencompra.CalcImporte(insumo.codigo);
         //calcTotal();
         //$('#open_modal_fac').attr("disabled", false);
     };
