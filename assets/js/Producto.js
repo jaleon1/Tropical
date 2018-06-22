@@ -1,19 +1,19 @@
 class Producto {
     // Constructor
-    constructor(id, codigo,nombre, txtcolor, bgcolor, nombreabreviado, descripcion, saldocantidad, 
-                saldocosto, costopromedio, precioventa, esventa) {
-        this.id = id || null;
+    constructor(id, codigo, nombre, txtcolor, bgcolor, nombreabreviado, descripcion, saldocantidad, saldocosto, costopromedio, precioventa, esventa, lista) {
+        this.id = id || null;        
         this.codigo = codigo || '';
         this.nombre = nombre || '';
         this.txtcolor = txtcolor || '';
         this.bgcolor = bgcolor || '';
         this.nombreabreviado = nombreabreviado || '';
         this.descripcion = descripcion || '';
-        this.saldocantidad = saldocantidad || '';
-        this.saldocosto = saldocosto || '';
-        this.costopromedio = costopromedio || '';
-        this.precioventa = precioventa || '';
-        this.esventa = esventa || 0; //1: es venta; 0: es esventa.
+        this.saldocantidad = saldocantidad || 0;
+        this.saldocosto = saldocosto || 0;
+        this.costopromedio = costopromedio || 0;
+        this.precioventa = precioventa || 0;
+        this.esventa = esventa || 0; //1: producto para vender, 0 articulo no vendible.
+        this.lista = lista || [];
     }
 
     //Getter
@@ -366,7 +366,7 @@ class Producto {
                     <input id="costo" class="form-control col-3" name="costo" type="text" placeholder="Costo del artículo" autofocus="" value="0">
                 </td>
                 <td class=" last">
-                    <a id ="delete_row${id}" onclick="productotemporal.DeleteInsumo(this)" > <i class="glyphicon glyphicon-trash" onclick="DeleteInsumo(this)"> </i> Eliminar </a>
+                    <a id ="delete_row${id}" onclick="productotemporal.Deleteproducto(this)" > <i class="glyphicon glyphicon-trash" onclick="Deleteproducto(this)"> </i> Eliminar </a>
                 </td>
             </tr>
         `);
@@ -404,6 +404,103 @@ class Producto {
                 validator.reset();
         } 
     };
+
+    ResetSearch() {
+        $("#p_searh").val('');
+    };
+
+    LoadProducto() {
+        if ($("#p_searh").val() != ""){
+            producto.codigo =  $("#p_searh").val();
+            //
+            $.ajax({
+                type: "POST",
+                url: "class/Producto.php",
+                data: {
+                    action: "ReadByCode",
+                    obj: JSON.stringify(producto)
+                }
+            })
+            .done(function (e) {
+                producto.ResetSearch();
+                producto.ValidateProductoFac(e);
+            })
+            .fail(function (e) {
+                producto.showError(e);
+            });
+        }
+    };
+
+    ValidateProductoFac(e){
+        //compara si el articulo ya existe
+        // carga lista con datos.
+        if(e != "false"){
+            producto = JSON.parse(e)[0];
+            producto.UltPrd = producto.codigo;
+            var repetido = false;
+
+            if(document.getElementById("productos").rows.length != 0 && producto != null){
+                $(document.getElementById("productos").rows).each(function(i,item){
+                    if(item.childNodes[0].innerText==producto.codigo){
+                        item.childNodes[3].childNodes["0"].attributes[3].value = producto.cantidad;
+                        var CantAct = parseInt(item.childNodes[3].firstElementChild.value);
+                        if (parseInt(producto.cantidad) > CantAct ){
+                            item.childNodes[3].firstElementChild.value = parseFloat(item.childNodes[3].firstElementChild.value) + 1;
+                        }
+                        // else{
+                        //     // alert("No hay mas de este producto");
+                        //     alertSwal(producto.cantidad)
+                        //     // $("#cant_"+ producto.UltPrd).val($("#cant_"+ producto.UltPrd)[0].attributes[3].value); 
+                        //     $("#cant_"+ producto.UltPrd).val(producto.cantidad);
+                        // }
+                        repetido=true;
+                        
+                    }     
+                });
+            }    
+            if (repetido==false){
+                // showDataProducto(e);
+                producto.AgregaProducto();
+                producto.ResetSearch();
+            }
+        }
+        else{
+            producto.ResetSearch();
+        }
+    };
+
+    AgregaProducto(){
+        //producto.UltPro = producto.codigo;
+        var rowNode = t   //t es la tabla de productos
+        .row.add( [producto.id, producto.codigo, producto.nombre, producto.descripcion, "0", "0", "0"])
+        .draw() //dibuja la tabla con el nuevo producto
+        .node();     
+        //
+        $('td:eq(3) input', rowNode).attr({id: ("cant_"+producto.codigo), max:  "9999999999", min: "1", step:"1", value:"1"}).change(function(){
+             producto.CalcImporte($(this).parents('tr').find('td:eq(0)').html());
+        }); 
+        //
+        $('td:eq(4) input.valor', rowNode).attr({id: ("precioventa_v"+producto.codigo), style: "display:none"});
+        $('td:eq(4) input.display', rowNode).attr({id: ("precioventa_d"+producto.codigo)});
+        $('td:eq(5) input.valor', rowNode).attr({id: ("subtotal_v"+producto.codigo), style: "display:none"});
+        $('td:eq(5) input.display', rowNode).attr({id: ("subtotal_d"+producto.codigo)});   
+        //t.order([0, 'desc']).draw();
+        t.columns.adjust().draw();
+        //calcTotal();
+        //$('#open_modal_fac').attr("disabled", false);
+    };
+
+    CalcImporte(prd){
+        //alert('calculando');
+        producto.UltPrd = prd;//validar
+        producto.cantidad =  $(`#cant_${prd}`).val();
+        producto.precioventa = $(`#precioventa_${prd}`).val();
+        producto.subtotal= producto.cantidad * producto.precioventa; // subtotal linea
+        //
+        $(`#subtotal_v${prd}`).val(producto.subtotal.toFixed(10));
+        $(`#subtotal_d${prd}`).val("$"+producto.subtotal.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+    };
+
 }
 
 //Class Instance
