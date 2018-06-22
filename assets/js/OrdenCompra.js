@@ -202,7 +202,7 @@ class OrdenCompra {
             }    
             if (repetido==false){
                 // showDataProducto(e);
-                ordencompra.AgregaPrd();
+                ordencompra.AgregaInsumo();
                 ordencompra.ResetSearch();
             }
         }
