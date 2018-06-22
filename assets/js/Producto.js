@@ -60,9 +60,17 @@ class Producto {
     get Save() {
         $('#btnProducto').attr("disabled", "disabled");
         var miAccion = this.id == null ? 'Create' : 'Update';
-        this.nombre = $("#nombre").val();
         this.codigo = $("#codigo").val();
-        this.articulo = $("#articulo")[0].checked;
+        this.nombre = $("#nombre").val();
+        this.txtcolor = $("#txtcolor").val();
+        this.bgcolor = $("#bgcolor").val();
+        this.nombreabreviado = $("#nombreabreviado").val();
+        this.descripcion =  $("#descripcion").val();
+        this.saldocantidad = $("#saldocantidad").val();
+        this.saldocosto = $("#saldocosto").val();
+        this.costopromedio = $("#costopromedio").val();
+        this.precioventa = $("#precioventa").val();
+        this.esventa = $("#esventa")[0].checked;
 
         $.ajax({
             type: "POST",
@@ -194,9 +202,17 @@ class Producto {
 
     ClearCtls() {
         $("#id").val('');
-        $("#nombre").val('');
         $("#codigo").val('');
-        $("#articulo")[0].checked=false;     
+        $("#nombre").val('');
+        $("#txtcolor").val('');
+        $("#bgcolor").val('');
+        $("#nombreabreviado").val('');
+        $("#descripcion").val('');
+        $("#saldocantidad").val('');
+        $("#saldocosto").val('');
+        $("#costopromedio").val('');
+        $("#precioventa").val('');
+        $("#esventa")[0].checked=false;     
     };
 
     ShowAll(e) {
@@ -206,7 +222,11 @@ class Producto {
         $('#tableBody-Producto').html("");
         // // Carga lista
         var data = JSON.parse(e);
-        //style="display: none"
+        
+        /*
+        <td>${item.txtcolor}</td>
+        <td>${item.bgcolor}</td>
+        */
         $.each(data, function (i, item) {
             $('#tableBody-Producto').append(`
                 <tr> 
@@ -214,15 +234,26 @@ class Producto {
                         <input id="chk-addproducto${item.id}" type="checkbox" class="flat" name="table_records">
                     </td>
                     <td class="itemId" >${item.id}</td>
-                    <td>${item.nombre}</td>
                     <td>${item.codigo}</td>
+                    <td>${item.nombre}</td>
+                    <td>${item.nombreabreviado}</td>
+                    <td>${item.descripcion}</td>
+                    <td>${item.saldocantidad}</td>
+                    <td>${item.saldocosto}</td>
+                    <td>${item.costopromedio}</td>
+                    <td>${item.precioventa}</td>
+                    <td>${item.esventa}</td>
+                    <td class=" last">
+                        <a  class="update" data-toggle="modal" data-target=".bs-example-modal-lg" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | 
+                        <a  class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>
+                    </td>
                     ${document.URL.indexOf("Producto.html")>=1 ?                                       
                         `<td class=" last">
                             <a  class="update" data-toggle="modal" data-target=".bs-example-modal-lg" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | 
                             <a  class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>
                         </td>`
                     :   ``
-                    }
+                                            }
                 </tr>
             `);
             // event Handler
@@ -256,19 +287,28 @@ class Producto {
         this.ClearCtls();
         // carga objeto.
         var data = JSON.parse(e)[0];
-        producto = new Producto(data.id, data.nombre, data.nombre, data.articulo);
-            // data.cantidad, data.costo);
+        producto = new Producto(data.id, data.codigo, data.nombre, data.txtcolor, data.bgcolor, data.nombreabreviado, 
+        data.descripcion, data.saldocantidad, data.costopromedio, data.precioventa , data.esventa);
         // Asigna objeto a controles
         $("#id").val(producto.id);
-        $("#nombre").val(producto.nombre);
         $("#codigo").val(producto.codigo);
+        $("#nombre").val(producto.nombre);
+        $("#txtcolor").val(producto.txtcolor);
+        $("#bgcolor").val(producto.bgcolor);
+        $("#nombreabreviado").val(producto.nombreabreviado);
+        $("#descripcion").val(producto.descripcion);
+        $("#saldocantidad").val(producto.saldocantidad);
+        $("#saldocosto").val(producto.saldocantidad);
+        $("#costopromedio").val(producto.costopromedio);
+        $("#precioventa").val(producto.precioventa);
+        $("#esventa").val(producto.esventa);
 
         // checkbox
-        if(producto.articulo==1){
-            $("#articulo")[0].checked=true;
+        if(producto.esventa==1){
+            $("#esventa")[0].checked=true;
         }
         else {
-            $("#articulo")[0].checked=false;
+            $("#esventa")[0].checked=false;
         }
     };
 

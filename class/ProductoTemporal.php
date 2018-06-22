@@ -34,7 +34,9 @@ class ProductoTemporal{
     public $id=null;
     public $idproducto='';
     public $idusuario='';
+    public $idusuariorecibe='';
     public $usuario='';
+    public $usuariorecibe='';
     public $producto='';
     public $cantidad=0;
     public $estado=0;
@@ -50,6 +52,7 @@ class ProductoTemporal{
             require_once("UUID.php");
             $this->id= $obj["id"] ?? UUID::v4();
             $this->idproducto= $obj["idproducto"] ?? '';
+            $this->idusuariorecibe= $obj["idusuariorecibe"] ?? '';
             $this->cantidad= $obj["cantidad"] ?? 0;            
             $this->estado= $obj["estado"] ?? 0;
             //Insumos del Producto
@@ -70,7 +73,9 @@ class ProductoTemporal{
 
     function ReadAll(){
         try {
-            $sql='SELECT id, idproducto, (select nombre from producto where id=idproducto) as producto, idusuario, (select nombre from usuario where id=idusuario) as usuario, cantidad, estado
+            $sql='SELECT id, idproducto, (select nombre from producto where id=idproducto) as producto, idusuario, 
+            (select nombre from usuario where id=idusuario) as usuario, 
+            idusuariorecibe, (select nombre from usuario where id=idusuariorecibe) as usuariorecibe,cantidad, estado
                 FROM     productotemporal       
                 ORDER BY idproducto asc';
             $data= DATA::Ejecutar($sql);
@@ -91,19 +96,22 @@ class ProductoTemporal{
             $insumosxproducto=null;
 
             $sql_productotemporal='SELECT id, idusuario, (SELECT nombre FROM usuario WHERE id=idusuario) AS usuario, idproducto, 
+            idusuariorecibe, (SELECT nombre FROM usuario WHERE id=idusuariorecibe) AS usuariorecibe,
             (SELECT nombre FROM producto WHERE id=idproducto) AS producto, cantidad, estado FROM productotemporal 
             WHERE id=:id';
             
-            $sql_insumosxproducto='SELECT id,idproductotemporal,idinsumo,(SELECT nombre FROM insumo WHERE id=idinsumo) AS nombre,cantidad FROM insumosxproducto WHERE idproductotemporal=:id';
+            $sql_insumosxproducto='SELECT id,idproductotemporal,idinsumo,(SELECT nombre FROM insumo WHERE id=idinsumo) AS nombre,cantidad,costo FROM insumosxproducto WHERE idproductotemporal=:id';
 
             $param= array(':id'=>$this->id);
             $productotemporal = DATA::Ejecutar($sql_productotemporal,$param);
             $insumosxproducto = DATA::Ejecutar($sql_insumosxproducto,$param);
 
             $this->id = $productotemporal[0]['id'];
-            $this->idusuario = $productotemporal[0]['idusuario'];
             $this->idproducto = $productotemporal[0]['idproducto'];
+            $this->idusuario = $productotemporal[0]['idusuario'];
+            $this->idusuariorecibe = $productotemporal[0]['idusuariorecibe'];
             $this->usuario = $productotemporal[0]['usuario'];
+            $this->usuariorecibe = $productotemporal[0]['usuariorecibe'];
             $this->producto = $productotemporal[0]['producto'];
             $this->cantidad = $productotemporal[0]['cantidad'];
             $this->estado = $productotemporal[0]['estado'];
@@ -133,10 +141,11 @@ class ProductoTemporal{
 
     function Create(){
         try {
-            $sql="INSERT INTO productotemporal   (id, idproducto, idusuario, cantidad, estado, fecha) 
-                VALUES (:uuid, :idproducto, :idusuario, :cantidad, :estado, now())";
+            $sql="INSERT INTO productotemporal   (id, idproducto, idusuario, idusuariorecibe, cantidad, estado, fecha) 
+                VALUES (:uuid, :idproducto, :idusuario, :idusuariorecibe, :cantidad, :estado, now())";
             //
-            $param= array(':uuid'=>$this->id, ':idproducto'=>$this->idproducto, ':idusuario'=>$_SESSION['usersession']->id, ':cantidad'=>$this->cantidad, ':estado'=>$this->estado);
+            $param= array(':uuid'=>$this->id, ':idproducto'=>$this->idproducto, ':idusuario'=>$_SESSION['usersession']->id, 
+            ':idusuariorecibe'=>$this->idusuariorecibe, ':cantidad'=>$this->cantidad, ':estado'=>$this->estado);
             $data = DATA::Ejecutar($sql,$param, false);
 
             //Actualizar la cantidad de la tabla de insumos
@@ -166,9 +175,10 @@ class ProductoTemporal{
     function Update(){
         try {
             $sql="UPDATE productotemporal 
-                SET idproducto=:idproducto, idusuario=:idusuario, cantidad=:cantidad, estado=:estado
+                SET idproducto=:idproducto, idusuario=:idusuario, , idusuariorecibe=:idusuariorecibe, cantidad=:cantidad, estado=:estado
                 WHERE id=:id";
-            $param= array(':id'=>$this->id, ':idproducto'=>$this->idproducto, ':idusuario'=>$this->idusuario, ':cantidad'=>$this->cantidad, ':estado'=>$this->estado);
+            $param= array(':id'=>$this->id, ':idproducto'=>$this->idproducto, ':idusuario'=>$this->idusuario, ':idusuariorecibe'=>$this->idusuariorecibe,
+            ':cantidad'=>$this->cantidad, ':estado'=>$this->estado);
             $data = DATA::Ejecutar($sql,$param,false);
             if($data){
                 //update array obj

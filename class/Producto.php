@@ -45,9 +45,17 @@ if(isset($_POST["action"])){
 
 class Producto{
     public $id=null;
-    public $nombre='';
     public $codigo='';
-    public $articulo=0;
+    public $nombre='';
+    public $txtcolor='';
+    public $bgcolor='';
+    public $nombreabreviado='';
+    public $descripcion='';
+    public $saldocantidad='';
+    public $saldocosto='';
+    public $costopromedio='';
+    public $precioventa='';
+    public $esventa=0;
 
     function __construct(){
         // identificador único
@@ -57,17 +65,25 @@ class Producto{
         if(isset($_POST["obj"])){
             $obj= json_decode($_POST["obj"],true);
             $this->id= $obj["id"] ?? null;
-            $this->nombre= $obj["nombre"] ?? '';
             $this->codigo= $obj["codigo"] ?? '';
-            $this->articulo= $obj["articulo"] ?? 0;
+            $this->nombre= $obj["nombre"] ?? '';
+            $this->txtcolor= $obj["txtcolor"] ?? '';
+            $this->bgcolor= $obj["bgcolor"] ?? '';
+            $this->nombreabreviado= $obj["nombreabreviado"] ?? '';
+            $this->descripcion= $obj["descripcion"] ?? '';
+            $this->saldocantidad= $obj["saldocantidad"] ?? '';
+            $this->saldocosto= $obj["saldocosto"] ?? '';
+            $this->costopromedio= $obj["costopromedio"] ?? '';
+            $this->precioventa= $obj["precioventa"] ?? '';
+            $this->esventa= $obj["esventa"] ?? 0;
         }
     }
 
     function ReadAll(){
         try {
-            $sql='SELECT id, nombre, codigo, descripcion, saldocosto, costopromedio, precioventa, esventa
+            $sql='SELECT id, codigo, nombre, txtcolor, bgcolor, nombreabreviado, descripcion, saldocantidad, saldocosto, costopromedio, precioventa, esventa
                 FROM     producto       
-                ORDER BY nombre asc';
+                ORDER BY codigo asc';
             $data= DATA::Ejecutar($sql);
             return $data;
         }     
@@ -82,10 +98,10 @@ class Producto{
   
     function ReadAllArticulo(){
         try {
-            $sql='SELECT id, nombre, codigo, descripcion, saldocosto, costopromedio, precioventa, esventa
+            $sql='SELECT id, codigo, nombre, txtcolor, bgcolor, nombreabreviado, descripcion, saldocantidad, saldocosto, costopromedio, precioventa, esventa
                 FROM     producto       
-                WHERE articulo=1
-                ORDER BY nombre asc';
+                WHERE esventa=1
+                ORDER BY codigo asc';
             $data= DATA::Ejecutar($sql);
             return $data;
         }     
@@ -100,7 +116,7 @@ class Producto{
 
     function Read(){
         try {
-            $sql='SELECT id, nombre, codigo, descripcion, saldocosto, costopromedio, precioventa, esventa
+            $sql='SELECT id, codigo, nombre, txtcolor, bgcolor, nombreabreviado, descripcion, saldocantidad, saldocosto, costopromedio, precioventa,esventa
                 FROM producto  
                 where id=:id';
             $param= array(':id'=>$this->id);
@@ -154,9 +170,23 @@ class Producto{
 
     function Create(){
         try {
-            $sql="INSERT INTO producto   (id, nombre, codigo, articulo ) VALUES (uuid(),:nombre, :codigo, :articulo );";
+            // $this->txtcolor = "010203";
+            // $this->bgcolor = "040506";
+            $sql="INSERT INTO tropical.producto   (id, nombre, codigo, txtcolor, bgcolor, nombreabreviado, descripcion, saldocantidad, saldocosto, costopromedio, precioventa, esventa) 
+            VALUES (uuid(), :nombre, :codigo ,:txtcolor, :bgcolor, :nombreabreviado, :descripcion, :saldocantidad, :saldocosto, :costopromedio ,:precioventa, :esventa);";
             //
-            $param= array(':nombre'=>$this->nombre, ':codigo'=>$this->codigo, ':articulo'=>$this->articulo);
+            $param= array(':nombre'=>$this->nombre, 
+            ':codigo'=>$this->codigo,
+            ':txtcolor'=>$this->txtcolor,
+            ':bgcolor'=>$this->bgcolor,
+            ':nombreabreviado'=>$this->nombreabreviado,
+            ':descripcion'=>$this->descripcion,
+            ':saldocantidad'=>$this->saldocantidad,
+            ':saldocosto'=>$this->saldocosto,
+            ':costopromedio'=>$this->costopromedio,
+            ':precioventa'=>$this->precioventa, 
+            ':esventa'=>$this->esventa);
+
             $data = DATA::Ejecutar($sql,$param, false);
             if($data)
             {
@@ -178,9 +208,9 @@ class Producto{
     function Update(){
         try {
             $sql="UPDATE producto 
-                SET nombre=:nombre, codigo=:codigo
+                SET codigo=:codigo, nombre=:nombre, txtcolor=:txtcolor, bgcolor=:bgcolor, nombreabreviado=:nombreabreviado, descripcion=:descripcion, saldocantidad=:saldocantidad, saldocosto=:saldocosto, costopromedio=:costopromedio, precioventa=:precioventa, esventa=:esventa
                 WHERE id=:id";
-            $param= array(':id'=>$this->id, ':nombre'=>$this->nombre, ':codigo'=>$this->codigo);
+            $param= array(':id'=>$this->id, ':codigo'=>$this->codigo, ':nombre'=>$this->nombre, ':txtcolor'=>$this->txtcolor,':bgcolor'=>$this->bgcolor,':nombreabreviado'=>$this->nombreabreviado,':descripcion'=>$this->descripcion,':saldocantidad'=>$this->saldocantidad,':saldocosto'=>$this->saldocosto,':costopromedio'=>$this->costopromedio,':precioventa'=>$this->precioventa, ':esventa'=>$this->esventa);
             $data = DATA::Ejecutar($sql,$param,false);
             if($data)
                 return true;

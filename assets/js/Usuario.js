@@ -165,7 +165,7 @@ class Usuario {
             $('#tableBody-Usuario').append(`
                 <tr>
                     <td class="a-center ">
-                        <input type="checkbox" class="flat" name="table_records">
+                        <input id="chckadduser${item.id}" type="checkbox" class="flat" name="table_records">
                     </td>
                     <td class="itemId" >${item.id}</td>
                     <td>${item.nombre}</td>
@@ -181,6 +181,8 @@ class Usuario {
             // event Handler
             $('#update' + item.id).click(usuario.UpdateEventHandler);
             $('#delete' + item.id).click(usuario.DeleteEventHandler);
+            $('#chckadduser'+item.id).change(productotemporal.AddUserEventHandler);
+        
         })
         //datatable         
         if ($.fn.dataTable.isDataTable('#dsUsuario')) {
