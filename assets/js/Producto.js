@@ -1,12 +1,18 @@
 class Producto {
     // Constructor
-    constructor(id, nombre, codigo, articulo, cantidad, costo, lista) {
-        this.id = id || null;
-        this.nombre = nombre || '';
+    constructor(id, codigo, nombre, txtcolor, bgcolor, nombreabreviado, descripcion, saldocantidad, saldocosto, costopromedio, precioventa, esventa, lista) {
+        this.id = id || null;        
         this.codigo = codigo || '';
-        this.articulo = articulo || 0; //1: articulo; 0: producto.
-        this.cantidad = cantidad || 0;
-        this.costo = costo || 0;
+        this.nombre = nombre || '';
+        this.txtcolor = txtcolor || '';
+        this.bgcolor = bgcolor || '';
+        this.nombreabreviado = nombreabreviado || '';
+        this.descripcion = descripcion || '';
+        this.saldocantidad = saldocantidad || 0;
+        this.saldocosto = saldocosto || 0;
+        this.costopromedio = costopromedio || 0;
+        this.precioventa = precioventa || 0;
+        this.esventa = esventa || 0; //1: producto para vender, 0 articulo no vendible.
         this.lista = lista || [];
     }
 
