@@ -1,12 +1,13 @@
 class Insumo {
     // Constructor
-    constructor(id, nombre, codigo, bueno, danado, costo) {
+    constructor(id, codigo,nombre, descripcion, saldocantidad, saldocosto, costopromedio) {
         this.id = id || null;
-        this.nombre = nombre || '';
         this.codigo = codigo || '';
-        this.bueno = bueno || 0;
-        this.danado = danado || 0;
-        this.costo = costo || 0;
+        this.nombre = nombre || '';
+        this.descripcion = descripcion || '';
+        this.saldocantidad = saldocantidad || 0;
+        this.saldocosto = saldocosto || 0;
+        this.costopromedio = costopromedio || 0;
     }
 
     //Getter
@@ -33,11 +34,12 @@ class Insumo {
     get Save() {
         $('#btnInsumo').attr("disabled", "disabled");
         var miAccion = this.id == null ? 'Create' : 'Update';
-        this.nombre = $("#nombre").val();
         this.codigo = $("#codigo").val();
-        this.bueno = $("#bueno").val();
-        this.danado = $("#danado").val();
-        this.costo = $("#costo").val();
+        this.nombre = $("#nombre").val();
+        this.descripcion = $("#descripcion").val();
+        this.saldocantidad = $("#saldocantidad").val();
+        this.saldocosto = $("#saldocosto").val();
+        this.costopromedio = $("#costopromedio").val();
         $.ajax({
             type: "POST",
             url: "class/Insumo.php",
@@ -120,11 +122,12 @@ class Insumo {
 
     ClearCtls() {
         $("#id").val('');
-        $("#nombre").val('');
         $("#codigo").val('');
-        $("#bueno").val('');
-        $("#danado").val('');
-        $("#costo").val('');
+        $("#nombre").val('');
+        $("#descripcion").val('');
+        $("#saldocantidad").val('');
+        $("#saldocosto").val('');
+        $("#costopromedio").val('');
     };
 
     ShowAll(e) {
@@ -142,11 +145,12 @@ class Insumo {
                         <input id="chk-addinsumo${item.id}" type="checkbox" class="flat" name="table_records">
                     </td>
                     <td class="itemId">${item.id}</td>
-                    <td>${item.nombre}</td>
                     <td>${item.codigo}</td>
-                    <td>${item.bueno}</td>
-                    <td>${item.danado}</td>
-                    <td>${item.costo}</td>
+                    <td>${item.nombre}</td>
+                    <td>${item.descripcion}</td>
+                    <td>${item.saldocantidad}</td>
+                    <td>${parseFloat(item.saldocosto).toFixed(2)}</td>
+                    <td>${parseFloat(item.costopromedio).toFixed(2)}</td>
                     <td class=" last">
                         <a  id="update" class="update" data-toggle="modal" data-target=".bs-example-modal-lg" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | 
                         <a  id="delete" class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>
@@ -156,8 +160,8 @@ class Insumo {
             // event Handler
             $(".update").click(insumo.UpdateEventHandler);
             $(".delete").click(insumo.DeleteEventHandler);
-            if (url.indexOf("ProductoTemporal.html")!=-1) {
-                $('#chk-addinsumo'+item.id).change(productotemporal.AddInsumoEventHandler);
+            if (url.indexOf("OrdenSalida.html")!=-1) {
+                $('#chk-addinsumo'+item.id).change(ordensalida.AddInsumoEventHandler);
             }
         })        
         //datatable         
@@ -194,15 +198,16 @@ class Insumo {
         this.ClearCtls();
         // carga objeto.
         var data = JSON.parse(e)[0];
-        insumo = new Insumo(data.id, data.nombre, data.codigo,
-            data.bueno, data.danado, data.costo);
+        insumo = new Insumo(data.id, data.codigo, data.nombre, data.descripcion,
+            data.saldocantidad, data.saldocosto, data.costopromedio);
         // Asigna objeto a controles
         $("#id").val(insumo.id);
-        $("#nombre").val(insumo.nombre);
         $("#codigo").val(insumo.codigo);
-        $("#bueno").val(insumo.bueno);
-        $("#danado").val(insumo.danado);
-        $("#costo").val(insumo.costo);
+        $("#nombre").val(insumo.nombre);
+        $("#descripcion").val(insumo.descripcion);
+        $("#saldocantidad").val(insumo.saldocantidad);
+        $("#saldocosto").val(parseFloat(insumo.saldocosto).toFixed(2));
+        $("#costopromedio").val(parseFloat(insumo.costopromedio).toFixed(2));
     };
 
     DeleteEventHandler() {

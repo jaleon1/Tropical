@@ -230,23 +230,19 @@ class Producto {
         $.each(data, function (i, item) {
             $('#tableBody-Producto').append(`
                 <tr> 
-                    <td class="a-center ">
-                        <input id="chk-addproducto${item.id}" type="checkbox" class="flat" name="table_records">
+                    <td>
+                        <input class="flat" type="checkbox" id="chk-addproducto${item.id}">
                     </td>
-                    <td class="itemId" >${item.id}</td>
+                    <td class="itemId">${item.id}</td>
                     <td>${item.codigo}</td>
                     <td>${item.nombre}</td>
                     <td>${item.nombreabreviado}</td>
                     <td>${item.descripcion}</td>
                     <td>${item.saldocantidad}</td>
-                    <td>${item.saldocosto}</td>
-                    <td>${item.costopromedio}</td>
-                    <td>${item.precioventa}</td>
+                    <td>${parseFloat(item.saldocosto).toFixed(2)}</td>
+                    <td>${parseFloat(item.costopromedio).toFixed(2)}</td>
+                    <td>${parseFloat(item.precioventa).toFixed(2)}</td>
                     <td>${item.esventa}</td>
-                    <td class=" last">
-                        <a  class="update" data-toggle="modal" data-target=".bs-example-modal-lg" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | 
-                        <a  class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>
-                    </td>
                     ${document.URL.indexOf("Producto.html")>=1 ?                                       
                         `<td class=" last">
                             <a  class="update" data-toggle="modal" data-target=".bs-example-modal-lg" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | 
@@ -256,6 +252,10 @@ class Producto {
                                             }
                 </tr>
             `);
+            // <td class=" last">
+            // <a  class="update" data-toggle="modal" data-target=".bs-example-modal-lg" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | 
+            // <a  class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>
+            // </td>
             // event Handler
             $('.update').click(producto.UpdateEventHandler);
             $('.delete').click(producto.DeleteEventHandler);
@@ -298,9 +298,9 @@ class Producto {
         $("#nombreabreviado").val(producto.nombreabreviado);
         $("#descripcion").val(producto.descripcion);
         $("#saldocantidad").val(producto.saldocantidad);
-        $("#saldocosto").val(producto.saldocantidad);
-        $("#costopromedio").val(producto.costopromedio);
-        $("#precioventa").val(producto.precioventa);
+        $("#saldocosto").val(parseFloat(producto.saldocantidad).toFixed(2));
+        $("#costopromedio").val(parseFloat(producto.costopromedio).toFixed(2));
+        $("#precioventa").val(parseFloat(producto.precioventa).toFixed(2));
         $("#esventa").val(producto.esventa);
 
         // checkbox
