@@ -1,10 +1,13 @@
 class Distribucion {
     // Constructor
-    constructor(id, orden, fecha, idusuario, lista) {
+    constructor(id, orden, fecha, idusuario, idbodega, porcentajedescuento, porcentajeiva, lista) {
         this.id = id || null;        
         this.orden = orden || '';
         this.fecha = fecha || '';
-        this.idusuario = idusuario || '';
+        this.idusuario = idusuario || null;
+        this.idbodega = idbodega || null;
+        this.porcentajedescuento = porcentajedescuento || 0;
+        this.porcentajeiva = porcentajeiva || 0;
         this.lista = lista || [];
     }
 
@@ -20,38 +23,37 @@ class Distribucion {
             return;
         }
         //
-        $('#btnOrdenCompra').attr("disabled", "disabled");
-        var miAccion = this.id == null ? 'Create' : 'Update';        
-        this.orden = $("#orden").val();
-        this.idproveedor = $("#proveedor").val();
+        $('#btnDistribucion').attr("disabled", "disabled");
+        var miAccion = distr.id == null ? 'Create' : 'Update';        
+        distr.orden = $("#orden").val();
+        distr.idbodega = bodega.id;
+        distr.porcentajedescuento = $("#desc_100").val();
+        distr.porcentajeiva=$("#iv_100").val();
         //
-        ordencompra.lista = [];
+        distr.lista = [];
         $('#productos tr').each(function(i, item) {
             var objlista = new Object();
-            objlista.idinsumo= $('#dsitems').dataTable().fnGetData(item)[0]; // id del item.
-            objlista.costounitario= $(this).find('td:eq(2) input').val();
-            objlista.cantidadbueno= $(this).find('td:eq(3) input').val();
-            objlista.cantidadmalo= $(this).find('td:eq(4) input').val();
-            objlista.valorbueno= $(this).find('td:eq(5) input.valor').val();
-            objlista.valormalo= $(this).find('td:eq(6) input.valor').val();
-            ordencompra.lista.push(objlista);
+            objlista.idproducto= $('#dsitems').dataTable().fnGetData(item)[0]; // id del item.
+            objlista.cantidad= $(this).find('td:eq(3) input').val();
+            objlista.valor= $(this).find('td:eq(4) input').val(); // valor: precio de venta para facturacion bodega externa. 
+            distr.lista.push(objlista);
         });
         $.ajax({
             type: "POST",
-            url: "class/OrdenCompra.php",
+            url: "class/Distribucion.php",
             data: {
                 action: miAccion,
                 obj: JSON.stringify(this)
             }
         })
-            .done(ordencompra.showInfo)
+            .done(distr.showInfo)
             .fail(function (e) {
-                ordencompra.showError(e);
+                distr.showError(e);
             })
             .always(function () {
-                setTimeout('$("#btnOrdenCompra").removeAttr("disabled")', 1000);
-                ordencompra = new OrdenCompra();
-                ordencompra.CleanCtls();
+                setTimeout('$("#btnDistribucion").removeAttr("disabled")', 1000);
+                distr = new Distribucion();
+                distr.CleanCtls();
                 $("#p_searh").focus();
             });
     };

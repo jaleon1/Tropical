@@ -325,6 +325,23 @@ class Producto{
         }
     }
 
+    public static function UpdateSaldoPromedioSalida($id, $ncantidad){
+        try {
+            $sql="CALL spUpdateSaldosPromedioProductoSalida(:mid, :ncantidad);";
+            $param= array(':mid'=>$id, ':ncantidad'=>$ncantidad);
+            $data = DATA::Ejecutar($sql,$param,false);
+            if($data)
+                return true;
+            else throw new Exception('Error al calcular SALDOS Y PROMEDIOS, debe realizar el cálculo manualmente.', 666);
+        }     
+        catch(Exception $e) {
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }
+    }   
 
 }
 
