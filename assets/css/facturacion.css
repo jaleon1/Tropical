@@ -9,3 +9,15 @@
     padding: 0px;
     height: 1.5em;
 }
+
+.display[readonly]{
+    background: transparent;
+    border: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+    cursor: default;
+}

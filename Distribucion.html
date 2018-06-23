@@ -28,8 +28,6 @@
     <link href="assets/css/iCheck/skins/flat/green.css" rel="stylesheet">
     <!-- Custom Theme Style -->
     <link href="assets/css/custom.min.css" rel="stylesheet">
-    <!-- Custom Table Scroll -->
-    <link href="assets/css/facturacion.css" rel="stylesheet">
     <!-- Custom TablePRD -->
     <link href="assets/css/datatables.net-bs/css/dataTables.bootstrap.min.css" rel="stylesheet">
     <!-- SweetAlert -->
@@ -134,7 +132,7 @@
 
                     <div class="page-title">
                         <div class="title_left">
-                            <h3>Orden de Compra</h3>
+                            <h3>Distribucion de Productos</h3>
                         </div>
                         <div class="title_right">
                             <h3 id="fecha" style="float:right"></h3>
@@ -149,7 +147,7 @@
                                 <div class="title_right">
                                     <div class="col-md-6 col-sm-6 col-xs-6 form-group top_search">
                                         <div class="input-group">
-                                            <input type="text" class="form-control col-md-12 col-xs-12" id="orden" placeholder="Número de Orden">
+                                            <input type="text" class="form-control col-md-12 col-xs-12" id="orden" readonly placeholder="Número de Orden">
                                         </div>
                                     </div>
                                     <div class="col-md-12 col-sm-12 col-xs-12 form-group pull-right top_search">
@@ -302,12 +300,12 @@
                                                         </tr>
                                                         <tr class="odd pointer">
                                                             <td class="">Descuento</td>
-                                                            <td class="" id="desc_100">0%</td>
-                                                            <td class="" id="desc_val">¢0</td>
+                                                            <td class="" id="desc_100" value="0">%</td>
+                                                            <td class="" id="desc_val" >¢0</td>
                                                         </tr>
                                                         <tr class="even pointer">
                                                             <td class="">Impuesto de Ventas</td>
-                                                            <td class="text-left" id="iv_100">13% </td>
+                                                            <td class="text-left" id="iv_100" value='13'>% </td>
                                                             <td class="" id="iv_val">¢0</td>
                                                         </tr>
                                                         <tr class="odd pointer">
@@ -330,12 +328,12 @@
                     <div class="clearfix"></div>
 
                     <div class="ln_solid"></div>
-                    <div class="form-group">
+                    <!-- <div class="form-group">
                         <div class="col-md-6 col-md-offset-3">
                             <button type="submit" class="btn btn-primary" id="reload">Limpiar</button>
                             <button type="button" class="btn btn-success" id="btnproducto">Submit</button>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
             </div>
             <!-- /page content -->
@@ -352,41 +350,48 @@
     </div>
 
     <!-- modals -->
-    <!-- Large modal -->
-    <!-- <div class="modal fade factura-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
+    <div id="modal-bodega" class="modal fade bs-bodega-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-lg">
-            <div class="modal-content modal-factura">
+            <div class="modal-content">
+
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">
                         <span aria-hidden="true">×</span>
                     </button>
-                    <h4 class="modal-title" id="myModalLabel">Facturar</h4>
+                    <h4 class="modal-title" id="myModalLabel">Seleccionar Bodega</h4>
                 </div>
+
                 <div class="modal-body">
-                    <div class="row">
-                        <div>
-                            <center>
-                                <h1 id="total_pagar"></h1>
-                            </center>
+                    <form class="form-horizontal form-label-left" id="frmBodegaSeleccionar" novalidate>
 
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div id="formapago">
+                        <div id="datatable_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <table id="dsBodega" class="table table-striped jambo_table bulk_action" role="grid" aria-describedby="datatable_info">
+                                        <!-- <thead>
+                                            <tr role="row" class="headings">
+                                            </tr>
+                                        </thead> -->
 
+                                        <tbody id="tableBody-Bodega">
+
+                                        </tbody>
+
+                                    </table>
+                                </div>
+                            </div>
                         </div>
-                    </div>
+                        <div class="ln_solid"></div>
+                    </form>
                 </div>
+
                 <div class="modal-footer">
-                    <div id="btn-formapago">
-
-                    </div>
                 </div>
+
             </div>
         </div>
-    </div> -->
-    <!-- modals -->
-    <!-- Large modal -->
+    </div>
+    <!-- /modal -->
 
     <!-- jQuery -->
     <script src="assets/js/jquery.min.js"></script>
@@ -408,7 +413,7 @@
     <script src="assets/js/Producto.js"></script>
     <script src="assets/js/Bodega.js"></script>
     <script src="assets/js/Distribucion.js"></script>
-    
+
     <!--CAMBIAR por Facuracli-->
     <!-- JS dataTables -->
     <script src="assets/js/jquery.dataTables.min.js"></script>
@@ -424,9 +429,10 @@
 
 <script>
     $(document).ready(function () {
-        //producto.Init();
-        $('#btnproducto').click(function () {
-            distr.Save;
+        $(document).on('click', '#btnAddBodega', function (event) {
+            bodega.id = null;
+            bodega.Read;
+            //bodega.Init();
         });
         //Valida si se presiona enter -> carga el producto en la lista
         //si preciona "*" -> Quita el "*", pasa el punto de insercion a la cantidad y selecciona el valor para ser reemplazdo con el teclado
@@ -442,7 +448,6 @@
             }
         });
 
-        
         $('#reload').click(function () {
             location.reload();
         });
@@ -494,5 +499,14 @@
             ]
         });
         t.columns.adjust().draw();
+
+        var validator = new FormValidator({ "events": ['blur', 'input', 'change'] }, document.forms["frmBodega"]);
+        $('#frmBodega').submit(function (e) {
+            e.preventDefault();
+            var validatorResult = validator.checkAll(this);
+            if (validatorResult.valid)
+                distr.Save;
+            return false;
+        });
     });
 </script>

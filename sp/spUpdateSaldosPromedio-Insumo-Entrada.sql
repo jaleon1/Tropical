@@ -3,7 +3,7 @@ use tropical;
 -- drop procedure spUpdateSaldosPromedioInsumo;
 -- drop procedure spUpdateSaldosPromedioArticulo;
 DELIMITER //
-CREATE PROCEDURE spUpdateSaldosPromedioInsumo(
+CREATE PROCEDURE spUpdateSaldosPromedioInsumoEntrada(
 	IN mid char(36),
 	IN ncantidad DECIMAL(10,0),
     IN ncosto DECIMAL(15,10)
@@ -27,10 +27,10 @@ BEGIN
 		SET saldocantidad=msaldocantidad, saldocosto=msaldocosto, costopromedio = mcostopromedio
 		WHERE id= mid;  
 	ELSE 
-		CALL spUpdateSaldosPromedioArticulo(mid, ncantidad, ncosto);
+		CALL spUpdateSaldosPromedioArticuloEntrada(mid, ncantidad, ncosto);
 	END IF;
 END; //
-CREATE PROCEDURE spUpdateSaldosPromedioArticulo(
+CREATE PROCEDURE spUpdateSaldosPromedioArticuloEntrada(
 	IN mid char(36),
 	IN ncantidad DECIMAL(10,0),
     IN ncosto DECIMAL(15,10)
