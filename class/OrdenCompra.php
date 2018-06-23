@@ -4,40 +4,38 @@ if(isset($_POST["action"])){
     unset($_POST['action']);
     // Classes
     require_once("Conexion.php");
+    require_once("Usuario.php");
     // Session
     if (!isset($_SESSION))
         session_start();
     // Instance
-    $insumo= new Insumo();
+    $ordencompra= new OrdenCompra();
     switch($opt){
         case "ReadAll":
-            echo json_encode($insumo->ReadAll());
+            echo json_encode($ordencompra->ReadAll());
             break;
         case "Read":
-            echo json_encode($insumo->Read());
+            echo json_encode($ordencompra->Read());
             break;
         case "Create":
-            $insumo->Create();
+            $ordencompra->Create();
             break;
         case "Update":
-            $insumo->Update();
+            $ordencompra->Update();
             break;
         case "Delete":
-            $insumo->Delete();
+            $ordencompra->Delete();
             break;   
-        case "ReadByCode":  
-            echo json_encode($insumo->ReadByCode());
-            break;
     }
 }
 
-class Insumo{
+class OrdenCompra{
     public $id=null;
-    public $nombre='';
-    public $codigo='';
-    public $bueno=0;
-    public $danado=0;
-    public $costo=0;
+    public $fecha='';
+    public $idproveedor=null;
+    public $orden='';
+    public $idusuario=null;
+    public $lista= [];
 
     function __construct(){
         // identificador único
@@ -46,20 +44,36 @@ class Insumo{
         }
         if(isset($_POST["obj"])){
             $obj= json_decode($_POST["obj"],true);
-            $this->id= $obj["id"] ?? null;
-            $this->nombre= $obj["nombre"] ?? '';
-            $this->codigo= $obj["codigo"] ?? '';
-            $this->bueno= $obj["bueno"] ?? 0;            
-            $this->danado= $obj["danado"] ?? 0;
-            $this->costo= $obj["costo"] ?? 0;
+            require_once("UUID.php");
+            $this->id= $obj["id"] ?? UUID::v4();
+            //$this->fecha= $obj["fecha"] ?? '';
+            $this->idproveedor= $obj["idproveedor"] ?? null;
+            $this->orden= $obj["orden"] ?? '';            
+            //$this->idusuario= $obj["idusuario"] ?? null;
+            // lista.
+            if(isset($obj["lista"] )){
+                require_once("InsumosXOrdenCompra.php");
+                //
+                foreach ($obj["lista"] as $itemlist) {
+                    $item= new InsumosXOrdenCompra();
+                    $item->idordencompra= $this->id;
+                    $item->idinsumo= $itemlist['idinsumo'];
+                    $item->costounitario= $itemlist['costounitario'];
+                    $item->cantidadbueno= $itemlist['cantidadbueno'];
+                    $item->cantidadmalo= $itemlist['cantidadmalo'];
+                    $item->valorbueno= $itemlist['valorbueno'];
+                    $item->valormalo= $itemlist['valormalo'];
+                    array_push ($this->lista, $item);
+                }
+            }
         }
     }
 
     function ReadAll(){
         try {
-            $sql='SELECT id, nombre, codigo, bueno, danado, costo
-                FROM     insumo       
-                ORDER BY nombre asc';
+            $sql='SELECT id, fecha, idproveedor, orden, idusuario
+                FROM     ordencompra       
+                ORDER BY fecha asc';
             $data= DATA::Ejecutar($sql);
             return $data;
         }     
@@ -74,8 +88,8 @@ class Insumo{
 
     function Read(){
         try {
-            $sql='SELECT id, nombre, codigo, bueno, danado, costo
-                FROM insumo  
+            $sql='SELECT id, fecha, idproveedor, orden, idusuario
+                FROM ordencompra  
                 where id=:id';
             $param= array(':id'=>$this->id);
             $data= DATA::Ejecutar($sql,$param);
@@ -85,22 +99,25 @@ class Insumo{
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
-                'msg' => 'Error al cargar el insumo'))
+                'msg' => 'Error al cargar el ordencompra'))
             );
         }
     }
 
     function Create(){
         try {
-            $sql="INSERT INTO insumo   (id, nombre, codigo, bueno, danado, costo) VALUES (uuid(),:nombre, :codigo, :bueno, :danado, :costo);";
+            $sql="INSERT INTO ordencompra   (id, idproveedor, orden, idusuario) VALUES (:id, :idproveedor, :orden, :idusuario);";
             //
-            $param= array(':nombre'=>$this->nombre, ':codigo'=>$this->codigo, ':bueno'=>$this->bueno, ':danado'=>$this->danado, ':costo'=>$this->costo);
+            //require_once('Evento.php');
+            
+            $param= array(':id'=>$this->id ,':idproveedor'=>$this->idproveedor, ':orden'=>$this->orden, ':idusuario'=>$_SESSION['usersession']->id);
             $data = DATA::Ejecutar($sql,$param,false);
             if($data)
             {
-                //get id.
                 //save array obj
-                return true;
+                if(InsumosXOrdenCompra::Create($this->lista))
+                    return true;
+                else throw new Exception('Error al guardar los roles.', 03);
             }
             else throw new Exception('Error al guardar.', 02);
         }     
@@ -115,10 +132,10 @@ class Insumo{
 
     function Update(){
         try {
-            $sql="UPDATE insumo 
-                SET nombre=:nombre, codigo=:codigo, bueno=:bueno, danado=:danado, costo=:costo
+            $sql="UPDATE ordencompra 
+                SET fecha=:fecha, idproveedor=:idproveedor, orden=:orden, idusuario=:idusuario
                 WHERE id=:id";
-            $param= array(':id'=>$this->id, ':nombre'=>$this->nombre, ':codigo'=>$this->codigo, ':bueno'=>$this->bueno, ':danado'=>$this->danado, ':costo'=>$this->costo);
+            $param= array(':id'=>$this->id, ':fecha'=>$this->fecha, ':idproveedor'=>$this->idproveedor, ':orden'=>$this->orden, ':idusuario'=>$this->idusuario);
             $data = DATA::Ejecutar($sql,$param,false);
             if($data)
                 return true;
@@ -161,7 +178,7 @@ class Insumo{
             //     $sessiondata['msg']='Registro en uso'; 
             //     return $sessiondata;           
             // }                    
-            $sql='DELETE FROM insumo  
+            $sql='DELETE FROM ordencompra  
             WHERE id= :id';
             $param= array(':id'=>$this->id);
             $data= DATA::Ejecutar($sql, $param, false);
@@ -179,11 +196,11 @@ class Insumo{
     }
 
     function ReadByCode(){
-        try{
-            $sql="SELECT id, nombre, codigo, descripcion
-                FROM insumo
-                WHERE codigo= :codigo";
-            $param= array(':codigo'=>$this->codigo);
+        try{     
+            $sql="SELECT id, fecha, idproveedor, descripcion
+                FROM ordencompra
+                WHERE idproveedor= :idproveedor";
+            $param= array(':idproveedor'=>$this->idproveedor);
             $data= DATA::Ejecutar($sql,$param);
             
             if(count($data))
@@ -198,26 +215,6 @@ class Insumo{
             );
         }
     }
-
-    public static function UpdateSaldoPromedio($id, $ncantidad, $ncosto){
-        try {
-
-            $sql="CALL spUpdateSaldosPromedioInsumo(:mid, :ncantidad, :ncosto);";
-            $param= array(':mid'=>$id, ':ncantidad'=>$ncantidad, ':ncosto'=>$ncosto);
-            $data = DATA::Ejecutar($sql,$param,false);
-            if($data)
-                return true;
-            else throw new Exception('Error al calcular SALDOS Y PROMEDIOS, debe realizar el cálculo manualmente.', 666);
-        }     
-        catch(Exception $e) {
-            header('HTTP/1.0 400 Bad error');
-            die(json_encode(array(
-                'code' => $e->getCode() ,
-                'msg' => $e->getMessage()))
-            );
-        }
-    }   
-
 
 }
 

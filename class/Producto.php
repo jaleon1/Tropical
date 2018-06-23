@@ -22,6 +22,9 @@ if(isset($_POST["action"])){
         case "ReadArticulo":
             echo json_encode($producto->ReadArticulo());
             break;
+        case "ReadArticuloByCode":
+            echo json_encode($producto->ReadArticuloByCode());
+            break;
         case "Create":
             $producto->Create();
             break;
@@ -34,6 +37,9 @@ if(isset($_POST["action"])){
         case "Delete":
             echo json_encode($producto->Delete());
             break;   
+        case "ReadByCode":  
+            echo json_encode($producto->ReadByCode());
+            break;
     }
 }
 
@@ -114,6 +120,42 @@ class Producto{
                 FROM producto  
                 where id=:id';
             $param= array(':id'=>$this->id);
+            $data= DATA::Ejecutar($sql,$param);
+            return $data;
+        }     
+        catch(Exception $e) {
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar el producto'))
+            );
+        }
+    }
+
+    function ReadArticulo(){
+        try {
+            $sql='SELECT id, nombre, codigo, descripcion, saldocosto, costopromedio, precioventa, esventa
+                FROM producto  
+                where id=:id and esventa=0';
+            $param= array(':id'=>$this->id);
+            $data= DATA::Ejecutar($sql,$param);
+            return $data;
+        }     
+        catch(Exception $e) {
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar el producto'))
+            );
+        }
+    }
+
+    function ReadArticuloByCode(){
+        try {
+            $sql='SELECT id, nombre, codigo, descripcion, saldocosto, costopromedio, precioventa, esventa
+                FROM producto  
+                where codigo=:codigo and esventa=0';
+            $param= array(':codigo'=>$this->codigo);
             $data= DATA::Ejecutar($sql,$param);
             return $data;
         }     
@@ -260,6 +302,29 @@ class Producto{
             );
         }
     }
+
+    function ReadByCode(){
+        try{     
+            $sql="SELECT id, nombre, codigo, descripcion, saldocosto, costopromedio, precioventa, esventa
+                FROM producto 
+                WHERE codigo= :codigo";
+            $param= array(':codigo'=>$this->codigo);
+
+            $data= DATA::Ejecutar($sql,$param);
+            
+            if(count($data))
+                return $data;
+            else return false;
+        }
+        catch(Exception $e){
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }
+    }
+
 
 }
 
