@@ -16,8 +16,8 @@ if(isset($_POST["action"])){
         case "Read":
             echo json_encode($producto->Read());
             break;
-        case "ReadAllArticulo":
-            echo json_encode($producto->ReadAllArticulo());
+        case "ReadAllPrdVenta":
+            echo json_encode($producto->ReadAllPrdVenta());
             break;
         case "ReadArticulo":
             echo json_encode($producto->ReadArticulo());
@@ -90,7 +90,7 @@ class Producto{
         }
     }
   
-    function ReadAllArticulo(){
+    function ReadAllPrdVenta(){
         try {
             $sql='SELECT id, codigo, nombre, txtcolor, bgcolor, nombreabreviado, descripcion, saldocantidad, saldocosto, costopromedio, precioventa, esventa
                 FROM     producto       
