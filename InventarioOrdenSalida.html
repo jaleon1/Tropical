@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- check User session -->
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/Session.js"></script>
+    <script>
+        Session.Check();
+    </script>
+    <!-- /End check -->
+
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Meta, title, CSS, favicons, etc. -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Tropical | Inventario</title>
+
+    <!-- Bootstrap -->
+    <link href="assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="assets/css/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <!-- NProgress -->
+    <link href="assets/css/nprogress/nprogress.css" rel="stylesheet">
+    <!-- bootstrap-datetimepicker -->
+    <link href="assets/css/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css" rel="stylesheet">
+    <!-- iCheck -->
+    <link href="assets/css/iCheck/skins/flat/green.css" rel="stylesheet">
+    <!-- SweetAlert -->
+    <link rel="stylesheet" href="assets/css/sweetalert2.min.css">
+
+    <!-- Datatables -->
+    <link href="../vendors/datatables.net-bs/css/dataTables.bootstrap.min.css" rel="stylesheet">
+    <link href="../vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css" rel="stylesheet">
+    <link href="../vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css" rel="stylesheet">
+    <link href="../vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css" rel="stylesheet">
+    <link href="../vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom Theme Style -->
+    <link href="assets/css/custom.css" rel="stylesheet">
+
+
+</head>
+
+<body class="nav-md">
+    <div class="container body">
+        <div class="main_container">
+            <div class="col-md-3 left_col">
+                <div class="left_col scroll-view">
+                    <div class="navbar nav_title" style="border: 0;">
+                        <a href="index.html" class="site_title">
+                            <i class="glyphicon glyphicon-share-alt"></i>
+                            <span>Tropical</span>
+                        </a>
+                    </div>
+
+                    <div class="clearfix"></div>
+
+                    <!-- menu profile quick info -->
+                    <div class="profile clearfix">
+                        <div class="profile_pic">
+                            
+                        </div>
+                        <div class="profile_info">
+                            <span>Bienvenido,</span>
+                            <h2 id='call_name'></h2>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <!-- /menu profile quick info -->
+
+                    <br />
+
+                    <!-- sidebar menu -->
+                    <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+                        <div class="menu_section">
+                            <h3>Menu</h3>
+                            <ul id="menubox" class="nav side-menu">
+                               
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- /sidebar menu -->
+
+                    <!-- /menu footer buttons -->
+                    <div class="sidebar-footer hidden-small">
+                        <a data-toggle="tooltip" data-placement="top" title="Settings">
+                            <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+                        </a>
+                        <a data-toggle="tooltip" data-placement="top" title="FullScreen">
+                            <span class="glyphicon glyphicon-fullscreen" aria-hidden="true"></span>
+                        </a>
+                        <a data-toggle="tooltip" data-placement="top" title="Lock">
+                            <span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
+                        </a>
+                        <a data-toggle="tooltip" data-placement="top" title="Logout" onclick="Session.End();">
+                            <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
+                        </a>
+                    </div>
+                    <!-- /menu footer buttons -->
+                </div>
+            </div>
+
+            <!-- top navigation -->
+            <div class="top_nav">
+                <div class="nav_menu">
+                    <nav>
+                        <div class="nav toggle">
+                            <a id="menu_toggle">
+                                <i class="fa fa-bars"></i>
+                            </a>
+                        </div>
+
+                        <ul class="nav navbar-nav navbar-right">
+                            <li class="">
+                                <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false" id='call_username'>
+                                </a>
+                                <ul class="dropdown-menu dropdown-usermenu pull-right">
+                                    <li>
+                                        <a href="javascript:;"> Profile</a>
+                                    </li>
+                                    <li>
+                                        <a onclick="Session.End();">
+                                            <i class="fa fa-sign-out pull-right"></i> Log Out</a>
+                                    </li>
+                                </ul>
+                            </li>
+
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+            <!-- /top navigation -->
+
+            <!-- page content -->
+            <div class="right_col" role="main">
+                <div class="">
+                    <div class="page-title">
+                        <div class="title_left">
+                            <h3>ORDEN DE SALIDA</h3>
+                        </div>
+
+                        <div class="title_right">
+                            <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
+                                <div class="input-group">
+                                    <!-- <input type="text" class="form-control" placeholder="Search for...">
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button">Go!</button>
+                                    </span> -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="clearfix"></div>
+
+                    <div class="row">
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+                            <div class="x_panel">
+                                <div class="x_title">
+                                    <h2>Inventario Orden de Salida</h2>
+                                    
+                                    <div class="clearfix"></div>
+                                </div>
+
+                                <!--  CONTENIDO DE LA PAGINA -->
+                                <div class="x_content">
+                                    <!-- TABLE -->
+                                    <div id="datatable_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <table id="dsOrdenSalida" class="table table-striped jambo_table bulk_action" role="grid" aria-describedby="datatable_info">
+                                                    <thead>
+                                                        <tr role="row" class="headings">
+                                                            <th class='itemId'>ID</th><th class='oculto'>ID USUARIO ENTREGA</th><th class='oculto'>ID USUARIO RECIBE</th>
+                                                            <th>Fecha</th> <th>Usuario Entrega</th> <th>Usuario Recibe</th> <th>Fecha Liquidación</th>  <th>Estado</th> <th>Acción</th>
+                                                            <th><input type='checkbox' id='check-all' class='iCheck-helper'>Terminar</th>
+                                                        </tr>
+                                                    </thead>
+
+                                                    <tbody id="tableBody-OrdenSalida">
+
+                                                    </tbody>
+
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- /TABLE -->
+
+                                    <!-- MODAL -->
+                                    <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
+                                        <div class="modal-dialog modal-lg">
+                                            <div class="modal-content">
+
+                                                <div class="modal-header">
+                                                    <button type="button" class="close" data-dismiss="modal">
+                                                        <span aria-hidden="true">×</span>
+                                                    </button>
+                                                    <h4 class="modal-title" id="myModalLabel">Editar Orden de Salida</h4>
+                                                </div>
+
+                                                <div class="modal-body">
+                                                    <form class="form-horizontal form-label-left" id="frmInventarioProductoTemporal" novalidate>
+
+                                                        <span class="section">Datos Generales</span>
+                
+                                                        <div class="row">
+                                                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                                                <div class="x_panel">
+                                                                    <div class="x_title">
+                                                                        <h2>Materia Prima</h2>
+                                    
+                                                                        <div class="clearfix"></div>
+                                                                    </div>
+                                                                    <!--  CONTENIDO DE LA PAGINA -->
+                                    
+                                                                    <div class="x_content">
+                                                                        <form class="form-horizontal form-label-left" id="frmInsumoTemporal" method="POST" novalidate>
+                                                                            <span class="section">Selección de Insumos
+                                    
+                                                                            </span>
+                                                                            <div class="row">
+                                                                                <div class="col-sm-11">
+                                                                                    <table id="dsOrdenSalidaModal" class="table table-striped jambo_table bulk_action" role="grid" aria-describedby="datatable_info">
+                                                                                        <thead>
+                                                                                            <tr role="row" class="headings">
+                                                                                                    <th class='itemId'>ID</th>
+                                                                                                    <th class='oculto'>Usuario Entrega</th>
+                                                                                                    <th class='oculto'>Usuario Recibe</th>
+                                                                                                    <th class='oculto'>Fecha</th>
+                                                                                                    <th>Nombre</th>
+                                                                                                    <th>Cantidad</th>
+                                                                                                    <th class='oculto'>Descripción</th>
+                                                                                                    <th class='oculto'>Saldo Cantidad</th>
+                                                                                                    <th class='oculto'>Saldo Costo</th>
+                                                                                                    <th class='oculto'>Costo Promedio</th>
+                                                                                                    <th>Acción</th>
+                                                                                            </tr>
+                                                                                        </thead>
+                                    
+                                                                                        <tbody id="tableBody-OrdenSalidaModal">
+                                    
+                                                                                        </tbody>
+                                    
+                                                                                    </table>
+                                                                                </div>
+                                                                                <div class="col-sm-1">
+                                                                                    <button id="btnAddInsumo" data-toggle="modal" data-target=".bs-example-modal-lg-insumo" type="button" class="btn btn-info btn-lg">+</button>
+                                                                                </div>
+                                                                            </div>
+                                    
+                                                                            <div class="ln_solid"></div>
+                                    
+                                                                            <div class="form-group">
+                                                                                <div class="col-md-6 col-md-offset-3">
+                                                                                </div>
+                                                                            </div>
+                                                                        </form>
+                                                                    </div>
+                                                                    <!--  /CONTENIDO DE LA PAGINA -->
+                                    
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                                                <div class="x_panel">
+                                                                    <div class="x_title">
+                                                                        <h2>Datos Generales</h2>
+                                    
+                                                                        <div class="clearfix"></div>
+                                                                    </div>
+                                                                    <!--  CONTENIDO DE LA PAGINA -->
+                                    
+                                                                    <div class="x_content">
+                                                                        <form class="form-horizontal form-label-left" id="frmOrdenSalida" method="POST" novalidate>
+                                                                            <span class="section">Inserte los datos Generales
+                                    
+                                                                            </span>
+                                                                            
+                                                                            <div class="row">
+                                                                                <div class="col-sm-11">
+                                                                                    <div class="item form-group ">
+                                                                                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="valor">Número de Orden
+                                                                                
+                                                                                        </label>
+                                                                                        <div class="col-md-6 col-sm-6 col-xs-12">
+                                                                                            <input id="numeroorden" class="form-control col-md-7 col-xs-12" name="numeroorden" data-validate-minmax="1,99999" placeholder="Nueva" readonly="readonly">
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-sm-1">
+                                                                                    
+                                                                                </div>
+                                                                            </div>
+                                                                            
+                                                                            <div class="row">
+                                                                                <div class="col-sm-11">
+                                                                                    <div class="item form-group ">
+                                                                                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="valor">Fecha
+                                                                                            
+                                                                                        </label>
+                                                                                        <div class="col-md-6 col-sm-6 col-xs-12">
+                                                                                            <div class="input-group date" id="myDatepicker1">
+                                                                                                <input id="dt_fecha" type="text" class="form-control"  readonly>
+                                                                                                <span class="input-group-addon">
+                                                                                                   <span class="glyphicon glyphicon-calendar"></span>
+                                                                                                </span>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-sm-1">
+                                    
+                                                                                </div>
+                                                                            </div>
+                                    
+                                                                            <div class="row">
+                                                                                <div class="col-sm-11">
+                                                                                    <div class="item form-group ">
+                                                                                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="valor">Fecha Liquidación
+                                                                                            
+                                                                                        </label>
+                                                                                        <div class="col-md-6 col-sm-6 col-xs-12">
+                                                                                            <div class="input-group date" id="myDatepicker2">
+                                                                                                <input id="dt_fechaliquida" type="text" class="form-control">
+                                                                                                <span class="input-group-addon">
+                                                                                                    <span class="glyphicon glyphicon-calendar"></span>
+                                                                                                </span>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-sm-1">
+                                    
+                                                                                </div>
+                                                                            </div>
+                                    
+                                                                            <div class="row">
+                                                                                <div class="col-sm-11">
+                                                                                    <div class="item form-group ">
+                                                                                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="valor">Usuario Recibe
+                                                                                            <span class="required">*</span>
+                                                                                        </label>
+                                                                                        <div class="col-md-6 col-sm-6 col-xs-12">
+                                                                                            <input id="usuariorecibe" class="form-control col-md-7 col-xs-12" name="usuariorecibe" required="required" data-validate-minmax="1,99999" placeholder="Seleccione Usuario" readonly>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-sm-1">
+                                                                                    <button id="btnAddUsuarioRecibe" data-toggle="modal" data-target=".bs-example-modal-lg-usuariorecibe" type="button" class="btn btn-info btn-lg">+</button>
+                                                                                </div>
+                                                                            </div>
+                                    
+                                                                            <div class="row">
+                                                                                <div class="col-sm-11">
+                                                                                        <div class="item form-group">
+                                                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="estado">Estado</label>
+                                                                                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                                                                                <select class="form-control" id="estado">
+                                                                                                    <option>EN PROCESO</option>
+                                                                                                    <option>LIQUIDADO</option>
+                                                                                                  </select>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                </div>
+                                                                                <div class="col-sm-1">                                                    
+                                                                                </div>
+                                                                            </div>
+                                    
+                                                                            <div class="ln_solid"></div>
+                                    
+                                                                            <div class="form-group">
+                                                                                <div class="col-md-6 col-md-offset-3">
+                                                                                    <button type="reset" class="btn btn-primary">Borrar</button>
+                                                                                    <button id="btnOrdenSalida" type="submit" class="btn btn-success">Guardar</button>
+                                                                                </div>
+                                                                            </div>
+                                                                        </form>
+                                                                    </div>
+                                                                    <!--  /CONTENIDO DE LA PAGINA -->
+                                    
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="ln_solid"></div>
+                                                        <div class="form-group">
+                                                            <div class="col-md-6 col-md-offset-3">
+                                                                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+
+                                                <div class="modal-footer">
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- /modal -->
+                                </div>
+                                <!--  /CONTENIDO DE LA PAGINA -->
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /page content -->
+
+            <!-- footer content -->
+            <footer>
+                <div class="pull-right">
+                    Tropical SNO
+                    <a href="http://faccr.com">Tropical Sno</a>
+                </div>
+                <div class="clearfix"></div>
+            </footer>
+            <!-- /footer content -->
+        </div>
+    </div>
+
+    <!-- Bootstrap -->
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <!-- FastClick -->
+    <script src="assets/js/fastclick/lib/fastclick.js"></script>
+    <!-- NProgress -->
+    <script src="assets/js/nprogress/nprogress.js"></script>
+    <!-- iCheck -->
+    <!-- <script src="assets/js/iCheck/icheck.min.js"></script> -->
+    <!-- Moment -->
+    <script src="assets/js/moment.min.js"></script>
+    <script src="assets/js/moment-timezone.js"></script>
+    <!-- bootstrap-datetimepicker -->
+    <script src="assets/js/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js"></script>
+    <!-- Validator -->
+    <script src="assets/js/validator.js"></script>
+    <!-- Input mask -->
+    <script src="assets/js/jquery.inputmask/jquery.inputmask.bundle.min.js"></script>
+    <!-- JS Scripts -->
+    <script src="assets/js/OrdenSalida.js"></script>
+    <script src="assets/js/ProductosxBodega.js"></script>
+    <script src="assets/js/Producto.js"></script>
+    <script src="assets/js/Insumo.js"></script>
+    <!-- Sweet Alert -->
+    <script src="assets/js/sweetalert2.min.js"></script>
+    <!-- Datatables -->
+    <script src="../vendors/datatables.net/js/jquery.dataTables.min.js"></script>
+    <!-- Custom Theme Scripts -->
+    <script src="assets/js/custom.min.js"></script>
+    <!-- FastClick -->
+    <script src="../vendors/fastclick/lib/fastclick.js"></script>
+    <!-- NProgress -->
+    <script src="../vendors/nprogress/nprogress.js"></script>
+    <!-- iCheck -->
+    <script src="../vendors/iCheck/icheck.min.js"></script>
+    <!-- Custom Theme Scripts -->
+    <script src="../build/js/custom.min.js"></script>
+
+</body>
+
+</html>
+
+<script>
+    $(document).ready(function () {
+        ordensalida.id=null;
+        ordensalida.Read;
+        ordensalida.Init();
+    });
+</script>

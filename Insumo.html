@@ -186,6 +186,16 @@
                                         <span class="section">Datos Generales</span>
 
                                         <div class="item form-group">
+                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="codigo">Codigo
+                                                <span class="required">*</span>
+                                            </label>
+                                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                                <input id="codigo" class="form-control col-md-7 col-xs-12" name="codigo" required="required" type="text" placeholder="Codigo del Insumo"
+                                                    autofocus>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="item form-group">
                                             <label class="control-label col-md-3 col-sm-3 col-xs-12" for="nombre">Nombre
                                                 <span class="required">*</span>
                                             </label>
@@ -196,33 +206,43 @@
                                         </div>
 
                                         <div class="item form-group">
-                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="codigo">Codigo
+                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="descripcion">Descripción
                                                 <span class="required">*</span>
                                             </label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <input id="codigo" class="form-control col-md-7 col-xs-12" name="codigo" required="required" type="text" placeholder="Codigo del Insumo"
-                                                    >
+
+                                                <input id="descripcion" class="form-control col-md-7 col-xs-12" name="descripcion" required="required" type="text" placeholder="Descripción"
+                                                    autofocus>
                                             </div>
                                         </div>
 
-                                        <div class="item form-group ">
-                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="valor">Cantidad Bueno</label>
+                                        <div class="item form-group">
+                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="saldocantidad">Saldo Cantidad
+                                                <span class="required">*</span>
+                                            </label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <input id="bueno" class="form-control col-md-7 col-xs-12" name="malo" type="number" placeholder="Cantidad Insumo Bueno">
+                                                <input id="saldocantidad" class="form-control col-md-7 col-xs-12" name="saldocantidad" required="required" type="text" placeholder="Saldo Cantidad"
+                                                value ="0" autofocus>
                                             </div>
                                         </div>
 
-                                        <div class="item form-group ">
-                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="valor">Cantidad Dañado</label>
+                                        <div class="item form-group">
+                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="saldocosto">Saldo Costo
+                                                <span class="required">*</span>
+                                            </label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <input id="danado" class="form-control col-md-7 col-xs-12" name="danado" type="number" placeholder="Cantidad Insumo Dañado">
+                                                <input id="saldocosto" class="form-control col-md-7 col-xs-12" name="saldocosto" required="required" type="text" placeholder="Saldo Costo"
+                                                value ="0" autofocus>
                                             </div>
                                         </div>
 
-                                        <div class="item form-group ">
-                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="valor">Costo</label>
+                                        <div class="item form-group">
+                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="costopromedio">Costo Promedio
+                                                <span class="required">*</span>
+                                            </label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <input id="costo" class="form-control col-md-7 col-xs-12" name="costo" type="number" placeholder="Costo del Insumo">
+                                                <input id="costopromedio" class="form-control col-md-7 col-xs-12" name="costopromedio" required="required" type="text" placeholder="Costo Promedio"
+                                                value ="0" autofocus>
                                             </div>
                                         </div>
 
@@ -230,8 +250,8 @@
 
                                         <div class="form-group">
                                             <div class="col-md-6 col-md-offset-3">
-                                                <button type="reset" class="btn btn-primary">Reset</button>
-                                                <button id="btnInsumo" type="submit" class="btn btn-success">Submit</button>
+                                                <button type="reset" class="btn btn-primary">Borrar</button>
+                                                <button id="btnInsumo" type="submit" class="btn btn-success">Guardar</button>
                                             </div>
                                         </div>
                                     </form>
