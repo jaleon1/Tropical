@@ -1,19 +1,19 @@
 class Producto {
     // Constructor
-    constructor(id, codigo,nombre, txtcolor, bgcolor, nombreabreviado, descripcion, saldocantidad, 
-                saldocosto, costopromedio, precioventa, esventa) {
-        this.id = id || null;
+    constructor(id, codigo, nombre, txtcolor, bgcolor, nombreabreviado, descripcion, saldocantidad, saldocosto, costopromedio, precioventa, esventa, lista) {
+        this.id = id || null;        
         this.codigo = codigo || '';
         this.nombre = nombre || '';
         this.txtcolor = txtcolor || '';
         this.bgcolor = bgcolor || '';
         this.nombreabreviado = nombreabreviado || '';
         this.descripcion = descripcion || '';
-        this.saldocantidad = saldocantidad || '';
-        this.saldocosto = saldocosto || '';
-        this.costopromedio = costopromedio || '';
-        this.precioventa = precioventa || '';
-        this.esventa = esventa || 0; //1: es venta; 0: es esventa.
+        this.saldocantidad = saldocantidad || 0;
+        this.saldocosto = saldocosto || 0;
+        this.costopromedio = costopromedio || 0;
+        this.precioventa = precioventa || 0;
+        this.esventa = esventa || 0; //1: producto para vender, 0 articulo no vendible.
+        this.lista = lista || [];
     }
 
     //Getter
@@ -366,7 +366,7 @@ class Producto {
                     <input id="costo" class="form-control col-3" name="costo" type="text" placeholder="Costo del artículo" autofocus="" value="0">
                 </td>
                 <td class=" last">
-                    <a id ="delete_row${id}" onclick="productotemporal.DeleteInsumo(this)" > <i class="glyphicon glyphicon-trash" onclick="DeleteInsumo(this)"> </i> Eliminar </a>
+                    <a id ="delete_row${id}" onclick="productotemporal.Deleteproducto(this)" > <i class="glyphicon glyphicon-trash" onclick="Deleteproducto(this)"> </i> Eliminar </a>
                 </td>
             </tr>
         `);
@@ -404,6 +404,7 @@ class Producto {
                 validator.reset();
         } 
     };
+
 }
 
 //Class Instance

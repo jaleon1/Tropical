@@ -182,7 +182,7 @@ function AgregaPrd(){
     .node();     
     $('td:eq(2)', rowNode).attr({id: ("prec_"+producto.codigoRapido)});
     $('td:eq(4)', rowNode).attr({id: ("impo_"+producto.codigoRapido)});
-    $('td:eq(3) input', rowNode).attr({id: ("cant_"+producto.codigoRapido), max:  producto.cantidad, min: "0", step:"1", value:"1", onchage:"CalcImporte("+producto.codigoRapido+")"});
+    $('td:eq(3) input', rowNode).attr({id: ("cant_"+producto.codigoRapido), max:  producto.cantidad, min: "0", step:"1", value:"1", onchange:"CalcImporte("+producto.codigoRapido+")"});
     $('td:eq(3) input', rowNode).change(function(){
         CalcImporte(producto.codigoRapido);
     });

@@ -36,7 +36,7 @@ class DATA {
         }
     }
     
-    // Ejecuta consulta SQL, $fetch = false envía los datos en 'crudo', $fetch=TRUE envía los datos en arreglo (fetch).
+    // Ejecuta consulta SQL, $fetch = false envía los datos en 'crudo', $fetch=TRUE envía los datos en arreglo (fetchAll).
     public static function Ejecutar($sql, $param=NULL, $fetch=true) {
         try{
             //conecta a BD
@@ -50,12 +50,7 @@ class DATA {
                     return  $st->fetchAll();
                 else return $st;    
             } else {
-                self::$conn->rollback(); 
-                /*header('HTTP/1.0 400 Bad error');
-                die(json_encode(array(
-                    'code' => 'x01' ,
-                    'msg' => 'Error de Ejecución'))
-                );*/
+                self::$conn->rollback();
                 throw new Exception('Error al ejecutar.',00);
             }            
         } catch (Exception $e) {
