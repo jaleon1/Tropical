@@ -12,7 +12,7 @@ class Distribucion {
     }
 
     get Save() {
-        if($('#productos').length==0 ){
+        if($('#dsitems tr').length==0 ){
             swal({
                 type: 'warning',
                 title: 'Orden de Compra',
@@ -35,7 +35,7 @@ class Distribucion {
             var objlista = new Object();
             objlista.idproducto= $('#dsitems').dataTable().fnGetData(item)[0]; // id del item.
             objlista.cantidad= $(this).find('td:eq(3) input').val();
-            objlista.valor= $(this).find('td:eq(4) input').val(); // valor: precio de venta para facturacion bodega externa. 
+            objlista.valor= $(this).find('td:eq(4) input').val(); // valor: precio de venta para distrcion bodega externa. 
             distr.lista.push(objlista);
         });
         $.ajax({
@@ -181,10 +181,41 @@ class Distribucion {
         producto.UltPrd = prd;//validar
         producto.cantidad =  $(`#cant_${prd}`).val();
         producto.precioventa = $(`#precioventa_v${prd}`).val();
-        producto.subtotal= producto.cantidad * producto.precioventa; // subtotal linea
+        producto.subtotal= (producto.cantidad * producto.precioventa).toFixed(10); // subtotal linea
         //
-        $(`#subtotal_v${prd}`).val(producto.subtotal.toFixed(10));
-        $(`#subtotal_d${prd}`).val("$"+producto.subtotal.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+        $(`#subtotal_v${prd}`).val(producto.subtotal);
+        $(`#subtotal_d${prd}`).val("¢"+parseFloat(producto.subtotal).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+        //
+        distr.calcTotal();
+    };
+
+    calcTotal(){
+        distr.subtotal=0; 
+        distr.porcentajedescuento=0;
+        distr.porcentajeiva=13;
+        $('#desc_100').val(distr.porcentajedescuento);
+        $('#iv_100').val(distr.porcentajeiva);
+        //
+        if($(document.getElementById("productos").rows)["0"].childElementCount>2){
+            $('#productos tr td:eq(5) input.valor').each(function(i,item){
+                distr.subtotal+= parseFloat(item.value).toFixed(10);
+            });
+            $("#subtotal")[0].textContent= "¢"+ parseFloat(distr.subtotal).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            distr.descuento = distr.subtotal * (parseFloat(distr.porcentajedescuento).toFixed(2) / 100);
+            $("#desc_val")[0].textContent= "¢"+ parseFloat(distr.descuento).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            distr.iva = distr.subtotal * (parseFloat(distr.porcentajeiva).toFixed(2) / 100);
+            $("#iv_val")[0].textContent= "¢" + parseFloat(distr.iva).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            distr.total= distr.subtotal - distr.descuento + distr.iva;
+            $("#total")[0].textContent= "¢" + parseFloat(distr.total).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+        else{
+            //$('#open_modal_fac').attr("disabled", true);
+            $("#subtotal")[0].textContent = "¢0"; 
+            $("#desc_val")[0].textContent = "¢0";
+            $("#iv_val")[0].textContent = "¢0";
+            $("#total")[0].textContent = "¢0";
+            
+        }
     };
 }
 
