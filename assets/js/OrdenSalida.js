@@ -32,7 +32,7 @@ constructor(id, fecha, numeroorden, usuarioentrega, usuariorecibe, fechaliquida,
     }
 
     get Save() {
-        if ($('#tableBody-OrdenSalida tr').length == 0){
+        if ($('#tableBody-InsumosOrdenSalida tr').length == 0){
             swal({
                 type: 'info',
                 title: 'Debe agregar los Insumos de la Orden de Salida...'                    
@@ -160,7 +160,7 @@ constructor(id, fecha, numeroorden, usuarioentrega, usuariorecibe, fechaliquida,
     ClearCtls() {
         $("#usuariorecibe").val('');
         $("#dt_fechaliquida").val('');
-        $('#tableBody-dsOrdenSalida').html("");
+        $('#tableBody-InsumosOrdenSalida').html("");
     };
 
     ShowAll(e) {
@@ -171,20 +171,19 @@ constructor(id, fecha, numeroorden, usuarioentrega, usuariorecibe, fechaliquida,
         //style="display: none"
         var estado="EN PROCESO";
         $.each(data, function (i, item) {
-            if (item.estado=="0") 
+            if (item.idestado=="0") 
                 estado="EN PROCESO";
             else
-                estado="TERMINADO";
+                estado="LIQUIDADO";
             $('#tableBody-OrdenSalida').append(`
                 <tr> 
                     <td class="itemId">${item.id}</td>
-                    <td class="oculto">${item.idproducto}</td>
-                    <td class="oculto">${item.idusuario}</td>
-                    <td class="oculto">${item.usuariorecibe}</td>
-                    <td>${item.producto}</td>
-                    <td>${item.usuario}</td>
+                    <td class="oculto">${item.idusuarioentrega}</td>
+                    <td class="oculto">${item.idusuariorecibe}</td>
+                    <td>${item.fecha}</td>
+                    <td>${item.usuarioentrega}</td>
                     <td>${item.usuariorecibe}</td>
-                    <td>${item.cantidad}</td>
+                    <td>${item.fechaliquida}</td>
                     <td>${estado}</td>
                     <td class=" last">
                         <a id="update${item.id}" class="update" data-toggle="modal" data-target=".bs-example-modal-lg" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | 
@@ -196,8 +195,8 @@ constructor(id, fecha, numeroorden, usuarioentrega, usuariorecibe, fechaliquida,
                 </tr>
             `);
             $('#update'+item.id).click(ordensalida.UpdateEventHandler);
-            $('#delete'+item.id).click(ordensalida.DeleteEventHandler);
-            $('#chkterminado'+item.id).click(ordensalida.UpdateCantidadProducto);
+            // $('#delete'+item.id).click(ordensalida.DeleteEventHandler);
+            // $('#chkterminado'+item.id).click(ordensalida.UpdateCantidadProducto);
             
         })        
         //datatable         
@@ -210,7 +209,7 @@ constructor(id, fecha, numeroorden, usuarioentrega, usuariorecibe, fechaliquida,
     };
 
     AddTableInsumo(id,codigo,nombre,descripcion,saldocantidad,saldocosto,costopromedio) {
-        $('#tableBody-OrdenSalida').append(`
+        $('#tableBody-InsumosOrdenSalida').append(`
             <tr id="row"${id}> 
                 <td class="itemId" >${id}</td>
                 <td class=oculto>${codigo}</td>
@@ -228,11 +227,11 @@ constructor(id, fecha, numeroorden, usuarioentrega, usuariorecibe, fechaliquida,
             </tr>
         `);
         //datatable         
-        if ( $.fn.dataTable.isDataTable( '#dsOrdenSalida' ) ) {
-            var table = $('#dsOrdenSalida').DataTable();
+        if ( $.fn.dataTable.isDataTable( '#dsInsumosOrdenSalida' ) ) {
+            var table = $('#dsInsumosOrdenSalida').DataTable();
         }
         else 
-            $('#dsOrdenSalida').DataTable( {
+            $('#dsInsumosOrdenSalida').DataTable( {
                 columns: [
                     { "width":"0px"},
                     { "width":"0px"},
@@ -248,36 +247,6 @@ constructor(id, fecha, numeroorden, usuarioentrega, usuariorecibe, fechaliquida,
                 "ordering": false,
                 "info": false,
                 "searching": false
-            } );
-    };
-
-    AddTableProducto(id,nombre,costo) {
-        $('#tableBody-InsumoProducto').append(`
-            <tr id="row"${id}> 
-                <td class="itemId" >${id}</td>
-                <td>${nombre}</td>
-                <td>
-                    <input id="cantidadInsumo" class="form-control col-3" name="cantidadInsumo" type="text" placeholder="Cantidad de paquetes" autofocus="" value="1">
-                </td>
-                <td class=oculto>${costo}</td>
-                <td class=" last">
-                    <a id ="delete_row${id}" onclick="ordensalida.DeleteInsumo(this)" > <i class="glyphicon glyphicon-trash" onclick="DeleteInsumo(this)"> </i> Eliminar </a>
-                </td>
-            </tr>
-        `);
-        //datatable         
-        if ( $.fn.dataTable.isDataTable( '#dsOrdenSalida' ) ) {
-            var table = $('#dsOrdenSalida').DataTable();
-        }
-        else 
-            $('#dsOrdenSalida').DataTable( {
-                columns: [
-                    { "width":"35%"},
-                    { "width":"35%"},
-                    { "width":"33%"},
-                ],          
-                paging: true,
-                search: true
             } );
     };
 
@@ -298,16 +267,30 @@ constructor(id, fecha, numeroorden, usuarioentrega, usuariorecibe, fechaliquida,
         // carga objeto.
         var data = JSON.parse(e);
     
-        ordensalida = new OrdenSalida(data.id, data.idproducto, data.producto, data.idusuario, data.usuariorecibe,
-        data.usuario, data.usuariorecibe, data.cantidad, data.estado, data.listainsumo);
+        ordensalida = new OrdenSalida(
+            data.id, 
+            data.numeroorden,                        
+            data.fecha, 
+            data.fechaliquida,                                      
+            data.idusuarioentrega, 
+            data.idusuariorecibe,
+            data.usuarioentrega, 
+            data.usuariorecibe, 
+            data.idestado, 
+            data.listainsumo);
 
         $.each(data.listainsumo, function (i, item) {
-            $('#tableBody-InsumoProducto').append(`
-                <tr id="row"${item.idinsumo}> 
-                    <td class="itemId" >${item.idinsumo}</td>
-                    <td>${item.nombre}</td>
+            $('#tableBody-OrdenSalidaModal').append(`
+                <tr id="row"${item.id}> 
+                    <td class="itemId" >${item.id}</td>
+                    <td class=oculto>${item.codigo}</td>
+                    <td>${item.nombreinsumo}</td>
+                    <td class=oculto>${item.descripcion}</td>
+                    <td class=oculto>${item.saldocantidad}</td>
+                    <td class=oculto>${item.saldocosto}</td>
+                    <td class=oculto>${item.costopromedio}</td>
                     <td>
-                        <input id="cantidadInsumo" class="form-control col-3" name="cantidadInsumo" type="text" placeholder="${item.cantidad}" autofocus="" value="1">
+                        <input id="cantidadInsumo" class="form-control col-3" name="cantidadInsumo" type="text" placeholder="Cantidad de paquetes" autofocus="" value="1">
                     </td>
                     <td class=" last">
                         <a id ="delete_row${item.id}" onclick="ordensalida.DeleteInsumo(this)" > <i class="glyphicon glyphicon-trash" onclick="DeleteInsumo(this)"> </i> Eliminar </a>
@@ -315,25 +298,38 @@ constructor(id, fecha, numeroorden, usuarioentrega, usuariorecibe, fechaliquida,
                 </tr>
             `);
             //datatable         
-            if ( $.fn.dataTable.isDataTable( '#dsOrdenSalida' ) ) {
-                var table = $('#dsOrdenSalida').DataTable();
+            if ( $.fn.dataTable.isDataTable( '#dsOrdenSalidaModal' ) ) {
+                var table = $('#dsOrdenSalidaModal').DataTable();
             }
             else 
-                $('#dsOrdenSalida').DataTable( {
+                $('#dsOrdenSalidaModal').DataTable( {
                     columns: [
+                        { "width":"0px"},
+                        { "width":"0px"},
                         { "width":"35%"},
+                        { "width":"0px"},
+                        { "width":"0px"},
+                        { "width":"0px"},
+                        { "width":"0px"},
                         { "width":"35%"},
-                        { "width":"33%"},
+                        { "width":"30%"}
                     ],          
-                    paging: true,
-                    search: true
+                    "paging": false,
+                    "ordering": false,
+                    "info": false,
+                    "searching": false
                 } );
         })
         
         // Asigna objeto a controles
-        $("#nombre").val(ordensalida.producto);
-        $("#cantidad").val(ordensalida.cantidad);
+        $("#numeroorden").val(ordensalida.numeroorden);
+        $("#dt_fecha").val(ordensalida.fecha);
+        $("#dt_fechaliquida").val(ordensalida.fechaliquida);
         $("#usuariorecibe").val(ordensalida.usuariorecibe);
+        if (ordensalida.idestado==0) 
+            $('#estado option:contains("EN PROCESO")')
+        else
+            $('#estado option:contains("LIQUIDADO")')
     };
 
     DeleteEventHandler() {
@@ -364,12 +360,6 @@ constructor(id, fecha, numeroorden, usuarioentrega, usuariorecibe, fechaliquida,
         $("#estado").focus();
     }
 
-    AddProductoEventHandler(){
-        $("#nombre").val($(this).parents("tr").find("td:eq(2)").html());
-        ordensalida.idproducto = $(this).parents("tr").find("td:eq(1)").html();
-        $('#modal-producto').modal('toggle');
-        $("#cantidad").focus();
-    }
     /* PENDIENTE */ 
     AddInsumoEventHandler(){
         var id=$(this).parents("tr").find("td:eq(1)").html();
@@ -382,7 +372,7 @@ constructor(id, fecha, numeroorden, usuarioentrega, usuariorecibe, fechaliquida,
         var ids_insumos = [];
 
         if ($(this).is(':checked')) {
-            $('#tableBody-OrdenSalida tr').each(function() {
+            $('#tableBody-InsumosOrdenSalida tr').each(function() {
                 ids_insumos.push($(this).find('td:eq(0)').html());   
             });
             if (ids_insumos.length==0) {

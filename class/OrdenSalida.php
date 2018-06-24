@@ -12,12 +12,12 @@ if(isset($_POST["action"])){
     // Instance
     $ordensalida= new OrdenSalida();
     switch($opt){
-        // case "ReadAll":
-        //     echo json_encode($ordensalida->ReadAll());
-        //     break;
-        // case "Read":
-        //     echo json_encode($ordensalida->Read());
-        //     break;
+        case "ReadAll":
+            echo json_encode($ordensalida->ReadAll());
+            break;
+        case "Read":
+            echo json_encode($ordensalida->Read());
+            break;
         case "Create":
             $ordensalida->Create();
             break;
@@ -35,9 +35,11 @@ class OrdenSalida{
     public $numeroorden='';
     public $fecha='';
     public $fechaliquida='';
+    public $idusuarioentrega='';
+    public $idusuariorecibe='';
     public $usuarioentrega='';
     public $usuariorecibe='';
-    public $estado='';
+    public $idestado='';
     public $listainsumo=[];
 
     function __construct(){
@@ -53,18 +55,18 @@ class OrdenSalida{
             $this->fechaliquida= $obj["fechaliquida"] ?? '';
             $this->usuarioentrega= $_SESSION['usersession']->id;
             $this->usuariorecibe= $obj["usuariorecibe"] ?? '';
-            $this->estado= $obj["estado"] ?? 0;
+            $this->idestado= $obj["estado"] ?? 0;
             //Insumos de la orden
             if (isset($obj["listainsumo"] )) {
                 require_once("InsumosxOrdenSalida.php");    
                 //            
                 foreach ($obj["listainsumo"] as $objInsumo) {
-                    $insprod= new InsumosxOrdenSalida();
-                    $insprod->idordensalida= $this->id;
-                    $insprod->idinsumo= $objInsumo['id'];
-                    $insprod->cantidad= $objInsumo['cantidad'];
-                    $insprod->costopromedio= $objInsumo['costopromedio'];
-                    array_push ($this->listainsumo, $insprod);
+                    $ins_ordensalida= new InsumosxOrdenSalida();
+                    $ins_ordensalida->idordensalida= $this->id;
+                    $ins_ordensalida->idinsumo= $objInsumo['id'];
+                    $ins_ordensalida->cantidad= $objInsumo['cantidad'];
+                    $ins_ordensalida->costopromedio= $objInsumo['costopromedio'];
+                    array_push ($this->listainsumo, $ins_ordensalida);
                 }
             }
         }
@@ -72,11 +74,10 @@ class OrdenSalida{
 
     function ReadAll(){
         try {
-            $sql='SELECT id, idproducto, (select nombre from producto where id=idproducto) as producto, idusuario, 
-            (select nombre from usuario where id=idusuario) as usuario, 
-            idusuariorecibe, (select nombre from usuario where id=idusuariorecibe) as usuariorecibe,cantidad, estado
+            $sql='SELECT `id`,`fecha`,`numeroorden`,`idusuarioentrega`, (SELECT nombre FROM usuario WHERE id=idusuarioentrega) as usuarioentrega,
+            `idusuariorecibe`, (SELECT nombre FROM usuario WHERE id=idusuariorecibe) as usuariorecibe, `fechaliquida`, `idestado`
                 FROM     ordensalida       
-                ORDER BY idproducto asc';
+                ORDER BY numeroorden asc';
             $data= DATA::Ejecutar($sql);
             return $data;
         }     
@@ -92,40 +93,39 @@ class OrdenSalida{
     function Read(){
         try {
             $ordensalida=null;
-            $insumosxproducto=null;
+            $insumoxordensalida=null;
 
-            $sql_ordensalida='SELECT id, idusuario, (SELECT nombre FROM usuario WHERE id=idusuario) AS usuario, idproducto, 
-            idusuariorecibe, (SELECT nombre FROM usuario WHERE id=idusuariorecibe) AS usuariorecibe,
-            (SELECT nombre FROM producto WHERE id=idproducto) AS producto, cantidad, estado FROM ordensalida 
-            WHERE id=:id';
+            $sql_ordensalida=$sql='SELECT `id`,`fecha`,`numeroorden`,`idusuarioentrega`, (SELECT nombre FROM usuario WHERE id=idusuarioentrega) as usuarioentrega,
+            `idusuariorecibe`, (SELECT nombre FROM usuario WHERE id=idusuariorecibe) as usuariorecibe, `fechaliquida`, `idestado`
+            FROM ordensalida WHERE id=:id ORDER BY numeroorden asc';
             
-            $sql_insumosxproducto='SELECT id,idordensalida,idinsumo,(SELECT nombre FROM insumo WHERE id=idinsumo) AS nombre,cantidad,costo FROM insumosxproducto WHERE idordensalida=:id';
+            $sql_insumoxordensalida='SELECT id,idordensalida,idinsumo,(SELECT nombre FROM insumo WHERE id=idinsumo) AS nombreinsumo,cantidad,costopromedio FROM insumosxordensalida WHERE idordensalida=:id';
 
             $param= array(':id'=>$this->id);
             $ordensalida = DATA::Ejecutar($sql_ordensalida,$param);
-            $insumosxproducto = DATA::Ejecutar($sql_insumosxproducto,$param);
+            $insumoxordensalida = DATA::Ejecutar($sql_insumoxordensalida,$param);
 
             $this->id = $ordensalida[0]['id'];
-            $this->idproducto = $ordensalida[0]['idproducto'];
-            $this->idusuario = $ordensalida[0]['idusuario'];
+            $this->fecha = $ordensalida[0]['fecha'];
+            $this->numeroorden = $ordensalida[0]['numeroorden'];
+            $this->idusuarioentrega = $ordensalida[0]['idusuarioentrega'];
+            $this->usuarioentrega = $ordensalida[0]['usuarioentrega'];
             $this->idusuariorecibe = $ordensalida[0]['idusuariorecibe'];
-            $this->usuario = $ordensalida[0]['usuario'];
             $this->usuariorecibe = $ordensalida[0]['usuariorecibe'];
-            $this->producto = $ordensalida[0]['producto'];
-            $this->cantidad = $ordensalida[0]['cantidad'];
-            $this->estado = $ordensalida[0]['estado'];
+            $this->fechaliquida = $ordensalida[0]['fechaliquida'];
+            $this->idestado = $ordensalida[0]['idestado'];
             
-            foreach ($insumosxproducto as $key => $value){
+            foreach ($insumoxordensalida as $key => $value){
                 require_once("InsumosxOrdenSalida.php");
-                $insprod = new InsumosxOrdenSalida();
+                $ins_ordensalida = new InsumosxOrdenSalida();
                 
-                $insprod->id = $value['id'];
-                $insprod->idinsumo = $value['idinsumo'];
-                $insprod->nombre = $value['nombre'];
-                $insprod->idordensalida = $value['idordensalida'];
-                $insprod->cantidad = $value['cantidad'];
-                $insprod->costo = $value['costo'];
-                array_push ($this->listainsumo, $insprod);
+                $ins_ordensalida->id = $value['id'];
+                $ins_ordensalida->idordensalida = $value['idordensalida'];
+                $ins_ordensalida->idinsumo = $value['idinsumo'];
+                $ins_ordensalida->nombreinsumo = $value['nombreinsumo'];
+                $ins_ordensalida->cantidad = $value['cantidad'];
+                $ins_ordensalida->costopromedio = $value['costopromedio'];
+                array_push ($this->listainsumo, $ins_ordensalida);
             }
             return $this;
         }     
@@ -149,7 +149,7 @@ class OrdenSalida{
                 VALUES (:uuid,:fecha,:numeroorden,:idusuarioentrega,
                 :idusuariorecibe,:fechaliquida,:idestado)";
             $param= array(':uuid'=>$this->id, ':fecha'=>$this->fecha, ':numeroorden'=>$numeroorden[0][0],':idusuarioentrega'=>$this->usuarioentrega, 
-            ':idusuariorecibe'=>$this->usuariorecibe, ':fechaliquida'=>$this->fechaliquida, ':idestado'=>$this->estado);
+            ':idusuariorecibe'=>$this->usuariorecibe, ':fechaliquida'=>$this->fechaliquida, ':idestado'=>$this->idestado);
             $data = DATA::Ejecutar($sql,$param, false);
 
             if($data)
@@ -174,10 +174,10 @@ class OrdenSalida{
     function Update(){
         try {
             $sql="UPDATE ordensalida 
-                SET idproducto=:idproducto, idusuario=:idusuario, , idusuariorecibe=:idusuariorecibe, cantidad=:cantidad, estado=:estado
+                SET idproducto=:idproducto, idusuario=:idusuario, , idusuariorecibe=:idusuariorecibe, cantidad=:cantidad, idestado=:idestado
                 WHERE id=:id";
             $param= array(':id'=>$this->id, ':idproducto'=>$this->idproducto, ':idusuario'=>$this->idusuario, ':idusuariorecibe'=>$this->idusuariorecibe,
-            ':cantidad'=>$this->cantidad, ':estado'=>$this->estado);
+            ':cantidad'=>$this->cantidad, ':idestado'=>$this->idestado);
             $data = DATA::Ejecutar($sql,$param,false);
             if($data){
                 //update array obj
@@ -206,7 +206,7 @@ class OrdenSalida{
     private function CheckRelatedItems(){
         try{
             $sql="SELECT idproducto
-                FROM insumosxproducto R
+                FROM insumosxordensalida R
                 WHERE R.idproducto= :id";                
             $param= array(':id'=>$this->id);
             $data= DATA::Ejecutar($sql, $param);
