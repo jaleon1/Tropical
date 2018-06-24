@@ -33,11 +33,12 @@ if(isset($_POST["action"])){
 
 class Insumo{
     public $id=null;
-    public $nombre='';
     public $codigo='';
-    public $bueno=0;
-    public $danado=0;
-    public $costo=0;
+    public $nombre='';
+    public $descripcion='';
+    public $saldocantidad=0;
+    public $saldocosto=0;
+    public $costopromedio=0;
 
     function __construct(){
         // identificador único
@@ -47,17 +48,18 @@ class Insumo{
         if(isset($_POST["obj"])){
             $obj= json_decode($_POST["obj"],true);
             $this->id= $obj["id"] ?? null;
-            $this->nombre= $obj["nombre"] ?? '';
             $this->codigo= $obj["codigo"] ?? '';
-            $this->bueno= $obj["bueno"] ?? 0;            
-            $this->danado= $obj["danado"] ?? 0;
-            $this->costo= $obj["costo"] ?? 0;
+            $this->nombre= $obj["nombre"] ?? '';
+            $this->descripcion= $obj["descripcion"] ?? '';
+            $this->saldocantidad= $obj["saldocantidad"] ?? 0;            
+            $this->saldocosto= $obj["saldocosto"] ?? 0;
+            $this->costopromedio= $obj["costopromedio"] ?? 0;
         }
     }
 
     function ReadAll(){
         try {
-            $sql='SELECT id, nombre, codigo, bueno, danado, costo
+            $sql='SELECT id, codigo, nombre, descripcion, saldocantidad, saldocosto, costopromedio
                 FROM     insumo       
                 ORDER BY nombre asc';
             $data= DATA::Ejecutar($sql);
@@ -74,7 +76,7 @@ class Insumo{
 
     function Read(){
         try {
-            $sql='SELECT id, nombre, codigo, bueno, danado, costo
+            $sql='SELECT id, codigo, nombre, descripcion, saldocantidad, saldocosto, costopromedio
                 FROM insumo  
                 where id=:id';
             $param= array(':id'=>$this->id);
@@ -92,9 +94,9 @@ class Insumo{
 
     function Create(){
         try {
-            $sql="INSERT INTO insumo   (id, nombre, codigo, bueno, danado, costo) VALUES (uuid(),:nombre, :codigo, :bueno, :danado, :costo);";
+            $sql="INSERT INTO insumo (id, codigo, nombre, descripcion, saldocantidad, saldocosto, costopromedio) VALUES (uuid(), :codigo, :nombre, :descripcion, :saldocantidad, :saldocosto, :costopromedio);";
             //
-            $param= array(':nombre'=>$this->nombre, ':codigo'=>$this->codigo, ':bueno'=>$this->bueno, ':danado'=>$this->danado, ':costo'=>$this->costo);
+            $param= array(':codigo'=>$this->codigo,':nombre'=>$this->nombre, ':descripcion'=>$this->descripcion, ':saldocantidad'=>$this->saldocantidad, ':saldocosto'=>$this->saldocosto, ':costopromedio'=>$this->costopromedio);
             $data = DATA::Ejecutar($sql,$param,false);
             if($data)
             {
@@ -116,9 +118,9 @@ class Insumo{
     function Update(){
         try {
             $sql="UPDATE insumo 
-                SET nombre=:nombre, codigo=:codigo, bueno=:bueno, danado=:danado, costo=:costo
+                SET  codigo=:codigo, nombre=:nombre, descripcion=:descripcion, saldocantidad=:saldocantidad, saldocosto=:saldocosto, costopromedio=:costopromedio
                 WHERE id=:id";
-            $param= array(':id'=>$this->id, ':nombre'=>$this->nombre, ':codigo'=>$this->codigo, ':bueno'=>$this->bueno, ':danado'=>$this->danado, ':costo'=>$this->costo);
+            $param= array(':id'=>$this->id, ':codigo'=>$this->codigo,':nombre'=>$this->nombre, ':descripcion'=>$this->descripcion, ':saldocantidad'=>$this->saldocantidad, ':saldocosto'=>$this->saldocosto, ':costopromedio'=>$this->costopromedio);
             $data = DATA::Ejecutar($sql,$param,false);
             if($data)
                 return true;
