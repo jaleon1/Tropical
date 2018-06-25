@@ -6,6 +6,7 @@ if(isset($_POST["action"])){
     require_once("Conexion.php");
     require_once('Evento.php');
     require_once('Usuario.php');
+    require_once('InsumosxOrdenSalida.php');
     // Session
     if (!isset($_SESSION))
         session_start();

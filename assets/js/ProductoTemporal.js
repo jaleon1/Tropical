@@ -1,18 +1,7 @@
 class ProductoTemporal {
     // Constructor
-constructor(id, codigo, nombre, txtcolor, bgcolor, nombreabreviado, descripcion,  saldocantidad, saldocosto, costopromedio, precioventa, esventa, p) {
-        this.id = id || null;
-        this.codigo = codigo || '';
-        this.nombre = nombre || '';
-        this.txtcolor = txtcolor || '';
-        this.bgcolor = bgcolor || '';
-        this.nombreabreviado = nombreabreviado || '';
-        this.descripcion = descripcion || '';
-        this.saldocantidad = saldocantidad || 0;
-        this.saldocosto = saldocosto || 0;
-        this.costopromedio = costopromedio || 0;
-        this.precioventa = precioventa || 0;
-        this.esventa = esventa || 1;
+constructor(numeroorden, p) {
+        this.numeroorden = numeroorden || '';
         this.listaproducto = p || [];
     }
 
@@ -51,16 +40,17 @@ constructor(id, codigo, nombre, txtcolor, bgcolor, nombreabreviado, descripcion,
         //     var costoinsumo=parseFloat($(this).find('td:eq(6)').html());
         //     ncosto += costoinsumo;
         // });
+        
         $('#btnAddProductoGenerado').attr("disabled", "disabled");
         var miAccion = this.id == null ? 'Create' : 'Update';
-
+        productotemporal.numeroorden = $("#orden").val();
         // lista de insumos
         productotemporal.listaproducto = [];
         $('#tableBody-ProductoGenerado tr').each(function() {
             var objproduto = new Object();
-            objproduto.id= $(this).find('td:eq(0)').html();
+            objproduto.idproducto= $(this).find('td:eq(0)').html();
             objproduto.cantidad= $(this).find('td:eq(10) input').val();
-            objproduto.costopromedio= $(this).find('td:eq(7)').html();
+            objproduto.costo= $(this).find('td:eq(7)').html();
             productotemporal.listaproducto.push(objproduto);
         });
         $.ajax({
@@ -77,9 +67,9 @@ constructor(id, codigo, nombre, txtcolor, bgcolor, nombreabreviado, descripcion,
             })
             .always(function () {
                 setTimeout('$("#btnProductoTemporal").removeAttr("disabled")', 1000);
-                productotemporal = new ProductoTemporal();
+                // productotemporal = new ProductoTemporal();
                 productotemporal.ClearCtls();
-                productotemporal.Read;
+                // productotemporal.Read;
             });
     }
 
