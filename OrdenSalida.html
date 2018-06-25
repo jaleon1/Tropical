@@ -507,8 +507,8 @@
     <!-- Input mask -->
     <script src="assets/js/jquery.inputmask/jquery.inputmask.bundle.min.js"></script>
     <!-- JS Scripts -->
-    <script src="assets/js/ProductoTemporal.js"></script>
     <script src="assets/js/OrdenSalida.js"></script>
+    <script src="assets/js/ProductoTemporal.js"></script>
     <script src="assets/js/Insumo.js"></script>
     <script src="assets/js/Producto.js"></script>
     <script src="assets/js/Usuario.js"></script>
@@ -532,8 +532,6 @@
 
 <script>
     $(document).ready(function () {
-        // if(!Session.state)
-        //     return;
         ordensalida.Init();
         $('#myDatepicker1').datetimepicker();
         $('#myDatepicker2').datetimepicker({format:'YYYY-MM-DD hh:mm:ss A'});
@@ -543,7 +541,6 @@
     });
 
     $(document).on('click', '#btnAddInsumo', function (event) {
-        //alert("Prueba");
         insumo.id = null;
         insumo.Read;
         insumo.Init();
