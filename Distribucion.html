@@ -16,7 +16,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Tropical Sno | Nuevo Usuario</title>
+    <title>Tropical Sno | Distribucion</title>
 
     <!-- Bootstrap -->
     <link href="assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -191,6 +191,7 @@
                             </div>
                         </div>
 
+                        <!-- bodega -->
                         <div class="col-md-3 col-sm-6 col-xs-3">
                             <div class="x_panel">
                                 <div class="x_title">
@@ -234,17 +235,19 @@
 
                                         <div class="ln_solid"></div>
 
-                                        <div class="form-group">
+                                        <!-- <div class="form-group">
                                             <div class="col-md-6 col-md-offset-3">
                                                 <button type="reset" class="btn btn-primary">Reset</button>
                                                 <button id="btnDistribucion" type="submit" class="btn btn-success">Submit</button>
                                             </div>
-                                        </div>
+                                        </div> -->
                                     </form>
                                 </div>
                             </div>
                         </div>
+                        <!-- /bodega -->
 
+                        <!-- totales -->
                         <div class="col-md-3 col-sm-3 col-xs-3 col-md-offset-9 col-sm-offset-9 col-xs-offset-9 ">
                             <div class="x_panel">
                                 <div class="x_title">
@@ -289,17 +292,20 @@
                                 </div>
                             </div>
                         </div>
+                        <!-- /totales -->
                     </div>
 
                     <div class="clearfix"></div>
 
                     <div class="ln_solid"></div>
-                    <!-- <div class="form-group">
-                        <div class="col-md-6 col-md-offset-3">
-                            <button type="submit" class="btn btn-primary" id="reload">Limpiar</button>
-                            <button type="button" class="btn btn-success" id="btnproducto">Submit</button>
+
+                    <div class="form-group">
+                        <div class="col-md-12 col-md-offset-9">
+                            <button type="reset" class="btn btn-primary">Reset</button>
+                            <button id="btnDistribucion" type="submit" class="btn btn-success">Submit</button>
                         </div>
-                    </div> -->
+                    </div>
+
                 </div>
             </div>
             <!-- /page content -->
@@ -418,6 +424,10 @@
             location.reload();
         });
 
+        $('#btnDistribucion').click(function () {
+            $('#frmBodega').submit();
+        });
+
         //Usa la variable t que es el datatable donde estan los productos
         t = $('#dsitems').DataTable({
             "ordering": false,
@@ -481,6 +491,7 @@
             // }
         });
         t.columns.adjust().draw();
+       
 
         var validator = new FormValidator({ "events": ['blur', 'input', 'change'] }, document.forms["frmBodega"]);
         $('#frmBodega').submit(function (e) {

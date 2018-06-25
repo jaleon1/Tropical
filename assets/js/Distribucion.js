@@ -46,7 +46,16 @@ class Distribucion {
                 obj: JSON.stringify(this)
             }
         })
-            .done(distr.showInfo)
+            .done(function(e){
+                // muestra el numero de orden: IMPRIMIR.
+                var data = JSON.parse(e)[0];
+                swal({
+                    type: 'success',
+                    title: 'Número de Orden:' + data.orden,
+                    text: 'Número de orden de Distribución:',
+                    showConfirmButton: true
+                });
+            })
             .fail(function (e) {
                 distr.showError(e);
             })
@@ -56,6 +65,87 @@ class Distribucion {
                 distr.CleanCtls();
                 $("#p_searh").focus();
             });
+    };
+
+    get ReadbyOrden() {
+        $('#orden').attr("disabled", "disabled");
+        var miAccion = 'ReadbyOrden';
+        distr.orden= $('#orden').val();
+        $.ajax({
+            type: "POST",
+            url: "class/Distribucion.php",
+            data: {
+                action: miAccion,
+                obj: JSON.stringify(this)
+            }
+        })
+            .done(function (e) {
+                if(e=='null')
+                {
+                    swal({
+                        position: 'top-end',
+                        type: 'warning',
+                        title: 'Orden no encontrada!',
+                        showConfirmButton: false,
+                        timer: 1000
+                    });
+                }
+                else distr.ShowItemData(e);
+            })
+            .fail(function (e) {
+                distr.showError(e);
+            })
+            .always(function () {
+                setTimeout('$("#orden").removeAttr("disabled")', 1000);
+            });
+    }
+
+    Aceptar(){
+        $('#btnDistribucion').attr("disabled", "disabled");
+        var miAccion = "Aceptar";
+        $.ajax({
+            type: "POST",
+            url: "class/Distribucion.php",
+            data: {
+                action: miAccion,
+                obj: JSON.stringify(this)
+            }
+        })
+            .done(insumo.showInfo)
+            .fail(function (e) {
+                distr.showError(e);
+            })
+            .always(function () {
+                setTimeout('$("#btnDistribucion").removeAttr("disabled")', 1000);
+                distr = new Distribucion();
+                distr.CleanCtls();
+                $("#orden").focus();
+            });
+
+    }
+
+    Reload(e) {
+        if (this.id == null)
+            this.ShowAll(e);
+        else this.ShowItemData(e);
+    };
+
+    ShowItemData(e) {
+        // Limpia el controles
+        this.CleanCtls();
+        // carga objeto.
+        var data = JSON.parse(e);
+        distr = new Distribucion(data.id, data.orden, data.fecha, data.idusuario, data.idbodega, data.porcentajedescuento, data.porcentajeiva, data.lista);
+        // datos
+        $('#orden').val(distr.orden);
+        $('#fecha').val(distr.fecha);
+        bodega.id= distr.idbodega;
+        bodega.Read;
+        // carga lista.
+        $.each(distr.lista, function (i, item) {
+            producto= item;
+            distr.AgregaProducto();
+        });
     };
 
     // Muestra información en ventana
@@ -161,7 +251,7 @@ class Distribucion {
         .draw() //dibuja la tabla con el nuevo producto
         .node();     
         //
-        $('td:eq(3) input', rowNode).attr({id: ("cant_"+producto.codigo), max:  "9999999999", min: "1", step:"1", value:"1"}).change(function(){
+        $('td:eq(3) input', rowNode).attr({id: ("cant_"+producto.codigo), max:  "9999999999", min: "1", step:"1", value: producto.cantidad}).change(function(){
              distr.CalcImporte($(this).parents('tr').find('td:eq(0)').html());
         }); 
         //

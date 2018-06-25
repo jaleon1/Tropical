@@ -17,14 +17,20 @@ if(isset($_POST["action"])){
         case "Read":
             echo json_encode($distribucion->Read());
             break;
+        case "ReadbyOrden":
+            echo json_encode($distribucion->ReadbyOrden());
+            break;
         case "Create":
-            $distribucion->Create();
+            echo json_encode($distribucion->Create());
             break;
         case "Update":
             $distribucion->Update();
             break;
         case "Delete":
             $distribucion->Delete();
+            break;  
+        case "Aceptar":
+            $distribucion->Aceptar();
             break;   
     }
 }
@@ -52,7 +58,7 @@ class Distribucion{
             $this->idbodega= $obj["idbodega"] ?? null;
             $this->porcentajedescuento= $obj["porcentajedescuento"] ?? 0;
             $this->porcentajeiva= $obj["porcentajeiva"] ?? '';
-            //$this->orden= $obj["orden"] ?? '';      
+            $this->orden= $obj["orden"] ?? '';      
             //$this->idusuario= $obj["idusuario"] ?? null;
             // lista.
             if(isset($obj["lista"] )){
@@ -87,14 +93,26 @@ class Distribucion{
         }
     }
 
-    function Read(){
+    function ReadbyOrden(){
         try {
-            $sql='SELECT id, fecha, idbodega, orden, idusuario
-                FROM distribucion  
-                where id=:id';
-            $param= array(':id'=>$this->id);
-            $data= DATA::Ejecutar($sql,$param);
-            return $data;
+            $sql='SELECT id, fecha, orden, idusuario, idbodega, porcentajedescuento, porcentajeiva 
+                FROM tropical.distribucion
+                WHERE orden=:orden';
+            $param= array(':orden'=>$this->orden);
+            $data= DATA::Ejecutar($sql,$param);     
+            if(count($data)){
+                $this->id = $data[0]['id'];
+                $this->fecha = $data[0]['fecha'];
+                $this->idusuario = $data[0]['idusuario'];
+                $this->idbodega = $data[0]['idbodega'];
+                $this->porcentajedescuento = $data[0]['porcentajedescuento'];
+                $this->porcentajeiva = $data[0]['porcentajeiva'];
+                // productos x distribucion.
+                $this->lista= ProductosXDistribucion::Read($this->id);
+                //
+                return $this;
+            }
+            else return null;
         }     
         catch(Exception $e) {
             header('HTTP/1.0 400 Bad error');
@@ -119,11 +137,31 @@ class Distribucion{
             if($data)
             {
                 //save array obj
-                if(ProductosXDistribucion::Create($this->lista))
-                    return true;
-                else throw new Exception('Error al guardar los roles.', 03);
+                if(ProductosXDistribucion::Create($this->lista)){
+                    // retorna orden autogenerada.
+                    return $this->Read();
+                }
+                else throw new Exception('Error al guardar los productos.', 03);
             }
             else throw new Exception('Error al guardar.', 02);
+        }     
+        catch(Exception $e) {
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }
+    }
+
+    function Aceptar(){
+        try {
+            $sql="CALL spUpdateSaldosPromedioInsumoBodegaEntrada(:mid, :ncantidad);";
+            $param= array(':mid'=>$id, ':ncantidad'=>$ncantidad);
+            $data = DATA::Ejecutar($sql,$param,false);
+            if($data)
+                return true;
+            else throw new Exception('Error al calcular SALDOS Y PROMEDIOS, debe realizar el cálculo manualmente.', 666);
         }     
         catch(Exception $e) {
             header('HTTP/1.0 400 Bad error');
@@ -219,26 +257,6 @@ class Distribucion{
             );
         }
     }
-
-    function ReadNextAI(){
-        try{     
-            $sql="SELECT orden+1
-                FROM distribucion
-                ORDER BY orden DESC LIMIT 1";
-            $data= DATA::Ejecutar($sql,$param);            
-            if(count($data))
-                return $data;
-            else return false;
-        }
-        catch(Exception $e){
-            header('HTTP/1.0 400 Bad error');
-            die(json_encode(array(
-                'code' => $e->getCode() ,
-                'msg' => $e->getMessage()))
-            );
-        }
-    }
-
 }
 
 

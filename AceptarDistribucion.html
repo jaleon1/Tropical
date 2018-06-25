@@ -16,7 +16,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Tropical Sno | Nuevo Usuario</title>
+    <title>Tropical Sno | Distribucion</title>
 
     <!-- Bootstrap -->
     <link href="assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -132,7 +132,7 @@
 
                     <div class="page-title">
                         <div class="title_left">
-                            <h3>Distribucion de Productos</h3>
+                            <h3>Aceptar Distribucion de Productos</h3>
                         </div>
                         <div class="title_right">
                             <h3 id="fecha" style="float:right"></h3>
@@ -148,40 +148,23 @@
                                 <div class="title_right">
                                     <div class="col-md-12 col-sm-12 col-xs-12 form-group top_search">
                                         <div class="input-group">
-                                            <input type="text" class="form-control" id="orden" readonly placeholder="Número de Orden Autogenerado">
+                                            <input type="text" class="form-control" id="orden"  placeholder="Número de Orden ">
                                         </div>
                                     </div>
-                                    <div class="col-md-12 col-sm-12 col-xs-12 form-group pull-right top_search">
+                                    <!-- <div class="col-md-12 col-sm-12 col-xs-12 form-group pull-right top_search">
                                         <div class="input-group">
                                             <input autofocus type="text" class="form-control" id="p_searh" placeholder="Ingresar Materia Prima/Producto...">
                                             <span class="input-group-btn">
                                                 <button class="btn btn-default" type="button">Buscar</button>
                                             </span>
                                         </div>
-                                    </div>
+                                    </div> -->
                                 </div>
                                 
                                 <div class="x_content">
                                     <div class="table-responsive">
                                         <table id="dsitems" class="table table-striped jambo_table bulk_action">
-                                            <!-- <thead>
-                                                    <tr class="headings">
-                                                        <th>
-                                                            <input type="checkbox" id="check-all" class="flat">
-                                                        </th>
-                                                        <th class="column-title">Codigo </th>
-                                                        <th class="column-title">Descripción </th>
-                                                        <th class="column-title">Precio/U </th>
-                                                        <th class="column-title">Cantidad </th>
-                                                        <th class="column-title">Importe </th> -->
-                                            <!--<th class="column-title">Amount </th>
-                                                        <th class="column-title no-link last"><span class="nobr">Action</span>
-                                                        </th> -->
-                                            <!-- <th class="bulk-actions" colspan="7">
-                                                        <a class="antoo" style="color:#fff; font-weight:500;">Acciones Masivas ( <span class="action-cnt"> </span> ) <i class="fa fa-chevron-down"></i></a>
-                                                        </th>
-                                                    </tr>
-                                                </thead> -->
+                                           
                                             <tbody id="productos">
 
                                             </tbody>
@@ -223,23 +206,18 @@
                                                         <input id="descripcion" class="form-control col-md-7 col-xs-12" name="descripcion" readonly>
                                                     </div>
                                                 </div>
-                                                <div class="item form-group ">
+                                                <!-- <div class="item form-group ">
                                                     <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tipo">Tipo</label>
                                                     <div class="col-md-6 col-sm-6 col-xs-12">
                                                         <input id="tipo" class="form-control col-md-7 col-xs-12" name="tipo" readonly>
                                                     </div>
-                                                </div>
+                                                </div> -->
                                             </div>
                                         </div>
 
                                         <div class="ln_solid"></div>
 
-                                        <div class="form-group">
-                                            <div class="col-md-6 col-md-offset-3">
-                                                <button type="reset" class="btn btn-primary">Reset</button>
-                                                <button id="btnDistribucion" type="submit" class="btn btn-success">Submit</button>
-                                            </div>
-                                        </div>
+                                        
                                     </form>
                                 </div>
                             </div>
@@ -294,12 +272,14 @@
                     <div class="clearfix"></div>
 
                     <div class="ln_solid"></div>
-                    <!-- <div class="form-group">
-                        <div class="col-md-6 col-md-offset-3">
-                            <button type="submit" class="btn btn-primary" id="reload">Limpiar</button>
-                            <button type="button" class="btn btn-success" id="btnproducto">Submit</button>
+
+                    <div class="form-group">
+                        <div class="col-md-12 col-md-offset-9">
+                            <button type="reset" class="btn btn-primary">Reset</button>
+                            <button id="btnDistribucion" type="submit" class="btn btn-success">Submit</button>
                         </div>
-                    </div> -->
+                    </div>
+
                 </div>
             </div>
             <!-- /page content -->
@@ -376,9 +356,9 @@
     <!-- Input mask -->
     <script src="assets/js/jquery.inputmask/jquery.inputmask.bundle.min.js"></script>
     <!-- JS Scripts -->
-    <script src="assets/js/Producto.js"></script>
-    <script src="assets/js/Bodega.js"></script>
     <script src="assets/js/Distribucion.js"></script>
+    <script src="assets/js/Bodega.js"></script>
+    <script src="assets/js/Producto.js"></script>
 
     <!--CAMBIAR por Facuracli-->
     <!-- JS dataTables -->
@@ -394,30 +374,21 @@
 </html>
 
 <script>
-    $(document).ready(function () {
-        $(document).on('click', '#btnAddBodega', function (event) {
-            bodega.id = null;
-            bodega.Read;
-            //bodega.Init();
-        });
-        //Valida si se presiona enter -> carga el producto en la lista
-        //si preciona "*" -> Quita el "*", pasa el punto de insercion a la cantidad y selecciona el valor para ser reemplazdo con el teclado
-        $("#p_searh").keyup(function (e) {
+    $(document).ready(function () {        
+        // Busca la distribucion por numero de orden.
+        $("#orden").keyup(function (e) {
             if (e.which == 13) {
-                // Acciones a realizar, por ej: enviar formulario.
-                distr.LoadProducto();
+                distr.ReadbyOrden;
             }
-            if (e.which == 106) {
-                $("#p_searh")[0].value = "";
-                // se usa UltPrd xq es el UltimoProductoTocado (si la cantidad del producto es alterada no hay forma de saber cual fue el ultimo modificado.)
-                $("#cant_" + producto.UltPrd).focus().select();
-            }
+        });
+
+        $('#btnDistribucion').click(function () {
+            distr.Aceptar();
         });
 
         $('#reload').click(function () {
             location.reload();
         });
-
         //Usa la variable t que es el datatable donde estan los productos
         t = $('#dsitems').DataTable({
             "ordering": false,
@@ -482,13 +453,13 @@
         });
         t.columns.adjust().draw();
 
-        var validator = new FormValidator({ "events": ['blur', 'input', 'change'] }, document.forms["frmBodega"]);
-        $('#frmBodega').submit(function (e) {
-            e.preventDefault();
-            var validatorResult = validator.checkAll(this);
-            if (validatorResult.valid)
-                distr.Save;
-            return false;
-        });
+        // var validator = new FormValidator({ "events": ['blur', 'input', 'change'] }, document.forms["frmBodega"]);
+        // $('#frmBodega').submit(function (e) {
+        //     e.preventDefault();
+        //     var validatorResult = validator.checkAll(this);
+        //     if (validatorResult.valid)
+        //         distr.Save;
+        //     return false;
+        //});
     });
 </script>
