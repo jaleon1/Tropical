@@ -156,37 +156,110 @@
                     <div class="clearfix"></div>
 
                     <div class="row">
+
                         <div class="col-md-6 col-sm-6 col-xs-12">
                             <div class="x_panel">
                                 <div class="x_title">
-                                    <h2>Insumos por Producto</h2>
+                                    <h2>Orden de Salida</h2>
 
                                     <div class="clearfix"></div>
                                 </div>
                                 <!--  CONTENIDO DE LA PAGINA -->
 
                                 <div class="x_content">
-                                    <form class="form-horizontal form-label-left" id="frmInsumoTemporal" method="POST" novalidate>
-                                        <span class="section">Selección de Insumos
-
-                                        </span>
+                                    <!-- TABLE -->
+                                    <div id="datatable_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
                                         <div class="row">
-                                            <div class="col-sm-11">
-                                                <table id="dsInsumoProducto" class="table table-striped jambo_table bulk_action" role="grid" aria-describedby="datatable_info">
+                                            <div class="col-sm-12">
+                                                <table id="dsOrdenSalida" class="table table-striped jambo_table bulk_action" role="grid" aria-describedby="datatable_info">
                                                     <thead>
                                                         <tr role="row" class="headings">
-
+                                                            <th><input type='checkbox' id='check-all' class='iCheck-helper'></th>
+                                                            <th class='itemId'>ID</th><th class='oculto'>ID USUARIO ENTREGA</th>
+                                                            <th class='oculto'>ID USUARIO RECIBE</th> 
+                                                            <th>Orden</th>
+                                                            <th>Fecha</th> 
+                                                            <th>Usuario Entrega</th> 
+                                                            <th>Usuario Recibe</th> 
+                                                            <th>Fecha Liquidación</th>  
+                                                            <th>Estado</th> 
                                                         </tr>
                                                     </thead>
 
-                                                    <tbody id="tableBody-InsumoProducto">
+                                                    <tbody id="tableBody-OrdenSalida">
+
+                                                    </tbody>
+
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- /TABLE -->
+                                </div>
+                                <!--  /CONTENIDO DE LA PAGINA -->
+
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                            <div class="x_panel">
+                                <div class="x_title">
+                                    <h2>Productos Elaborados</h2>
+
+                                    <div class="clearfix"></div>
+                                </div>
+                                <!--  CONTENIDO DE LA PAGINA -->
+
+                                <div class="x_content">
+                                    <form class="form-horizontal form-label-left" id="frmProductoTemporal" method="POST" novalidate>
+                                        <span class="section">Inserte los Productos Generados
+
+                                        </span>
+
+                                        <div class="row">
+                                            <div class="col-sm-10">
+                                                <div class="item form-group ">
+                                                    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="valor">Número de Orden
+                                                        <span class="required">*</span>
+                                                    </label>
+                                                    <div class="col-md-6 col-sm-5 col-xs-12">
+                                                        <input id="numeroorden" class="form-control col-md-7 col-xs-12" name="nmeroorden" required="required" data-validate-minmax="1,99999" placeholder="Seleccione Usuario" readonly>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-1">
+                                                
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-sm-11">
+                                                <table id="dsProductoGenerado" class="table table-striped jambo_table bulk_action" role="grid" aria-describedby="datatable_info">
+                                                    <thead>
+                                                        <tr role="row" class="headings">
+                                                            <th class='itemId'>Id</th>
+                                                            <th class='oculto'>Codigo</th>
+                                                            <th>Nombre</th>
+                                                            <th class='oculto'>Nombreabreviado</th>
+                                                            <th class='oculto'>Descripcion</th>
+                                                            <th class='oculto'>Saldocantidad</th>
+                                                            <th class='oculto'>Saldocosto</th>
+                                                            <th class='oculto'>Costopromedio</th>
+                                                            <th class='oculto'>Precioventa</th>
+                                                            <th class='oculto'>Esventa</th>
+                                                            <th>Cantidad</th>
+                                                            <th>Acción</th>
+                                                        </tr>
+                                                    </thead>
+
+                                                    <tbody id="tableBody-ProductoGenerado">
 
                                                     </tbody>
 
                                                 </table>
                                             </div>
                                             <div class="col-sm-1">
-                                                <button id="btnAddInsumo" data-toggle="modal" data-target=".bs-example-modal-lg-insumo" type="button" class="btn btn-info btn-lg">+</button>
+                                                <button id="btnAddProductoGenerado" data-toggle="modal" data-target=".bs-example-modal-lg-productogenerado" type="button" class="btn btn-info btn-lg">+</button>
                                             </div>
                                         </div>
 
@@ -205,75 +278,12 @@
 
                             </div>
                         </div>
-                        <div class="col-md-6 col-sm-6 col-xs-12">
-                            <div class="x_panel">
-                                <div class="x_title">
-                                    <h2>Producto</h2>
 
-                                    <div class="clearfix"></div>
-                                </div>
-                                <!--  CONTENIDO DE LA PAGINA -->
 
-                                <div class="x_content">
-                                    <form class="form-horizontal form-label-left" id="frmProductoTemporal" method="POST" novalidate>
-                                        <span class="section">Selección del Producto
-
-                                        </span>
-                                        
-                                        <div class="row">
-                                            <div class="col-sm-11">
-                                                <div class="item form-group ">
-                                                    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="valor">Usuario Recibe
-                                                        <span class="required">*</span>
-                                                    </label>
-                                                    <div class="col-md-6 col-sm-6 col-xs-12">
-                                                        <input id="usuariorecibe" class="form-control col-md-7 col-xs-12" name="usuariorecibe" required="required" data-validate-minmax="1,99999" placeholder="Seleccione Usuario">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-1">
-                                                <button id="btnAddUsuarioRecibe" data-toggle="modal" data-target=".bs-example-modal-lg-usuariorecibe" type="button" class="btn btn-info btn-lg">+</button>
-                                            </div>
-                                        </div>
-
-                                        <div class="row">
-                                            <div class="col-sm-11">
-                                                <table id="dsProductoTerminado" class="table table-striped jambo_table bulk_action" role="grid" aria-describedby="datatable_info">
-                                                    <thead>
-                                                        <tr role="row" class="headings">
-
-                                                        </tr>
-                                                    </thead>
-
-                                                    <tbody id="tableBody-ProductoTerminado">
-
-                                                    </tbody>
-
-                                                </table>
-                                            </div>
-                                            <div class="col-sm-1">
-                                                <button id="btnAddProducto" data-toggle="modal" data-target=".bs-example-modal-lg-producto" type="button" class="btn btn-info btn-lg">+</button>
-                                            </div>
-                                        </div>
-
-                                        <div class="ln_solid"></div>
-
-                                        <div class="form-group">
-                                            <div class="col-md-6 col-md-offset-3">
-                                                <button type="reset" class="btn btn-primary">Borrar</button>
-                                                <button id="btnProductoTemporal" type="submit" class="btn btn-success">Guardar</button>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                                <!--  /CONTENIDO DE LA PAGINA -->
-
-                            </div>
-                        </div>
                     </div>
 
                     <!-- MODAL -->
-                    <div class="modal fade bs-example-modal-lg-insumo" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal fade bs-example-modal-lg-productogenerado" tabindex="-1" role="dialog" aria-hidden="true">
                         <div class="modal-dialog modal-lg">
                             <div class="modal-content">
 
@@ -281,33 +291,38 @@
                                     <button type="button" class="close" data-dismiss="modal">
                                         <span aria-hidden="true">×</span>
                                     </button>
-                                    <h4 class="modal-title" id="myModalLabel">Seleccionar Insumo</h4>
+                                    <h4 class="modal-title" id="myModalLabel">Seleccionar Producto</h4>
                                 </div>
 
                                 <div class="modal-body">
                                     <form class="form-horizontal form-label-left" id="frmProducto" novalidate>
 
-                                        <span class="section">Insumos</span>
+                                        <span class="section">Productos</span>
                                         <div id="datatable_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
                                             <div class="row">
                                                 <div class="col-sm-12">
-                                                    <table id="dsInsumo" class="table table-striped jambo_table bulk_action" role="grid" aria-describedby="datatable_info">
+                                                    <table id="dsProducto" class="table table-striped jambo_table bulk_action" role="grid" aria-describedby="datatable_info">
                                                         <thead>
                                                             <tr role="row" class="headings">
                                                                 <th>
                                                                     <input type='checkbox' id='check-all' class='iCheck-helper'>
                                                                 </th>
                                                                 <th class='itemId'>ID</th>
-                                                                <th>Nombre</th>
                                                                 <th>Codigo</th>
-                                                                <th>Bueno</th>
-                                                                <th>Malo</th>
-                                                                <th>Costo</th>
-                                                                <th>Acción</th>
+                                                                <th>Nombre</th>
+                                                                <th class='oculto'>TXTColor</th>
+                                                                <th class='oculto'>BGColor</th>
+                                                                <th>Nombre Abreviado</th>
+                                                                <th>Descripción</th>
+                                                                <th>Saldo Cantidad</th>
+                                                                <th>Saldo Costo</th>
+                                                                <th>Costo Promedio</th>
+                                                                <th>Precio Venta</th>
+                                                                <th>Es Venta</th>
                                                             </tr>
                                                         </thead>
 
-                                                        <tbody id="tableBody-Insumo">
+                                                        <tbody id="tableBody-Producto">
 
                                                         </tbody>
 
@@ -458,6 +473,7 @@
         <script src="assets/js/jquery.inputmask/jquery.inputmask.bundle.min.js"></script>
    
         <!-- JS Scripts -->
+        <script src="assets/js/OrdenSalida.js"></script>
         <script src="assets/js/ProductoTemporal.js"></script>
         <script src="assets/js/Insumo.js"></script>
         <script src="assets/js/Producto.js"></script>
@@ -479,19 +495,17 @@
 
 <script>
     $(document).ready(function () {
-        // if(!Session.state)
-        //     return;
         productotemporal.Init();
+        ordensalida.id = null;
+        ordensalida.Read;
     });
 
     $(document).on('click', '#btnAddInsumo', function (event) {
-        //alert("Prueba");
         insumo.id = null;
         insumo.Read;
         insumo.Init();
     });
-    $(document).on('click', '#btnAddProducto', function (event) {
-        //alert("Prueba");
+    $(document).on('click', '#btnAddProductoGenerado', function (event) {
         producto.id = null;
         producto.Read;
         producto.Init();

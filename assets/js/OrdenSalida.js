@@ -158,47 +158,84 @@ constructor(id, fecha, numeroorden, usuarioentrega, usuariorecibe, fechaliquida,
     };
 
     ClearCtls() {
-        $("#usuariorecibe").val('');
+        $("#numeroorden").val('');
+        $("#dt_fecha").val('');
         $("#dt_fechaliquida").val('');
-        $('#tableBody-InsumosOrdenSalida').html("");
+        $("#usuariorecibe").val('');
+        $('#tableBody-OrdenSalidaModal').html("");
     };
 
     ShowAll(e) {
-        // Limpia el div que contiene la tabla.
-        $('#tableBody-OrdenSalida').html("");
-        // // Carga lista
-        var data = JSON.parse(e);
-        //style="display: none"
-        var estado="EN PROCESO";
-        $.each(data, function (i, item) {
-            if (item.idestado=="0") 
-                estado="EN PROCESO";
-            else
-                estado="LIQUIDADO";
-            $('#tableBody-OrdenSalida').append(`
-                <tr> 
-                    <td class="itemId">${item.id}</td>
-                    <td class="oculto">${item.idusuarioentrega}</td>
-                    <td class="oculto">${item.idusuariorecibe}</td>
-                    <td>${item.fecha}</td>
-                    <td>${item.usuarioentrega}</td>
-                    <td>${item.usuariorecibe}</td>
-                    <td>${item.fechaliquida}</td>
-                    <td>${estado}</td>
-                    <td class=" last">
-                        <a id="update${item.id}" class="update" data-toggle="modal" data-target=".bs-example-modal-lg" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | 
-                        <a id="delete${item.id}" class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>
-                    </td>
-                    <td class="a-center ">
-                    <input id="chkterminado${item.id}" type="checkbox" class="flat" name="table_records">
-                </td>
-                </tr>
-            `);
-            $('#update'+item.id).click(ordensalida.UpdateEventHandler);
-            // $('#delete'+item.id).click(ordensalida.DeleteEventHandler);
-            // $('#chkterminado'+item.id).click(ordensalida.UpdateCantidadProducto);
-            
-        })        
+        var url;
+        url = window.location.href;
+        if (url.indexOf("ProductoTemporal.html")!=-1){
+            // Limpia el div que contiene la tabla.
+            $('#tableBody-OrdenSalida').html("");
+            // // Carga lista
+            var data = JSON.parse(e);
+            //style="display: none"
+            var estado="EN PROCESO";
+            $.each(data, function (i, item) {
+                if (item.idestado=="0") 
+                    estado="EN PROCESO";
+                else
+                    estado="LIQUIDADO";
+                $('#tableBody-OrdenSalida').append(`
+                    <tr> 
+                        <td class="a-center ">
+                        <input id="chkaddordensalida${item.id}" type="checkbox" class="flat" name="table_records">
+                        </td>
+                        <td>${item.numeroorden}</td>
+                        <td class="itemId">${item.id}</td>
+                        <td class="oculto">${item.idusuarioentrega}</td>
+                        <td class="oculto">${item.idusuariorecibe}</td>
+                        <td>${item.fecha}</td>
+                        <td>${item.usuarioentrega}</td>
+                        <td>${item.usuariorecibe}</td>
+                        <td>${item.fechaliquida}</td>
+                        <td>${estado}</td>
+                    </tr>
+                `);
+                $('#chkaddordensalida'+item.id).click(productotemporal.AddOrdenSalida);
+            })    
+        }
+        else{
+            // Limpia el div que contiene la tabla.
+            $('#tableBody-OrdenSalida').html("");
+            // // Carga lista
+            var data = JSON.parse(e);
+            //style="display: none"
+            var estado="EN PROCESO";
+            $.each(data, function (i, item) {
+                if (item.idestado=="0") 
+                    estado="EN PROCESO";
+                else
+                    estado="LIQUIDADO";
+                $('#tableBody-OrdenSalida').append(`
+                    <tr> 
+                        <td class="a-center ">
+                        <input id="chkaddordensalida${item.id}" type="checkbox" class="flat" name="table_records">
+                        </td>
+                        <td>${item.numeroorden}</td>
+                        <td class="itemId">${item.id}</td>
+                        <td class="oculto">${item.idusuarioentrega}</td>
+                        <td class="oculto">${item.idusuariorecibe}</td>
+                        <td>${item.fecha}</td>
+                        <td>${item.usuarioentrega}</td>
+                        <td>${item.usuariorecibe}</td>
+                        <td>${item.fechaliquida}</td>
+                        <td>${estado}</td>
+                        <td class=" last">
+                            <a id="update${item.id}" class="update" data-toggle="modal" data-target=".bs-example-modal-lg" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | 
+                            <a id="delete${item.id}" class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>
+                        </td>
+                    </tr>
+                `);
+                $('#update'+item.id).click(ordensalida.UpdateEventHandler);
+                // $('#delete'+item.id).click(ordensalida.DeleteEventHandler);
+            })    
+        }
+    
         //datatable         
         if ( $.fn.dataTable.isDataTable( '#dsOrdenSalida' ) ) {
             var table = $('#dsOrdenSalida').DataTable();
@@ -269,15 +306,16 @@ constructor(id, fecha, numeroorden, usuarioentrega, usuariorecibe, fechaliquida,
     
         ordensalida = new OrdenSalida(
             data.id, 
-            data.numeroorden,                        
+            // data.numeroorden,                        
             data.fecha, 
             data.fechaliquida,                                      
             data.idusuarioentrega, 
             data.idusuariorecibe,
-            data.usuarioentrega, 
-            data.usuariorecibe, 
-            data.idestado, 
-            data.listainsumo);
+            // data.usuarioentrega, 
+            // data.usuariorecibe, 
+            data.idestado 
+            // data.listainsumo
+        );
 
         $.each(data.listainsumo, function (i, item) {
             $('#tableBody-OrdenSalidaModal').append(`
