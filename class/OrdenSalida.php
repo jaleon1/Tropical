@@ -6,6 +6,7 @@ if(isset($_POST["action"])){
     require_once("Conexion.php");
     require_once('Evento.php');
     require_once('Usuario.php');
+    require_once('InsumosxOrdenSalida.php');
     // Session
     if (!isset($_SESSION))
         session_start();
@@ -20,6 +21,9 @@ if(isset($_POST["action"])){
             break;
         case "Create":
             $ordensalida->Create();
+            break;
+        case "ReadbyOrden":
+            echo json_encode($ordensalida->ReadbyOrden());
             break;
         // case "Update":
         //     $ordensalida->Update();
@@ -51,10 +55,11 @@ class OrdenSalida{
             $obj= json_decode($_POST["obj"],true);
             require_once("UUID.php");
             $this->id= $obj["id"] ?? UUID::v4();
+            $this->numeroorden= $obj["numeroorden"] ?? '';
             $this->fecha= $obj["fecha"] ?? '';
             $this->fechaliquida= $obj["fechaliquida"] ?? '';
-            $this->usuarioentrega= $_SESSION['usersession']->id;
-            $this->usuariorecibe= $obj["usuariorecibe"] ?? '';
+            $this->idusuarioentrega= $_SESSION['usersession']->id;
+            $this->idusuariorecibe= $obj["usuariorecibe"] ?? '';
             $this->idestado= $obj["estado"] ?? 0;
             //Insumos de la orden
             if (isset($obj["listainsumo"] )) {
@@ -118,7 +123,6 @@ class OrdenSalida{
             foreach ($insumoxordensalida as $key => $value){
                 require_once("InsumosxOrdenSalida.php");
                 $ins_ordensalida = new InsumosxOrdenSalida();
-                
                 $ins_ordensalida->id = $value['id'];
                 $ins_ordensalida->idordensalida = $value['idordensalida'];
                 $ins_ordensalida->idinsumo = $value['idinsumo'];
@@ -148,8 +152,8 @@ class OrdenSalida{
             $sql="INSERT INTO ordensalida   (`id`,`fecha`,`numeroorden`,`idusuarioentrega`,`idusuariorecibe`,`fechaliquida`,`idestado`) 
                 VALUES (:uuid,:fecha,:numeroorden,:idusuarioentrega,
                 :idusuariorecibe,:fechaliquida,:idestado)";
-            $param= array(':uuid'=>$this->id, ':fecha'=>$this->fecha, ':numeroorden'=>$numeroorden[0][0],':idusuarioentrega'=>$this->usuarioentrega, 
-            ':idusuariorecibe'=>$this->usuariorecibe, ':fechaliquida'=>$this->fechaliquida, ':idestado'=>$this->idestado);
+            $param= array(':uuid'=>$this->id, ':fecha'=>$this->fecha, ':numeroorden'=>$numeroorden[0][0],':idusuarioentrega'=>$this->idusuarioentrega, 
+            ':idusuariorecibe'=>$this->idusuariorecibe, ':fechaliquida'=>$this->fechaliquida, ':idestado'=>$this->idestado);
             $data = DATA::Ejecutar($sql,$param, false);
 
             if($data)
@@ -248,26 +252,65 @@ class OrdenSalida{
         }
     }
 
-}
-
-function ReadNextAI(){
-    try{ 
-        $sql="SELECT numeroorden+1
-        FROM ordensalida
-        ORDER BY numeroorden DESC LIMIT 1";
-        $data= DATA::Ejecutar($sql,$param); 
-        if(count($data))
-        return $data;
-        else return false;
-        }
-        catch(Exception $e){    
+    function ReadNextAI(){
+        try{ 
+            $sql="SELECT numeroorden+1
+            FROM ordensalida
+            ORDER BY numeroorden DESC LIMIT 1";
+            $data= DATA::Ejecutar($sql,$param); 
+            if(count($data))
+            return $data;
+            else return false;
+            }
+            catch(Exception $e){    
+                header('HTTP/1.0 400 Bad error');
+                die(json_encode(array(
+                'code' => $e->getCode() ,
+                    'msg' => $e->getMessage()))
+    
+                );    
+            }
+    }
+    
+    function ReadbyOrden(){
+        try {
+            $sql='SELECT `ordensalida`.`id`,
+            `ordensalida`.`numeroorden`,
+            `ordensalida`.`fecha`,
+            `ordensalida`.`idusuarioentrega`,
+            `ordensalida`.`idusuariorecibe`,
+            (SELECT nombre FROM usuario WHERE id=`ordensalida`.`idusuarioentrega`) AS usuarioentrega,
+            (SELECT nombre FROM usuario WHERE id=`ordensalida`.`idusuariorecibe`) AS usuariorecibe,
+            `ordensalida`.`fechaliquida`,
+            `ordensalida`.`idestado`
+            FROM `tropical`.`ordensalida` WHERE numeroorden=:numeroorden';
+            $param= array(':numeroorden'=>$this->numeroorden);
+            $data= DATA::Ejecutar($sql,$param);     
+            if(count($data)){
+                $this->id = $data[0]['id'];
+                $this->numeroorden = $data[0]['numeroorden'];
+                $this->fecha = $data[0]['fecha'];
+                $this->idusuarioentrega = $data[0]['idusuarioentrega'];
+                $this->idusuariorecibe = $data[0]['idusuariorecibe'];
+                $this->usuarioentrega = $data[0]['usuarioentrega'];
+                $this->usuariorecibe = $data[0]['usuariorecibe'];
+                $this->fechaliquida = $data[0]['fechaliquida'];
+                $this->idestado = $data[0]['idestado'];
+                // productos x distribucion.
+                $this->listainsumo= InsumosxOrdenSalida::Read($this->id);
+                //
+                return $this;
+            }
+            else return null;
+        }     
+        catch(Exception $e) {
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
-            'code' => $e->getCode() ,
-                'msg' => $e->getMessage()))
-
-            );    
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar el distribucion'))
+            );
         }
+    }
 }
 
 ?>

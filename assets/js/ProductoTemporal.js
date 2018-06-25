@@ -1,18 +1,7 @@
 class ProductoTemporal {
     // Constructor
-constructor(id, codigo, nombre, txtcolor, bgcolor, nombreabreviado, descripcion,  saldocantidad, saldocosto, costopromedio, precioventa, esventa, p) {
-        this.id = id || null;
-        this.codigo = codigo || '';
-        this.nombre = nombre || '';
-        this.txtcolor = txtcolor || '';
-        this.bgcolor = bgcolor || '';
-        this.nombreabreviado = nombreabreviado || '';
-        this.descripcion = descripcion || '';
-        this.saldocantidad = saldocantidad || 0;
-        this.saldocosto = saldocosto || 0;
-        this.costopromedio = costopromedio || 0;
-        this.precioventa = precioventa || 0;
-        this.esventa = esventa || 1;
+constructor(numeroorden, p) {
+        this.numeroorden = numeroorden || '';
         this.listaproducto = p || [];
     }
 
@@ -39,29 +28,30 @@ constructor(id, codigo, nombre, txtcolor, bgcolor, nombreabreviado, descripcion,
 
     get Save() {
         /* ACA DEBO DE ACTUALIZAR PRODUCTO CON LAS CANTIDADES */
-        if ($('#tableBody-dsProductoGenerado tr').length == 0){
+        if ($('#tableBody-ProductoGenerado tr').length == 0){
             swal({
                 type: 'info',
                 title: 'Debe agregar los Productos a generar...'                    
             });
             return;
         }
+        // var ncosto=0;
+        // $('#tableBody-InsumosOrdenSalida tr').each(function() {
+        //     var costoinsumo=parseFloat($(this).find('td:eq(6)').html());
+        //     ncosto += costoinsumo;
+        // });
         
         $('#btnAddProductoGenerado').attr("disabled", "disabled");
         var miAccion = this.id == null ? 'Create' : 'Update';
-        this.codigo = productotemporal.codigo;
-        this.saldocantidad = $("#saldocantidad").val();
-        this.saldocosto = 0;
-        this.bgcolor = productotemporal.bgcolor;
+        productotemporal.numeroorden = $("#orden").val();
         // lista de insumos
         productotemporal.listaproducto = [];
-        $('#tableBody-InsumoProducto tr').each(function() {
-            var objInsumo = new Object();
-            objInsumo.id= $(this).find('td:eq(0)').html();
-            objInsumo.saldocantidad= $(this).find('td:eq(2) input').val();
-            objInsumo.costo= $(this).find('td:eq(3)').html();
-            productotemporal.listaproducto.push(objInsumo);
-
+        $('#tableBody-ProductoGenerado tr').each(function() {
+            var objproduto = new Object();
+            objproduto.idproducto= $(this).find('td:eq(0)').html();
+            objproduto.cantidad= $(this).find('td:eq(10) input').val();
+            objproduto.costo= $(this).find('td:eq(7)').html();
+            productotemporal.listaproducto.push(objproduto);
         });
         $.ajax({
             type: "POST",
@@ -77,9 +67,9 @@ constructor(id, codigo, nombre, txtcolor, bgcolor, nombreabreviado, descripcion,
             })
             .always(function () {
                 setTimeout('$("#btnProductoTemporal").removeAttr("disabled")', 1000);
-                productotemporal = new ProductoTemporal();
+                // productotemporal = new ProductoTemporal();
                 productotemporal.ClearCtls();
-                productotemporal.Read;
+                // productotemporal.Read;
             });
     }
 
