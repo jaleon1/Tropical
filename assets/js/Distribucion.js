@@ -70,7 +70,7 @@ class Distribucion {
     get ReadbyOrden() {
         $('#orden').attr("disabled", "disabled");
         var miAccion = 'ReadbyOrden';
-        distr.orden= $('#orden').val();
+        distr.orden= $('#p_searh').val();
         $.ajax({
             type: "POST",
             url: "class/Distribucion.php",
