@@ -161,14 +161,75 @@
                             <div class="x_panel">
                                 <div class="x_title">
                                     <h2>Orden de Salida</h2>
-
                                     <div class="clearfix"></div>
                                 </div>
                                 <!--  CONTENIDO DE LA PAGINA -->
-
                                 <div class="x_content">
+                                        <span class="section">Datos Generales e Insumos Añadidos</span>
                                     <!-- TABLE -->
-                                    <div id="datatable_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
+                                    <div class="col-md-12 col-sm-12 col-xs-9">
+                                        <div class="x_panel">
+                                            <div class="title_right">
+                                                <div class="col-md-6 col-sm-12 col-xs-12 form-group top_search">
+                                                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="esventa">Orden</label>
+                                                    <div class="input-group">
+                                                        <input type="text" class="form-control" id="orden" readonly placeholder="Número de Orden ">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 col-sm-12 col-xs-12 form-group top_search">
+                                                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="esventa">Fecha</label>
+                                                    <div class="input-group">
+                                                        <input type="text" class="form-control" id="fecha" readonly placeholder="Fecha Ingreso ">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 col-sm-12 col-xs-12 form-group top_search">
+                                                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="esventa">Entrega</label>
+                                                    <div class="input-group">
+                                                        <input type="text" class="form-control" id="usuarioentrega" readonly placeholder="Usuario Entrega ">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 col-sm-12 col-xs-12 form-group top_search">
+                                                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="esventa">Recibe</label>
+                                                    <div class="input-group">
+                                                        <input type="text" class="form-control" id="usuariorecibe" readonly placeholder="Usuario Recibe ">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12 col-sm-12 col-xs-12 form-group pull-right top_search">
+                                                    <div class="input-group">
+                                                        <input autofocus type="text" class="form-control" id="p_searh" placeholder="Ingresar Número de Orden.">
+                                                        <span class="input-group-btn">
+                                                            <button class="btn btn-default" type="button">Buscar</button>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="x_content">
+                                                <div class="table-responsive">
+                                                    <table id="dsInsumosOrdenSalida" class="table table-striped jambo_table bulk_action" role="grid" aria-describedby="datatable_info">
+                                                        <thead>
+                                                            <tr role="row" class="headings">
+                                                                    <th class='itemId'>ID</th>
+                                                                    <th class='oculto'>Coigo</th>
+                                                                    <th>Nombre</th>
+                                                                    <th>Cantidad</th>
+                                                                    <th class='oculto'>Descripción</th>
+                                                                    <th class='oculto'>Saldo Cantidad</th>
+                                                                    <th class='oculto'>Saldo Costo</th>
+                                                                    <th class='oculto'>Costo Promedio</th>
+                                                            </tr>
+                                                        </thead>
+    
+                                                        <tbody id="tableBody-InsumosOrdenSalida">
+    
+                                                        </tbody>
+    
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- <div id="datatable_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
                                         <div class="row">
                                             <div class="col-sm-12">
                                                 <table id="dsOrdenSalida" class="table table-striped jambo_table bulk_action" role="grid" aria-describedby="datatable_info">
@@ -193,11 +254,10 @@
                                                 </table>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> -->
                                     <!-- /TABLE -->
                                 </div>
                                 <!--  /CONTENIDO DE LA PAGINA -->
-
                             </div>
                         </div>
 
@@ -205,18 +265,13 @@
                             <div class="x_panel">
                                 <div class="x_title">
                                     <h2>Productos Elaborados</h2>
-
                                     <div class="clearfix"></div>
                                 </div>
                                 <!--  CONTENIDO DE LA PAGINA -->
-
                                 <div class="x_content">
                                     <form class="form-horizontal form-label-left" id="frmProductoTemporal" method="POST" novalidate>
-                                        <span class="section">Inserte los Productos Generados
-
-                                        </span>
-
-                                        <div class="row">
+                                        <span class="section">Inserte los Productos Generados</span>
+                                        <!-- <div class="row">
                                             <div class="col-sm-10">
                                                 <div class="item form-group ">
                                                     <label class="control-label col-md-3 col-sm-3 col-xs-12" for="valor">Número de Orden
@@ -230,7 +285,7 @@
                                             <div class="col-sm-1">
                                                 
                                             </div>
-                                        </div>
+                                        </div> -->
 
                                         <div class="row">
                                             <div class="col-sm-11">
@@ -268,14 +323,12 @@
                                         <div class="form-group">
                                             <div class="col-md-6 col-md-offset-3">
                                                 <button type="reset" class="btn btn-primary">Borrar</button>
-                                                <button id="btnInsumoProducto" type="submit" class="btn btn-success">Guardar</button>
+                                                <button id="btnAddProductoGenerado" type="submit" class="btn btn-success">Guardar</button>
                                             </div>
                                         </div>
                                     </form>
                                 </div>
                                 <!--  /CONTENIDO DE LA PAGINA -->
-
-
                             </div>
                         </div>
 
@@ -514,5 +567,9 @@
         usuario.id = null;
         usuario.Read;
         usuario.Init();
+    });
+    $("#p_searh").keyup(function (e) {
+        if (e.which == 13)
+            ordensalida.ReadbyOrden;
     });
 </script>
