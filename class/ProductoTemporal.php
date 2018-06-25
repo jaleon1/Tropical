@@ -139,36 +139,54 @@ class ProductoTemporal{
         }
     }
 
-    function Create(){
-        try {
-            $sql="INSERT INTO productotemporal   (id, idproducto, idusuario, idusuariorecibe, cantidad, estado, fecha) 
-                VALUES (:uuid, :idproducto, :idusuario, :idusuariorecibe, :cantidad, :estado, now())";
-            //
-            $param= array(':uuid'=>$this->id, ':idproducto'=>$this->idproducto, ':idusuario'=>$_SESSION['usersession']->id, 
-            ':idusuariorecibe'=>$this->idusuariorecibe, ':cantidad'=>$this->cantidad, ':estado'=>$this->estado);
-            $data = DATA::Ejecutar($sql,$param, false);
+    // function Create(){
+    //     try {
+    //         $sql="INSERT INTO productotemporal   (id, idproducto, idusuario, idusuariorecibe, cantidad, estado, fecha) 
+    //             VALUES (:uuid, :idproducto, :idusuario, :idusuariorecibe, :cantidad, :estado, now())";
+    //         //
+    //         $param= array(':uuid'=>$this->id, ':idproducto'=>$this->idproducto, ':idusuario'=>$_SESSION['usersession']->id, 
+    //         ':idusuariorecibe'=>$this->idusuariorecibe, ':cantidad'=>$this->cantidad, ':estado'=>$this->estado);
+    //         $data = DATA::Ejecutar($sql,$param, false);
 
-            //Actualizar la cantidad de la tabla de insumos
-            // $sql="UPDATE insumo SET bueno=:bueno WHERE id=:id";
-            // $sql="UPDATE insumo SET bueno=:bueno WHERE id=:id";
-            // $data_insumo = DATA::Ejecutar($sql,$param, false);
+    //         //Actualizar la cantidad de la tabla de insumos
+    //         // $sql="UPDATE insumo SET bueno=:bueno WHERE id=:id";
+    //         // $sql="UPDATE insumo SET bueno=:bueno WHERE id=:id";
+    //         // $data_insumo = DATA::Ejecutar($sql,$param, false);
 
-            if($data)
-            {
-                //save array obj
-                if(InsumosXProducto::Create($this->listainsumo))
-                    return true;
-                else throw new Exception('Error al guardar los insumos.', 03);
-            }
-            else throw new Exception('Error al guardar.', 02);
+    //         if($data)
+    //         {
+    //             //save array obj
+    //             if(InsumosXProducto::Create($this->listainsumo))
+    //                 return true;
+    //             else throw new Exception('Error al guardar los insumos.', 03);
+    //         }
+    //         else throw new Exception('Error al guardar.', 02);
             
+    //     }     
+    //     catch(Exception $e) {
+    //         header('HTTP/1.0 400 Bad error');
+    //         die(json_encode(array(
+    //             'code' => $e->getCode() ,
+    //             'msg' => $e->getMessage()))
+    //         );
+    //     }
+    // }
+
+    public static function Create($obj){
+        try {
+            $created = true;
+            $ncosto=0;
+            foreach ($obj as $item)
+                //Calcular NCOSTO
+                $ncosto += $item->costopromedio; 
+            foreach ($obj as $item) 
+                // Actualiza los saldos y calcula promedio
+                Producto::UpdateSaldoProducto($item->idproducto, $item->cantidad, $ncosto);
+                
+            return $created;
         }     
         catch(Exception $e) {
-            header('HTTP/1.0 400 Bad error');
-            die(json_encode(array(
-                'code' => $e->getCode() ,
-                'msg' => $e->getMessage()))
-            );
+            return false;
         }
     }
 

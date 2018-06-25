@@ -7,6 +7,28 @@ class InsumosxOrdenSalida{
     public $cantidad;
     public $costopromedio;
 
+    function Read($idordensalida){
+        try {
+            $sql='SELECT `insumosxordensalida`.`id`,
+            `insumosxordensalida`.`idordensalida`,
+            `insumosxordensalida`.`idinsumo`,
+            (SELECT nombre FROM insumo WHERE id=`insumosxordensalida`.`idinsumo`) AS nombreinsumo,
+            `insumosxordensalida`.`cantidad`,
+            `insumosxordensalida`.`costopromedio`
+            FROM `tropical`.`insumosxordensalida` WHERE idordensalida=:id';
+            $param= array(':id'=>$idordensalida);
+            $data= DATA::Ejecutar($sql,$param);
+            return $data;
+        }     
+        catch(Exception $e) {
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar el producto'))
+            );
+        }
+    }
+
     public static function Create($obj){
         try {
             $created = true;
