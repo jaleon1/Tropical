@@ -39,6 +39,7 @@ class ProductosXDistribucion{
     public static function Create($obj){
         try {
             $created = true;
+            require_once("Producto.php");
             foreach ($obj as $item) {             
                 $sql="INSERT INTO productosxdistribucion   (id, iddistribucion, idproducto, cantidad, valor)
                     VALUES (uuid(), :iddistribucion, :idproducto, :cantidad, :valor)";

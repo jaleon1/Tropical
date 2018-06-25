@@ -96,7 +96,7 @@ class Distribucion{
     function ReadbyOrden(){
         try {
             $sql='SELECT id, fecha, orden, idusuario, idbodega, porcentajedescuento, porcentajeiva 
-                FROM tropical.distribucion
+                FROM distribucion
                 WHERE orden=:orden';
             $param= array(':orden'=>$this->orden);
             $data= DATA::Ejecutar($sql,$param);     
@@ -119,6 +119,24 @@ class Distribucion{
             die(json_encode(array(
                 'code' => $e->getCode() ,
                 'msg' => 'Error al cargar el distribucion'))
+            );
+        }
+    }
+
+    function Read(){
+        try {
+            $sql='SELECT id, fecha, orden, idusuario, idbodega, porcentajedescuento, porcentajeiva 
+                FROM distribucion  
+                where id=:id';
+            $param= array(':id'=>$this->id);
+            $data= DATA::Ejecutar($sql,$param);
+            return $data;
+        }     
+        catch(Exception $e) {
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar el producto'))
             );
         }
     }
@@ -156,10 +174,19 @@ class Distribucion{
 
     function Aceptar(){
         try {
-            $sql="CALL spUpdateSaldosPromedioInsumoBodegaEntrada(:mid, :ncantidad);";
-            $param= array(':mid'=>$id, ':ncantidad'=>$ncantidad);
-            $data = DATA::Ejecutar($sql,$param,false);
-            if($data)
+            $created=true;
+            foreach ($this->lista as $item) {       
+                $sql="CALL spUpdateSaldosPromedioInsumoBodegaEntrada(:nidproducto, :nidbodega, :ncantidad, :ncosto)";
+                $param= array(':nidproducto'=> $item->idproducto, 
+                    ':nidbodega'=> $this->idbodega,
+                    ':ncantidad'=> $item->cantidad,
+                    ':ncosto'=> $item->valor);
+                $data = DATA::Ejecutar($sql,$param,false);
+                if(!$data)
+                    $created= false;
+                
+            }
+            if($created)
                 return true;
             else throw new Exception('Error al calcular SALDOS Y PROMEDIOS, debe realizar el cálculo manualmente.', 666);
         }     
@@ -238,7 +265,7 @@ class Distribucion{
     }
 
     function ReadByCode(){
-        try{     
+        try{ 
             $sql="SELECT id, fecha, idbodega, descripcion
                 FROM distribucion
                 WHERE idbodega= :idbodega";

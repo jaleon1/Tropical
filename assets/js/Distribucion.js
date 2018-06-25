@@ -80,7 +80,7 @@ class Distribucion {
             }
         })
             .done(function (e) {
-                if(e=='null')
+                if(e=='null' || e=='')
                 {
                     swal({
                         position: 'top-end',
@@ -103,6 +103,15 @@ class Distribucion {
     Aceptar(){
         $('#btnDistribucion').attr("disabled", "disabled");
         var miAccion = "Aceptar";
+        distr.lista = [];
+        $('#productos tr').each(function(i, item) {
+            var objlista = new Object();
+            objlista.idproducto= $('#dsitems').dataTable().fnGetData(item)[0]; // id del item.
+            objlista.cantidad= $(this).find('td:eq(3) input').val();
+            objlista.costo= $(this).find('td:eq(4) input').val(); // costo: precio de venta para distrcion bodega externa. 
+            objlista.valor= parseFloat(parseInt(objlista.cantidad) * parseFloat(objlista.costo).toFixed(10)).toFixed(10); // valor. costo*cantidad.
+            distr.lista.push(objlista);
+        });
         $.ajax({
             type: "POST",
             url: "class/Distribucion.php",
@@ -111,7 +120,7 @@ class Distribucion {
                 obj: JSON.stringify(this)
             }
         })
-            .done(insumo.showInfo)
+            .done(distr.showInfo)
             .fail(function (e) {
                 distr.showError(e);
             })
@@ -119,7 +128,7 @@ class Distribucion {
                 setTimeout('$("#btnDistribucion").removeAttr("disabled")', 1000);
                 distr = new Distribucion();
                 distr.CleanCtls();
-                $("#orden").focus();
+                $("#p_searh").focus();
             });
 
     }
@@ -178,6 +187,12 @@ class Distribucion {
         $('#proveedor').val("");
         $('#orden').val("");
         $('#productos').html("");
+        t.rows().remove().draw();
+        // totales
+        $("#subtotal")[0].textContent = "¢0"; 
+        $("#desc_val")[0].textContent = "¢0";
+        $("#iv_val")[0].textContent = "¢0";
+        $("#total")[0].textContent = "¢0";
     };
 
     ResetSearch() {
@@ -251,7 +266,7 @@ class Distribucion {
         .draw() //dibuja la tabla con el nuevo producto
         .node();     
         //
-        $('td:eq(3) input', rowNode).attr({id: ("cant_"+producto.codigo), max:  "9999999999", min: "1", step:"1", value: producto.cantidad}).change(function(){
+        $('td:eq(3) input', rowNode).attr({id: ("cant_"+producto.codigo), max:  "9999999999", min: "1", step:"1", value: producto.cantidad || 1}).change(function(){
              distr.CalcImporte($(this).parents('tr').find('td:eq(0)').html());
         }); 
         //
@@ -267,7 +282,6 @@ class Distribucion {
     };
 
     CalcImporte(prd){
-        //alert('calculando');
         producto.UltPrd = prd;//validar
         producto.cantidad =  $(`#cant_${prd}`).val();
         producto.precioventa = $(`#precioventa_v${prd}`).val();
@@ -280,22 +294,22 @@ class Distribucion {
     };
 
     calcTotal(){
-        distr.subtotal=0; 
+        var subtotal=0; 
         distr.porcentajedescuento=0;
         distr.porcentajeiva=13;
         $('#desc_100').val(distr.porcentajedescuento);
         $('#iv_100').val(distr.porcentajeiva);
         //
         if($(document.getElementById("productos").rows)["0"].childElementCount>2){
-            $('#productos tr td:eq(5) input.valor').each(function(i,item){
-                distr.subtotal+= parseFloat(item.value).toFixed(10);
+            $('#productos tr').find('td:eq(5)').each(function(i,item){
+                subtotal+=  parseFloat(item.childNodes[0].value).toFixed(10);
             });
-            $("#subtotal")[0].textContent= "¢"+ parseFloat(distr.subtotal).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-            distr.descuento = distr.subtotal * (parseFloat(distr.porcentajedescuento).toFixed(2) / 100);
+            $("#subtotal")[0].textContent= "¢"+ parseFloat(subtotal).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            distr.descuento = subtotal * (parseFloat(distr.porcentajedescuento).toFixed(2) / 100);
             $("#desc_val")[0].textContent= "¢"+ parseFloat(distr.descuento).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-            distr.iva = distr.subtotal * (parseFloat(distr.porcentajeiva).toFixed(2) / 100);
+            distr.iva = subtotal * (parseFloat(distr.porcentajeiva).toFixed(2) / 100);
             $("#iv_val")[0].textContent= "¢" + parseFloat(distr.iva).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-            distr.total= distr.subtotal - distr.descuento + distr.iva;
+            distr.total= subtotal - distr.descuento + distr.iva;
             $("#total")[0].textContent= "¢" + parseFloat(distr.total).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         }
         else{
