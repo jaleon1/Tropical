@@ -1,11 +1,11 @@
 class OrdenSalida {
     // Constructor
-constructor(id, fecha, numeroorden, usuarioentrega, usuariorecibe, fechaliquida, estado, i) {
+constructor(id, fecha, numeroorden, idusuarioentrega, idusuariorecibe, fechaliquida, estado, i) {
         this.id = id || null;
         this.numeroorden = numeroorden || '';
         this.fecha = fecha || '';
-        this.usuarioentrega = usuarioentrega || '';
-        this.usuariorecibe = usuariorecibe || '';
+        this.idusuarioentrega = idusuarioentrega || '';
+        this.idusuariorecibe = idusuariorecibe || '';
         this.fechaliquida = fechaliquida || '';
         this.estado = estado || 0;
         this.listainsumo = i || [];
@@ -43,12 +43,12 @@ constructor(id, fecha, numeroorden, usuarioentrega, usuariorecibe, fechaliquida,
         $('#btnOrdenSalida').attr("disabled", "disabled");
         var miAccion = this.id == null ? 'Create' : 'Update';
         this.fecha = $("#dt_fecha").val();
-        this.fechaliquida = $("#dt_fechaliquida").val();
-        this.usuariorecibe = ordensalida.usuariorecibe;
+        // this.fechaliquida = $("#dt_fechaliquida").val();
+        this.usuariorecibe = ordensalida.idusuariorecibe;
         this.estado = 0;
         // lista de insumos
         ordensalida.listainsumo = [];
-        $('#tableBody-OrdenSalida tr').each(function() {
+        $('#tableBody-InsumosOrdenSalida tr').each(function() {
             var objInsumo = new Object();
             objInsumo.id= $(this).find('td:eq(0)').html();
             objInsumo.cantidad= $(this).find('td:eq(7) input').val();
@@ -426,7 +426,7 @@ constructor(id, fecha, numeroorden, usuarioentrega, usuariorecibe, fechaliquida,
 
     AddUserEventHandler(){
         $("#usuariorecibe").val($(this).parents("tr").find("td:eq(2)").html());
-        ordensalida.usuariorecibe = $(this).parents("tr").find("td:eq(1)").html();
+        ordensalida.idusuariorecibe = $(this).parents("tr").find("td:eq(1)").html();
         $('#modal-usuariorecibe').modal('toggle');
         $("#estado").focus();
     }

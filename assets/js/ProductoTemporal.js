@@ -39,29 +39,29 @@ constructor(id, codigo, nombre, txtcolor, bgcolor, nombreabreviado, descripcion,
 
     get Save() {
         /* ACA DEBO DE ACTUALIZAR PRODUCTO CON LAS CANTIDADES */
-        if ($('#tableBody-dsProductoGenerado tr').length == 0){
+        if ($('#tableBody-ProductoGenerado tr').length == 0){
             swal({
                 type: 'info',
                 title: 'Debe agregar los Productos a generar...'                    
             });
             return;
         }
-        
+        // var ncosto=0;
+        // $('#tableBody-InsumosOrdenSalida tr').each(function() {
+        //     var costoinsumo=parseFloat($(this).find('td:eq(6)').html());
+        //     ncosto += costoinsumo;
+        // });
         $('#btnAddProductoGenerado').attr("disabled", "disabled");
         var miAccion = this.id == null ? 'Create' : 'Update';
-        this.codigo = productotemporal.codigo;
-        this.saldocantidad = $("#saldocantidad").val();
-        this.saldocosto = 0;
-        this.bgcolor = productotemporal.bgcolor;
+
         // lista de insumos
         productotemporal.listaproducto = [];
-        $('#tableBody-InsumoProducto tr').each(function() {
-            var objInsumo = new Object();
-            objInsumo.id= $(this).find('td:eq(0)').html();
-            objInsumo.saldocantidad= $(this).find('td:eq(2) input').val();
-            objInsumo.costo= $(this).find('td:eq(3)').html();
-            productotemporal.listaproducto.push(objInsumo);
-
+        $('#tableBody-ProductoGenerado tr').each(function() {
+            var objproduto = new Object();
+            objproduto.id= $(this).find('td:eq(0)').html();
+            objproduto.cantidad= $(this).find('td:eq(10) input').val();
+            objproduto.costopromedio= $(this).find('td:eq(7)').html();
+            productotemporal.listaproducto.push(objproduto);
         });
         $.ajax({
             type: "POST",

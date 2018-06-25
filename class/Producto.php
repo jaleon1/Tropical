@@ -310,7 +310,7 @@ class Producto{
         }
     }  
     
-    public static function UpdateSaldoProducto($id, $ncantidad,$ncosto){
+    public static function UpdateSaldoProducto($id, $ncantidad, $ncosto){
         try {
             $sql="CALL spUpdateSaldosProducto(:mid, :ncantidad, :ncosto);";
             $param= array(':mid'=>$id, ':ncantidad'=>$ncantidad, ':ncosto'=>$ncosto);
