@@ -6,16 +6,16 @@ DELIMITER //
 CREATE PROCEDURE spUpdateSaldosPromedioInsumoEntrada(
 	IN mid char(36),
 	IN ncantidad DECIMAL(10,0),
-    IN ncosto DECIMAL(15,10)
+    IN ncosto DECIMAL(20,10)
 )
 BEGIN
 	DECLARE msaldocantidad  decimal(10,0) DEFAULT null;
-    DECLARE msaldocosto  decimal(15,10) DEFAULT null;
-    DECLARE mcostopromedio  decimal(15,10)DEFAULT null;
+    DECLARE msaldocosto  decimal(20,10) DEFAULT null;
+    DECLARE mcostopromedio  decimal(20,10)DEFAULT null;
     --
 	SELECT saldocantidad, saldocosto 
 	INTO msaldocantidad, msaldocosto
-	FROM insumo
+	FROM insumos
 	WHERE id= mid;
 	-- Calculo de saldos y promedio
     IF msaldocantidad is not null THEN
@@ -37,8 +37,8 @@ CREATE PROCEDURE spUpdateSaldosPromedioArticuloEntrada(
 )
 BEGIN
 	DECLARE msaldocantidad decimal(10,0) DEFAULT null;
-    DECLARE msaldocosto  decimal(15,10) DEFAULT null;
-    DECLARE mcostopromedio  decimal(15,10) DEFAULT null;
+    DECLARE msaldocosto  decimal(20,10) DEFAULT null;
+    DECLARE mcostopromedio  decimal(20,10) DEFAULT null;
     --
 	SELECT saldocantidad, saldocosto 
 	INTO msaldocantidad, msaldocosto
