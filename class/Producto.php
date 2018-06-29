@@ -96,6 +96,8 @@ class Producto{
         }
     }
   
+
+    // Si hago el filtro por tipo en el javascript ya no necesito esta funcion
     function ReadAllPrdVenta(){
         try {
             $sql='SELECT id, codigo, nombre, txtcolor, bgcolor, nombreabreviado, descripcion, saldocantidad, saldocosto, costopromedio, precioventa, esventa

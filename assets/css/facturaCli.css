@@ -1,9 +1,42 @@
-.btnPrd {
-    height: 45px;
-    /* width: auto;
-    min-width: 55px; */
-    width: 75px;
+.btn_venta{
+    border-radius: 8px;
+} 
+
+.selected {
+    box-shadow: inset 0 0 10px 2px #484a52;
+    border: 4px solid firebrick;
+    border-radius: 8px;
 }
+
+.btn_tamano{
+    color: black;
+}
+
+.saborelegido {
+    font-size: 28px;
+    background: #d7d9db;
+    margin-right: 5px;
+}
+
+.saborelegido spam{
+    color: firebrick;
+    margin-right: 5px;
+}
+
+.btn_sabor {    
+    height: auto;
+    width: 90px;
+}
+
+.btn_prd{
+    height: 70px;
+}
+
+.btn_topping{
+    height: 75px;
+    width: 180px;
+}
+/*
 .PrecioPrd {
     margin: 0;
 }
@@ -11,15 +44,27 @@
 .btnSize {
 margin-left: 200px;
 }
-
-.titleSize {
+*/
+/* .titleSize {
     position: absolute;
-}
-
+}  */
+/* 
 input[readonly]{
     background: transparent;
     border: none;
     -moz-user-select:none;
     -webkit-user-select:none;
     user-select: none;
-}
+} */
+
+/* 
+.btn_venta{
+    border-radius: 8px;
+} */
+
+/* .selected p{ */
+    /* background-color: #5bc0de !important; */
+    /* color: white !important; */
+/* } */
+
+

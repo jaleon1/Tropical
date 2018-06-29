@@ -12,92 +12,82 @@ class FacturaCli {
         this.importe = importe || 0;
         this.t = t || null;
     }
-    //Get
-    // get Importe() {
-    // return this.cantidad * this.precio;
-    // }
-
-
-    // get Save() {
-
-    // }
-
 }
 
 let facturaCli = new FacturaCli();
+var t; //se usa para la tabla
+sabores = 2; //cantidad maxima de sabores a elegir
+toppings = 1; //cantidad maxima de toppings a elegir
 
-// var t; //En esta variable se guarda la tabla de productos a facturar
+sel_sabores = new Array(); //almacena los sabores seleccionados
+
+sel_tamano = "Grande"; //almacena el tamaño seleccionados
+
+sel_toppings = new Array(); //almacena los toppings seleccionados
+
+prd_x_fac = new Array(); // almacena los productos y a su vez los detalles de cada uno
+
+indice_prd = 0;
+
 $(document).ready(function () {
-    // $('#open_modal_fac').attr("disabled", true);
-
-    // btnFormaPago()
-
-    //Valida si se presiona enter -> carga el producto en la lista
-    //si preciona "*" -> Quita el "*", pasa el punto de insercion a la cantidad y selecciona el valor para ser reemplazdo con el teclado
-    // $("#p_searh").keyup(function(e) {
-    //     if(e.which == 13) {
-    //     // Acciones a realizar, por ej: enviar formulario.
-    //     LoadProducto();
-    //     }
-    //     if (e.which == 106) {
-    //         $("#p_searh")[0].value = "";
-    //         // se usa UltPrd xq es el UltimoProductoTocado (si la cantidad del producto es alterada no hay forma de saber cual fue el ultimo modificado.)
-    //         $("#cant_"+ producto.UltPrd).focus().select(); 
-    //     }
-    // });
-
     // Recarga la página para limpiar todo
-    $('#reload').click(function () {
+    $('#btn_limpia').click(function () {
         location.reload();
     });
 
-    //Abre modal de modo de pago
-    // $('#open_modal_fac').click(function(){
-    //     $('#total_pagar').empty();
-    //     $('#total_pagar').append("Total a Pagar: "+$("#total")[0].textContent );
-    // });
-
-    //Usa la variable t que es el datatable donde estan los productos
-    // t = $('#t_prdXbdg').DataTable({
-    //     "ordering": false,
-    //     "searching": false,
-    //     "info":     false, //Quita el pie de pagina
-    //     "language": {
-    //         "infoEmpty": "No hay productos agregados2",
-    //         "emptyTable": "No hay productos agregados2",
-    //         "search": "Buscar En Factura" //Cambia el texto de Search
-    //     },
-    //     "columns": [
-    //         {   "width": "500 px" , 
-    //             "height": "20 px"}
-    //     ],
-    // "columns": [
-    //     { "title": "id" },
-    //     { "title": "Codigo" },
-    //     { "title": "Descripcion" },
-    //     { "title": "Precio/U" },
-    //     { "title": "Cantidad" },
-    //     { "title": "Importe" }
-    //   ], // crea las columnas
-    // "scrollY":        "190px",
-    // "searching": false,
-    // "scrollCollapse": true,
-    //     "paging":         false,
-
-
-
-    //     "columnDefs": [ 
-    //         {"sortable":false, "class":"spacer", "targets": 5}
-    //     ]
-    // });
-
-    // t.columns.adjust().draw();
-
-    $("#fecha").append(moment().format('MMM DD YYYY, h:mm:ss a'));
-
+    sel_tamano = "Grande";
 
     LoadAllPrdVenta();
 
+    t = $('#prd').DataTable( {
+            "paging":   false,
+            "ordering": false,
+            "info":     false,
+            "searching": false,
+            "language": {
+                "infoEmpty": "No hay productos agregados",
+                "emptyTable": "No hay productos agregados",
+                "search": "Buscar En Factura" //Cambia el texto de Search
+            },
+            "columnDefs": [ 
+                {
+                    "visible": false,
+                    "targets": 0,
+                    "searchable": false
+                },
+                { 
+                    // "width": "2%", 
+                    "targets": 1,
+                    "searchable": false
+                },
+                { 
+                    "width": "8%", "targets": 2
+                }
+            ]
+    });
+
+
+    $('#prd').on( 'click', 'tr', function () {     
+        prd_row = this;
+        borraPRD(prd_row);
+    } );
+
+
+
+});
+
+
+$("#btngrande").click(function () {
+    $("#btngrande").addClass("selected");
+    $("#btnmediano").removeClass("selected");
+    sel_tamano = "Grande";
+});
+
+
+$("#btnmediano").click(function () {
+    $("#btnmediano").addClass("selected");
+    $("#btngrande").removeClass("selected");
+    sel_tamano = "Mediano";
 });
 
 
@@ -106,7 +96,7 @@ function LoadAllPrdVenta() {
         type: "POST",
         url: "class/Producto.php",
         data: {
-            action: "ReadAllPrdVenta"
+            action: "ReadAll"
         }
     })
         .done(function (e) {
@@ -119,22 +109,284 @@ function LoadAllPrdVenta() {
 };
 
 
-
-
-
-
 function DrawPrd(e) {
     productos = JSON.parse(e);
     $.each(productos, function (item, value) {
-        var prd = ` <button style="background-color:${productos[item].bgcolor};">
-        <div class="btnPrd" style="color:${productos[item].txtcolor}";>
-            <h5>${productos[item].nombreabreviado}</h5>
-        </div>
-    </button>`;
-        //${prd}
-        $('#prdXbdg').append(prd);
+        switch (productos[item].esventa) {
+            case "1":
+               DrawSabor(productos[item]);
+                break;
+            case "2":
+                DrawTopping(productos[item]);
+                break;
+            default:
+                return false
+        };
     });
 };
+
+
+
+function DrawSabor(sabores){
+    var prd = `
+    <button id="btn_${sabores.id}" class="btn_sabor btn_venta" style="background-color:${sabores.bgcolor};" onclick="agregaSabor('${sabores.id}', '${sabores.nombre}')">
+        <div class="btn_prd" style="color:${sabores.txtcolor}";>
+            <h5>${sabores.nombre}</h5>
+            <p id="cant_sabor_${sabores.id}"></p>
+        </div>
+    </button>`;
+    $('#prdXbdg').append(prd);
+};
+
+
+function DrawTopping(toppings){
+    var prd = `
+        <button id="btn_${toppings.id}" style="background-color:${toppings.bgcolor};" class="btn_topping btn_venta" onclick="agrega_toppings('${toppings.id}', '${toppings.nombre}')">
+            <div style="color: ${toppings.txtcolor};">
+                <h5>${toppings.nombre}</h5>
+                <p id="cant_topping_${toppings.id}">\xa0</p>
+            </div>
+        </button>`;
+        $('#toppings').append(prd);
+};
+
+
+function verificaCantidad(tipo) {
+    switch (tipo) {
+        case "sabor":
+            if (sabores > 0) {
+                sabores = sabores - 1;
+                return true
+            }
+            break;
+        case "topping":
+            if (toppings > 0) {
+                toppings = toppings - 1;
+                return true
+            }
+            break;
+        default:
+            return false
+    }
+};
+
+
+function agregaSabor(id, nombre) {
+    if (verificaCantidad("sabor")) {
+        if (($("#cant_sabor_" + id).text()) != "1" && ($("#cant_sabor_" + id).text()) != "2") {
+            $("#cant_sabor_" + id).text("1");
+        }
+        else {
+            $("#cant_sabor_" + id).text((parseInt($("#cant_sabor_" + id)[0].textContent) + 1));
+        }
+
+        sabo = new Object();
+        sabo.id = id;
+        sabo.nombre = nombre;
+
+        sel_sabores.push(sabo);
+
+        $("#btn_" + id).addClass("selected");
+
+        var prd =
+            `<strong id="eleccion_${id}" class="saborelegido" onclick="quitaSabor('${id}')">
+            ${nombre} 
+            <spam class="glyphicon glyphicon-remove"</spam>  
+        </strong>`;
+
+        $('#sabores_elegidos').append(prd);
+
+        $("#sabores_elegidos" + id).addClass("selected");
+    }
+};
+
+function quitaSabor(id) {
+    if (($("#cant_sabor_" + id).text()) == "2") {
+        $("#cant_sabor_" + id).text("1");
+    }
+    else {
+        $("#btn_" + id).removeClass("selected");
+        // $("#eleccion_" + id).remove();
+        $("#cant_sabor_" + id).text("");
+    }
+    sabores = sabores + 1
+    $("#eleccion_" + id).remove();
+
+    if (sel_sabores[0].id == id) {
+        sel_sabores.splice(0, 1); //array.splice(index, howmany, item1, ....., itemX)
+    };
+
+    if (sel_sabores.length == 2) {
+
+        if (sel_sabores[1].id == id) {
+            sel_sabores.splice(1, 1); //array.splice(index, howmany, item1, ....., itemX)
+        };
+    };
+
+};
+
+function agrega_toppings(id_topping, nombre_topping) {
+    if (verificaCantidad("topping")) {
+        if (($("#cant_topping_" + id_topping).text()) != "1" && ($("#cant_topping_" + id_topping).text()) != "2") {
+            $("#cant_topping_" + id_topping).text("1");
+        }
+        else {
+            $("#cant_topping_" + id_topping).text((parseInt($("#cant_topping_" + id_topping).text()) + 1));
+        }
+        topp = new Object();
+        topp.id = id_topping;
+        topp.nombre = nombre_topping;
+        sel_toppings.push(topp);
+        
+        $("#btn_" + id_topping).addClass("selected");
+
+        var prd =
+            `<strong id="eleccion_${id_topping}" class="saborelegido" onclick="quitaTopping('${id_topping}')">
+            ${nombre_topping} 
+            <spam class="glyphicon glyphicon-remove"</spam>  
+        </strong>`;
+
+        $('#toppings_elegidos').append(prd);
+
+        $("#toppings_elegidos" + id_topping).addClass("selected");
+    }
+};
+
+function quitaTopping(id) {
+    if (($("#cant_topping_" + id).text()) == "2") {
+        $("#cant_topping_" + id).text("1");
+    }
+    else {
+        $("#btn_" + id).removeClass("selected");
+        $("#cant_topping_" + id).text("\xa0");
+    }
+    toppings = toppings + 1
+
+    $("#eleccion_" + id).remove();
+
+    if (sel_toppings[0].id == id) {
+        sel_toppings.splice(0, 1);
+    };
+    
+    if (sel_toppings.length == 2) {
+        if (sel_toppings[1].id == id) {
+            sel_toppings.splice(1, 1);
+        };
+    };
+};
+
+
+$("#btn_agrega_prd").click(function () {    
+
+    indice_prd = indice_prd+1;
+    prd = new Array();
+    prd.push(indice_prd, sel_tamano, sel_sabores, sel_toppings);
+    prd_x_fac.push(prd); // se usa para el manejo del datatable (borar elementos)
+    // detalle_x_fac.push(prd_x_fac);
+
+    var rowNode = t   //t es la tabla de productos
+    .row.add([indice_prd,[sel_tamano +", "+ sel_sabores[0].nombre +" y "+ sel_sabores[1].nombre +", "+ sel_toppings[0].nombre], "<spam class='glyphicon glyphicon-trash btn_borrar'></spam>"])
+    .draw() //dibuja la tabla con el nuevo producto
+    .node();
+    
+    // $('td:eq(1)', rowNode).attr({id: ("prec")});
+    t.columns.adjust().draw();
+
+    calcTotal();
+
+    resetDash();
+
+
+});
+
+function borraPRD(row_prd) {
+    indx=null; //Indice a borrar, se usa de esta forma xq al modificar el contenido del arreglo falla el each
+
+    $(row_prd).addClass('borrar'); 
+
+    $(prd_x_fac).each(function(i,item){
+        if (t.row(row_prd).data()[0] == item[0]) {
+            prd_x_fac.splice(i, 1);
+        }
+        //alert("I: "+i+" | "+"item: "+item+"var_INDEX: "+indx);
+    });
+    t.row('.borrar').remove().draw( false );
+    // prd_x_fac.splice(indx, 1); //array.splice(index, howmany, item1, ....., itemX)
+
+};
+
+
+function resetDash(){
+    $('#toppings_elegidos').empty();
+    $('#sabores_elegidos').empty();
+    // $("#" + id).removeClass("selected");
+    $("#prdXbdg").find(".selected").removeClass("selected");
+    $("#prdXbdg").find("p").text("\xa0");
+
+    
+    $("#toppings").find(".selected").removeClass("selected");
+    $("#toppings").find("p").text("\xa0");
+
+
+    sel_sabores=[];
+    sel_toppings=[];
+    sabores=2;
+    toppings =2;
+};
+
+
+//Calcula los totales cada vez que un producto es modificado
+function calcTotal() {
+    var total = 0;
+    if (prd_x_fac.length > 0) {
+
+        $(prd_x_fac).each(function (i, item) {
+            if (item[1] == "Grande") {
+                total=total+2000;
+            }else if (item[1] == "Mediano") {
+                total=total+1000;    
+            }
+        });
+        $("#total").html("¢"+total);
+    }
+    else {
+        $('#open_modal_fac').attr("disabled", true);
+        $("#subtotal")[0].textContent = "¢0";
+        $("#iv_val")[0].textContent = "¢0";
+        $("#total")[0].textContent = "¢0";
+
+    }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 //VALIDAR SI SE NECESITA
@@ -257,30 +509,7 @@ function CalcImporte(prd) {
     }
 };
 
-//Calcula los totales cada vez que un producto es modificado
-function calcTotal() {
-    var subT = 0;
-    if ($(document.getElementById("productos").rows)["0"].childElementCount > 2) {
 
-        $(document.getElementById("productos").rows).each(function (i, item) {
-            // alert(item.childNodes[3].innerText);
-
-            subT = subT + parseFloat((item.childNodes[4].textContent).replace("¢", ""));
-        });
-        $("#subtotal")[0].textContent = "¢" + subT.toFixed(2);
-        factura.descuento = $("#desc_val")[0].textContent = "¢" + (subT * (parseFloat(($("#desc_100")[0].textContent).replace("%", ""))) / 100).toFixed(2);
-        factura.impuesto = $("#iv_val")[0].textContent = "¢" + ((subT * (parseFloat(($("#iv_100")[0].textContent).replace("%", "")) / 100)) - (parseFloat(($("#desc_val")[0].textContent).replace("¢", "")))).toFixed(2);
-        $("#total")[0].textContent = "¢" + ((($("#subtotal")[0].textContent).replace("¢", "")) - parseFloat(($("#desc_val")[0].textContent).replace("¢", "")) + parseFloat(($("#iv_val")[0].textContent).replace("¢", ""))).toFixed(2);
-    }
-    else {
-        $('#open_modal_fac').attr("disabled", true);
-        $("#subtotal")[0].textContent = "¢0";
-        $("#desc_val")[0].textContent = "¢0";
-        $("#iv_val")[0].textContent = "¢0";
-        $("#total")[0].textContent = "¢0";
-
-    }
-};
 
 //Elimana el producto de la factura 
 function BorraRow(prd) {
