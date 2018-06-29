@@ -24,8 +24,6 @@
     <link href="assets/css/font-awesome/css/font-awesome.min.css" rel="stylesheet">
     <!-- NProgress -->
     <link href="assets/css/nprogress/nprogress.css" rel="stylesheet">
-    <!-- bootstrap-datetimepicker -->
-    <!-- <link href="assets/css/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css" rel="stylesheet"> -->
     <!-- iCheck -->
     <link href="assets/css/iCheck/skins/flat/green.css" rel="stylesheet">
     <!-- SweetAlert -->
@@ -36,10 +34,12 @@
     <link href="../vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css" rel="stylesheet">
     <link href="../vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css" rel="stylesheet">
     <link href="../vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css" rel="stylesheet">
-    <link href="../vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css" rel="stylesheet">
+    <link href="../vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css" rel="stylesheet">    
 
     <!-- Custom Theme Style -->
     <link href="assets/css/custom.css" rel="stylesheet">
+    <!-- bootstrap-datetimepicker -->
+    <link href="../vendors/bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.css" rel="stylesheet">
 
 </head>
 
@@ -54,9 +54,7 @@
                             <span>Tropical</span>
                         </a>
                     </div>
-
                     <div class="clearfix"></div>
-
                     <!-- menu profile quick info -->
                     <div class="profile clearfix">
                         <div class="profile_pic">
@@ -69,9 +67,7 @@
                         <div class="clearfix"></div>
                     </div>
                     <!-- /menu profile quick info -->
-
                     <br />
-
                     <!-- sidebar menu -->
                     <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
                         <div class="menu_section">
@@ -82,7 +78,6 @@
                         </div>
                     </div>
                     <!-- /sidebar menu -->
-
                     <!-- /menu footer buttons -->
                     <div class="sidebar-footer hidden-small">
                         <a data-toggle="tooltip" data-placement="top" title="Settings">
@@ -101,7 +96,6 @@
                     <!-- /menu footer buttons -->
                 </div>
             </div>
-
             <!-- top navigation -->
             <div class="top_nav">
                 <div class="nav_menu">
@@ -132,13 +126,12 @@
                 </div>
             </div>
             <!-- /top navigation -->
-
             <!-- page content -->
             <div class="right_col" role="main">
                 <div class="">
                     <div class="page-title">
                         <div class="title_left">
-                            <h3>PRODUCTO TERMINADO</h3>
+                            <h3>ORDEN DE SALIDA</h3>
                         </div>
 
                         <div class="title_right">
@@ -156,165 +149,162 @@
                     <div class="clearfix"></div>
 
                     <div class="row">
-
                         <div class="col-md-6 col-sm-6 col-xs-12">
                             <div class="x_panel">
                                 <div class="x_title">
-                                    <h2>Orden de Salida</h2>
+                                    <h2>Materia Prima</h2>
+
                                     <div class="clearfix"></div>
                                 </div>
                                 <!--  CONTENIDO DE LA PAGINA -->
+
                                 <div class="x_content">
-                                        <span class="section">Datos Generales e Insumos Añadidos</span>
-                                    <!-- TABLE -->
-                                    <div class="col-md-12 col-sm-12 col-xs-9">
-                                        <div class="x_panel">
-                                            <div class="title_right">
-                                                <div class="col-md-6 col-sm-12 col-xs-12 form-group top_search">
-                                                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="esventa">Orden</label>
-                                                    <div class="input-group">
-                                                        <input type="text" class="form-control" id="orden" readonly placeholder="Número de Orden ">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6 col-sm-12 col-xs-12 form-group top_search">
-                                                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="esventa">Fecha</label>
-                                                    <div class="input-group">
-                                                        <input type="text" class="form-control" id="fecha" readonly placeholder="Fecha Ingreso ">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6 col-sm-12 col-xs-12 form-group top_search">
-                                                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="esventa">Entrega</label>
-                                                    <div class="input-group">
-                                                        <input type="text" class="form-control" id="usuarioentrega" readonly placeholder="Usuario Entrega ">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6 col-sm-12 col-xs-12 form-group top_search">
-                                                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="esventa">Recibe</label>
-                                                    <div class="input-group">
-                                                        <input type="text" class="form-control" id="usuariorecibe" readonly placeholder="Usuario Recibe ">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-12 col-sm-12 col-xs-12 form-group pull-right top_search">
-                                                    <div class="input-group">
-                                                        <input autofocus type="text" class="form-control" id="p_searh" placeholder="Ingresar Número de Orden.">
-                                                        <span class="input-group-btn">
-                                                            <button class="btn btn-default" type="button">Buscar</button>
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            
-                                            <div class="x_content">
-                                                <div class="table-responsive">
-                                                    <table id="dsInsumosOrdenSalida" class="table table-striped jambo_table bulk_action" role="grid" aria-describedby="datatable_info">
-                                                        <thead>
-                                                            <tr role="row" class="headings">
-                                                                    <th class='itemId'>ID</th>
-                                                                    <th class='oculto'>Coigo</th>
-                                                                    <th>Nombre</th>
-                                                                    <th>Cantidad</th>
-                                                                    <th class='oculto'>Descripción</th>
-                                                                    <th class='oculto'>Saldo Cantidad</th>
-                                                                    <th class='oculto'>Saldo Costo</th>
-                                                                    <th class='oculto'>Costo Promedio</th>
-                                                            </tr>
-                                                        </thead>
-    
-                                                        <tbody id="tableBody-InsumosOrdenSalida">
-    
-                                                        </tbody>
-    
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- <div id="datatable_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
+                                    <form class="form-horizontal form-label-left" id="frmInsumoTemporal" method="POST" novalidate>
+                                        <span class="section">Selección de Insumos
+
+                                        </span>
                                         <div class="row">
-                                            <div class="col-sm-12">
-                                                <table id="dsOrdenSalida" class="table table-striped jambo_table bulk_action" role="grid" aria-describedby="datatable_info">
+                                            <div class="col-sm-11">
+                                                <table id="dsInsumosOrdenSalida" class="table table-striped jambo_table bulk_action" role="grid" aria-describedby="datatable_info">
                                                     <thead>
                                                         <tr role="row" class="headings">
-                                                            <th><input type='checkbox' id='check-all' class='iCheck-helper'></th>
-                                                            <th class='itemId'>ID</th><th class='oculto'>ID USUARIO ENTREGA</th>
-                                                            <th class='oculto'>ID USUARIO RECIBE</th> 
-                                                            <th>Orden</th>
-                                                            <th>Fecha</th> 
-                                                            <th>Usuario Entrega</th> 
-                                                            <th>Usuario Recibe</th> 
-                                                            <th>Fecha Liquidación</th>  
-                                                            <th>Estado</th> 
+                                                                <th class='itemId'>ID</th>
+                                                                <th class='oculto'>Coigo</th>
+                                                                <th>Nombre</th>
+                                                                <th>Cantidad</th>
+                                                                <th class='oculto'>Descripción</th>
+                                                                <th class='oculto'>Saldo Cantidad</th>
+                                                                <th class='oculto'>Saldo Costo</th>
+                                                                <th class='oculto'>Costo Promedio</th>
+                                                                <th>Acción</th>
                                                         </tr>
                                                     </thead>
 
-                                                    <tbody id="tableBody-OrdenSalida">
+                                                    <tbody id="tableBody-InsumosOrdenSalida">
 
                                                     </tbody>
 
                                                 </table>
                                             </div>
+                                            <div class="col-sm-1">
+                                                <button id="btnAddInsumo" data-toggle="modal" data-target=".bs-example-modal-lg-insumo" type="button" class="btn btn-info btn-lg">+</button>
+                                            </div>
                                         </div>
-                                    </div> -->
-                                    <!-- /TABLE -->
+
+                                        <div class="ln_solid"></div>
+
+                                        <div class="form-group">
+                                            <div class="col-md-6 col-md-offset-3">
+                                            </div>
+                                        </div>
+                                    </form>
                                 </div>
                                 <!--  /CONTENIDO DE LA PAGINA -->
+
                             </div>
                         </div>
-
                         <div class="col-md-6 col-sm-6 col-xs-12">
                             <div class="x_panel">
                                 <div class="x_title">
-                                    <h2>Productos Elaborados</h2>
+                                    <h2>Datos Generales</h2>
+
                                     <div class="clearfix"></div>
                                 </div>
                                 <!--  CONTENIDO DE LA PAGINA -->
+
                                 <div class="x_content">
-                                    <form class="form-horizontal form-label-left" id="frmProductoTemporal" method="POST" novalidate>
-                                        <span class="section">Inserte los Productos Generados</span>
-                                        <!-- <div class="row">
-                                            <div class="col-sm-10">
+                                    <form class="form-horizontal form-label-left" id="frmOrdenSalida" method="POST" novalidate>
+                                        <span class="section">Inserte los datos Generales
+
+                                        </span>
+                                        
+                                        <div class="row">
+                                            <div class="col-sm-11">
                                                 <div class="item form-group ">
                                                     <label class="control-label col-md-3 col-sm-3 col-xs-12" for="valor">Número de Orden
-                                                        <span class="required">*</span>
+                                            
                                                     </label>
-                                                    <div class="col-md-6 col-sm-5 col-xs-12">
-                                                        <input id="numeroorden" class="form-control col-md-7 col-xs-12" name="nmeroorden" required="required" data-validate-minmax="1,99999" placeholder="Seleccione Usuario" readonly>
+                                                    <div class="col-md-6 col-sm-6 col-xs-12">
+                                                        <input id="numeroorden" class="form-control col-md-7 col-xs-12" name="numeroorden" data-validate-minmax="1,99999" placeholder="Nueva" readonly="readonly">
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="col-sm-1">
                                                 
                                             </div>
-                                        </div> -->
+                                        </div>
+                                        
+                                        <div class="row">
+                                            <div class="col-sm-11">
+                                                <div class="item form-group ">
+                                                    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="valor">Fecha
+                                                        
+                                                    </label>
+                                                    <div class="col-md-6 col-sm-6 col-xs-12">
+                                                        <div class="input-group date" id="myDatepicker1">
+                                                            <input id="dt_fecha" type="text" class="form-control"  readonly>
+                                                            <span class="input-group-addon">
+                                                               <span class="glyphicon glyphicon-calendar"></span>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-1">
+
+                                            </div>
+                                        </div>
 
                                         <div class="row">
                                             <div class="col-sm-11">
-                                                <table id="dsProductoGenerado" class="table table-striped jambo_table bulk_action" role="grid" aria-describedby="datatable_info">
-                                                    <thead>
-                                                        <tr role="row" class="headings">
-                                                            <th class='itemId'>Id</th>
-                                                            <th class='oculto'>Codigo</th>
-                                                            <th>Nombre</th>
-                                                            <th class='oculto'>Nombreabreviado</th>
-                                                            <th class='oculto'>Descripcion</th>
-                                                            <th class='oculto'>Saldocantidad</th>
-                                                            <th class='oculto'>Saldocosto</th>
-                                                            <th class='oculto'>Costopromedio</th>
-                                                            <th class='oculto'>Precioventa</th>
-                                                            <th class='oculto'>Esventa</th>
-                                                            <th>Cantidad</th>
-                                                            <th>Acción</th>
-                                                        </tr>
-                                                    </thead>
-
-                                                    <tbody id="tableBody-ProductoGenerado">
-
-                                                    </tbody>
-
-                                                </table>
+                                                <div class="item form-group ">
+                                                    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="valor">Fecha Liquidación
+                                                        
+                                                    </label>
+                                                    <div class="col-md-6 col-sm-6 col-xs-12">
+                                                        <div class="input-group date" id="myDatepicker2">
+                                                            <input id="dt_fechaliquida" type="text" class="form-control">
+                                                            <span class="input-group-addon">
+                                                                <span class="glyphicon glyphicon-calendar"></span>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                             <div class="col-sm-1">
-                                                <button id="btnAddProductoGenerado" data-toggle="modal" data-target=".bs-example-modal-lg-productogenerado" type="button" class="btn btn-info btn-lg">+</button>
+
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-sm-11">
+                                                <div class="item form-group ">
+                                                    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="valor">Usuario Recibe
+                                                        <span class="required">*</span>
+                                                    </label>
+                                                    <div class="col-md-6 col-sm-6 col-xs-12">
+                                                        <input id="usuariorecibe" class="form-control col-md-7 col-xs-12" name="usuariorecibe" required="required" data-validate-minmax="1,99999" placeholder="Seleccione Usuario" readonly>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-1">
+                                                <button id="btnAddUsuarioRecibe" data-toggle="modal" data-target=".bs-example-modal-lg-usuariorecibe" type="button" class="btn btn-info btn-lg">+</button>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-sm-11">
+                                                    <div class="item form-group">
+                                                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="estado">Estado</label>
+                                                        <div class="col-md-6 col-sm-6 col-xs-12">
+                                                            <select class="form-control" id="estado">
+                                                                <option>EN PROCESO</option>
+                                                                <option>LIQUIDADO</option>
+                                                              </select>
+                                                        </div>
+                                                    </div>
+                                            </div>
+                                            <div class="col-sm-1">                                                    
                                             </div>
                                         </div>
 
@@ -323,20 +313,19 @@
                                         <div class="form-group">
                                             <div class="col-md-6 col-md-offset-3">
                                                 <button type="reset" class="btn btn-primary">Borrar</button>
-                                                <button id="btnAddProductoGenerado" type="submit" class="btn btn-success">Guardar</button>
+                                                <button id="btnOrdenSalida" type="submit" class="btn btn-success">Guardar</button>
                                             </div>
                                         </div>
                                     </form>
                                 </div>
                                 <!--  /CONTENIDO DE LA PAGINA -->
+
                             </div>
                         </div>
-
-
                     </div>
 
                     <!-- MODAL -->
-                    <div class="modal fade bs-example-modal-lg-productogenerado" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal fade bs-example-modal-lg-insumo" tabindex="-1" role="dialog" aria-hidden="true">
                         <div class="modal-dialog modal-lg">
                             <div class="modal-content">
 
@@ -344,17 +333,17 @@
                                     <button type="button" class="close" data-dismiss="modal">
                                         <span aria-hidden="true">×</span>
                                     </button>
-                                    <h4 class="modal-title" id="myModalLabel">Seleccionar Producto</h4>
+                                    <h4 class="modal-title" id="myModalLabel">Seleccionar Insumo</h4>
                                 </div>
 
                                 <div class="modal-body">
                                     <form class="form-horizontal form-label-left" id="frmProducto" novalidate>
 
-                                        <span class="section">Productos</span>
+                                        <span class="section">Insumos</span>
                                         <div id="datatable_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
                                             <div class="row">
                                                 <div class="col-sm-12">
-                                                    <table id="dsProducto" class="table table-striped jambo_table bulk_action" role="grid" aria-describedby="datatable_info">
+                                                    <table id="dsInsumo" class="table table-striped jambo_table bulk_action" role="grid" aria-describedby="datatable_info">
                                                         <thead>
                                                             <tr role="row" class="headings">
                                                                 <th>
@@ -363,19 +352,15 @@
                                                                 <th class='itemId'>ID</th>
                                                                 <th>Codigo</th>
                                                                 <th>Nombre</th>
-                                                                <th class='oculto'>TXTColor</th>
-                                                                <th class='oculto'>BGColor</th>
-                                                                <th>Nombre Abreviado</th>
                                                                 <th>Descripción</th>
                                                                 <th>Saldo Cantidad</th>
                                                                 <th>Saldo Costo</th>
                                                                 <th>Costo Promedio</th>
-                                                                <th>Precio Venta</th>
-                                                                <th>Es Venta</th>
+                                                                <th>Acción</th>
                                                             </tr>
                                                         </thead>
 
-                                                        <tbody id="tableBody-Producto">
+                                                        <tbody id="tableBody-Insumo">
 
                                                         </tbody>
 
@@ -427,6 +412,7 @@
                                                                 </th>
                                                                 <th class='itemId'>ID</th>
                                                                 <th>Nombre</th>
+                                                                <th>Descripción</th>
                                                                 <th>Código</th>
                                                                 <th>Acción</th>
                                                             </tr>
@@ -513,44 +499,45 @@
     <script src="assets/js/fastclick/lib/fastclick.js"></script>
     <!-- NProgress -->
     <script src="assets/js/nprogress/nprogress.js"></script>
-    <!-- iCheck -->
-    <!-- <script src="assets/js/iCheck/icheck.min.js"></script> -->
     <!-- Moment -->
-    <!-- <script src="assets/js/moment.min.js"></script>
-        <script src="assets/js/moment-timezone.js"></script> -->
-        <!-- bootstrap-datetimepicker -->
-        <!-- <script src="assets/js/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js"></script> -->
-        <!-- Validator -->
-        <script src="assets/js/validator.js"></script>
-        <!-- Input mask -->
-        <script src="assets/js/jquery.inputmask/jquery.inputmask.bundle.min.js"></script>
-   
-        <!-- JS Scripts -->
-        <script src="assets/js/OrdenSalida.js"></script>
-        <script src="assets/js/ProductoTemporal.js"></script>
-        <script src="assets/js/Insumo.js"></script>
-        <script src="assets/js/Producto.js"></script>
-        <script src="assets/js/Usuario.js"></script>
-        <!-- Sweet Alert -->
-        <script src="assets/js/sweetalert2.min.js"></script>
-
-        <!-- Datatables -->
-        <script src="../vendors/datatables.net/js/jquery.dataTables.min.js"></script>
-        <!-- Custom Theme Scripts -->
-        <script src="assets/js/custom.min.js"></script>
-   
-        <!-- Custom Theme Scripts -->
-        <script src="../build/js/custom.min.js"></script>
-
+    <script src="assets/js/moment.min.js"></script>
+    <script src="assets/js/moment-timezone.js"></script>
+    <!-- Validator -->
+    <script src="assets/js/validator.js"></script>
+    <!-- Input mask -->
+    <script src="assets/js/jquery.inputmask/jquery.inputmask.bundle.min.js"></script>
+    <!-- JS Scripts -->
+    <script src="assets/js/OrdenSalida.js"></script>
+    <script src="assets/js/ProductoTemporal.js"></script>
+    <script src="assets/js/Insumo.js"></script>
+    <script src="assets/js/Producto.js"></script>
+    <script src="assets/js/Usuario.js"></script>
+    <!-- Sweet Alert -->
+    <script src="assets/js/sweetalert2.min.js"></script>
+    <!-- Datatables -->
+    <script src="../vendors/datatables.net/js/jquery.dataTables.min.js"></script>
+    <!-- iCheck -->
+    <script src="assets/js/iCheck/icheck.min.js"></script>
+    <!-- Custom Theme Scripts -->
+    <script src="assets/js/custom.min.js"></script>
+    <!-- Custom Theme Scripts -->
+    <!-- <script src="../build/js/custom.min.js"></script> -->
+    <!-- Moment -->    
+    <!-- <script src="assets/bootstrap/js/moment.js"></script> -->
+    <!-- bootstrap-datetimepicker -->    
+    <script src="assets/bootstrap/js/bootstrap-datetimepicker.min.js"></script>
 </body>
 
 </html>
 
 <script>
     $(document).ready(function () {
-        productotemporal.Init();
-        ordensalida.id = null;
-        ordensalida.Read;
+        ordensalida.Init();
+        $('#myDatepicker1').datetimepicker();
+        $('#myDatepicker2').datetimepicker({format:'YYYY-MM-DD hh:mm:ss A'});
+        var dateTime = new Date();
+        var now = moment(dateTime).format("YYYY-MM-DD HH:mm:ss A");
+        $('#dt_fecha').val(now);
     });
 
     $(document).on('click', '#btnAddInsumo', function (event) {
@@ -558,18 +545,11 @@
         insumo.Read;
         insumo.Init();
     });
-    $(document).on('click', '#btnAddProductoGenerado', function (event) {
-        producto.id = null;
-        producto.Read;
-        producto.Init();
-    });
+
     $(document).on('click', '#btnAddUsuarioRecibe', function (event) {    
         usuario.id = null;
         usuario.Read;
         usuario.Init();
     });
-    $("#p_searh").keyup(function (e) {
-        if (e.which == 13)
-            ordensalida.ReadbyOrden;
-    });
+
 </script>

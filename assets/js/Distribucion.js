@@ -1,15 +1,18 @@
 class Distribucion {
     // Constructor
-    constructor(id, orden, fecha, idusuario, lista) {
+    constructor(id, orden, fecha, idusuario, idbodega, porcentajedescuento, porcentajeiva, lista) {
         this.id = id || null;        
         this.orden = orden || '';
         this.fecha = fecha || '';
-        this.idusuario = idusuario || '';
+        this.idusuario = idusuario || null;
+        this.idbodega = idbodega || null;
+        this.porcentajedescuento = porcentajedescuento || 0;
+        this.porcentajeiva = porcentajeiva || 0;
         this.lista = lista || [];
     }
 
     get Save() {
-        if($('#productos').length==0 ){
+        if($('#dsitems tr').length==0 ){
             swal({
                 type: 'warning',
                 title: 'Orden de Compra',
@@ -20,40 +23,138 @@ class Distribucion {
             return;
         }
         //
-        $('#btnOrdenCompra').attr("disabled", "disabled");
-        var miAccion = this.id == null ? 'Create' : 'Update';        
-        this.orden = $("#orden").val();
-        this.idproveedor = $("#proveedor").val();
+        $('#btnDistribucion').attr("disabled", "disabled");
+        var miAccion = distr.id == null ? 'Create' : 'Update';        
+        distr.orden = $("#orden").val();
+        distr.idbodega = bodega.id;
+        distr.porcentajedescuento = $("#desc_100").val();
+        distr.porcentajeiva=$("#iv_100").val();
         //
-        ordencompra.lista = [];
+        distr.lista = [];
         $('#productos tr').each(function(i, item) {
             var objlista = new Object();
-            objlista.idinsumo= $('#dsitems').dataTable().fnGetData(item)[0]; // id del item.
-            objlista.costounitario= $(this).find('td:eq(2) input').val();
-            objlista.cantidadbueno= $(this).find('td:eq(3) input').val();
-            objlista.cantidadmalo= $(this).find('td:eq(4) input').val();
-            objlista.valorbueno= $(this).find('td:eq(5) input.valor').val();
-            objlista.valormalo= $(this).find('td:eq(6) input.valor').val();
-            ordencompra.lista.push(objlista);
+            objlista.idproducto= $('#dsitems').dataTable().fnGetData(item)[0]; // id del item.
+            objlista.cantidad= $(this).find('td:eq(3) input').val();
+            objlista.valor= $(this).find('td:eq(4) input').val(); // valor: precio de venta para distrcion bodega externa. 
+            distr.lista.push(objlista);
         });
         $.ajax({
             type: "POST",
-            url: "class/OrdenCompra.php",
+            url: "class/Distribucion.php",
             data: {
                 action: miAccion,
                 obj: JSON.stringify(this)
             }
         })
-            .done(ordencompra.showInfo)
+            .done(function(e){
+                // muestra el numero de orden: IMPRIMIR.
+                var data = JSON.parse(e)[0];
+                swal({
+                    type: 'success',
+                    title: 'Número de Orden:' + data.orden,
+                    text: 'Número de orden de Distribución:',
+                    showConfirmButton: true
+                });
+            })
             .fail(function (e) {
-                ordencompra.showError(e);
+                distr.showError(e);
             })
             .always(function () {
-                setTimeout('$("#btnOrdenCompra").removeAttr("disabled")', 1000);
-                ordencompra = new OrdenCompra();
-                ordencompra.CleanCtls();
+                setTimeout('$("#btnDistribucion").removeAttr("disabled")', 1000);
+                distr = new Distribucion();
+                distr.CleanCtls();
                 $("#p_searh").focus();
             });
+    };
+
+    get ReadbyOrden() {
+        $('#orden').attr("disabled", "disabled");
+        var miAccion = 'ReadbyOrden';
+        distr.orden= $('#p_searh').val();
+        $.ajax({
+            type: "POST",
+            url: "class/Distribucion.php",
+            data: {
+                action: miAccion,
+                obj: JSON.stringify(this)
+            }
+        })
+            .done(function (e) {
+                if(e=='null' || e=='')
+                {
+                    swal({
+                        position: 'top-end',
+                        type: 'warning',
+                        title: 'Orden no encontrada!',
+                        showConfirmButton: false,
+                        timer: 1000
+                    });
+                }
+                else distr.ShowItemData(e);
+            })
+            .fail(function (e) {
+                distr.showError(e);
+            })
+            .always(function () {
+                setTimeout('$("#orden").removeAttr("disabled")', 1000);
+            });
+    }
+
+    Aceptar(){
+        $('#btnDistribucion').attr("disabled", "disabled");
+        var miAccion = "Aceptar";
+        distr.lista = [];
+        $('#productos tr').each(function(i, item) {
+            var objlista = new Object();
+            objlista.idproducto= $('#dsitems').dataTable().fnGetData(item)[0]; // id del item.
+            objlista.cantidad= $(this).find('td:eq(3) input').val();
+            objlista.costo= $(this).find('td:eq(4) input').val(); // costo: precio de venta para distrcion bodega externa. 
+            objlista.valor= parseFloat(parseInt(objlista.cantidad) * parseFloat(objlista.costo).toFixed(10)).toFixed(10); // valor. costo*cantidad.
+            distr.lista.push(objlista);
+        });
+        $.ajax({
+            type: "POST",
+            url: "class/Distribucion.php",
+            data: {
+                action: miAccion,
+                obj: JSON.stringify(this)
+            }
+        })
+            .done(distr.showInfo)
+            .fail(function (e) {
+                distr.showError(e);
+            })
+            .always(function () {
+                setTimeout('$("#btnDistribucion").removeAttr("disabled")', 1000);
+                distr = new Distribucion();
+                distr.CleanCtls();
+                $("#p_searh").focus();
+            });
+
+    }
+
+    Reload(e) {
+        if (this.id == null)
+            this.ShowAll(e);
+        else this.ShowItemData(e);
+    };
+
+    ShowItemData(e) {
+        // Limpia el controles
+        this.CleanCtls();
+        // carga objeto.
+        var data = JSON.parse(e);
+        distr = new Distribucion(data.id, data.orden, data.fecha, data.idusuario, data.idbodega, data.porcentajedescuento, data.porcentajeiva, data.lista);
+        // datos
+        $('#orden').val(distr.orden);
+        $('#fecha').val(distr.fecha);
+        bodega.id= distr.idbodega;
+        bodega.Read;
+        // carga lista.
+        $.each(distr.lista, function (i, item) {
+            producto= item;
+            distr.AgregaProducto();
+        });
     };
 
     // Muestra información en ventana
@@ -86,6 +187,12 @@ class Distribucion {
         $('#proveedor').val("");
         $('#orden').val("");
         $('#productos').html("");
+        t.rows().remove().draw();
+        // totales
+        $("#subtotal")[0].textContent = "¢0"; 
+        $("#desc_val")[0].textContent = "¢0";
+        $("#iv_val")[0].textContent = "¢0";
+        $("#total")[0].textContent = "¢0";
     };
 
     ResetSearch() {
@@ -159,7 +266,7 @@ class Distribucion {
         .draw() //dibuja la tabla con el nuevo producto
         .node();     
         //
-        $('td:eq(3) input', rowNode).attr({id: ("cant_"+producto.codigo), max:  "9999999999", min: "1", step:"1", value:"1"}).change(function(){
+        $('td:eq(3) input', rowNode).attr({id: ("cant_"+producto.codigo), max:  "9999999999", min: "1", step:"1", value: producto.cantidad || 1}).change(function(){
              distr.CalcImporte($(this).parents('tr').find('td:eq(0)').html());
         }); 
         //
@@ -175,14 +282,44 @@ class Distribucion {
     };
 
     CalcImporte(prd){
-        //alert('calculando');
         producto.UltPrd = prd;//validar
         producto.cantidad =  $(`#cant_${prd}`).val();
         producto.precioventa = $(`#precioventa_v${prd}`).val();
-        producto.subtotal= producto.cantidad * producto.precioventa; // subtotal linea
+        producto.subtotal= (producto.cantidad * producto.precioventa).toFixed(10); // subtotal linea
         //
-        $(`#subtotal_v${prd}`).val(producto.subtotal.toFixed(10));
-        $(`#subtotal_d${prd}`).val("$"+producto.subtotal.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+        $(`#subtotal_v${prd}`).val(producto.subtotal);
+        $(`#subtotal_d${prd}`).val("¢"+parseFloat(producto.subtotal).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+        //
+        distr.calcTotal();
+    };
+
+    calcTotal(){
+        var subtotal=0; 
+        distr.porcentajedescuento=0;
+        distr.porcentajeiva=13;
+        $('#desc_100').val(distr.porcentajedescuento);
+        $('#iv_100').val(distr.porcentajeiva);
+        //
+        if($(document.getElementById("productos").rows)["0"].childElementCount>2){
+            $('#productos tr').find('td:eq(5)').each(function(i,item){
+                subtotal+=  parseFloat(item.childNodes[0].value).toFixed(10);
+            });
+            $("#subtotal")[0].textContent= "¢"+ parseFloat(subtotal).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            distr.descuento = subtotal * (parseFloat(distr.porcentajedescuento).toFixed(2) / 100);
+            $("#desc_val")[0].textContent= "¢"+ parseFloat(distr.descuento).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            distr.iva = subtotal * (parseFloat(distr.porcentajeiva).toFixed(2) / 100);
+            $("#iv_val")[0].textContent= "¢" + parseFloat(distr.iva).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            distr.total= subtotal - distr.descuento + distr.iva;
+            $("#total")[0].textContent= "¢" + parseFloat(distr.total).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+        else{
+            //$('#open_modal_fac').attr("disabled", true);
+            $("#subtotal")[0].textContent = "¢0"; 
+            $("#desc_val")[0].textContent = "¢0";
+            $("#iv_val")[0].textContent = "¢0";
+            $("#total")[0].textContent = "¢0";
+            
+        }
     };
 }
 

@@ -139,7 +139,7 @@
                 <div class="">
                     <div class="page-title">
                         <div class="title_left">
-                            <h3>PRODUCTO TEMPORAL</h3>
+                            <h3>ORDEN DE SALIDA</h3>
                         </div>
 
                         <div class="title_right">
@@ -160,7 +160,7 @@
                         <div class="col-md-12 col-sm-12 col-xs-12">
                             <div class="x_panel">
                                 <div class="x_title">
-                                    <h2>Inventario Producto Temporal</h2>
+                                    <h2>Inventario Orden de Salida</h2>
                                     
                                     <div class="clearfix"></div>
                                 </div>
@@ -171,21 +171,16 @@
                                     <div id="datatable_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
                                         <div class="row">
                                             <div class="col-sm-12">
-                                                <table id="dsProductoTemporal" class="table table-striped jambo_table bulk_action" role="grid" aria-describedby="datatable_info">
+                                                <table id="dsOrdenSalida" class="table table-striped jambo_table bulk_action" role="grid" aria-describedby="datatable_info">
                                                     <thead>
                                                         <tr role="row" class="headings">
-                                                            <th class='itemId'>ID</th>
-                                                            <th class='oculto'>Codigo</th>
-                                                            <th class='oculto'>ID USUARIO RECIBE</th>
-                                                            <th class='oculto'>ID PRODUCTO</th>
-                                                            <th>Producto</th> <th>Usuario Entrega</th> 
-                                                            <th>Usuario Recibe</th> <th>Cantidad</th>  
-                                                            <th>Estado</th> <th>Acción</th>
-                                                            <th><input type='checkbox' id='check-all' class='iCheck-helper'>Terminar</th>
+                                                            <th><input type='checkbox' id='check-all' class='iCheck-helper'></th>
+                                                            <th class='itemId'>ID</th><th class='oculto'>ID USUARIO ENTREGA</th><th class='oculto'>ID USUARIO RECIBE</th> <th>Orden</th>
+                                                            <th>Fecha</th> <th>Usuario Entrega</th> <th>Usuario Recibe</th> <th>Fecha Liquidación</th>  <th>Estado</th> <th>Acción</th>
                                                         </tr>
                                                     </thead>
 
-                                                    <tbody id="tableBody-ProductoTemporal">
+                                                    <tbody id="tableBody-OrdenSalida">
 
                                                     </tbody>
 
@@ -204,7 +199,7 @@
                                                     <button type="button" class="close" data-dismiss="modal">
                                                         <span aria-hidden="true">×</span>
                                                     </button>
-                                                    <h4 class="modal-title" id="myModalLabel">Editar Producto Temporal</h4>
+                                                    <h4 class="modal-title" id="myModalLabel">Editar Orden de Salida</h4>
                                                 </div>
 
                                                 <div class="modal-body">
@@ -216,7 +211,7 @@
                                                             <div class="col-md-6 col-sm-6 col-xs-12">
                                                                 <div class="x_panel">
                                                                     <div class="x_title">
-                                                                        <h2>Insumos por Producto</h2>
+                                                                        <h2>Materia Prima</h2>
                                     
                                                                         <div class="clearfix"></div>
                                                                     </div>
@@ -227,23 +222,33 @@
                                                                             <span class="section">Selección de Insumos
                                     
                                                                             </span>
-                                                                            <div id="reportrange" class="pull-right">
-                                                                                <button id="btnAddInsumo" data-toggle="modal" data-target=".bs-example-modal-lg-insumo" type="button" class="btn btn-info btn-lg">+</button>    
-                                                                            </div>
                                                                             <div class="row">
-                                                                                <div class="col-sm-12">
-                                                                                    <table id="dsInsumoProducto" class="table table-striped jambo_table bulk_action" role="grid" aria-describedby="datatable_info">
+                                                                                <div class="col-sm-11">
+                                                                                    <table id="dsOrdenSalidaModal" class="table table-striped jambo_table bulk_action" role="grid" aria-describedby="datatable_info">
                                                                                         <thead>
                                                                                             <tr role="row" class="headings">
-                                                                                                
+                                                                                                    <th class='itemId'>ID</th>
+                                                                                                    <th class='oculto'>Usuario Entrega</th>
+                                                                                                    <th class='oculto'>Usuario Recibe</th>
+                                                                                                    <th class='oculto'>Fecha</th>
+                                                                                                    <th>Nombre</th>
+                                                                                                    <th>Cantidad</th>
+                                                                                                    <th class='oculto'>Descripción</th>
+                                                                                                    <th class='oculto'>Saldo Cantidad</th>
+                                                                                                    <th class='oculto'>Saldo Costo</th>
+                                                                                                    <th class='oculto'>Costo Promedio</th>
+                                                                                                    <th>Acción</th>
                                                                                             </tr>
                                                                                         </thead>
                                     
-                                                                                        <tbody id="tableBody-InsumoProducto">
-                                                                    
+                                                                                        <tbody id="tableBody-OrdenSalidaModal">
+                                    
                                                                                         </tbody>
                                     
                                                                                     </table>
+                                                                                </div>
+                                                                                <div class="col-sm-1">
+                                                                                    <button id="btnAddInsumo" data-toggle="modal" data-target=".bs-example-modal-lg-insumo" type="button" class="btn btn-info btn-lg">+</button>
                                                                                 </div>
                                                                             </div>
                                     
@@ -251,60 +256,116 @@
                                     
                                                                             <div class="form-group">
                                                                                 <div class="col-md-6 col-md-offset-3">
-                                    
                                                                                 </div>
                                                                             </div>
                                                                         </form>
                                                                     </div>
                                                                     <!--  /CONTENIDO DE LA PAGINA -->
                                     
-                                                                    
                                                                 </div>
                                                             </div>
                                                             <div class="col-md-6 col-sm-6 col-xs-12">
                                                                 <div class="x_panel">
                                                                     <div class="x_title">
-                                                                        <h2>Producto</h2>
+                                                                        <h2>Datos Generales</h2>
                                     
                                                                         <div class="clearfix"></div>
                                                                     </div>
                                                                     <!--  CONTENIDO DE LA PAGINA -->
                                     
                                                                     <div class="x_content">
-                                                                        <form class="form-horizontal form-label-left" id="frmProductoTemporal" method="POST" novalidate>
-                                                                            <span class="section">Selección del Producto
+                                                                        <form class="form-horizontal form-label-left" id="frmOrdenSalida" method="POST" novalidate>
+                                                                            <span class="section">Inserte los datos Generales
                                     
                                                                             </span>
-                                                                            <div id="reportrange" class="pull-right">
-                                                                                <button id="btnAddProducto" data-toggle="modal" data-target=".bs-example-modal-lg-producto" type="button" class="btn btn-info btn-lg">+</button>    
-                                                                            </div>
+                                                                            
                                                                             <div class="row">
-                                                                                <div class="col-sm-12">
-                                                                                    <div class="item form-group">
-                                                                                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="nombre">Nombre
-                                                                                            <span class="required">*</span>
-                                                                                        </label>
-                                                                                        <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                                            <input id="nombre" class="form-control col-md-7 col-xs-12" name="nombre" required="required" type="text" placeholder="Nombre del Producto"
-                                                                                                autofocus>
-                                                                                        </div>
-                                                                                    </div>
+                                                                                <div class="col-sm-11">
                                                                                     <div class="item form-group ">
-                                                                                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="valor">Cantidad
-                                                                                            <span class="required">*</span>
+                                                                                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="valor">Número de Orden
+                                                                                
                                                                                         </label>
                                                                                         <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                                            <input id="cantidad" class="form-control col-md-7 col-xs-12" name="cantidad" required="required" type="text" placeholder="Cantidad Producto">
+                                                                                            <input id="numeroorden" class="form-control col-md-7 col-xs-12" name="numeroorden" data-validate-minmax="1,99999" placeholder="Nueva" readonly="readonly">
                                                                                         </div>
                                                                                     </div>
+                                                                                </div>
+                                                                                <div class="col-sm-1">
+                                                                                    
+                                                                                </div>
+                                                                            </div>
+                                                                            
+                                                                            <div class="row">
+                                                                                <div class="col-sm-11">
+                                                                                    <div class="item form-group ">
+                                                                                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="valor">Fecha
+                                                                                            
+                                                                                        </label>
+                                                                                        <div class="col-md-6 col-sm-6 col-xs-12">
+                                                                                            <div class="input-group date" id="myDatepicker1">
+                                                                                                <input id="dt_fecha" type="text" class="form-control"  readonly>
+                                                                                                <span class="input-group-addon">
+                                                                                                   <span class="glyphicon glyphicon-calendar"></span>
+                                                                                                </span>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-sm-1">
+                                    
+                                                                                </div>
+                                                                            </div>
+                                    
+                                                                            <div class="row">
+                                                                                <div class="col-sm-11">
+                                                                                    <div class="item form-group ">
+                                                                                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="valor">Fecha Liquidación
+                                                                                            
+                                                                                        </label>
+                                                                                        <div class="col-md-6 col-sm-6 col-xs-12">
+                                                                                            <div class="input-group date" id="myDatepicker2">
+                                                                                                <input id="dt_fechaliquida" type="text" class="form-control">
+                                                                                                <span class="input-group-addon">
+                                                                                                    <span class="glyphicon glyphicon-calendar"></span>
+                                                                                                </span>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-sm-1">
+                                    
+                                                                                </div>
+                                                                            </div>
+                                    
+                                                                            <div class="row">
+                                                                                <div class="col-sm-11">
                                                                                     <div class="item form-group ">
                                                                                         <label class="control-label col-md-3 col-sm-3 col-xs-12" for="valor">Usuario Recibe
                                                                                             <span class="required">*</span>
                                                                                         </label>
                                                                                         <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                                            <input id="usuariorecibe" class="form-control col-md-7 col-xs-12" name="usuariorecibe" required="required" data-validate-minmax="1,99999" placeholder="Seleccione Usuario">
+                                                                                            <input id="usuariorecibe" class="form-control col-md-7 col-xs-12" name="usuariorecibe" required="required" data-validate-minmax="1,99999" placeholder="Seleccione Usuario" readonly>
                                                                                         </div>
                                                                                     </div>
+                                                                                </div>
+                                                                                <div class="col-sm-1">
+                                                                                    <button id="btnAddUsuarioRecibe" data-toggle="modal" data-target=".bs-example-modal-lg-usuariorecibe" type="button" class="btn btn-info btn-lg">+</button>
+                                                                                </div>
+                                                                            </div>
+                                    
+                                                                            <div class="row">
+                                                                                <div class="col-sm-11">
+                                                                                        <div class="item form-group">
+                                                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="estado">Estado</label>
+                                                                                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                                                                                <select class="form-control" id="estado">
+                                                                                                    <option>EN PROCESO</option>
+                                                                                                    <option>LIQUIDADO</option>
+                                                                                                  </select>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                </div>
+                                                                                <div class="col-sm-1">                                                    
                                                                                 </div>
                                                                             </div>
                                     
@@ -312,7 +373,8 @@
                                     
                                                                             <div class="form-group">
                                                                                 <div class="col-md-6 col-md-offset-3">
-                                                                                        <button id="btnProductoTemporal" type="submit" class="btn btn-success">Guardar</button>
+                                                                                    <button type="reset" class="btn btn-primary">Borrar</button>
+                                                                                    <button id="btnOrdenSalida" type="submit" class="btn btn-success">Guardar</button>
                                                                                 </div>
                                                                             </div>
                                                                         </form>
@@ -335,100 +397,6 @@
                                                 <div class="modal-footer">
                                                 </div>
 
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="modal fade bs-example-modal-lg-insumo" tabindex="-1" role="dialog" aria-hidden="true">
-                                        <div class="modal-dialog modal-lg">
-                                            <div class="modal-content">
-                
-                                                <div class="modal-header">
-                                                    <button type="button" class="close" data-dismiss="modal">
-                                                        <span aria-hidden="true">×</span>
-                                                    </button>
-                                                    <h4 class="modal-title" id="myModalLabel">Seleccionar Insumo</h4>
-                                                </div>
-                
-                                                <div class="modal-body">
-                                                    <form class="form-horizontal form-label-left" id="frmInsumo" novalidate>
-        
-                                                        <span class="section">Insumos</span>
-                                                            <div id="datatable_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
-                                                                <div class="row">
-                                                                    <div class="col-sm-12">
-                                                                        <table id="dsInsumo" class="table table-striped jambo_table bulk_action" role="grid" aria-describedby="datatable_info">
-                                                                            <thead>
-                                                                                <tr role="row" class="headings">
-                                                                                    <th><input type='checkbox' id='check-all' class='iCheck-helper'></th><th class='itemId'>ID</th><th>Nombre</th> <th>Codigo</th> <th>Bueno</th>  <th>Malo</th> <th>Costo</th> <th>Acción</th>
-                                                                                </tr>
-                                                                            </thead>
-                
-                                                                            <tbody id="tableBody-Insumo">
-                                                                                
-                                                                            </tbody>
-                
-                                                                        </table>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        <div class="ln_solid"></div>
-                                                        
-                                                        <div class="form-group">
-                                                            <div class="col-md-6 col-md-offset-3">
-                                                                <!-- <button id="btnSalirModalInsumo" type="reset" class="btn btn-primary">Salir</button>-->
-                                                                <button type="button" class="btn btn-default" data-dismiss="modal" id="btnSalirModalInsumo" >Close</button>
-                                                            </div>
-                                                        </div>
-                
-                                                    </form>
-                                                </div>
-                
-                                                <div class="modal-footer">
-                                                </div>
-                
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div id="modal-producto" class="modal fade bs-example-modal-lg-producto" tabindex="-1" role="dialog" aria-hidden="true">
-                                        <div class="modal-dialog modal-lg">
-                                            <div class="modal-content">
-                
-                                                <div class="modal-header">
-                                                    <button type="button" class="close" data-dismiss="modal">
-                                                        <span aria-hidden="true">×</span>
-                                                    </button>
-                                                    <h4 class="modal-title" id="myModalLabel">Seleccionar Producto</h4>
-                                                </div>
-                
-                                                <div class="modal-body">
-                                                    <form class="form-horizontal form-label-left" id="frmProducto" novalidate>
-                
-                                                        <span class="section">Productos</span>
-                                                            <div id="datatable_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
-                                                                <div class="row">
-                                                                    <div class="col-sm-12">
-                                                                        <table id="dsProducto" class="table table-striped jambo_table bulk_action" role="grid" aria-describedby="datatable_info">
-                                                                            <thead>
-                                                                                <tr role="row" class="headings">
-                                                                                    <th><input type='checkbox' id='check-all' class='iCheck-helper'></th><th class='itemId'>ID</th><th>Nombre</th> <th>Código</th> <th>Acción</th>
-                                                                                </tr>
-                                                                            </thead>
-                
-                                                                            <tbody id="tableBody-Producto">
-                                                                                
-                                                                            </tbody>
-                
-                                                                        </table>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        <div class="ln_solid"></div>
-                                                    </form>
-                                                </div>
-                
-                                                <div class="modal-footer">
-                                                </div>
-                
                                             </div>
                                         </div>
                                     </div>
@@ -473,45 +441,25 @@
     <!-- Input mask -->
     <script src="assets/js/jquery.inputmask/jquery.inputmask.bundle.min.js"></script>
     <!-- JS Scripts -->
-    <!-- <script src="assets/js/InventarioProducto.js"></script> -->
+    <script src="assets/js/OrdenSalida.js"></script>
     <script src="assets/js/ProductoTemporal.js"></script>
     <script src="assets/js/ProductosxBodega.js"></script>
     <script src="assets/js/Producto.js"></script>
     <script src="assets/js/Insumo.js"></script>
     <!-- Sweet Alert -->
     <script src="assets/js/sweetalert2.min.js"></script>
-
     <!-- Datatables -->
     <script src="../vendors/datatables.net/js/jquery.dataTables.min.js"></script>
-    <!--<script src="../vendors/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
-    <script src="../vendors/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
-    <script src="../vendors/datatables.net-buttons-bs/js/buttons.bootstrap.min.js"></script>
-    <script src="../vendors/datatables.net-buttons/js/buttons.flash.min.js"></script>
-    <script src="../vendors/datatables.net-buttons/js/buttons.html5.min.js"></script>
-    <script src="../vendors/datatables.net-buttons/js/buttons.print.min.js"></script>
-    <script src="../vendors/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js"></script>
-    <script src="../vendors/datatables.net-keytable/js/dataTables.keyTable.min.js"></script>
-    <script src="../vendors/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
-    <script src="../vendors/datatables.net-responsive-bs/js/responsive.bootstrap.js"></script>
-    <script src="../vendors/datatables.net-scroller/js/dataTables.scroller.min.js"></script>
-    <script src="../vendors/jszip/dist/jszip.min.js"></script>
-    <script src="../vendors/pdfmake/build/pdfmake.min.js"></script>
-    <script src="../vendors/pdfmake/build/vfs_fonts.js"></script> -->
-
     <!-- Custom Theme Scripts -->
     <script src="assets/js/custom.min.js"></script>
-    
-
-
-        <!-- FastClick -->
-        <script src="../vendors/fastclick/lib/fastclick.js"></script>
-        <!-- NProgress -->
-        <script src="../vendors/nprogress/nprogress.js"></script>
-        <!-- iCheck -->
-        <script src="../vendors/iCheck/icheck.min.js"></script>
-    
-        <!-- Custom Theme Scripts -->
-        <script src="../build/js/custom.min.js"></script>
+    <!-- FastClick -->
+    <script src="../vendors/fastclick/lib/fastclick.js"></script>
+    <!-- NProgress -->
+    <script src="../vendors/nprogress/nprogress.js"></script>
+    <!-- iCheck -->
+    <script src="../vendors/iCheck/icheck.min.js"></script>
+    <!-- Custom Theme Scripts -->
+    <script src="../build/js/custom.min.js"></script>
 
 </body>
 
@@ -519,23 +467,8 @@
 
 <script>
     $(document).ready(function () {
-        // if(!Session.state)
-        //     return;
-        productotemporal.id=null;
-        productotemporal.Read;
-        productotemporal.Init();
-        //
-    });
-    $(document).on('click', '#btnAddInsumo', function (event) {    
-        //alert("Prueba");
-        insumo.id=null;
-        insumo.Read;
-        insumo.Init();        
-    });
-    $(document).on('click', '#btnAddProducto', function (event) {    
-        //alert("Prueba");
-        producto.id=null;
-        producto.Read;
-        producto.Init();        
+        ordensalida.id=null;
+        ordensalida.Read;
+        ordensalida.Init();
     });
 </script>

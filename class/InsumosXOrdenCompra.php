@@ -28,7 +28,7 @@ class InsumosXOrdenCompra{
                 $data = DATA::Ejecutar($sql,$param,false);                
                 if($data){
                     // Actualiza los saldos y calcula promedio
-                    Insumo::UpdateSaldoPromedio($item->idinsumo, $item->cantidadbueno, $item->valorbueno);
+                    Insumo::UpdateSaldoPromedioEntrada($item->idinsumo, $item->cantidadbueno, $item->valorbueno);
                 }
                 else $created= false;
             }

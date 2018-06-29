@@ -226,39 +226,6 @@ class Producto{
             );
         }
     }
-    
-    // function UpdateCantidad(){
-    //     try {
-    //         /*
-
-    //         INSERTAR CANTIDAD PRODUCTO BODEGA PRINCIPAL
-
-    //         $param= array(':id'=>$_POST["idproducto"]);
-    //         $sql="SELECT cantidad FROM productosxbodega WHERE idproducto=:id";
-    //         $data=DATA::Ejecutar($sql,$param);
-    //         $cantidad = $data[0][0] + $_POST["cantidad"];
-            
-    //         $sql="UPDATE producto SET cantidad=:cantidad WHERE id=:id";
-    //         $param= array(':id'=>$_POST["idproducto"], ':cantidad'=>$cantidad);
-    //         $data = DATA::Ejecutar($sql,$param,false);
-    //         */
-            
-    //         $sql="UPDATE productotemporal SET estado=1 WHERE id=:id";
-    //         $param= array(':id'=>$_POST["id"]);
-    //         $data = DATA::Ejecutar($sql,$param,false);
-
-    //         if($data)
-    //             return true;
-    //         else throw new Exception('Error al guardar.', 123);
-    //     }     
-    //     catch(Exception $e) {
-    //         header('HTTP/1.0 400 Bad error');
-    //         die(json_encode(array(
-    //             'code' => $e->getCode() ,
-    //             'msg' => $e->getMessage()))
-    //         );
-    //     }
-    // }
 
     private function CheckRelatedItems(){
         try{
@@ -327,6 +294,41 @@ class Producto{
         }
     }
 
+    public static function UpdateSaldoPromedioSalida($id, $ncantidad){
+        try {
+            $sql="CALL spUpdateSaldosPromedioProductoSalida(:mid, :ncantidad);";
+            $param= array(':mid'=>$id, ':ncantidad'=>$ncantidad);
+            $data = DATA::Ejecutar($sql,$param,false);
+            if($data)
+                return true;
+            else throw new Exception('Error al calcular SALDOS Y PROMEDIOS, debe realizar el cálculo manualmente.', 666);
+        }     
+        catch(Exception $e) {
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }
+    }  
+    
+    public static function UpdateSaldoProducto($id, $ncantidad, $ncosto){
+        try {
+            $sql="CALL spUpdateSaldosProducto(:mid, :ncantidad, :ncosto);";
+            $param= array(':mid'=>$id, ':ncantidad'=>$ncantidad, ':ncosto'=>$ncosto);
+            $data = DATA::Ejecutar($sql,$param,false);
+            if($data)
+                return true;
+            else throw new Exception('Error al calcular SALDOS Y PROMEDIOS, debe realizar el cálculo manualmente.', 666);
+        }     
+        catch(Exception $e) {
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }
+    } 
 
 }
 

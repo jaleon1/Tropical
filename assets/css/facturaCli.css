@@ -47,14 +47,36 @@ margin-left: 200px;
 */
 /* .titleSize {
     position: absolute;
+<<<<<<< HEAD
 }  */
 /* 
 input[readonly]{
+=======
+}
+
+.table-fixed{
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.cantidad{
+    width: auto;
+    margin: 0px;
+    padding: 0px;
+    height: 1.5em;
+}
+
+.display[readonly]{
+>>>>>>> 95ad344d4c0c75fd717264909b1194f17c420275
     background: transparent;
     border: none;
-    -moz-user-select:none;
-    -webkit-user-select:none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
     user-select: none;
+<<<<<<< HEAD
 } */
 
 /* 
@@ -68,3 +90,7 @@ input[readonly]{
 /* } */
 
 
+=======
+    cursor: default;
+}
+>>>>>>> 95ad344d4c0c75fd717264909b1194f17c420275

@@ -139,7 +139,7 @@
                 <div class="">
                     <div class="page-title">
                         <div class="title_left">
-                            <h3>INSUMOS</h3>
+                            <h3>MATERIA PRIMA</h3>
                         </div>
 
                         <div class="title_right">
@@ -160,7 +160,7 @@
                         <div class="col-md-12 col-sm-12 col-xs-12">
                             <div class="x_panel">
                                 <div class="x_title">
-                                    <h2>Inventario Insumo</h2>
+                                    <h2>Inventario</h2>
                                     
                                     <div class="clearfix"></div>
                                 </div>
@@ -174,7 +174,7 @@
                                                 <table id="dsInsumo" class="table table-striped jambo_table bulk_action" role="grid" aria-describedby="datatable_info">
                                                     <thead>
                                                         <tr role="row" class="headings">
-                                                            <th><input type='checkbox' id='check-all' class='iCheck-helper'></th><th class='itemId'>ID</th><th>Nombre</th> <th>Codigo</th> <th>Bueno</th>  <th>Malo</th> <th>Costo</th> <th>Acción</th>
+                                                            <th><input type='checkbox' id='check-all' class='iCheck-helper'></th><th class='itemId'>ID</th><th>Codigo</th> <th>Nombre</th> <th>descripcion</th> <th>Saldo Cantidad</th>  <th>Saldo Costo</th> <th>Costo Promedio</th> <th>Acción</th>
                                                         </tr>
                                                     </thead>
 
@@ -206,6 +206,16 @@
                                                         <span class="section">Datos Generales</span>
 
                                                         <div class="item form-group">
+                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="codigo">Codigo
+                                                                <span class="required">*</span>
+                                                            </label>
+                                                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                                                <input id="codigo" class="form-control col-md-7 col-xs-12" name="codigo" required="required" type="text" placeholder="Codigo del Insumo"
+                                                                    autofocus>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="item form-group">
                                                             <label class="control-label col-md-3 col-sm-3 col-xs-12" for="nombre">Nombre
                                                                 <span class="required">*</span>
                                                             </label>
@@ -216,41 +226,50 @@
                                                         </div>
                 
                                                         <div class="item form-group">
-                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="codigo">Codigo
+                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="descripcion">Descripción
                                                                 <span class="required">*</span>
                                                             </label>
                                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <input id="codigo" class="form-control col-md-7 col-xs-12" name="codigo" required="required" type="text" placeholder="Codigo del Insumo"
+                                                                <input id="descripcion" class="form-control col-md-7 col-xs-12" name="descripcion" required="required" type="text" placeholder="Descripción"
                                                                     autofocus>
                                                             </div>
                                                         </div>
                 
-                                                        <div class="item form-group ">
-                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="valor">Cantidad Bueno</label>
+                                                        <div class="item form-group">
+                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="saldocantidad">Saldo Cantidad
+                                                                <span class="required">*</span>
+                                                            </label>
                                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <input id="bueno" class="form-control col-md-7 col-xs-12" name="bueno" type="text" placeholder="Cantidad Bueno">
+                                                                <input id="saldocantidad" class="form-control col-md-7 col-xs-12" name="saldocantidad" required="required" type="text" placeholder="Saldo Cantidad"
+                                                                value ="0" autofocus>
                                                             </div>
                                                         </div>
                 
-                                                        <div class="item form-group ">
-                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="valor">Cantidad Dañado</label>
+                                                        <div class="item form-group">
+                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="saldocosto">Saldo Costo
+                                                                <span class="required">*</span>
+                                                            </label>
                                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <input id="danado" class="form-control col-md-7 col-xs-12" name="danado" type="text" placeholder="Cantidad Dañado">
+                                                                <input id="saldocosto" class="form-control col-md-7 col-xs-12" name="saldocosto" required="required" type="text" placeholder="Saldo Costo"
+                                                                value ="0" autofocus>
                                                             </div>
                                                         </div>
-
-                                                        <div class="item form-group ">
-                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="valor">Costo</label>
+                
+                                                        <div class="item form-group">
+                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="costopromedio">Costo Promedio
+                                                                <span class="required">*</span>
+                                                            </label>
                                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <input id="costo" class="form-control col-md-7 col-xs-12" name="costo" type="text" placeholder="Costo del Insumo">
+                                                                <input id="costopromedio" class="form-control col-md-7 col-xs-12" name="costopromedio" required="required" type="text" placeholder="Costo Promedio"
+                                                                value ="0" autofocus>
                                                             </div>
                                                         </div>
                 
                                                         <div class="ln_solid"></div>
                                                         <div class="form-group">
                                                             <div class="col-md-6 col-md-offset-3">
-                                                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                                                <button id="btnInsumo" type="submit" class="btn btn-success">Submit</button>
+                                                                <button type="button" class="btn btn-default" data-dismiss="modal">Borrar</button>
+                                                                <button id="btnInsumo" type="submit" class="btn btn-success">Guardar</button>
                                                             </div>
                                                         </div>
                                                     </form>

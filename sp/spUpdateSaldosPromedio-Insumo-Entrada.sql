@@ -3,19 +3,19 @@ use tropical;
 -- drop procedure spUpdateSaldosPromedioInsumo;
 -- drop procedure spUpdateSaldosPromedioArticulo;
 DELIMITER //
-CREATE PROCEDURE spUpdateSaldosPromedioInsumo(
+CREATE PROCEDURE spUpdateSaldosPromedioInsumoEntrada(
 	IN mid char(36),
 	IN ncantidad DECIMAL(10,0),
-    IN ncosto DECIMAL(15,10)
+    IN ncosto DECIMAL(20,10)
 )
 BEGIN
 	DECLARE msaldocantidad  decimal(10,0) DEFAULT null;
-    DECLARE msaldocosto  decimal(15,10) DEFAULT null;
-    DECLARE mcostopromedio  decimal(15,10)DEFAULT null;
+    DECLARE msaldocosto  decimal(20,10) DEFAULT null;
+    DECLARE mcostopromedio  decimal(20,10)DEFAULT null;
     --
 	SELECT saldocantidad, saldocosto 
 	INTO msaldocantidad, msaldocosto
-	FROM insumo
+	FROM insumos
 	WHERE id= mid;
 	-- Calculo de saldos y promedio
     IF msaldocantidad is not null THEN
@@ -27,18 +27,18 @@ BEGIN
 		SET saldocantidad=msaldocantidad, saldocosto=msaldocosto, costopromedio = mcostopromedio
 		WHERE id= mid;  
 	ELSE 
-		CALL spUpdateSaldosPromedioArticulo(mid, ncantidad, ncosto);
+		CALL spUpdateSaldosPromedioArticuloEntrada(mid, ncantidad, ncosto);
 	END IF;
 END; //
-CREATE PROCEDURE spUpdateSaldosPromedioArticulo(
+CREATE PROCEDURE spUpdateSaldosPromedioArticuloEntrada(
 	IN mid char(36),
 	IN ncantidad DECIMAL(10,0),
     IN ncosto DECIMAL(15,10)
 )
 BEGIN
 	DECLARE msaldocantidad decimal(10,0) DEFAULT null;
-    DECLARE msaldocosto  decimal(15,10) DEFAULT null;
-    DECLARE mcostopromedio  decimal(15,10) DEFAULT null;
+    DECLARE msaldocosto  decimal(20,10) DEFAULT null;
+    DECLARE mcostopromedio  decimal(20,10) DEFAULT null;
     --
 	SELECT saldocantidad, saldocosto 
 	INTO msaldocantidad, msaldocosto
