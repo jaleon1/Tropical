@@ -5,27 +5,6 @@ constructor(numeroorden, p) {
         this.listaproducto = p || [];
     }
 
-    //Getter
-    // get Read() {
-    //     var miAccion = this.id == null ? 'ReadAll' : 'Read';
-    //     if(miAccion=='ReadAll' && $('#tableBody-ProductoTemporal').length==0 )
-    //         return;
-    //     $.ajax({
-    //         type: "POST",
-    //         url: "class/ProductoTemporal.php",
-    //         data: {
-    //             action: miAccion,
-    //             id: this.id
-    //         }
-    //     })
-    //         .done(function (e) {
-    //             productotemporal.Reload(e);
-    //         })
-    //         .fail(function (e) {
-    //             productotemporal.showError(e);
-    //         });
-    // }
-
     get Save() {
         /* ACA DEBO DE ACTUALIZAR PRODUCTO CON LAS CANTIDADES */
         if ($('#tableBody-ProductoGenerado tr').length == 0){
@@ -35,24 +14,33 @@ constructor(numeroorden, p) {
             });
             return;
         }
-        // var ncosto=0;
-        // $('#tableBody-InsumosOrdenSalida tr').each(function() {
-        //     var costoinsumo=parseFloat($(this).find('td:eq(6)').html());
-        //     ncosto += costoinsumo;
-        // });
+
+        if ($('#tableBody-InsumosOrdenSalida tr').length == 0){
+            swal({
+                type: 'info',
+                title: 'Debe de ingresar una orden...'                    
+            });
+            return;
+        }
         
         $('#btnAddProductoGenerado').attr("disabled", "disabled");
         var miAccion = this.id == null ? 'Create' : 'Update';
         productotemporal.numeroorden = $("#orden").val();
         // lista de insumos
         productotemporal.listaproducto = [];
+        var costototalinsumo=0;
+        $('#tableBody-InsumosOrdenSalida tr').each(function() {
+            costototalinsumo+=parseFloat($(this).find('td:eq(6)').html())*parseFloat($(this).find('td:eq(7) input').val());
+        });
+
         $('#tableBody-ProductoGenerado tr').each(function() {
             var objproduto = new Object();
             objproduto.idproducto= $(this).find('td:eq(0)').html();
             objproduto.cantidad= $(this).find('td:eq(10) input').val();
-            objproduto.costo= $(this).find('td:eq(7)').html();
+            objproduto.costo= costototalinsumo;
             productotemporal.listaproducto.push(objproduto);
         });
+
         $.ajax({
             type: "POST",
             url: "class/ProductoTemporal.php",
@@ -61,7 +49,14 @@ constructor(numeroorden, p) {
                 obj: JSON.stringify(this)
             }
         })
-            .done(productotemporal.showInfo)
+            .done(function(e){
+                swal({
+                    type: 'success',
+                    title: 'Número de Orden:' + $("#orden").val(),
+                    text: 'Número de orden de Distribución:',
+                    showConfirmButton: true
+                });
+            })
             .fail(function (e) {
                 productotemporal.showError(e);
             })
@@ -117,15 +112,6 @@ constructor(numeroorden, p) {
             });
     }
 
-    // // Methods
-    // UpdateCantidadProducto(){
-    //     nombrebodega.codigo = $(this).parents("tr").find("td:eq(1)").html();
-    //     nombrebodega.saldocantidad = $(this).parents("tr").find("td:eq(5)").html();
-    //     nombrebodega.idbodega = '22a80c9e-5639-11e8-8242-54ee75873a00';
-    //     var codigotemporal = $(this).parents("tr").find("td:eq(0)").html();
-    //     nombrebodega.SaveCantidad(codigotemporal);        
-    // };
-
     AddOrdenSalida(){
         ordensalida.id = $(this).parents("tr").find(".itemId").text();
         $('#numeroorden').val($(this).parents("tr").find("td:eq(1)").html());
@@ -139,8 +125,6 @@ constructor(numeroorden, p) {
 
     // Muestra información en ventana
     showInfo() {
-        //$(".modal").css({ display: "none" });   
-        $(".close").click();
         swal({
             position: 'top-end',
             type: 'success',
@@ -151,8 +135,7 @@ constructor(numeroorden, p) {
     };
 
     // Muestra errores en ventana
-    showError(e) {
-        //$(".modal").css({ display: "none" });  
+    showError(e) {  
         var data = JSON.parse(e.responseText);
         swal({
             type: 'error',
@@ -163,10 +146,13 @@ constructor(numeroorden, p) {
     };
 
     ClearCtls() {
-        $("#saldocantidad").val('');
-        $("#nombre").val('');
-        //datatable.
-        $('#tableBody-InsumoProducto').html("");
+        $("#orden").val('');
+        $("#fecha").val('');
+        $("#usuarioentrega").val('');
+        $("#usuariorecibe").val('');
+        $("#p_searh").val('');
+        $('#tableBody-ProductoGenerado').html("");
+        $('#tableBody-InsumosOrdenSalida').html("");
     };
 
     ShowAll(e) {
@@ -298,37 +284,7 @@ constructor(numeroorden, p) {
                 "searching": false
             } );
     };
-
-    // AddTableProducto(id,nombre,costo) {
-    //     $('#tableBody-InsumoProducto').append(`
-    //         <tr id="row"${id}> 
-    //             <td class="itemId" >${id}</td>
-    //             <td>${nombre}</td>
-    //             <td>
-    //                 <input id="cantidadInsumo" class="form-control col-3" name="cantidadInsumo" type="text" placeholder="Cantidad de paquetes" autofocus="" value="1">
-    //             </td>
-    //             <td class=oculto>${costo}</td>
-    //             <td class=" last">
-    //                 <a id ="delete_row${id}" onclick="productotemporal.DeleteInsumo(this)" > <i class="glyphicon glyphicon-trash" onclick="DeleteInsumo(this)"> </i> Eliminar </a>
-    //             </td>
-    //         </tr>
-    //     `);
-    //     //datatable         
-    //     if ( $.fn.dataTable.isDataTable( '#dsProductoTemporal' ) ) {
-    //         var table = $('#dsProductoTemporal').DataTable();
-    //     }
-    //     else 
-    //         $('#dsProductoTemporal').DataTable( {
-    //             columns: [
-    //                 { "width":"35%"},
-    //                 { "width":"35%"},
-    //                 { "width":"33%"},
-    //             ],          
-    //             paging: true,
-    //             search: true
-    //         } );
-    // };
-
+    
     DeleteInsumo(btn) {
         var row = btn.parentNode.parentNode;
         row.parentNode.removeChild(row);
@@ -411,14 +367,7 @@ constructor(numeroorden, p) {
         $('#modal-descripcion').modal('toggle');
         $("#saldocantidad").focus();
     }
-
-    // AddProductoEventHandler(){
-    //     $("#nombre").val($(this).parents("tr").find("td:eq(2)").html());
-    //     productotemporal.codigo = $(this).parents("tr").find("td:eq(1)").html();
-    //     $('#modal-nombre').modal('toggle');
-    //     $("#saldocantidad").focus();
-    // }
-
+    
     AddProductoEventHandler(){
         var id=$(this).parents("tr").find("td:eq(1)").html();
         var codigo=$(this).parents("tr").find("td:eq(2)").html();

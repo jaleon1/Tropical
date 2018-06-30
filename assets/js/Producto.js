@@ -37,6 +37,26 @@ class Producto {
             });
     }
 
+    get ReadAllProductoVenta() {
+        var miAccion = "ReadAllProductoVenta";
+        if(miAccion=='ReadAll' && $('#tableBody-Producto').length==0 )
+            return;
+        $.ajax({
+            type: "POST",
+            url: "class/Producto.php",
+            data: {
+                action: miAccion,
+                id: this.id
+            }
+        })
+            .done(function (e) {
+                producto.Reload(e);
+            })
+            .fail(function (e) {
+                producto.showError(e);
+            });
+    }
+
     get ReadArticulo() {
         var miAccion = this.id == null ? 'ReadAllArticulo' : 'ReadArticulo';
         if(miAccion=='ReadAllArticulo' && $('#tableBody-Producto').length==0 )

@@ -25,9 +25,9 @@ if(isset($_POST["action"])){
         case "ReadbyOrden":
             echo json_encode($ordensalida->ReadbyOrden());
             break;
-        // case "Update":
-        //     $ordensalida->Update();
-        //     break;
+        case "Update":
+            $ordensalida->Update();
+            break;
         // case "Delete":
         //     echo json_encode($ordensalida->Delete());
         //     break;   
@@ -45,6 +45,7 @@ class OrdenSalida{
     public $usuariorecibe='';
     public $idestado='';
     public $listainsumo=[];
+    public $listainsumocantidad=[];
 
     function __construct(){
         // identificador único
@@ -64,7 +65,6 @@ class OrdenSalida{
             //Insumos de la orden
             if (isset($obj["listainsumo"] )) {
                 require_once("InsumosxOrdenSalida.php");    
-                //            
                 foreach ($obj["listainsumo"] as $objInsumo) {
                     $ins_ordensalida= new InsumosxOrdenSalida();
                     $ins_ordensalida->idordensalida= $this->id;
@@ -72,6 +72,17 @@ class OrdenSalida{
                     $ins_ordensalida->cantidad= $objInsumo['cantidad'];
                     $ins_ordensalida->costopromedio= $objInsumo['costopromedio'];
                     array_push ($this->listainsumo, $ins_ordensalida);
+                }
+            }
+            //Insumos de la orden
+            if (isset($obj["listainsumo"] )) {
+                require_once("InsumosxOrdenSalida.php");    
+                foreach ($obj["listainsumocantidad"] as $objInsumoCantidad) {
+                    $ins_ordensalida= new InsumosxOrdenSalida();
+                    $ins_ordensalida->idordensalida= $this->id;
+                    $ins_ordensalida->idinsumo= $objInsumoCantidad['id'];
+                    $ins_ordensalida->cantidad= $objInsumoCantidad['cantidad'];
+                    array_push ($this->listainsumocantidad, $ins_ordensalida);
                 }
             }
         }
@@ -103,13 +114,11 @@ class OrdenSalida{
             $sql_ordensalida=$sql='SELECT `id`,`fecha`,`numeroorden`,`idusuarioentrega`, (SELECT nombre FROM usuario WHERE id=idusuarioentrega) as usuarioentrega,
             `idusuariorecibe`, (SELECT nombre FROM usuario WHERE id=idusuariorecibe) as usuariorecibe, `fechaliquida`, `idestado`
             FROM ordensalida WHERE id=:id ORDER BY numeroorden asc';
-            
             $sql_insumoxordensalida='SELECT id,idordensalida,idinsumo,(SELECT nombre FROM insumo WHERE id=idinsumo) AS nombreinsumo,cantidad,costopromedio FROM insumosxordensalida WHERE idordensalida=:id';
 
             $param= array(':id'=>$this->id);
             $ordensalida = DATA::Ejecutar($sql_ordensalida,$param);
             $insumoxordensalida = DATA::Ejecutar($sql_insumoxordensalida,$param);
-
             $this->id = $ordensalida[0]['id'];
             $this->fecha = $ordensalida[0]['fecha'];
             $this->numeroorden = $ordensalida[0]['numeroorden'];
@@ -143,17 +152,11 @@ class OrdenSalida{
     }
 
     function Create(){
-        try {
-            $ultimaorden="SELECT numeroorden+1 FROM ordensalida ORDER BY numeroorden DESC LIMIT 1";
-            $numeroorden=DATA::Ejecutar($ultimaorden);
-            if ($numeroorden==null) 
-                $numeroorden[0][0]=1;
-            
-            $sql="INSERT INTO ordensalida   (`id`,`fecha`,`numeroorden`,`idusuarioentrega`,`idusuariorecibe`,`fechaliquida`,`idestado`) 
-                VALUES (:uuid,:fecha,:numeroorden,:idusuarioentrega,
-                :idusuariorecibe,:fechaliquida,:idestado)";
-            $param= array(':uuid'=>$this->id, ':fecha'=>$this->fecha, ':numeroorden'=>$numeroorden[0][0],':idusuarioentrega'=>$this->idusuarioentrega, 
-            ':idusuariorecibe'=>$this->idusuariorecibe, ':fechaliquida'=>$this->fechaliquida, ':idestado'=>$this->idestado);
+        try {           
+            $sql="INSERT INTO tropical.ordensalida (`id`,`fecha`,`idusuarioentrega`,`idusuariorecibe`,`idestado`) 
+                VALUES (:uuid,:fecha,:idusuarioentrega,:idusuariorecibe,:idestado)";
+            $param= array(':uuid'=>$this->id, ':fecha'=>$this->fecha,':idusuarioentrega'=>$this->idusuarioentrega, 
+            ':idusuariorecibe'=>$this->idusuariorecibe,':idestado'=>0);
             $data = DATA::Ejecutar($sql,$param, false);
 
             if($data)
@@ -177,23 +180,20 @@ class OrdenSalida{
 
     function Update(){
         try {
-            $sql="UPDATE ordensalida 
-                SET idproducto=:idproducto, idusuario=:idusuario, , idusuariorecibe=:idusuariorecibe, cantidad=:cantidad, idestado=:idestado
-                WHERE id=:id";
-            $param= array(':id'=>$this->id, ':idproducto'=>$this->idproducto, ':idusuario'=>$this->idusuario, ':idusuariorecibe'=>$this->idusuariorecibe,
-            ':cantidad'=>$this->cantidad, ':idestado'=>$this->idestado);
+            $sql="UPDATE tropical.ordensalida SET idusuariorecibe=:idusuariorecibe WHERE id=:id";
+             $param= array(':id'=>$this->id,':idusuariorecibe'=>$this->idusuariorecibe);
             $data = DATA::Ejecutar($sql,$param,false);
             if($data){
                 //update array obj
                 if($this->listainsumo!=null)
                     if(InsumosxOrdenSalida::Update($this->listainsumo))
                         return true;            
-                    else throw new Exception('Error al guardar los roles.', 03);
+                    else throw new Exception('Error al guardar la orden de salida.', 03);
                 else {
                     // no tiene roles
                     if(InsumosxOrdenSalida::Delete($this->id))
                         return true;
-                    else throw new Exception('Error al guardar los roles.', 04);
+                    else throw new Exception('Error al borrar la orden de salida.', 04);
                 }
             }
             else throw new Exception('Error al guardar.', 123);
@@ -283,7 +283,7 @@ class OrdenSalida{
             (SELECT nombre FROM usuario WHERE id=`ordensalida`.`idusuariorecibe`) AS usuariorecibe,
             `ordensalida`.`fechaliquida`,
             `ordensalida`.`idestado`
-            FROM `tropical`.`ordensalida` WHERE numeroorden=:numeroorden';
+            FROM `tropical`.`ordensalida` WHERE numeroorden=:numeroorden AND idestado=0';
             $param= array(':numeroorden'=>$this->numeroorden);
             $data= DATA::Ejecutar($sql,$param);     
             if(count($data)){
