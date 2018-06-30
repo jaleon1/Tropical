@@ -323,7 +323,7 @@
                                         <div class="form-group">
                                             <div class="col-md-6 col-md-offset-3">
                                                 <button type="reset" class="btn btn-primary">Borrar</button>
-                                                <button id="btnAddProductoGenerado" type="submit" class="btn btn-success">Guardar</button>
+                                                <button id="btnSaveProductoGenerado" type="submit" class="btn btn-success">Guardar</button>
                                             </div>
                                         </div>
                                     </form>
@@ -363,8 +363,8 @@
                                                                 <th class='itemId'>ID</th>
                                                                 <th>Codigo</th>
                                                                 <th>Nombre</th>
-                                                                <th class='oculto'>TXTColor</th>
-                                                                <th class='oculto'>BGColor</th>
+                                                                <!-- <th class='oculto'>TXTColor</th>
+                                                                <th class='oculto'>BGColor</th> -->
                                                                 <th>Nombre Abreviado</th>
                                                                 <th>Descripción</th>
                                                                 <th>Saldo Cantidad</th>
@@ -559,6 +559,11 @@
         insumo.Init();
     });
     $(document).on('click', '#btnAddProductoGenerado', function (event) {
+        producto.id = null;
+        producto.ReadAllProductoVenta;
+        producto.Init();
+    });
+    $(document).on('click', '#btnSaveProductoGenerado', function (event) {
         producto.id = null;
         producto.Read;
         producto.Init();

@@ -16,6 +16,9 @@ if(isset($_POST["action"])){
         case "Read":
             echo json_encode($producto->Read());
             break;
+        case "ReadAllProductoVenta":
+            echo json_encode($producto->ReadAllProductoVenta());
+            break;
         case "ReadAllPrdVenta":
             echo json_encode($producto->ReadAllPrdVenta());
             break;
@@ -83,6 +86,23 @@ class Producto{
         try {
             $sql='SELECT id, codigo, nombre, txtcolor, bgcolor, nombreabreviado, descripcion, saldocantidad, saldocosto, costopromedio, precioventa, esventa
                 FROM     producto       
+                ORDER BY codigo asc';
+            $data= DATA::Ejecutar($sql);
+            return $data;
+        }     
+        catch(Exception $e) {
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar la lista'))
+            );
+        }
+    }
+
+    function ReadAllProductoVenta(){
+        try {
+            $sql='SELECT id, codigo, nombre, txtcolor, bgcolor, nombreabreviado, descripcion, saldocantidad, saldocosto, costopromedio, precioventa, esventa
+                FROM     producto   WHERE esventa=1     
                 ORDER BY codigo asc';
             $data= DATA::Ejecutar($sql);
             return $data;
@@ -312,7 +332,7 @@ class Producto{
     
     public static function UpdateSaldoProducto($id, $ncantidad, $ncosto){
         try {
-            $sql="CALL spUpdateSaldosProducto(:mid, :ncantidad, :ncosto);";
+            $sql="CALL spUpdateSaldosPromedioProducto(:mid, :ncantidad, :ncosto);";
             $param= array(':mid'=>$id, ':ncantidad'=>$ncantidad, ':ncosto'=>$ncosto);
             $data = DATA::Ejecutar($sql,$param,false);
             if($data)
