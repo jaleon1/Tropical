@@ -232,8 +232,9 @@ $.ajaxPrefilter(function(options, originalOptions, jqXHR) {
             }
         })
             .done(function (e) {
-                var data= JSON.parse(e);
-                alert(data.msg);
+                //var data= JSON.parse(e);
+                //alert(e);
+                $('.x_title').text(e);
             })
             .fail(function (e) {
                 var data= JSON.parse(e.responseText);
