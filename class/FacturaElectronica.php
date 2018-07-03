@@ -61,6 +61,10 @@ class FacturaElectronica{
     }
 
     private function CreaClave(){
+        $dia = date('d');
+        $mes = date('m');
+        $ano = date('y');
+        //
         $this->numConsecutivo= $this->factura->local . $this->factura->terminal . $this->tipoComprobante . $this->factura->consecutivo;
         $this->clave= $this->emisor->idCodigoPais . $this->dia . $this->mes . $this->ann . $this->emisor->identificacion . $this->factura->local . $this->factura->terminal . $this->tipoComprobante . $this->factura->consecutivo . $this->factura->idSituacionComprobante . $this->emisor->codigoSeguridad;
     }
@@ -131,12 +135,12 @@ class FacturaElectronica{
                 }
                 if($receptor->numTelefono!=null){
                     $Telefono= $Receptor->addChild('Telefono');
-                        $Telefono->addChild('Provincia', $receptor->idcodigoPaisTel);
+                        $Telefono->addChild('CodigoPais', $receptor->idcodigoPaisTel);
                         $Telefono->addChild('NumTelefono', $receptor->numTelefono);            
                 }
                 if($receptor->numTelefonoFax!=null){
                     $Telefono= $Receptor->addChild('Telefono');
-                        $Telefono->addChild('Provincia', $receptor->codigoPaisFax);
+                        $Telefono->addChild('CodigoPais', $receptor->codigoPaisFax);
                         $Telefono->addChild('NumTelefono', $receptor->numTelefonoFax);            
                 }
                 if($receptor->correoElectronico!=null)

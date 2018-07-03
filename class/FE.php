@@ -1,4 +1,37 @@
 <?php
+// cr libre api
+
+  // --data 'w=ejemplo&r=hola'
+
+
+$url = 'https://localhost/API-MH/www/api.php';
+$headers = array(
+    "content-type: application/x-www-form-urlencoded"                      
+);
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL,$url);
+// POST
+curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+curl_setopt($ch, CURLINFO_HEADER_OUT, 1);
+curl_setopt($ch, CURLOPT_HEADER, 1);
+curl_setopt($ch,CURLOPT_VERBOSE, 1);
+curl_setopt($ch, CURLOPT_POSTFIELDS, $content);
+$server_output = curl_exec ($ch);
+$information = curl_getinfo($ch);
+$header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+$header = substr($server_output, 0, $header_size);
+$body = substr($server_output, $header_size);
+$error_msg = "";
+if (curl_error($ch)) {
+    $error_msg = curl_error($ch);
+}     
+curl_close($ch);
+
+
+
+
 // include_once("settings.php");
 // $corePath = $config['modules']['coreInstall'];
 // include_once($corePath . "/core/boot.php");
@@ -9,10 +42,10 @@
 // error_reporting(E_ALL);
 // ini_set('display_errors', 1);
 // SIMULA LLAMADO A FACTURA ELECTRONICA.
-require_once('FacturaElectronica.php');
-$fe = new FacturaElectronica();
-$fe->idTransaccion= '3b31b046-75eb-11e8-abed-f2f00eda9710';
-$fe->Send();
+// require_once('FacturaElectronica.php');
+// $fe = new FacturaElectronica();
+// $fe->idTransaccion= '3b31b046-75eb-11e8-abed-f2f00eda9710';
+// $fe->Send();
 // $fe->dia= $_POST["dia"];
 // $fe->mes= $_POST["mes"];
 // $fe->ann= $_POST["ann"];
