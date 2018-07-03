@@ -1,9 +1,9 @@
 class Factura {
     // Constructor
-    constructor(id, cajero, subtotal, descuento, producto, total, fechaCreacion, idfila, p_codigo, p_descripcion, p_precio, p_cantidad, importe) {
+    constructor(id, cajero, subTotal, descuento, producto, total, fechaCreacion, idfila, p_codigo, p_descripcion, p_precio, p_cantidad, importe) {
         this.id = id || null;
         this.cajero = cajero || '';
-        this.subtotal=subtotal || '';
+        this.subTotal=subTotal || '';
         this.descuento=descuento || 0;
         this.producto=producto || 0;
         this.total= total || '';
@@ -128,10 +128,10 @@ function calcTotal(){
         
         subT= subT + parseFloat((item.childNodes[11].textContent).replace("¢","")); 
     });
-    $("#subtotal")[0].textContent = "¢"+subT.toFixed(2); 
+    $("#subTotal")[0].textContent = "¢"+subT.toFixed(2); 
     $("#desc_val")[0].textContent = "¢"+ (subT * (parseFloat(($("#desc_100")[0].textContent).replace("%",""))) / 100).toFixed(2) ;
     $("#iv_val")[0].textContent = "¢"+ ((subT * (parseFloat(($("#iv_100")[0].textContent).replace("%","")) / 100)) - (parseFloat(($("#desc_val")[0].textContent).replace("¢","")))).toFixed(2) ;
-    $("#total")[0].textContent = "¢" + ((($("#subtotal")[0].textContent).replace("¢","")) - parseFloat(($("#desc_val")[0].textContent).replace("¢","")) + parseFloat(($("#iv_val")[0].textContent).replace("¢",""))).toFixed(2);
+    $("#total")[0].textContent = "¢" + ((($("#subTotal")[0].textContent).replace("¢","")) - parseFloat(($("#desc_val")[0].textContent).replace("¢","")) + parseFloat(($("#iv_val")[0].textContent).replace("¢",""))).toFixed(2);
 };
 
 

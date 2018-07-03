@@ -88,9 +88,9 @@ var Session=  {
         `);
         // menu segun permisos de usuario.
         $.each(eventos, function (i, item) {
-            $('#' + item.menupadre).css({'display':'block'});
-            $('#' + item.menupadre + ' ul.nav').css({'display':'block'});
-            $('#' + item.menupadre + ' ul.nav').append(`
+            $('#' + item.menuPadre).css({'display':'block'});
+            $('#' + item.menuPadre + ' ul.nav').css({'display':'block'});
+            $('#' + item.menuPadre + ' ul.nav').append(`
                 <li>
                     <a href="${item.url}">${item.nombre}</a>
                 </li>

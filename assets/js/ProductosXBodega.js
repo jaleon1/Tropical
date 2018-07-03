@@ -1,9 +1,9 @@
 class ProductoBodega {
     // Constructor
-    constructor(id, idbodega, idproducto, producto, cantidad, costo, lista) {
+    constructor(id, idBodega, idProducto, producto, cantidad, costo, lista) {
         this.id = id || null;
-        this.idbodega = idbodega || '';
-        this.idproducto = idproducto || '';
+        this.idBodega = idBodega || '';
+        this.idProducto = idProducto || '';
         this.producto = producto || '';
         this.cantidad = cantidad || 0;
         this.costo = costo || 0;
@@ -21,7 +21,7 @@ class ProductoBodega {
             data: {
                 action: miAccion,
                 id: this.id,
-                idbodega: this.idbodega
+                idBodega: this.idBodega
             }
         })
             .done(function (e) {
@@ -65,9 +65,9 @@ class ProductoBodega {
         productobodega.lista = [];
         $('#tableBody-listaProducto tr').each(function() {
             var objlista = new Object();
-            objlista.idbodega= bodega.id; //bodega seleccionada en el modal.
+            objlista.idBodega= bodega.id; //bodega seleccionada en el modal.
             objlista.id= $(this).find('td:eq(0)').html(); //id del producto seleccionado para mover.
-            objlista.idproducto= $(this).find('td:eq(1)').html();
+            objlista.idProducto= $(this).find('td:eq(1)').html();
             objlista.cantidad= $(this).find('td:eq(3) input').val();
             objlista.costo= $(this).find('td:eq(4) input').val();
             productobodega.lista.push(objlista);
@@ -93,7 +93,7 @@ class ProductoBodega {
             });
     }
   
-    SaveCantidad(idproductotemporal) {
+    SaveCantidad(idProductoTemporal) {
         var miAccion = this.id == null ? 'Create' : 'Update';
         $.ajax({
             type: "POST",
@@ -101,7 +101,7 @@ class ProductoBodega {
             data: {
                 action: miAccion,
                 obj: JSON.stringify(this),
-                idproductotemporal: idproductotemporal
+                idProductoTemporal: idProductoTemporal
             }
         })
             .done(productobodega.showInfo)
@@ -228,7 +228,7 @@ class ProductoBodega {
                         <input id="chk-addproducto${item.id}" type="checkbox" class="flat" name="table_records">
                     </td>
                     <td class="itemId" >${item.id}</td>
-                    <td class="itemId" >${item.idproducto}</td>
+                    <td class="itemId" >${item.idProducto}</td>
                     <td>${item.producto}</td>
                     <td>${item.cantidad}</td>
                     <td>${item.costo}</td>
@@ -272,7 +272,7 @@ class ProductoBodega {
     AddProductoEventHandler(){
         var posicion=null;
         productobodega.id= $(this).parents("tr").find("td:eq(1)").html();
-        productobodega.idproducto=$(this).parents("tr").find("td:eq(2)").html();
+        productobodega.idProducto=$(this).parents("tr").find("td:eq(2)").html();
         productobodega.producto=$(this).parents("tr").find("td:eq(3)").html();
         productobodega.cantidad= $(this).parents("tr").find("td:eq(4)").html()
         productobodega.costo= $(this).parents("tr").find("td:eq(5)").html();  
@@ -297,7 +297,7 @@ class ProductoBodega {
         $('#tableBody-listaProducto').append(`
             <tr id="row"${productobodega.id}> 
                 <td class="itemId" >${productobodega.id}</td>
-                <td class="itemId" >${productobodega.idproducto}</td>
+                <td class="itemId" >${productobodega.idProducto}</td>
                 <td>${ productobodega.producto}</td>
                 <td>
                     <input id="cantidad" class="form-control col-3" name="cantidad" type="number" placeholder="Cantidad de artículos" autofocus="" data-validate-minmax="1,${productobodega.cantidad}" value="1">
@@ -345,7 +345,7 @@ class ProductoBodega {
         this.ClearCtls();
         // carga objeto.
         var data = JSON.parse(e)[0];
-        productobodega = new ProductoBodega(data.id, data.idbodega, data.idproducto, data.producto, data.cantidad, data.costo);
+        productobodega = new ProductoBodega(data.id, data.idBodega, data.idProducto, data.producto, data.cantidad, data.costo);
         // Asigna objeto a controles
         //$("#id").val(productobodega.id);
         $("#productonombre").val(productobodega.producto);

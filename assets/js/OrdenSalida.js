@@ -52,7 +52,7 @@ constructor(id, fecha, numeroorden, idusuarioentrega, idusuariorecibe, fechaliqu
             var objInsumo = new Object();
             objInsumo.id= $(this).find('td:eq(0)').html();
             objInsumo.cantidad= $(this).find('td:eq(7) input').val();
-            objInsumo.costopromedio= $(this).find('td:eq(6)').html();
+            objInsumo.costoPromedio= $(this).find('td:eq(6)').html();
             ordensalida.listainsumo.push(objInsumo);
         });
         $.ajax({
@@ -156,9 +156,9 @@ constructor(id, fecha, numeroorden, idusuarioentrega, idusuariorecibe, fechaliqu
 
     // Methods
     UpdateCantidadProducto(){
-        productobodega.idproducto = $(this).parents("tr").find("td:eq(1)").html();
+        productobodega.idProducto = $(this).parents("tr").find("td:eq(1)").html();
         productobodega.cantidad = $(this).parents("tr").find("td:eq(5)").html();
-        productobodega.idbodega = '22a80c9e-5639-11e8-8242-54ee75873a00';
+        productobodega.idBodega = '22a80c9e-5639-11e8-8242-54ee75873a00';
         var idordensalida = $(this).parents("tr").find("td:eq(0)").html();
         productobodega.SaveCantidad(idordensalida);        
     };
@@ -281,16 +281,16 @@ constructor(id, fecha, numeroorden, idusuarioentrega, idusuariorecibe, fechaliqu
             $('#dsOrdenSalida').DataTable();
     };
 
-    AddTableInsumo(id,codigo,nombre,descripcion,saldocantidad,saldocosto,costopromedio) {
+    AddTableInsumo(id,codigo,nombre,descripcion,saldoCantidad,saldoCosto,costoPromedio) {
         $('#tableBody-InsumosOrdenSalida').append(`
             <tr id="row"${id}> 
                 <td class="itemId" >${id}</td>
                 <td class=oculto>${codigo}</td>
                 <td>${nombre}</td>
                 <td class=oculto>${descripcion}</td>
-                <td class=oculto>${saldocantidad}</td>
-                <td class=oculto>${saldocosto}</td>
-                <td class=oculto>${costopromedio}</td>
+                <td class=oculto>${saldoCantidad}</td>
+                <td class=oculto>${saldoCosto}</td>
+                <td class=oculto>${costoPromedio}</td>
                 <td>
                     <input id="cantidadInsumo" class="form-control col-3" name="cantidadInsumo" type="text" placeholder="Cantidad de paquetes" autofocus="" value="1">
                 </td>
@@ -366,13 +366,13 @@ constructor(id, fecha, numeroorden, idusuarioentrega, idusuariorecibe, fechaliqu
                 $.each(data.listainsumo, function (i, item) {
                     $('#tableBody-InsumosOrdenSalida').append(`
                         <tr id="row"${item.id}> 
-                            <td class="itemId" >${item.idinsumo}</td>
+                            <td class="itemId" >${item.idInsumo}</td>
                             <td class=oculto>${item.codigo}</td>
                             <td>${item.nombreinsumo}</td>
                             <td class=oculto>${item.descripcion}</td>
-                            <td class=oculto>${item.saldocantidad}</td>
-                            <td class=oculto>${item.saldocosto}</td>
-                            <td class=oculto>${item.costopromedio}</td>
+                            <td class=oculto>${item.saldoCantidad}</td>
+                            <td class=oculto>${item.saldoCosto}</td>
+                            <td class=oculto>${item.costoPromedio}</td>
                             <td>
                                 <input id="cantidadInsumo" class="form-control col-3" name="cantidadInsumo" type="text" placeholder="Cantidad de paquetes" autofocus="" value="${item.cantidad}"readonly>
                             </td>
@@ -415,13 +415,13 @@ constructor(id, fecha, numeroorden, idusuarioentrega, idusuariorecibe, fechaliqu
                 $.each(data.listainsumo, function (i, item) {
                     $('#tableBody-InsumosOrdenSalida').append(`
                         <tr id="row"${item.id}> 
-                            <td class="itemId">${item.idinsumo}</td>
+                            <td class="itemId">${item.idInsumo}</td>
                             <td class=oculto>${item.codigo}</td>
                             <td>${item.nombreinsumo}</td>
                             <td class=oculto>${item.descripcion}</td>
-                            <td class=oculto>${item.saldocantidad}</td>
-                            <td class=oculto>${item.saldocosto}</td>
-                            <td class=oculto>${item.costopromedio}</td>
+                            <td class=oculto>${item.saldoCantidad}</td>
+                            <td class=oculto>${item.saldoCosto}</td>
+                            <td class=oculto>${item.costoPromedio}</td>
                             <td>
                                 <input id="cantidadInsumo" class="form-control col-3" name="cantidadInsumo" type="text" placeholder="Cantidad de paquetes" autofocus="" value="${item.cantidad}">
                             </td>
@@ -509,9 +509,9 @@ constructor(id, fecha, numeroorden, idusuarioentrega, idusuariorecibe, fechaliqu
         var codigo=$(this).parents("tr").find("td:eq(2)").html(); 
         var nombre=$(this).parents("tr").find("td:eq(3)").html();
         var descripcion=$(this).parents("tr").find("td:eq(4)").html();
-        var saldocantidad=$(this).parents("tr").find("td:eq(5)").html();
-        var saldocosto=$(this).parents("tr").find("td:eq(6)").html();
-        var costopromedio=$(this).parents("tr").find("td:eq(7)").html();
+        var saldoCantidad=$(this).parents("tr").find("td:eq(5)").html();
+        var saldoCosto=$(this).parents("tr").find("td:eq(6)").html();
+        var costoPromedio=$(this).parents("tr").find("td:eq(7)").html();
         var ids_insumos = [];
 
         if ($(this).is(':checked')) {
@@ -519,13 +519,13 @@ constructor(id, fecha, numeroorden, idusuarioentrega, idusuariorecibe, fechaliqu
                 ids_insumos.push($(this).find('td:eq(0)').html());   
             });
             if (ids_insumos.length==0) {
-                ordensalida.AddTableInsumo(id,codigo,nombre,descripcion,saldocantidad,saldocosto,costopromedio);
+                ordensalida.AddTableInsumo(id,codigo,nombre,descripcion,saldoCantidad,saldoCosto,costoPromedio);
             }
             else{
                 if (ids_insumos.indexOf(id)!=-1) 
                     $('#chk-addinsumo'+id).attr("checked",false);
                 else
-                    ordensalida.AddTableInsumo(id,codigo,nombre,descripcion,saldocantidad,saldocosto,costopromedio);
+                    ordensalida.AddTableInsumo(id,codigo,nombre,descripcion,saldoCantidad,saldoCosto,costoPromedio);
             }
         }
     }

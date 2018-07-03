@@ -2,17 +2,17 @@
 require_once("Conexion.php");
 
 class RolesXUsuario{
-    public $idrol;
-    public $idusuario;
+    public $idRol;
+    public $idUsuario;
 
     public static function Create($obj){
         try {
             $created = true;
             foreach ($obj as $rolusr) {
-                $sql="INSERT INTO rolesxusuario   (idrol, idusuario)
-                VALUES (:idrol, :idusuario)";
+                $sql="INSERT INTO rolesXUsuario   (idRol, idUsuario)
+                VALUES (:idRol, :idUsuario)";
                 //
-                $param= array(':idrol'=>$rolusr->idrol, ':idusuario'=>$rolusr->idusuario);
+                $param= array(':idRol'=>$rolusr->idRol, ':idUsuario'=>$rolusr->idUsuario);
                 $data = DATA::Ejecutar($sql,$param,false);
                 if(!$data)
                     $created= false;
@@ -28,7 +28,7 @@ class RolesXUsuario{
         try {
             $updated = true;
             // elimina todos los objetos relacionados
-            $updated= self::Delete($obj[0]->idusuario);
+            $updated= self::Delete($obj[0]->idUsuario);
             // crea los nuevos objetos
             $updated= self::Create($obj);
             return $updated;
@@ -40,9 +40,9 @@ class RolesXUsuario{
 
     public static function Delete($_idusuario){
         try {                 
-            $sql='DELETE FROM rolesxusuario  
-                WHERE idusuario= :idusuario';
-            $param= array(':idusuario'=> $_idusuario);
+            $sql='DELETE FROM rolesXUsuario  
+                WHERE idUsuario= :idUsuario';
+            $param= array(':idUsuario'=> $_idusuario);
             $data= DATA::Ejecutar($sql, $param, false);
             if($data)
                 return true;

@@ -59,7 +59,7 @@ class OrdenSalida{
             $this->numeroorden= $obj["numeroorden"] ?? '';
             $this->fecha= $obj["fecha"] ?? '';
             $this->fechaliquida= $obj["fechaliquida"] ?? '';
-            $this->idusuarioentrega= $_SESSION['usersession']->id;
+            $this->idusuarioentrega= $_SESSION['userSession']->id;
             $this->idusuariorecibe= $obj["usuariorecibe"] ?? '';
             $this->idestado= $obj["estado"] ?? 0;
             //Insumos de la orden
@@ -68,9 +68,9 @@ class OrdenSalida{
                 foreach ($obj["listainsumo"] as $objInsumo) {
                     $ins_ordensalida= new InsumosxOrdenSalida();
                     $ins_ordensalida->idordensalida= $this->id;
-                    $ins_ordensalida->idinsumo= $objInsumo['id'];
+                    $ins_ordensalida->idInsumo= $objInsumo['id'];
                     $ins_ordensalida->cantidad= $objInsumo['cantidad'];
-                    $ins_ordensalida->costopromedio= $objInsumo['costopromedio'];
+                    $ins_ordensalida->costoPromedio= $objInsumo['costoPromedio'];
                     array_push ($this->listainsumo, $ins_ordensalida);
                 }
             }
@@ -80,7 +80,7 @@ class OrdenSalida{
                 foreach ($obj["listainsumocantidad"] as $objInsumoCantidad) {
                     $ins_ordensalida= new InsumosxOrdenSalida();
                     $ins_ordensalida->idordensalida= $this->id;
-                    $ins_ordensalida->idinsumo= $objInsumoCantidad['id'];
+                    $ins_ordensalida->idInsumo= $objInsumoCantidad['id'];
                     $ins_ordensalida->cantidad= $objInsumoCantidad['cantidad'];
                     array_push ($this->listainsumocantidad, $ins_ordensalida);
                 }
@@ -114,7 +114,7 @@ class OrdenSalida{
             $sql_ordensalida=$sql='SELECT `id`,`fecha`,`numeroorden`,`idusuarioentrega`, (SELECT nombre FROM usuario WHERE id=idusuarioentrega) as usuarioentrega,
             `idusuariorecibe`, (SELECT nombre FROM usuario WHERE id=idusuariorecibe) as usuariorecibe, `fechaliquida`, `idestado`
             FROM ordensalida WHERE id=:id ORDER BY numeroorden asc';
-            $sql_insumoxordensalida='SELECT id,idordensalida,idinsumo,(SELECT nombre FROM insumo WHERE id=idinsumo) AS nombreinsumo,cantidad,costopromedio FROM insumosxordensalida WHERE idordensalida=:id';
+            $sql_insumoxordensalida='SELECT id,idordensalida,idInsumo,(SELECT nombre FROM insumo WHERE id=idInsumo) AS nombreinsumo,cantidad,costoPromedio FROM insumosxordensalida WHERE idordensalida=:id';
 
             $param= array(':id'=>$this->id);
             $ordensalida = DATA::Ejecutar($sql_ordensalida,$param);
@@ -134,10 +134,10 @@ class OrdenSalida{
                 $ins_ordensalida = new InsumosxOrdenSalida();
                 $ins_ordensalida->id = $value['id'];
                 $ins_ordensalida->idordensalida = $value['idordensalida'];
-                $ins_ordensalida->idinsumo = $value['idinsumo'];
+                $ins_ordensalida->idInsumo = $value['idInsumo'];
                 $ins_ordensalida->nombreinsumo = $value['nombreinsumo'];
                 $ins_ordensalida->cantidad = $value['cantidad'];
-                $ins_ordensalida->costopromedio = $value['costopromedio'];
+                $ins_ordensalida->costoPromedio = $value['costoPromedio'];
                 array_push ($this->listainsumo, $ins_ordensalida);
             }
             return $this;
@@ -209,9 +209,9 @@ class OrdenSalida{
 
     private function CheckRelatedItems(){
         try{
-            $sql="SELECT idproducto
+            $sql="SELECT idProducto
                 FROM insumosxordensalida R
-                WHERE R.idproducto= :id";                
+                WHERE R.idProducto= :id";                
             $param= array(':id'=>$this->id);
             $data= DATA::Ejecutar($sql, $param);
             if(count($data))

@@ -221,7 +221,7 @@ class Bodega {
     };
 
     OpenEventHandler() {
-        productobodega.idbodega = $(this).parents("tr").find(".itemId").text();  //Class itemId = ID del objeto.
+        productobodega.idBodega = $(this).parents("tr").find(".itemId").text();  //Class itemId = ID del objeto.
         $('#nombrebodega').text($(this).parents("tr").find("td").eq(2).text());
         productobodega.Read;
     };
