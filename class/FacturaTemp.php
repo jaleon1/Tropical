@@ -19,7 +19,6 @@ class Factura{
     public $totalVentaNeta;
     public $totalImpuesto;
     public $totalComprobante;
-    public $resumenFactura=null;
     //
     public $idEmisor;
     public $idReceptor;
@@ -38,24 +37,24 @@ class Factura{
             $this->idCondicionVenta= $data[0]['idcondicionventa'];
             $this->idSituacionComprobante= $data[0]['idsituacioncomprobante'];
             $this->idEstadoComprobante= $data[0]['idestadocomprobante'];
-            $this->plazoCredito= $data[0]['plazocredito'];
-            $this->idMedioPago= $data[0]['idmediopago'];
+            $this->plazoCredito= $data[0]['plazoCredito'];
+            $this->idMedioPago= $data[0]['idMedioPago'];
             // resumen factura
-            $this->resumenFactura= $data[0]['resumenfactura'];
-            // $this->idCodigoMoneda= $data[0]['idcodigopais'];
-            // $this->tipoCambio= $data[0]['numtelefono'];
+            $this->ResumenFactura= $data[0]['ResumenFactura'];
+            // $this->idcodigoMoneda= $data[0]['idcodigoMoneda'];
+            // $this->tipoCambio= $data[0]['tipoCambio'];
             // ...
             // codigo referencia
-            $this->codigoReferencia= $data[0]['codigoreferencia'];
+            $this->codigoReferencia= $data[0]['codigoReferencia'];
             // totales
-            $this->totalVenta= $data[0]['totalventa'];
-            $this->totalDescuentos= $data[0]['totaldescuentos'];
-            $this->totalVentaNeta= $data[0]['totalventaneta']; 
-            $this->totalImpuesto= $data[0]['totalimpuesto']; 
-            $this->totalComprobante= $data[0]['totalcomprobante'];
+            $this->totalVenta= $data[0]['totalVenta'];
+            $this->totalDescuentos= $data[0]['totalDescuentos'];
+            $this->totalVentaNeta= $data[0]['totalVentaNeta']; 
+            $this->totalImpuesto= $data[0]['totalImpuesto']; 
+            $this->totalComprobante= $data[0]['totalComprobante'];
             //
-            $this->idEmisor= $data[0]['idemisor'];
-            $this->idReceptor= $data[0]['idreceptor'];
+            $this->idEmisor= $data[0]['idEmisor'];
+            $this->idReceptor= $data[0]['idReceptor'];
             return  $this;
         }
         else return null;
@@ -96,22 +95,22 @@ class ProductoXFactura{
         if(count($data)){
             $this->id= $data[0]['id'];
             $this->idProducto= $data[0]['idproducto'];
-            $this->numeroLinea= $data[0]['numerolinea'];
+            $this->numeroLinea= $data[0]['numeroLinea'];
             $this->codigo= $data[0]['codigo'];
             $this->cantidad= $data[0]['cantidad'];
-            $this->idUnidadMedida= $data[0]['idunidadmedida'];
-            $this->unidadMedidaComercial= $data[0]['unidadmedidacomercial'];
+            $this->idUnidadMedida= $data[0]['idUnidadMedida'];
+            $this->unidadMedidaComercial= $data[0]['unidadMedidaComercial'];
             $this->detalle= $data[0]['detalle'];
-            $this->precioUnitario= $data[0]['preciounitario'];
-            $this->montoTotal= $data[0]['montototal'];
-            $this->montoDescuento= $data[0]['montodescuento'];
-            $this->naturalezaDescuento= $data[0]['naturalezadescuento'];
-            $this->subTotal= $data[0]['subtotal'];
-            $this->codigoImpuesto  = $data[0]['codigoimpuesto'];
-            $this->tarifaImpuesto= $data[0]['tarifaimpuesto']; 
-            $this->montoImpuesto= $data[0]['montoimpuesto'];
-            $this->idExoneracionImpuesto  = $data[0]['idexoneracionimpuesto'];
-            $this->montoTotalLinea= $data[0]['montototallinea']; 
+            $this->precioUnitario= $data[0]['precioUnitario'];
+            $this->montoTotal= $data[0]['montoTotal'];
+            $this->montoDescuento= $data[0]['montoDescuento'];
+            $this->naturalezaDescuento= $data[0]['naturalezaDescuento'];
+            $this->subTotal= $data[0]['subTotal'];
+            $this->codigoImpuesto  = $data[0]['codigoImpuesto'];
+            $this->tarifaImpuesto= $data[0]['tarifaImpuesto']; 
+            $this->montoImpuesto= $data[0]['montoImpuesto'];
+            $this->idExoneracionImpuesto  = $data[0]['idExoneracionImpuesto'];
+            $this->montoTotalLinea= $data[0]['montoTotalLinea']; 
             
             return  $this;
         }

@@ -70,6 +70,7 @@ class Firmadocr {
 	$this->Reference1Id		= "ReferenceKeyInfo";
 	
 	$this->SignedProperties	= "SignedProperties-".$this->signatureID;
+
     $this->tipoDoc = $tipodoc;
 	$xml1 = base64_decode($xmlsinfirma);
 	$xml1 = $this->insertaFirma($xml1);
@@ -122,11 +123,13 @@ class Firmadocr {
     $xmnls_signeg .= 'xmlns:ds="http://www.w3.org/2000/09/xmldsig#" '.
                      'xmlns:xsd="http://www.w3.org/2001/XMLSchema" '.
                      'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"';
+
 	//date_default_timezone_set("America/Costa_Rica");
 	//$signTime1='2018-01-30T17:16:42-06:00';
 	//$signTime1 = date('Y-m-d\TH:i:s.vT:00');
 	$signTime1 = date('Y-m-d\TH:i:s-06:00');
 	
+
     $certData   = openssl_x509_parse($this->publicKey);
     $certDigest =base64_encode(openssl_x509_fingerprint($this->publicKey, "sha256", true));
     
@@ -135,6 +138,7 @@ class Firmadocr {
       $certIssuer[] = $item . '=' . $value;
     }
 	$certIssuer = implode(', ', array_reverse($certIssuer));
+
     $prop = '<xades:SignedProperties Id="' . $this->SignedProperties .  '">' .
       '<xades:SignedSignatureProperties>'.
 		  '<xades:SigningTime>' .  $signTime1 . '</xades:SigningTime>' .     
@@ -170,6 +174,7 @@ class Firmadocr {
 		  '</xades:DataObjectFormat>'.
 	  '</xades:SignedDataObjectProperties>'.
 	  '</xades:SignedProperties>';
+
     // Prepare key info
     $publicPEM = "";
     openssl_x509_export($this->publicKey, $publicPEM);
@@ -188,15 +193,19 @@ class Firmadocr {
 				'</ds:RSAKeyValue>'.
 				'</ds:KeyValue>'.
 			 '</ds:KeyInfo>';
+
 	
 	$aconop=str_replace('<xades:SignedProperties', '<xades:SignedProperties ' . $xmnls_signedprops, $prop);
 	$propDigest=$this->retC14DigestSha1($aconop);
+
 	
 	$keyinfo_para_hash1=str_replace('<ds:KeyInfo', '<ds:KeyInfo ' . $xmlns_keyinfo, $kInfo);
 	$kInfoDigest=$this->retC14DigestSha1($keyinfo_para_hash1);
+
     
 	
     $documentDigest = base64_encode(hash('sha256' , $canonizadoreal, true ));
+
     // Prepare signed info
     $sInfo = '<ds:SignedInfo>' . 
 	  '<ds:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315" />' . 
@@ -217,7 +226,10 @@ class Firmadocr {
 	  '<ds:DigestValue>' . $propDigest . '</ds:DigestValue>' . 
 	  '</ds:Reference>' . 
 	  '</ds:SignedInfo>';
+
+
     $signaturePayload = str_replace('<ds:SignedInfo', '<ds:SignedInfo ' . $xmnls_signeg, $sInfo);
+
 	
 	$d1p = new DOMDocument('1.0','UTF-8');
 	$d1p->loadXML($signaturePayload);
@@ -225,9 +237,12 @@ class Firmadocr {
 	
     $signatureResult = "";
     $algo = "SHA256";
+
+
 	openssl_sign($signaturePayload, $signatureResult, $this->privateKey,$algo);
 	
 	$signatureResult = base64_encode($signatureResult);
+
     $sig = '<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" Id="' . $this->signatureID . '">'. 
 	   $sInfo . 
       '<ds:SignatureValue Id="' . $this->signatureValue . '">' . 
@@ -235,6 +250,7 @@ class Firmadocr {
       '<ds:Object Id="'.$this->XadesObjectId .'">'.
 	  '<xades:QualifyingProperties xmlns:xades="http://uri.etsi.org/01903/v1.3.2#" Id="QualifyingProperties-012b8df6-b93e-4867-9901-83447ffce4bf" Target="#' . $this->signatureID . '">' . $prop .
       '</xades:QualifyingProperties></ds:Object></ds:Signature>';
+
 	$buscar;$remplazar;
     if ($this->tipoDoc == '01'){
         $buscar = '</FacturaElectronica>';
@@ -256,6 +272,7 @@ class Firmadocr {
     if($pos !== false){
         $xml = substr_replace($xml, $remplazar, $pos, strlen($buscar));
     }
+
     return $xml;
   }
 }
