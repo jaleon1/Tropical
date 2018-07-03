@@ -21,8 +21,8 @@
 			<CodigoPais>506</CodigoPais>
 			<NumTelefono>84316310</NumTelefono>
 		</Telefono>
-		<CorreoElectronico>carlos.echc11@gmail.com</CorreoElectronico>
 	</Emisor>
+		<CorreoElectronico>carlos.echc11@gmail.com</CorreoElectronico>
 	<Receptor>
 		<Nombre/>
 		<Identificacion>
