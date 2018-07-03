@@ -12,19 +12,19 @@ class Emisor{
     public $tipoIdentificacion;
     public $identificacion;
     public $nombreComercial;
-    public $idprovincia;
-    public $idcanton;
-    public $iddistrito;
-    public $idbarrio;
+    public $idProvincia;
+    public $idCanton;
+    public $idDistrito;
+    public $idBarrio;
     public $otrasSenas;
-    public $idcodigopaistel;
+    public $idCodigoPaisTel;
     public $numTelefono;
-    public $idcodigoPaisFax;
+    public $idCodigoPaisFax;
     public $numTelefonoFax;
     public $correoElectronico;   
 
     public function Datos($id){
-        $sql='SELECT id, codigoseguridad, idcodigopais, nombre, idtipoidentificacion, identificacion, nombrecomercial, idprovincia, idcanton, iddistrito, idbarrio, otrassenas, idcodigopaistel, numtelefono, idcodigopaisfax, numtelefonofax, correoelectronico
+        $sql='SELECT id, codigoseguridad, idcodigopais, nombre, idtipoidentificacion, identificacion, nombrecomercial, idProvincia, idCanton, idDistrito, idBarrio, otrassenas, idCodigoPaisTel, numtelefono, idcodigopaisfax, numtelefonofax, correoelectronico
             FROM clienteFE
             WHERE id= :id';
         $param= array(':id'=> $id);
@@ -36,14 +36,14 @@ class Emisor{
             $this->tipoIdentificacion= $data[0]['idtipoidentificacion'];
             $this->identificacion= $data[0]['identificacion'];
             $this->nombreComercial= $data[0]['nombrecomercial'];
-            $this->idprovincia= $data[0]['idprovincia'];
-            $this->idcanton= $data[0]['idcanton'];
-            $this->iddistrito= $data[0]['iddistrito'];
-            $this->idbarrio= $data[0]['idbarrio'];
+            $this->idProvincia= $data[0]['idProvincia'];
+            $this->idCanton= $data[0]['idCanton'];
+            $this->idDistrito= $data[0]['idDistrito'];
+            $this->idBarrio= $data[0]['idBarrio'];
             $this->otrasSenas= $data[0]['otrassenas'];
-            $this->idcodigopaisTel= $data[0]['idcodigopaistel'];
+            $this->idcodigopaisTel= $data[0]['idCodigoPaisTel'];
             $this->numTelefono= $data[0]['numtelefono'];
-            $this->idcodigoPaisFax= $data[0]['idcodigopaisfax'];
+            $this->idCodigoPaisFax= $data[0]['idcodigopaisfax'];
             $this->numTelefonoFax= $data[0]['numtelefonofax'];
             $this->correoElectronico= $data[0]['correoelectronico']; 
             return  $this;

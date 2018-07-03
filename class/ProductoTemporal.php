@@ -36,9 +36,9 @@ class ProductoTemporal{
                 //            
                 foreach ($obj["listaproducto"] as $objproducto) {
                     $producto= new Producto();
-                    $producto->id= $objproducto['idproducto'];
-                    $producto->saldocantidad= $objproducto['cantidad'];
-                    $producto->costopromedio= $objproducto['costo'];
+                    $producto->id= $objproducto['idProducto'];
+                    $producto->saldoCantidad= $objproducto['cantidad'];
+                    $producto->costoPromedio= $objproducto['costo'];
                     array_push ($this->listaproducto, $producto);
                 }
             }
@@ -59,13 +59,13 @@ class ProductoTemporal{
             $cantidadproducto = count($this->listaproducto);
             foreach ($this->listaproducto as $item) 
             {
-                $costoxproducto = $item->costopromedio/$cantidadproducto;
+                $costoxproducto = $item->costoPromedio/$cantidadproducto;
             }
 
             foreach ($this->listaproducto as $item) 
             {
                 // Actualiza los saldos y calcula promedio
-                Producto::UpdateSaldoProducto($item->id, $item->saldocantidad, $costoxproducto);
+                Producto::UpdateSaldoProducto($item->id, $item->saldoCantidad, $costoxproducto);
             }
             return $created;
         }     

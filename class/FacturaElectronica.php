@@ -97,11 +97,11 @@ class FacturaElectronica{
             if($this->emisor->nombreComercial!=null)
                 $Emisor->addChild('NombreComercial',$this->emisor->nombreComercial);
             $Ubicacion= $Emisor->addChild('Ubicacion');
-                $Ubicacion->addChild('Provincia', $this->emisor->idprovincia);
-                $Ubicacion->addChild('Canton', $this->emisor->idcanton);
-                $Ubicacion->addChild('Distrito', $this->emisor->iddistrito);
-                if($this->emisor->idbarrio!=null)
-                    $Ubicacion->addChild('Barrio', $this->emisor->idbarrio);                
+                $Ubicacion->addChild('Provincia', $this->emisor->idProvincia);
+                $Ubicacion->addChild('Canton', $this->emisor->idCanton);
+                $Ubicacion->addChild('Distrito', $this->emisor->idDistrito);
+                if($this->emisor->idBarrio!=null)
+                    $Ubicacion->addChild('Barrio', $this->emisor->idBarrio);                
                 $Ubicacion->addChild('OtrasSenas', $this->emisor->otrasSenas);
             if($this->emisor->numTelefono!=null){
                 $Telefono= $Emisor->addChild('Telefono');
@@ -135,7 +135,7 @@ class FacturaElectronica{
                 }
                 if($receptor->numTelefono!=null){
                     $Telefono= $Receptor->addChild('Telefono');
-                        $Telefono->addChild('CodigoPais', $receptor->idcodigoPaisTel);
+                        $Telefono->addChild('CodigoPais', $receptor->idCodigoPaisTel);
                         $Telefono->addChild('NumTelefono', $receptor->numTelefono);            
                 }
                 if($receptor->numTelefonoFax!=null){

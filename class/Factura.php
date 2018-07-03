@@ -30,18 +30,18 @@ if(isset($_POST["action"])){
 
 class Factura{
     public $id=null;
-    public $idusuario=null;
+    public $idUsuario=null;
     public $fecha=null;
     //
-    public $subtotal=0;    
+    public $subTotal=0;    
     public $iva=0;
-    public $porcentajeiva=0;
+    public $porcentajeIva=0;
     public $descuento=0;
     public $porcentajeDescuento=0;
     public $total=0;
     //
-    public $tipopago='';
-    public $pagacon=0;
+    public $tipoPago='';
+    public $pagaCon=0;
     public $vuelto=0;
     //
     // public $listaproducto= array();
@@ -55,15 +55,15 @@ class Factura{
             $obj= json_decode($_POST["obj"],true);
             require_once("UUID.php");
             $this->id= $obj["id"] ?? UUID::v4();
-            $this->idusuario= $obj["idusuario"] ?? '';
+            $this->idUsuario= $obj["idUsuario"] ?? '';
             $this->idcliente= $obj["idcliente"] ?? '';
             $this->fecha= $obj["fecha"] ?? '';
             $this->producto= $obj["producto"] ?? 0;          
             $this->impventas= $obj["impuesto"] ?? '';
             $this->descuento= $obj["descuento"] ?? '';            
-            // $this->subtotal= $obj["subtotal"] ?? ''; 
+            // $this->subTotal= $obj["subTotal"] ?? ''; 
             // $this->iva= $obj["iva"] ?? 0;            
-            // $this->porcentajeiva= $obj["porcentajeiva"] ?? 0;
+            // $this->porcentajeIva= $obj["porcentajeIva"] ?? 0;
             // $this->porcentajeDescuento= $obj["porcentajeDescuento"] ?? 0;            
             // $this->total= $obj["total"] ?? null;
             // Categorias del factura.
@@ -73,7 +73,7 @@ class Factura{
             //     foreach ($obj["listaproducto"] as $idprod) {
             //         $prodfact= new ProductosXFactura();
             //         $prodfact->idcategoria= $idprod;
-            //         $prodfact->idproducto= $this->id;
+            //         $prodfact->idProducto= $this->id;
             //         array_push ($this->listaproducto, $prodfact);
             //     }
             // }
@@ -82,9 +82,9 @@ class Factura{
 
     function ReadAll(){
         try {
-            $sql='SELECT id, idusuario, fecha, descuento, iva, porcentajeiva , porcentajeDescuento
+            $sql='SELECT id, idUsuario, fecha, descuento, iva, porcentajeIva , porcentajeDescuento
                 FROM     factura       
-                ORDER BY idusuario asc';
+                ORDER BY idUsuario asc';
             $data= DATA::Ejecutar($sql);
             return $data;
         }     
@@ -99,8 +99,8 @@ class Factura{
 
     function Read(){
         try {
-            $sql='SELECT p.id, p.idusuario, p.fecha, p.subtotal, iva, porcentajeiva, descuento, porcentajeDescuento, total, c.id as idcategoria,c.idusuario as nombrecategoria
-                FROM factura  p LEFT JOIN categoriasxproducto cp on cp.idproducto = p.id
+            $sql='SELECT p.id, p.idUsuario, p.fecha, p.subTotal, iva, porcentajeIva, descuento, porcentajeDescuento, total, c.id as idcategoria,c.idUsuario as nombrecategoria
+                FROM factura  p LEFT JOIN categoriasXProducto cp on cp.idProducto = p.id
                     LEFT join categoria c on c.id = cp.idcategoria
                 where p.id=:id';
             $param= array(':id'=>$this->id);
@@ -110,24 +110,24 @@ class Factura{
                 $cat= new Categoria(); // categorias del factura
                 if($key==0){
                     $this->id = $value['id'];
-                    $this->idusuario = $value['idusuario'];
+                    $this->idUsuario = $value['idUsuario'];
                     $this->fecha = $value['fecha'];
-                    $this->subtotal = $value['subtotal'];
+                    $this->subTotal = $value['subTotal'];
                     $this->iva = $value['iva'];
-                    $this->porcentajeiva = $value['porcentajeiva'];
+                    $this->porcentajeIva = $value['porcentajeIva'];
                     $this->descuento = $value['descuento'];
                     $this->porcentajeDescuento = $value['porcentajeDescuento'];
                     $this->total = $value['total'];
                     //categoria
                     if($value['idcategoria']!=null){
                         $cat->id = $value['idcategoria'];
-                        $cat->idusuario = $value['nombrecategoria'];
+                        $cat->idUsuario = $value['nombrecategoria'];
                         array_push ($this->listaproducto, $cat);
                     }
                 }
                 else {
                     $cat->id = $value['idcategoria'];
-                    $cat->idusuario = $value['nombrecategoria'];
+                    $cat->idUsuario = $value['nombrecategoria'];
                     array_push ($this->listaproducto, $cat);
                 }
             }
@@ -151,10 +151,10 @@ class Factura{
 //         if($data)
 //         {
 //             foreach ($this->producto as $insprod) {
-//                 $sql="INSERT INTO productosxfactura   (idfactura, idproducto, precio, cantidad)
-//                     VALUES (:idfactura, :idproducto, :precio, :cantidad)";              
+//                 $sql="INSERT INTO productosxfactura   (idfactura, idProducto, precio, cantidad)
+//                     VALUES (:idfactura, :idProducto, :precio, :cantidad)";              
 //                 //
-//                 $param= array(':idfactura'=>"ad23718a-5fec-11e8-af02-c85b76da12f5",':idproducto'=>$insprod[0], ':precio'=>$insprod[3], ':cantidad'=>$insprod[4]);
+//                 $param= array(':idfactura'=>"ad23718a-5fec-11e8-af02-c85b76da12f5",':idProducto'=>$insprod[0], ':precio'=>$insprod[3], ':cantidad'=>$insprod[4]);
 //                 $data = DATA::Ejecutar($sql,$param,false);
 //                 if($data)
 //                 {
@@ -176,24 +176,24 @@ class Factura{
 /////////////////////////////////////////////
     function Create(){
         try {
-            // $sql="INSERT INTO factura   (id, idusuario, fecha, subtotal, iva, porcentajeiva, descuento, porcentajeDescuento, total)
-            //     VALUES (:uuid, :idusuario, :fecha, :subtotal, :iva, :porcentajeiva, :descuento, :porcentajeDescuento, :total)";
+            // $sql="INSERT INTO factura   (id, idUsuario, fecha, subTotal, iva, porcentajeIva, descuento, porcentajeDescuento, total)
+            //     VALUES (:uuid, :idUsuario, :fecha, :subTotal, :iva, :porcentajeIva, :descuento, :porcentajeDescuento, :total)";
             //
-            $sql="INSERT INTO factura   (id, idusuario, idcliente, fecha, impventas, descuento)
-            VALUES (:uuid, :idusuario, :idcliente, :fecha, :impventas, :descuento)"; 
+            $sql="INSERT INTO factura   (id, idUsuario, idcliente, fecha, impventas, descuento)
+            VALUES (:uuid, :idUsuario, :idcliente, :fecha, :impventas, :descuento)"; 
         
-            // $param= array(':usuario'=>$this->idusuario,':cliente'=>$this->cliente, ':fecha'=>$this->fecha, 'impventas'=>$this->impventas, 'descuento'=>$this->descuento);
+            // $param= array(':usuario'=>$this->idUsuario,':cliente'=>$this->cliente, ':fecha'=>$this->fecha, 'impventas'=>$this->impventas, 'descuento'=>$this->descuento);
        
-            $param= array(':uuid'=>$this->id, ':idusuario'=>$this->idusuario, ':idcliente'=>$this->idcliente, ':fecha'=>$this->fecha, 
+            $param= array(':uuid'=>$this->id, ':idUsuario'=>$this->idUsuario, ':idcliente'=>$this->idcliente, ':fecha'=>$this->fecha, 
             ':impventas'=>$this->impventas, ':descuento'=>$this->descuento);
             $data = DATA::Ejecutar($sql,$param, false);
             if($data)
             {
                 foreach ($this->producto as $insprod) {
-                    $sql="INSERT INTO productosxfactura   (idfactura, idproducto, precio, cantidad)
-                        VALUES (:idfactura, :idproducto, :precio, :cantidad)";              
+                    $sql="INSERT INTO productosxfactura   (idfactura, idProducto, precio, cantidad)
+                        VALUES (:idfactura, :idProducto, :precio, :cantidad)";              
                     //
-                    $param= array(':idfactura'=>$this->id,':idproducto'=>$insprod[0], ':precio'=>$insprod[3], ':cantidad'=>$insprod[4]);
+                    $param= array(':idfactura'=>$this->id,':idProducto'=>$insprod[0], ':precio'=>$insprod[3], ':cantidad'=>$insprod[4]);
                     $data = DATA::Ejecutar($sql,$param,false);
                     if($data)
                     {
@@ -216,9 +216,9 @@ class Factura{
     function Update(){
         try {
             $sql="UPDATE factura 
-                SET idusuario=:idusuario, fecha=:fecha, subtotal= :subtotal, iva=:iva, porcentajeiva=:porcentajeiva, descuento=:descuento, porcentajeDescuento=:porcentajeDescuento, total=:total
+                SET idUsuario=:idUsuario, fecha=:fecha, subTotal= :subTotal, iva=:iva, porcentajeIva=:porcentajeIva, descuento=:descuento, porcentajeDescuento=:porcentajeDescuento, total=:total
                 WHERE id=:id";
-            $param= array(':id'=>$this->id, ':idusuario'=>$this->idusuario, ':fecha'=>$this->fecha, ':subtotal'=>$this->subtotal, ':iva'=>$this->iva, ':porcentajeiva'=>$this->porcentajeiva , 
+            $param= array(':id'=>$this->id, ':idUsuario'=>$this->idUsuario, ':fecha'=>$this->fecha, ':subTotal'=>$this->subTotal, ':iva'=>$this->iva, ':porcentajeIva'=>$this->porcentajeIva , 
                 ':descuento'=>$this->descuento, ':porcentajeDescuento'=>$this->porcentajeDescuento, ':total'=>$this->total);
             $data = DATA::Ejecutar($sql,$param,false);
             if($data){
@@ -247,9 +247,9 @@ class Factura{
 
     private function CheckRelatedItems(){
         try{
-            $sql="SELECT idproducto
-                FROM categoriasxproducto x
-                WHERE x.idproducto= :id";
+            $sql="SELECT idProducto
+                FROM categoriasXProducto x
+                WHERE x.idProducto= :id";
             $param= array(':id'=>$this->id);
             $data= DATA::Ejecutar($sql, $param);
             if(count($data))

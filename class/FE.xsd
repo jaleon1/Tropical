@@ -216,7 +216,7 @@ targetNamespace="https://tribunet.hacienda.go.cr/docs/esquemas/2017/v4.2/factura
 										</xs:element>
 										<xs:element name="MontoTotalLinea" type="DecimalDineroType">
 											<xs:annotation>
-												<xs:documentation>Se obtiene de la suma de los campos subtotal mÃ¡s monto de los impuestos</xs:documentation>
+												<xs:documentation>Se obtiene de la suma de los campos subTotal mÃ¡s monto de los impuestos</xs:documentation>
 											</xs:annotation>
 										</xs:element>
 									</xs:sequence>
@@ -1049,7 +1049,7 @@ targetNamespace="https://tribunet.hacienda.go.cr/docs/esquemas/2017/v4.2/factura
 			</xs:element>
 			<xs:element name="Monto" type="DecimalDineroType">
 				<xs:annotation>
-					<xs:documentation>Se obtiene de la multiplicaciÃ³n del campo subtotal por la tarifa del impuesto</xs:documentation>
+					<xs:documentation>Se obtiene de la multiplicaciÃ³n del campo subTotal por la tarifa del impuesto</xs:documentation>
 				</xs:annotation>
 			</xs:element>
 			<xs:element name="Exoneracion" type="ExoneracionType" minOccurs="0"/>

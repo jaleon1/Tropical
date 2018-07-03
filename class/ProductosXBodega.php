@@ -11,7 +11,7 @@ if(isset($_POST["action"])){
     $productosxbodega= new ProductosXBodega();
     switch($opt){
         case "ReadAll": // todos los productos de una bodega
-            $productosxbodega->idbodega = $_POST["idbodega"]; // id de la bodega
+            $productosxbodega->idBodega = $_POST["idBodega"]; // id de la bodega
             echo json_encode($productosxbodega->ReadAll());
             break;
         case "Read":
@@ -34,8 +34,8 @@ if(isset($_POST["action"])){
 
 class ProductosXBodega{
     public $id=null;
-    public $idbodega='';
-    public $idproducto='';
+    public $idBodega='';
+    public $idProducto='';
     public $producto='';
     public $cantidad=0;
     public $costo=0;
@@ -49,8 +49,8 @@ class ProductosXBodega{
         if(isset($_POST["obj"])){
             $obj= json_decode($_POST["obj"],true);
             $this->id= $obj["id"] ?? null;
-            $this->idbodega= $obj["idbodega"] ?? null;
-            $this->idproducto= $obj["idproducto"] ?? null;
+            $this->idBodega= $obj["idBodega"] ?? null;
+            $this->idProducto= $obj["idProducto"] ?? null;
             $this->cantidad= $obj["cantidad"] ?? 0;      
             $this->costo= $obj["costo"] ?? 0;
             unset($_POST['obj']);
@@ -60,8 +60,8 @@ class ProductosXBodega{
                 foreach ($obj["lista"] as $item) {
                     $prodTemp =  new Producto();
                     $prodTemp->id= $item['id'];            
-                    $prodTemp->idbodega= $item['idbodega'];
-                    $prodTemp->idproducto= $item['idproducto'];
+                    $prodTemp->idBodega= $item['idBodega'];
+                    $prodTemp->idProducto= $item['idProducto'];
                     $prodTemp->cantidad= $item['cantidad'];
                     $prodTemp->costo= $item['costo'];
                     array_push ($this->lista, $prodTemp);
@@ -73,12 +73,12 @@ class ProductosXBodega{
 
     function ReadAll(){
         try {
-            $sql='SELECT pb.id, idbodega, idproducto, nombre as producto, pb.cantidad, pb.costo, p.bgColor, p.txtColor
-                FROM     productosxbodega   pb INNER JOIN producto p on p.id=pb.idproducto
-                WHERE    idbodega= :idbodega
+            $sql='SELECT pb.id, idBodega, idProducto, nombre as producto, pb.cantidad, pb.costo, p.bgColor, p.txtColor
+                FROM     productosxbodega   pb INNER JOIN producto p on p.id=pb.idProducto
+                WHERE    idBodega= :idBodega
                 AND		 p.articulo = "0"
-                ORDER BY idbodega asc';
-            $param= array(':idbodega'=>$this->idbodega);
+                ORDER BY idBodega asc';
+            $param= array(':idBodega'=>$this->idBodega);
             $data= DATA::Ejecutar($sql,$param);
             return $data;
         }     
@@ -94,12 +94,12 @@ class ProductosXBodega{
 
     function ReadAllPrd_Bdg(){
         try {
-            $sql='SELECT pb.id, idbodega, idproducto, nombre as producto, pb.cantidad, pb.costo, p.bgColor, p.txtColor
-                FROM     productosxbodega   pb INNER JOIN producto p on p.id=pb.idproducto
-                WHERE    idbodega= :idbodega
+            $sql='SELECT pb.id, idBodega, idProducto, nombre as producto, pb.cantidad, pb.costo, p.bgColor, p.txtColor
+                FROM     productosxbodega   pb INNER JOIN producto p on p.id=pb.idProducto
+                WHERE    idBodega= :idBodega
                 AND		 p.articulo = "0"
-                ORDER BY idbodega asc';
-            $param= array(':idbodega'=>$this->idbodega);
+                ORDER BY idBodega asc';
+            $param= array(':idBodega'=>$this->idBodega);
             $data= DATA::Ejecutar($sql,$param);
             return $data;
         }     
@@ -115,8 +115,8 @@ class ProductosXBodega{
 
     function Read(){
         try {
-            $sql='SELECT pb.id,pb.idbodega, pb.idproducto, pb.cantidad, pb.costo , p.nombre as producto
-                FROM productosxbodega pb INNER JOIN producto p on p.id=pb.idproducto
+            $sql='SELECT pb.id,pb.idBodega, pb.idProducto, pb.cantidad, pb.costo , p.nombre as producto
+                FROM productosxbodega pb INNER JOIN producto p on p.id=pb.idProducto
                 where pb.id=:id';
             $param= array(':id'=>$this->id);
             $data= DATA::Ejecutar($sql,$param);
@@ -133,13 +133,13 @@ class ProductosXBodega{
 
     function Create(){
         try {
-            $sql="INSERT INTO productosxbodega (id, idbodega, idproducto, cantidad, costo) VALUES (uuid(),:idbodega, :idproducto, :cantidad, 
-            (SELECT SUM(costo) FROM insumosxproducto WHERE idproductotemporal=:idproductotemporal) );";
+            $sql="INSERT INTO productosxbodega (id, idBodega, idProducto, cantidad, costo) VALUES (uuid(),:idBodega, :idProducto, :cantidad, 
+            (SELECT SUM(costo) FROM insumosxproducto WHERE idProductoTemporal=:idProductoTemporal) );";
             //
-            $param= array(':idbodega'=>$this->idbodega, ':idproducto'=>$this->idproducto, ':cantidad'=>$this->cantidad,':idproductotemporal'=>$_POST["idproductotemporal"]);
+            $param= array(':idBodega'=>$this->idBodega, ':idProducto'=>$this->idProducto, ':cantidad'=>$this->cantidad,':idProductoTemporal'=>$_POST["idProductoTemporal"]);
             $data = DATA::Ejecutar($sql,$param, false);
-            $sql2 = "UPDATE productotemporal SET estado=1 WHERE id=:idproductotemporal";
-            $param2=array(':idproductotemporal'=>$_POST["idproductotemporal"]);
+            $sql2 = "UPDATE productotemporal SET estado=1 WHERE id=:idProductoTemporal";
+            $param2=array(':idProductoTemporal'=>$_POST["idProductoTemporal"]);
             $data2 = DATA::Ejecutar($sql2, $param2, false);
             if($data && $data2)
             {
@@ -159,9 +159,9 @@ class ProductosXBodega{
     function Add(){
         try {
             foreach ($this->lista as $producto) {
-                $sql="INSERT INTO productosxbodega (id, idbodega, idproducto, cantidad, costo) VALUES (uuid(),:idbodega, :idproducto, :cantidad, :costo);";
+                $sql="INSERT INTO productosxbodega (id, idBodega, idProducto, cantidad, costo) VALUES (uuid(),:idBodega, :idProducto, :cantidad, :costo);";
                 //
-                $param= array(':idbodega'=>$producto->idbodega, ':idproducto'=>$producto->idproducto, ':cantidad'=>$producto->cantidad, ':costo'=>$producto->costo);
+                $param= array(':idBodega'=>$producto->idBodega, ':idProducto'=>$producto->idProducto, ':cantidad'=>$producto->cantidad, ':costo'=>$producto->costo);
                 $data = DATA::Ejecutar($sql,$param, false);
                 if($data){
                     // Si tiene ID de producto es porque viene de la bodega principal y debe restar

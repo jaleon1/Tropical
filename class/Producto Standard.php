@@ -38,7 +38,7 @@ class Producto{
     public $scancode='';
     public $codigoRapido='';
     public $fechaExpiracion=null;
-    public $listacategoria= array();
+    public $listaCategoria= array();
     
 
     function __construct(){
@@ -59,14 +59,14 @@ class Producto{
             $this->codigoRapido= $obj["codigoRapido"] ?? 0;            
             $this->fechaExpiracion= $obj["fechaExpiracion"] ?? null;
             //Categorias del producto.
-            if(isset($obj["listacategoria"] )){
+            if(isset($obj["listaCategoria"] )){
                 require_once("CategoriasXProducto.php");
                 //
-                foreach ($obj["listacategoria"] as $idcat) {
+                foreach ($obj["listaCategoria"] as $idcat) {
                     $catprod= new CategoriasXProducto();
                     $catprod->idcategoria= $idcat;
-                    $catprod->idproducto= $this->id;
-                    array_push ($this->listacategoria, $catprod);
+                    $catprod->idProducto= $this->id;
+                    array_push ($this->listaCategoria, $catprod);
                 }
             }
         }
@@ -92,7 +92,7 @@ class Producto{
     function Read(){
         try {
             $sql='SELECT p.id, p.nombre, p.nombreAbreviado, p.descripcion, cantidad, precio, scancode, codigoRapido, fechaExpiracion, c.id as idcategoria,c.nombre as nombrecategoria
-                FROM producto  p LEFT JOIN categoriasxproducto cp on cp.idproducto = p.id
+                FROM producto  p LEFT JOIN categoriasXProducto cp on cp.idProducto = p.id
                     LEFT join categoria c on c.id = cp.idcategoria
                 where p.id=:id';
             $param= array(':id'=>$this->id);
@@ -114,13 +114,13 @@ class Producto{
                     if($value['idcategoria']!=null){
                         $cat->id = $value['idcategoria'];
                         $cat->nombre = $value['nombrecategoria'];
-                        array_push ($this->listacategoria, $cat);
+                        array_push ($this->listaCategoria, $cat);
                     }
                 }
                 else {
                     $cat->id = $value['idcategoria'];
                     $cat->nombre = $value['nombrecategoria'];
-                    array_push ($this->listacategoria, $cat);
+                    array_push ($this->listaCategoria, $cat);
                 }
             }
             return $this;
@@ -145,7 +145,7 @@ class Producto{
             if($data)
             {
                 //save array obj
-                if(CategoriasXProducto::Create($this->listacategoria))
+                if(CategoriasXProducto::Create($this->listaCategoria))
                     return true;
                 else throw new Exception('Error al guardar las categorias.', 03);
             }
@@ -170,8 +170,8 @@ class Producto{
             $data = DATA::Ejecutar($sql,$param,false);
             if($data){
                 //update array obj
-                if($this->listacategoria!=null)
-                    if(CategoriasXProducto::Update($this->listacategoria))
+                if($this->listaCategoria!=null)
+                    if(CategoriasXProducto::Update($this->listaCategoria))
                         return true;            
                     else throw new Exception('Error al guardar las categorias.', 03);
                 else {
@@ -194,9 +194,9 @@ class Producto{
 
     private function CheckRelatedItems(){
         try{
-            $sql="SELECT idproducto
-                FROM categoriasxproducto x
-                WHERE x.idproducto= :id";
+            $sql="SELECT idProducto
+                FROM categoriasXProducto x
+                WHERE x.idProducto= :id";
             $param= array(':id'=>$this->id);
             $data= DATA::Ejecutar($sql, $param);
             if(count($data))

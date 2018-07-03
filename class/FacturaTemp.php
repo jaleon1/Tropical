@@ -94,7 +94,7 @@ class ProductoXFactura{
         $data= DATA::Ejecutar($sql, $param);
         if(count($data)){
             $this->id= $data[0]['id'];
-            $this->idProducto= $data[0]['idproducto'];
+            $this->idProducto= $data[0]['idProducto'];
             $this->numeroLinea= $data[0]['numeroLinea'];
             $this->codigo= $data[0]['codigo'];
             $this->cantidad= $data[0]['cantidad'];

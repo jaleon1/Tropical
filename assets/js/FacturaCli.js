@@ -1,9 +1,9 @@
 class FacturaCli {
     // Constructor
-    constructor(id, cajero, producto, descuento, total, fechaCreacion, importe, t, idusuario, idcliente) {
+    constructor(id, cajero, producto, descuento, total, fechaCreacion, importe, t, idUsuario, idcliente) {
         this.id = id || null;
         this.cajero = cajero || '';
-        this.idusuario = idusuario || '';
+        this.idUsuario = idUsuario || '';
         this.idcliente = idcliente || '';
         this.descuento = descuento || 0;
         this.producto = producto || new Array(new Array());
@@ -112,7 +112,7 @@ function LoadAllPrdVenta() {
 function DrawPrd(e) {
     productos = JSON.parse(e);
     $.each(productos, function (item, value) {
-        switch (productos[item].esventa) {
+        switch (productos[item].esVenta) {
             case "1":
                DrawSabor(productos[item]);
                 break;
@@ -129,8 +129,8 @@ function DrawPrd(e) {
 
 function DrawSabor(sabores){
     var prd = `
-    <button id="btn_${sabores.id}" class="btn_sabor btn_venta" style="background-color:${sabores.bgcolor};" onclick="agregaSabor('${sabores.id}', '${sabores.nombre}')">
-        <div class="btn_prd" style="color:${sabores.txtcolor}";>
+    <button id="btn_${sabores.id}" class="btn_sabor btn_venta" style="background-color:${sabores.bgColor};" onclick="agregaSabor('${sabores.id}', '${sabores.nombre}')">
+        <div class="btn_prd" style="color:${sabores.txtColor}";>
             <h5>${sabores.nombre}</h5>
             <p id="cant_sabor_${sabores.id}"></p>
         </div>
@@ -141,8 +141,8 @@ function DrawSabor(sabores){
 
 function DrawTopping(toppings){
     var prd = `
-        <button id="btn_${toppings.id}" style="background-color:${toppings.bgcolor};" class="btn_topping btn_venta" onclick="agrega_toppings('${toppings.id}', '${toppings.nombre}')">
-            <div style="color: ${toppings.txtcolor};">
+        <button id="btn_${toppings.id}" style="background-color:${toppings.bgColor};" class="btn_topping btn_venta" onclick="agrega_toppings('${toppings.id}', '${toppings.nombre}')">
+            <div style="color: ${toppings.txtColor};">
                 <h5>${toppings.nombre}</h5>
                 <p id="cant_topping_${toppings.id}">\xa0</p>
             </div>
@@ -351,7 +351,7 @@ function calcTotal() {
     }
     else {
         $('#open_modal_fac').attr("disabled", true);
-        $("#subtotal")[0].textContent = "¢0";
+        $("#subTotal")[0].textContent = "¢0";
         $("#iv_val")[0].textContent = "¢0";
         $("#total")[0].textContent = "¢0";
 

@@ -8,22 +8,22 @@ class Receptor{
     public $nombre= null;
     public $tipoIdentificacion= null;
     public $identificacion= null;
-    public $identificacionextranjero= null;
+    public $identificacionExtranjero= null;
     public $nombreComercial= null;
-    public $idubicacion= null;
-    public $idprovincia= null;
-    public $idcanton= null;
-    public $iddistrito= null;
-    public $idbarrio= null;
+    public $idUbicacion= null;
+    public $idProvincia= null;
+    public $idCanton= null;
+    public $idDistrito= null;
+    public $idBarrio= null;
     public $otrasSenas= null;
-    public $idcodigoPaisTel= null;
+    public $idCodigoPaisTel= null;
     public $numTelefono= null;
     public $codigoPaisFax= null;
     public $numTelefonoFax= null;
     public $correoElectronico= null;
 
     public function Datos($ident){
-        $sql='SELECT r.id, nombre, idtipoidentificacion, identificacion, identificacionextranjero, nombrecomercial, ubicacion, idprovincia, idcanton, iddistrito, idbarrio, otrassenas, idcodigopaistel, numtelefono, idcodigopaisfax, numtelefonofax, correoelectronico
+        $sql='SELECT r.id, nombre, idtipoidentificacion, identificacion, identificacionExtranjero, nombrecomercial, ubicacion, idProvincia, idCanton, idDistrito, idBarrio, otrassenas, idCodigoPaisTel, numtelefono, idcodigopaisfax, numtelefonofax, correoelectronico
             FROM receptor r inner join factura f on f.idreceptor=r.id
             WHERE r.id= :identificacion';
         $param= array(':identificacion'=> $ident);
@@ -32,17 +32,17 @@ class Receptor{
             $this->nombre= $data[0]['nombre'];
             $this->tipoIdentificacion= $data[0]['idtipoidentificacion'];
             $this->identificacion= $data[0]['identificacion'];
-            $this->identificacionExtranjero= $data[0]['identificacionextranjero'];
+            $this->identificacionExtranjero= $data[0]['identificacionExtranjero'];
             $this->nombreComercial= $data[0]['nombrecomercial'];
             $this->ubicacion= $data[0]['ubicacion'];
-            $this->idprovincia= $data[0]['idprovincia'];
-            $this->idcanton= $data[0]['idcanton'];
-            $this->iddistrito= $data[0]['iddistrito'];
-            $this->idbarrio= $data[0]['idbarrio'];
+            $this->idProvincia= $data[0]['idProvincia'];
+            $this->idCanton= $data[0]['idCanton'];
+            $this->idDistrito= $data[0]['idDistrito'];
+            $this->idBarrio= $data[0]['idBarrio'];
             $this->otrasSenas= $data[0]['otrassenas'];
-            $this->idcodigoPaisTel= $data[0]['idcodigopaistel'];
+            $this->idCodigoPaisTel= $data[0]['idCodigoPaisTel'];
             $this->numTelefono= $data[0]['numtelefono'];
-            $this->idcodigoPaisFax= $data[0]['idcodigopaisfax'];
+            $this->idCodigoPaisFax= $data[0]['idcodigopaisfax'];
             $this->numTelefonoFax= $data[0]['numtelefonofax'];
             $this->correoElectronico= $data[0]['correoelectronico']; 
             return  $this;

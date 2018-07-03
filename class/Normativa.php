@@ -9,13 +9,13 @@ class Normativa{
     public $fechaResolucion;
 
     public function Datos(){
-        $sql='SELECT numeroresolucion, fecharesolucion
+        $sql='SELECT numeroResolucion, fechaResolucion
             FROM normativa';
         //$param= array(':identificacion'=> $ident);
         $data= DATA::Ejecutar($sql);
         if(count($data)){
-            $this->numeroResolucion= $data[0]['numeroresolucion'];
-            $this->fechaResolucion= $data[0]['fecharesolucion']; 
+            $this->numeroResolucion= $data[0]['numeroResolucion'];
+            $this->fechaResolucion= $data[0]['fechaResolucion']; 
             return  $this;
         }
         else return null;

@@ -1,9 +1,9 @@
 class Factura {
     // Constructor
-    constructor(id, cajero, subtotal, descuento, producto, total, fechaCreacion, idfila, p_codigo, p_descripcion, p_precio, p_cantidad, importe) {
+    constructor(id, cajero, subTotal, descuento, producto, total, fechaCreacion, idfila, p_codigo, p_descripcion, p_precio, p_cantidad, importe) {
         this.id = id || null;
         this.cajero = cajero || '';
-        this.subtotal=subtotal || '';
+        this.subTotal=subTotal || '';
         this.descuento=descuento || 0;
         this.producto=producto || 0;
         this.total= total || '';
