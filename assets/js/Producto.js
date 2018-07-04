@@ -1,18 +1,18 @@
 class Producto {
     // Constructor
-    constructor(id, codigo, nombre, txtcolor, bgcolor, nombreabreviado, descripcion, saldocantidad, saldocosto, costopromedio, precioventa, esventa, lista) {
+    constructor(id, codigo, nombre, txtColor, bgColor, nombreAbreviado, descripcion, saldoCantidad, saldoCosto, costoPromedio, precioVenta, esVenta, lista) {
         this.id = id || null;        
         this.codigo = codigo || '';
         this.nombre = nombre || '';
-        this.txtcolor = txtcolor || '';
-        this.bgcolor = bgcolor || '';
-        this.nombreabreviado = nombreabreviado || '';
+        this.txtColor = txtColor || '';
+        this.bgColor = bgColor || '';
+        this.nombreAbreviado = nombreAbreviado || '';
         this.descripcion = descripcion || '';
-        this.saldocantidad = saldocantidad || 0;
-        this.saldocosto = saldocosto || 0;
-        this.costopromedio = costopromedio || 0;
-        this.precioventa = precioventa || 0;
-        this.esventa = esventa || 0; //1: producto para vender, 0 articulo no vendible.
+        this.saldoCantidad = saldoCantidad || 0;
+        this.saldoCosto = saldoCosto || 0;
+        this.costoPromedio = costoPromedio || 0;
+        this.precioVenta = precioVenta || 0;
+        this.esVenta = esVenta || 0; //1: producto para vender, 0 articulo no vendible.
         this.lista = lista || [];
     }
 
@@ -82,15 +82,15 @@ class Producto {
         var miAccion = this.id == null ? 'Create' : 'Update';
         this.codigo = $("#codigo").val();
         this.nombre = $("#nombre").val();
-        this.txtcolor = $("#txtcolor").val();
-        this.bgcolor = $("#bgcolor").val();
-        this.nombreabreviado = $("#nombreabreviado").val();
+        this.txtColor = $("#txtColor").val();
+        this.bgColor = $("#bgColor").val();
+        this.nombreAbreviado = $("#nombreAbreviado").val();
         this.descripcion =  $("#descripcion").val();
-        this.saldocantidad = $("#saldocantidad").val();
-        this.saldocosto = $("#saldocosto").val();
-        this.costopromedio = $("#costopromedio").val();
-        this.precioventa = $("#precioventa").val();
-        this.esventa = $("#esventa")[0].checked;
+        this.saldoCantidad = $("#saldoCantidad").val();
+        this.saldoCosto = $("#saldoCosto").val();
+        this.costoPromedio = $("#costoPromedio").val();
+        this.precioVenta = $("#precioVenta").val();
+        this.esVenta = $("#esVenta")[0].checked;
 
         $.ajax({
             type: "POST",
@@ -131,7 +131,7 @@ class Producto {
         $('#tableBody-ArticuloBodega tr').each(function() {
             var objArticulo = new Object();
             objArticulo.idbodega= '22a80c9e-5639-11e8-8242-54ee75873a00'; //id unico bodega principal.
-            objArticulo.idproducto= $(this).find('td:eq(0)').html();
+            objArticulo.idProducto= $(this).find('td:eq(0)').html();
             objArticulo.cantidad= $(this).find('td:eq(2) input').val();
             objArticulo.costo= $(this).find('td:eq(3) input').val();
             producto.lista.push(objArticulo);
@@ -224,15 +224,15 @@ class Producto {
         $("#id").val('');
         $("#codigo").val('');
         $("#nombre").val('');
-        $("#txtcolor").val('');
-        $("#bgcolor").val('');
-        $("#nombreabreviado").val('');
+        $("#txtColor").val('');
+        $("#bgColor").val('');
+        $("#nombreAbreviado").val('');
         $("#descripcion").val('');
-        $("#saldocantidad").val('');
-        $("#saldocosto").val('');
-        $("#costopromedio").val('');
-        $("#precioventa").val('');
-        $("#esventa")[0].checked=false;     
+        $("#saldoCantidad").val('');
+        $("#saldoCosto").val('');
+        $("#costoPromedio").val('');
+        $("#precioVenta").val('');
+        $("#esVenta")[0].checked=false;     
     };
 
     ShowAll(e) {
@@ -244,8 +244,8 @@ class Producto {
         var data = JSON.parse(e);
         
         /*
-        <td>${item.txtcolor}</td>
-        <td>${item.bgcolor}</td>
+        <td>${item.txtColor}</td>
+        <td>${item.bgColor}</td>
         */
         $.each(data, function (i, item) {
             $('#tableBody-Producto').append(`
@@ -256,13 +256,13 @@ class Producto {
                     <td class="itemId">${item.id}</td>
                     <td>${item.codigo}</td>
                     <td>${item.nombre}</td>
-                    <td>${item.nombreabreviado}</td>
+                    <td>${item.nombreAbreviado}</td>
                     <td>${item.descripcion}</td>
-                    <td>${item.saldocantidad}</td>
-                    <td>${parseFloat(item.saldocosto).toFixed(2)}</td>
-                    <td>${parseFloat(item.costopromedio).toFixed(2)}</td>
-                    <td>${parseFloat(item.precioventa).toFixed(2)}</td>
-                    <td>${item.esventa}</td>
+                    <td>${item.saldoCantidad}</td>
+                    <td>${parseFloat(item.saldoCosto).toFixed(2)}</td>
+                    <td>${parseFloat(item.costoPromedio).toFixed(2)}</td>
+                    <td>${parseFloat(item.precioVenta).toFixed(2)}</td>
+                    <td>${item.esVenta}</td>
                     ${document.URL.indexOf("Producto.html")>=1 ?                                       
                         `<td class=" last">
                             <a  class="update" data-toggle="modal" data-target=".bs-example-modal-lg" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | 
@@ -307,28 +307,28 @@ class Producto {
         this.ClearCtls();
         // carga objeto.
         var data = JSON.parse(e)[0];
-        producto = new Producto(data.id, data.codigo, data.nombre, data.txtcolor, data.bgcolor, data.nombreabreviado, 
-        data.descripcion, data.saldocantidad, data.costopromedio, data.precioventa , data.esventa);
+        producto = new Producto(data.id, data.codigo, data.nombre, data.txtColor, data.bgColor, data.nombreAbreviado, 
+        data.descripcion, data.saldoCantidad, data.costoPromedio, data.precioVenta , data.esVenta);
         // Asigna objeto a controles
         $("#id").val(producto.id);
         $("#codigo").val(producto.codigo);
         $("#nombre").val(producto.nombre);
-        $("#txtcolor").val(producto.txtcolor);
-        $("#bgcolor").val(producto.bgcolor);
-        $("#nombreabreviado").val(producto.nombreabreviado);
+        $("#txtColor").val(producto.txtColor);
+        $("#bgColor").val(producto.bgColor);
+        $("#nombreAbreviado").val(producto.nombreAbreviado);
         $("#descripcion").val(producto.descripcion);
-        $("#saldocantidad").val(producto.saldocantidad);
-        $("#saldocosto").val(parseFloat(producto.saldocantidad).toFixed(2));
-        $("#costopromedio").val(parseFloat(producto.costopromedio).toFixed(2));
-        $("#precioventa").val(parseFloat(producto.precioventa).toFixed(2));
-        $("#esventa").val(producto.esventa);
+        $("#saldoCantidad").val(producto.saldoCantidad);
+        $("#saldoCosto").val(parseFloat(producto.saldoCantidad).toFixed(2));
+        $("#costoPromedio").val(parseFloat(producto.costoPromedio).toFixed(2));
+        $("#precioVenta").val(parseFloat(producto.precioVenta).toFixed(2));
+        $("#esVenta").val(producto.esVenta);
 
         // checkbox
-        if(producto.esventa==1){
-            $("#esventa")[0].checked=true;
+        if(producto.esVenta==1){
+            $("#esVenta")[0].checked=true;
         }
         else {
-            $("#esventa")[0].checked=false;
+            $("#esVenta")[0].checked=false;
         }
     };
 

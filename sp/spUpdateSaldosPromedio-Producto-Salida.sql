@@ -11,7 +11,7 @@ BEGIN
     DECLARE msaldocosto  decimal(20,10) DEFAULT null;
     DECLARE mcostopromedio  decimal(20,10)DEFAULT null;
     --
-	SELECT saldocantidad, costopromedio
+	SELECT saldoCantidad, costoPromedio
 	INTO msaldocantidad, mcostopromedio
 	FROM producto
 	WHERE id= mid;
@@ -20,7 +20,7 @@ BEGIN
 	set msaldocosto= mcostopromedio * msaldocantidad;
 	--
 	UPDATE producto
-	SET saldocantidad=msaldocantidad, saldocosto=msaldocosto 
+	SET saldoCantidad=msaldocantidad, saldoCosto=msaldocosto 
 	WHERE id= mid; 
 END; //
 DELIMITER ;

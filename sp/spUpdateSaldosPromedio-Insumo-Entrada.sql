@@ -13,7 +13,7 @@ BEGIN
     DECLARE msaldocosto  decimal(20,10) DEFAULT null;
     DECLARE mcostopromedio  decimal(20,10)DEFAULT null;
     --
-	SELECT saldocantidad, saldocosto 
+	SELECT saldoCantidad, saldoCosto 
 	INTO msaldocantidad, msaldocosto
 	FROM insumos
 	WHERE id= mid;
@@ -24,7 +24,7 @@ BEGIN
 		set mcostopromedio= msaldocosto / msaldocantidad;
 		--
 		UPDATE insumo
-		SET saldocantidad=msaldocantidad, saldocosto=msaldocosto, costopromedio = mcostopromedio
+		SET saldoCantidad=msaldocantidad, saldoCosto=msaldocosto, costoPromedio = mcostopromedio
 		WHERE id= mid;  
 	ELSE 
 		CALL spUpdateSaldosPromedioArticuloEntrada(mid, ncantidad, ncosto);
@@ -40,7 +40,7 @@ BEGIN
     DECLARE msaldocosto  decimal(20,10) DEFAULT null;
     DECLARE mcostopromedio  decimal(20,10) DEFAULT null;
     --
-	SELECT saldocantidad, saldocosto 
+	SELECT saldoCantidad, saldoCosto 
 	INTO msaldocantidad, msaldocosto
 	FROM producto
 	WHERE id= mid;
@@ -50,7 +50,7 @@ BEGIN
 	set mcostopromedio= msaldocosto / msaldocantidad;
 	--
 	UPDATE producto
-	SET saldocantidad=msaldocantidad, saldocosto=msaldocosto, costopromedio = mcostopromedio
+	SET saldoCantidad=msaldocantidad, saldoCosto=msaldocosto, costoPromedio = mcostopromedio
 	WHERE id= mid;  
 	
 END; //

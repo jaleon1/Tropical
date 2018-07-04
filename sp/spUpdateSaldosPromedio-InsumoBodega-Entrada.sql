@@ -14,7 +14,7 @@ BEGIN
     DECLARE msaldocosto  decimal(20,10) DEFAULT 0;
     DECLARE mcostopromedio  decimal(20,10)DEFAULT 0;
 	-- verifica si el insumo se encuentra en el inventario.
-	SELECT saldocantidad, saldocosto
+	SELECT saldoCantidad, saldoCosto
 	INTO msaldocantidad, msaldocosto
 	FROM insumosxbodega
 	WHERE idproducto= nidproducto AND idbodega= nidbodega;
@@ -31,7 +31,7 @@ BEGIN
 	set mcostopromedio= msaldocosto / msaldocantidad;
 	--
 	UPDATE insumosxbodega
-	SET saldocantidad=msaldocantidad, saldocosto=msaldocosto, costopromedio = mcostopromedio
+	SET saldoCantidad=msaldocantidad, saldoCosto=msaldocosto, costoPromedio = mcostopromedio
 	WHERE idproducto= nidproducto AND idbodega= nidbodega;
 END; //
 DELIMITER ;

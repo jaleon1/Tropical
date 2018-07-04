@@ -221,7 +221,7 @@ CREATE TABLE `productoxbodega` (
 
 CREATE TABLE `productoxestado` (
   `idproducto` char(36) NOT NULL,
-  `idestado` char(36) NOT NULL,
+  `idEstado` char(36) NOT NULL,
   `cantidad` int(6) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 

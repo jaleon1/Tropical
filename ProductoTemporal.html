@@ -171,27 +171,27 @@
                                         <div class="x_panel">
                                             <div class="title_right">
                                                 <div class="col-md-6 col-sm-12 col-xs-12 form-group top_search">
-                                                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="esventa">Orden</label>
+                                                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="esVenta">Orden</label>
                                                     <div class="input-group">
                                                         <input type="text" class="form-control" id="orden" readonly placeholder="Número de Orden ">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6 col-sm-12 col-xs-12 form-group top_search">
-                                                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="esventa">Fecha</label>
+                                                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="esVenta">Fecha</label>
                                                     <div class="input-group">
                                                         <input type="text" class="form-control" id="fecha" readonly placeholder="Fecha Ingreso ">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6 col-sm-12 col-xs-12 form-group top_search">
-                                                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="esventa">Entrega</label>
+                                                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="esVenta">Entrega</label>
                                                     <div class="input-group">
-                                                        <input type="text" class="form-control" id="usuarioentrega" readonly placeholder="Usuario Entrega ">
+                                                        <input type="text" class="form-control" id="usuarioEntrega" readonly placeholder="Usuario Entrega ">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6 col-sm-12 col-xs-12 form-group top_search">
-                                                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="esventa">Recibe</label>
+                                                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="esVenta">Recibe</label>
                                                     <div class="input-group">
-                                                        <input type="text" class="form-control" id="usuariorecibe" readonly placeholder="Usuario Recibe ">
+                                                        <input type="text" class="form-control" id="usuarioRecibe" readonly placeholder="Usuario Recibe ">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-12 col-sm-12 col-xs-12 form-group pull-right top_search">
@@ -229,32 +229,6 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <!-- <div id="datatable_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
-                                        <div class="row">
-                                            <div class="col-sm-12">
-                                                <table id="dsOrdenSalida" class="table table-striped jambo_table bulk_action" role="grid" aria-describedby="datatable_info">
-                                                    <thead>
-                                                        <tr role="row" class="headings">
-                                                            <th><input type='checkbox' id='check-all' class='iCheck-helper'></th>
-                                                            <th class='itemId'>ID</th><th class='oculto'>ID USUARIO ENTREGA</th>
-                                                            <th class='oculto'>ID USUARIO RECIBE</th> 
-                                                            <th>Orden</th>
-                                                            <th>Fecha</th> 
-                                                            <th>Usuario Entrega</th> 
-                                                            <th>Usuario Recibe</th> 
-                                                            <th>Fecha Liquidación</th>  
-                                                            <th>Estado</th> 
-                                                        </tr>
-                                                    </thead>
-
-                                                    <tbody id="tableBody-OrdenSalida">
-
-                                                    </tbody>
-
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div> -->
                                     <!-- /TABLE -->
                                 </div>
                                 <!--  /CONTENIDO DE LA PAGINA -->
@@ -271,21 +245,6 @@
                                 <div class="x_content">
                                     <form class="form-horizontal form-label-left" id="frmProductoTemporal" method="POST" novalidate>
                                         <span class="section">Inserte los Productos Generados</span>
-                                        <!-- <div class="row">
-                                            <div class="col-sm-10">
-                                                <div class="item form-group ">
-                                                    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="valor">Número de Orden
-                                                        <span class="required">*</span>
-                                                    </label>
-                                                    <div class="col-md-6 col-sm-5 col-xs-12">
-                                                        <input id="numeroorden" class="form-control col-md-7 col-xs-12" name="nmeroorden" required="required" data-validate-minmax="1,99999" placeholder="Seleccione Usuario" readonly>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-1">
-                                                
-                                            </div>
-                                        </div> -->
 
                                         <div class="row">
                                             <div class="col-sm-11">
@@ -450,7 +409,7 @@
                             </div>
                         </div>
                     </div>
-                    <div id="modal-usuariorecibe" class="modal fade bs-example-modal-lg-usuariorecibe" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div id="modal-usuarioRecibe" class="modal fade bs-example-modal-lg-usuarioRecibe" tabindex="-1" role="dialog" aria-hidden="true">
                         <div class="modal-dialog modal-lg">
                             <div class="modal-content">
 
@@ -549,8 +508,8 @@
 <script>
     $(document).ready(function () {
         productotemporal.Init();
-        ordensalida.id = null;
-        ordensalida.Read;
+        ordenSalida.id = null;
+        ordenSalida.Read;
     });
 
     $(document).on('click', '#btnAddInsumo', function (event) {
@@ -575,6 +534,6 @@
     });
     $("#p_searh").keyup(function (e) {
         if (e.which == 13)
-            ordensalida.ReadbyOrden;
+            ordenSalida.ReadbyOrden;
     });
 </script>

@@ -284,7 +284,7 @@
                                                                                 
                                                                                         </label>
                                                                                         <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                                            <input id="numeroorden" class="form-control col-md-7 col-xs-12" name="numeroorden" data-validate-minmax="1,99999" placeholder="Nueva" readonly="readonly">
+                                                                                            <input id="numeroOrden" class="form-control col-md-7 col-xs-12" name="numeroOrden" data-validate-minmax="1,99999" placeholder="Nueva" readonly="readonly">
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
@@ -342,12 +342,12 @@
                                                                                             <span class="required">*</span>
                                                                                         </label>
                                                                                         <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                                            <input id="usuariorecibe" class="form-control col-md-7 col-xs-12" name="usuariorecibe" required="required" data-validate-minmax="1,99999" placeholder="Seleccione Usuario" readonly>
+                                                                                            <input id="usuarioRecibe" class="form-control col-md-7 col-xs-12" name="usuarioRecibe" required="required" data-validate-minmax="1,99999" placeholder="Seleccione Usuario" readonly>
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
                                                                                 <div class="col-sm-1">
-                                                                                    <button id="btnAddUsuarioRecibe" data-toggle="modal" data-target=".bs-example-modal-lg-usuariorecibe" type="button" class="btn btn-info btn-lg">+</button>
+                                                                                    <button id="btnAddUsuarioRecibe" data-toggle="modal" data-target=".bs-example-modal-lg-usuarioRecibe" type="button" class="btn btn-info btn-lg">+</button>
                                                                                 </div>
                                                                             </div>
                                     
@@ -510,7 +510,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="modal-usuariorecibe" class="modal fade bs-example-modal-lg-usuariorecibe" tabindex="-1" role="dialog" aria-hidden="true">
+                                    <div id="modal-usuarioRecibe" class="modal fade bs-example-modal-lg-usuarioRecibe" tabindex="-1" role="dialog" aria-hidden="true">
                                         <div class="modal-dialog modal-lg">
                                             <div class="modal-content">
 
@@ -618,9 +618,9 @@
 
 <script>
     $(document).ready(function () {
-        ordensalida.id=null;
-        ordensalida.Read;
-        ordensalida.Init();
+        ordenSalida.id=null;
+        ordenSalida.Read;
+        ordenSalida.Init();
     });
     $(document).on('click', '#btnAddInsumo', function (event) {
         insumo.id = null;

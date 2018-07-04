@@ -22,7 +22,7 @@ class ProductosXDistribucion{
                 $producto->id = $value['id'];
                 $producto->idproducto = $value['idproducto'];
                 $producto->cantidad = $value['cantidad'];
-                $producto->precioventa = $value['valor'];
+                $producto->precioVenta = $value['valor'];
                 //
                 $producto->codigo = $value['codigo'];
                 $producto->nombre = $value['nombre'];

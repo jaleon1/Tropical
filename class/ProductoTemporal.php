@@ -19,8 +19,8 @@ if(isset($_POST["action"])){
 }
 
 class ProductoTemporal{
-    public $numeroorden;
-    public $listaproducto=[];
+    public $numeroOrden;
+    public $listaProducto=[];
 
     function __construct(){
         // identificador único
@@ -29,17 +29,17 @@ class ProductoTemporal{
         }
         if(isset($_POST["obj"])){
             $obj= json_decode($_POST["obj"],true);
-            $this->numeroorden= $obj["numeroorden"] ?? '';
+            $this->numeroOrden= $obj["numeroOrden"] ?? '';
             //Productos
-            if (isset($obj["listaproducto"] )) {
+            if (isset($obj["listaProducto"] )) {
                 require_once("Producto.php");    
                 //            
-                foreach ($obj["listaproducto"] as $objproducto) {
+                foreach ($obj["listaProducto"] as $objproducto) {
                     $producto= new Producto();
-                    $producto->id= $objproducto['idproducto'];
-                    $producto->saldocantidad= $objproducto['cantidad'];
-                    $producto->costopromedio= $objproducto['costo'];
-                    array_push ($this->listaproducto, $producto);
+                    $producto->id= $objproducto['idProducto'];
+                    $producto->saldoCantidad= $objproducto['cantidad'];
+                    $producto->costoPromedio= $objproducto['costo'];
+                    array_push ($this->listaProducto, $producto);
                 }
             }
         }
@@ -49,23 +49,23 @@ class ProductoTemporal{
         try {
             $created = true;
             $now = date_create('now')->format('Y-m-d H:i:s');
-            $sql="UPDATE ordensalida 
-                SET idestado=1, fechaliquida=:fechaliquida
-                WHERE numeroorden=:numeroorden";
-            $param= array(':numeroorden'=>$this->numeroorden,':fechaliquida'=>$now);
+            $sql="UPDATE ordenSalida 
+                SET idEstado=1, fechaLiquida=:fechaLiquida
+                WHERE numeroOrden=:numeroOrden";
+            $param= array(':numeroOrden'=>$this->numeroOrden,':fechaLiquida'=>$now);
             $data = DATA::Ejecutar($sql,$param,false);
 
             //averiguar cuantos productos de venta llevo para dividir el costo.
-            $cantidadproducto = count($this->listaproducto);
-            foreach ($this->listaproducto as $item) 
+            $cantidadproducto = count($this->listaProducto);
+            foreach ($this->listaProducto as $item) 
             {
-                $costoxproducto = $item->costopromedio/$cantidadproducto;
+                $costoxproducto = $item->costoPromedio/$cantidadproducto;
             }
 
-            foreach ($this->listaproducto as $item) 
+            foreach ($this->listaProducto as $item) 
             {
                 // Actualiza los saldos y calcula promedio
-                Producto::UpdateSaldoProducto($item->id, $item->saldocantidad, $costoxproducto);
+                Producto::UpdateSaldoProducto($item->id, $item->saldoCantidad, $costoxproducto);
             }
             return $created;
         }     

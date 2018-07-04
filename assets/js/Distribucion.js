@@ -262,7 +262,7 @@ class Distribucion {
     AgregaProducto(){
         //producto.UltPro = producto.codigo;
         var rowNode = t   //t es la tabla de productos
-        .row.add( [producto.id, producto.codigo, producto.nombre, producto.descripcion, "0", producto.precioventa, "0"])
+        .row.add( [producto.id, producto.codigo, producto.nombre, producto.descripcion, "0", producto.precioVenta, "0"])
         .draw() //dibuja la tabla con el nuevo producto
         .node();     
         //
@@ -270,8 +270,8 @@ class Distribucion {
              distr.CalcImporte($(this).parents('tr').find('td:eq(0)').html());
         }); 
         //
-        $('td:eq(4) input.valor', rowNode).attr({id: ("precioventa_v"+producto.codigo), style: "display:none", value: producto.precioventa });
-        $('td:eq(4) input.display', rowNode).attr({id: ("precioventa_d"+producto.codigo), value: ("$"+parseFloat(producto.precioventa).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")) });
+        $('td:eq(4) input.valor', rowNode).attr({id: ("precioventa_v"+producto.codigo), style: "display:none", value: producto.precioVenta });
+        $('td:eq(4) input.display', rowNode).attr({id: ("precioventa_d"+producto.codigo), value: ("$"+parseFloat(producto.precioVenta).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")) });
         $('td:eq(5) input.valor', rowNode).attr({id: ("subtotal_v"+producto.codigo), style: "display:none"});
         $('td:eq(5) input.display', rowNode).attr({id: ("subtotal_d"+producto.codigo)});   
         //t.order([0, 'desc']).draw();
@@ -284,8 +284,8 @@ class Distribucion {
     CalcImporte(prd){
         producto.UltPrd = prd;//validar
         producto.cantidad =  $(`#cant_${prd}`).val();
-        producto.precioventa = $(`#precioventa_v${prd}`).val();
-        producto.subtotal= (producto.cantidad * producto.precioventa).toFixed(10); // subtotal linea
+        producto.precioVenta = $(`#precioventa_v${prd}`).val();
+        producto.subtotal= (producto.cantidad * producto.precioVenta).toFixed(10); // subtotal linea
         //
         $(`#subtotal_v${prd}`).val(producto.subtotal);
         $(`#subtotal_d${prd}`).val("¢"+parseFloat(producto.subtotal).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));

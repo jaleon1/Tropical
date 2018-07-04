@@ -1,8 +1,8 @@
 class ProductoTemporal {
     // Constructor
-constructor(numeroorden, p) {
-        this.numeroorden = numeroorden || '';
-        this.listaproducto = p || [];
+constructor(numeroOrden, p) {
+        this.numeroOrden = numeroOrden || '';
+        this.listaProducto = p || [];
     }
 
     get Save() {
@@ -25,20 +25,20 @@ constructor(numeroorden, p) {
         
         $('#btnAddProductoGenerado').attr("disabled", "disabled");
         var miAccion = this.id == null ? 'Create' : 'Update';
-        productotemporal.numeroorden = $("#orden").val();
+        productoTemporal.numeroOrden = $("#orden").val();
         // lista de insumos
-        productotemporal.listaproducto = [];
-        var costototalinsumo=0;
+        productoTemporal.listaProducto = [];
+        var costoTotalInsumo=0;
         $('#tableBody-InsumosOrdenSalida tr').each(function() {
-            costototalinsumo+=parseFloat($(this).find('td:eq(6)').html())*parseFloat($(this).find('td:eq(7) input').val());
+            costoTotalInsumo+=parseFloat($(this).find('td:eq(6)').html())*parseFloat($(this).find('td:eq(7) input').val());
         });
 
         $('#tableBody-ProductoGenerado tr').each(function() {
-            var objproduto = new Object();
-            objproduto.idproducto= $(this).find('td:eq(0)').html();
-            objproduto.cantidad= $(this).find('td:eq(10) input').val();
-            objproduto.costo= costototalinsumo;
-            productotemporal.listaproducto.push(objproduto);
+            var objProducto = new Object();
+            objProducto.idProducto= $(this).find('td:eq(0)').html();
+            objProducto.cantidad= $(this).find('td:eq(10) input').val();
+            objProducto.costo= costoTotalInsumo;
+            productoTemporal.listaProducto.push(objProducto);
         });
 
         $.ajax({
@@ -58,13 +58,13 @@ constructor(numeroorden, p) {
                 });
             })
             .fail(function (e) {
-                productotemporal.showError(e);
+                productoTemporal.showError(e);
             })
             .always(function () {
                 setTimeout('$("#btnProductoTemporal").removeAttr("disabled")', 1000);
-                // productotemporal = new ProductoTemporal();
-                productotemporal.ClearCtls();
-                // productotemporal.Read;
+                // productoTemporal = new ProductoTemporal();
+                productoTemporal.ClearCtls();
+                // productoTemporal.Read;
             });
     }
 
@@ -104,17 +104,17 @@ constructor(numeroorden, p) {
                 }
             })
             .fail(function (e) {
-                productotemporal.showError(e);
+                productoTemporal.showError(e);
             })
             .always(function () {
-                productotemporal = new ProductoTemporal();
-                productotemporal.Read;
+                productoTemporal = new ProductoTemporal();
+                productoTemporal.Read;
             });
     }
 
     AddOrdenSalida(){
-        ordensalida.id = $(this).parents("tr").find(".itemId").text();
-        $('#numeroorden').val($(this).parents("tr").find("td:eq(1)").html());
+        ordenSalida.id = $(this).parents("tr").find(".itemId").text();
+        $('#numeroOrden').val($(this).parents("tr").find("td:eq(1)").html());
     }
 
     Reload(e) {
@@ -148,8 +148,8 @@ constructor(numeroorden, p) {
     ClearCtls() {
         $("#orden").val('');
         $("#fecha").val('');
-        $("#usuarioentrega").val('');
-        $("#usuariorecibe").val('');
+        $("#usuarioEntrega").val('');
+        $("#usuarioRecibe").val('');
         $("#p_searh").val('');
         $('#tableBody-ProductoGenerado').html("");
         $('#tableBody-InsumosOrdenSalida').html("");
@@ -162,12 +162,12 @@ constructor(numeroorden, p) {
             // // Carga lista
             var data = JSON.parse(e);
             //style="display: none"
-            var saldocosto="EN PROCESO";
+            var saldoCosto="EN PROCESO";
             $.each(data, function (i, item) {
-                if (item.saldocosto=="0") 
-                    saldocosto="EN PROCESO";
+                if (item.saldoCosto=="0") 
+                    saldoCosto="EN PROCESO";
                 else
-                    saldocosto="TERMINADO";
+                    saldoCosto="TERMINADO";
                 $('#tableBody-ProductoTemporal').append(`
                     <tr> 
                         <td class="a-center ">
@@ -175,16 +175,16 @@ constructor(numeroorden, p) {
                         </td>
                         <td class="itemId">${item.id}</td>
                         <td class="oculto">${item.codigo}</td>
-                        <td class="oculto">${item.txtcolor}</td>
-                        <td class="oculto">${item.bgcolor}</td>
+                        <td class="oculto">${item.txtColor}</td>
+                        <td class="oculto">${item.bgColor}</td>
                         <td>${item.nombre}</td>
-                        <td>${item.nombreabreviado}</td>
+                        <td>${item.nombreAbreviado}</td>
                         <td>${item.descripcion}</td>
-                        <td>${item.saldocantidad}</td>
-                        <td>${saldocosto}</td>
+                        <td>${item.saldoCantidad}</td>
+                        <td>${saldoCosto}</td>
                     </tr>
                 `);
-                $('#chkaddorden'+item.id).click(productotemporal.UpdateCantidadProducto);
+                $('#chkaddorden'+item.id).click(productoTemporal.UpdateCantidadProducto);
             })        
             //datatable         
             if ( $.fn.dataTable.isDataTable( '#dsProductoTemporal' ) )
@@ -197,23 +197,23 @@ constructor(numeroorden, p) {
         // // Carga lista
         var data = JSON.parse(e);
         //style="display: none"
-        var saldocosto="EN PROCESO";
+        var saldoCosto="EN PROCESO";
         $.each(data, function (i, item) {
-            if (item.saldocosto=="0") 
-                saldocosto="EN PROCESO";
+            if (item.saldoCosto=="0") 
+                saldoCosto="EN PROCESO";
             else
-                saldocosto="TERMINADO";
+                saldoCosto="TERMINADO";
             $('#tableBody-ProductoTemporal').append(`
                 <tr> 
                     <td class="itemId">${item.id}</td>
                     <td class="oculto">${item.codigo}</td>
-                    <td class="oculto">${item.txtcolor}</td>
-                    <td class="oculto">${item.bgcolor}</td>
+                    <td class="oculto">${item.txtColor}</td>
+                    <td class="oculto">${item.bgColor}</td>
                     <td>${item.nombre}</td>
-                    <td>${item.nombreabreviado}</td>
+                    <td>${item.nombreAbreviado}</td>
                     <td>${item.descripcion}</td>
-                    <td>${item.saldocantidad}</td>
-                    <td>${saldocosto}</td>
+                    <td>${item.saldoCantidad}</td>
+                    <td>${saldoCosto}</td>
                     <td class=" last">
                         <a id="update${item.id}" class="update" data-toggle="modal" data-target=".bs-example-modal-lg" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | 
                         <a id="delete${item.id}" class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>
@@ -223,9 +223,9 @@ constructor(numeroorden, p) {
                     </td>
                 </tr>
             `);
-            $('#update'+item.id).click(productotemporal.UpdateEventHandler);
-            $('#delete'+item.id).click(productotemporal.DeleteEventHandler);
-            $('#chkterminado'+item.id).click(productotemporal.UpdateCantidadProducto);
+            $('#update'+item.id).click(productoTemporal.UpdateEventHandler);
+            $('#delete'+item.id).click(productoTemporal.DeleteEventHandler);
+            $('#chkterminado'+item.id).click(productoTemporal.UpdateCantidadProducto);
     
         })        
         //datatable         
@@ -237,24 +237,24 @@ constructor(numeroorden, p) {
             $('#dsProductoTemporal').DataTable();
     };
 
-    AddTableProducto(id,codigo,nombre,nombreabreviado,descripcion,saldocantidad,saldocosto,costopromedio,precioventa,esventa) {
+    AddTableProducto(id,codigo,nombre,nombreAbreviado,descripcion,saldoCantidad,saldoCosto,costoPromedio,precioVenta,esVenta) {
         $('#tableBody-ProductoGenerado').append(`
             <tr id="row"${id}> 
                 <td class="itemId" >${id}</td>
                 <td class=oculto>${codigo}</td>
                 <td>${nombre}</td>
-                <td class=oculto>${nombreabreviado}</td>
+                <td class=oculto>${nombreAbreviado}</td>
                 <td class=oculto>${descripcion}</td>
-                <td class=oculto>${saldocantidad}</td>
-                <td class=oculto>${saldocosto}</td>
-                <td class=oculto>${costopromedio}</td>
-                <td class=oculto>${precioventa}</td>
-                <td class=oculto>${esventa}</td>
+                <td class=oculto>${saldoCantidad}</td>
+                <td class=oculto>${saldoCosto}</td>
+                <td class=oculto>${costoPromedio}</td>
+                <td class=oculto>${precioVenta}</td>
+                <td class=oculto>${esVenta}</td>
                 <td>
                     <input id="cantidadProducto" class="form-control col-3" name="cantidadProducto" type="text" placeholder="Cantidad de paquetes" autofocus="" value="1">
                 </td>
                 <td class=" last">
-                    <a id ="delete_row${id}" onclick="productotemporal.DeleteInsumo(this)" > <i class="glyphicon glyphicon-trash" onclick="DeleteInsumo(this)"> </i> Eliminar </a>
+                    <a id ="delete_row${id}" onclick="productoTemporal.DeleteInsumo(this)" > <i class="glyphicon glyphicon-trash" onclick="DeleteInsumo(this)"> </i> Eliminar </a>
                 </td>
             </tr>
         `);
@@ -292,8 +292,8 @@ constructor(numeroorden, p) {
 
     UpdateEventHandler() {
         // 
-        productotemporal.id = $(this).parents("tr").find(".itemId").text(); //Class itemId = ID del objeto.
-        productotemporal.Read;
+        productoTemporal.id = $(this).parents("tr").find(".itemId").text(); //Class itemId = ID del objeto.
+        productoTemporal.Read;
     };
 
     ShowItemData(e) {
@@ -302,19 +302,19 @@ constructor(numeroorden, p) {
         // carga objeto.
         var data = JSON.parse(e);
     
-        productotemporal = new ProductoTemporal(data.id, data.codigo, data.nombre, data.txtcolor, data.bgcolor,
-        data.nombreabreviado, data.descripcion, data.saldocantidad, data.saldocosto, data.listaproducto);
+        productoTemporal = new ProductoTemporal(data.id, data.codigo, data.nombre, data.txtColor, data.bgColor,
+        data.nombreAbreviado, data.descripcion, data.saldoCantidad, data.saldoCosto, data.listaProducto);
 
-        $.each(data.listaproducto, function (i, item) {
+        $.each(data.listaProducto, function (i, item) {
             $('#tableBody-InsumoProducto').append(`
                 <tr id="row"${item.idinsumo}> 
                     <td class="itemId" >${item.idinsumo}</td>
                     <td>${item.nombre}</td>
                     <td>
-                        <input id="cantidadInsumo" class="form-control col-3" name="cantidadInsumo" type="text" placeholder="${item.saldocantidad}" autofocus="" value="1">
+                        <input id="cantidadInsumo" class="form-control col-3" name="cantidadInsumo" type="text" placeholder="${item.saldoCantidad}" autofocus="" value="1">
                     </td>
                     <td class=" last">
-                        <a id ="delete_row${item.id}" onclick="productotemporal.DeleteInsumo(this)" > <i class="glyphicon glyphicon-trash" onclick="DeleteInsumo(this)"> </i> Eliminar </a>
+                        <a id ="delete_row${item.id}" onclick="productoTemporal.DeleteInsumo(this)" > <i class="glyphicon glyphicon-trash" onclick="DeleteInsumo(this)"> </i> Eliminar </a>
                     </td>
                 </tr>
             `);
@@ -335,13 +335,13 @@ constructor(numeroorden, p) {
         })
         
         // Asigna objeto a controles
-        $("#nombre").val(productotemporal.nombre);
-        $("#saldocantidad").val(productotemporal.saldocantidad);
-        $("#descripcion").val(productotemporal.descripcion);
+        $("#nombre").val(productoTemporal.nombre);
+        $("#saldoCantidad").val(productoTemporal.saldoCantidad);
+        $("#descripcion").val(productoTemporal.descripcion);
     };
 
     DeleteEventHandler() {
-        productotemporal.id = $(this).parents("tr").find(".itemId").text();  //Class itemId = ID del objeto.
+        productoTemporal.id = $(this).parents("tr").find(".itemId").text();  //Class itemId = ID del objeto.
         // Mensaje de borrado:
         swal({
             title: 'Eliminar?',
@@ -356,29 +356,29 @@ constructor(numeroorden, p) {
             cancelButtonClass: 'btn btn-danger'
         }).then((result) => {
             if (result.value) {
-                productotemporal.Delete;
+                productoTemporal.Delete;
             }
         })
     };
 
     AddUserEventHandler(){
         $("#descripcion").val($(this).parents("tr").find("td:eq(2)").html());
-        productotemporal.bgcolor = $(this).parents("tr").find("td:eq(1)").html();
+        productoTemporal.bgColor = $(this).parents("tr").find("td:eq(1)").html();
         $('#modal-descripcion').modal('toggle');
-        $("#saldocantidad").focus();
+        $("#saldoCantidad").focus();
     }
     
     AddProductoEventHandler(){
         var id=$(this).parents("tr").find("td:eq(1)").html();
         var codigo=$(this).parents("tr").find("td:eq(2)").html();
         var nombre=$(this).parents("tr").find("td:eq(3)").html();
-        var nombreabreviado=$(this).parents("tr").find("td:eq(4)").html();
+        var nombreAbreviado=$(this).parents("tr").find("td:eq(4)").html();
         var descripcion=$(this).parents("tr").find("td:eq(5)").html();
-        var saldocantidad=$(this).parents("tr").find("td:eq(6)").html();
-        var saldocosto=$(this).parents("tr").find("td:eq(7)").html();
-        var costopromedio=$(this).parents("tr").find("td:eq(8)").html();
-        var precioventa=$(this).parents("tr").find("td:eq(9)").html();
-        var esventa=$(this).parents("tr").find("td:eq(10)").html();
+        var saldoCantidad=$(this).parents("tr").find("td:eq(6)").html();
+        var saldoCosto=$(this).parents("tr").find("td:eq(7)").html();
+        var costoPromedio=$(this).parents("tr").find("td:eq(8)").html();
+        var precioVenta=$(this).parents("tr").find("td:eq(9)").html();
+        var esVenta=$(this).parents("tr").find("td:eq(10)").html();
         
         var ids_productos = [];
 
@@ -387,13 +387,13 @@ constructor(numeroorden, p) {
                 ids_productos.push($(this).find('td:eq(0)').html());   
             });
             if (ids_productos.length==0) {
-                productotemporal.AddTableProducto(id,codigo,nombre,nombreabreviado,descripcion,saldocantidad,saldocosto,costopromedio,precioventa,esventa);
+                productoTemporal.AddTableProducto(id,codigo,nombre,nombreAbreviado,descripcion,saldoCantidad,saldoCosto,costoPromedio,precioVenta,esVenta);
             }
             else{
                 if (ids_productos.indexOf(id)!=-1) 
                     $('#chk-addproducto'+id).attr("checked",false);
                 else
-                    productotemporal.AddTableProducto(id,codigo,nombre,nombreabreviado,descripcion,saldocantidad,saldocosto,costopromedio,precioventa,esventa);
+                    productoTemporal.AddTableProducto(id,codigo,nombre,nombreAbreviado,descripcion,saldoCantidad,saldoCosto,costoPromedio,precioVenta,esVenta);
             }
         }
     }
@@ -405,7 +405,7 @@ constructor(numeroorden, p) {
             e.preventDefault();
             var validatorResult = validator.checkAll(this);
             if (validatorResult.valid)
-                productotemporal.Save;
+                productoTemporal.Save;
             return false;
         });
 
@@ -413,7 +413,7 @@ constructor(numeroorden, p) {
             e.preventDefault();
             var validatorResult = validator.checkAll(this);
             if (validatorResult.valid)
-                productotemporal.Save;
+                productoTemporal.Save;
             return false;
         });
 
@@ -425,4 +425,4 @@ constructor(numeroorden, p) {
 }
 
 //Class Instance
-let productotemporal = new ProductoTemporal();
+let productoTemporal = new ProductoTemporal();

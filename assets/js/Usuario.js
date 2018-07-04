@@ -185,7 +185,7 @@ class Usuario {
                 $('#chckadduser'+item.id).change(productotemporal.AddUserEventHandler);
             }
             if (document.URL.indexOf("OrdenSalida.html")!=-1){
-                $('#chckadduser'+item.id).change(ordensalida.AddUserEventHandler);
+                $('#chckadduser'+item.id).change(ordenSalida.AddUserEventHandler);
             }
         
         })

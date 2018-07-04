@@ -1,13 +1,13 @@
 class Insumo {
     // Constructor
-    constructor(id, codigo,nombre, descripcion, saldocantidad, saldocosto, costopromedio) {
+    constructor(id, codigo,nombre, descripcion, saldoCantidad, saldoCosto, costoPromedio) {
         this.id = id || null;
         this.codigo = codigo || '';
         this.nombre = nombre || '';
         this.descripcion = descripcion || '';
-        this.saldocantidad = saldocantidad || 0;
-        this.saldocosto = saldocosto || 0;
-        this.costopromedio = costopromedio || 0;
+        this.saldoCantidad = saldoCantidad || 0;
+        this.saldoCosto = saldoCosto || 0;
+        this.costoPromedio = costoPromedio || 0;
     }
 
     //Getter
@@ -37,9 +37,9 @@ class Insumo {
         this.codigo = $("#codigo").val();
         this.nombre = $("#nombre").val();
         this.descripcion = $("#descripcion").val();
-        this.saldocantidad = $("#saldocantidad").val();
-        this.saldocosto = $("#saldocosto").val();
-        this.costopromedio = $("#costopromedio").val();
+        this.saldoCantidad = $("#saldoCantidad").val();
+        this.saldoCosto = $("#saldoCosto").val();
+        this.costoPromedio = $("#costoPromedio").val();
         $.ajax({
             type: "POST",
             url: "class/Insumo.php",
@@ -125,9 +125,9 @@ class Insumo {
         $("#codigo").val('');
         $("#nombre").val('');
         $("#descripcion").val('');
-        $("#saldocantidad").val('');
-        $("#saldocosto").val('');
-        $("#costopromedio").val('');
+        $("#saldoCantidad").val('');
+        $("#saldoCosto").val('');
+        $("#costoPromedio").val('');
     };
 
     ShowAll(e) {
@@ -148,9 +148,9 @@ class Insumo {
                     <td>${item.codigo}</td>
                     <td>${item.nombre}</td>
                     <td>${item.descripcion}</td>
-                    <td>${item.saldocantidad}</td>
-                    <td>${parseFloat(item.saldocosto).toFixed(2)}</td>
-                    <td>${parseFloat(item.costopromedio).toFixed(2)}</td>
+                    <td>${item.saldoCantidad}</td>
+                    <td>${parseFloat(item.saldoCosto).toFixed(2)}</td>
+                    <td>${parseFloat(item.costoPromedio).toFixed(2)}</td>
                     <td class=" last">
                         <a  id="update" class="update" data-toggle="modal" data-target=".bs-example-modal-lg" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | 
                         <a  id="delete" class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>
@@ -161,7 +161,7 @@ class Insumo {
             $(".update").click(insumo.UpdateEventHandler);
             $(".delete").click(insumo.DeleteEventHandler);
             if (url.indexOf("OrdenSalida.html")!=-1) {
-                $('#chk-addinsumo'+item.id).change(ordensalida.AddInsumoEventHandler);
+                $('#chk-addinsumo'+item.id).change(ordenSalida.AddInsumoEventHandler);
             }
         })        
         //datatable         
@@ -199,15 +199,15 @@ class Insumo {
         // carga objeto.
         var data = JSON.parse(e)[0];
         insumo = new Insumo(data.id, data.codigo, data.nombre, data.descripcion,
-            data.saldocantidad, data.saldocosto, data.costopromedio);
+            data.saldoCantidad, data.saldoCosto, data.costoPromedio);
         // Asigna objeto a controles
         $("#id").val(insumo.id);
         $("#codigo").val(insumo.codigo);
         $("#nombre").val(insumo.nombre);
         $("#descripcion").val(insumo.descripcion);
-        $("#saldocantidad").val(insumo.saldocantidad);
-        $("#saldocosto").val(parseFloat(insumo.saldocosto).toFixed(2));
-        $("#costopromedio").val(parseFloat(insumo.costopromedio).toFixed(2));
+        $("#saldoCantidad").val(insumo.saldoCantidad);
+        $("#saldoCosto").val(parseFloat(insumo.saldoCosto).toFixed(2));
+        $("#costoPromedio").val(parseFloat(insumo.costoPromedio).toFixed(2));
     };
 
     DeleteEventHandler() {
