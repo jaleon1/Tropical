@@ -173,8 +173,8 @@
                                     <div id="datatable_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
                                         <div class="row">
                                             <div class="col-sm-12">
-                                                <table id="dsIpAutorizada" class="table table-striped jambo_table bulk_action" role="grid" aria-describedby="datatable_info">
-                                                    <tbody id="tableBody-IpAutorizada">
+                                                <table id="dsItems" class="table table-striped jambo_table bulk_action" role="grid" aria-describedby="datatable_info">
+                                                    <tbody id="tbodyItems">
                                                     </tbody>
 
                                                 </table>
@@ -300,6 +300,7 @@
 </html>
 
 <script>
+    var t= null; // tabla
     $(document).ready(function () {
         // if(!Session.state)
         //     return;
@@ -307,35 +308,35 @@
         ipautorizada.Read;
         ipautorizada.Init();
         //Usa la variable t que es el datatable donde estan los items
-        t = $('#dsIpAutorizada').DataTable({
-            "ordering": false,
-            // "bSort": false,
-            "info": false, //Quita el pie de pagina
-            "language": {
-                "infoEmpty": "No hay ip agregadas",
-                "emptyTable": "No hay ip agregadas",
-                "search": "Buscar IP" //Cambia el texto de Search
-            },
-            "columns": [
-                { "title": "ip" },
-                { "title": "Created" }
-            ], // crea las columnas
-            "scrollY": "190px",
-            // "searching": false,
-            "scrollCollapse": true,
-            "paging": true,
-            "columnDefs": [
-                {// ip
-                    "width": "85%", "targets": 0,
-                    "data": null,
-                    "visible": true
-                },
-                {// created
-                    "width": "15%", "targets": 1,
-                    "data": null,
-                }
-            ]
-        });
-        t.columns.adjust().draw();
+        // t = $('#dsItems').DataTable({
+        //     "ordering": false,
+        //     // "bSort": false,
+        //     "info": false, //Quita el pie de pagina
+        //     "language": {
+        //         "infoEmpty": "No hay ip agregadas",
+        //         "emptyTable": "No hay ip agregadas",
+        //         "search": "Buscar IP" //Cambia el texto de Search
+        //     },
+        //     "columns": [
+        //         { "title": "ip" },
+        //         { "title": "Created" }
+        //     ], // crea las columnas
+        //     "scrollY": "190px",
+        //     // "searching": false,
+        //     "scrollCollapse": true,
+        //     "paging": true,
+        //     "columnDefs": [
+        //         {// ip
+        //             "width": "85%", "targets": 0,
+        //             "data": null,
+        //             "visible": true
+        //         },
+        //         {// created
+        //             "width": "15%", "targets": 1,
+        //             "data": null,
+        //         }
+        //     ]
+        // });
+        // t.columns.adjust().draw();
     });
 </script>
