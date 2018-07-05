@@ -6,40 +6,28 @@ class IpAutorizada {
 
     //Getter
     get Read() {
-        var miAccion = this.id == null ? 'ReadAll' : 'Read';
+        var miAccion = this.ip == null ? 'ReadAll' : 'Read';
         if(miAccion=='ReadAll' && $('#tbodyItems').length==0 )
             return;
-        // $.ajax({
-        //     type: "POST",
-        //     url: "class/IpAutorizada.php",
-        //     data: {
-        //         action: miAccion,
-        //         id: this.id
-        //     }
-        // })
-        //     .done(function (e) {
-        //         ipautorizada.Reload(e);
-        //     })
-        //     .fail(function (e) {
-        //         ipautorizada.showError(e);
-        //     });
-        $('#dsItems').DataTable( {
-            "processing": true,
-            "serverSide": true,
-            "ajax": {
-                "url": "class/IpAutorizada.php",
-                "type": "POST",
-                "action": "miAccion"
-            },
-            "columns": [
-                { "data": "ip" },
-            ]
-        } );
+        $.ajax({
+            type: "POST",
+            url: "class/IpAutorizada.php",
+            data: {
+                action: miAccion,
+                ip: this.ip
+            }
+        })
+            .done(function (e) {
+                ipautorizada.Reload(e);
+            })
+            .fail(function (e) {
+                ipautorizada.showError(e);
+            });
     }
 
     get Save() {
         $('#btnIp').attr("disabled", "disabled");
-        var miAccion = this.id == null ? 'Create' : 'Update';
+        var miAccion = this.ip == null ? 'Create' : 'Update';
         this.ip = $("#ip").val();
         $.ajax({
             type: "POST",
@@ -68,7 +56,7 @@ class IpAutorizada {
             url: "class/IpAutorizada.php",
             data: {
                 action: 'Delete',
-                id: this.id
+                ip: this.ip
             }
         })
             .done(function () {
@@ -91,14 +79,14 @@ class IpAutorizada {
 
     // Methods
     Reload(e) {
-        if (this.id == null)
+        if (this.ip == null)
             this.ShowAll(e);
         else this.ShowItemData(e);
     };
 
     // Muestra información en ventana
     showInfo() {
-        //$(".modal").css({ display: "none" });   
+        //$(".modal").css({ display: "none" });
         $(".close").click();
         swal({
             
@@ -126,20 +114,16 @@ class IpAutorizada {
     };
 
     ShowAll(e) {
-        // Limpia el div que contiene la tabla.
-        $('#tbodyItems').html("");
-        // Carga lista
-        ipautorizada = JSON.parse(e);
-        // var rowNode = t   //t es la tabla de productos
-        // .row.add( [ipautorizada.ip, ipautorizada,created])
-        // .draw() //dibuja la tabla con el nuevo producto
-        // .node(); 
-        t.data = ipautorizada;
-        t.columns.adjust().draw();
+        t.clear();
+        t.rows.add(JSON.parse(e));
+        t.draw();
+        //$('.update').click(ipautorizada.UpdateEventHandler);
+        $('.delete').click(ipautorizada.DeleteEventHandler);
     };
 
     UpdateEventHandler() {
-        ipautorizada.id = $(this).parents("tr").find(".itemId").text();  //Class itemId = ID del objeto.
+        //ipautorizada.id = $(this).parents("tr").find(".itemId").text();  //Class itemId = ID del objeto no visible
+        ipautorizada.ip = $(this).parents("tr").find(".itemIdvisible").text();  //Class itemId = ID del objeto. 
         ipautorizada.Read;
     };
 
@@ -147,16 +131,16 @@ class IpAutorizada {
         // Limpia el controles
         this.ClearCtls();
         // carga objeto.
-        ipautorizada = JSON.parse(e)[0];
-        //var data = JSON.parse(e)[0];
-        // ipautorizada = new IpAutorizada(data.id, data.ip, data.nombre, data.txtColor, data.bgColor, data.nombreAbreviado, 
-        // data.descripcion, data.saldoCantidad, data.costoPromedio, data.precioVenta , data.esVenta);        
+        var data = JSON.parse(e)[0];     
+        ipautorizada= new IpAutorizada(data.ip);
         // Asigna objeto a controles        
         $("#ip").val(ipautorizada.ip);
+        // Muestra modal
+        $(".modal").modal('toggle');
     };
 
     DeleteEventHandler() {
-        ipautorizada.id = $(this).parents("tr").find(".itemId").text();  //Class itemId = ID del objeto.
+        ipautorizada.ip = $(this).parents("tr").find(".itemIdvisible").text();  //Class itemId = ID del objeto.
         // Mensaje de borrado:
         swal({
             title: 'Eliminar?',
