@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<NotaCreditoElectronica xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="https://tribunet.hacienda.go.cr/docs/esquemas/2017/v4.2/notaCreditoElectronica" xsi:schemaLocation="https://tribunet.hacienda.go.cr/docs/esquemas/2017/v4.2/notaCreditoElectronica https://tribunet.hacienda.go.cr/docs/esquemas/2017/v4.2/notaCreditoElectronica.xsd">
+        <Clave>50618051800011538077800100001030000000009183168485</Clave>
+        <NumeroConsecutivo>00100001010000000009</NumeroConsecutivo>
+        <FechaEmision>2018-05-18T10:42:40-06:00</FechaEmision>
+        <Emisor><Nombre>Bryan Edgardo Valerin Gazo</Nombre>
+        <Identificacion>
+        <Tipo>01</Tipo>
+        <Numero>115380778</Numero>
+        </Identificacion>
+        <Ubicacion>
+        <Provincia>6</Provincia>
+        <Canton>02</Canton>
+        <Distrito>03</Distrito>
+        <OtrasSenas>Esparza Centro</OtrasSenas>
+        </Ubicacion>
+        <Telefono>
+        <CodigoPais>506</CodigoPais>
+        <NumTelefono>83168485</NumTelefono>
+        </Telefono>
+        <CorreoElectronico>facturacion.valeringazo@gmail.com</CorreoElectronico>
+        </Emisor>
+        <Receptor>
+        <Nombre>KIMBERLY ARGUEDAS RAMOS</Nombre>
+        <Identificacion>
+        <Tipo>01</Tipo>
+        <Numero>205860860</Numero>
+        </Identificacion>
+        <Ubicacion>
+        <Provincia>6</Provincia>
+        <Canton>01</Canton>
+        <Distrito>01</Distrito>
+        <OtrasSenas/>
+        </Ubicacion>
+        </Receptor>
+        <CondicionVenta>01</CondicionVenta>
+        <MedioPago>01</MedioPago>
+
+        <DetalleServicio><LineaDetalle>
+            <NumeroLinea>1</NumeroLinea>
+            <Codigo>
+            <Tipo>04</Tipo>
+            <Codigo>0001</Codigo>
+            </Codigo>
+            <Cantidad>1.000</Cantidad>
+            <UnidadMedida>Sp</UnidadMedida>
+            <Detalle>Servicios Profesionales</Detalle>
+            <PrecioUnitario>10000.00</PrecioUnitario>
+            <MontoTotal>10000.00</MontoTotal>
+            <SubTotal>10000.00</SubTotal>
+            <MontoTotalLinea>10000.00</MontoTotalLinea>
+            </LineaDetalle></DetalleServicio>
+
+        <ResumenFactura>
+        <TotalServExentos>10000</TotalServExentos>
+        <TotalExento>10000</TotalExento>
+        <TotalVenta>10000</TotalVenta>
+        <TotalVentaNeta>10000</TotalVentaNeta>
+        <TotalComprobante>10000</TotalComprobante>
+        </ResumenFactura>
+
+        <InformacionReferencia>
+        <TipoDoc>01</TipoDoc>
+        <Numero>50605061800011150075300100001010000000090133539627</Numero>
+        <FechaEmision>2018-04-30T13:47:50-06:00</FechaEmision>
+        <Codigo>01</Codigo>
+        <Razon>ERROR EN FACTURA</Razon>
+        </InformacionReferencia>
+
+        <Normativa>
+        <NumeroResolucion>DGT-R-48-2016</NumeroResolucion>
+        <FechaResolucion>07-10-2016 00:00:00</FechaResolucion>
+        </Normativa>
+        <Otros>
+        <OtroTexto/>
+        </Otros>
+        </NotaCreditoElectronica>

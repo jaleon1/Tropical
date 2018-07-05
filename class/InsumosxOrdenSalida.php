@@ -8,6 +8,7 @@ class InsumosxOrdenSalida{
 
     function Read($idOrdenSalida){
         try {
+<<<<<<< HEAD
             $sql='SELECT `insumosXOrdenSalida`.`idOrdenSalida`,
             `insumosXOrdenSalida`.`id`,
             `insumosXOrdenSalida`.`idInsumo`,
@@ -16,6 +17,16 @@ class InsumosxOrdenSalida{
             `insumosXOrdenSalida`.`costoPromedio`
             FROM `tropical`.`insumosXOrdenSalida` WHERE idOrdenSalida=:id';
             $param= array(':id'=>$idOrdenSalida);
+=======
+            $sql='SELECT `insumosxordensalida`.`idordensalida`,
+            `insumosxordensalida`.`id`,
+            `insumosxordensalida`.`idInsumo`,
+            (SELECT nombre FROM insumo WHERE id=`insumosxordensalida`.`idInsumo`) AS nombreinsumo,
+            `insumosxordensalida`.`cantidad`,
+            `insumosxordensalida`.`costoPromedio`
+            FROM `tropical`.`insumosxordensalida` WHERE idordensalida=:id';
+            $param= array(':id'=>$idordensalida);
+>>>>>>> master
             $data= DATA::Ejecutar($sql,$param);
             return $data;
         }     
@@ -45,9 +56,15 @@ class InsumosxOrdenSalida{
                 $data_insumo = DATA::Ejecutar($sql_insumo,$param_insumo,false);
                 
                 //Inserta en tabla intermedia insumos y productos
+<<<<<<< HEAD
                 $sql="INSERT INTO insumosXOrdenSalida (id,idOrdenSalida, idInsumo, cantidad, costoPromedio)
                 VALUES (uuid(),:idOrdenSalida, :idInsumo, :cantidad, :costoPromedio)";
                 $param= array(':idOrdenSalida'=>$ins_orden->idOrdenSalida, ':idInsumo'=>$ins_orden->idInsumo,':cantidad'=>$ins_orden->cantidad, ':costoPromedio'=>$ins_orden->costoPromedio);
+=======
+                $sql="INSERT INTO insumosxordensalida (id,idordensalida, idInsumo, cantidad, costoPromedio)
+                VALUES (uuid(),:idordensalida, :idInsumo, :cantidad, :costoPromedio)";
+                $param= array(':idordensalida'=>$ins_orden->idordensalida, ':idInsumo'=>$ins_orden->idInsumo,':cantidad'=>$ins_orden->cantidad, ':costoPromedio'=>$ins_orden->costoPromedio);
+>>>>>>> master
                 $data = DATA::Ejecutar($sql,$param,false);
                 
                 if(!$data and !$data_insumo)
@@ -70,8 +87,13 @@ class InsumosxOrdenSalida{
                 $cantidadinsumo = DATA::Ejecutar($sql_insumo,$param_insumo);
                 
                 //Selecciona la cantidad de Insumos
+<<<<<<< HEAD
                 $sql_insumo="SELECT cantidad FROM insumosXOrdenSalida WHERE idOrdenSalida=:idOrdenSalida AND idInsumo=:idInsumo";
                 $param_orden= array(':idOrdenSalida'=>$ins_orden->idOrdenSalida,':idInsumo'=>$ins_orden->idInsumo);
+=======
+                $sql_insumo="SELECT cantidad FROM insumosxordensalida WHERE idordensalida=:idordensalida AND idInsumo=:idInsumo";
+                $param_orden= array(':idordensalida'=>$ins_orden->idordensalida,':idInsumo'=>$ins_orden->idInsumo);
+>>>>>>> master
                 $cantidadorden = DATA::Ejecutar($sql_insumo,$param_orden);
                 
                 $saldoCantidad = $cantidadinsumo[0][0] + $cantidadorden[0][0];

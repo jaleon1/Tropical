@@ -2,33 +2,33 @@
 require_once("Conexion.php");
 
 class InsumosXOrdenCompra{
-    public $idordencompra;
-    public $idinsumo;
-    public $costounitario;
-    public $cantidadbueno;
-    public $cantidadmalo;
-    public $valorbueno;
-    public $valormalo;
+    public $idOrdenCompra;
+    public $idInsumo;
+    public $costoUnitario;
+    public $cantidadBueno;
+    public $cantidadMalo;
+    public $valorBueno;
+    public $valorMalo;
     //
     public static function Create($obj){
         try {
             $created = true;
             require_once("Insumo.php");
             foreach ($obj as $item) {             
-                $sql="INSERT INTO insumosxordencompra   (id, idordencompra, idinsumo, costounitario, cantidadbueno, cantidadmalo, valorbueno, valormalo)
-                    VALUES (uuid(), :idordencompra, :idinsumo, :costounitario, :cantidadbueno, :cantidadmalo, :valorbueno, :valormalo)";
-                $param= array(':idordencompra'=>$item->idordencompra, 
-                    ':idinsumo'=>$item->idinsumo,
-                    ':costounitario'=>$item->costounitario, 
-                    ':cantidadbueno'=>$item->cantidadbueno, 
-                    ':cantidadmalo'=>$item->cantidadmalo,
-                    ':valorbueno'=>$item->valorbueno,
-                    ':valormalo'=>$item->valormalo
+                $sql="INSERT INTO insumosXOrdenCompra   (id, idOrdenCompra, idInsumo, costoUnitario, cantidadBueno, cantidadMalo, valorBueno, valorMalo)
+                    VALUES (uuid(), :idOrdenCompra, :idInsumo, :costoUnitario, :cantidadBueno, :cantidadMalo, :valorBueno, :valorMalo)";
+                $param= array(':idOrdenCompra'=>$item->idOrdenCompra, 
+                    ':idInsumo'=>$item->idInsumo,
+                    ':costoUnitario'=>$item->costoUnitario, 
+                    ':cantidadBueno'=>$item->cantidadBueno, 
+                    ':cantidadMalo'=>$item->cantidadMalo,
+                    ':valorBueno'=>$item->valorBueno,
+                    ':valorMalo'=>$item->valorMalo
                 );
                 $data = DATA::Ejecutar($sql,$param,false);                
                 if($data){
                     // Actualiza los saldos y calcula promedio
-                    Insumo::UpdateSaldoPromedioEntrada($item->idinsumo, $item->cantidadbueno, $item->valorbueno);
+                    Insumo::UpdateSaldoPromedioEntrada($item->idInsumo, $item->cantidadBueno, $item->valorBueno);
                 }
                 else $created= false;
             }
@@ -43,7 +43,7 @@ class InsumosXOrdenCompra{
         try {
             $updated = true;
             // elimina todos los objetos relacionados
-            $updated= self::Delete($obj[0]->costounitario);
+            $updated= self::Delete($obj[0]->costoUnitario);
             // crea los nuevos objetos
             $updated= self::Create($obj);
             return $updated;
@@ -55,9 +55,9 @@ class InsumosXOrdenCompra{
 
     public static function Delete($_idproductotemporal){
         try {                 
-            $sql='DELETE FROM insumosxordencompra  
-                WHERE costounitario= :costounitario';
-            $param= array(':costounitario'=> $_idproductotemporal);
+            $sql='DELETE FROM insumosXOrdenCompra  
+                WHERE costoUnitario= :costoUnitario';
+            $param= array(':costoUnitario'=> $_idproductotemporal);
             $data= DATA::Ejecutar($sql, $param, false);
             if($data)
                 return true;

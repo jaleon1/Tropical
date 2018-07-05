@@ -32,7 +32,7 @@ class Rol{
     public $id=null;
     public $nombre='';
     public $descripcion='';
-    public $listaevento= array();
+    public $listaEvento= array();
     
 
     function __construct(){
@@ -47,14 +47,14 @@ class Rol{
             $this->nombre= $obj["nombre"] ?? '';
             $this->descripcion= $obj["descripcion"] ?? '';
             //Categorias del rol.
-            if(isset($obj["listaevento"] )){
+            if(isset($obj["listaEvento"] )){
                 require_once("EventosXRol.php");
                 //
-                foreach ($obj["listaevento"] as $ideven) {
+                foreach ($obj["listaEvento"] as $ideven) {
                     $evenrol= new EventosXRol();
-                    $evenrol->idevento= $ideven;
-                    $evenrol->idrol= $this->id;
-                    array_push ($this->listaevento, $evenrol);
+                    $evenrol->idEvento= $ideven;
+                    $evenrol->idRol= $this->id;
+                    array_push ($this->listaEvento, $evenrol);
                 }
             }
         }
@@ -79,9 +79,9 @@ class Rol{
 
     function Read(){
         try {
-            $sql='SELECT r.id, r.nombre, r.descripcion,  e.id as idevento , e.nombre as nombreevento
-                FROM rol  r LEFT JOIN EventosXRol er on er.idrol = r.id
-                    LEFT join evento e on e.id = er.idevento
+            $sql='SELECT r.id, r.nombre, r.descripcion,  e.id as idEvento , e.nombre as nombreEvento
+                FROM rol  r LEFT JOIN EventosXRol er on er.idRol = r.id
+                    LEFT join evento e on e.id = er.idEvento
                 where r.id=:id';
             $param= array(':id'=>$this->id);
             $data= DATA::Ejecutar($sql,$param);     
@@ -93,16 +93,16 @@ class Rol{
                     $this->nombre = $value['nombre'];
                     $this->descripcion = $value['descripcion'];
                     // Evento
-                    if($value['idevento']!=null){
-                        $evento->id = $value['idevento'];
-                        $evento->nombre = $value['nombreevento'];
-                        array_push ($this->listaevento, $evento);
+                    if($value['idEvento']!=null){
+                        $evento->id = $value['idEvento'];
+                        $evento->nombre = $value['nombreEvento'];
+                        array_push ($this->listaEvento, $evento);
                     }
                 }
                 else {
-                    $evento->id = $value['idevento'];
-                    $evento->nombre = $value['nombreevento'];
-                    array_push ($this->listaevento, $evento);
+                    $evento->id = $value['idEvento'];
+                    $evento->nombre = $value['nombreEvento'];
+                    array_push ($this->listaEvento, $evento);
                 }
             }
             return $this;
@@ -126,7 +126,7 @@ class Rol{
             if($data)
             {
                 //save array obj
-                if(EventosXRol::Create($this->listaevento))
+                if(EventosXRol::Create($this->listaEvento))
                     return true;
                 else throw new Exception('Error al guardar los eventos.', 03);
             }
@@ -150,8 +150,8 @@ class Rol{
             $data = DATA::Ejecutar($sql,$param,false);
             if($data){
                 //update array obj
-                if($this->listaevento!=null)
-                    if(EventosXRol::Update($this->listaevento))
+                if($this->listaEvento!=null)
+                    if(EventosXRol::Update($this->listaEvento))
                         return true;            
                     else throw new Exception('Error al guardar los eventos.', 03);
                 else {
@@ -174,9 +174,9 @@ class Rol{
 
     private function CheckRelatedItems(){
         try{
-            $sql="SELECT idrol
+            $sql="SELECT idRol
                 FROM EventosXRol x
-                WHERE x.idrol= :id";
+                WHERE x.idRol= :id";
             $param= array(':id'=>$this->id);
             $data= DATA::Ejecutar($sql, $param);
             if(count($data))

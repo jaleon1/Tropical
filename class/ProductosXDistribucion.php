@@ -3,24 +3,24 @@ require_once("Conexion.php");
 
 class ProductosXDistribucion{
     public $id;
-    public $iddistribucion;
-    public $idproducto;
+    public $idDistribucion;
+    public $idProducto;
     public $cantidad;
     public $valor;
     //
     public static function Read($id){
         try{
-            $sql="SELECT pd.id, pd.idproducto, pd.cantidad, pd.valor,
+            $sql="SELECT pd.id, pd.idProducto, pd.cantidad, pd.valor,
                     p.codigo, p.nombre, p.descripcion
-                FROM productosxdistribucion pd INNER JOIN producto p on p.id = pd.idproducto	
-                WHERE pd.iddistribucion= :iddistribucion";
-            $param= array(':iddistribucion'=>$id);
+                FROM productosXDistribucion pd INNER JOIN producto p on p.id = pd.idProducto	
+                WHERE pd.idDistribucion= :idDistribucion";
+            $param= array(':idDistribucion'=>$id);
             $data = DATA::Ejecutar($sql,$param);            
             $lista = [];
             foreach ($data as $key => $value){
                 $producto = new ProductosXDistribucion();
                 $producto->id = $value['id'];
-                $producto->idproducto = $value['idproducto'];
+                $producto->idProducto = $value['idProducto'];
                 $producto->cantidad = $value['cantidad'];
                 $producto->precioVenta = $value['valor'];
                 //
@@ -41,17 +41,17 @@ class ProductosXDistribucion{
             $created = true;
             require_once("Producto.php");
             foreach ($obj as $item) {             
-                $sql="INSERT INTO productosxdistribucion   (id, iddistribucion, idproducto, cantidad, valor)
-                    VALUES (uuid(), :iddistribucion, :idproducto, :cantidad, :valor)";
-                $param= array(':iddistribucion'=>$item->iddistribucion, 
-                    ':idproducto'=>$item->idproducto,
+                $sql="INSERT INTO productosXDistribucion   (id, idDistribucion, idProducto, cantidad, valor)
+                    VALUES (uuid(), :idDistribucion, :idProducto, :cantidad, :valor)";
+                $param= array(':idDistribucion'=>$item->idDistribucion, 
+                    ':idProducto'=>$item->idProducto,
                     ':cantidad'=>$item->cantidad, 
                     ':valor'=>$item->valor
                 );
                 $data = DATA::Ejecutar($sql,$param,false);                
                 if($data){
                     // Actualiza los saldos y calcula promedio
-                    Producto::UpdateSaldoPromedioSalida($item->idproducto, $item->cantidad);
+                    Producto::UpdateSaldoPromedioSalida($item->idProducto, $item->cantidad);
                 }
                 else $created= false;
             }
@@ -78,7 +78,7 @@ class ProductosXDistribucion{
 
     public static function Delete($_idproductotemporal){
         try {                 
-            $sql='DELETE FROM insumosxordencompra  
+            $sql='DELETE FROM insumosXOrdenCompra  
                 WHERE cantidad= :cantidad';
             $param= array(':cantidad'=> $_idproductotemporal);
             $data= DATA::Ejecutar($sql, $param, false);

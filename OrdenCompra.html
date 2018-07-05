@@ -205,7 +205,7 @@
                                                         <tr class="even pointer">
                                                             <td class="">SubTotal</td>
                                                             <td class=""> </td>
-                                                            <td class="" id="subtotal">¢0</td>
+                                                            <td class="" id="subTotal">¢0</td>
                                                         </tr>
                                                         <tr class="odd pointer">
                                                             <td class="">Descuento</td>
@@ -330,16 +330,16 @@
 
 <script>
     $(document).ready(function () {
-        //ordencompra.Init();
+        //ordenCompra.Init();
         $('#btnOrdenCompra').click(function () {
-            ordencompra.Save;
+            ordenCompra.Save;
         });
         //Valida si se presiona enter -> carga el producto en la lista
         //si preciona "*" -> Quita el "*", pasa el punto de insercion a la cantidad y selecciona el valor para ser reemplazdo con el teclado
         $("#p_searh").keyup(function (e) {
             if (e.which == 13) {
                 // Acciones a realizar, por ej: enviar formulario.
-                ordencompra.LoadInsumo();
+                ordenCompra.LoadInsumo();
             }
             if (e.which == 106) {
                 $("#p_searh")[0].value = "";

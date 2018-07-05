@@ -130,7 +130,11 @@ class Producto {
         producto.lista = [];
         $('#tableBody-ArticuloBodega tr').each(function() {
             var objArticulo = new Object();
+<<<<<<< HEAD
             objArticulo.idbodega= '22a80c9e-5639-11e8-8242-54ee75873a00'; //id unico bodega principal.
+=======
+            objArticulo.idBodega= '22a80c9e-5639-11e8-8242-54ee75873a00'; //id unico bodega principal.
+>>>>>>> master
             objArticulo.idProducto= $(this).find('td:eq(0)').html();
             objArticulo.cantidad= $(this).find('td:eq(2) input').val();
             objArticulo.costo= $(this).find('td:eq(3) input').val();

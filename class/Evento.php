@@ -22,8 +22,8 @@ class Evento{
     public $id;
     public $nombre;
     public $url;
-    public $menupadre;
-    public $submenupadre;
+    public $menuPadre;
+    public $subMenuPadre;
 
     function ReadAll(){
         try {

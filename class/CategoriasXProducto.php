@@ -2,17 +2,17 @@
 require_once("Conexion.php");
 
 class CategoriasXProducto{
-    public $idcategoria;
-    public $idproducto;
+    public $idCategoria;
+    public $idProducto;
 
     public static function Create($obj){
         try {
             $created = true;
             foreach ($obj as $catprod) {
-                $sql="INSERT INTO categoriasxproducto   (idcategoria, idproducto)
-                VALUES (:idcategoria, :idproducto)";
+                $sql="INSERT INTO categoriasXProducto   (idCategoria, idProducto)
+                VALUES (:idCategoria, :idProducto)";
                 //
-                $param= array(':idcategoria'=>$catprod->idcategoria, ':idproducto'=>$catprod->idproducto);
+                $param= array(':idCategoria'=>$catprod->idCategoria, ':idProducto'=>$catprod->idProducto);
                 $data = DATA::Ejecutar($sql,$param,false);
                 if(!$data)
                     $created= false;
@@ -28,7 +28,7 @@ class CategoriasXProducto{
         try {
             $updated = true;
             // elimina todos los objetos relacionados
-            $updated= self::Delete($obj[0]->idproducto);
+            $updated= self::Delete($obj[0]->idProducto);
             // crea los nuevos objetos
             $updated= self::Create($obj);
             return $updated;
@@ -40,9 +40,9 @@ class CategoriasXProducto{
 
     public static function Delete($_idproducto){
         try {                 
-            $sql='DELETE FROM categoriasxproducto  
-                WHERE idproducto= :idproducto';
-            $param= array(':idproducto'=> $_idproducto);
+            $sql='DELETE FROM categoriasXProducto  
+                WHERE idProducto= :idProducto';
+            $param= array(':idProducto'=> $_idproducto);
             $data= DATA::Ejecutar($sql, $param, false);
             if($data)
                 return true;

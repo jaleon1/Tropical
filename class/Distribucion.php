@@ -38,11 +38,11 @@ if(isset($_POST["action"])){
 class Distribucion{
     public $id=null;
     public $fecha='';
-    public $idbodega=null;
+    public $idBodega=null;
     public $orden='';
-    public $idusuario=null;
-    public $porcentajedescuento=0;
-    public $porcentajeiva=null;
+    public $idUsuario=null;
+    public $porcentajeDescuento=0;
+    public $porcentajeIva=null;
     public $lista= [];
 
     function __construct(){
@@ -55,19 +55,19 @@ class Distribucion{
             require_once("UUID.php");
             $this->id= $obj["id"] ?? UUID::v4();
             //$this->fecha= $obj["fecha"] ?? '';
-            $this->idbodega= $obj["idbodega"] ?? null;
-            $this->porcentajedescuento= $obj["porcentajedescuento"] ?? 0;
-            $this->porcentajeiva= $obj["porcentajeiva"] ?? '';
+            $this->idBodega= $obj["idBodega"] ?? null;
+            $this->porcentajeDescuento= $obj["porcentajeDescuento"] ?? 0;
+            $this->porcentajeIva= $obj["porcentajeIva"] ?? '';
             $this->orden= $obj["orden"] ?? '';      
-            //$this->idusuario= $obj["idusuario"] ?? null;
+            //$this->idUsuario= $obj["idUsuario"] ?? null;
             // lista.
             if(isset($obj["lista"] )){
                 require_once("ProductosXDistribucion.php");
                 //
                 foreach ($obj["lista"] as $itemlist) {
                     $item= new ProductosXDistribucion();
-                    $item->iddistribucion= $this->id;
-                    $item->idproducto= $itemlist['idproducto'];
+                    $item->idDistribucion= $this->id;
+                    $item->idProducto= $itemlist['idProducto'];
                     $item->cantidad= $itemlist['cantidad'];
                     $item->valor= $itemlist['valor'];
                     array_push ($this->lista, $item);
@@ -78,7 +78,7 @@ class Distribucion{
 
     function ReadAll(){
         try {
-            $sql='SELECT id, fecha, idbodega, orden, idusuario
+            $sql='SELECT id, fecha, idBodega, orden, idUsuario
                 FROM     distribucion       
                 ORDER BY fecha asc';
             $data= DATA::Ejecutar($sql);
@@ -95,7 +95,7 @@ class Distribucion{
 
     function ReadbyOrden(){
         try {
-            $sql='SELECT id, fecha, orden, idusuario, idbodega, porcentajedescuento, porcentajeiva 
+            $sql='SELECT id, fecha, orden, idUsuario, idBodega, porcentajeDescuento, porcentajeIva 
                 FROM distribucion
                 WHERE orden=:orden';
             $param= array(':orden'=>$this->orden);
@@ -103,10 +103,10 @@ class Distribucion{
             if(count($data)){
                 $this->id = $data[0]['id'];
                 $this->fecha = $data[0]['fecha'];
-                $this->idusuario = $data[0]['idusuario'];
-                $this->idbodega = $data[0]['idbodega'];
-                $this->porcentajedescuento = $data[0]['porcentajedescuento'];
-                $this->porcentajeiva = $data[0]['porcentajeiva'];
+                $this->idUsuario = $data[0]['idUsuario'];
+                $this->idBodega = $data[0]['idBodega'];
+                $this->porcentajeDescuento = $data[0]['porcentajeDescuento'];
+                $this->porcentajeIva = $data[0]['porcentajeIva'];
                 // productos x distribucion.
                 $this->lista= ProductosXDistribucion::Read($this->id);
                 //
@@ -125,7 +125,7 @@ class Distribucion{
 
     function Read(){
         try {
-            $sql='SELECT id, fecha, orden, idusuario, idbodega, porcentajedescuento, porcentajeiva 
+            $sql='SELECT id, fecha, orden, idUsuario, idBodega, porcentajeDescuento, porcentajeIva 
                 FROM distribucion  
                 where id=:id';
             $param= array(':id'=>$this->id);
@@ -143,13 +143,13 @@ class Distribucion{
 
     function Create(){
         try {
-            $sql="INSERT INTO distribucion  (id, idbodega, idusuario, porcentajedescuento, porcentajeiva) 
-                VALUES (:id, :idbodega, :idusuario, :porcentajedescuento, :porcentajeiva);";
+            $sql="INSERT INTO distribucion  (id, idBodega, idUsuario, porcentajeDescuento, porcentajeIva) 
+                VALUES (:id, :idBodega, :idUsuario, :porcentajeDescuento, :porcentajeIva);";
             $param= array(':id'=>$this->id ,
-                ':idbodega'=>$this->idbodega, 
-                ':idusuario'=>$_SESSION['usersession']->id,
-                ':porcentajedescuento'=>$this->porcentajedescuento,
-                ':porcentajeiva'=>$this->porcentajeiva,
+                ':idBodega'=>$this->idBodega, 
+                ':idUsuario'=>$_SESSION['userSession']->id,
+                ':porcentajeDescuento'=>$this->porcentajeDescuento,
+                ':porcentajeIva'=>$this->porcentajeIva,
             );
             $data = DATA::Ejecutar($sql,$param,false);
             if($data)
@@ -177,8 +177,8 @@ class Distribucion{
             $created=true;
             foreach ($this->lista as $item) {       
                 $sql="CALL spUpdateSaldosPromedioInsumoBodegaEntrada(:nidproducto, :nidbodega, :ncantidad, :ncosto)";
-                $param= array(':nidproducto'=> $item->idproducto, 
-                    ':nidbodega'=> $this->idbodega,
+                $param= array(':nidproducto'=> $item->idProducto, 
+                    ':nidbodega'=> $this->idBodega,
                     ':ncantidad'=> $item->cantidad,
                     ':ncosto'=> $item->valor);
                 $data = DATA::Ejecutar($sql,$param,false);
@@ -202,9 +202,9 @@ class Distribucion{
     function Update(){
         try {
             $sql="UPDATE distribucion 
-                SET fecha=:fecha, idbodega=:idbodega, orden=:orden, idusuario=:idusuario
+                SET fecha=:fecha, idBodega=:idBodega, orden=:orden, idUsuario=:idUsuario
                 WHERE id=:id";
-            $param= array(':id'=>$this->id, ':fecha'=>$this->fecha, ':idbodega'=>$this->idbodega, ':orden'=>$this->orden, ':idusuario'=>$this->idusuario);
+            $param= array(':id'=>$this->id, ':fecha'=>$this->fecha, ':idBodega'=>$this->idBodega, ':orden'=>$this->orden, ':idUsuario'=>$this->idUsuario);
             $data = DATA::Ejecutar($sql,$param,false);
             if($data)
                 return true;
@@ -266,10 +266,10 @@ class Distribucion{
 
     function ReadByCode(){
         try{ 
-            $sql="SELECT id, fecha, idbodega, descripcion
+            $sql="SELECT id, fecha, idBodega, descripcion
                 FROM distribucion
-                WHERE idbodega= :idbodega";
-            $param= array(':idbodega'=>$this->idbodega);
+                WHERE idBodega= :idBodega";
+            $param= array(':idBodega'=>$this->idBodega);
             $data= DATA::Ejecutar($sql,$param);
             
             if(count($data))

@@ -157,9 +157,9 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
     UpdateCantidadProducto(){
         productobodega.idProducto = $(this).parents("tr").find("td:eq(1)").html();
         productobodega.cantidad = $(this).parents("tr").find("td:eq(5)").html();
-        productobodega.idbodega = '22a80c9e-5639-11e8-8242-54ee75873a00';
-        var idOrdenSalida = $(this).parents("tr").find("td:eq(0)").html();
-        productobodega.SaveCantidad(idOrdenSalida);        
+        productobodega.idBodega = '22a80c9e-5639-11e8-8242-54ee75873a00';
+        var idordensalida = $(this).parents("tr").find("td:eq(0)").html();
+        productobodega.SaveCantidad(idordensalida);        
     };
 
     Reload(e) {

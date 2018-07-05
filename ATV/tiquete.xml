@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<FacturaElectronica xmlns="https://tribunet.hacienda.go.cr/docs/esquemas/2017/v4.2/facturaElectronica" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<Clave>50615061800050224049900100001010000000004105904649</Clave>
+<NumeroConsecutivo>00100001010000000004</NumeroConsecutivo>
+<FechaEmision>2018-06-15T00:20:05-06:00</FechaEmision>
+<Emisor>
+<Nombre>Luis Martin Cascante Granados</Nombre>
+<Identificacion>
+<Tipo>01</Tipo>
+<Numero>502240499</Numero>
+</Identificacion>
+<NombreComercial>Luis Martin Cascante Granados</NombreComercial>
+<Ubicacion>
+<Provincia>5</Provincia>
+<Canton>05</Canton>
+<Distrito>03</Distrito>
+<Barrio>03</Barrio>
+<OtrasSenas>Barrio el Colegio</OtrasSenas>
+</Ubicacion>
+<Telefono>
+<CodigoPais>506</CodigoPais>
+<NumTelefono>88186220</NumTelefono>
+</Telefono>
+<CorreoElectronico>je.lios.cheng@gmail.com</CorreoElectronico>
+</Emisor>
+<Receptor>
+<Nombre>Josefina Rojas Badilla</Nombre>
+<Identificacion>
+<Tipo>01</Tipo>
+<Numero>501120260</Numero>
+</Identificacion>
+<Ubicacion>
+<Provincia>6</Provincia>
+<Canton>08</Canton>
+<Distrito>01</Distrito>
+<Barrio>01</Barrio>
+<OtrasSenas>300m NO de la Iglesia Católica</OtrasSenas>
+</Ubicacion>
+<Telefono>
+<CodigoPais>506</CodigoPais>
+<NumTelefono>27734447</NumTelefono>
+</Telefono>
+<CorreoElectronico>je.lios.cheng@gmail.com</CorreoElectronico>
+</Receptor>
+<CondicionVenta>01</CondicionVenta>
+<PlazoCredito>0</PlazoCredito>
+<MedioPago>01</MedioPago>
+<DetalleServicio>
+<LineaDetalle>
+<NumeroLinea>1</NumeroLinea>
+<Codigo>
+<Tipo>04</Tipo>
+<Codigo>00001</Codigo>
+</Codigo>
+<Cantidad>1</Cantidad>
+<UnidadMedida>Sp</UnidadMedida>
+<UnidadMedidaComercial>Servicio Profesional</UnidadMedidaComercial>
+<Detalle>Honorarios Profesionales 1</Detalle>
+<PrecioUnitario>100</PrecioUnitario>
+<MontoTotal>100</MontoTotal>
+<MontoDescuento>0</MontoDescuento>
+<NaturalezaDescuento>0</NaturalezaDescuento>
+<SubTotal>100</SubTotal>
+<MontoTotalLinea>100</MontoTotalLinea>
+</LineaDetalle>
+<LineaDetalle>
+<NumeroLinea>2</NumeroLinea>
+<Codigo>
+<Tipo>04</Tipo>
+<Codigo>00002</Codigo>
+</Codigo>
+<Cantidad>8</Cantidad>
+<UnidadMedida>Sp</UnidadMedida>
+<UnidadMedidaComercial>Servicio Profesional</UnidadMedidaComercial>
+<Detalle>Honorarios Profesionales 1</Detalle>
+<PrecioUnitario>25</PrecioUnitario>
+<MontoTotal>200</MontoTotal>
+<MontoDescuento>0</MontoDescuento>
+<NaturalezaDescuento>0</NaturalezaDescuento>
+<SubTotal>200</SubTotal>
+<MontoTotalLinea>200</MontoTotalLinea>
+</LineaDetalle>
+</DetalleServicio>
+<ResumenFactura>
+<CodigoMoneda>CRC</CodigoMoneda>
+<TipoCambio>1</TipoCambio>
+<TotalServGravados>0</TotalServGravados>
+<TotalServExentos>300</TotalServExentos>
+<TotalMercanciasGravadas>0</TotalMercanciasGravadas>
+<TotalMercanciasExentas>0</TotalMercanciasExentas>
+<TotalGravado>0</TotalGravado>
+<TotalExento>300</TotalExento>
+<TotalVenta>300</TotalVenta>
+<TotalDescuentos>0</TotalDescuentos>
+<TotalVentaNeta>300</TotalVentaNeta>
+<TotalImpuesto>0</TotalImpuesto>
+<TotalComprobante>300</TotalComprobante>
+</ResumenFactura>
+<Normativa>
+<NumeroResolucion>DGT-R-48-2016</NumeroResolucion>
+<FechaResolucion>07-10-2016 08:00:00</FechaResolucion>
+</Normativa>
+</FacturaElectronica>
