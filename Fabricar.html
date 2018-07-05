@@ -7,7 +7,7 @@
     <script src="assets/js/Session.js"></script>
     <script src="assets/js/moment.min.js"></script>
     <script>
-        Session.Check();
+        //Session.Check();
     </script>
     <!-- /End check -->
 
@@ -86,43 +86,74 @@
 
 <script>
     $(document).ready(function () {
-        waitForMsg(); /* Start the inital request */
+        waitForMsg();
+        updateTime();
     });
 
-    function addmsg(id, orden){
-        /* Simple helper to add a div.
-        type is the name of a CSS class (old/new/error).
-        msg is the contents of the div */
-        var CurrentDate = moment();        
-        $(".row").append(`
-             <div id="${id}" class="container">          
-                <p>${id}</p>
-                <h3><p>${orden}</p></h3>
-                <span class="time-right">${CurrentDate.format('HH:mm')}</span>
-            </div>
-        `);
-        $("#"+id).click(onClickOrden); 
+    function updateTime(){
+        $('.time-right').each(function(i, item){
+            $(this)[0].firstChild.textContent= moment(this.children[0].textContent).fromNow();     
+        });
+        var t = setTimeout(updateTime, 30000);
+    }
+
+    function addmsg(data){
+        $.each(data, function(i, item){
+            var render= $(".container").find("#" + item.id);
+            //
+            if(render.length==0){
+                $(".row").append(`                                 
+                    <div id="${item.id}" class="container">   
+                        <div class="avatar avatar-left"> 
+                            <div class="avatar-letter" style="background-color: rgb(154, 108, 224)" title="${item.tamano}">${item.tamano}</div> 
+                        </div>
+                        <p>${item.consecutivo}</p>
+                        <h3><p>${item.sabor1} | ${item.sabor2} | ${item.topping}</p></h3>
+                        
+                        <span class="time-right">${moment(item.fechaCreacion).fromNow()}
+                            <span class="idBox">${item.fechaCreacion}</span>
+                        </span>
+                        <p class='idBox'>${item.id}<p>
+                    </div>
+                `);
+                $("#"+item.id).click(onClickOrden); 
+            }
+        });        
     };
 
     function onClickOrden(){
-        $(this).hide();
+        $.ajax({
+            type: "POST",
+            url: "class/Make.php",
+            data: {
+                action: 'Write',
+                id: $(this)[0].id
+            }
+        })
+            .done($(this).remove())
+            .fail(function (e) {
+                
+            })
+            .always(function () {
+                
+            });
     };
 
     function waitForMsg(){
-        /* This requests the url "msgsrv.php"
-        When it complete (or errors)*/
         $.ajax({
-            type: "GET",
+            type: "POST",
             url: "class/Make.php",
-
             async: true, /* If set to non-async, browser shows page as "Loading.."*/
             cache: false,
-            timeout:10000, /* Timeout in ms */
-
-            success: function(e){ /* called when request to barge.php completes */
+            timeout:45000, /* Timeout in ms */
+            data: { 
+                action: 'Read',
+                local:'001' // número de local según el usuario registrado.
+            },            
+            success: function(e){ 
                 if(e!=''){
                     var data = JSON.parse(e);
-                    addmsg(data.id, data.orden); /* Add response to a .msg div (with the "new" class)*/
+                    addmsg(data); 
                     setTimeout(
                         waitForMsg, /* Request next message */
                         5000 /* ..after x seconds */

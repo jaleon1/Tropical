@@ -1,3 +1,29 @@
+.idBox {
+    visibility: hidden;
+}
+
+.avatar-letter {
+    line-height: 48px;
+    width: 48px;
+    font-size: 25px;
+    background-color: rgb(154, 108, 224);
+    text-align: center;
+  }
+  
+  .avatar-left {
+    float: left;
+    margin-right: 10px;
+    color: #fff;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    text-rendering: optimizeLegibility;
+    
+  }
+  
+  .avatar div{
+    border-radius: 30px;
+    display: block;
+  }
+
 .container {
     border: 2px solid #dedede;
     background-color: #f1f1f1;
