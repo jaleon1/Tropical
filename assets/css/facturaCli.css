@@ -47,11 +47,6 @@ margin-left: 200px;
 */
 /* .titleSize {
     position: absolute;
-<<<<<<< HEAD
-}  */
-/* 
-input[readonly]{
-=======
 }
 
 .table-fixed{
@@ -67,7 +62,6 @@ input[readonly]{
 }
 
 .display[readonly]{
->>>>>>> 95ad344d4c0c75fd717264909b1194f17c420275
     background: transparent;
     border: none;
     -webkit-user-select: none;
@@ -76,21 +70,5 @@ input[readonly]{
     -ms-user-select: none;
     -o-user-select: none;
     user-select: none;
-<<<<<<< HEAD
-} */
-
-/* 
-.btn_venta{
-    border-radius: 8px;
-} */
-
-/* .selected p{ */
-    /* background-color: #5bc0de !important; */
-    /* color: white !important; */
-/* } */
-
-
-=======
     cursor: default;
 }
->>>>>>> 95ad344d4c0c75fd717264909b1194f17c420275
