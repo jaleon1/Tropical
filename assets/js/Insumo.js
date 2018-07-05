@@ -70,14 +70,30 @@ class Insumo {
                 id: this.id
             }
         })
-            .done(function () {
-                swal({
-                    //position: 'top-end',
-                    type: 'success',
-                    title: 'Eliminado!',
-                    showConfirmButton: false,
-                    timer: 1000
-                });
+            .done(function (e) {
+                var data = JSON.parse(e);
+                if (data == 0)
+                    swal({
+                        type: 'success',
+                        title: 'Eliminado!',
+                        showConfirmButton: false,
+                        timer: 1000
+                    });
+                else if (data.status == 1) {
+                    swal({
+                        type: 'error',
+                        title: 'No es posible eliminar...',
+                        text: 'El registro que intenta eliminar ya se ecnuentra liquidado'                        
+                    });
+                }
+                else {
+                    swal({
+                        type: 'error',
+                        title: 'Ha ocurrido un error...',
+                        text: 'El registro no ha sido eliminado',
+                        footer: '<a href>Contacte a Soporte Técnico</a>',
+                    })
+                }
             })
             .fail(function (e) {
                 insumo.showError(e);
@@ -170,22 +186,10 @@ class Insumo {
             //table.destroy();
         }
         else 
-            $('#dsInsumo').DataTable( {
-                // columns: [
-                //     { "sTitle": "<input type='checkbox' id='check-all' class='iCheck-helper' >" },
-                //     { title: "ID"
-                //     // ,visible: false
-                //     },
-                //     { title: "Nombre" },
-                //     { title: "Código" },
-                //     { title: "Bueno" },
-                //     { title: "Dañado" },
-                //     { title: "Costo" },
-                //     { title: "Action" }
-                // ],          
+            $('#dsInsumo').DataTable( {          
                 paging: true,
                 search: true
-            } );
+            });
     };
 
     UpdateEventHandler() {

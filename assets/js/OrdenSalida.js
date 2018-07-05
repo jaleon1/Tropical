@@ -121,7 +121,7 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
         })
             .done(function (e) {
                 var data = JSON.parse(e);
-                if (data.status == 0)
+                if (data == 0)
                     swal({
                         type: 'success',
                         title: 'Eliminado!',

@@ -10,10 +10,10 @@ if(isset($_POST["action"])){
     if (!isset($_SESSION))
         session_start();
     // Instance
-    $productotemporal= new ProductoTemporal();
+    $productoTemporal= new ProductoTemporal();
     switch($opt){
         case "Create":
-            $productotemporal->Create();
+            $productoTemporal->Create();
             break; 
     }
 }
@@ -39,11 +39,7 @@ class ProductoTemporal{
                     $producto->id= $objproducto['idProducto'];
                     $producto->saldoCantidad= $objproducto['cantidad'];
                     $producto->costoPromedio= $objproducto['costo'];
-<<<<<<< HEAD
                     array_push ($this->listaProducto, $producto);
-=======
-                    array_push ($this->listaproducto, $producto);
->>>>>>> master
                 }
             }
         }

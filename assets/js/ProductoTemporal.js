@@ -34,19 +34,11 @@ constructor(numeroOrden, p) {
         });
 
         $('#tableBody-ProductoGenerado tr').each(function() {
-<<<<<<< HEAD
             var objProducto = new Object();
             objProducto.idProducto= $(this).find('td:eq(0)').html();
             objProducto.cantidad= $(this).find('td:eq(10) input').val();
             objProducto.costo= costoTotalInsumo;
             productoTemporal.listaProducto.push(objProducto);
-=======
-            var objproduto = new Object();
-            objproduto.idProducto= $(this).find('td:eq(0)').html();
-            objproduto.cantidad= $(this).find('td:eq(10) input').val();
-            objproduto.costo= costototalinsumo;
-            productotemporal.listaproducto.push(objproduto);
->>>>>>> master
         });
 
         $.ajax({
@@ -61,7 +53,7 @@ constructor(numeroOrden, p) {
                 swal({
                     type: 'success',
                     title: 'Número de Orden:' + $("#orden").val(),
-                    text: 'Número de orden de Distribución:',
+                    text: 'Liquidada:',
                     showConfirmButton: true
                 });
             })
@@ -310,13 +302,8 @@ constructor(numeroOrden, p) {
         // carga objeto.
         var data = JSON.parse(e);
     
-<<<<<<< HEAD
         productoTemporal = new ProductoTemporal(data.id, data.codigo, data.nombre, data.txtColor, data.bgColor,
         data.nombreAbreviado, data.descripcion, data.saldoCantidad, data.saldoCosto, data.listaProducto);
-=======
-        productotemporal = new ProductoTemporal(data.id, data.codigo, data.nombre, data.txtColor, data.bgColor,
-        data.nombreAbreviado, data.descripcion, data.saldoCantidad, data.saldoCosto, data.listaproducto);
->>>>>>> master
 
         $.each(data.listaProducto, function (i, item) {
             $('#tableBody-InsumoProducto').append(`
@@ -348,15 +335,9 @@ constructor(numeroOrden, p) {
         })
         
         // Asigna objeto a controles
-<<<<<<< HEAD
         $("#nombre").val(productoTemporal.nombre);
         $("#saldoCantidad").val(productoTemporal.saldoCantidad);
         $("#descripcion").val(productoTemporal.descripcion);
-=======
-        $("#nombre").val(productotemporal.nombre);
-        $("#saldoCantidad").val(productotemporal.saldoCantidad);
-        $("#descripcion").val(productotemporal.descripcion);
->>>>>>> master
     };
 
     DeleteEventHandler() {
@@ -382,11 +363,7 @@ constructor(numeroOrden, p) {
 
     AddUserEventHandler(){
         $("#descripcion").val($(this).parents("tr").find("td:eq(2)").html());
-<<<<<<< HEAD
         productoTemporal.bgColor = $(this).parents("tr").find("td:eq(1)").html();
-=======
-        productotemporal.bgColor = $(this).parents("tr").find("td:eq(1)").html();
->>>>>>> master
         $('#modal-descripcion').modal('toggle');
         $("#saldoCantidad").focus();
     }
@@ -410,21 +387,13 @@ constructor(numeroOrden, p) {
                 ids_productos.push($(this).find('td:eq(0)').html());   
             });
             if (ids_productos.length==0) {
-<<<<<<< HEAD
                 productoTemporal.AddTableProducto(id,codigo,nombre,nombreAbreviado,descripcion,saldoCantidad,saldoCosto,costoPromedio,precioVenta,esVenta);
-=======
-                productotemporal.AddTableProducto(id,codigo,nombre,nombreAbreviado,descripcion,saldoCantidad,saldoCosto,costoPromedio,precioVenta,esVenta);
->>>>>>> master
             }
             else{
                 if (ids_productos.indexOf(id)!=-1) 
                     $('#chk-addproducto'+id).attr("checked",false);
                 else
-<<<<<<< HEAD
                     productoTemporal.AddTableProducto(id,codigo,nombre,nombreAbreviado,descripcion,saldoCantidad,saldoCosto,costoPromedio,precioVenta,esVenta);
-=======
-                    productotemporal.AddTableProducto(id,codigo,nombre,nombreAbreviado,descripcion,saldoCantidad,saldoCosto,costoPromedio,precioVenta,esVenta);
->>>>>>> master
             }
         }
     }

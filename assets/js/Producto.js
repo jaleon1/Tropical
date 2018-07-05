@@ -130,11 +130,7 @@ class Producto {
         producto.lista = [];
         $('#tableBody-ArticuloBodega tr').each(function() {
             var objArticulo = new Object();
-<<<<<<< HEAD
-            objArticulo.idbodega= '22a80c9e-5639-11e8-8242-54ee75873a00'; //id unico bodega principal.
-=======
             objArticulo.idBodega= '22a80c9e-5639-11e8-8242-54ee75873a00'; //id unico bodega principal.
->>>>>>> master
             objArticulo.idProducto= $(this).find('td:eq(0)').html();
             objArticulo.cantidad= $(this).find('td:eq(2) input').val();
             objArticulo.costo= $(this).find('td:eq(3) input').val();
@@ -284,7 +280,7 @@ class Producto {
             $('.update').click(producto.UpdateEventHandler);
             $('.delete').click(producto.DeleteEventHandler);
             if (document.URL.indexOf("ProductoTemporal.html")!=-1) {
-                $('#chk-addproducto'+item.id).change(productotemporal.AddProductoEventHandler);
+                $('#chk-addproducto'+item.id).change(productoTemporal.AddProductoEventHandler);
             }
             if (document.URL.indexOf("Articulo.html")!=-1 || url.indexOf("Distribucion.html")!=-1) {
                 $('#chk-addproducto'+item.id).change(producto.AddArticuloEventHandler);
@@ -390,7 +386,7 @@ class Producto {
                     <input id="costo" class="form-control col-3" name="costo" type="text" placeholder="Costo del artículo" autofocus="" value="0">
                 </td>
                 <td class=" last">
-                    <a id ="delete_row${id}" onclick="productotemporal.Deleteproducto(this)" > <i class="glyphicon glyphicon-trash" onclick="Deleteproducto(this)"> </i> Eliminar </a>
+                    <a id ="delete_row${id}" onclick="productoTemporal.Deleteproducto(this)" > <i class="glyphicon glyphicon-trash" onclick="Deleteproducto(this)"> </i> Eliminar </a>
                 </td>
             </tr>
         `);

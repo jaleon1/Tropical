@@ -23,7 +23,7 @@ if(isset($_POST["action"])){
             $insumo->Update();
             break;
         case "Delete":
-            $insumo->Delete();
+            echo json_encode($insumo->Delete());
             break;   
         case "ReadByCode":  
             echo json_encode($insumo->ReadByCode());
@@ -138,8 +138,8 @@ class Insumo{
     private function CheckRelatedItems(){
         try{
             $sql="SELECT id
-                FROM /*  definir relacion */ R
-                WHERE R./*definir campo relacion*/= :id";                
+                FROM insumosXOrdenSalida R
+                WHERE R.idInsumo= :id";                
             $param= array(':id'=>$this->id);
             $data= DATA::Ejecutar($sql, $param);
             if(count($data))
@@ -157,12 +157,12 @@ class Insumo{
 
     function Delete(){
         try {
-            // if($this->CheckRelatedItems()){
-            //     //$sessiondata array que devuelve si hay relaciones del objeto con otras tablas.
-            //     $sessiondata['status']=1; 
-            //     $sessiondata['msg']='Registro en uso'; 
-            //     return $sessiondata;           
-            // }                    
+            if($this->CheckRelatedItems()){
+                //$sessiondata array que devuelve si hay relaciones del objeto con otras tablas.
+                $sessiondata['status']=1; 
+                $sessiondata['msg']='Registro en uso'; 
+                return $sessiondata;           
+            }                    
             $sql='DELETE FROM insumo  
             WHERE id= :id';
             $param= array(':id'=>$this->id);
@@ -220,9 +220,5 @@ class Insumo{
         }
     }   
 
-
 }
-
-
-
 ?>
