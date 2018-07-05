@@ -36,6 +36,8 @@
     <link rel="stylesheet" href="assets/css/sweetalert2.min.css">
     <!-- SweetAlert -->
     <link rel="stylesheet" href="assets/css/facturaCli.css">
+    <!-- Load the jQBTK CSS files -->
+    <link rel="stylesheet" href="assets/css/jqbtk/jqbtk.min.css">
 
 </head>
 
@@ -56,30 +58,24 @@
                                 <div class="table-responsive">
                                     <table class="table table-striped jambo_table bulk_action">
                                         <tbody>
-                                            <!-- <tr class="even pointer">
-                                                <td class="">SubTotal</td>
-                                                <td class=""> </td>
-                                                <td class="" id="subtotal">¢0</td>
-                                            </tr> -->
-                                            <!-- <tr class="even pointer">
-                                                <td class="">Impuesto de Ventas</td>
-                                                <td class="text-left" id="iv_100">13% </td>
-                                                <td class="" id="iv_val">¢0</td>
-                                            </tr> -->
                                             <tr class="odd pointer">
-                                                <td class="">TOTAL IVI</td>
-                                                <td class=""></td>
-                                                <td class="" id="total">¢0</td>
+                                                <td class="totales">TOTAL IVI</td>
+                                                <td class="totales"></td>
+                                                <td class="totales" id="total">¢0</td>
                                             </tr>
                                         </tbody>
                                     </table>
                                 </div>
+                                
+                                <input type="tel" class="keyboard" id="telephone">
+
+                                <button type="button" id="btnFacturar" data-toggle="modal" data-target=".factura-modal-lg" class="btn btn-danger btn-lg btn-facturar">Facturar</button>
                             </div>
                             <div class="x_content">
                                 <div class="table-responsive">
                                     <table id="prd" class="table table-striped jambo_table bulk_action">
                                         <tbody id="productos">
-                                            
+
                                         </tbody>
                                     </table>
                                 </div>
@@ -132,128 +128,118 @@
 
                                                 </div>
                                             </div>
+                                        </div>
+                                        <div class="row">
+
                                             <div class="row">
                                                 <div class="col-lg-12">
                                                     <div id="toppings">
-                                                        <!-- <button id="chocolate" style="background-color:#7B3F00;" class="btn_topping btn_venta" onclick="agrega_toppings('chocolate')">
-                                                            <div style="color: aliceblue;">
-                                                                <h5>Chocolate</h5>
-                                                                <p>&nbsp</p>
-                                                            </div>
-                                                        </button>
-                                                        <button id="frutos" style="background-color:#e90c0c;" class="btn_topping btn_venta" onclick="agrega_toppings('frutos')">
-                                                            <div style="color:aliceblue;">
-                                                                <h5>Pulpa de Frutos Rojos</h5>
-                                                                <p>&nbsp</p>
-                                                            </div>
-                                                        </button>
-                                                        <button id="gomitas" style="background-color:rgb(238, 108, 48);" class="btn_topping btn_venta" onclick="agrega_toppings('gomitas')">
-                                                            <div style="color:aliceblue;">
-                                                                <h5>Gomitas de Colores</h5>
-                                                                <p>&nbsp</p>
-                                                            </div>
-                                                        </button> -->
+
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="clearfix"></div>
-                                <div class="x_panel">
-                                    <!--  CONTENIDO DE LA PAGINA -->
-                                    <div class="x_content">
-                                        <div class="row">
-                                            <div class="col-lg-12">
-                                                <center>
-                                                    <button type="button" id="btn_limpia" class="btn btn-lg btn-warning">Limpiar</button>
-                                                    <button type="button" id="btn_agrega_prd" class="btn btn-lg btn-success">Agregar</button>
-                                                </center>
-                                            </div>
+                            </div>
+                            <div class="clearfix"></div>
+                            <div class="x_panel">
+                                <!--  CONTENIDO DE LA PAGINA -->
+                                <div class="x_content">
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <center>
+                                                <button type="button" id="btn_limpia" class="btn btn-lg btn-warning">Limpiar</button>
+                                                <button type="button" id="btn_agrega_prd" class="btn btn-lg btn-success">Agregar</button>
+                                            </center>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <!-- /page content -->
+                </div>
+                <!-- /page content -->
 
-                    <!-- footer content -->
-                    <!-- <footer>
+                <!-- footer content -->
+                <!-- <footer>
                 <div class="pull-right">
                     Ventas y administración de Inventario <a href="http://faccr.com">Fac-CR</a>
                 </div>
                 <div class="clearfix"></div>
             </footer> -->
-                    <!-- /footer content -->
-                </div>
+                <!-- /footer content -->
             </div>
+        </div>
 
-            <!-- modals -->
-            <!-- Large modal -->
-            <div class="modal fade factura-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content modal-factura">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal">
-                                <span aria-hidden="true">×</span>
-                            </button>
-                            <h4 class="modal-title" id="myModalLabel">Facturar</h4>
-                        </div>
-                        <div class="modal-body">
-                            <div class="row">
-                                <div>
-                                    <center>
-                                        <h1 id="total_pagar"></h1>
-                                    </center>
+        <!-- modals -->
+        <!-- Large modal -->
+        <div class="modal fade factura-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content modal-factura">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                        <h4 class="modal-title" id="myModalLabel">Facturar</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div>
+                                <center>
+                                    <h1 id="total_pagar"></h1>
+                                </center>
 
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div id="formapago">
-
-                                </div>
                             </div>
                         </div>
-                        <div class="modal-footer">
-                            <div id="btn-formapago">
+                        <div class="row">
+                            <div id="formapago">
 
                             </div>
                         </div>
                     </div>
+                    <div class="modal-footer">
+                        <div id="btn-formapago">
+
+                        </div>
+                    </div>
                 </div>
             </div>
-            <!-- modals -->
-            <!-- Large modal -->
+        </div>
+        <!-- modals -->
+        <!-- Large modal -->
 
-            <!-- jQuery -->
-            <script src="assets/js/jquery.min.js"></script>
-            <!-- Bootstrap -->
-            <script src="assets/bootstrap/js/bootstrap.min.js"></script>
-            <!-- FastClick -->
-            <script src="assets/js/fastclick/lib/fastclick.js"></script>
-            <!-- NProgress -->
-            <script src="assets/js/nprogress/nprogress.js"></script>
-            <!-- iCheck -->
-            <script src="assets/js/iCheck/icheck.min.js"></script>
-            <!-- Validator -->
-            <script src="assets/js/validator.js"></script>
-            <!-- Custom Theme Scripts -->
-            <script src="assets/js/custom.min.js"></script>
-            <!-- Input mask -->
-            <script src="assets/js/jquery.inputmask/jquery.inputmask.bundle.min.js"></script>
-            <!-- JS Scripts -->
-            <script src="assets/js/ProductosXBodega.js"></script>
-            <!--CAMBIAR por PxB-->
-            <script src="assets/js/Facturacli.js"></script>
-            <!--CAMBIAR por Facuracli-->
-            <!-- JS dataTables -->
-            <script src="assets/js/jquery.dataTables.min.js"></script>
-            <script src="assets/js/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
-            <!-- JS Moments -->
-            <script src="assets/js/moment.min.js"></script>
-            <!-- Sweet Alert -->
-            <script src="assets/js/sweetalert2.min.js"></script>
+        <!-- jQuery -->
+        <script src="assets/js/jquery.min.js"></script>
+        <!-- Bootstrap -->
+        <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+        <!-- FastClick -->
+        <script src="assets/js/fastclick/lib/fastclick.js"></script>
+        <!-- NProgress -->
+        <script src="assets/js/nprogress/nprogress.js"></script>
+        <!-- iCheck -->
+        <script src="assets/js/iCheck/icheck.min.js"></script>
+        <!-- Validator -->
+        <script src="assets/js/validator.js"></script>
+        <!-- Custom Theme Scripts -->
+        <script src="assets/js/custom.min.js"></script>
+        <!-- Input mask -->
+        <script src="assets/js/jquery.inputmask/jquery.inputmask.bundle.min.js"></script>
+        <!-- JS Scripts -->
+        <script src="assets/js/ProductosXBodega.js"></script>
+        <!--CAMBIAR por PxB-->
+        <script src="assets/js/Facturacli.js"></script>
+        <!--CAMBIAR por Facuracli-->
+        <!-- JS dataTables -->
+        <script src="assets/js/jquery.dataTables.min.js"></script>
+        <script src="assets/js/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+        <!-- JS Moments -->
+        <script src="assets/js/moment.min.js"></script>
+        <!-- Sweet Alert -->
+        <script src="assets/js/sweetalert2.min.js"></script>
+        <!-- Load the jQuery jQBTK plugin's JavaScript -->
+        <script src="assets/js/jqbtk/jqbtk.min.js"></script>
+
 
 </body>
 
