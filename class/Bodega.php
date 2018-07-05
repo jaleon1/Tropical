@@ -21,6 +21,9 @@ if(isset($_POST["action"])){
         case "ListTipos":
             echo json_encode($bodega->ListTipos());
             break;
+        case "List":
+            echo json_encode($bodega->List());
+            break;
         case "Create":
             $bodega->Create();
             break;
@@ -62,7 +65,7 @@ class Bodega{
     function ReadAll(){
         try {
             $sql='SELECT b.id, b.nombre, b.descripcion , t.nombre as tipo
-                FROM     bodega  b INNER JOIN tipobodega t on t.id = b.idtipobodega
+                FROM     bodega  b INNER JOIN tipoBodega t on t.id = b.idTipoBodega
                 ORDER BY b.nombre asc';
             $data= DATA::Ejecutar($sql);
             return $data;
@@ -78,7 +81,7 @@ class Bodega{
 
     function Read(){
         try {
-            $sql='SELECT b.id, b.nombre, b.descripcion, b.ubicacion, b.contacto, b.telefono, b.idtipobodega as tipo
+            $sql='SELECT b.id, b.nombre, b.descripcion, b.ubicacion, b.contacto, b.telefono, b.idTipoBodega as tipo
                 FROM bodega  b
                 where b.id=:id';
             $param= array(':id'=>$this->id);
@@ -97,8 +100,25 @@ class Bodega{
     function ListTipos(){
         try {
             $sql='SELECT id, nombre
-                FROM     tipobodega       
+                FROM     tipoBodega       
                 WHERE   nombre!="Primaria"
+                ORDER BY nombre asc';
+            $data= DATA::Ejecutar($sql);
+            return $data;
+        }
+        catch(Exception $e) {
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar la lista'))
+            );
+        }
+    }
+
+    function List(){
+        try {
+            $sql='SELECT id, nombre
+                FROM     bodega
                 ORDER BY nombre asc';
             $data= DATA::Ejecutar($sql);
             return $data;
@@ -114,7 +134,7 @@ class Bodega{
 
     function Create(){
         try {
-            $sql="INSERT INTO bodega   (id, nombre, ubicacion, descripcion, contacto, telefono, idtipobodega)
+            $sql="INSERT INTO bodega   (id, nombre, ubicacion, descripcion, contacto, telefono, idTipoBodega)
                 VALUES (uuid(), :nombre, :ubicacion, :descripcion, :contacto, :telefono, :tipo)";
             //
             $param= array(':nombre'=>$this->nombre, ':ubicacion'=>$this->ubicacion, ':descripcion'=>$this->descripcion, 
@@ -138,7 +158,7 @@ class Bodega{
     function Update(){
         try {
             $sql="UPDATE bodega 
-                SET nombre=:nombre, ubicacion=:ubicacion, descripcion= :descripcion, contacto=:contacto, telefono=:telefono, idtipobodega=:tipo
+                SET nombre=:nombre, ubicacion=:ubicacion, descripcion= :descripcion, contacto=:contacto, telefono=:telefono, idTipoBodega=:tipo
                 WHERE id=:id";
             $param= array(':id'=>$this->id, ':nombre'=>$this->nombre, ':ubicacion'=>$this->ubicacion, ':descripcion'=>$this->descripcion, 
                 ':contacto'=>$this->contacto, ':telefono'=>$this->telefono, ':tipo'=>$this->tipo);

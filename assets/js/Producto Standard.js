@@ -10,7 +10,7 @@ class Producto {
         this.scancode = scancode || '';
         this.codigoRapido = codigoRapido || '';
         this.fechaExpiracion = fechaExpiracion || null;
-        this.listacategoria = cat || null;
+        this.listaCategoria = cat || null;
     }
 
     //Getter
@@ -46,7 +46,7 @@ class Producto {
         this.scancode = $("#scancode").val();
         this.codigoRapido = $("#codigoRapido").val();
         this.fechaExpiracion = $("#fechaExpiracion").val() == "" ? null : moment($("#fechaExpiracion").val(), 'DD/MM/YYYY').unix(); // UTC TIMESTAMP
-        this.listacategoria = $('#categoria > option:selected').map(function () { return this.value; }).get();
+        this.listaCategoria = $('#categoria > option:selected').map(function () { return this.value; }).get();
         $.ajax({
             type: "POST",
             url: "class/Producto.php",
@@ -81,7 +81,7 @@ class Producto {
                 var data = JSON.parse(e);
                 if(data.status==0)
                     swal({
-                        //position: 'top-end',
+                        //
                         type: 'success',
                         title: 'Eliminado!',
                         showConfirmButton: false,
@@ -124,7 +124,7 @@ class Producto {
         //$(".modal").css({ display: "none" });   
         $(".close").click();
         swal({
-            position: 'top-end',
+            
             type: 'success',
             title: 'Good!',
             showConfirmButton: false,
@@ -256,7 +256,7 @@ class Producto {
         //var data = JSON.parse(e)[0];
         var data = JSON.parse(e);
         producto = new Producto(data.id, data.nombre, data.nombreAbreviado, data.descripcion,
-            data.cantidad, data.precio, data.scancode, data.codigoRapido, data.fechaExpiracion, data.listacategoria);
+            data.cantidad, data.precio, data.scancode, data.codigoRapido, data.fechaExpiracion, data.listaCategoria);
         // Asigna objeto a controles
         $("#id").val(producto.id);
         $("#nombre").val(producto.nombre);
@@ -270,7 +270,7 @@ class Producto {
             producto.fechaExpiracion == null ? null : moment(producto.fechaExpiracion, 'X').format('DD/MM/YYYY')
         );
         //Categorías 
-        $.each(producto.listacategoria, function(i, item){
+        $.each(producto.listaCategoria, function(i, item){
             $('#categoria option[value=' + item.id + ']').prop("selected", true);
         });
         

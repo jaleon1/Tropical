@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+
+
+<html lang="en">
+
+<head>
+    <!-- check User session -->
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/Session.js"></script>
+    <script>
+        // Session.Check();
+    </script>
+    <!-- /End check -->
+
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Meta, title, CSS, favicons, etc. -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Tropical | FE</title>
+
+    <!-- Bootstrap -->
+    <link href="assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="assets/css/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <!-- NProgress -->
+    <link href="assets/css/nprogress/nprogress.css" rel="stylesheet">
+    <!-- Custom Theme Style -->
+    <link href="assets/css/custom.css" rel="stylesheet">
+    <!-- SweetAlert -->
+    <link rel="stylesheet" href="assets/css/sweetalert2.min.css">
+</head>
+
+<body class="nav-md">
+    <div class="container body">
+        <div class="main_container">
+            <div class="col-md-3 left_col">
+                <div class="left_col scroll-view">
+                    <div class="navbar nav_title" style="border: 0;">
+                        <a href="index.html" class="site_title">
+                            <i class="glyphicon glyphicon-share-alt"></i>
+                            <span>Tropical Sno!</span>
+                        </a>
+                    </div>
+
+                    <div class="clearfix"></div>
+
+                    <!-- menu profile quick info -->
+                    <div class="profile clearfix">
+                        <div class="profile_pic">
+                            <img src="images/user.png" alt="..." class="img-circle profile_img">
+                        </div>
+                        <div class="profile_info">
+                            <span>Bienvenido,</span>
+                            <h2 id='call_name'></h2>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <!-- /menu profile quick info -->
+
+                    <br />
+
+                    <!-- sidebar menu -->
+                    <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+                        <div class="menu_section">
+                            <h3 class="menuName"></h3>
+                            <ul id="menubox" class="nav side-menu">
+                                
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- /sidebar menu -->
+
+                    <!-- /menu footer buttons -->
+                    <div class="sidebar-footer hidden-small">
+                        <a data-toggle="tooltip" data-placement="top" title="Settings">
+                            <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+                        </a>
+                        <a data-toggle="tooltip" data-placement="top" title="FullScreen">
+                            <span class="glyphicon glyphicon-fullscreen" aria-hidden="true"></span>
+                        </a>
+                        <a data-toggle="tooltip" data-placement="top" title="Lock">
+                            <span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
+                        </a>
+                        <a data-toggle="tooltip" data-placement="top" title="Logout" onclick="Session.End();">
+                            <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
+                        </a>
+                    </div>
+                    <!-- /menu footer buttons -->
+                </div>
+            </div>
+
+            <!-- top navigation -->
+            <div class="top_nav">
+                <div class="nav_menu">
+                    <nav>
+                        <div class="nav toggle">
+                            <a id="menu_toggle">
+                                <i class="fa fa-bars"></i>
+                            </a>
+                        </div>
+
+                        <ul class="nav navbar-nav navbar-right">
+                            <li class="">
+                                <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false" id='call_username' >
+                                    
+                                </a>
+                                <ul class="dropdown-menu dropdown-usermenu pull-right">
+                                    <li>
+                                        <a href="javascript:;"> Profile</a>
+                                    </li>
+                                    <li>
+                                        <a onclick="Session.End();">
+                                            <i class="fa fa-sign-out pull-right"></i> Log Out</a>
+                                    </li>
+                                </ul>
+                            </li>
+
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+            <!-- /top navigation -->
+
+            <!-- page content -->
+            <div class="right_col" role="main">
+                <div class="">
+                    <div class="page-title">
+                        <div class="title_left">
+                            <h3>FE</h3>
+                        </div>
+                    </div>
+
+                    <div class="clearfix"></div>
+
+                    <div class="row">
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+                            <div class="x_panel">
+                                <div class="x_title">
+                                    
+
+                                </div>
+                                <!--  CONTENIDO DE LA PAGINA -->
+                                <div id='err'></div>
+                                 
+
+
+                                <!--  / CONTENIDO DE LA PAGINA -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="clearfix"></div>
+
+                    <div class="ln_solid"></div>
+
+
+                </div>
+            </div>
+            <!-- /page content -->
+
+        </div>
+
+    </div>
+
+    <!-- footer content -->
+    <footer>
+        <div class="pull-right">
+            Tropical SNO
+            <a href="http://StoryLabscr.com">Tropical Sno</a>
+        </div>
+        <div class="clearfix"></div>
+    </footer>
+    <!-- /footer content -->
+
+    <!-- Bootstrap -->
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <!-- FastClick -->
+    <script src="assets/js/fastclick/lib/fastclick.js"></script>
+    <!-- NProgress -->
+    <script src="assets/js/nprogress/nprogress.js"></script>
+    <!-- Validator -->
+    <script src="assets/js/validator.js"></script>
+    <!-- Custom Theme Scripts -->
+    <script src="assets/js/custom.min.js"></script>
+    <!-- Input mask -->
+    <script src="assets/js/jquery.inputmask/jquery.inputmask.bundle.min.js"></script>
+    <!-- JS Scripts -->
+
+    <!-- Sweet Alert -->
+    <script src="assets/js/sweetalert2.min.js"></script>
+</body>
+
+</html>
+
+<script>
+    //  $.post("https://api.comprobanteselectronicos.go.cr/recepcion-sandbox/v1/recepcion/", function(data, status){
+    //     alert("Data: " + data + "\nStatus: " + status);
+    // });
+
+$.ajaxPrefilter(function(options, originalOptions, jqXHR) {
+    if (options.url.match(/^https?:/)) {
+        options.headers['X-Proxy-URL'] = options.url;
+        // options.headers['token']= options.headers['Authorization']; // token
+        // options.url = 'class/proxy.php';
+        options.url = 'class/FE.php';
+    }
+});
+
+    $.ajax({
+            type: "POST",
+            url: "https://api.comprobanteselectronicos.go.cr/recepcion-sandbox/v1/recepcion/",
+            headers: {
+                "Authorization": 'Bearer eyJhbGciOiJSUzI1NiJ9.eyJqdGkiOiI0OTYzNjlkNC0xZTQzLTQzYWItYWI3Mi04MDU0NTk0ZTYxYTYiLCJleHAiOjE1MzAwNzU1MjUsIm5iZiI6MCwiaWF0IjoxNTMwMDc1MjI1LCJpc3MiOiJodHRwczovL2lkcC5jb21wcm9iYW50ZXNlbGVjdHJvbmljb3MuZ28uY3IvYXV0aC9yZWFsbXMvcnV0LXN0YWciLCJhdWQiOiJhcGktc3RhZyIsInN1YiI6ImQwYzZlYzMzLTdjMWItNDg3NC1iNWRjLTBlOTJlMDUxNjViNSIsInR5cCI6IkJlYXJlciIsImF6cCI6ImFwaS1zdGFnIiwic2Vzc2lvbl9zdGF0ZSI6ImNjMTk0ZTc3LWE1ZDgtNDA5ZS05OTcwLWQwMTVlNTFjNTkzMyIsImNsaWVudF9zZXNzaW9uIjoiNjkyN2I2NTUtZjM1MC00MmQ0LWE1ZTctNDI0NGFlNWU1ODg1IiwiYWxsb3dlZC1vcmlnaW5zIjpbXSwicmVzb3VyY2VfYWNjZXNzIjp7ImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJ2aWV3LXByb2ZpbGUiXX19LCJuYW1lIjoiQ0FSTE9TIEVEVUFSRE8gQ0hBQ09OIENBTFZPIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiY3BmLTAxLTExODctMDc2M0BzdGFnLmNvbXByb2JhbnRlc2VsZWN0cm9uaWNvcy5nby5jciIsImdpdmVuX25hbWUiOiJDQVJMT1MgRURVQVJETyIsImZhbWlseV9uYW1lIjoiQ0hBQ09OIENBTFZPIiwicG9saWN5LWlkIjoiNThhNjIwMzM3NmVhZTE0MDhjZTVlN2RkIiwiZW1haWwiOiJjcGYtMDEtMTE4Ny0wNzYzQHN0YWcuY29tcHJvYmFudGVzZWxlY3Ryb25pY29zLmdvLmNyIn0.Yafuftmw3f-VAWCtZyVfUVcW7jDmfcPw-1ur-IqC2lLHmuO0tUkFFf89_-Xc-oSmMhJPBOi-aeHQqCXfAQJ775zo0On0hP-4aSjCh9Gu2cJCT3haJ17NB2nUXHtWihItZ251M6qDuWccqoi0a_dTESZIWiafH1gXkLlLK0u_RFh-VYXeKFSUf-i6EWvmqNEaiMMrn-5spZKSKz3C1FQH12IzFdM2eIb6BF0g0Ai_aGFkopzUlaC7AZ93bZS81cVrW_Mq3fNHPhaUIT_qyUBp9wxYQU-dbzelaZo4wKYN0FAr8npvGqxoKSQrETRynzLebCTJeyvi47l9WHtfRIpJkw'
+            },     
+            contentType: 'application/json',       
+            data: {
+                
+                clave: "50626061800011187076300100001010000000001199999999",
+                fecha: "2016-01-01T00:00:00-0600",
+                emisor: {
+                    tipoIdentificacion: "01",
+                    numeroIdentificacion: "111870763"
+                },
+                receptor: {
+                    tipoIdentificacion: "01",
+                    numeroIdentificacion: "111870763"
+                },
+                comprobanteXml: "PD94bWwgdmVyc2lvbj0iMS4wIiA/Pg0KDQo8ZG9tYWluIHhtbG5zPSJ1cm46amJvc3M6ZG9tYWluOjQuMCI+DQogICAgPGV4dGVuc2lvbnM+DQogICAgICAgIDxleHRlbnNpb24gbW9kdWxlPSJvcmcuamJvc3MuYXMuY2x1c3RlcmluZy5pbmZpbmlzcGFuIi8+DQogICAgICAgIDxleHRlbnNpb24gbW9kdWxlPSJvcmcuamJvc3MuYXMuY2x1c3RlcmluZy5qZ3JvdXBzIi8+DQogICAgICAgIDxleHRlbnNpb24gbW9kdWxlPSJvcmcuamJvc3MuYXMuY29ubmVjdG9yIi8+DQogICAgICAgIDxleHRlbnNpb24gbW"
+
+            }
+        })
+            .done(function (e) {
+                //var data= JSON.parse(e);
+                //alert(e);
+                $('.x_title').text(e);
+            })
+            .fail(function (e) {
+                var data= JSON.parse(e.responseText);
+                alert(data.msg);
+            });
+
+
+
+
+    var url= "https://api.comprobanteselectronicos.go.cr/recepcion-sandbox/v1/recepcion/";
+    var method= 'post';
+    var xhr = new XMLHttpRequest();
+    // makeCorsRequest();
+    
+    function createCORSRequest(method, url) {
+        var xhr = new XMLHttpRequest();
+        xhr.withCredentials = true;
+        if ("withCredentials" in xhr) {
+            // XHR for Chrome/Firefox/Opera/Safari.
+            xhr.open(method, url, true);
+        } else if (typeof XDomainRequest != "undefined") {
+            // XDomainRequest for IE.
+            xhr = new XDomainRequest();
+            xhr.open(method, url);
+        } else {
+            // CORS not supported.
+            xhr = null;
+        }
+        return xhr;
+    }
+
+    function getTitle(text) {
+        return text.match('<title>(.*)?</title>')[1];
+    }
+
+    function makeCorsRequest() {
+        // This is a sample server that supports CORS.
+        var xhr = createCORSRequest('POST', url);
+        if (!xhr) {
+            alert('CORS not supported');
+            return;
+    }
+
+    // Response handlers.
+    xhr.onload = function() {
+            var text = xhr.responseText;
+            var title = getTitle(text);
+            alert('Response from CORS request to ' + url + ': ' + title);
+        };
+
+        xhr.onerror = function() {
+            alert('Woops, there was an error making the request.');
+        };
+
+        xhr.send();
+    }
+
+
+
+</script>

@@ -2,19 +2,18 @@
 require_once("Conexion.php");
 
 class InsumosxOrdenSalida{
-    public $idinsumo;
-    public $idproductotemporal;
+    public $idInsumo;
     public $cantidad;
-    public $costopromedio;
+    public $costoPromedio;
 
     function Read($idordensalida){
         try {
-            $sql='SELECT `insumosxordensalida`.`id`,
-            `insumosxordensalida`.`idordensalida`,
-            `insumosxordensalida`.`idinsumo`,
-            (SELECT nombre FROM insumo WHERE id=`insumosxordensalida`.`idinsumo`) AS nombreinsumo,
+            $sql='SELECT `insumosxordensalida`.`idordensalida`,
+            `insumosxordensalida`.`id`,
+            `insumosxordensalida`.`idInsumo`,
+            (SELECT nombre FROM insumo WHERE id=`insumosxordensalida`.`idInsumo`) AS nombreinsumo,
             `insumosxordensalida`.`cantidad`,
-            `insumosxordensalida`.`costopromedio`
+            `insumosxordensalida`.`costoPromedio`
             FROM `tropical`.`insumosxordensalida` WHERE idordensalida=:id';
             $param= array(':id'=>$idordensalida);
             $data= DATA::Ejecutar($sql,$param);
@@ -33,22 +32,22 @@ class InsumosxOrdenSalida{
         try {
             $created = true;
             foreach ($obj as $ins_orden) {
-                
                 //Selecciona la cantidad de Insumos
-                $sql_insumo="SELECT saldocantidad FROM insumo WHERE id=:idinsumo";
-                $param_insumo= array(':idinsumo'=>$ins_orden->idinsumo);
-                $data_cantidad = DATA::Ejecutar($sql_insumo,$param_insumo);
-                $cantidad_insumo = $data_cantidad[0][0] - $ins_orden->cantidad;
+                $sql_insumo="SELECT saldoCantidad,costoPromedio FROM insumo WHERE id=:idInsumo";
+                $param_insumo= array(':idInsumo'=>$ins_orden->idInsumo);
+                $data_insumo = DATA::Ejecutar($sql_insumo,$param_insumo);
+                $saldoCantidad = $data_insumo[0][0] - $ins_orden->cantidad;
+                $saldoCosto = $data_insumo[0][1] * $saldoCantidad;
 
                 //Actualiza la cantidad de Insumos
-                $sql_insumo="UPDATE insumo SET saldocantidad=:saldocantidad WHERE id=:idinsumo";
-                $param_insumo= array(':saldocantidad'=>$cantidad_insumo, ':idinsumo'=>$ins_orden->idinsumo);
+                $sql_insumo="UPDATE insumo SET saldoCantidad=:saldoCantidad, saldoCosto=:saldoCosto WHERE id=:idInsumo";
+                $param_insumo= array(':saldoCantidad'=>$saldoCantidad, ':saldoCosto'=>$saldoCosto, ':idInsumo'=>$ins_orden->idInsumo);
                 $data_insumo = DATA::Ejecutar($sql_insumo,$param_insumo,false);
                 
                 //Inserta en tabla intermedia insumos y productos
-                $sql="INSERT INTO insumosxordensalida (id,idordensalida, idinsumo, cantidad, costopromedio)
-                VALUES (uuid(),:idordensalida, :idinsumo, :cantidad, :costopromedio)";
-                $param= array(':idordensalida'=>$ins_orden->idordensalida, ':idinsumo'=>$ins_orden->idinsumo,':cantidad'=>$ins_orden->cantidad, ':costopromedio'=>$ins_orden->costopromedio);
+                $sql="INSERT INTO insumosxordensalida (id,idordensalida, idInsumo, cantidad, costoPromedio)
+                VALUES (uuid(),:idordensalida, :idInsumo, :cantidad, :costoPromedio)";
+                $param= array(':idordensalida'=>$ins_orden->idordensalida, ':idInsumo'=>$ins_orden->idInsumo,':cantidad'=>$ins_orden->cantidad, ':costoPromedio'=>$ins_orden->costoPromedio);
                 $data = DATA::Ejecutar($sql,$param,false);
                 
                 if(!$data and !$data_insumo)
@@ -61,11 +60,46 @@ class InsumosxOrdenSalida{
         }
     }
 
+    public static function UpdateSaldoCantidadInsumo($obj){
+        try {
+            $created = true;
+            foreach ($obj as $ins_orden) {
+                //Selecciona la cantidad de Insumos
+                $sql_insumo="SELECT saldoCantidad FROM insumo WHERE id=:idInsumo";
+                $param_insumo= array(':idInsumo'=>$ins_orden->idInsumo);
+                $cantidadinsumo = DATA::Ejecutar($sql_insumo,$param_insumo);
+                
+                //Selecciona la cantidad de Insumos
+                $sql_insumo="SELECT cantidad FROM insumosxordensalida WHERE idordensalida=:idordensalida AND idInsumo=:idInsumo";
+                $param_orden= array(':idordensalida'=>$ins_orden->idordensalida,':idInsumo'=>$ins_orden->idInsumo);
+                $cantidadorden = DATA::Ejecutar($sql_insumo,$param_orden);
+                
+                $saldoCantidad = $cantidadinsumo[0][0] + $cantidadorden[0][0];
+
+                //Actualiza la cantidad de Insumos
+                $sql_insumo="UPDATE insumo SET saldoCantidad=:saldoCantidad WHERE id=:idInsumo";
+                $param= array(':saldoCantidad'=>$saldoCantidad, ':idInsumo'=>$ins_orden->idInsumo);
+                $data_insumo = DATA::Ejecutar($sql_insumo,$param,false);
+            
+                if(!$data_insumo)
+                $created= false;
+            }
+            return $created;
+        }     
+        catch(Exception $e) {
+            return false;
+        }
+    }
+
+
+
     public static function Update($obj){
         try {
             $updated = true;
+            // Devuelve el valor restado a los insumos
+            $updated= self::UpdateSaldoCantidadInsumo($obj);
             // elimina todos los objetos relacionados
-            $updated= self::Delete($obj[0]->idproductotemporal);
+            $updated= self::Delete($obj[0]->idordensalida);
             // crea los nuevos objetos
             $updated= self::Create($obj);
             return $updated;
@@ -75,11 +109,11 @@ class InsumosxOrdenSalida{
         }
     }
 
-    public static function Delete($_idproductotemporal){
+    public static function Delete($_idordensalida){
         try {                 
-            $sql='DELETE FROM insumoxordensalida  
-                WHERE idproductotemporal= :idproductotemporal';
-            $param= array(':idproductotemporal'=> $_idproductotemporal);
+            $sql='DELETE FROM insumosxordensalida  
+                WHERE idordensalida= :idordensalida';
+            $param= array(':idordensalida'=> $_idordensalida);
             $data= DATA::Ejecutar($sql, $param, false);
             if($data)
                 return true;

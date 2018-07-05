@@ -29,12 +29,14 @@ if(isset($_POST["action"])){
         case "Login":
             $usuario->username= $_POST["username"];
             $usuario->password= $_POST["password"];
-            $usuario->Login();
-            echo json_encode($_SESSION['usersession']);
+            $usuario->ip= $_POST["ip"];
+            if($usuario->checkIp())
+                $usuario->Login();
+            echo json_encode($_SESSION['userSession']);
             break;   
         case "CheckSession":     
             $usuario->CheckSession();
-            echo json_encode($_SESSION['usersession']);
+            echo json_encode($_SESSION['userSession']);
             break;
         case "EndSession":
             $usuario->EndSession();
@@ -53,6 +55,7 @@ abstract class userSessionStatus
     const nocredencial= 'nocredencial'; // login ok; sin credenciales
     const inactivo= 'inactivo';
     const noexiste= 'noexiste';
+    const noip= 'noip';
 }
 
 class Usuario{
@@ -65,7 +68,10 @@ class Usuario{
     public $status = userSessionStatus::invalido; // estado de la sesion de usuario.
     public $listarol= array(); // array de roles del usuario.
     public $eventos= array(); // array de eventos asignados a la sesion de usuario.
-    public $url;    
+    public $url;
+    public $idBodega;
+    public $bodega;
+    public $ip;
 
     function __construct(){
         // identificador único
@@ -81,14 +87,15 @@ class Usuario{
             $this->password= $obj["password"] ?? '';  
             $this->email= $obj["email"] ?? '';  
             $this->activo= $obj["activo"] ?? '';
+            $this->idBodega= $obj["idBodega"] ?? null;
             //roles del usuario.
             if(isset($obj["listarol"] )){
                 require_once("RolesXUsuario.php");
                 //
-                foreach ($obj["listarol"] as $idrol) {
+                foreach ($obj["listarol"] as $idRol) {
                     $rolUsr= new RolesXUsuario();
-                    $rolUsr->idrol= $idrol;
-                    $rolUsr->idusuario= $this->id;
+                    $rolUsr->idRol= $idRol;
+                    $rolUsr->idUsuario= $this->id;
                     array_push ($this->listarol, $rolUsr);
                 }
             }
@@ -97,16 +104,31 @@ class Usuario{
 
     // login and user session
 
+    function checkIp(){
+        $sql= 'SELECT ip
+            FROM ipAutorizada
+            where ip=:ip';
+        $param= array(':ip'=>$this->ip);
+        $data= DATA::Ejecutar($sql, $param);
+        if(!count($data)){
+            unset($_SESSION["userSession"]);
+            $this->status= userSessionStatus::noip;
+            $_SESSION["userSession"]= $this;
+            return false;
+        }
+        else return true;
+    }
+
     function CheckSession(){
-        if(isset($_SESSION["usersession"]->id)){
+        if(isset($_SESSION["userSession"]->id)){
             // VALIDA SI TIENE CREDENCIALES PARA LA URL CONSULTADA
-            $_SESSION['usersession']->status= userSessionStatus::nocredencial;
-            $_SESSION['usersession']->url = $_POST["url"];
-            $urlarr = explode('/', $_SESSION['usersession']->url);
+            $_SESSION['userSession']->status= userSessionStatus::nocredencial;
+            $_SESSION['userSession']->url = $_POST["url"];
+            $urlarr = explode('/', $_SESSION['userSession']->url);
             $myUrl = end($urlarr);
-            foreach ($_SESSION['usersession']->eventos as $evento) {
+            foreach ($_SESSION['userSession']->eventos as $evento) {
                 if(strtolower($myUrl) == strtolower($evento->url)){
-                    $_SESSION['usersession']->status= userSessionStatus::login;
+                    $_SESSION['userSession']->status= userSessionStatus::login;
                     break;
                 }
             }
@@ -114,31 +136,29 @@ class Usuario{
         else {
             $this->status= userSessionStatus::invalido;
             $this->url = $_POST["url"];
-            $_SESSION["usersession"]= $this;
+            $_SESSION["userSession"]= $this;
         }
     }
 
     function EndSession(){
-        unset($_SESSION['usersession']);
+        unset($_SESSION['userSession']);
         //return true;
     }
 
     function Login(){
         try { 
-            // demo; borrar...........<<<<
-            //$this->password= $this->CreateHash();
-            //..................>>>>
             //Check activo & password.
-            $sql= 'SELECT u.id, u.username, u.nombre, activo, password, idevento, e.nombre as nombreUrl, e.url, menupadre, submenupadre
-            FROM usuario u inner join rolesxusuario ru on ru.idusuario = u.id
-                inner join eventosxrol er on er.idrol = ru.idrol
-                inner join evento e on e.id = er.idevento
+            $sql= 'SELECT u.id, u.username, u.nombre, activo, password, idEvento, e.nombre as nombreUrl, e.url, menuPadre, subMenuPadre, idBodega , b.nombre as bodega
+            FROM usuario u inner join rolesXUsuario ru on ru.idUsuario = u.id
+                inner join eventosXRol er on er.idRol = ru.idRol
+                inner join evento e on e.id = er.idEvento
+                inner join bodega b on b.id = u.idBodega
                 where username=:username';
             $param= array(':username'=>$this->username);
             $data= DATA::Ejecutar($sql, $param);
             if($data){
                 if($data[0]['activo']==0){
-                    unset($_SESSION["usersession"]);
+                    unset($_SESSION["userSession"]);
                     $this->status= userSessionStatus::inactivo;
                 }
                 else {
@@ -153,40 +173,43 @@ class Usuario{
                                 $this->nombre = $value['nombre'];
                                 $this->activo = $value['activo'];
                                 $this->status = userSessionStatus::login;
-                                $this->url = isset($_SESSION['usersession']->url)? $_SESSION['usersession']->url : 'Dashboard.html'; // Url consultada
+                                $this->url = isset($_SESSION['userSession']->url)? $_SESSION['userSession']->url : 'Dashboard.html'; // Url consultada
+                                $this->idBodega = $value['idBodega'];
+                                $this->bodega = $value['bodega'];
+                                $_SESSION['idBodega']= $this->idBodega;
                                 //
-                                $evento->id= $value['idevento'];
+                                $evento->id= $value['idEvento'];
                                 $evento->nombre= $value['nombreUrl'];
                                 $evento->url= $value['url'];
-                                $evento->menupadre= $value['menupadre'];
-                                $evento->submenupadre= $value['submenupadre'];
+                                $evento->menuPadre= $value['menuPadre'];
+                                $evento->subMenuPadre= $value['subMenuPadre'];
                                 $this->eventos = array($evento);
                             }
                             else {
-                                $evento->id= $value['idevento'];
+                                $evento->id= $value['idEvento'];
                                 $evento->nombre= $value['nombreUrl'];
                                 $evento->url= $value['url'];
-                                $evento->menupadre= $value['menupadre'];
-                                $evento->submenupadre= $value['submenupadre'];
+                                $evento->menuPadre= $value['menuPadre'];
+                                $evento->subMenuPadre= $value['subMenuPadre'];
                                 array_push ($this->eventos, $evento);
                             }                    
                         }
                     }
                     else { // password invalido
-                        unset($_SESSION["usersession"]);
+                        unset($_SESSION["userSession"]);
                         $this->status= userSessionStatus::invalido;
                     }
                 }
             }
             else {
-                unset($_SESSION["usersession"]);
+                unset($_SESSION["userSession"]);
                 $this->status= userSessionStatus::noexiste;
             }
             // set user session.
-            $_SESSION["usersession"]= $this;
+            $_SESSION["userSession"]= $this;
         }     
         catch(Exception $e) {
-            unset($_SESSION["usersession"]);
+            unset($_SESSION["userSession"]);
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
@@ -216,9 +239,9 @@ class Usuario{
 
     function Read(){
         try {
-            $sql='SELECT u.id, u.nombre, u.username, u.password, email, activo, r.id as idrol, r.nombre as nombrerol
-                FROM usuario  u LEFT JOIN rolesxusuario ru on ru.idusuario = u.id
-                    LEFT JOIN rol r on r.id = ru.idrol
+            $sql='SELECT u.id, u.nombre, u.username, u.password, email, activo, r.id as idRol, r.nombre as nombreRol, idBodega
+                FROM usuario  u LEFT JOIN rolesXUsuario ru on ru.idUsuario = u.id
+                    LEFT JOIN rol r on r.id = ru.idRol
                 where u.id=:id';
             $param= array(':id'=>$this->id);
             $data= DATA::Ejecutar($sql,$param);     
@@ -233,16 +256,17 @@ class Usuario{
                     $this->password = $value['password'];
                     $this->email = $value['email'];
                     $this->activo = $value['activo'];
+                    $this->idBodega = $value['idBodega'];
                     //rol
-                    if($value['idrol']!=null){
-                        $rol->id = $value['idrol'];
-                        $rol->nombre = $value['nombrerol'];
+                    if($value['idRol']!=null){
+                        $rol->id = $value['idRol'];
+                        $rol->nombre = $value['nombreRol'];
                         array_push ($this->listarol, $rol);
                     }
                 }
                 else {
-                    $rol->id = $value['idrol'];
-                    $rol->nombre = $value['nombrerol'];
+                    $rol->id = $value['idRol'];
+                    $rol->nombre = $value['nombreRol'];
                     array_push ($this->listarol, $rol);
                 }
             }
@@ -259,11 +283,11 @@ class Usuario{
 
     function Create(){
         try {
-            $sql="INSERT INTO usuario   (id, nombre, username, password, email, activo)
-                VALUES (:uuid, :nombre, :username, :password, :email, :activo)";
+            $sql="INSERT INTO usuario   (id, nombre, username, password, email, activo, idBodega)
+                VALUES (:uuid, :nombre, :username, :password, :email, :activo, :idBodega)";
             //
             $param= array(':uuid'=>$this->id, ':nombre'=>$this->nombre, ':username'=>$this->username, ':password'=> password_hash($this->password, PASSWORD_DEFAULT), 
-                ':email'=>$this->email, ':activo'=>$this->activo);
+                ':email'=>$this->email, ':activo'=>$this->activo, ':idBodega'=>$this->idBodega);
             $data = DATA::Ejecutar($sql,$param, false);
             if($data)
             {
@@ -287,13 +311,13 @@ class Usuario{
         try {
             if($this->password=='NOCHANGED'){
                 $sql="UPDATE usuario 
-                    SET nombre=:nombre, username=:username, email=:email, activo=:activo 
+                    SET nombre=:nombre, username=:username, email=:email, activo=:activo, idBodega=:idBodega
                     WHERE id=:id";
-                $param= array(':id'=>$this->id, ':nombre'=>$this->nombre, ':username'=>$this->username, ':email'=>$this->email, ':activo'=>$this->activo);
+                $param= array(':id'=>$this->id, ':nombre'=>$this->nombre, ':username'=>$this->username, ':email'=>$this->email, ':activo'=>$this->activo, ':idBodega'=>$this->idBodega);
             }
             else {
                 $sql="UPDATE usuario 
-                    SET nombre=:nombre, username=:username, password= :password, email=:email, activo=:activo 
+                    SET nombre=:nombre, username=:username, password= :password, email=:email, activo=:activo, idBodega=:idBodega
                     WHERE id=:id";
                 $param= array(':id'=>$this->id, ':nombre'=>$this->nombre, ':username'=>$this->username, ':password'=> password_hash($this->password, PASSWORD_DEFAULT), ':email'=>$this->email, ':activo'=>$this->activo);
             }
@@ -345,9 +369,9 @@ class Usuario{
 
     private function CheckRelatedItems(){
         try{
-            $sql="SELECT idusuario
-                FROM rolesxusuario x
-                WHERE x.idusuario= :id";
+            $sql="SELECT idUsuario
+                FROM rolesXUsuario x
+                WHERE x.idUsuario= :id";
             $param= array(':id'=>$this->id);
             $data= DATA::Ejecutar($sql, $param);
             if(count($data))

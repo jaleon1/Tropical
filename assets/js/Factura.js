@@ -1,9 +1,9 @@
 class Factura {
     // Constructor
-    constructor(id, cajero, producto, descuento, total, fechaCreacion, importe, t, idusuario, idcliente) {
+    constructor(id, cajero, producto, descuento, total, fechaCreacion, importe, t, idUsuario, idcliente) {
         this.id = id || null;
         this.cajero = cajero || '';
-        this.idusuario = idusuario || '';
+        this.idUsuario = idUsuario || '';
         this.idcliente = idcliente || '';
         this.descuento=descuento || 0;
         this.producto=producto || new Array(new Array ());
@@ -237,14 +237,14 @@ function calcTotal(){
             
             subT= subT + parseFloat((item.childNodes[4].textContent).replace("¢","")); 
         });
-        $("#subtotal")[0].textContent = "¢"+subT.toFixed(2); 
+        $("#subTotal")[0].textContent = "¢"+subT.toFixed(2); 
         factura.descuento = $("#desc_val")[0].textContent = "¢"+ (subT * (parseFloat(($("#desc_100")[0].textContent).replace("%",""))) / 100).toFixed(2) ;
         factura.impuesto = $("#iv_val")[0].textContent = "¢"+ ((subT * (parseFloat(($("#iv_100")[0].textContent).replace("%","")) / 100)) - (parseFloat(($("#desc_val")[0].textContent).replace("¢","")))).toFixed(2) ;
-        $("#total")[0].textContent = "¢" + ((($("#subtotal")[0].textContent).replace("¢","")) - parseFloat(($("#desc_val")[0].textContent).replace("¢","")) + parseFloat(($("#iv_val")[0].textContent).replace("¢",""))).toFixed(2);
+        $("#total")[0].textContent = "¢" + ((($("#subTotal")[0].textContent).replace("¢","")) - parseFloat(($("#desc_val")[0].textContent).replace("¢","")) + parseFloat(($("#iv_val")[0].textContent).replace("¢",""))).toFixed(2);
     }
     else{
         $('#open_modal_fac').attr("disabled", true);
-        $("#subtotal")[0].textContent = "¢0"; 
+        $("#subTotal")[0].textContent = "¢0"; 
         $("#desc_val")[0].textContent = "¢0";
         $("#iv_val")[0].textContent = "¢0";
         $("#total")[0].textContent = "¢0";
@@ -486,7 +486,7 @@ function CleanCtls() {
 //     //$(".modal").css({ display: "none" });  
     
 //     // swal({
-//     //     position: 'top-end',
+//     //     
 //     //     type: 'success',
 //     //     title: 'Good!',
 //     //     showConfirmButton: false,

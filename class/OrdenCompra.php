@@ -9,22 +9,22 @@ if(isset($_POST["action"])){
     if (!isset($_SESSION))
         session_start();
     // Instance
-    $ordencompra= new OrdenCompra();
+    $ordenCompra= new OrdenCompra();
     switch($opt){
         case "ReadAll":
-            echo json_encode($ordencompra->ReadAll());
+            echo json_encode($ordenCompra->ReadAll());
             break;
         case "Read":
-            echo json_encode($ordencompra->Read());
+            echo json_encode($ordenCompra->Read());
             break;
         case "Create":
-            $ordencompra->Create();
+            $ordenCompra->Create();
             break;
         case "Update":
-            $ordencompra->Update();
+            $ordenCompra->Update();
             break;
         case "Delete":
-            $ordencompra->Delete();
+            $ordenCompra->Delete();
             break;   
     }
 }
@@ -32,9 +32,9 @@ if(isset($_POST["action"])){
 class OrdenCompra{
     public $id=null;
     public $fecha='';
-    public $idproveedor=null;
+    public $idProveedor=null;
     public $orden='';
-    public $idusuario=null;
+    public $idUsuario=null;
     public $lista= [];
 
     function __construct(){
@@ -47,22 +47,22 @@ class OrdenCompra{
             require_once("UUID.php");
             $this->id= $obj["id"] ?? UUID::v4();
             //$this->fecha= $obj["fecha"] ?? '';
-            $this->idproveedor= $obj["idproveedor"] ?? null;
+            $this->idProveedor= $obj["idProveedor"] ?? null;
             $this->orden= $obj["orden"] ?? '';            
-            //$this->idusuario= $obj["idusuario"] ?? null;
+            //$this->idUsuario= $obj["idUsuario"] ?? null;
             // lista.
             if(isset($obj["lista"] )){
                 require_once("InsumosXOrdenCompra.php");
                 //
                 foreach ($obj["lista"] as $itemlist) {
                     $item= new InsumosXOrdenCompra();
-                    $item->idordencompra= $this->id;
-                    $item->idinsumo= $itemlist['idinsumo'];
-                    $item->costounitario= $itemlist['costounitario'];
-                    $item->cantidadbueno= $itemlist['cantidadbueno'];
-                    $item->cantidadmalo= $itemlist['cantidadmalo'];
-                    $item->valorbueno= $itemlist['valorbueno'];
-                    $item->valormalo= $itemlist['valormalo'];
+                    $item->idOrdenCompra= $this->id;
+                    $item->idInsumo= $itemlist['idInsumo'];
+                    $item->costoUnitario= $itemlist['costoUnitario'];
+                    $item->cantidadBueno= $itemlist['cantidadBueno'];
+                    $item->cantidadMalo= $itemlist['cantidadMalo'];
+                    $item->valorBueno= $itemlist['valorBueno'];
+                    $item->valorMalo= $itemlist['valorMalo'];
                     array_push ($this->lista, $item);
                 }
             }
@@ -71,8 +71,8 @@ class OrdenCompra{
 
     function ReadAll(){
         try {
-            $sql='SELECT id, fecha, idproveedor, orden, idusuario
-                FROM     ordencompra       
+            $sql='SELECT id, fecha, idProveedor, orden, idUsuario
+                FROM     ordenCompra       
                 ORDER BY fecha asc';
             $data= DATA::Ejecutar($sql);
             return $data;
@@ -88,8 +88,8 @@ class OrdenCompra{
 
     function Read(){
         try {
-            $sql='SELECT id, fecha, idproveedor, orden, idusuario
-                FROM ordencompra  
+            $sql='SELECT id, fecha, idProveedor, orden, idUsuario
+                FROM ordenCompra  
                 where id=:id';
             $param= array(':id'=>$this->id);
             $data= DATA::Ejecutar($sql,$param);
@@ -99,18 +99,18 @@ class OrdenCompra{
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
-                'msg' => 'Error al cargar el ordencompra'))
+                'msg' => 'Error al cargar el ordenCompra'))
             );
         }
     }
 
     function Create(){
         try {
-            $sql="INSERT INTO ordencompra   (id, idproveedor, orden, idusuario) VALUES (:id, :idproveedor, :orden, :idusuario);";
+            $sql="INSERT INTO ordenCompra   (id, idProveedor, orden, idUsuario) VALUES (:id, :idProveedor, :orden, :idUsuario);";
             //
             //require_once('Evento.php');
             
-            $param= array(':id'=>$this->id ,':idproveedor'=>$this->idproveedor, ':orden'=>$this->orden, ':idusuario'=>$_SESSION['usersession']->id);
+            $param= array(':id'=>$this->id ,':idProveedor'=>$this->idProveedor, ':orden'=>$this->orden, ':idUsuario'=>$_SESSION['userSession']->id);
             $data = DATA::Ejecutar($sql,$param,false);
             if($data)
             {
@@ -132,10 +132,10 @@ class OrdenCompra{
 
     function Update(){
         try {
-            $sql="UPDATE ordencompra 
-                SET fecha=:fecha, idproveedor=:idproveedor, orden=:orden, idusuario=:idusuario
+            $sql="UPDATE ordenCompra 
+                SET fecha=:fecha, idProveedor=:idProveedor, orden=:orden, idUsuario=:idUsuario
                 WHERE id=:id";
-            $param= array(':id'=>$this->id, ':fecha'=>$this->fecha, ':idproveedor'=>$this->idproveedor, ':orden'=>$this->orden, ':idusuario'=>$this->idusuario);
+            $param= array(':id'=>$this->id, ':fecha'=>$this->fecha, ':idProveedor'=>$this->idProveedor, ':orden'=>$this->orden, ':idUsuario'=>$this->idUsuario);
             $data = DATA::Ejecutar($sql,$param,false);
             if($data)
                 return true;
@@ -178,7 +178,7 @@ class OrdenCompra{
             //     $sessiondata['msg']='Registro en uso'; 
             //     return $sessiondata;           
             // }                    
-            $sql='DELETE FROM ordencompra  
+            $sql='DELETE FROM ordenCompra  
             WHERE id= :id';
             $param= array(':id'=>$this->id);
             $data= DATA::Ejecutar($sql, $param, false);
@@ -197,10 +197,10 @@ class OrdenCompra{
 
     function ReadByCode(){
         try{     
-            $sql="SELECT id, fecha, idproveedor, descripcion
-                FROM ordencompra
-                WHERE idproveedor= :idproveedor";
-            $param= array(':idproveedor'=>$this->idproveedor);
+            $sql="SELECT id, fecha, idProveedor, descripcion
+                FROM ordenCompra
+                WHERE idProveedor= :idProveedor";
+            $param= array(':idProveedor'=>$this->idProveedor);
             $data= DATA::Ejecutar($sql,$param);
             
             if(count($data))

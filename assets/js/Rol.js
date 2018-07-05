@@ -4,7 +4,7 @@ class Rol {
         this.id = id || null;
         this.nombre = nombre || '';
         this.descripcion = descripcion || '';
-        this.listaevento = evento || null;
+        this.listaEvento = evento || null;
     }
 
     //Getter
@@ -34,7 +34,7 @@ class Rol {
         this.nombre = $("#nombre").val();
         this.descripcion = $("#descripcion").val();
         // Lista de eventos seleccionados.
-        this.listaevento = $('#evento > option:selected').map(function () { return this.value; }).get();
+        this.listaEvento = $('#evento > option:selected').map(function () { return this.value; }).get();
         $.ajax({
             type: "POST",
             url: "class/Rol.php",
@@ -69,7 +69,7 @@ class Rol {
                 var data = JSON.parse(e);
                 if(data.status==0)
                     swal({
-                        //position: 'top-end',
+                        //
                         type: 'success',
                         title: 'Eliminado!',
                         showConfirmButton: false,
@@ -132,7 +132,7 @@ class Rol {
         //$(".modal").css({ display: "none" });   
         $(".close").click();
         swal({
-            position: 'top-end',
+            
             type: 'success',
             title: 'Good!',
             showConfirmButton: false,
@@ -216,13 +216,13 @@ class Rol {
         this.ClearCtls();
         // carga objeto.
         var data = JSON.parse(e);
-        rol = new Rol(data.id, data.nombre, data.descripcion, data.listaevento);
+        rol = new Rol(data.id, data.nombre, data.descripcion, data.listaEvento);
         // Asigna objeto a controles
         $("#id").val(rol.id);
         $("#nombre").val(rol.nombre);
         $("#descripcion").val(rol.descripcion);
         // eventos.
-        $.each(rol.listaevento, function(i, item){
+        $.each(rol.listaEvento, function(i, item){
             $('#evento option[value=' + item.id + ']').prop("selected", true);
         });
         $("#evento").selectpicker("refresh");

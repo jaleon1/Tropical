@@ -1,9 +1,9 @@
 class FacturaCli {
     // Constructor
-    constructor(id, cajero, producto, descuento, total, fechaCreacion, importe, t, idusuario, idcliente) {
+    constructor(id, cajero, producto, descuento, total, fechaCreacion, importe, t, idUsuario, idcliente) {
         this.id = id || null;
         this.cajero = cajero || '';
-        this.idusuario = idusuario || '';
+        this.idUsuario = idUsuario || '';
         this.idcliente = idcliente || '';
         this.descuento = descuento || 0;
         this.producto = producto || new Array(new Array());
@@ -142,7 +142,7 @@ function LoadAllPrdVenta() {
 function DrawPrd(e) {
     productos = JSON.parse(e);
     $.each(productos, function (item, value) {
-        switch (productos[item].esventa) {
+        switch (productos[item].esVenta) {
             case "1":
                DrawSabor(productos[item]);
                 break;
@@ -172,6 +172,7 @@ function DrawTopping(toppings){
     var prd = `
         <button id="${toppings.id}" style="background-color:${toppings.bgcolor};" class="btn_topping btn_venta" onclick="agrega_toppings('${toppings.id}', '${toppings.nombre}')">
             <div style="color: ${toppings.txtcolor};">
+
                 <h5>${toppings.nombre}</h5>
                 <p id="cant_topping_${toppings.id}">\xa0</p>
             </div>
@@ -831,7 +832,7 @@ function CleanCtls() {
 //     //$(".modal").css({ display: "none" });  
 
 //     // swal({
-//     //     position: 'top-end',
+//     //     
 //     //     type: 'success',
 //     //     title: 'Good!',
 //     //     showConfirmButton: false,

@@ -1,11 +1,11 @@
 class OrdenCompra {
     // Constructor
-    constructor(id, orden, fecha, idprodveedor, idusuario, lista) {        
+    constructor(id, orden, fecha, idProdveedor, idUsuario, lista) {        
         this.id = id || null;        
         this.orden = orden || '';
         this.fecha = fecha || '';
-        this.idprodveedor = idprodveedor || '';
-        this.idusuario = idusuario || '';
+        this.idProdveedor = idProdveedor || '';
+        this.idUsuario = idUsuario || '';
         this.lista = lista || [];
     }
 
@@ -24,18 +24,18 @@ class OrdenCompra {
         $('#btnOrdenCompra').attr("disabled", "disabled");
         var miAccion = this.id == null ? 'Create' : 'Update';        
         this.orden = $("#orden").val();
-        this.idproveedor = $("#proveedor").val();
+        this.idProveedor = $("#proveedor").val();
         //
-        ordencompra.lista = [];
+        ordenCompra.lista = [];
         $('#productos tr').each(function(i, item) {
             var objlista = new Object();
-            objlista.idinsumo= $('#dsitems').dataTable().fnGetData(item)[0]; // id del item.
-            objlista.costounitario= $(this).find('td:eq(2) input').val();
-            objlista.cantidadbueno= $(this).find('td:eq(3) input').val();
-            objlista.cantidadmalo= $(this).find('td:eq(4) input').val();
-            objlista.valorbueno= $(this).find('td:eq(5) input.valor').val();
-            objlista.valormalo= $(this).find('td:eq(6) input.valor').val();
-            ordencompra.lista.push(objlista);
+            objlista.idInsumo= $('#dsitems').dataTable().fnGetData(item)[0]; // id del item.
+            objlista.costoUnitario= $(this).find('td:eq(2) input').val();
+            objlista.cantidadBueno= $(this).find('td:eq(3) input').val();
+            objlista.cantidadMalo= $(this).find('td:eq(4) input').val();
+            objlista.valorBueno= $(this).find('td:eq(5) input.valor').val();
+            objlista.valorMalo= $(this).find('td:eq(6) input.valor').val();
+            ordenCompra.lista.push(objlista);
         });
         $.ajax({
             type: "POST",
@@ -45,14 +45,14 @@ class OrdenCompra {
                 obj: JSON.stringify(this)
             }
         })
-            .done(ordencompra.showInfo)
+            .done(ordenCompra.showInfo)
             .fail(function (e) {
-                ordencompra.showError(e);
+                ordenCompra.showError(e);
             })
             .always(function () {
                 setTimeout('$("#btnOrdenCompra").removeAttr("disabled")', 1000);
-                ordencompra = new OrdenCompra();
-                ordencompra.CleanCtls();
+                ordenCompra = new OrdenCompra();
+                ordenCompra.CleanCtls();
                 $("#p_searh").focus();
             });
     };
@@ -62,7 +62,7 @@ class OrdenCompra {
         //$(".modal").css({ display: "none" });   
         $(".close").click();
         swal({
-            position: 'top-end',
+            
             type: 'success',
             title: 'Good!',
             showConfirmButton: false,
@@ -95,10 +95,10 @@ class OrdenCompra {
                 }
             })
             .done(function (e) {
-                ordencompra.ValidateInsumoFac(e);
+                ordenCompra.ValidateInsumoFac(e);
             })
             .fail(function (e) {
-                ordencompra.showError(e);
+                ordenCompra.showError(e);
             });
         }
     };
@@ -116,11 +116,11 @@ class OrdenCompra {
                 }
             })
             .done(function (e) {
-                ordencompra.ResetSearch();
-                ordencompra.ValidateInsumoFac(e);
+                ordenCompra.ResetSearch();
+                ordenCompra.ValidateInsumoFac(e);
             })
             .fail(function (e) {
-                ordencompra.showError(e);
+                ordenCompra.showError(e);
             });
         }
     };
@@ -164,12 +164,12 @@ class OrdenCompra {
             }    
             if (repetido==false){
                 // showDataProducto(e);
-                ordencompra.AgregaInsumo();
-                ordencompra.ResetSearch();
+                ordenCompra.AgregaInsumo();
+                ordenCompra.ResetSearch();
             }
         }
         else{
-            ordencompra.LoadArticulo();
+            ordenCompra.LoadArticulo();
         }
     };
 
@@ -202,12 +202,12 @@ class OrdenCompra {
             }    
             if (repetido==false){
                 // showDataProducto(e);
-                ordencompra.AgregaInsumo();
-                ordencompra.ResetSearch();
+                ordenCompra.AgregaInsumo();
+                ordenCompra.ResetSearch();
             }
         }
         else{
-            ordencompra.ResetSearch();
+            ordenCompra.ResetSearch();
         }
     };
 
@@ -231,16 +231,16 @@ class OrdenCompra {
         .node();     
         //
         $('td:eq(2) input', rowNode).attr({id: ("prec_"+insumo.codigo), max:  "9999999999", min: "0", step:"1", value:"1" }).change(function(){
-            ordencompra.CalcImporte($(this).parents('tr').find('td:eq(0)').html());
+            ordenCompra.CalcImporte($(this).parents('tr').find('td:eq(0)').html());
         });
         //
         $('td:eq(3) input', rowNode).attr({id: ("cantBueno_"+insumo.codigo), max:  "9999999999", min: "1", step:"1", value:"1"}).change(function(){
-             ordencompra.CalcImporte($(this).parents('tr').find('td:eq(0)').html());
+             ordenCompra.CalcImporte($(this).parents('tr').find('td:eq(0)').html());
         });
 
         //$('td:eq(4)', rowNode).attr({id: ("cantMalo_"+insumo.codigo)});
         $('td:eq(4) input', rowNode).attr({id: ("cantMalo_"+insumo.codigo), max:  "9999999999", min: "0", step:"1", value:"0"}).change(function(){
-             ordencompra.CalcImporte($(this).parents('tr').find('td:eq(0)').html());
+             ordenCompra.CalcImporte($(this).parents('tr').find('td:eq(0)').html());
         });
         //
         $('td:eq(5) input.valor', rowNode).attr({id: ("valorBueno_v"+insumo.codigo), style: "display:none"});
@@ -251,7 +251,7 @@ class OrdenCompra {
         $('td:eq(7) input.display', rowNode).attr({id: ("subtotal_d"+insumo.codigo)});   
         //t.order([0, 'desc']).draw();
         t.columns.adjust().draw();
-        ordencompra.CalcImporte(insumo.codigo);
+        ordenCompra.CalcImporte(insumo.codigo);
         //calcTotal();
         //$('#open_modal_fac').attr("disabled", false);
     };
@@ -265,14 +265,14 @@ class OrdenCompra {
         insumo.cantMalo =  $(`#cantMalo_${prd}`).val();
         insumo.valorBueno=  parseFloat(insumo.precio) * parseInt(insumo.cantBueno);
         insumo.valorMalo=  parseFloat(insumo.precio) * parseInt(insumo.cantMalo);
-        insumo.subtotal= insumo.valorBueno + insumo.valorMalo; // subtotal linea
+        insumo.subTotal= insumo.valorBueno + insumo.valorMalo; // subTotal linea
         //
         $(`#valorBueno_v${prd}`).val(insumo.valorBueno.toFixed(10));
         $(`#valorBueno_d${prd}`).val("$"+insumo.valorBueno.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
         $(`#valorMalo_v${prd}`).val(insumo.valorMalo.toFixed(10));
         $(`#valorMalo_d${prd}`).val("$"+insumo.valorMalo.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
-        $(`#subtotal_v${prd}`).val(insumo.subtotal.toFixed(10));
-        $(`#subtotal_d${prd}`).val("$"+insumo.subtotal.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+        $(`#subtotal_v${prd}`).val(insumo.subTotal.toFixed(10));
+        $(`#subtotal_d${prd}`).val("$"+insumo.subTotal.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
     };
 
     Init() {
@@ -294,5 +294,5 @@ class OrdenCompra {
     };
 }
 
-let ordencompra = new OrdenCompra();
+let ordenCompra = new OrdenCompra();
 
