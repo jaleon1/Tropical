@@ -744,7 +744,7 @@ function CleanCtls() {
 //     //$(".modal").css({ display: "none" });  
 
 //     // swal({
-//     //     position: 'top-end',
+//     //     
 //     //     type: 'success',
 //     //     title: 'Good!',
 //     //     showConfirmButton: false,

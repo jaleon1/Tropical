@@ -16,7 +16,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Tropical Sno | Usuarios</title>
+    <title>Tropical | IP</title>
 
     <!-- Bootstrap -->
     <link href="assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -30,10 +30,6 @@
     <link href="assets/css/iCheck/skins/flat/green.css" rel="stylesheet">
     <!-- SweetAlert -->
     <link rel="stylesheet" href="assets/css/sweetalert2.min.css">
-    <!-- Switchery -->
-    <link href="assets/css/switchery/switchery.min.css" rel="stylesheet">
-    <!-- Select -->
-    <link href="assets/css/bootstrap-select.css" rel="stylesheet">
 
     <!-- Datatables -->
     <link href="../vendors/datatables.net-bs/css/dataTables.bootstrap.min.css" rel="stylesheet">
@@ -44,6 +40,8 @@
 
     <!-- Custom Theme Style -->
     <link href="assets/css/custom.css" rel="stylesheet">
+    <!-- Bootstrap Colorpicker -->
+    <link href="assets/bootstrap/css/bootstrap-colorpicker.min.css" rel="stylesheet">
 
 
 </head>
@@ -56,7 +54,7 @@
                     <div class="navbar nav_title" style="border: 0;">
                         <a href="index.html" class="site_title">
                             <i class="glyphicon glyphicon-share-alt"></i>
-                            <span>Tropical Sno!</span>
+                            <span>Tropical</span>
                         </a>
                     </div>
 
@@ -65,7 +63,7 @@
                     <!-- menu profile quick info -->
                     <div class="profile clearfix">
                         <div class="profile_pic">
-                            <img src="images/img.jpg" alt="..." class="img-circle profile_img">
+                            
                         </div>
                         <div class="profile_info">
                             <span>Bienvenido,</span>
@@ -82,6 +80,7 @@
                         <div class="menu_section">
                             <h3 class="menuName"></h3>
                             <ul id="menubox" class="nav side-menu">
+                                
                             </ul>
                         </div>
                     </div>
@@ -98,7 +97,7 @@
                         <a data-toggle="tooltip" data-placement="top" title="Lock">
                             <span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
                         </a>
-                        <a data-toggle="tooltip" data-placement="top" title="Logout" onclick="Sesion.End();">
+                        <a data-toggle="tooltip" data-placement="top" title="Logout" onclick="Session.End();">
                             <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
                         </a>
                     </div>
@@ -142,12 +141,16 @@
                 <div class="">
                     <div class="page-title">
                         <div class="title_left">
-                            <h3>USUARIOS</h3>
+                            <h3>IP AUTORIZADA</h3>
                         </div>
 
                         <div class="title_right">
                             <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
                                 <div class="input-group">
+                                    <!-- <input type="text" class="form-control" placeholder="Search for...">
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button">Go!</button>
+                                    </span> -->
                                 </div>
                             </div>
                         </div>
@@ -160,7 +163,7 @@
                             <div class="x_panel">
                                 <div class="x_title">
                                     <h2>Inventario</h2>
-
+                                    
                                     <div class="clearfix"></div>
                                 </div>
 
@@ -170,13 +173,8 @@
                                     <div id="datatable_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
                                         <div class="row">
                                             <div class="col-sm-12">
-                                                <table id="dsUsuario" class="table table-striped table-bordered dataTable no-footer jambo_table " role="grid" aria-describedby="datatable_info">
-                                                    <thead>
-                                                        <tr role="row" class="headings">
-                                                        </tr>
-                                                    </thead>
-
-                                                    <tbody id="tableBody-Usuario">
+                                                <table id="dsIpAutorizada" class="table table-striped jambo_table bulk_action" role="grid" aria-describedby="datatable_info">
+                                                    <tbody id="tableBody-IpAutorizada">
                                                     </tbody>
 
                                                 </table>
@@ -194,88 +192,40 @@
                                                     <button type="button" class="close" data-dismiss="modal">
                                                         <span aria-hidden="true">×</span>
                                                     </button>
-                                                    <h4 class="modal-title" id="myModalLabel">Editar Usuario</h4>
+                                                    <h4 class="modal-title" id="myModalLabel">Editar ip</h4>
                                                 </div>
 
                                                 <div class="modal-body">
-                                                    <form class="form-horizontal form-label-left" id="frmUsuario" method="POST" novalidate>
+                                                    <form class="form-horizontal form-label-left" id="frmProducto" novalidate>
 
-                                                        <!-- <span class="section">Datos Generales</span> -->
-                
-                                                        <div class="item form-group">
-                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="nombre">Nombre Completo
-                                                                <span class="required">*</span>
-                                                            </label>
-                                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <input id="nombre" class="form-control col-md-7 col-xs-12" name="nombre" required="required" type="text" placeholder="Nombre completo Del usuario" data-validate-words="2">
-                                                            </div>
-                                                        </div>
-                
-                                                        <div class="item form-group">
-                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="username">Username
-                                                                <span class="required">*</span>                                                
-                                                            </label>
-                                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <input id="username" class="form-control col-md-7 col-xs-12" readonly name="username" required="required" type="text" placeholder="Nombre Único de usuario" >                                                
-                                                            </div>
-                                                            <span id="checkusername" class="fa"></span>
-                                                        </div>
-                
-                                                        <div class="item form-group">
-                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="password">Password
-                                                                <span class="required">*</span>
-                                                            </label>
-                                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <input id="password" class="form-control col-md-7 col-xs-12" name="password" required="required" type="password" data-validate-length-range="6" placeholder="Mínimo 6 caracteres">
-                                                            </div>
-                                                        </div>
-                
-                                                        <div class="item form-group">
-                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="repetir">Repetir Password</label>
-                                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <input id="repetir" class="optional form-control col-md-7 col-xs-12" name="repetir" type="password" placeholder="Repita el password" data-validate-linked="password" required="required">
-                                                            </div>
-                                                        </div>
-                
-                                                        <div class="item form-group">
-                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="email">Email</label>
-                                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <input id="email" class="optional form-control col-md-7 col-xs-12" name="email" type="email" >
-                                                            </div>
-                                                        </div>
-                
-                                                        <div class="form-group">
-                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12">Activo</label>
-                                                            <div class="col-md-9 col-sm-9 col-xs-12">
-                                                                <label>
-                                                                  <!-- <input type="checkbox" checked  class="js-switch"  data-switchery="true" id="activo" name="activo"> -->
-                                                                  <input type="checkbox" checked  id="activo" name="activo">
-                                                                </label>
-                                                            </div>
-                                                        </div>
-                
-                                                        <div class="item form-group">
-                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12">Roles (Multiple)</label>
-                                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <select class="selectpicker show-menu-arrow form-control" multiple="multiple" id="rol" name="rol"></select>
-                                                            </div>
-                                                        </div>
+                                                        <span class="section">Datos Generales</span>
 
                                                         <div class="item form-group">
-                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12">Bodega
+                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="codigo">Codigo
                                                                 <span class="required">*</span>
                                                             </label>
                                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <select class="selectpicker show-menu-arrow form-control" required="required" id="selbodega" name="selbodega"></select>
+                                                                <input id="codigo" class="form-control col-md-7 col-xs-12" name="codigo" required="required" type="text" placeholder="Codigo del Producto"
+                                                                    autofocus>
                                                             </div>
+                                                    </div>
+            
+                                                    <div class="item form-group">
+                                                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="ip">Ip
+                                                            <span class="required">*</span>
+                                                        </label>
+                                                        <div class="col-md-6 col-sm-6 col-xs-12">
+                                                            <input id="ip" class="form-control col-md-7 col-xs-12" name="ip" required="required" type="text" placeholder="Nombre del Producto"
+                                                                autofocus>
                                                         </div>
-                                                        
-                                                        <div class="ln_solid"></div>
-                
+                                                    </div>           
+                                                    
+               
+                                                    <div class="ln_solid"></div>
                                                         <div class="form-group">
                                                             <div class="col-md-6 col-md-offset-3">
-                                                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                                                <button id="btnUsuario" type="submit" class="btn btn-success">Submit</button>
+                                                                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                                                                <button id="btnIp" type="submit" class="btn btn-success">Guardar</button>
                                                             </div>
                                                         </div>
                                                     </form>
@@ -302,7 +252,7 @@
             <!-- footer content -->
             <footer>
                 <div class="pull-right">
-                    Ventas y administración de Inventario
+                    Tropical SNO
                     <a href="http://storylabscr.com">powered by Stroy Labs</a>
                 </div>
                 <div class="clearfix"></div>
@@ -317,8 +267,6 @@
     <script src="assets/js/fastclick/lib/fastclick.js"></script>
     <!-- NProgress -->
     <script src="assets/js/nprogress/nprogress.js"></script>
-    <!-- iCheck -->
-    <!-- <script src="assets/js/iCheck/icheck.min.js"></script> -->
     <!-- Moment -->
     <script src="assets/js/moment.min.js"></script>
     <script src="assets/js/moment-timezone.js"></script>
@@ -329,20 +277,23 @@
     <!-- Input mask -->
     <script src="assets/js/jquery.inputmask/jquery.inputmask.bundle.min.js"></script>
     <!-- JS Scripts -->
-    <script src="assets/js/Usuario.js"></script>
-    <script src="assets/js/Rol.js"></script>
-    <!-- <script src="assets/js/ProductoTemporal.js"></script> -->
-    <script src="assets/js/Bodega.js"></script>
+    <script src="assets/js/ipAutorizada.js"></script>
     <!-- Sweet Alert -->
     <script src="assets/js/sweetalert2.min.js"></script>
     <!-- Datatables -->
     <script src="../vendors/datatables.net/js/jquery.dataTables.min.js"></script>
+    <!-- iCheck -->
+    <script src="assets/js/iCheck/icheck.min.js"></script>
     <!-- Custom Theme Scripts -->
     <script src="assets/js/custom.min.js"></script>
-    <!-- Switchery -->
-    <script src="assets/js/switchery/switchery.min.js"></script>
-    <!-- Select -->
-    <script src="assets/js/bootstrap-select.js"></script>
+    <!-- FastClick -->
+    <!-- <script src="../vendors/fastclick/lib/fastclick.js"></script> -->
+    <!-- NProgress -->
+    <!-- <script src="../vendors/nprogress/nprogress.js"></script> -->
+    <!-- Custom Theme Scripts -->
+    <!-- <script src="../build/js/custom.min.js"></script> -->
+    <!-- Bootstrap Colorpicker -->
+    <script src="assets/bootstrap/js/bootstrap-colorpicker.min.js"></script>
 
 </body>
 
@@ -350,12 +301,41 @@
 
 <script>
     $(document).ready(function () {
-        usuario.id = null;
-        usuario.Read;
-        usuario.Init();
-        //
-        rol.List;
-        bodega.List;
+        // if(!Session.state)
+        //     return;
+        ipautorizada.id=null;
+        ipautorizada.Read;
+        ipautorizada.Init();
+        //Usa la variable t que es el datatable donde estan los items
+        t = $('#dsIpAutorizada').DataTable({
+            "ordering": false,
+            // "bSort": false,
+            "info": false, //Quita el pie de pagina
+            "language": {
+                "infoEmpty": "No hay ip agregadas",
+                "emptyTable": "No hay ip agregadas",
+                "search": "Buscar IP" //Cambia el texto de Search
+            },
+            "columns": [
+                { "title": "ip" },
+                { "title": "Created" }
+            ], // crea las columnas
+            "scrollY": "190px",
+            // "searching": false,
+            "scrollCollapse": true,
+            "paging": true,
+            "columnDefs": [
+                {// ip
+                    "width": "85%", "targets": 0,
+                    "data": null,
+                    "visible": true
+                },
+                {// created
+                    "width": "15%", "targets": 1,
+                    "data": null,
+                }
+            ]
+        });
+        t.columns.adjust().draw();
     });
-
 </script>

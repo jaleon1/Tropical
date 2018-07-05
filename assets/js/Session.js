@@ -18,7 +18,7 @@ var Session=  {
             switch(data.status){
                 case 'login':
                     $('.right_col').show();
-                    Session.setUsername(data.username, data.nombre);
+                    Session.setUsername(data.username, data.nombre, data.bodega);
                     Session.setMenu(data.eventos);  
                     Session.state=true;
                     break;
@@ -28,7 +28,7 @@ var Session=  {
                     Session.setMenu(data.eventos);    
                     Session.state=false;
                     swal({
-                        //position: 'top-end',
+                        //
                         type: 'error',
                         title: 'El usuario no tiene credenciales para ver esta página.',
                         showConfirmButton: false,
@@ -38,7 +38,7 @@ var Session=  {
                 case 'invalido':
                     Session.state=false;
                     location.href= 'login.html'; 
-                    break;
+                    break;                
             }   
         })    
         .fail(function( e ) {
@@ -46,14 +46,17 @@ var Session=  {
             location.href= 'login.html';
         });
     },
-    setUsername(un, n){
+    setUsername(un, n, b){
         $('#call_username').html(
             '<img src="images/user.png" alt="" > ' + un+ ' ' + 
             '<span class=" fa fa-angle-down" ></span> '        
         );
         $('#call_name').text(n);
+        // bodega
+        $('.menuName').text(b);
+
     },
-    setMenu(eventos){
+    setMenu(eventos){        
         $('#menubox').html('');
         $('#menubox').append(`
             <li id="Inventario" style="display:none;">
@@ -81,9 +84,7 @@ var Session=  {
                 <a> <i class="fa fa-cog"></i> Sistema
                     <span class="fa fa-chevron-down"></span>
                 </a>
-                <ul class="nav child_menu"> <li>
-                    <a href="xxx">yyy</a>
-                </li> </ul>
+                <ul class="nav child_menu"> </ul>
             </li>
         `);
         // menu segun permisos de usuario.
@@ -96,14 +97,6 @@ var Session=  {
                 </li>
             `);
         });
-        
-        
-        
-        
-        
-
-
-
         // $('#call_menu').html('');
         // $('#call_menu').css({'display':'block'});
         // $.each(eventos, function (i, item) {
@@ -125,7 +118,7 @@ var Session=  {
         .done(function( e ) {
             location.href= 'login.html';
         })    
-        .fail(function( e ) {        
+        .fail(function( e ) {
             showError(e);
             //location.href= 'login.html';
         });

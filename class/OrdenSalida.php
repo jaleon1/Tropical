@@ -153,7 +153,7 @@ class OrdenSalida{
 
     function Create(){
         try {           
-            $sql="INSERT INTO tropical.ordensalida (`id`,`fecha`,`idusuarioentrega`,`idusuariorecibe`,`idestado`) 
+            $sql="INSERT INTO ordenSalida (`id`,`fecha`,`idusuarioentrega`,`idusuariorecibe`,`idestado`) 
                 VALUES (:uuid,:fecha,:idusuarioentrega,:idusuariorecibe,:idestado)";
             $param= array(':uuid'=>$this->id, ':fecha'=>$this->fecha,':idusuarioentrega'=>$this->idusuarioentrega, 
             ':idusuariorecibe'=>$this->idusuariorecibe,':idestado'=>0);
@@ -180,7 +180,7 @@ class OrdenSalida{
 
     function Update(){
         try {
-            $sql="UPDATE tropical.ordensalida SET idusuariorecibe=:idusuariorecibe WHERE id=:id";
+            $sql="UPDATE ordenSalida SET idusuariorecibe=:idusuariorecibe WHERE id=:id";
              $param= array(':id'=>$this->id,':idusuariorecibe'=>$this->idusuariorecibe);
             $data = DATA::Ejecutar($sql,$param,false);
             if($data){
