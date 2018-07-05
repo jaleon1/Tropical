@@ -91,7 +91,7 @@ constructor(id, fecha, numeroorden, idusuarioentrega, idusuariorecibe, fechaliqu
                 if(e=='null')
                 {
                     swal({
-                        position: 'top-end',
+                        
                         type: 'warning',
                         title: 'Orden no encontrada!',
                         showConfirmButton: false,
@@ -123,7 +123,7 @@ constructor(id, fecha, numeroorden, idusuarioentrega, idusuariorecibe, fechaliqu
                 var data = JSON.parse(e);
                 if (data.status == 0)
                     swal({
-                        //position: 'top-end',
+                        //
                         type: 'success',
                         title: 'Eliminado!',
                         showConfirmButton: false,
@@ -173,7 +173,7 @@ constructor(id, fecha, numeroorden, idusuarioentrega, idusuariorecibe, fechaliqu
     showInfo() {
         $(".close").click();
         swal({
-            position: 'top-end',
+            
             type: 'success',
             title: 'Good!',
             showConfirmButton: false,

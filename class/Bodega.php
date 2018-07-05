@@ -21,6 +21,9 @@ if(isset($_POST["action"])){
         case "ListTipos":
             echo json_encode($bodega->ListTipos());
             break;
+        case "List":
+            echo json_encode($bodega->List());
+            break;
         case "Create":
             $bodega->Create();
             break;
@@ -62,7 +65,7 @@ class Bodega{
     function ReadAll(){
         try {
             $sql='SELECT b.id, b.nombre, b.descripcion , t.nombre as tipo
-                FROM     bodega  b INNER JOIN tipobodega t on t.id = b.idTipoBodega
+                FROM     bodega  b INNER JOIN tipoBodega t on t.id = b.idTipoBodega
                 ORDER BY b.nombre asc';
             $data= DATA::Ejecutar($sql);
             return $data;
@@ -97,8 +100,25 @@ class Bodega{
     function ListTipos(){
         try {
             $sql='SELECT id, nombre
-                FROM     tipobodega       
+                FROM     tipoBodega       
                 WHERE   nombre!="Primaria"
+                ORDER BY nombre asc';
+            $data= DATA::Ejecutar($sql);
+            return $data;
+        }
+        catch(Exception $e) {
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar la lista'))
+            );
+        }
+    }
+
+    function List(){
+        try {
+            $sql='SELECT id, nombre
+                FROM     bodega
                 ORDER BY nombre asc';
             $data= DATA::Ejecutar($sql);
             return $data;

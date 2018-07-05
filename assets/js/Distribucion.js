@@ -83,7 +83,7 @@ class Distribucion {
                 if(e=='null' || e=='')
                 {
                     swal({
-                        position: 'top-end',
+                        
                         type: 'warning',
                         title: 'Orden no encontrada!',
                         showConfirmButton: false,
@@ -162,7 +162,7 @@ class Distribucion {
         //$(".modal").css({ display: "none" });   
         $(".close").click();
         swal({
-            position: 'top-end',
+            
             type: 'success',
             title: 'Good!',
             showConfirmButton: false,

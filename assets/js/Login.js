@@ -1,3 +1,5 @@
+// var localip= '0.0.0.0';
+
 $(document).ready(function () {
     //Validator.js
     var validator = new FormValidator({ "events": ['blur', 'input', 'change'] }, document.forms[0]);
@@ -12,7 +14,7 @@ $(document).ready(function () {
     // on form "reset" event
     document.forms[0].onreset = function (e) {
       validator.reset();
-    }
+    }    
 });
 
 function Login(){
@@ -23,6 +25,7 @@ function Login(){
             action: 'Login',               
             username:  $("#username").val(),
             password: $("#password").val(),
+            ip: localip,
             beforeSend: function(){
                  $("#error").fadeOut();
             } 
@@ -52,6 +55,14 @@ function Login(){
                     </div>
                 `);
             });  
+        else if(data.status=='noip')
+            swal({
+                //
+                type: 'error',
+                title: 'Número de IP no autorizada',
+                showConfirmButton: false,
+                timer: 3000
+            });
         else
             $("#error").fadeIn(500, function(){      
                 $("#error").html(`                    

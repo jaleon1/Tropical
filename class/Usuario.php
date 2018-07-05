@@ -29,7 +29,9 @@ if(isset($_POST["action"])){
         case "Login":
             $usuario->username= $_POST["username"];
             $usuario->password= $_POST["password"];
-            $usuario->Login();
+            $usuario->ip= $_POST["ip"];
+            if($usuario->checkIp())
+                $usuario->Login();
             echo json_encode($_SESSION['userSession']);
             break;   
         case "CheckSession":     
@@ -53,6 +55,7 @@ abstract class userSessionStatus
     const nocredencial= 'nocredencial'; // login ok; sin credenciales
     const inactivo= 'inactivo';
     const noexiste= 'noexiste';
+    const noip= 'noip';
 }
 
 class Usuario{
@@ -65,7 +68,10 @@ class Usuario{
     public $status = userSessionStatus::invalido; // estado de la sesion de usuario.
     public $listarol= array(); // array de roles del usuario.
     public $eventos= array(); // array de eventos asignados a la sesion de usuario.
-    public $url;    
+    public $url;
+    public $idBodega;
+    public $bodega;
+    public $ip;
 
     function __construct(){
         // identificador único
@@ -81,6 +87,7 @@ class Usuario{
             $this->password= $obj["password"] ?? '';  
             $this->email= $obj["email"] ?? '';  
             $this->activo= $obj["activo"] ?? '';
+            $this->idBodega= $obj["idBodega"] ?? null;
             //roles del usuario.
             if(isset($obj["listarol"] )){
                 require_once("RolesXUsuario.php");
@@ -96,6 +103,21 @@ class Usuario{
     }
 
     // login and user session
+
+    function checkIp(){
+        $sql= 'SELECT ip
+            FROM ipAutorizada
+            where ip=:ip';
+        $param= array(':ip'=>$this->ip);
+        $data= DATA::Ejecutar($sql, $param);
+        if(!count($data)){
+            unset($_SESSION["userSession"]);
+            $this->status= userSessionStatus::noip;
+            $_SESSION["userSession"]= $this;
+            return false;
+        }
+        else return true;
+    }
 
     function CheckSession(){
         if(isset($_SESSION["userSession"]->id)){
@@ -125,14 +147,12 @@ class Usuario{
 
     function Login(){
         try { 
-            // demo; borrar...........<<<<
-            //$this->password= $this->CreateHash();
-            //..................>>>>
             //Check activo & password.
-            $sql= 'SELECT u.id, u.username, u.nombre, activo, password, idEvento, e.nombre as nombreUrl, e.url, menuPadre, subMenuPadre
+            $sql= 'SELECT u.id, u.username, u.nombre, activo, password, idEvento, e.nombre as nombreUrl, e.url, menuPadre, subMenuPadre, idBodega , b.bodega as bodega
             FROM usuario u inner join rolesXUsuario ru on ru.idUsuario = u.id
                 inner join eventosXRol er on er.idRol = ru.idRol
                 inner join evento e on e.id = er.idEvento
+                inner join bodega b on b.id = u.idBodega
                 where username=:username';
             $param= array(':username'=>$this->username);
             $data= DATA::Ejecutar($sql, $param);
@@ -154,6 +174,9 @@ class Usuario{
                                 $this->activo = $value['activo'];
                                 $this->status = userSessionStatus::login;
                                 $this->url = isset($_SESSION['userSession']->url)? $_SESSION['userSession']->url : 'Dashboard.html'; // Url consultada
+                                $this->idBodega = $value['idBodega'];
+                                $this->bodega = $value['bodega'];
+                                $_SESSION['idBodega']= $this->idBodega;
                                 //
                                 $evento->id= $value['idEvento'];
                                 $evento->nombre= $value['nombreUrl'];
@@ -216,7 +239,7 @@ class Usuario{
 
     function Read(){
         try {
-            $sql='SELECT u.id, u.nombre, u.username, u.password, email, activo, r.id as idRol, r.nombre as nombreRol
+            $sql='SELECT u.id, u.nombre, u.username, u.password, email, activo, r.id as idRol, r.nombre as nombreRol, idBodega
                 FROM usuario  u LEFT JOIN rolesXUsuario ru on ru.idUsuario = u.id
                     LEFT JOIN rol r on r.id = ru.idRol
                 where u.id=:id';
@@ -233,6 +256,7 @@ class Usuario{
                     $this->password = $value['password'];
                     $this->email = $value['email'];
                     $this->activo = $value['activo'];
+                    $this->idBodega = $value['idBodega'];
                     //rol
                     if($value['idRol']!=null){
                         $rol->id = $value['idRol'];
@@ -259,11 +283,11 @@ class Usuario{
 
     function Create(){
         try {
-            $sql="INSERT INTO usuario   (id, nombre, username, password, email, activo)
-                VALUES (:uuid, :nombre, :username, :password, :email, :activo)";
+            $sql="INSERT INTO usuario   (id, nombre, username, password, email, activo, idBodega)
+                VALUES (:uuid, :nombre, :username, :password, :email, :activo, :idBodega)";
             //
             $param= array(':uuid'=>$this->id, ':nombre'=>$this->nombre, ':username'=>$this->username, ':password'=> password_hash($this->password, PASSWORD_DEFAULT), 
-                ':email'=>$this->email, ':activo'=>$this->activo);
+                ':email'=>$this->email, ':activo'=>$this->activo, ':idBodega'=>$this->idBodega);
             $data = DATA::Ejecutar($sql,$param, false);
             if($data)
             {
@@ -287,13 +311,13 @@ class Usuario{
         try {
             if($this->password=='NOCHANGED'){
                 $sql="UPDATE usuario 
-                    SET nombre=:nombre, username=:username, email=:email, activo=:activo 
+                    SET nombre=:nombre, username=:username, email=:email, activo=:activo, idBodega=:idBodega
                     WHERE id=:id";
-                $param= array(':id'=>$this->id, ':nombre'=>$this->nombre, ':username'=>$this->username, ':email'=>$this->email, ':activo'=>$this->activo);
+                $param= array(':id'=>$this->id, ':nombre'=>$this->nombre, ':username'=>$this->username, ':email'=>$this->email, ':activo'=>$this->activo, ':idBodega'=>$this->idBodega);
             }
             else {
                 $sql="UPDATE usuario 
-                    SET nombre=:nombre, username=:username, password= :password, email=:email, activo=:activo 
+                    SET nombre=:nombre, username=:username, password= :password, email=:email, activo=:activo, idBodega=:idBodega
                     WHERE id=:id";
                 $param= array(':id'=>$this->id, ':nombre'=>$this->nombre, ':username'=>$this->username, ':password'=> password_hash($this->password, PASSWORD_DEFAULT), ':email'=>$this->email, ':activo'=>$this->activo);
             }

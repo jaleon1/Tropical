@@ -72,7 +72,7 @@ class Bodega {
         })
             .done(function () {
                 swal({
-                    //position: 'top-end',
+                    //
                     type: 'success',
                     title: 'Eliminado!',
                     showConfirmButton: false,
@@ -98,10 +98,33 @@ class Bodega {
             }
         })
         .done(function( e ) {
+            bodega.ShowListTipo(e);
+        })    
+        .fail(function (e) {
+            bodega.showError(e);
+        })
+        .always(function (e){
+            $("#tipo").selectpicker("refresh");
+        });
+    }
+
+    get List() {
+        var miAccion= 'List';
+        $.ajax({
+            type: "POST",
+            url: "class/Bodega.php",
+            data: { 
+                action: miAccion
+            }
+        })
+        .done(function( e ) {
             bodega.ShowList(e);
         })    
         .fail(function (e) {
             bodega.showError(e);
+        })
+        .always(function (e){
+            $("#selbodega").selectpicker("refresh");
         });
     }
 
@@ -117,7 +140,7 @@ class Bodega {
         //$(".modal").css({ display: "none" });   
         $(".close").click();
         swal({
-            position: 'top-end',
+            
             type: 'success',
             title: 'Good!',
             showConfirmButton: false,
@@ -248,12 +271,23 @@ class Bodega {
         $('#tipo option[value=' + bodega.tipo + ']').prop("selected", true);        
     };
 
+    ShowListTipo(e) {
+        // carga lista con datos.
+        var data = JSON.parse(e);
+        // Recorre arreglo.
+        $.each(data, function (i, item) {
+            $('#tipo').append(`
+                <option value=${item.id}>${item.nombre}</option>
+            `);
+        })
+    };
+
     ShowList(e) {
         // carga lista con datos.
         var data = JSON.parse(e);
         // Recorre arreglo.
         $.each(data, function (i, item) {
-                $('#tipo').append(`
+                $('#selbodega').append(`
                     <option value=${item.id}>${item.nombre}</option>
                 `);
         })

@@ -1,6 +1,6 @@
 class Usuario {
     // Constructor
-    constructor(id, nombre, username, password, email, activo, r) {
+    constructor(id, nombre, username, password, email, activo, r, idBodega) {
         this.id = id || null;
         this.nombre = nombre || '';
         this.username = username || '';
@@ -8,6 +8,7 @@ class Usuario {
         this.email = email || '';
         this.activo = activo || 0; //1: activo; 0: inactivo.
         this.listarol = r || null;
+        this.idBodega = idBodega;
     }
 
     //Getter
@@ -43,6 +44,7 @@ class Usuario {
         this.email = $("#email").val();
         this.activo = $("#activo")[0].checked;
         this.listarol = $('#rol > option:selected').map(function () { return this.value; }).get();
+        this.idBodega = $('#selbodega option:selected').val(); 
         $.ajax({
             type: "POST",
             url: "class/Usuario.php",
@@ -77,7 +79,7 @@ class Usuario {
                 var data = JSON.parse(e);
                 if (data.status == 0)
                     swal({
-                        //position: 'top-end',
+                        //
                         type: 'success',
                         title: 'Eliminado!',
                         showConfirmButton: false,
@@ -120,7 +122,7 @@ class Usuario {
         //$(".modal").css({ display: "none" });   
         $(".close").click();
         swal({
-            position: 'top-end',
+            
             type: 'success',
             title: 'Good!',
             showConfirmButton: false,
@@ -222,7 +224,7 @@ class Usuario {
         this.ClearCtls();
         // carga objeto.
         var data = JSON.parse(e);
-        usuario = new Usuario(data.id, data.nombre, data.username, data.password, data.email, data.activo, data.listarol);
+        usuario = new Usuario(data.id, data.nombre, data.username, data.password, data.email, data.activo, data.listarol, data.idBodega);
         // Asigna objeto a controles
         $("#id").val(usuario.id);
         $("#nombre").val(usuario.nombre);
@@ -248,6 +250,10 @@ class Usuario {
             $('#rol option[value=' + item.id + ']').prop("selected", true);
         });
         $("#rol").selectpicker("refresh");
+        //bodega
+        $('#selbodega option[value=' + data.idBodega + ']').prop("selected", true);
+        $("#selbodega").selectpicker("refresh");
+        
     };
 
     DeleteEventHandler() {

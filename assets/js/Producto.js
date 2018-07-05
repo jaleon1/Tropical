@@ -168,7 +168,7 @@ class Producto {
         })
             .done(function () {
                 swal({
-                    //position: 'top-end',
+                    //
                     type: 'success',
                     title: 'Eliminado!',
                     showConfirmButton: false,
@@ -196,7 +196,7 @@ class Producto {
         //$(".modal").css({ display: "none" });   
         $(".close").click();
         swal({
-            position: 'top-end',
+            
             type: 'success',
             title: 'Good!',
             showConfirmButton: false,

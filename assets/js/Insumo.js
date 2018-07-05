@@ -72,7 +72,7 @@ class Insumo {
         })
             .done(function () {
                 swal({
-                    //position: 'top-end',
+                    //
                     type: 'success',
                     title: 'Eliminado!',
                     showConfirmButton: false,
@@ -100,7 +100,7 @@ class Insumo {
         //$(".modal").css({ display: "none" });   
         $(".close").click();
         swal({
-            position: 'top-end',
+            
             type: 'success',
             title: 'Good!',
             showConfirmButton: false,
