@@ -16,7 +16,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Tropical Sno | Nuevo Usuario</title>
+    <title>Tropical Sno | Determinación de Precios Tropical SNO</title>
 
     <!-- Bootstrap -->
     <link href="assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -134,7 +134,7 @@
 
                     <div class="page-title">
                         <div class="title_left">
-                            <h3>Orden de Compra</h3>
+                            <h3>Determinación de Precios</h3>
                         </div>
                         <div class="title_right">
                             <h3 id="fecha" style="float:right"></h3>
@@ -146,22 +146,13 @@
                     <div class="row">
                         <div class="col-md-12 col-sm-12 col-xs-12">
                             <div class="x_panel">
-                                <div class="title_right">
-                                    <div class="col-md-6 col-sm-6 col-xs-6 form-group pull-right top_search">
-                                        <div class="input-group">
-                                            <input type="text" class="form-control col-md-7 col-xs-12" id="orden" placeholder="Número de Orden">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6 col-sm-6 col-xs-6 form-group pull-left top_search">
-                                            <div class="input-group">
-                                                <input type="text" class="form-control col-md-7 col-xs-12" id="proveedor" placeholder="Proveedor">
-                                            </div>
-                                        </div>
+                                <div class="title_right">                                    
+
                                     <div class="col-md-12 col-sm-12 col-xs-12 form-group pull-right top_search">
                                         <div class="input-group">
-                                            <input autofocus type="text" class="form-control" id="p_searh" placeholder="Ingresar Materia Prima/Producto...">
+                                            <input autofocus type="text" class="form-control" id="p_searh" placeholder="Ingresar el código del producto...">
                                             <span class="input-group-btn">
-                                                <button class="btn btn-default" type="button">Buscar</button>
+                                                <button class="btn btn-default" type="button">Buscar</button>x
                                             </span>
                                         </div>
                                     </div>
@@ -169,27 +160,8 @@
                                 <!--  CONTENIDO DE LA PAGINA -->
                                 <div class="x_content">
                                     <div class="table-responsive">
-                                        <table id="dsitems" class="table table-striped jambo_table bulk_action">
-                                            <!-- <thead>
-                                                    <tr class="headings">
-                                                        <th>
-                                                            <input type="checkbox" id="check-all" class="flat">
-                                                        </th>
-                                                        <th class="column-title">Codigo </th>
-                                                        <th class="column-title">Descripción </th>
-                                                        <th class="column-title">Precio/U </th>
-                                                        <th class="column-title">Cantidad </th>
-                                                        <th class="column-title">Importe </th> -->
-                                            <!--<th class="column-title">Amount </th>
-                                                        <th class="column-title no-link last"><span class="nobr">Action</span>
-                                                        </th> -->
-                                            <!-- <th class="bulk-actions" colspan="7">
-                                                        <a class="antoo" style="color:#fff; font-weight:500;">Acciones Masivas ( <span class="action-cnt"> </span> ) <i class="fa fa-chevron-down"></i></a>
-                                                        </th>
-                                                    </tr>
-                                                </thead> -->
-                                            <tbody id="productos">
-
+                                        <table id="dsItems" class="table table-striped jambo_table bulk_action">                                           
+                                            <tbody id="tbodyItems">
                                             </tbody>
                                         </table>
                                     </div>
@@ -239,7 +211,7 @@
                     <div class="form-group">
                         <div class="col-md-6 col-md-offset-3">
                             <button type="submit" class="btn btn-primary" id="reload">Limpiar</button>
-                            <button type="button" class="btn btn-success" id="btnOrdenCompra">Submit</button>
+                            <button type="button" class="btn btn-success" id="btnSubmit">Submit</button>
                         </div>
                     </div>
                 </div>
@@ -310,11 +282,8 @@
     <script src="assets/js/custom.min.js"></script>
     <!-- Input mask -->
     <script src="assets/js/jquery.inputmask/jquery.inputmask.bundle.min.js"></script>
-    <!-- JS Scripts -->
-    <script src="assets/js/Insumo.js"></script>
+    <!-- JS Scripts -->    
     <script src="assets/js/Producto.js"></script>
-    <!--CAMBIAR por PxB-->
-    <script src="assets/js/OrdenCompra.js"></script>
     <!--CAMBIAR por Facuracli-->
     <!-- JS dataTables -->
     <script src="assets/js/jquery.dataTables.min.js"></script>
@@ -329,22 +298,18 @@
 </html>
 
 <script>
+    var t= null; // tabla
     $(document).ready(function () {
         //ordenCompra.Init();
-        $('#btnOrdenCompra').click(function () {
-            ordenCompra.Save;
+        $('#btnSubmit').click(function () {
+            producto.ActualizarPrecios();
         });
         //Valida si se presiona enter -> carga el producto en la lista
         //si preciona "*" -> Quita el "*", pasa el punto de insercion a la cantidad y selecciona el valor para ser reemplazdo con el teclado
         $("#p_searh").keyup(function (e) {
             if (e.which == 13) {
                 // Acciones a realizar, por ej: enviar formulario.
-                ordenCompra.LoadInsumo();
-            }
-            if (e.which == 106) {
-                $("#p_searh")[0].value = "";
-                // se usa UltPrd xq es el UltimoProductoTocado (si la cantidad del producto es alterada no hay forma de saber cual fue el ultimo modificado.)
-                $("#cant_" + producto.UltPrd).focus().select();
+                producto.LoadProducto();
             }
         });
 
@@ -354,68 +319,42 @@
         });
 
         //Usa la variable t que es el datatable donde estan los productos
-        t = $('#dsitems').DataTable({
-            "ordering": false,
-            // "bSort": false,
+        t = $('#dsItems').DataTable({
+            responsive: true,
+            "ordering": false,            
+            "searching": true,
+            "paging": true,
             "info": false, //Quita el pie de pagina
             "language": {
                 "infoEmpty": "No hay productos agregados",
                 "emptyTable": "No hay productos agregados",
-                "search": "Buscar En Factura" //Cambia el texto de Search
+                "search": "Buscar En Productos" //Cambia el texto de Search
             },
             "columns": [
                 { "title": "id" },
                 { "title": "Codigo" },
-                { "title": "Descripcion" },
-                { "title": "Precio/U" },
-                { "title": "CantidadBueno" },
-                { "title": "CantidadMalo" },
-                { "title": "ValorBueno" },
-                { "title": "ValorMalo" },
-                { "title": "Subtotal" },
-            ], // crea las columnas
-            "scrollY": "190px",
-            // "searching": false,
-            "scrollCollapse": true,
-            "paging": false,
+                { "title": "Nombre" },
+                { "title": "costoPromedio" },
+                { "title": "precioVenta" }
+            ],            
             "columnDefs": [
                 {//id
-                    "width": "0%", "targets": 0,
+                    "targets": 0,
                     "visible": false,
-                    "searchable": false
-                },
-                {//precio
-                    "width": "10%", "targets": 3,
-                    "data": null,
-                    "defaultContent": '<input class="cantidad form-control" type="number">'
-                },
-                {//cant.
-                    "width": "5%", "targets": 4,
-                    "data": null,
-                    "defaultContent": '<input class="cantidad form-control" type="number">'
-                },
-                {//cant.
-                    "width": "5%", "targets": 5,
-                    "data": null,
-                    "defaultContent": '<input class="cantidad form-control" type="number">'
-                },
-                {//valor.
-                    "width": "15%", "targets": 6,
-                    "data": null,
-                    "defaultContent": '<input readonly class="valor"><input readonly class="display">'
-                },
-                {//valor.
-                    "width": "15%", "targets": 7,
-                    "data": null,
-                    "defaultContent": '<input readonly class="valor"><input readonly class="display">'
-                },
+                    "searchable": false,
+                    "className": "itemId",
+                },               
                 {
-                    "width": "15%", "targets": 8,
+                    "width": "25%", "targets": 3,
                     "data": null,
-                    "defaultContent": '<input readonly class="valor"><input readonly class="display">'
+                    "defaultContent": '<input class="cantidad form-control" readonly>'
+                },                
+                {
+                    "width": "25%", "targets": 4,
+                    "data": null,
+                    "defaultContent": '<input class="cantidad form-control" type="number">'
                 }
             ]
         });
-        t.columns.adjust().draw();
     });
 </script>

@@ -407,6 +407,103 @@ class Producto {
             } );
     };
 
+    LoadProducto() {
+        if ($("#p_searh").val() != ""){
+            producto.codigo = $("#p_searh").val();  //Columna 0 de la fila seleccionda= ID.
+            //
+            $.ajax({
+                type: "POST",
+                url: "class/Producto.php",
+                data: {
+                    action: "ReadByCode",
+                    obj: JSON.stringify(producto)
+                }
+            })
+            .done(function (e) {
+                producto.ValidateProductoFac(e);
+            })
+            .fail(function (e) {
+                producto.showError(e);
+            });
+        }
+    };
+
+    ValidateProductoFac(e){
+        //compara si el articulo ya existe
+        // carga lista con datos.
+        if(e != "false"){
+            var data = JSON.parse(e)[0];
+            producto= new Producto(data.id, data.codigo, data.nombre, data.txtColor, data.bgColor, data.nombreAbreviado, data.descripcion, data.saldoCantidad, data.saldoCosto, data.costoPromedio, data.precioVenta, data.esVenta, data.lista);
+            producto.UltPrd = producto.codigo;
+            var repetido = false;
+            //
+            if(document.getElementById("tbodyItems").rows.length != 0 && data != null){
+                $(document.getElementById("tbodyItems").rows).each(function(i,item){
+                    if(item.childNodes[0].innerText==producto.codigo){
+                        repetido=true;
+                        swal({
+                            type: 'warning',
+                            title: 'Determinación de Precio',
+                            text: 'El item ' + producto.codigo + ' ya se encuentra en la lista',
+                            showConfirmButton: false,
+                            timer: 3000
+                        });
+                        
+                    }     
+                });
+            }    
+            if (repetido==false){
+                // showDataProducto(e);
+                producto.AgregaProducto();
+                producto.ResetSearch();
+            }
+        }
+    };
+
+    ResetSearch() {
+        $("#p_searh").val('');
+    };
+
+    AgregaProducto(){
+        var rowNode = t
+            .row.add( [producto.id, producto.codigo, producto.nombre, producto.costoPromedio, producto.precioVenta ])
+            .draw() 
+            .node();     
+        //
+        $('td:eq(2) input', rowNode).attr({id: ("costo"+producto.id), max:  "9999999999999", min: "1", step:"1", 
+            value: parseFloat(producto.costoPromedio).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+        });
+        $('td:eq(3) input', rowNode).attr({id: ("precio"+producto.id), max:  "9999999999999", min: "0", step:"1", value: producto.precioVenta });
+    };
+
+    ActualizarPrecios(){
+        producto.lista = [];
+        $('#tbodyItems tr').each(function(i, item) {
+            var objlista = new Object();
+            objlista.id= $('#dsItems').dataTable().fnGetData(item)[0]; // id del item.
+            objlista.precioVenta= $(this).find('td:eq(3) input').val();
+            producto.lista.push(objlista);
+        });
+        $.ajax({
+            type: "POST",
+            url: "class/Producto.php",
+            data: {
+                action: "ActualizaPrecios",
+                obj: JSON.stringify(this)
+            }
+        })
+            .done(producto.showInfo)
+            .fail(function (e) {
+                producto.showError(e);
+            })
+            .always(function () {
+                setTimeout('$("#btnSubmit").removeAttr("disabled")', 1000);
+                producto = new Producto();
+                //producto.CleanCtls();
+                $("#p_searh").focus();
+            });
+    }
+
     Init() {
         // validator.js
         var validator = new FormValidator({ "events": ['blur', 'input', 'change'] }, document.forms["frmProducto"]);
