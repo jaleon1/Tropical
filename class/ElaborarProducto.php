@@ -10,15 +10,15 @@ if(isset($_POST["action"])){
     if (!isset($_SESSION))
         session_start();
     // Instance
-    $productoTemporal= new ProductoTemporal();
+    $elaborarProducto= new ElaborarProducto();
     switch($opt){
         case "Create":
-            $productoTemporal->Create();
+            $elaborarProducto->Create();
             break; 
     }
 }
 
-class ProductoTemporal{
+class ElaborarProducto{
     public $numeroOrden;
     public $listaProducto=[];
 

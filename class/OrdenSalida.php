@@ -20,7 +20,7 @@ if(isset($_POST["action"])){
             echo json_encode($ordenSalida->Read());
             break;
         case "Create":
-            $ordenSalida->Create();
+            echo json_encode($ordenSalida->Create());
             break;
         case "ReadbyOrden":
             echo json_encode($ordenSalida->ReadbyOrden());
@@ -161,9 +161,13 @@ class OrdenSalida{
 
             if($data)
             {
+                //Obtiene el ultimo numero de Orden
+                $sql="SELECT numeroOrden FROM tropical.ordenSalida order by numeroOrden desc limit 1;";
+                $maxid=DATA::Ejecutar($sql);
+                
                 //save array obj
                 if(InsumosxOrdenSalida::Create($this->listaInsumo))
-                    return true;
+                    return $maxid;
                 else throw new Exception('Error al guardar los insumos.', 03);
             }
             else throw new Exception('Error al guardar.', 02);
@@ -251,26 +255,6 @@ class OrdenSalida{
             );
         }
     }
-
-    // function ReadNextAI(){
-    //     try{ 
-    //         $sql="SELECT numeroOrden+1
-    //         FROM ordenSalida
-    //         ORDER BY numeroOrden DESC LIMIT 1";
-    //         $data= DATA::Ejecutar($sql,$param); 
-    //         if(count($data))
-    //         return $data;
-    //         else return false;
-    //         }
-    //         catch(Exception $e){    
-    //             header('HTTP/1.0 400 Bad error');
-    //             die(json_encode(array(
-    //             'code' => $e->getCode() ,
-    //                 'msg' => $e->getMessage()))
-    
-    //             );    
-    //         }
-    // }
     
     function ReadbyOrden(){
         try {

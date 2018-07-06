@@ -322,15 +322,13 @@
                                                                 <th class='itemId'>ID</th>
                                                                 <th>Codigo</th>
                                                                 <th>Nombre</th>
-                                                                <!-- <th class='oculto'>TXTColor</th>
-                                                                <th class='oculto'>BGColor</th> -->
                                                                 <th>Nombre Abreviado</th>
                                                                 <th>Descripción</th>
-                                                                <th>Saldo Cantidad</th>
-                                                                <th>Saldo Costo</th>
-                                                                <th>Costo Promedio</th>
-                                                                <th>Precio Venta</th>
-                                                                <th>Es Venta</th>
+                                                                <th class='oculto'>Saldo Cantidad</th>
+                                                                <th class='oculto'>Saldo Costo</th>
+                                                                <th class='oculto'>Costo Promedio</th>
+                                                                <th class='oculto'>Precio Venta</th>
+                                                                <th class='oculto'>Es Venta</th>
                                                             </tr>
                                                         </thead>
 
@@ -486,7 +484,7 @@
    
         <!-- JS Scripts -->
         <script src="assets/js/OrdenSalida.js"></script>
-        <script src="assets/js/ProductoTemporal.js"></script>
+        <script src="assets/js/ElaborarProducto.js"></script>
         <script src="assets/js/Insumo.js"></script>
         <script src="assets/js/Producto.js"></script>
         <script src="assets/js/Usuario.js"></script>
@@ -507,7 +505,7 @@
 
 <script>
     $(document).ready(function () {
-        productoTemporal.Init();
+        elaborarProducto.Init();
         ordenSalida.id = null;
         ordenSalida.Read;
     });

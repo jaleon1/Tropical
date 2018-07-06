@@ -306,7 +306,7 @@ class ProductoBodega {
                     <input id="costo" class="form-control col-3" name="costo" readonly type="text" placeholder="Costo del artículo" autofocus="" value="${ productobodega.costo}">
                 </td>
                 <td class=" last">
-                    <a id ="delete_row${productobodega.id}" onclick="productoTemporal.DeleteInsumo(this)" > <i class="glyphicon glyphicon-trash" onclick="DeleteInsumo(this)"> </i> Eliminar </a>
+                    <a id ="delete_row${productobodega.id}" onclick="elaborarProducto.DeleteInsumo(this)" > <i class="glyphicon glyphicon-trash" onclick="DeleteInsumo(this)"> </i> Eliminar </a>
                 </td>
             </tr>
         `);

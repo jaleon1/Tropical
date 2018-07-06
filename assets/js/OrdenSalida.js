@@ -51,6 +51,7 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
         $('#tableBody-InsumosOrdenSalida tr').each(function() {
             var objInsumo = new Object();
             objInsumo.id= $(this).find('td:eq(0)').html();
+            objInsumo.nombreInsumo= $(this).find('td:eq(2)').html();
             objInsumo.cantidad= $(this).find('td:eq(7) input').val();
             objInsumo.costoPromedio= $(this).find('td:eq(6)').html();
             ordenSalida.listaInsumo.push(objInsumo);
@@ -63,7 +64,10 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
                 obj: JSON.stringify(this)
             }
         })
-            .done(ordenSalida.showInfo)
+            .done(function (e) {        
+            ordenSalida.showInfo(e);
+            
+            })
             .fail(function (e) {
                 ordenSalida.showError(e);
             })
@@ -169,7 +173,9 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
     };
 
     // Muestra información en ventana
-    showInfo() {
+    showInfo(e) {e
+        /* IMPRIMIR */
+        // ordenSalida.ticketPrint(e);
         $(".close").click();
         swal({
             position: 'top-end',
@@ -179,6 +185,23 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
             timer: 1000
         });
     };
+
+    ticketPrint(e){
+        var data = JSON.parse(e);
+        location.href ="/Tropical/TicketOrdenSalida.html";
+
+        $("#numeroOrden").val(data[0][0]);
+        $("#fechaOrdenSalida").val(ordenSalida.fecha);
+        $("#usuarioRecibe").val('Jairo León');
+        $.each(this.listaInsumo, function (i, item) {
+            $('#tableBody-TicketOrdenSalida').append(`
+                <tr> 
+                    <td>${item.nombreInsumo}</td>
+                    <td class="itemId">${item.cantidad}</td>
+                </tr>
+            `);
+        }) 
+    }
 
     // Muestra errores en ventana
     showError(e) {
@@ -203,7 +226,7 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
     ShowAll(e) {
         var url;
         url = window.location.href;
-        if (url.indexOf("ProductoTemporal.html")!=-1){
+        
             // Limpia el div que contiene la tabla.
             $('#tableBody-OrdenSalida').html("");
             // // Carga lista
@@ -229,12 +252,22 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
                         <td>${item.usuarioRecibe}</td>
                         <td>${item.fechaLiquida}</td>
                         <td>${estado}</td>
+                        ${document.URL.indexOf("InventarioOrdensalida.html")>=1 ? 
+                        `<td class=" last">
+                            <a id="update${item.id}" class="update" data-toggle="modal" data-target=".bs-example-modal-lg" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | 
+                            <a id="delete${item.id}" class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>
+                        </td>`
+                        :``}
                     </tr>
                 `);
-                $('#chkaddordensalida'+item.id).click(productoTemporal.AddOrdenSalida);
+                if (document.URL.indexOf("Ordensalida.html")!=-1)
+                    $('#chkaddordensalida'+item.id).click(elaborarProducto.AddOrdenSalida);
+                    if (document.URL.indexOf("InventarioOrdensalida.html")!=-1){
+                        $('#update'+item.id).click(ordenSalida.UpdateEventHandler);
+                        $('#delete'+item.id).click(ordenSalida.DeleteEventHandler);
+                    }
             })    
-        }
-        else{
+        
             // Limpia el div que contiene la tabla.
             $('#tableBody-OrdenSalida').html("");
             // // Carga lista
@@ -269,7 +302,6 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
                 $('#update'+item.id).click(ordenSalida.UpdateEventHandler);
                 $('#delete'+item.id).click(ordenSalida.DeleteEventHandler);
             })    
-        }
     
         //datatable         
         if ( $.fn.dataTable.isDataTable( '#dsOrdenSalida' ) ) {
@@ -335,7 +367,7 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
     };
 
     ShowItemData(e) {
-        if(e==null && (document.URL.indexOf("ProductoTemporal.html")!=-1)){
+        if(e==null && (document.URL.indexOf("ElaborarProducto.html")!=-1)){
             $("p_searh").val('');
             swal({
                 type: 'info',
@@ -347,7 +379,7 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
             this.ClearCtls();
             // carga objeto.
             var data = JSON.parse(e);
-            if(document.URL.indexOf("ProductoTemporal.html")!=-1)
+            if(document.URL.indexOf("ElaborarProducto.html")!=-1)
             {
                 // ordenSalida = new OrdenSalida(
                 //     data.id, 
@@ -502,7 +534,6 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
         $("#estado").focus();
     }
 
-    /* PENDIENTE */ 
     AddInsumoEventHandler(){
         var id=$(this).parents("tr").find("td:eq(1)").html();
         var codigo=$(this).parents("tr").find("td:eq(2)").html(); 
@@ -561,8 +592,6 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
             validator.reset();
         }
     };
-
-    
 }
 
 //Class Instance

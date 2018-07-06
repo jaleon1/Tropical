@@ -181,8 +181,8 @@ class Usuario {
             // event Handler
             $('#update' + item.id).click(usuario.UpdateEventHandler);
             $('#delete' + item.id).click(usuario.DeleteEventHandler);
-            if (document.URL.indexOf("ProductoTemporal.html")!=-1){
-                $('#chckadduser'+item.id).change(productoTemporal.AddUserEventHandler);
+            if (document.URL.indexOf("ElaborarProducto.html")!=-1){
+                $('#chckadduser'+item.id).change(elaborarProducto.AddUserEventHandler);
             }
             if (document.URL.indexOf("OrdenSalida.html")!=-1){
                 $('#chckadduser'+item.id).change(ordenSalida.AddUserEventHandler);

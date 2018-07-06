@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div class="ticket">
+    <p class="centrado"><H1>ORDEN DE SALIDA</H1>
+      <br><H2 id=numeroOrden></H2>
+      <br>
+      <br><H2>Tropical SNO.</H2>
+      <br><H2 id="fechaOrdenSalida"></H2>
+      <br><H2 id="usuarioRecibe"></H2>
+    </p>
+    <table>
+      <thead>
+        <tr>
+          <th class="cantidad">INSUMO</th>
+          <th class="producto">CANTIDAD</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody-TicketOrdenSalida"></tbody>
+    </table>
+    <br>
+    <p class="centrado">Orden Iniciada...</p>
+  </div>
+  <script src="assets/js/OrdenSalida.js"></script>
+</body>
+<script>
+  
+  window.print();  
+</script>
+
+</html>
