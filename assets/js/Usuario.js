@@ -1,6 +1,6 @@
 class Usuario {
     // Constructor
-    constructor(id, nombre, username, password, email, activo, r, idBodega) {
+    constructor(id, nombre, username, password, email, activo, r, b) {
         this.id = id || null;
         this.nombre = nombre || '';
         this.username = username || '';
@@ -8,7 +8,7 @@ class Usuario {
         this.email = email || '';
         this.activo = activo || 0; //1: activo; 0: inactivo.
         this.listarol = r || null;
-        this.idBodega = idBodega;
+        this.bodegas = b || null;
     }
 
     //Getter
@@ -44,7 +44,7 @@ class Usuario {
         this.email = $("#email").val();
         this.activo = $("#activo")[0].checked;
         this.listarol = $('#rol > option:selected').map(function () { return this.value; }).get();
-        this.idBodega = $('#selbodega option:selected').val(); 
+        this.bodegas = $('#selbodega option:selected').map(function () { return this.value; }).get();
         $.ajax({
             type: "POST",
             url: "class/Usuario.php",
@@ -152,6 +152,9 @@ class Usuario {
         $("#activo")[0].checked=true;        
         $('#rol option').prop("selected", false);
         $("#rol").selectpicker("refresh");
+        $('#selbodega option').prop("selected", false);
+        $("#selbodega").selectpicker("refresh");
+        //
         $('#checkusername').removeClass('fa-check-circle');
         $('#checkusername').removeClass('fa-times-circle');
         $('#checkusername').text('');
@@ -224,7 +227,7 @@ class Usuario {
         this.ClearCtls();
         // carga objeto.
         var data = JSON.parse(e);
-        usuario = new Usuario(data.id, data.nombre, data.username, data.password, data.email, data.activo, data.listarol, data.idBodega);
+        usuario = new Usuario(data.id, data.nombre, data.username, data.password, data.email, data.activo, data.listarol, data.bodegas);
         // Asigna objeto a controles
         $("#id").val(usuario.id);
         $("#nombre").val(usuario.nombre);
@@ -251,7 +254,9 @@ class Usuario {
         });
         $("#rol").selectpicker("refresh");
         //bodega
-        $('#selbodega option[value=' + data.idBodega + ']').prop("selected", true);
+        $.each(usuario.bodegas, function (i, item) {
+            $('#selbodega option[value=' + item.idBodega + ']').prop("selected", true);
+        });
         $("#selbodega").selectpicker("refresh");
         
     };

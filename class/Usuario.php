@@ -5,6 +5,7 @@ if(isset($_POST["action"])){
     // Classes
     require_once("Conexion.php");
     require_once('Evento.php');
+    require_once("usuariosXBodega.php");
     // Session
     if (!isset($_SESSION))
         session_start();
@@ -45,6 +46,9 @@ if(isset($_POST["action"])){
             $usuario->username= $_POST["username"];
             echo json_encode($usuario->CheckUsername());
             break;
+        case "setBodega":
+            $usuario->setBodega();
+            break;
     }
 }
 
@@ -68,8 +72,9 @@ class Usuario{
     public $status = userSessionStatus::invalido; // estado de la sesion de usuario.
     public $listarol= array(); // array de roles del usuario.
     public $eventos= array(); // array de eventos asignados a la sesion de usuario.
+    public $bodegas= array(); 
     public $url;
-    public $idBodega;
+    public $idBodega; // bodega selecconada en la sesión.
     public $bodega;
     public $ip;
 
@@ -87,7 +92,6 @@ class Usuario{
             $this->password= $obj["password"] ?? '';  
             $this->email= $obj["email"] ?? '';  
             $this->activo= $obj["activo"] ?? '';
-            $this->idBodega= $obj["idBodega"] ?? null;
             //roles del usuario.
             if(isset($obj["listarol"] )){
                 require_once("RolesXUsuario.php");
@@ -97,6 +101,17 @@ class Usuario{
                     $rolUsr->idRol= $idRol;
                     $rolUsr->idUsuario= $this->id;
                     array_push ($this->listarol, $rolUsr);
+                }
+            }
+            //bodegas del usuario.
+            if(isset($obj["bodegas"] )){
+                require_once("usuariosXBodega.php");
+                //
+                foreach ($obj["bodegas"] as $item) {
+                    $bodega= new usuariosXBodega();
+                    $bodega->idBodega= $item; // id de la bodega en lista.
+                    $bodega->idUsuario= $this->id;
+                    array_push ($this->bodegas, $bodega);
                 }
             }
         }
@@ -148,11 +163,10 @@ class Usuario{
     function Login(){
         try { 
             //Check activo & password.
-            $sql= 'SELECT u.id, u.username, u.nombre, activo, password, idEvento, e.nombre as nombreUrl, e.url, menuPadre, subMenuPadre, idBodega , b.nombre as bodega
+            $sql= 'SELECT u.id, u.username, u.nombre, activo, password, idEvento, e.nombre as nombreUrl, e.url, menuPadre, subMenuPadre
             FROM usuario u inner join rolesXUsuario ru on ru.idUsuario = u.id
                 inner join eventosXRol er on er.idRol = ru.idRol
                 inner join evento e on e.id = er.idEvento
-                inner join bodega b on b.id = u.idBodega
                 where username=:username';
             $param= array(':username'=>$this->username);
             $data= DATA::Ejecutar($sql, $param);
@@ -165,7 +179,7 @@ class Usuario{
                     // usuario activo; check password
                     if(password_verify($this->password, $data[0]['password'])){
                         foreach ($data as $key => $value){
-                            // Session
+                            // Session Datos del usuario y eventos relacionados a su rol
                             $evento= new Evento(); // evento con credencial del usuario.
                             if($key==0){
                                 $this->id = $value['id'];
@@ -174,9 +188,6 @@ class Usuario{
                                 $this->activo = $value['activo'];
                                 $this->status = userSessionStatus::login;
                                 $this->url = isset($_SESSION['userSession']->url)? $_SESSION['userSession']->url : 'Dashboard.html'; // Url consultada
-                                $this->idBodega = $value['idBodega'];
-                                $this->bodega = $value['bodega'];
-                                $_SESSION['idBodega']= $this->idBodega;
                                 //
                                 $evento->id= $value['idEvento'];
                                 $evento->nombre= $value['nombreUrl'];
@@ -194,6 +205,11 @@ class Usuario{
                                 array_push ($this->eventos, $evento);
                             }                    
                         }
+                        // Bodegas del usuario
+                        $this->bodegas= usuariosXBodega::Read($this->id);
+                        // si solo tiene una bodega, asigna la sesion.
+                        if(count($this->bodegas)==1)
+                            $this->idBodega= $this->bodegas[0]->idBodega;
                     }
                     else { // password invalido
                         unset($_SESSION["userSession"]);
@@ -239,7 +255,7 @@ class Usuario{
 
     function Read(){
         try {
-            $sql='SELECT u.id, u.nombre, u.username, u.password, email, activo, r.id as idRol, r.nombre as nombreRol, idBodega
+            $sql='SELECT u.id, u.nombre, u.username, u.password, email, activo, r.id as idRol, r.nombre as nombreRol
                 FROM usuario  u LEFT JOIN rolesXUsuario ru on ru.idUsuario = u.id
                     LEFT JOIN rol r on r.id = ru.idRol
                 where u.id=:id';
@@ -255,8 +271,7 @@ class Usuario{
                     $this->username = $value['username'];
                     $this->password = $value['password'];
                     $this->email = $value['email'];
-                    $this->activo = $value['activo'];
-                    $this->idBodega = $value['idBodega'];
+                    $this->activo = $value['activo'];                    
                     //rol
                     if($value['idRol']!=null){
                         $rol->id = $value['idRol'];
@@ -270,6 +285,7 @@ class Usuario{
                     array_push ($this->listarol, $rol);
                 }
             }
+            $this->bodegas= usuariosXBodega::Read($this->id);
             return $this;
         }     
         catch(Exception $e) {
@@ -283,18 +299,29 @@ class Usuario{
 
     function Create(){
         try {
-            $sql="INSERT INTO usuario   (id, nombre, username, password, email, activo, idBodega)
-                VALUES (:uuid, :nombre, :username, :password, :email, :activo, :idBodega)";
+            $sql="INSERT INTO usuario   (id, nombre, username, password, email, activo)
+                VALUES (:uuid, :nombre, :username, :password, :email, :activo)";
             //
             $param= array(':uuid'=>$this->id, ':nombre'=>$this->nombre, ':username'=>$this->username, ':password'=> password_hash($this->password, PASSWORD_DEFAULT), 
-                ':email'=>$this->email, ':activo'=>$this->activo, ':idBodega'=>$this->idBodega);
+                ':email'=>$this->email, ':activo'=>$this->activo);
             $data = DATA::Ejecutar($sql,$param, false);
             if($data)
             {
+                $created= true;
+                $errmsg='';
                 //save array obj
-                if(RolesXUsuario::Create($this->listarol))
+                if(!RolesXUsuario::Create($this->listarol)){
+                    $created= false;
+                    $errmsg= 'Error al guardar los roles.';
+                }
+                // save bodegas
+                if(!usuariosXBodega::Create($this->bodegas)){
+                    $created= false;
+                    $errmsg= 'Error al guardar las bodegas.';
+                }
+                if($created)
                     return true;
-                else throw new Exception('Error al guardar los roles.', 03);
+                else throw new Exception($errmsg, 05);
             }
             else throw new Exception('Error al guardar.', 02);
         }     
@@ -313,27 +340,49 @@ class Usuario{
                 $sql="UPDATE usuario 
                     SET nombre=:nombre, username=:username, email=:email, activo=:activo, idBodega=:idBodega
                     WHERE id=:id";
-                $param= array(':id'=>$this->id, ':nombre'=>$this->nombre, ':username'=>$this->username, ':email'=>$this->email, ':activo'=>$this->activo, ':idBodega'=>$this->idBodega);
+                $param= array(':id'=>$this->id, ':nombre'=>$this->nombre, ':username'=>$this->username, ':email'=>$this->email, ':activo'=>$this->activo);
             }
             else {
                 $sql="UPDATE usuario 
-                    SET nombre=:nombre, username=:username, password= :password, email=:email, activo=:activo, idBodega=:idBodega
+                    SET nombre=:nombre, username=:username, password= :password, email=:email, activo=:activo
                     WHERE id=:id";
-                $param= array(':id'=>$this->id, ':nombre'=>$this->nombre, ':username'=>$this->username, ':password'=> password_hash($this->password, PASSWORD_DEFAULT), ':email'=>$this->email, ':activo'=>$this->activo);
+                $param= array(':id'=>$this->id, ':nombre'=>$this->nombre, ':username'=>$this->username, ':password'=> password_hash($this->password, PASSWORD_DEFAULT), 
+                    ':email'=>$this->email, ':activo'=>$this->activo);
             }
             $data = DATA::Ejecutar($sql,$param,false);
             if($data){
                 //update array obj
+                $created= true;
+                $errmsg='';
                 if($this->listarol!=null)
-                    if(RolesXUsuario::Update($this->listarol))
-                        return true;            
-                    else throw new Exception('Error al guardar los roles.', 03);
+                    if(!RolesXUsuario::Update($this->listarol)){
+                        $created= false;
+                        $errmsg= 'Error al actualizar los roles.';
+                    }
                 else {
                     // no tiene roles
-                    if(RolesXUsuario::Delete($this->id))
-                        return true;
-                    else throw new Exception('Error al guardar los roles.', 04);
+                    if(!RolesXUsuario::Delete($this->id)){
+                        $created= false;
+                        $errmsg= 'Error al actualizar los roles.';
+                    }                        
                 }
+                //
+                if($this->bodegas!=null)
+                    if(usuariosXBodegas::Update($this->bodegas)){
+                        $created= false;
+                        $errmsg= 'Error al actualizar las bodegas.';
+                    }                
+                else {
+                    // no tiene roles
+                    if(usuariosXBodegas::Delete($this->id)){
+                        $created= false;
+                        $errmsg= 'Error al actualizar las bodegas.';
+                    }
+                }
+                if($created)
+                    return true;
+                else throw new Exception($errmsg, 04);
+                
             }
             else throw new Exception('Error al guardar.', 123);
         }     
@@ -412,6 +461,10 @@ class Usuario{
                 'msg' => $e->getMessage()))
             );
         }
+    }
+
+    function setBodega(){
+        $_SESSION["userSession"]->idBodega= $_POST['idBodega'];
     }
 
 }

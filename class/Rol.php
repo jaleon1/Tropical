@@ -80,7 +80,7 @@ class Rol{
     function Read(){
         try {
             $sql='SELECT r.id, r.nombre, r.descripcion,  e.id as idEvento , e.nombre as nombreEvento
-                FROM rol  r LEFT JOIN EventosXRol er on er.idRol = r.id
+                FROM rol  r LEFT JOIN eventosXRol er on er.idRol = r.id
                     LEFT join evento e on e.id = er.idEvento
                 where r.id=:id';
             $param= array(':id'=>$this->id);
@@ -175,7 +175,7 @@ class Rol{
     private function CheckRelatedItems(){
         try{
             $sql="SELECT idRol
-                FROM EventosXRol x
+                FROM eventosXRol x
                 WHERE x.idRol= :id";
             $param= array(':id'=>$this->id);
             $data= DATA::Ejecutar($sql, $param);

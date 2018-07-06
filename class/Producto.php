@@ -70,7 +70,7 @@ class Producto{
     public $saldoCosto='';
     public $costoPromedio='';
     public $precioVenta='';
-    public $esVenta=0;
+    public $esVenta=0; // tipo de producto.
     public $lista= [];
 
     function __construct(){
@@ -91,7 +91,7 @@ class Producto{
             $this->saldoCosto= $obj["saldoCosto"] ?? '';
             $this->costoPromedio= $obj["costoPromedio"] ?? '';
             $this->precioVenta= $obj["precioVenta"] ?? '';
-            $this->esVenta= $obj["esVenta"] ?? 0;
+            $this->esVenta= $obj["tipoProducto"] ?? 0;
         }
     }
 
@@ -129,7 +129,6 @@ class Producto{
         }
     }
   
-
     // Si hago el filtro por tipo en el javascript ya no necesito esta funcion
     function ReadAllPrdVenta(){
         try {
@@ -151,7 +150,7 @@ class Producto{
 
     function Read(){
         try {
-            $sql='SELECT id, codigo, nombre, txtColor, bgColor, nombreAbreviado, descripcion, saldoCantidad, saldoCosto, costoPromedio, precioVenta,esVenta
+            $sql='SELECT id, codigo, nombre, txtColor, bgColor, nombreAbreviado, descripcion, saldoCantidad, saldoCosto, costoPromedio, precioVenta, esVenta
                 FROM producto  
                 where id=:id';
             $param= array(':id'=>$this->id);
