@@ -1,7 +1,5 @@
 <?php
 require_once("Conexion.php");
-//require_once("Log.php");
-//require_once('Globals.php');
 //
 if (!isset($_SESSION))
     session_start();
@@ -23,6 +21,9 @@ if(isset($_POST["action"])){
             break;
         case "List":
             echo json_encode($bodega->List());
+            break;
+        case "readByUser":
+            echo json_encode($bodega->readByUser());
             break;
         case "Create":
             $bodega->Create();
@@ -93,6 +94,30 @@ class Bodega{
             die(json_encode(array(
                 'code' => $e->getCode() ,
                 'msg' => 'Error al cargar la bodega'))
+            );
+        }
+    }
+
+    function readByUser(){
+        try {                                    
+            require_once('Usuario.php');
+            session_reset();
+            $sql='SELECT b.id, b.nombre, b.descripcion , t.nombre as tipo
+                    FROM tropical.bodega b 
+                        INNER JOIN usuariosXBodega u on u.idbodega = b.id
+                        INNER JOIN tipoBodega t on t.id = b.idTipoBodega
+                    WHERE  u.idUsuario = :userId
+                ORDER BY b.nombre asc';
+            
+            $param= array(':userId'=>$_SESSION['userSession']->id);
+            $data= DATA::Ejecutar($sql,$param);    
+            return $data;
+        }     
+        catch(Exception $e) {
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar la lista'))
             );
         }
     }
@@ -221,6 +246,8 @@ class Bodega{
             );
         }
     }
+
+    
 
 }
 

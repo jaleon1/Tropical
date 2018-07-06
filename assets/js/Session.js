@@ -7,7 +7,7 @@ var Session=  {
             url: "class/Usuario.php",
             data: {
                 action: 'CheckSession',
-                url: window.location.href,
+                url: window.location.href
                 // success: function(data) {
                 //     return data;
                 // }

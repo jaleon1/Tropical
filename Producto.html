@@ -32,6 +32,8 @@
     <link href="assets/css/custom.css" rel="stylesheet">
     <!-- Bootstrap Colorpicker -->
     <link href="assets/bootstrap/css/bootstrap-colorpicker.min.css" rel="stylesheet">
+    <!-- Select -->
+    <link href="assets/css/bootstrap-select.css" rel="stylesheet">
 
 </head>
 
@@ -248,9 +250,13 @@
                                         </div>
 
                                         <div class="item form-group">
-                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="esVenta">Es venta</label>
+                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="esVenta">Tipo de Producto</label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <input type="checkbox"    id="esVenta" name="esVenta">
+                                                    <select class="selectpicker show-menu-arrow form-control" id="tipoProducto" name="tipoProducto">
+                                                        <option value="0">Artículo (no venta al cliente)</option>
+                                                        <option value="1" selected>Venta</option>
+                                                        <option value="2">Topping</option>
+                                                    </select>
                                             </div>
                                         </div>
 
@@ -306,6 +312,8 @@
     <script src="assets/js/sweetalert2.min.js"></script>
     <!-- Bootstrap Colorpicker -->
     <script src="assets/bootstrap/js/bootstrap-colorpicker.min.js"></script>
+    <!-- Select -->
+    <script src="assets/js/bootstrap-select.js"></script>
 
 </body>
 

@@ -9,7 +9,7 @@ class EventosXRol{
         try {
             $created = true;
             foreach ($obj as $everol) {
-                $sql="INSERT INTO eventosxrol   (idEvento, idRol)
+                $sql="INSERT INTO eventosXRol   (idEvento, idRol)
                     VALUES (:idEvento, :idRol)";
                 //
                 $param= array(':idEvento'=>$everol->idEvento, ':idRol'=>$everol->idRol);
@@ -40,7 +40,7 @@ class EventosXRol{
 
     public static function Delete($_idrol){
         try {                 
-            $sql='DELETE FROM eventosxrol  
+            $sql='DELETE FROM eventosXRol  
                 WHERE idRol= :idRol';
             $param= array(':idRol'=> $_idrol);
             $data= DATA::Ejecutar($sql, $param, false);

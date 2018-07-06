@@ -1,6 +1,6 @@
 class Producto {
     // Constructor
-    constructor(id, codigo, nombre, txtColor, bgColor, nombreAbreviado, descripcion, saldoCantidad, saldoCosto, costoPromedio, precioVenta, esVenta, lista) {
+    constructor(id, codigo, nombre, txtColor, bgColor, nombreAbreviado, descripcion, saldoCantidad, saldoCosto, costoPromedio, precioVenta, tipoProducto, lista) {
         this.id = id || null;        
         this.codigo = codigo || '';
         this.nombre = nombre || '';
@@ -12,7 +12,7 @@ class Producto {
         this.saldoCosto = saldoCosto || 0;
         this.costoPromedio = costoPromedio || 0;
         this.precioVenta = precioVenta || 0;
-        this.esVenta = esVenta || 0; //1: producto para vender, 0 articulo no vendible.
+        this.tipoProducto = tipoProducto || 0; //1: producto para vender, 0 articulo no vendible.
         this.lista = lista || [];
     }
 
@@ -90,7 +90,7 @@ class Producto {
         this.saldoCosto = $("#saldoCosto").val();
         this.costoPromedio = $("#costoPromedio").val();
         this.precioVenta = $("#precioVenta").val();
-        this.esVenta = $("#esVenta")[0].checked;
+        this.tipoProducto = $('#tipoProducto option:selected').val();
 
         $.ajax({
             type: "POST",
@@ -231,8 +231,9 @@ class Producto {
         $("#saldoCantidad").val('');
         $("#saldoCosto").val('');
         $("#costoPromedio").val('');
-        $("#precioVenta").val('');
-        $("#esVenta")[0].checked=false;     
+        $("#precioVenta").val(''); 
+        $('#tipoProducto option').prop("selected", false);
+        $("#tipoProducto").selectpicker("refresh");
     };
 
     ShowAll(e) {
@@ -262,11 +263,11 @@ class Producto {
                     <td>${parseFloat(item.saldoCosto).toFixed(2)}</td>
                     <td>${parseFloat(item.costoPromedio).toFixed(2)}</td>
                     <td>${parseFloat(item.precioVenta).toFixed(2)}</td>
-                    <td>${item.esVenta}</td>
+                    <td>${item.esVenta}</td> 
                     ${document.URL.indexOf("Producto.html")>=1 ?                                       
                         `<td class=" last">
-                            <a  class="update" data-toggle="modal" data-target=".bs-example-modal-lg" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | 
-                            <a  class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>
+                            <a  id="update${item.id}" data-toggle="modal" data-target=".bs-example-modal-lg" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | 
+                            <a  id="delete${item.id}"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>
                         </td>`
                     :   ``
                                             }
@@ -277,8 +278,8 @@ class Producto {
             // <a  class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>
             // </td>
             // event Handler
-            $('.update').click(producto.UpdateEventHandler);
-            $('.delete').click(producto.DeleteEventHandler);
+            $('#update'+item.id).click(producto.UpdateEventHandler);
+            $('#delete'+item.id).click(producto.DeleteEventHandler);
             if (document.URL.indexOf("ProductoTemporal.html")!=-1) {
                 $('#chk-addproducto'+item.id).change(productotemporal.AddProductoEventHandler);
             }
@@ -308,7 +309,7 @@ class Producto {
         // carga objeto.
         var data = JSON.parse(e)[0];
         producto = new Producto(data.id, data.codigo, data.nombre, data.txtColor, data.bgColor, data.nombreAbreviado, 
-        data.descripcion, data.saldoCantidad, data.costoPromedio, data.precioVenta , data.esVenta);
+        data.descripcion, data.saldoCantidad, data.saldoCosto, data.costoPromedio, data.precioVenta , data.esVenta);
         // Asigna objeto a controles
         $("#id").val(producto.id);
         $("#codigo").val(producto.codigo);
@@ -321,15 +322,9 @@ class Producto {
         $("#saldoCosto").val(parseFloat(producto.saldoCantidad).toFixed(2));
         $("#costoPromedio").val(parseFloat(producto.costoPromedio).toFixed(2));
         $("#precioVenta").val(parseFloat(producto.precioVenta).toFixed(2));
-        $("#esVenta").val(producto.esVenta);
-
-        // checkbox
-        if(producto.esVenta==1){
-            $("#esVenta")[0].checked=true;
-        }
-        else {
-            $("#esVenta")[0].checked=false;
-        }
+        //$("#tipoProducto").val(producto.tipoProducto);
+        $('#tipoProducto option[value=' + producto.tipoProducto + ']').prop("selected", true);
+        $("#tipoProducto").selectpicker("refresh");
     };
 
     DeleteEventHandler() {
@@ -433,7 +428,7 @@ class Producto {
         // carga lista con datos.
         if(e != "false"){
             var data = JSON.parse(e)[0];
-            producto= new Producto(data.id, data.codigo, data.nombre, data.txtColor, data.bgColor, data.nombreAbreviado, data.descripcion, data.saldoCantidad, data.saldoCosto, data.costoPromedio, data.precioVenta, data.esVenta, data.lista);
+            producto= new Producto(data.id, data.codigo, data.nombre, data.txtColor, data.bgColor, data.nombreAbreviado, data.descripcion, data.saldoCantidad, data.saldoCosto, data.costoPromedio, data.precioVenta, data.tipoProducto, data.lista);
             producto.UltPrd = producto.codigo;
             var repetido = false;
             //

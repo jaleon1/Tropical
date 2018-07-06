@@ -128,6 +128,23 @@ class Bodega {
         });
     }
 
+    get readByUser() {
+        var miAccion = "readByUser";
+        $.ajax({
+            type: "POST",
+            url: "class/Bodega.php",
+            data: {
+                action: miAccion
+            }
+        })
+            .done(function (e) {
+                bodega.ShowAllD(e);
+            })
+            .fail(function (e) {
+                bodega.showError(e);
+            });
+    }
+
     // Methods
     Reload(e) {
         if (this.id == null)
@@ -231,11 +248,19 @@ class Bodega {
             });
     };
 
+    ShowAllD(e) {
+        b.clear();
+        b.rows.add(JSON.parse(e));
+        b.draw();
+        //$('.update').click(ipautorizada.UpdateEventHandler);
+        //$('.delete').click(ipautorizada.DeleteEventHandler);
+    };
+
     AddBodegaEventHandler(){
         bodega.id=$(this).find('td:eq(1)').html();
-        bodega.nombre=$(this).find('td:eq(2)').html()
-        bodega.descripcion= $(this).find('td:eq(3)').html()
-        bodega.tipo= $(this).find('td:eq(4)').html()
+        bodega.nombre=$(this).find('td:eq(2)').html();
+        bodega.descripcion= $(this).find('td:eq(3)').html();
+        bodega.tipo= $(this).find('td:eq(4)').html();
         //
         $('#nombre').val(bodega.nombre);
         $('#descripcion').val(bodega.descripcion);

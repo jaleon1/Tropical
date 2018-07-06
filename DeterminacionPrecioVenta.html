@@ -16,7 +16,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Tropical Sno | Distribucion</title>
+    <title>Tropical Sno | Determinación de Precios Tropical SNO</title>
 
     <!-- Bootstrap -->
     <link href="assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -28,6 +28,8 @@
     <link href="assets/css/iCheck/skins/flat/green.css" rel="stylesheet">
     <!-- Custom Theme Style -->
     <link href="assets/css/custom.min.css" rel="stylesheet">
+    <!-- Custom Table Scroll -->
+    <link href="assets/css/facturacion.css" rel="stylesheet">
     <!-- Custom TablePRD -->
     <link href="assets/css/datatables.net-bs/css/dataTables.bootstrap.min.css" rel="stylesheet">
     <!-- SweetAlert -->
@@ -132,7 +134,7 @@
 
                     <div class="page-title">
                         <div class="title_left">
-                            <h3>Distribucion de Productos</h3>
+                            <h3>Determinación de Precios</h3>
                         </div>
                         <div class="title_right">
                             <h3 id="fecha" style="float:right"></h3>
@@ -142,48 +144,27 @@
                     <div class="clearfix"></div>
 
                     <div class="row">
-                        <!--  CONTENIDO DE LA PAGINA -->
                         <div class="col-md-9 col-sm-9 col-xs-9">
                             <div class="x_panel">
                                 <div class="title_right">
-                                    <div class="col-md-12 col-sm-12 col-xs-12 form-group top_search">
+
+                                    <div class="col-md-12 col-sm-12 col-xs-12 form-group ">
                                         <div class="input-group">
-                                            <input type="text" class="form-control" id="orden" readonly placeholder="Número de Orden Autogenerado">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-12 col-sm-12 col-xs-12 form-group pull-right top_search">
-                                        <div class="input-group">
-                                            <input autofocus type="text" class="form-control" id="p_searh" placeholder="Ingresar Materia Prima/Producto...">
+                                            <input autofocus type="text" class="form-control" id="p_searh" placeholder="Ingresar el código del producto...">
                                             <span class="input-group-btn">
-                                                <button class="btn btn-default" type="button">Buscar</button>
+                                                <button class="btn btn-default" type="button">Buscar</button>x
                                             </span>
                                         </div>
                                     </div>
+
                                 </div>
-                                
+
+                                <!--  CONTENIDO DE LA PAGINA -->
+
                                 <div class="x_content">
                                     <div class="table-responsive">
-                                        <table id="dsitems" class="table table-striped jambo_table bulk_action">
-                                            <!-- <thead>
-                                                    <tr class="headings">
-                                                        <th>
-                                                            <input type="checkbox" id="check-all" class="flat">
-                                                        </th>
-                                                        <th class="column-title">Codigo </th>
-                                                        <th class="column-title">Descripción </th>
-                                                        <th class="column-title">Precio/U </th>
-                                                        <th class="column-title">Cantidad </th>
-                                                        <th class="column-title">Importe </th> -->
-                                            <!--<th class="column-title">Amount </th>
-                                                        <th class="column-title no-link last"><span class="nobr">Action</span>
-                                                        </th> -->
-                                            <!-- <th class="bulk-actions" colspan="7">
-                                                        <a class="antoo" style="color:#fff; font-weight:500;">Acciones Masivas ( <span class="action-cnt"> </span> ) <i class="fa fa-chevron-down"></i></a>
-                                                        </th>
-                                                    </tr>
-                                                </thead> -->
-                                            <tbody id="productos">
-
+                                        <table id="dsItems" class="table table-striped jambo_table bulk_action">
+                                            <tbody id="tbodyItems">
                                             </tbody>
                                         </table>
                                     </div>
@@ -191,21 +172,15 @@
                             </div>
                         </div>
 
-                        <!-- bodega -->
-                        <div class="col-md-3 col-sm-6 col-xs-3">
+                        <div class="col-md-3 col-sm-3 col-xs-3 form-group ">
                             <div class="x_panel">
-                                <div class="x_title">
-                                    <h2>Bodega</h2>
-
-                                    <div class="clearfix"></div>
-                                </div>
-
-                                <div class="x_content">
+                                <div class="title_right">
                                     <form class="form-horizontal form-label-left" id="frmBodega" method="POST" novalidate>
 
                                         <div id="reportrange" class="pull-right">
                                             <button id="btnAddBodega" data-toggle="modal" data-target=".bs-bodega-modal-lg" type="button" class="btn btn-info btn-lg">+</button>
                                         </div>
+
                                         <div class="row">
                                             <div class="col-sm-12">
                                                 <div class="item form-group">
@@ -235,77 +210,22 @@
 
                                         <div class="ln_solid"></div>
 
-                                        <!-- <div class="form-group">
-                                            <div class="col-md-6 col-md-offset-3">
-                                                <button type="reset" class="btn btn-primary">Reset</button>
-                                                <button id="btnDistribucion" type="submit" class="btn btn-success">Submit</button>
-                                            </div>
-                                        </div> -->
                                     </form>
                                 </div>
                             </div>
                         </div>
-                        <!-- /bodega -->
 
-                        <!-- totales -->
-                        <div class="col-md-3 col-sm-3 col-xs-3 col-md-offset-9 col-sm-offset-9 col-xs-offset-9 ">
-                            <div class="x_panel">
-                                <div class="x_title">
-                                    <h2>Totales</h2>
-
-                                    <div class="clearfix"></div>
-                                </div>
-
-                                <div class="x_content">
-                                    <form class="form-horizontal form-label-left" id="frmTotales" method="POST" novalidate>
-                                        <div class="row">
-                                            <div class="table-responsive">
-                                                <table class="table table-striped jambo_table bulk_action">
-                                                    <tbody>
-                                                        <tr class="even pointer">
-                                                            <td class="">SubTotal</td>
-                                                            <td class=""> </td>
-                                                            <td class="" id="subTotal">¢0</td>
-                                                        </tr>
-                                                        <tr class="odd pointer">
-                                                            <td class="">Descuento</td>
-                                                            <td class="" id="desc_100" value="0">%</td>
-                                                            <td class="" id="desc_val" >¢0</td>
-                                                        </tr>
-                                                        <tr class="even pointer">
-                                                            <td class="">Impuesto de Ventas</td>
-                                                            <td class="text-left" id="iv_100" value='13'>%</td>
-                                                            <td class="" id="iv_val">¢0</td>
-                                                        </tr>
-                                                        <tr class="odd pointer">
-                                                            <td class="">TOTAL</td>
-                                                            <td class=""></td>
-                                                            <td class="" id="total">¢0</td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-
-                                        <div class="ln_solid"></div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- /totales -->
                     </div>
 
                     <div class="clearfix"></div>
 
                     <div class="ln_solid"></div>
-
                     <div class="form-group">
-                        <div class="col-md-12 col-md-offset-9">
-                            <button type="reset" class="btn btn-primary">Reset</button>
-                            <button id="btnDistribucion" type="submit" class="btn btn-success">Submit</button>
+                        <div class="col-md-6 col-md-offset-3">
+                            <button type="submit" class="btn btn-primary" id="reload">Limpiar</button>
+                            <button type="button" class="btn btn-success" id="btnSubmit">Submit</button>
                         </div>
                     </div>
-
                 </div>
             </div>
             <!-- /page content -->
@@ -334,27 +254,17 @@
                 </div>
 
                 <div class="modal-body">
-                    <form class="form-horizontal form-label-left" id="frmBodegaSeleccionar" novalidate>
-
-                        <div id="datatable_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
-                            <div class="row">
-                                <div class="col-sm-12">
-                                    <table id="dsBodega" class="table table-striped jambo_table bulk_action" role="grid" aria-describedby="datatable_info">
-                                        <!-- <thead>
-                                            <tr role="row" class="headings">
-                                            </tr>
-                                        </thead> -->
-
-                                        <tbody id="tableBody-Bodega">
-
-                                        </tbody>
-
-                                    </table>
-                                </div>
+                    <div id="datatable_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <table id="dsItemsBodega" class="table table-striped jambo_table bulk_action no-wrap" width="100%" role="grid" aria-describedby="datatable_info">
+                                    <tbody id="tbodyItemsBodega">
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
-                        <div class="ln_solid"></div>
-                    </form>
+                    </div>
+                    <div class="ln_solid"></div>
                 </div>
 
                 <div class="modal-footer">
@@ -384,8 +294,6 @@
     <!-- JS Scripts -->
     <script src="assets/js/Producto.js"></script>
     <script src="assets/js/Bodega.js"></script>
-    <script src="assets/js/Distribucion.js"></script>
-
     <!--CAMBIAR por Facuracli-->
     <!-- JS dataTables -->
     <script src="assets/js/jquery.dataTables.min.js"></script>
@@ -400,89 +308,99 @@
 </html>
 
 <script>
+    var t = null; // tabla
+    var b = null; // tabla
     $(document).ready(function () {
-        $(document).on('click', '#btnAddBodega', function (event) {
-            bodega.id = null;
-            bodega.Read;
-            //bodega.Init();
+        bodega.id = null;
+        bodega.readByUser;
+
+        //ordenCompra.Init();
+        $('#btnSubmit').click(function () {
+            producto.ActualizarPrecios();
         });
         //Valida si se presiona enter -> carga el producto en la lista
         //si preciona "*" -> Quita el "*", pasa el punto de insercion a la cantidad y selecciona el valor para ser reemplazdo con el teclado
         $("#p_searh").keyup(function (e) {
             if (e.which == 13) {
                 // Acciones a realizar, por ej: enviar formulario.
-                distr.LoadProducto();
-            }
-            if (e.which == 106) {
-                $("#p_searh")[0].value = "";
-                // se usa UltPrd xq es el UltimoProductoTocado (si la cantidad del producto es alterada no hay forma de saber cual fue el ultimo modificado.)
-                $("#cant_" + producto.UltPrd).focus().select();
+                producto.LoadProducto();
             }
         });
 
+        // Recarga la página para limpiar todo
         $('#reload').click(function () {
             location.reload();
         });
 
-        $('#btnDistribucion').click(function () {
-            $('#frmBodega').submit();
+        $('#dsItemsBodega tbody').on('dblclick', 'tr', function () {
+            var data = b.row(this).data();
+            alert('You clicked on ' + data[0] + '\'s row');
         });
 
-        //Usa la variable t que es el datatable donde estan los productos
-        t = $('#dsitems').DataTable({
+        // productos
+        t = $('#dsItems').DataTable({
+            responsive: true,
             "ordering": false,
-            // "bSort": false,
+            "searching": true,
+            "paging": true,
             "info": false, //Quita el pie de pagina
             "language": {
                 "infoEmpty": "No hay productos agregados",
                 "emptyTable": "No hay productos agregados",
-                "search": "Buscar En Factura" //Cambia el texto de Search
+                "search": "Buscar En Productos" //Cambia el texto de Search
             },
             "columns": [
                 { "title": "id" },
                 { "title": "Codigo" },
                 { "title": "Nombre" },
-                { "title": "Descripcion" },
-                { "title": "Cantidad" },
-                { "title": "Precio Venta" },
-                { "title": "Subtotal" },
-            ], // crea las columnas
-            "scrollY": "190px",
-            // "searching": false,
-            "scrollCollapse": true,
-            "paging": false,
+                { "title": "costoPromedio" },
+                { "title": "precioVenta" }
+            ],
             "columnDefs": [
-                {// id.
-                    "width": "0%", "targets": 0,
+                {//id
+                    "targets": 0,
                     "visible": false,
-                    "searchable": false
+                    "searchable": false,
+                    "className": "itemId",
                 },
-                {// cant.
-                    "width": "10%", "targets": 4,
+                {
+                    "width": "25%", "targets": 3,
+                    "data": null,
+                    "defaultContent": '<input class="cantidad form-control" readonly>'
+                },
+                {
+                    "width": "25%", "targets": 4,
                     "data": null,
                     "defaultContent": '<input class="cantidad form-control" type="number">'
-                },
-                {// precio venta
-                    "width": "10%", "targets": 5,
-                    "data": null,
-                    "defaultContent": '<input readonly class="valor"><input readonly class="display">'
-                },
-                {// cant.
-                    "width": "10%", "targets": 6,
-                    "data": null,
-                    "defaultContent": '<input readonly class="valor"><input readonly class="display">'
                 }
             ]
         });
-        t.columns.adjust().draw();       
-
-        var validator = new FormValidator({ "events": ['blur', 'input', 'change'] }, document.forms["frmBodega"]);
-        $('#frmBodega').submit(function (e) {
-            e.preventDefault();
-            var validatorResult = validator.checkAll(this);
-            if (validatorResult.valid)
-                distr.Save;
-            return false;
+        // bodegas
+        b = $('#dsItemsBodega').DataTable({
+            responsive: true,
+            ordering: false,
+            searching: true,
+            paging: true,
+            info: false, //Quita el pie de pagina
+            language: {
+                infoEmpty: "No hay bodegas agregadas",
+                emptyTable: "No hay bodegas agregadas",
+                search: "Buscar en bodegas" //Cambia el texto de Search
+            },
+            columns: [
+                { title: "id" },
+                { title: "Nombre" },
+                { title: "Descripción" },
+                { title: "Tipo" }
+            ],
+            columnDefs: [
+                {//id
+                    targets: 0,
+                    visible: false,
+                    searchable: false,
+                    className: "itemId",
+                }
+            ]
         });
     });
 </script>
