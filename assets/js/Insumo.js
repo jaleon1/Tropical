@@ -70,6 +70,32 @@ class Insumo {
                 id: this.id
             }
         })
+<<<<<<< HEAD
+            .done(function (e) {
+                var data = JSON.parse(e);
+                if (data == 0)
+                    swal({
+                        type: 'success',
+                        title: 'Eliminado!',
+                        showConfirmButton: false,
+                        timer: 1000
+                    });
+                else if (data.status == 1) {
+                    swal({
+                        type: 'error',
+                        title: 'No es posible eliminar...',
+                        text: 'El registro que intenta eliminar ya se ecnuentra liquidado'                        
+                    });
+                }
+                else {
+                    swal({
+                        type: 'error',
+                        title: 'Ha ocurrido un error...',
+                        text: 'El registro no ha sido eliminado',
+                        footer: '<a href>Contacte a Soporte Técnico</a>',
+                    })
+                }
+=======
             .done(function () {
                 swal({
                     //
@@ -78,6 +104,7 @@ class Insumo {
                     showConfirmButton: false,
                     timer: 1000
                 });
+>>>>>>> master
             })
             .fail(function (e) {
                 insumo.showError(e);
@@ -138,6 +165,7 @@ class Insumo {
         // // Carga lista
         var data = JSON.parse(e);
         //style="display: none"
+        
         $.each(data, function (i, item) {
             $('#tableBody-Insumo').append(`
                 <tr> 
@@ -148,44 +176,39 @@ class Insumo {
                     <td>${item.codigo}</td>
                     <td>${item.nombre}</td>
                     <td>${item.descripcion}</td>
-                    <td>${item.saldoCantidad}</td>
-                    <td>${parseFloat(item.saldoCosto).toFixed(2)}</td>
-                    <td>${parseFloat(item.costoPromedio).toFixed(2)}</td>
-                    <td class=" last">
-                        <a  id="update" class="update" data-toggle="modal" data-target=".bs-example-modal-lg" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | 
-                        <a  id="delete" class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>
-                    </td>
+                    ${document.URL.indexOf("OrdenSalida.html")>=1 ? 
+                        `<td class="oculto">${item.saldoCantidad}</td>
+                         <td class="oculto">${parseFloat(item.saldoCosto).toFixed(2)}</td>
+                         <td class="oculto">${parseFloat(item.costoPromedio).toFixed(2)}</td>`
+                    :``}
+                    ${document.URL.indexOf("Insumo.html")>=1 ? 
+                        `<td>${item.saldoCantidad}</td>
+                        <td>${parseFloat(item.saldoCosto).toFixed(2)}</td>
+                        <td>${parseFloat(item.costoPromedio).toFixed(2)}</td>
+                        <td class=" last">
+                            <a  id="update" class="update" data-toggle="modal" data-target=".bs-example-modal-lg" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | 
+                            <a  id="delete" class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>
+                        </td>`
+                    :``}
                 </tr>
             `);
             // event Handler
             $(".update").click(insumo.UpdateEventHandler);
             $(".delete").click(insumo.DeleteEventHandler);
-            if (url.indexOf("OrdenSalida.html")!=-1) {
-                $('#chk-addinsumo'+item.id).change(ordensalida.AddInsumoEventHandler);
-            }
-        })        
+            if (document.URL.indexOf("OrdenSalida.html")!=-1)
+                $('#chk-addinsumo'+item.id).change(ordenSalida.AddInsumoEventHandler);
+        })
+
         //datatable         
         if ( $.fn.dataTable.isDataTable( '#dsInsumo' ) ) {
             var table = $('#dsInsumo').DataTable();
             //table.destroy();
         }
         else 
-            $('#dsInsumo').DataTable( {
-                // columns: [
-                //     { "sTitle": "<input type='checkbox' id='check-all' class='iCheck-helper' >" },
-                //     { title: "ID"
-                //     // ,visible: false
-                //     },
-                //     { title: "Nombre" },
-                //     { title: "Código" },
-                //     { title: "Bueno" },
-                //     { title: "Dañado" },
-                //     { title: "Costo" },
-                //     { title: "Action" }
-                // ],          
+            $('#dsInsumo').DataTable( {          
                 paging: true,
                 search: true
-            } );
+            });
     };
 
     UpdateEventHandler() {

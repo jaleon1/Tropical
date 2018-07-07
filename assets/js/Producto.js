@@ -243,11 +243,7 @@ class Producto {
         $('#tableBody-Producto').html("");
         // // Carga lista
         var data = JSON.parse(e);
-        
-        /*
-        <td>${item.txtColor}</td>
-        <td>${item.bgColor}</td>
-        */
+
         $.each(data, function (i, item) {
             $('#tableBody-Producto').append(`
                 <tr> 
@@ -259,34 +255,39 @@ class Producto {
                     <td>${item.nombre}</td>
                     <td>${item.nombreAbreviado}</td>
                     <td>${item.descripcion}</td>
-                    <td>${item.saldoCantidad}</td>
-                    <td>${parseFloat(item.saldoCosto).toFixed(2)}</td>
-                    <td>${parseFloat(item.costoPromedio).toFixed(2)}</td>
-                    <td>${parseFloat(item.precioVenta).toFixed(2)}</td>
-                    <td>${item.esVenta}</td> 
-                    ${document.URL.indexOf("Producto.html")>=1 ?                                       
-                        `<td class=" last">
-                            <a  id="update${item.id}" data-toggle="modal" data-target=".bs-example-modal-lg" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | 
-                            <a  id="delete${item.id}"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>
+                    ${document.URL.indexOf("ElaborarProducto.html")>=1 ?                                       
+                        `<td class="oculto">${item.saldoCantidad}</td>
+                        <td class="oculto">${parseFloat(item.saldoCosto).toFixed(2)}</td>
+                        <td class="oculto">${parseFloat(item.costoPromedio).toFixed(2)}</td>
+                        <td class="oculto">${parseFloat(item.precioVenta).toFixed(2)}</td>
+                        <td class="oculto">${item.esVenta}</td>`
+                    :``}
+                    ${document.URL.indexOf("InventarioProducto.html")>=1 ?                                       
+                        `<td>${item.saldoCantidad}</td>
+
+                        
+                        <td>${parseFloat(item.saldoCosto).toFixed(2)}</td>
+                        <td>${parseFloat(item.costoPromedio).toFixed(2)}</td>
+                        <td>${parseFloat(item.precioVenta).toFixed(2)}</td>
+                        <td>${item.esVenta}</td>
+                        <td class=" last">
+                            <a  class="update" data-toggle="modal" data-target=".bs-example-modal-lg" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | 
+                            <a  class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>
                         </td>`
-                    :   ``
-                                            }
+                    :``}
                 </tr>
             `);
-            // <td class=" last">
-            // <a  class="update" data-toggle="modal" data-target=".bs-example-modal-lg" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | 
-            // <a  class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>
-            // </td>
             // event Handler
-            $('#update'+item.id).click(producto.UpdateEventHandler);
-            $('#delete'+item.id).click(producto.DeleteEventHandler);
-            if (document.URL.indexOf("ProductoTemporal.html")!=-1) {
-                $('#chk-addproducto'+item.id).change(productotemporal.AddProductoEventHandler);
+            $('.update').click(producto.UpdateEventHandler);
+            $('.delete').click(producto.DeleteEventHandler);
+            if (document.URL.indexOf("ElaborarProducto.html")!=-1) {
+                $('#chk-addproducto'+item.id).change(elaborarProducto.AddProductoEventHandler);
             }
             if (document.URL.indexOf("Articulo.html")!=-1 || url.indexOf("Distribucion.html")!=-1) {
                 $('#chk-addproducto'+item.id).change(producto.AddArticuloEventHandler);
             }
-        })        
+        })    
+                
         //datatable         
         if ( $.fn.dataTable.isDataTable( '#dsProducto' ) ) {
             var table = $('#dsProducto').DataTable();
@@ -381,7 +382,7 @@ class Producto {
                     <input id="costo" class="form-control col-3" name="costo" type="text" placeholder="Costo del artículo" autofocus="" value="0">
                 </td>
                 <td class=" last">
-                    <a id ="delete_row${id}" onclick="productotemporal.Deleteproducto(this)" > <i class="glyphicon glyphicon-trash" onclick="Deleteproducto(this)"> </i> Eliminar </a>
+                    <a id ="delete_row${id}" onclick="elaborarProducto.Deleteproducto(this)" > <i class="glyphicon glyphicon-trash" onclick="Deleteproducto(this)"> </i> Eliminar </a>
                 </td>
             </tr>
         `);
