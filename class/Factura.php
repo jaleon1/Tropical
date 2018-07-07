@@ -73,13 +73,8 @@ class Factura{
             //     foreach ($obj["listaProducto"] as $idprod) {
             //         $prodfact= new ProductosXFactura();
             //         $prodfact->idcategoria= $idprod;
-<<<<<<< HEAD
             //         $prodfact->idproducto= $this->id;
             //         array_push ($this->listaProducto, $prodfact);
-=======
-            //         $prodfact->idProducto= $this->id;
-            //         array_push ($this->listaproducto, $prodfact);
->>>>>>> master
             //     }
             // }
         }
@@ -126,24 +121,14 @@ class Factura{
                     //categoria
                     if($value['idcategoria']!=null){
                         $cat->id = $value['idcategoria'];
-<<<<<<< HEAD
                         $cat->idusuario = $value['nombrecategoria'];
                         array_push ($this->listaProducto, $cat);
-=======
-                        $cat->idUsuario = $value['nombrecategoria'];
-                        array_push ($this->listaproducto, $cat);
->>>>>>> master
                     }
                 }
                 else {
                     $cat->id = $value['idcategoria'];
-<<<<<<< HEAD
                     $cat->idusuario = $value['nombrecategoria'];
                     array_push ($this->listaProducto, $cat);
-=======
-                    $cat->idUsuario = $value['nombrecategoria'];
-                    array_push ($this->listaproducto, $cat);
->>>>>>> master
                 }
             }
             return $this;
