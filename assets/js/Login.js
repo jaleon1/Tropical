@@ -1,3 +1,6 @@
+var url;
+var t= null;
+
 $(document).ready(function () {
     //Validator.js
     var validator = new FormValidator({ "events": ['blur', 'input', 'change'] }, document.forms[0]);
@@ -12,7 +15,27 @@ $(document).ready(function () {
     // on form "reset" event
     document.forms[0].onreset = function (e) {
       validator.reset();
-    }
+    }    
+    //
+    $('#dsItemsBodega tbody').on('dblclick', 'tr', function () {
+        var data = t.row(this).data();
+        $.ajax({
+            type: "POST",
+            url: "class/Usuario.php",
+            data: {
+                action: 'setBodega',               
+                idBodega: data.idBodega
+            }        
+        })
+        .done(function( e ) {       
+            if(url)  
+                location.href= data.url || 'Dashboard.html';
+        })
+        .fail(function( e ) {
+            showError(e);
+        });
+    });
+   
 });
 
 function Login(){
@@ -23,6 +46,7 @@ function Login(){
             action: 'Login',               
             username:  $("#username").val(),
             password: $("#password").val(),
+            ip: localip,
             beforeSend: function(){
                  $("#error").fadeOut();
             } 
@@ -31,7 +55,13 @@ function Login(){
     .done(function( e ) {
         var data= JSON.parse(e);
         if(data.status=='login'){
-            if(data.url)
+            // si el usuario está relacionado con mas de una bodega debe seleccionarla en modal
+            if(data.bodegas.length>1){
+                url= data.url;
+                ShowAll(data);
+                $("#modal-bodega").modal('toggle');                
+            }
+            else if(data.url)        
                 location.href= data.url || 'Dashboard.html';
         }
         else if(data.status=='inactivo')
@@ -52,6 +82,14 @@ function Login(){
                     </div>
                 `);
             });  
+        else if(data.status=='noip')
+            swal({
+                //
+                type: 'error',
+                title: 'Número de IP no autorizada',
+                showConfirmButton: false,
+                timer: 3000
+            });
         else
             $("#error").fadeIn(500, function(){      
                 $("#error").html(`                    
@@ -76,4 +114,28 @@ function showError(e) {
         text: 'Algo no está bien (' + data.code + '): ' + data.msg, 
         footer: '<a href>Contacte a Soporte Técnico</a>',
     })
+};
+
+function ShowAll(data) {
+    t= $('#dsItemsBodega').DataTable ({
+        responsive: true,      
+        pagging: false,
+        searching: false,
+        bPaginate: false,
+        bLengthChange: false,
+        info:false,
+        data : data.bodegas,
+        columns : [
+            { "data" : "idBodega" },
+            { "data" : "nombre" }
+        ],
+        columnDefs: [
+            {//id
+            targets: 0,
+            visible: false,
+            searchable: false,
+            className: "itemId"
+            }
+        ]
+    });
 };

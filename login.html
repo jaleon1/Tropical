@@ -24,6 +24,11 @@
   <link href="assets/css/custom.css" rel="stylesheet">
   <!-- SweetAlert -->
   <link rel="stylesheet" href="assets/css/sweetalert2.min.css">
+  <link href="../vendors/datatables.net-bs/css/dataTables.bootstrap.min.css" rel="stylesheet">
+  <link href="../vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css" rel="stylesheet">
+  <link href="../vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css" rel="stylesheet">
+  <link href="../vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css" rel="stylesheet">
+  <link href="../vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css" rel="stylesheet">
 
 </head>
 
@@ -36,37 +41,36 @@
       <div class="animate form login_form">
         <section class="login_content">
           <div id="error"></div>
-          <form id="frmLogin" novalidate>
+          <form id="frmLogin" novalidate style="margin:0; padding:0;">
             <h1>Login Form</h1>
-            <fieldset>
+
+            <fieldset style="margin:0; padding:0;">
               <div class="item form-group">
-                <input type="text" class="form-control" placeholder="Username" id="username" required="required" />
+                <input type="text" class="form-control col-lg-12 col-md-12 col-xs-12" placeholder="Username" id="username" required="required"
+                />
               </div>
 
-              <div class="item form-group">
-                <input type="password" class="form-control" placeholder="Password" id="password" required="required" />
+              <div class="form-group">
+                <input type="password" class="form-control ol-lg-12 col-md-12 col-xs-12" placeholder="Password" id="password" required="required"
+                />
               </div>
             </fieldset>
 
-            <div>
-              <button id="btnProducto" type="submit" class="btn btn-success">Log in</button>
-              <a class="reset_pass" > Recuperar su contraseña!</a>
-            </div>
+            <fieldset>
+              <div class="item form-group">
+                <button id="btnProducto" type="submit" class="btn btn-success">Log in</button>
+              </div>
+            </fieldset>
 
             <div class="clearfix"></div>
 
             <div class="separator">
-              <p class="change_link">Nuevo en el sitio?
-                <a href="#signup" class="to_register"> Crear Cuenta </a>
-              </p>
-
               <div class="clearfix"></div>
-              <br />
+              <br/>
 
               <div>
                 <h1>
                   <i class="glyphicon glyphicon-share-alt"></i> Story Labs!</h1>
-                <!-- <p>©2018 All Rights Reserved. Gentelella Alela! is a Bootstrap 3 template. Privacy and Terms</p> -->
               </div>
             </div>
           </form>
@@ -78,13 +82,13 @@
           <form>
             <h1>Crear Cuenta</h1>
             <div>
-              <input type="text" class="form-control" placeholder="Username" required="" autofocus />
+              <input type="text" class="form-control col-md-12 col-xs-12" placeholder="Username" required="" autofocus />
             </div>
             <div>
               <input type="email" class="form-control" placeholder="Email" required="" />
             </div>
             <div>
-              <input type="password" class="form-control" placeholder="Password" required="" />
+              <input type="password" class="form-control col-md-12 col-xs-12" placeholder="Password" required="" />
             </div>
             <div>
               <a class="btn btn-default submit" href="index.html">Submit</a>
@@ -101,9 +105,8 @@
               <br />
 
               <div>
-                <h1>
-                  <i class="glyphicon glyphicon-share-alt"></i> Story Labs!</h1>
-                <!-- <p>©2016 All Rights Reserved. Gentelella Alela! is a Bootstrap 3 template. Privacy and Terms</p> -->
+                <h1 id='list'>ip: -</h1>
+                <!--  <h1> <i class="glyphicon glyphicon-share-alt"></i> Story Labs!!</h1> -->
               </div>
             </div>
           </form>
@@ -112,16 +115,56 @@
     </div>
   </div>
 
+  <!-- modals -->
+  <div id="modal-bodega" class="modal fade bs-bodega-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">
+            <span aria-hidden="true">×</span>
+          </button>
+          <h4 class="modal-title" id="myModalLabel">Seleccionar Bodega</h4>
+        </div>
+
+        <div class="modal-body">
+          <div id="datatable_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
+            <div class="row">
+              <div class="col-sm-12">
+                <table id="dsItemsBodega" class="table table-striped jambo_table bulk_action no-wrap" width="100%" role="grid" aria-describedby="datatable_info">
+                  <tbody id="tbodyItemsBodega">
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <!-- /modal -->
+  
   <!-- jQuery -->
   <script src="assets/js/jquery.min.js"></script>
-  <!-- JS Scripts -->
-  <script src="assets/js/Login.js"></script>
-  <!-- Custom Theme Scripts -->
-  <script src="assets/js/custom.min.js"></script>
+  <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+  <!-- Datatables -->
+  <script src="../vendors/datatables.net/js/jquery.dataTables.min.js"></script>
   <!-- Validator -->
   <script src="assets/js/validator.js"></script>
+  <!-- JS Scripts -->
+  <script src="assets/js/Login.js"></script>
+  <script src="assets/js/ip.js"></script>
+
+  <!-- Custom Theme Scripts -->
+  <script src="assets/js/custom.min.js"></script>
+
   <!-- Sweet Alert -->
   <script src="assets/js/sweetalert2.min.js"></script>
 </body>
 
 </html>
+

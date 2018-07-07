@@ -36,61 +36,14 @@
     height: 75px;
     width: 180px;
 }
-/*
-.PrecioPrd {
-    margin: 0;
+
+
+.totales {
+    font-size:large;
+    font-weight: bold;
 }
 
-.btnSize {
-margin-left: 200px;
-}
-*/
-/* .titleSize {
-    position: absolute;
-<<<<<<< HEAD
-}  */
-/* 
-input[readonly]{
-=======
+.btn-facturar {
+    width: 100%;
 }
 
-.table-fixed{
-    max-height: 400px;
-    overflow-y: auto;
-}
-
-.cantidad{
-    width: auto;
-    margin: 0px;
-    padding: 0px;
-    height: 1.5em;
-}
-
-.display[readonly]{
->>>>>>> 95ad344d4c0c75fd717264909b1194f17c420275
-    background: transparent;
-    border: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    -o-user-select: none;
-    user-select: none;
-<<<<<<< HEAD
-} */
-
-/* 
-.btn_venta{
-    border-radius: 8px;
-} */
-
-/* .selected p{ */
-    /* background-color: #5bc0de !important; */
-    /* color: white !important; */
-/* } */
-
-
-=======
-    cursor: default;
-}
->>>>>>> 95ad344d4c0c75fd717264909b1194f17c420275

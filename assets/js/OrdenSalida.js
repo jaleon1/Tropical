@@ -95,7 +95,7 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
                 if(e=='null')
                 {
                     swal({
-                        position: 'top-end',
+                        
                         type: 'warning',
                         title: 'Orden no encontrada!',
                         showConfirmButton: false,
@@ -127,6 +127,10 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
                 var data = JSON.parse(e);
                 if (data == 0)
                     swal({
+<<<<<<< HEAD
+=======
+                        //
+>>>>>>> master
                         type: 'success',
                         title: 'Eliminado!',
                         showConfirmButton: false,
@@ -178,7 +182,7 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
         // ordenSalida.ticketPrint(e);
         $(".close").click();
         swal({
-            position: 'top-end',
+            
             type: 'success',
             title: 'Good!',
             showConfirmButton: false,

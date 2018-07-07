@@ -68,7 +68,7 @@
                     <!-- sidebar menu -->
                     <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
                         <div class="menu_section active">
-                            <h3>Menu</h3>
+                            <h3 class="menuName"></h3>
                             <ul id="menubox" class="nav side-menu">
 
                             </ul>
@@ -473,25 +473,8 @@
                     "defaultContent": '<input readonly class="valor"><input readonly class="display">'
                 }
             ]
-            // ,"initComplete": function (settings, json) {
-            //     this.api().columns('.sum').every(function () {
-            //         var column = this;
-            //         var sum = column
-            //         .data()
-            //         .reduce(function (a, b) { 
-            //             a = parseInt(a, 10);
-            //             if(isNaN(a)){ a = 0; }
-                        
-            //             b = parseInt(b, 10);
-            //             if(isNaN(b)){ b = 0; }                        
-            //             return a + b;
-            //         });
-            //         $(column.footer()).html('Sum: ' + sum);                    
-            //     });
-            // }
         });
-        t.columns.adjust().draw();
-       
+        t.columns.adjust().draw();       
 
         var validator = new FormValidator({ "events": ['blur', 'input', 'change'] }, document.forms["frmBodega"]);
         $('#frmBodega').submit(function (e) {

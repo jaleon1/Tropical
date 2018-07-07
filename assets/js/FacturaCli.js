@@ -19,23 +19,22 @@ var t; //se usa para la tabla
 sabores = 2; //cantidad maxima de sabores a elegir
 toppings = 1; //cantidad maxima de toppings a elegir
 
-sel_sabores = new Array(); //almacena los sabores seleccionados
-
-sel_tamano = "Grande"; //almacena el tamaño seleccionados
-
-sel_toppings = new Array(); //almacena los toppings seleccionados
-
-prd_x_fac = new Array(); // almacena los productos y a su vez los detalles de cada uno
-
-indice_prd = 0;
+sel_tamano = 0; //almacena el tamaño seleccionados
 
 $(document).ready(function () {
+    
+    $('#open_modal_fac').attr("disabled", true);
+    
+    $('#telephone').keyboard();
+    
+    btnFormaPago();
+
     // Recarga la página para limpiar todo
     $('#btn_limpia').click(function () {
         location.reload();
     });
 
-    sel_tamano = "Grande";
+    sel_tamano = 1; //1 Grande | 0 Mediano
 
     LoadAllPrdVenta();
 
@@ -44,9 +43,12 @@ $(document).ready(function () {
             "ordering": false,
             "info":     false,
             "searching": false,
+            "scrollX": false,
+            "scrollY": false,
+            "scrollCollapse": true,
             "language": {
-                "infoEmpty": "No hay productos agregados",
-                "emptyTable": "No hay productos agregados",
+                "infoEmpty": "Seleccione el sabor",
+                "emptyTable": "Seleccione el sabor",
                 "search": "Buscar En Factura" //Cambia el texto de Search
             },
             "columnDefs": [ 
@@ -55,13 +57,36 @@ $(document).ready(function () {
                     "targets": 0,
                     "searchable": false
                 },
-                { 
-                    // "width": "2%", 
+                {
                     "targets": 1,
+                    "width": "auto" 
+                },
+                {
+                    "visible": false,
+                    "targets": 2,
                     "searchable": false
                 },
-                { 
-                    "width": "8%", "targets": 2
+                {  
+                    "width": "auto",
+                    "targets": 3
+                },
+                {
+                    "visible": false,
+                    "targets": 4,
+                    "searchable": false
+                },
+                {
+                    "width": "auto",
+                    "targets": 5,
+                },
+                {
+                    "visible": false,
+                    "targets": 6,
+                    "searchable": false
+                },
+                {
+                    "width": "auto",
+                    "targets": 7
                 }
             ]
     });
@@ -72,22 +97,28 @@ $(document).ready(function () {
         borraPRD(prd_row);
     } );
 
+    $('#btn_agrega_prd').attr('disabled','disabled');
+    
+    $('#btnFacturar').attr('disabled','disabled');
 
-
+    $('#btnFacturar').click(function(){
+        $('#total_pagar').empty();
+        $('#total_pagar').append("Total a Pagar: "+$("#total")[0].textContent );
+    });
 });
 
 
 $("#btngrande").click(function () {
     $("#btngrande").addClass("selected");
     $("#btnmediano").removeClass("selected");
-    sel_tamano = "Grande";
+    sel_tamano = 1;
 });
 
 
 $("#btnmediano").click(function () {
     $("#btnmediano").addClass("selected");
     $("#btngrande").removeClass("selected");
-    sel_tamano = "Mediano";
+    sel_tamano = 0;
 });
 
 
@@ -105,7 +136,6 @@ function LoadAllPrdVenta() {
         .fail(function (e) {
             showError(e);
         });
-
 };
 
 
@@ -126,11 +156,10 @@ function DrawPrd(e) {
 };
 
 
-
 function DrawSabor(sabores){
     var prd = `
-    <button id="btn_${sabores.id}" class="btn_sabor btn_venta" style="background-color:${sabores.bgColor};" onclick="agregaSabor('${sabores.id}', '${sabores.nombre}')">
-        <div class="btn_prd" style="color:${sabores.txtColor}";>
+    <button id="${sabores.id}" class="btn_sabor btn_venta" style="background-color:${sabores.bgcolor};" onclick="agregaSabor('${sabores.id}', '${sabores.nombre}')">
+        <div class="btn_prd" style="color:${sabores.txtcolor}";>
             <h5>${sabores.nombre}</h5>
             <p id="cant_sabor_${sabores.id}"></p>
         </div>
@@ -141,8 +170,9 @@ function DrawSabor(sabores){
 
 function DrawTopping(toppings){
     var prd = `
-        <button id="btn_${toppings.id}" style="background-color:${toppings.bgColor};" class="btn_topping btn_venta" onclick="agrega_toppings('${toppings.id}', '${toppings.nombre}')">
-            <div style="color: ${toppings.txtColor};">
+        <button id="${toppings.id}" style="background-color:${toppings.bgcolor};" class="btn_topping btn_venta" onclick="agrega_toppings('${toppings.id}', '${toppings.nombre}')">
+            <div style="color: ${toppings.txtcolor};">
+
                 <h5>${toppings.nombre}</h5>
                 <p id="cant_topping_${toppings.id}">\xa0</p>
             </div>
@@ -180,13 +210,7 @@ function agregaSabor(id, nombre) {
             $("#cant_sabor_" + id).text((parseInt($("#cant_sabor_" + id)[0].textContent) + 1));
         }
 
-        sabo = new Object();
-        sabo.id = id;
-        sabo.nombre = nombre;
-
-        sel_sabores.push(sabo);
-
-        $("#btn_" + id).addClass("selected");
+        $("#" + id).addClass("selected");
 
         var prd =
             `<strong id="eleccion_${id}" class="saborelegido" onclick="quitaSabor('${id}')">
@@ -198,32 +222,25 @@ function agregaSabor(id, nombre) {
 
         $("#sabores_elegidos" + id).addClass("selected");
     }
+    btnAgregaPRD();
 };
+
 
 function quitaSabor(id) {
     if (($("#cant_sabor_" + id).text()) == "2") {
         $("#cant_sabor_" + id).text("1");
     }
     else {
-        $("#btn_" + id).removeClass("selected");
+        $("#" + id).removeClass("selected");
         // $("#eleccion_" + id).remove();
-        $("#cant_sabor_" + id).text("");
+        $("#cant_sabor_" + id).text("\xa0");
     }
-    sabores = sabores + 1
+    sabores = sabores + 1;
+
     $("#eleccion_" + id).remove();
-
-    if (sel_sabores[0].id == id) {
-        sel_sabores.splice(0, 1); //array.splice(index, howmany, item1, ....., itemX)
-    };
-
-    if (sel_sabores.length == 2) {
-
-        if (sel_sabores[1].id == id) {
-            sel_sabores.splice(1, 1); //array.splice(index, howmany, item1, ....., itemX)
-        };
-    };
-
+    btnAgregaPRD();
 };
+
 
 function agrega_toppings(id_topping, nombre_topping) {
     if (verificaCantidad("topping")) {
@@ -233,12 +250,8 @@ function agrega_toppings(id_topping, nombre_topping) {
         else {
             $("#cant_topping_" + id_topping).text((parseInt($("#cant_topping_" + id_topping).text()) + 1));
         }
-        topp = new Object();
-        topp.id = id_topping;
-        topp.nombre = nombre_topping;
-        sel_toppings.push(topp);
         
-        $("#btn_" + id_topping).addClass("selected");
+        $("#" + id_topping).addClass("selected");
 
         var prd =
             `<strong id="eleccion_${id_topping}" class="saborelegido" onclick="quitaTopping('${id_topping}')">
@@ -250,113 +263,187 @@ function agrega_toppings(id_topping, nombre_topping) {
 
         $("#toppings_elegidos" + id_topping).addClass("selected");
     }
+    btnAgregaPRD();
 };
+
 
 function quitaTopping(id) {
     if (($("#cant_topping_" + id).text()) == "2") {
         $("#cant_topping_" + id).text("1");
     }
     else {
-        $("#btn_" + id).removeClass("selected");
+        $("#" + id).removeClass("selected");
         $("#cant_topping_" + id).text("\xa0");
     }
     toppings = toppings + 1
 
     $("#eleccion_" + id).remove();
+    btnAgregaPRD();
+};
 
-    if (sel_toppings[0].id == id) {
-        sel_toppings.splice(0, 1);
-    };
+
+$("#btn_agrega_prd").click(function () {
+    idSabor  = new Array();
+    nombresabor = new Array();
+    id_topping  = "";
+    nombre_topping = "";
+    $("#prdXbdg").find(".selected").each(function (i, item) {
+        idSabor[i] = item.id;        
+        nombresabor[i] = item.children["0"].childNodes[1].textContent;
+        // cant[i] = $("#cant_"+id[i]).text();
+        if ($("#prdXbdg").find(".selected").length=1){
+            nombresabor[1] = nombresabor[i];
+            idSabor[1] = idSabor[i]; 
+        }
+        
+    });
+
+    $("#toppings").find(".selected").each(function (i, item) {
+        id_topping = item.id;        
+        nombre_topping = item.children["0"].childNodes[1].textContent;
+        
+    });
     
-    if (sel_toppings.length == 2) {
-        if (sel_toppings[1].id == id) {
-            sel_toppings.splice(1, 1);
-        };
+    var rowNode = t   //t es la tabla de productos
+        .row.add([sel_tamano, codigoTamano(), idSabor[0], nombresabor[0], idSabor[1], nombresabor[1], id_topping, nombre_topping])
+        .draw() //dibuja la tabla con el nuevo producto
+        .node();
+
+    t.columns.adjust().draw();
+
+    calcTotal();
+    resetDash();
+    btnAgregaPRD();
+    btnFacturar();
+});
+
+
+function codigoTamano(){
+    switch (sel_tamano) {
+        case 0:
+            return "Mediano";
+            break;
+        case 1:
+            return "Grande";
+            break;
+        default:
+            return false;
     };
 };
 
 
-$("#btn_agrega_prd").click(function () {    
-
-    indice_prd = indice_prd+1;
-    prd = new Array();
-    prd.push(indice_prd, sel_tamano, sel_sabores, sel_toppings);
-    prd_x_fac.push(prd); // se usa para el manejo del datatable (borar elementos)
-    // detalle_x_fac.push(prd_x_fac);
-
-    var rowNode = t   //t es la tabla de productos
-    .row.add([indice_prd,[sel_tamano +", "+ sel_sabores[0].nombre +" y "+ sel_sabores[1].nombre +", "+ sel_toppings[0].nombre], "<spam class='glyphicon glyphicon-trash btn_borrar'></spam>"])
-    .draw() //dibuja la tabla con el nuevo producto
-    .node();
-    
-    // $('td:eq(1)', rowNode).attr({id: ("prec")});
-    t.columns.adjust().draw();
-
-    calcTotal();
-
-    resetDash();
-
-
-});
-
 function borraPRD(row_prd) {
-    indx=null; //Indice a borrar, se usa de esta forma xq al modificar el contenido del arreglo falla el each
-
     $(row_prd).addClass('borrar'); 
-
-    $(prd_x_fac).each(function(i,item){
-        if (t.row(row_prd).data()[0] == item[0]) {
-            prd_x_fac.splice(i, 1);
-        }
-        //alert("I: "+i+" | "+"item: "+item+"var_INDEX: "+indx);
-    });
+    
     t.row('.borrar').remove().draw( false );
-    // prd_x_fac.splice(indx, 1); //array.splice(index, howmany, item1, ....., itemX)
-
+    calcTotal(); 
+    
+    btnAgregaPRD();
+    btnFacturar();
 };
 
 
 function resetDash(){
     $('#toppings_elegidos').empty();
     $('#sabores_elegidos').empty();
-    // $("#" + id).removeClass("selected");
     $("#prdXbdg").find(".selected").removeClass("selected");
     $("#prdXbdg").find("p").text("\xa0");
-
     
     $("#toppings").find(".selected").removeClass("selected");
     $("#toppings").find("p").text("\xa0");
 
-
-    sel_sabores=[];
-    sel_toppings=[];
     sabores=2;
-    toppings =2;
+    toppings =1;
 };
 
 
 //Calcula los totales cada vez que un producto es modificado
 function calcTotal() {
     var total = 0;
-    if (prd_x_fac.length > 0) {
 
-        $(prd_x_fac).each(function (i, item) {
-            if (item[1] == "Grande") {
-                total=total+2000;
-            }else if (item[1] == "Mediano") {
-                total=total+1000;    
-            }
-        });
-        $("#total").html("¢"+total);
+    if(t.columns().data().length>0){
+        $(t.columns().data()[0]).each(function(i,item){
+            if (item == 1) {
+                    total=total+2000;
+                }else if (item == 0) {
+                    total=total+1000;    
+                }
+            });
+            $("#total").html("¢"+total);
     }
     else {
-        $('#open_modal_fac').attr("disabled", true);
-        $("#subTotal")[0].textContent = "¢0";
-        $("#iv_val")[0].textContent = "¢0";
         $("#total")[0].textContent = "¢0";
+    };
+};
 
+function btnFacturar() {
+    if (t.row().count()>0){
+        $('#btnFacturar').removeAttr('disabled');
+    }
+    else{        
+        $("#btnFacturar").attr('disabled','disabled');
     }
 };
+
+
+function btnAgregaPRD() {
+    //Se valida que exista un sabor seleccionado para que no falle al buscar la cantidad
+    if ($("#prdXbdg").find(".selected").length>0) { 
+        if (($("#prdXbdg").find(".selected").length >= 2 ||  $("#prdXbdg").find(".selected")["0"].children["0"].childNodes[3].textContent == "2")){
+       
+            if ( $("#toppings").find(".selected").length >= 1  ){
+                $('#btn_agrega_prd').removeAttr('disabled');
+            }
+            else{
+                $('#btn_agrega_prd').attr('disabled','disabled');
+            }
+        }    
+        else{        
+            $('#btn_agrega_prd').attr('disabled','disabled');
+        }
+    }
+    else{
+        $('#btn_agrega_prd').attr('disabled','disabled');
+    }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -516,6 +603,7 @@ function BorraRow(prd) {
     $(`#prec_${prd}`)["0"].parentElement.attributes[1].value = ($(`#prec_${prd}`)["0"].parentElement.attributes[1].value) + " selected";
     t.row('.selected').remove().draw(false);
 }
+
 
 function facCard() {
     $("#formapago").empty();
@@ -744,7 +832,7 @@ function CleanCtls() {
 //     //$(".modal").css({ display: "none" });  
 
 //     // swal({
-//     //     position: 'top-end',
+//     //     
 //     //     type: 'success',
 //     //     title: 'Good!',
 //     //     showConfirmButton: false,

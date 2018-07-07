@@ -81,7 +81,7 @@ constructor(numeroOrden, p) {
                 var data = JSON.parse(e);
                 if (data.status == 0)
                     swal({
-                        //position: 'top-end',
+                        //
                         type: 'success',
                         title: 'Eliminado!',
                         showConfirmButton: false,
@@ -126,7 +126,7 @@ constructor(numeroOrden, p) {
     // Muestra información en ventana
     showInfo() {
         swal({
-            position: 'top-end',
+            
             type: 'success',
             title: 'Good!',
             showConfirmButton: false,

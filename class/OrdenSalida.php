@@ -153,10 +153,17 @@ class OrdenSalida{
 
     function Create(){
         try {           
+<<<<<<< HEAD
             $sql="INSERT INTO tropical.ordenSalida (`id`,`fecha`,`idUsuarioEntrega`,`idUsuarioRecibe`,`idEstado`) 
                 VALUES (:uuid,:fecha,:idUsuarioEntrega,:idUsuarioRecibe,:idEstado)";
             $param= array(':uuid'=>$this->id, ':fecha'=>$this->fecha,':idUsuarioEntrega'=>$this->idUsuarioEntrega, 
             ':idUsuarioRecibe'=>$this->idUsuarioRecibe,':idEstado'=>0);
+=======
+            $sql="INSERT INTO ordenSalida (`id`,`fecha`,`idusuarioentrega`,`idusuariorecibe`,`idestado`) 
+                VALUES (:uuid,:fecha,:idusuarioentrega,:idusuariorecibe,:idestado)";
+            $param= array(':uuid'=>$this->id, ':fecha'=>$this->fecha,':idusuarioentrega'=>$this->idusuarioentrega, 
+            ':idusuariorecibe'=>$this->idusuariorecibe,':idestado'=>0);
+>>>>>>> master
             $data = DATA::Ejecutar($sql,$param, false);
 
             if($data)
@@ -184,8 +191,13 @@ class OrdenSalida{
 
     function Update(){
         try {
+<<<<<<< HEAD
             $sql="UPDATE tropical.ordenSalida SET idUsuarioRecibe=:idUsuarioRecibe WHERE id=:id";
              $param= array(':id'=>$this->id,':idUsuarioRecibe'=>$this->idUsuarioRecibe);
+=======
+            $sql="UPDATE ordenSalida SET idusuariorecibe=:idusuariorecibe WHERE id=:id";
+             $param= array(':id'=>$this->id,':idusuariorecibe'=>$this->idusuariorecibe);
+>>>>>>> master
             $data = DATA::Ejecutar($sql,$param,false);
             if($data){
                 //update array obj

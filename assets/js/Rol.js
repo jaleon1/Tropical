@@ -69,7 +69,7 @@ class Rol {
                 var data = JSON.parse(e);
                 if(data.status==0)
                     swal({
-                        //position: 'top-end',
+                        //
                         type: 'success',
                         title: 'Eliminado!',
                         showConfirmButton: false,
@@ -132,7 +132,7 @@ class Rol {
         //$(".modal").css({ display: "none" });   
         $(".close").click();
         swal({
-            position: 'top-end',
+            
             type: 'success',
             title: 'Good!',
             showConfirmButton: false,

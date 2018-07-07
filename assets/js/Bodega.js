@@ -72,7 +72,7 @@ class Bodega {
         })
             .done(function () {
                 swal({
-                    //position: 'top-end',
+                    //
                     type: 'success',
                     title: 'Eliminado!',
                     showConfirmButton: false,
@@ -98,11 +98,51 @@ class Bodega {
             }
         })
         .done(function( e ) {
+            bodega.ShowListTipo(e);
+        })    
+        .fail(function (e) {
+            bodega.showError(e);
+        })
+        .always(function (e){
+            $("#tipo").selectpicker("refresh");
+        });
+    }
+
+    get List() {
+        var miAccion= 'List';
+        $.ajax({
+            type: "POST",
+            url: "class/Bodega.php",
+            data: { 
+                action: miAccion
+            }
+        })
+        .done(function( e ) {
             bodega.ShowList(e);
         })    
         .fail(function (e) {
             bodega.showError(e);
+        })
+        .always(function (e){
+            $("#selbodega").selectpicker("refresh");
         });
+    }
+
+    get readByUser() {
+        var miAccion = "readByUser";
+        $.ajax({
+            type: "POST",
+            url: "class/Bodega.php",
+            data: {
+                action: miAccion
+            }
+        })
+            .done(function (e) {
+                bodega.ShowAllD(e);
+            })
+            .fail(function (e) {
+                bodega.showError(e);
+            });
     }
 
     // Methods
@@ -117,7 +157,7 @@ class Bodega {
         //$(".modal").css({ display: "none" });   
         $(".close").click();
         swal({
-            position: 'top-end',
+            
             type: 'success',
             title: 'Good!',
             showConfirmButton: false,
@@ -208,11 +248,19 @@ class Bodega {
             });
     };
 
+    ShowAllD(e) {
+        b.clear();
+        b.rows.add(JSON.parse(e));
+        b.draw();
+        //$('.update').click(ipautorizada.UpdateEventHandler);
+        //$('.delete').click(ipautorizada.DeleteEventHandler);
+    };
+
     AddBodegaEventHandler(){
         bodega.id=$(this).find('td:eq(1)').html();
-        bodega.nombre=$(this).find('td:eq(2)').html()
-        bodega.descripcion= $(this).find('td:eq(3)').html()
-        bodega.tipo= $(this).find('td:eq(4)').html()
+        bodega.nombre=$(this).find('td:eq(2)').html();
+        bodega.descripcion= $(this).find('td:eq(3)').html();
+        bodega.tipo= $(this).find('td:eq(4)').html();
         //
         $('#nombre').val(bodega.nombre);
         $('#descripcion').val(bodega.descripcion);
@@ -248,12 +296,23 @@ class Bodega {
         $('#tipo option[value=' + bodega.tipo + ']').prop("selected", true);        
     };
 
+    ShowListTipo(e) {
+        // carga lista con datos.
+        var data = JSON.parse(e);
+        // Recorre arreglo.
+        $.each(data, function (i, item) {
+            $('#tipo').append(`
+                <option value=${item.id}>${item.nombre}</option>
+            `);
+        })
+    };
+
     ShowList(e) {
         // carga lista con datos.
         var data = JSON.parse(e);
         // Recorre arreglo.
         $.each(data, function (i, item) {
-                $('#tipo').append(`
+                $('#selbodega').append(`
                     <option value=${item.id}>${item.nombre}</option>
                 `);
         })

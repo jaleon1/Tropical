@@ -70,6 +70,7 @@ class Insumo {
                 id: this.id
             }
         })
+<<<<<<< HEAD
             .done(function (e) {
                 var data = JSON.parse(e);
                 if (data == 0)
@@ -94,6 +95,16 @@ class Insumo {
                         footer: '<a href>Contacte a Soporte Técnico</a>',
                     })
                 }
+=======
+            .done(function () {
+                swal({
+                    //
+                    type: 'success',
+                    title: 'Eliminado!',
+                    showConfirmButton: false,
+                    timer: 1000
+                });
+>>>>>>> master
             })
             .fail(function (e) {
                 insumo.showError(e);
@@ -116,7 +127,7 @@ class Insumo {
         //$(".modal").css({ display: "none" });   
         $(".close").click();
         swal({
-            position: 'top-end',
+            
             type: 'success',
             title: 'Good!',
             showConfirmButton: false,
