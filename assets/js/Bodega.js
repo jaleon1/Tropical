@@ -188,64 +188,13 @@ class Bodega {
     };
 
     ShowAll(e) {
-        // Limpia el div que contiene la tabla.
-        $('#tableBody-Bodega').html("");
-        // Carga lista
-        var data = JSON.parse(e);
-        //style="display: none"
-        $.each(data, function (i, item) {
-            $('#tableBody-Bodega').append(`
-                <tr class='trbodega'> 
-                    <td class="a-center ">
-                        <input id="chk-addbodega${item.id}" type="checkbox" class="flat" name="table_records">
-                    </td>
-                    <td class="itemId" >${item.id}</td>
-                    <td>${item.nombre}</td>
-                    <td>${item.descripcion}</td>
-                    <td>${item.tipo}</td>
-
-                    ${item.nombre!='Primaria'?
-                        `<td class=" last">
-                            <a id="update${item.id}" data-toggle="modal" data-target=".bs-bodega-modal-lg" > <i class="glyphicon glyphicon-edit" > </i> Editar | </a> 
-                            <a id="open${item.id}" data-toggle="modal" data-target=".bs-producto-modal-lg" > <i class="fa fa-book" > </i> Abrir | </a>
-                            <a id="delete${item.id}"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>
-                        </td>`
-                    : 
-                        `<td class=" last">
-                            <a id="open${item.id}" data-toggle="modal" data-target=".bs-producto-modal-lg" > <i class="fa fa-book" > </i> Abrir </a>
-                            <!-- <a id="additem${item.id}" data-toggle="modal" data-target=".bs-articulo-modal-lg" > <i class="fa fa-gear" > </i> Artículo | </a> -->
-                            <!-- <a id="senditem${item.id}" data-toggle="modal" data-target=".bs-send-modal-lg" > <i class="fa fa-reply-all" > </i> Enviar </a> -->
-                        </td>`
-                    }
-                </tr>
-            `);
-            $('#update'+item.id).click(bodega.UpdateEventHandler);
-            $('#open'+item.id).click(bodega.OpenEventHandler);            
-            $('#delete'+item.id).click(bodega.DeleteEventHandler);
-            if (document.URL.indexOf("Distribucion.html")!=-1) {
-                $('.trbodega').dblclick(bodega.AddBodegaEventHandler);
-            }
-        })
-        //datatable         
-        if ($.fn.dataTable.isDataTable('#dsBodega')) {
-            var table = $('#dsBodega').DataTable();
-        }
-        else
-            $('#dsBodega').DataTable({
-                columns: [
-                    { title: "Check" },
-                    {
-                        title: "ID"
-                        //,visible: false
-                    },
-                    { title: "Nombre" },
-                    { title: "Descripcion" },
-                    { title: "Tipo" },
-                    { title: "Action" }
-                ],
-                paging: true,
-                search: true
-            });
+        var t= $('#dsItems').DataTable();
+        t.clear();
+        t.rows.add(JSON.parse(e));
+        t.draw();
+        $('.update').click(usuario.UpdateEventHandler);
+        $('.delete').click(usuario.DeleteEventHandler);
+        $('#dsItems tbody tr').dblclick(usuario.UpdateEventHandler);
     };
 
     ShowAllD(e) {
@@ -338,6 +287,33 @@ class Bodega {
             }
         })
     };
+
+    setTable(buttons=true){
+        //
+        $('#dsItems').DataTable({
+            responsive: true,
+            info: false,
+            columns: [
+                {
+                    title: "id",
+                    data: "id",
+                    className: "itemId",                    
+                    searchable: false
+                },
+                { title: "Nombre", data: "nombre" },
+                { title: "Descripción", data: "descripcion" },
+                {
+                    title: "Action",
+                    orderable: false,
+                    searchable:false,
+                    visible: buttons,
+                    mRender: function () {
+                        return '<a class="update" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | <a class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>'                            
+                    }
+                }
+            ]
+        });
+    }
 
     Init() {
         // validator.js

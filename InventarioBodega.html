@@ -78,7 +78,7 @@
                         <div class="menu_section">
                             <h3 class="menuName"></h3>
                             <ul id="menubox" class="nav side-menu">
-                                
+
                             </ul>
                         </div>
                     </div>
@@ -160,28 +160,18 @@
                         <div class="col-md-12 col-sm-12 col-xs-12">
                             <div class="x_panel">
                                 <div class="x_title">
-                                    <h2>Lista</h2>
-
                                     <div class="clearfix"></div>
                                 </div>
 
                                 <!--  CONTENIDO DE LA PAGINA -->
                                 <div class="x_content">
                                     <!-- TABLE -->
-                                    <div id="datatable_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
-                                        <div class="row">
-                                            <div class="col-sm-12">
-                                                <table id="dsBodega" class="table table-striped table-bordered dataTable no-footer jambo_table " role="grid" aria-describedby="datatable_info">
-                                                    <thead>
-                                                        <tr role="row" class="headings">
-                                                        </tr>
-                                                    </thead>
-
-                                                    <tbody id="tableBody-Bodega">
-                                                    </tbody>
-
-                                                </table>
-                                            </div>
+                                    <div class="row">
+                                        <div class="col-md-12 col-sm-12 col-xs-12">
+                                            <table id="dsItems" class="table display responsive table-striped jambo_table no-wrap" width="100%" role="grid" aria-describedby="datatable_info">
+                                                <tbody id="tbodyItems">
+                                                </tbody>
+                                            </table>
                                         </div>
                                     </div>
                                     <!-- /TABLE -->
@@ -281,24 +271,24 @@
                                                 </div>
 
                                                 <div class="modal-body">
-                                                        
-                                                        <div id="datatable_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
-                                                            <div class="row">
-                                                                <div class="col-sm-12">
-                                                                    <table id="dsProducto" class="table table-striped table-bordered dataTable no-footer jambo_table " role="grid" aria-describedby="datatable_info">
-                                                                        <thead>
-                                                                            <tr role="row" class="headings">
-                                                                            </tr>
-                                                                        </thead>
-                    
-                                                                        <tbody id="tableBody-ProductoBodega">
-                                                                        </tbody>
-                    
-                                                                    </table>
-                                                                </div>
+
+                                                    <div id="datatable_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
+                                                        <div class="row">
+                                                            <div class="col-sm-12">
+                                                                <table id="dsProducto" class="table table-striped table-bordered dataTable no-footer jambo_table " role="grid" aria-describedby="datatable_info">
+                                                                    <thead>
+                                                                        <tr role="row" class="headings">
+                                                                        </tr>
+                                                                    </thead>
+
+                                                                    <tbody id="tableBody-ProductoBodega">
+                                                                    </tbody>
+
+                                                                </table>
                                                             </div>
                                                         </div>
-                                                    
+                                                    </div>
+
                                                 </div>
 
                                                 <div class="modal-footer">
@@ -319,7 +309,7 @@
                                                     <button type="button" class="close" data-dismiss="modal">
                                                         <span aria-hidden="true">×</span>
                                                     </button>
-                                                    <h4 class="modal-title" >Editar Producto / Artículo</h4>
+                                                    <h4 class="modal-title">Editar Producto / Artículo</h4>
                                                 </div>
 
                                                 <div class="modal-body">
@@ -333,23 +323,24 @@
                                                                 <input id="productonombre" class="form-control col-md-7 col-xs-12" readonly name="productonombre" type="text" placeholder="Nombre completo Del producto">
                                                             </div>
                                                             <div id="reportrange" class="pull-right">
-                                                                <button id="btnAddCantidadCosto" data-toggle="modal" data-target=".bs-cantidadcosto-modal-lg" type="button" class="btn btn-info btn-lg">+</button>    
+                                                                <button id="btnAddCantidadCosto" data-toggle="modal" data-target=".bs-cantidadcosto-modal-lg" type="button" class="btn btn-info btn-lg">+</button>
                                                             </div>
                                                         </div>
 
                                                         <div class="item form-group ">
                                                             <label class="control-label col-md-3 col-sm-3 col-xs-12" for="valor">Cantidad</label>
                                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <input id="cantidad" class="form-control col-md-7 col-xs-12"  name="cantidad" type="number" data-validate-minmax="0,999999999" placeholder="Cantidad Producto">
+                                                                <input id="cantidad" class="form-control col-md-7 col-xs-12" name="cantidad" type="number" data-validate-minmax="0,999999999"
+                                                                    placeholder="Cantidad Producto">
                                                             </div>
                                                         </div>
-                
+
                                                         <div class="item form-group ">
                                                             <label class="control-label col-md-3 col-sm-3 col-xs-12" for="valor">Costo</label>
                                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <input id="costo" class="form-control col-md-7 col-xs-12"  name="costo" type="number" data-validate-minmax="0,999999999" placeholder="Costo del Producto">
+                                                                <input id="costo" class="form-control col-md-7 col-xs-12" name="costo" type="number" data-validate-minmax="0,999999999" placeholder="Costo del Producto">
                                                             </div>
-                                                        </div>                                                        
+                                                        </div>
 
                                                         <div class="ln_solid"></div>
 
@@ -383,7 +374,7 @@
                                                 </div>
 
                                                 <div class="modal-body">
-                                                    <form class="form-horizontal form-label-left" id="frmCantidadCostoxProducto" novalidate>                                                        
+                                                    <form class="form-horizontal form-label-left" id="frmCantidadCostoxProducto" novalidate>
 
                                                         <!-- <div class="item form-group">
                                                             <label class="control-label col-md-3 col-sm-3 col-xs-12" for="articulonombre">Artículo
@@ -400,16 +391,18 @@
                                                         <div class="item form-group ">
                                                             <label class="control-label col-md-3 col-sm-3 col-xs-12" for="cantidadproductoagregar">Cantidad</label>
                                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <input id="cantidadproductoagregar" class="form-control col-md-7 col-xs-12" value="0" name="cantidadproductoagregar" type="number" data-validate-minmax="0,999999999" placeholder="Cantidad a sumar">
+                                                                <input id="cantidadproductoagregar" class="form-control col-md-7 col-xs-12" value="0" name="cantidadproductoagregar" type="number"
+                                                                    data-validate-minmax="0,999999999" placeholder="Cantidad a sumar">
                                                             </div>
                                                         </div>
-                
+
                                                         <div class="item form-group ">
                                                             <label class="control-label col-md-3 col-sm-3 col-xs-12" for="costoproductoagregar">Costo</label>
                                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <input id="costoproductoagregar" class="form-control col-md-7 col-xs-12" value="0" name="costoproductoagregar" type="number" data-validate-minmax="0,999999999" placeholder="Costo del Producto">
+                                                                <input id="costoproductoagregar" class="form-control col-md-7 col-xs-12" value="0" name="costoproductoagregar" type="number"
+                                                                    data-validate-minmax="0,999999999" placeholder="Costo del Producto">
                                                             </div>
-                                                        </div>   
+                                                        </div>
 
                                                         <div class="ln_solid"></div>
 
@@ -487,6 +480,7 @@
 <script>
     $(document).ready(function () {
         bodega.id = null;
+        bodega.setTable;
         bodega.Read;
         bodega.ListTipos;
         bodega.Init();

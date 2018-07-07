@@ -230,7 +230,7 @@ class Rol {
         })
     };
 
-    setTable(){
+    setTable(buttons=true){
         //
         $('#dsItems').DataTable({
             responsive: true,
@@ -248,9 +248,9 @@ class Rol {
                     title: "Action",
                     orderable: false,
                     searchable:false,
+                    visible: buttons,
                     mRender: function () {
-                        return '<a class="update" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | ' +
-                            '<a class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>'
+                        return '<a class="update" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | <a class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>'                            
                     }
                 }
             ]

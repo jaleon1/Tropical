@@ -171,7 +171,7 @@ class Usuario {
         // eventos
         $('.update').click(usuario.UpdateEventHandler);
         $('.delete').click(usuario.DeleteEventHandler);
-        $('#dsItems tbody').dblclick(usuario.UpdateEventHandler);
+        $('#dsItems tbody tr').dblclick(usuario.UpdateEventHandler);
     };
 
     UpdateEventHandler() {
@@ -297,7 +297,7 @@ class Usuario {
         });        
     };
 
-    setTable(){
+    setTable(buttons=true){
         //
         $('#dsItems').DataTable({
             responsive: true,
@@ -306,20 +306,18 @@ class Usuario {
                 {
                     title: "id",
                     data: "id",
-                    className: "itemId",
+                    className: "itemId",                    
                     searchable: false
                 },
                 { title: "Nombre", data: "nombre" },
-                { title: "Username", data: "username" },
-                { title: "email", data: "email" },
-                { title: "Activo", data: "activo" },
+                { title: "Descripción", data: "descripcion" },
                 {
                     title: "Action",
                     orderable: false,
                     searchable:false,
+                    visible: buttons,
                     mRender: function () {
-                        return '<a class="update" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | ' +
-                            '<a class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>'
+                        return '<a class="update" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | <a class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>'                            
                     }
                 }
             ]
