@@ -271,7 +271,6 @@ class Usuario {
             .fail(function (e) {
                 usuario.showError(e);
             });
-
     }
 
     Init() {

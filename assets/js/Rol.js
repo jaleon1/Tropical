@@ -9,8 +9,9 @@ class Rol {
 
     //Getter
     get Read() {
+        NProgress.start();
         var miAccion = this.id == null ?  'ReadAll'  : 'Read';
-        if(miAccion=='ReadAll' && $('#tableBody-Rol').length==0 )
+        if(miAccion=='ReadAll' && $('#tbodyItems').length==0 )
             return;
         $.ajax({
             type: "POST",
@@ -25,10 +26,12 @@ class Rol {
             })
             .fail(function (e) {
                 rol.showError(e);
-            });
+            })
+            .always(NProgress.done());
     }
 
     get Save() {
+        NProgress.start();
         $('#btnRol').attr("disabled", "disabled");
         var miAccion = this.id == null ? 'Create' : 'Update';
         this.nombre = $("#nombre").val();
@@ -53,6 +56,7 @@ class Rol {
                 rol.ClearCtls();
                 rol.Read;
                 $("#nombre").focus();
+                NProgress.done();
             });
     }
 
@@ -161,49 +165,12 @@ class Rol {
     };
 
     ShowAll(e) {
-        // Limpia el div que contiene la tabla.
-        $('#tableBody-Rol').html("");
-        // Carga lista
-        var data = JSON.parse(e);
-        //
-        $.each(data, function (i, item) {
-            $('#tableBody-Rol').append(`
-                <tr> 
-                    <td class="a-center ">
-                        <input type="checkbox" class="flat" name="table_records">
-                    </td>
-                    <td class="itemId" >${item.id}</td>
-                    <td>${item.nombre}</td>
-                    <td>${item.descripcion}</td>
-                    <td class=" last">
-                        <a id="update${item.id}" data-toggle="modal" data-target=".bs-example-modal-lg" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | 
-                        <a id="delete${item.id}"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>
-                    </td>
-                </tr>
-            `);
-            // event Handler
-            $('#update'+item.id).click(rol.UpdateEventHandler);
-            $('#delete'+item.id).click(rol.DeleteEventHandler);
-        })
-        //datatable         
-        if ($.fn.dataTable.isDataTable('#dsRol')) {
-            var table = $('#dsRol').DataTable();
-        }
-        else
-            $('#dsRol').DataTable({
-                columns: [
-                    { title: "Check" },
-                    {
-                        title: "ID"
-                        //,visible: false
-                    },
-                    { title: "Nombre" },
-                    { title: "Descripcion" },
-                    { title: "Action" }
-                ],
-                paging: true,
-                search: true
-            });
+        var t= $('#dsItems').DataTable();
+        t.clear();
+        t.rows.add(JSON.parse(e));
+        t.draw();
+        $('.update').click(rol.UpdateEventHandler);
+        $('.delete').click(rol.DeleteEventHandler);
     };
 
     UpdateEventHandler() {
@@ -259,6 +226,36 @@ class Rol {
             }
         })
     };
+
+    setTable(){
+        //
+        $('#dsItems').DataTable({
+            responsive: true,
+            info: false,
+            columns: [
+                {
+                    title: "id",
+                    data: "id",
+                    className: "itemId",
+                    visible: false,
+                    searchable: false
+                },
+                // { title: "Nombre", data: "nombre" },
+                // { title: "Username", data: "username" },
+                // { title: "email", data: "email" },
+                // { title: "Activo", data: "activo" },
+                {
+                    title: "Action",
+                    orderable: false,
+                    searchable:false,
+                    mRender: function () {
+                        return '<a class="update" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | ' +
+                            '<a class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>'
+                    }
+                }
+            ]
+        });
+    }
 
     Init() {
         // validator.js
