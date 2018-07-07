@@ -70,7 +70,6 @@ class Insumo {
                 id: this.id
             }
         })
-<<<<<<< HEAD
             .done(function (e) {
                 var data = JSON.parse(e);
                 if (data == 0)
@@ -95,7 +94,6 @@ class Insumo {
                         footer: '<a href>Contacte a Soporte Técnico</a>',
                     })
                 }
-=======
             .done(function () {
                 swal({
                     //
