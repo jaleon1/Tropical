@@ -43,6 +43,18 @@ if(isset($_POST["action"])){
         case "ReadByCode":  
             echo json_encode($producto->ReadByCode());
             break;
+        case "ActualizaPrecios":
+            if(isset($_POST["obj"])){
+                $obj= json_decode($_POST["obj"],true);
+                foreach ($obj["lista"] as $itemlist) {
+                    $item= new Producto();
+                    $item->id= $itemlist['id'];
+                    $item->precioVenta= $itemlist['precioVenta'];
+                    array_push ($producto->lista, $item);
+                }
+                $producto->ActualizaPrecios();
+            }
+            break;
     }
 }
 
@@ -58,7 +70,8 @@ class Producto{
     public $saldoCosto='';
     public $costoPromedio='';
     public $precioVenta='';
-    public $esVenta=0;
+    public $esVenta=0; // tipo de producto.
+    public $lista= [];
 
     function __construct(){
         // identificador único
@@ -78,7 +91,7 @@ class Producto{
             $this->saldoCosto= $obj["saldoCosto"] ?? '';
             $this->costoPromedio= $obj["costoPromedio"] ?? '';
             $this->precioVenta= $obj["precioVenta"] ?? '';
-            $this->esVenta= $obj["esVenta"] ?? 0;
+            $this->esVenta= $obj["tipoProducto"] ?? 0;
         }
     }
 
@@ -117,7 +130,6 @@ class Producto{
         }
     }
   
-
     // Si hago el filtro por tipo en el javascript ya no necesito esta funcion
     function ReadAllPrdVenta(){
         try {
@@ -139,7 +151,7 @@ class Producto{
 
     function Read(){
         try {
-            $sql='SELECT id, codigo, nombre, txtColor, bgColor, nombreAbreviado, descripcion, saldoCantidad, saldoCosto, costoPromedio, precioVenta,esVenta
+            $sql='SELECT id, codigo, nombre, txtColor, bgColor, nombreAbreviado, descripcion, saldoCantidad, saldoCosto, costoPromedio, precioVenta, esVenta
                 FROM producto  
                 where id=:id';
             $param= array(':id'=>$this->id);
@@ -305,6 +317,32 @@ class Producto{
             if(count($data))
                 return $data;
             else return false;
+        }
+        catch(Exception $e){
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }
+    }
+
+    function ActualizaPrecios(){
+        try{     
+            $created = true;
+            foreach ($this->lista as $item) {
+                $sql="UPDATE producto
+                    SET precioVenta=:precioVenta
+                    WHERE id= :id";
+                $param= array(':id'=>$item->id, ':precioVenta'=>$item->precioVenta);
+                $data= DATA::Ejecutar($sql,$param, false);
+                if(!$data)
+                    $created= false;                
+            }
+            if(!$created)
+                throw new Exception('Error al actualizar precios, REVISAR manualmente.', 666);
+            else return true;
+            // 
         }
         catch(Exception $e){
             header('HTTP/1.0 400 Bad error');

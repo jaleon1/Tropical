@@ -4260,3 +4260,7 @@ table thead .checkbox.radio { margin-top:-7px;margin-top:-21px; }
 .oculto{
     display:none;
 }
+
+#modalInventarioOrdenSalida{
+  width: 65% !important;
+}

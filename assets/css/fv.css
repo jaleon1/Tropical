@@ -73,7 +73,7 @@ button{ font-size:1.1em; padding:5px 25px; }
     75%{ -webkit-transform:translateX(6px); }
 }
 
-form fieldset{ clear:both; margin:0 0 10px 0; }
+form fieldset{clear:both;margin: 0 0 0px 0;}
 /* form .item{ padding:5px 0; position:relative; height:2em; } */
 
 .item.form-group.bad {}

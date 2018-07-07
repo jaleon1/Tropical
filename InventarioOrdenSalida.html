@@ -192,7 +192,7 @@
 
                                     <!-- MODAL -->
                                     <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
-                                        <div class="modal-dialog modal-lg">
+                                        <div id="modalInventarioOrdenSalida" class="modal-dialog modal-lg">
                                             <div class="modal-content">
 
                                                 <div class="modal-header">
@@ -244,18 +244,19 @@
                                                                                         </tbody>
                                     
                                                                                     </table>
+                                                                                    
                                                                                 </div>
                                                                                 <div class="col-sm-1">
-                                                                                    <button id="btnAddInsumo" data-toggle="modal" data-target=".bs-example-modal-lg-insumo" type="button" class="btn btn-info btn-lg">+</button>
+                                                                                    <button id="btnAddInsumo" data-toggle="modal" data-target=".bs-example-modal-lg-insumo" type="button" class="btn btn-info btn-sm">+</button>
                                                                                 </div>
                                                                             </div>
                                     
-                                                                            <div class="ln_solid"></div>
+                                                                            <!-- <div class="ln_solid"></div> -->
                                     
-                                                                            <div class="form-group">
+                                                                            <!-- <div class="form-group">
                                                                                 <div class="col-md-6 col-md-offset-3">
                                                                                 </div>
-                                                                            </div>
+                                                                            </div> -->
                                                                         </form>
                                                                     </div>
                                                                     <!--  /CONTENIDO DE LA PAGINA -->
@@ -280,16 +281,13 @@
                                                                             <div class="row">
                                                                                 <div class="col-sm-11">
                                                                                     <div class="item form-group ">
-                                                                                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="valor">Número de Orden
-                                                                                
+                                                                                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="valor">Orden
+                                                            
                                                                                         </label>
-                                                                                        <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                                            <input id="numeroorden" class="form-control col-md-7 col-xs-12" name="numeroorden" data-validate-minmax="1,99999" placeholder="Nueva" readonly="readonly">
+                                                                                        <div class="col-md-7 col-sm-5 col-xs-12">
+                                                                                            <input id="numeroOrden" class="form-control col-md-7 col-xs-12" name="numeroOrden" data-validate-minmax="1,99999" placeholder="Nueva" readonly="readonly">
                                                                                         </div>
                                                                                     </div>
-                                                                                </div>
-                                                                                <div class="col-sm-1">
-                                                                                    
                                                                                 </div>
                                                                             </div>
                                                                             
@@ -299,9 +297,9 @@
                                                                                         <label class="control-label col-md-3 col-sm-3 col-xs-12" for="valor">Fecha
                                                                                             
                                                                                         </label>
-                                                                                        <div class="col-md-6 col-sm-6 col-xs-12">
+                                                                                        <div class="col-md-7 col-sm-5 col-xs-12">
                                                                                             <div class="input-group date" id="myDatepicker1">
-                                                                                                <input id="dt_fecha" type="text" class="form-control"  readonly>
+                                                                                                <input id="dt_fecha" type="text" class="form-control col-md-7 col-xs-12"  readonly>
                                                                                                 <span class="input-group-addon">
                                                                                                    <span class="glyphicon glyphicon-calendar"></span>
                                                                                                 </span>
@@ -309,63 +307,23 @@
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
-                                                                                <div class="col-sm-1">
-                                    
-                                                                                </div>
                                                                             </div>
-                                    
-                                                                            <!-- <div class="row">
-                                                                                <div class="col-sm-11">
-                                                                                    <div class="item form-group ">
-                                                                                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="valor">Fecha Liquidación
-                                                                                            
-                                                                                        </label>
-                                                                                        <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                                            <div class="input-group date" id="myDatepicker2">
-                                                                                                <input id="dt_fechaliquida" type="text" class="form-control">
-                                                                                                <span class="input-group-addon">
-                                                                                                    <span class="glyphicon glyphicon-calendar"></span>
-                                                                                                </span>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                                <div class="col-sm-1">
-                                    
-                                                                                </div>
-                                                                            </div> -->
                                     
                                                                             <div class="row">
                                                                                 <div class="col-sm-11">
                                                                                     <div class="item form-group ">
-                                                                                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="valor">Usuario Recibe
+                                                                                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="valor">Recibe
                                                                                             <span class="required">*</span>
                                                                                         </label>
-                                                                                        <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                                            <input id="usuariorecibe" class="form-control col-md-7 col-xs-12" name="usuariorecibe" required="required" data-validate-minmax="1,99999" placeholder="Seleccione Usuario" readonly>
+                                                                                        <div class="col-md-7 col-sm-5 col-xs-12">
+                                                                                            <input id="usuarioRecibe" class="form-control col-md-7 col-xs-12" name="usuarioRecibe" required="required" data-validate-minmax="1,99999" placeholder="Seleccione Usuario" readonly>
                                                                                         </div>
-                                                                                    </div>
+                                                                                    </div>    
                                                                                 </div>
                                                                                 <div class="col-sm-1">
-                                                                                    <button id="btnAddUsuarioRecibe" data-toggle="modal" data-target=".bs-example-modal-lg-usuariorecibe" type="button" class="btn btn-info btn-lg">+</button>
+                                                                                    <button id="btnAddUsuarioRecibe" data-toggle="modal" data-target=".bs-example-modal-lg-usuarioRecibe" type="button" class="btn btn-info btn-sm">+</button>    
                                                                                 </div>
                                                                             </div>
-                                    
-                                                                            <!-- <div class="row">
-                                                                                <div class="col-sm-11">
-                                                                                        <div class="item form-group">
-                                                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="estado">Estado</label>
-                                                                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                                                <select class="form-control" id="estado">
-                                                                                                    <option>EN PROCESO</option>
-                                                                                                    <option>LIQUIDADO</option>
-                                                                                                  </select>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                </div>
-                                                                                <div class="col-sm-1">                                                    
-                                                                                </div>
-                                                                            </div> -->
                                     
                                                                             <div class="ln_solid"></div>
                                     
@@ -383,12 +341,12 @@
                                                             </div>
                                                         </div>
 
-                                                        <div class="ln_solid"></div>
-                                                        <div class="form-group">
+                                                        <!-- <div class="ln_solid"></div> -->
+                                                        <!-- <div class="form-group">
                                                             <div class="col-md-6 col-md-offset-3">
                                                                 <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
                                                             </div>
-                                                        </div>
+                                                        </div> -->
                                                     </form>
                                                 </div>
 
@@ -510,7 +468,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="modal-usuariorecibe" class="modal fade bs-example-modal-lg-usuariorecibe" tabindex="-1" role="dialog" aria-hidden="true">
+                                    <div id="modal-usuarioRecibe" class="modal fade bs-example-modal-lg-usuarioRecibe" tabindex="-1" role="dialog" aria-hidden="true">
                                         <div class="modal-dialog modal-lg">
                                             <div class="modal-content">
 
@@ -592,7 +550,7 @@
     <script src="assets/js/jquery.inputmask/jquery.inputmask.bundle.min.js"></script>
     <!-- JS Scripts -->
     <script src="assets/js/OrdenSalida.js"></script>
-    <script src="assets/js/ProductoTemporal.js"></script>
+    <script src="assets/js/ElaborarProducto.js"></script>
     <script src="assets/js/ProductosxBodega.js"></script>
     <script src="assets/js/Producto.js"></script>
     <script src="assets/js/Insumo.js"></script>
@@ -618,9 +576,9 @@
 
 <script>
     $(document).ready(function () {
-        ordensalida.id=null;
-        ordensalida.Read;
-        ordensalida.Init();
+        ordenSalida.id=null;
+        ordenSalida.Read;
+        ordenSalida.Init();
     });
     $(document).on('click', '#btnAddInsumo', function (event) {
         insumo.id = null;

@@ -1,6 +1,6 @@
 class Usuario {
     // Constructor
-    constructor(id, nombre, username, password, email, activo, r, idBodega) {
+    constructor(id, nombre, username, password, email, activo, r, b) {
         this.id = id || null;
         this.nombre = nombre || '';
         this.username = username || '';
@@ -8,13 +8,14 @@ class Usuario {
         this.email = email || '';
         this.activo = activo || 0; //1: activo; 0: inactivo.
         this.listarol = r || null;
-        this.idBodega = idBodega;
+        this.bodegas = b || null;
     }
 
     //Getter
     get Read() {
+        NProgress.start();
         var miAccion = this.id == null ? 'ReadAll' : 'Read';
-        if (miAccion == 'ReadAll' && $('#tableBody-Usuario').length == 0)
+        if (miAccion == 'ReadAll' && $('#tbodyItems').length == 0)
             return;
         $.ajax({
             type: "POST",
@@ -29,11 +30,12 @@ class Usuario {
             })
             .fail(function (e) {
                 usuario.showError(e);
-            });
+            })
+            .always(NProgress.done());
     }
 
     get Save() {
-        // this.CheckUsername();
+        NProgress.start();
         $('#btnUsuario').attr("disabled", "disabled");
         var miAccion = this.id == null ? 'Create' : 'Update';
         this.nombre = $("#nombre").val();
@@ -44,7 +46,7 @@ class Usuario {
         this.email = $("#email").val();
         this.activo = $("#activo")[0].checked;
         this.listarol = $('#rol > option:selected').map(function () { return this.value; }).get();
-        this.idBodega = $('#selbodega option:selected').val(); 
+        this.bodegas = $('#selbodega option:selected').map(function () { return this.value; }).get();
         $.ajax({
             type: "POST",
             url: "class/Usuario.php",
@@ -63,6 +65,7 @@ class Usuario {
                 usuario.ClearCtls();
                 usuario.Read;
                 $("#nombre").focus();
+                NProgress.done();
             });
     }
 
@@ -152,70 +155,27 @@ class Usuario {
         $("#activo")[0].checked=true;        
         $('#rol option').prop("selected", false);
         $("#rol").selectpicker("refresh");
+        $('#selbodega option').prop("selected", false);
+        $("#selbodega").selectpicker("refresh");
+        //
         $('#checkusername').removeClass('fa-check-circle');
         $('#checkusername').removeClass('fa-times-circle');
         $('#checkusername').text('');
     };
 
     ShowAll(e) {
-        // Limpia el div que contiene la tabla.
-        $('#tableBody-Usuario').html("");
-        // // Carga lista
-        var data = JSON.parse(e);
-        //style="display: none"
-        $.each(data, function (i, item) {
-            $('#tableBody-Usuario').append(`
-                <tr>
-                    <td class="a-center ">
-                        <input id="chckadduser${item.id}" type="checkbox" class="flat" name="table_records">
-                    </td>
-                    <td class="itemId" >${item.id}</td>
-                    <td>${item.nombre}</td>
-                    <td>${item.username}</td>
-                    <td>${item.email}</td>
-                    <td>${item.activo}</td>
-                    <td class=" last">
-                        <a id="update${item.id}" data-toggle="modal" data-target=".bs-example-modal-lg" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | 
-                        <a id="delete${item.id}"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>
-                    </td>
-                </tr>
-            `);
-            // event Handler
-            $('#update' + item.id).click(usuario.UpdateEventHandler);
-            $('#delete' + item.id).click(usuario.DeleteEventHandler);
-            if (document.URL.indexOf("ProductoTemporal.html")!=-1){
-                $('#chckadduser'+item.id).change(productotemporal.AddUserEventHandler);
-            }
-            if (document.URL.indexOf("OrdenSalida.html")!=-1){
-                $('#chckadduser'+item.id).change(ordensalida.AddUserEventHandler);
-            }
-        
-        })
-        //datatable         
-        if ($.fn.dataTable.isDataTable('#dsUsuario')) {
-            var table = $('#dsUsuario').DataTable();
-        }
-        else
-            $('#dsUsuario').DataTable({
-                columns: [
-                    { title: "Check" },
-                    {
-                        title: "ID"
-                        //,visible: false
-                    },
-                    { title: "Nombre" },
-                    { title: "Username" },
-                    { title: "eMail" },
-                    { title: "Activo" },
-                    { title: "Action" }
-                ],
-                paging: true,
-                search: true
-            });
+        var t= $('#dsItems').DataTable();
+        t.clear();
+        t.rows.add(JSON.parse(e));
+        t.draw();
+        // eventos
+        $('.update').click(usuario.UpdateEventHandler);
+        $('.delete').click(usuario.DeleteEventHandler);
+        $('#dsItems tbody tr').dblclick(usuario.UpdateEventHandler);
     };
 
     UpdateEventHandler() {
-        usuario.id = $(this).parents("tr").find(".itemId").text();  //Class itemId = ID del objeto.
+        usuario.id = $(this).parents("tr").find(".itemId").text() || $(this).find(".itemId").text(); //Class itemId = ID del objeto.
         usuario.Read;
     };
 
@@ -224,11 +184,12 @@ class Usuario {
         this.ClearCtls();
         // carga objeto.
         var data = JSON.parse(e);
-        usuario = new Usuario(data.id, data.nombre, data.username, data.password, data.email, data.activo, data.listarol, data.idBodega);
+        usuario = new Usuario(data.id, data.nombre, data.username, data.password, data.email, data.activo, data.listarol, data.bodegas);
         // Asigna objeto a controles
         $("#id").val(usuario.id);
         $("#nombre").val(usuario.nombre);
         $("#username").val(usuario.username);
+        $("#myModalLabel").html('<h1>' + usuario.username + '<h1>' );  
         $("#password").val(usuario.password);
         $("#repetir").val(usuario.password);
         // checkbox
@@ -251,9 +212,12 @@ class Usuario {
         });
         $("#rol").selectpicker("refresh");
         //bodega
-        $('#selbodega option[value=' + data.idBodega + ']').prop("selected", true);
+        $.each(usuario.bodegas, function (i, item) {
+            $('#selbodega option[value=' + item.idBodega + ']').prop("selected", true);
+        });
         $("#selbodega").selectpicker("refresh");
-        
+        // modal
+        $(".modal").modal('toggle');
     };
 
     DeleteEventHandler() {
@@ -309,7 +273,6 @@ class Usuario {
             .fail(function (e) {
                 usuario.showError(e);
             });
-
     }
 
     Init() {
@@ -331,11 +294,37 @@ class Usuario {
         // Check username
         $('#username').focusout(function () {
             usuario.CheckUsername();
-        });
-
-        //switchery
-        
+        });        
     };
+
+    setTable(buttons=true){
+        //
+        $('#dsItems').DataTable({
+            responsive: true,
+            info: false,
+            columns: [
+                {
+                    title: "id",
+                    data: "id",
+                    className: "itemId",                    
+                    searchable: false
+                }, 
+                { title: "Nombre", data: "nombre" },
+                { title: "username", data: "username" },
+                { title: "email", data: "email" },
+                { title: "Activo", data: "activo" },
+                {
+                    title: "Action",
+                    orderable: false,
+                    searchable:false,
+                    visible: buttons,
+                    mRender: function () {
+                        return '<a class="update" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | <a class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>'                            
+                    }
+                }
+            ]
+        });
+    }
 }
 
 //Class Instance

@@ -44,7 +44,7 @@ class Factura{
     public $pagaCon=0;
     public $vuelto=0;
     //
-    // public $listaproducto= array();
+    // public $listaProducto= array();
     
     function __construct(){
         // identificador único
@@ -67,14 +67,14 @@ class Factura{
             // $this->porcentajeDescuento= $obj["porcentajeDescuento"] ?? 0;            
             // $this->total= $obj["total"] ?? null;
             // Categorias del factura.
-            // if(isset($obj["listaproducto"] )){
+            // if(isset($obj["listaProducto"] )){
             //     require_once("ProductosXFactura.php");
             //     //
-            //     foreach ($obj["listaproducto"] as $idprod) {
+            //     foreach ($obj["listaProducto"] as $idprod) {
             //         $prodfact= new ProductosXFactura();
             //         $prodfact->idcategoria= $idprod;
-            //         $prodfact->idProducto= $this->id;
-            //         array_push ($this->listaproducto, $prodfact);
+            //         $prodfact->idproducto= $this->id;
+            //         array_push ($this->listaProducto, $prodfact);
             //     }
             // }
         }
@@ -121,14 +121,14 @@ class Factura{
                     //categoria
                     if($value['idcategoria']!=null){
                         $cat->id = $value['idcategoria'];
-                        $cat->idUsuario = $value['nombrecategoria'];
-                        array_push ($this->listaproducto, $cat);
+                        $cat->idusuario = $value['nombrecategoria'];
+                        array_push ($this->listaProducto, $cat);
                     }
                 }
                 else {
                     $cat->id = $value['idcategoria'];
-                    $cat->idUsuario = $value['nombrecategoria'];
-                    array_push ($this->listaproducto, $cat);
+                    $cat->idusuario = $value['nombrecategoria'];
+                    array_push ($this->listaProducto, $cat);
                 }
             }
             return $this;
@@ -223,8 +223,8 @@ class Factura{
             $data = DATA::Ejecutar($sql,$param,false);
             if($data){
                 //update array obj
-                if($this->listaproducto!=null)
-                    if(ProductosXFactura::Update($this->listaproducto))
+                if($this->listaProducto!=null)
+                    if(ProductosXFactura::Update($this->listaProducto))
                         return true;            
                     else throw new Exception('Error al guardar las categorias.', 03);
                 else {

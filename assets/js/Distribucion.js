@@ -12,7 +12,7 @@ class Distribucion {
     }
 
     get Save() {
-        if($('#dsitems tr').length==0 ){
+        if($('# tr').length==0 ){
             swal({
                 type: 'warning',
                 title: 'Orden de Compra',
@@ -33,7 +33,7 @@ class Distribucion {
         distr.lista = [];
         $('#productos tr').each(function(i, item) {
             var objlista = new Object();
-            objlista.idProducto= $('#dsitems').dataTable().fnGetData(item)[0]; // id del item.
+            objlista.idProducto= $('#').dataTable().fnGetData(item)[0]; // id del item.
             objlista.cantidad= $(this).find('td:eq(3) input').val();
             objlista.valor= $(this).find('td:eq(4) input').val(); // valor: precio de venta para distrcion bodega externa. 
             distr.lista.push(objlista);
@@ -106,7 +106,7 @@ class Distribucion {
         distr.lista = [];
         $('#productos tr').each(function(i, item) {
             var objlista = new Object();
-            objlista.idProducto= $('#dsitems').dataTable().fnGetData(item)[0]; // id del item.
+            objlista.idProducto= $('#').dataTable().fnGetData(item)[0]; // id del item.
             objlista.cantidad= $(this).find('td:eq(3) input').val();
             objlista.costo= $(this).find('td:eq(4) input').val(); // costo: precio de venta para distrcion bodega externa. 
             objlista.valor= parseFloat(parseInt(objlista.cantidad) * parseFloat(objlista.costo).toFixed(10)).toFixed(10); // valor. costo*cantidad.
@@ -226,41 +226,36 @@ class Distribucion {
         // carga lista con datos.
         if(e != "false"){
             producto = JSON.parse(e)[0];
-            producto.UltPrd = producto.codigo;
             var repetido = false;
-
             if(document.getElementById("productos").rows.length != 0 && producto != null){
                 $(document.getElementById("productos").rows).each(function(i,item){
                     if(item.childNodes[0].innerText==producto.codigo){
-                        item.childNodes[3].childNodes["0"].attributes[3].value = producto.cantidad;
-                        var CantAct = parseInt(item.childNodes[3].firstElementChild.value);
-                        if (parseInt(producto.cantidad) > CantAct ){
-                            item.childNodes[3].firstElementChild.value = parseFloat(item.childNodes[3].firstElementChild.value) + 1;
-                        }
-                        // else{
-                        //     // alert("No hay mas de este producto");
-                        //     alertSwal(producto.cantidad)
-                        //     // $("#cant_"+ producto.UltPrd).val($("#cant_"+ producto.UltPrd)[0].attributes[3].value); 
-                        //     $("#cant_"+ producto.UltPrd).val(producto.cantidad);
-                        // }
-                        repetido=true;
-                        
+                        swal({
+                            type: 'warning',
+                            title: 'El producto '+ producto.codigo +' ya se encuentra en la lista.',
+                            //text: '',
+                            showConfirmButton: false,
+                            timer: 3000
+                        });
                     }     
                 });
             }    
-            if (repetido==false){
-                // showDataProducto(e);
+            if (repetido==false)
                 distr.AgregaProducto();
-                distr.ResetSearch();
-            }
         }
         else{
-            distr.ResetSearch();
+            swal({
+                type: 'warning',
+                title: 'El producto '+ producto.codigo +' NO existe.',
+                //text: 'Debe agregar el producto a la lista',
+                showConfirmButton: false,
+                timer: 3000
+            });
         }
     };
 
     AgregaProducto(){
-        //producto.UltPro = producto.codigo;
+        var t = $('#dsItems').DataTable();
         var rowNode = t   //t es la tabla de productos
         .row.add( [producto.id, producto.codigo, producto.nombre, producto.descripcion, "0", producto.precioVenta, "0"])
         .draw() //dibuja la tabla con el nuevo producto
@@ -320,6 +315,66 @@ class Distribucion {
             $("#total")[0].textContent = "¢0";
             
         }
+    };
+
+    setTable(buttons=true){
+        //
+        $('#dsItems').DataTable({
+            responsive: true,
+            info: false,
+            columns: [
+                {
+                    title: "id",
+                    data: "id",
+                    className: "itemId",                    
+                    searchable: false
+                },
+                { title: "Codigo", data: "codigo" },
+                { title: "Nombre", data: "nombre" },
+                { title: "Descripción", data: "descripcion" },
+                { 
+                    title: "Cantidad", 
+                    //data: "cantidad",
+                    defaultContent: '<input class="cantidad form-control" type="number">'
+                },
+                { 
+                    title: "Precio Venta", 
+                    //data: "precioventa" 
+                    defaultContent: '<input class="valor"><input readonly class="display">'
+                },
+                { 
+                    title: "Subtotal", 
+                    //data: "sobtotal"
+                    defaultContent: '<input readonly class="valor"><input readonly class="display">'
+                },
+                {
+                    title: "Action",
+                    orderable: false,
+                    searchable:false,
+                    visible: buttons,
+                    mRender: function () {
+                        return '<a class="update" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | <a class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>'                            
+                    }
+                }
+            ],
+            // columnDefs: [                
+            //     // {// cant.
+            //     //     "width": "10%", "targets": 4,
+            //     //     "data": null,
+            //     //     "defaultContent": '<input class="cantidad form-control" type="number">'
+            //     // },
+            //     // {// precio venta
+            //     //     "width": "10%", "targets": 5,
+            //     //     "data": null,
+                    
+            //     // },
+            //     // {// cant.
+            //     //     "width": "10%", "targets": 6,
+            //     //     "data": null,
+                    
+            //     // }
+            // ]
+        });
     };
 }
 

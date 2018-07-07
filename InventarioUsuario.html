@@ -159,28 +159,18 @@
                         <div class="col-md-12 col-sm-12 col-xs-12">
                             <div class="x_panel">
                                 <div class="x_title">
-                                    <h2>Inventario</h2>
-
                                     <div class="clearfix"></div>
                                 </div>
 
                                 <!--  CONTENIDO DE LA PAGINA -->
                                 <div class="x_content">
                                     <!-- TABLE -->
-                                    <div id="datatable_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
-                                        <div class="row">
-                                            <div class="col-sm-12">
-                                                <table id="dsUsuario" class="table table-striped table-bordered dataTable no-footer jambo_table " role="grid" aria-describedby="datatable_info">
-                                                    <thead>
-                                                        <tr role="row" class="headings">
-                                                        </tr>
-                                                    </thead>
-
-                                                    <tbody id="tableBody-Usuario">
-                                                    </tbody>
-
-                                                </table>
-                                            </div>
+                                    <div class="row">
+                                        <div class="col-md-12 col-sm-12 col-xs-12">
+                                            <table id="dsItems" class="table display responsive table-striped jambo_table no-wrap" width="100%" role="grid" aria-describedby="datatable_info">
+                                                <tbody id="tbodyItems">
+                                                </tbody>
+                                            </table>
                                         </div>
                                     </div>
                                     <!-- /TABLE -->
@@ -194,66 +184,71 @@
                                                     <button type="button" class="close" data-dismiss="modal">
                                                         <span aria-hidden="true">×</span>
                                                     </button>
-                                                    <h4 class="modal-title" id="myModalLabel">Editar Usuario</h4>
+                                                    <h4 class="modal-title" id="myModalLabel"> Editar Usuario:
+                                                        <input type="hidden" id="username" class="form-control col-md-7 col-xs-12" readonly name="username" style="user-select: none; background: transparent; border-color: transparent; border:0 none;" >                                                     
+                                                    </h4>
                                                 </div>
 
                                                 <div class="modal-body">
                                                     <form class="form-horizontal form-label-left" id="frmUsuario" method="POST" novalidate>
 
                                                         <!-- <span class="section">Datos Generales</span> -->
-                
+
                                                         <div class="item form-group">
                                                             <label class="control-label col-md-3 col-sm-3 col-xs-12" for="nombre">Nombre Completo
                                                                 <span class="required">*</span>
                                                             </label>
                                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <input id="nombre" class="form-control col-md-7 col-xs-12" name="nombre" required="required" type="text" placeholder="Nombre completo Del usuario" data-validate-words="2">
+                                                                <input id="nombre" class="form-control col-md-7 col-xs-12" name="nombre" required="required" type="text" placeholder="Nombre completo Del usuario"
+                                                                    data-validate-words="2">
                                                             </div>
                                                         </div>
-                
-                                                        <div class="item form-group">
+
+                                                        <!-- <div class="item form-group">
                                                             <label class="control-label col-md-3 col-sm-3 col-xs-12" for="username">Username
-                                                                <span class="required">*</span>                                                
+                                                                <span class="required">*</span>
                                                             </label>
                                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <input id="username" class="form-control col-md-7 col-xs-12" readonly name="username" required="required" type="text" placeholder="Nombre Único de usuario" >                                                
+                                                                <input id="username" class="form-control col-md-7 col-xs-12" readonly name="username" required="required" type="text" placeholder="Nombre Único de usuario">
                                                             </div>
                                                             <span id="checkusername" class="fa"></span>
-                                                        </div>
-                
+                                                        </div> -->
+
                                                         <div class="item form-group">
                                                             <label class="control-label col-md-3 col-sm-3 col-xs-12" for="password">Password
                                                                 <span class="required">*</span>
                                                             </label>
                                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <input id="password" class="form-control col-md-7 col-xs-12" name="password" required="required" type="password" data-validate-length-range="6" placeholder="Mínimo 6 caracteres">
+                                                                <input id="password" class="form-control col-md-7 col-xs-12" name="password" required="required" type="password" data-validate-length-range="6"
+                                                                    placeholder="Mínimo 6 caracteres">
                                                             </div>
                                                         </div>
-                
+
                                                         <div class="item form-group">
                                                             <label class="control-label col-md-3 col-sm-3 col-xs-12" for="repetir">Repetir Password</label>
                                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <input id="repetir" class="optional form-control col-md-7 col-xs-12" name="repetir" type="password" placeholder="Repita el password" data-validate-linked="password" required="required">
+                                                                <input id="repetir" class="optional form-control col-md-7 col-xs-12" name="repetir" type="password" placeholder="Repita el password"
+                                                                    data-validate-linked="password" required="required">
                                                             </div>
                                                         </div>
-                
+
                                                         <div class="item form-group">
                                                             <label class="control-label col-md-3 col-sm-3 col-xs-12" for="email">Email</label>
                                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <input id="email" class="optional form-control col-md-7 col-xs-12" name="email" type="email" >
+                                                                <input id="email" class="optional form-control col-md-7 col-xs-12" name="email" type="email">
                                                             </div>
                                                         </div>
-                
+
                                                         <div class="form-group">
                                                             <label class="control-label col-md-3 col-sm-3 col-xs-12">Activo</label>
                                                             <div class="col-md-9 col-sm-9 col-xs-12">
                                                                 <label>
-                                                                  <!-- <input type="checkbox" checked  class="js-switch"  data-switchery="true" id="activo" name="activo"> -->
-                                                                  <input type="checkbox" checked  id="activo" name="activo">
+                                                                    <!-- <input type="checkbox" checked  class="js-switch"  data-switchery="true" id="activo" name="activo"> -->
+                                                                    <input type="checkbox" checked id="activo" name="activo">
                                                                 </label>
                                                             </div>
                                                         </div>
-                
+
                                                         <div class="item form-group">
                                                             <label class="control-label col-md-3 col-sm-3 col-xs-12">Roles (Multiple)</label>
                                                             <div class="col-md-6 col-sm-6 col-xs-12">
@@ -266,12 +261,12 @@
                                                                 <span class="required">*</span>
                                                             </label>
                                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <select class="selectpicker show-menu-arrow form-control" required="required" id="selbodega" name="selbodega"></select>
+                                                                <select class="selectpicker show-menu-arrow form-control" multiple required="required" id="selbodega" name="selbodega"></select>
                                                             </div>
                                                         </div>
-                                                        
+
                                                         <div class="ln_solid"></div>
-                
+
                                                         <div class="form-group">
                                                             <div class="col-md-6 col-md-offset-3">
                                                                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -331,7 +326,6 @@
     <!-- JS Scripts -->
     <script src="assets/js/Usuario.js"></script>
     <script src="assets/js/Rol.js"></script>
-    <!-- <script src="assets/js/ProductoTemporal.js"></script> -->
     <script src="assets/js/Bodega.js"></script>
     <!-- Sweet Alert -->
     <script src="assets/js/sweetalert2.min.js"></script>
@@ -351,6 +345,7 @@
 <script>
     $(document).ready(function () {
         usuario.id = null;
+        usuario.setTable();
         usuario.Read;
         usuario.Init();
         //

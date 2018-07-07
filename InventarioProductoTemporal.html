@@ -185,7 +185,7 @@
                                                         </tr>
                                                     </thead>
 
-                                                    <tbody id="tableBody-ProductoTemporal">
+                                                    <tbody id="tableBody-ElaborarProducto">
 
                                                     </tbody>
 
@@ -302,7 +302,7 @@
                                                                                             <span class="required">*</span>
                                                                                         </label>
                                                                                         <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                                            <input id="usuariorecibe" class="form-control col-md-7 col-xs-12" name="usuariorecibe" required="required" data-validate-minmax="1,99999" placeholder="Seleccione Usuario">
+                                                                                            <input id="usuarioRecibe" class="form-control col-md-7 col-xs-12" name="usuarioRecibe" required="required" data-validate-minmax="1,99999" placeholder="Seleccione Usuario">
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
@@ -474,7 +474,7 @@
     <script src="assets/js/jquery.inputmask/jquery.inputmask.bundle.min.js"></script>
     <!-- JS Scripts -->
     <!-- <script src="assets/js/InventarioProducto.js"></script> -->
-    <script src="assets/js/ProductoTemporal.js"></script>
+    <script src="assets/js/ElaborarProducto.js"></script>
     <script src="assets/js/ProductosxBodega.js"></script>
     <script src="assets/js/Producto.js"></script>
     <script src="assets/js/Insumo.js"></script>
@@ -521,9 +521,9 @@
     $(document).ready(function () {
         // if(!Session.state)
         //     return;
-        productotemporal.id=null;
-        productotemporal.Read;
-        productotemporal.Init();
+        elaborarProducto.id=null;
+        elaborarProducto.Read;
+        elaborarProducto.Init();
         //
     });
     $(document).on('click', '#btnAddInsumo', function (event) {    

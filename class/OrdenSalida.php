@@ -11,41 +11,41 @@ if(isset($_POST["action"])){
     if (!isset($_SESSION))
         session_start();
     // Instance
-    $ordensalida= new OrdenSalida();
+    $ordenSalida= new OrdenSalida();
     switch($opt){
         case "ReadAll":
-            echo json_encode($ordensalida->ReadAll());
+            echo json_encode($ordenSalida->ReadAll());
             break;
         case "Read":
-            echo json_encode($ordensalida->Read());
+            echo json_encode($ordenSalida->Read());
             break;
         case "Create":
-            $ordensalida->Create();
+            echo json_encode($ordenSalida->Create());
             break;
         case "ReadbyOrden":
-            echo json_encode($ordensalida->ReadbyOrden());
+            echo json_encode($ordenSalida->ReadbyOrden());
             break;
         case "Update":
-            $ordensalida->Update();
+            $ordenSalida->Update();
             break;
-        // case "Delete":
-        //     echo json_encode($ordensalida->Delete());
-        //     break;   
+        case "Delete":
+            echo json_encode($ordenSalida->Delete());
+            break;   
     }
 }
 
 class OrdenSalida{
     public $id=null;
-    public $numeroorden='';
+    public $numeroOrden='';
     public $fecha='';
-    public $fechaliquida='';
-    public $idusuarioentrega='';
-    public $idusuariorecibe='';
-    public $usuarioentrega='';
-    public $usuariorecibe='';
-    public $idestado='';
-    public $listainsumo=[];
-    public $listainsumocantidad=[];
+    public $fechaLiquida='';
+    public $idUsuarioEntrega='';
+    public $idUsuarioRecibe='';
+    public $usuarioEntrega='';
+    public $usuarioRecibe='';
+    public $idEstado='';
+    public $listaInsumo=[];
+    public $listaInsumoCantidad=[];
 
     function __construct(){
         // identificador único
@@ -56,33 +56,33 @@ class OrdenSalida{
             $obj= json_decode($_POST["obj"],true);
             require_once("UUID.php");
             $this->id= $obj["id"] ?? UUID::v4();
-            $this->numeroorden= $obj["numeroorden"] ?? '';
+            $this->numeroOrden= $obj["numeroOrden"] ?? '';
             $this->fecha= $obj["fecha"] ?? '';
-            $this->fechaliquida= $obj["fechaliquida"] ?? '';
-            $this->idusuarioentrega= $_SESSION['userSession']->id;
-            $this->idusuariorecibe= $obj["usuariorecibe"] ?? '';
-            $this->idestado= $obj["estado"] ?? 0;
+            $this->fechaLiquida= $obj["fechaLiquida"] ?? '';
+            $this->idUsuarioEntrega= $_SESSION['userSession']->id;
+            $this->idUsuarioRecibe= $obj["usuarioRecibe"] ?? '';
+            $this->idEstado= $obj["estado"] ?? 0;
             //Insumos de la orden
-            if (isset($obj["listainsumo"] )) {
+            if (isset($obj["listaInsumo"] )) {
                 require_once("InsumosxOrdenSalida.php");    
-                foreach ($obj["listainsumo"] as $objInsumo) {
+                foreach ($obj["listaInsumo"] as $objInsumo) {
                     $ins_ordensalida= new InsumosxOrdenSalida();
-                    $ins_ordensalida->idordensalida= $this->id;
+                    $ins_ordensalida->idOrdenSalida= $this->id;
                     $ins_ordensalida->idInsumo= $objInsumo['id'];
                     $ins_ordensalida->cantidad= $objInsumo['cantidad'];
                     $ins_ordensalida->costoPromedio= $objInsumo['costoPromedio'];
-                    array_push ($this->listainsumo, $ins_ordensalida);
+                    array_push ($this->listaInsumo, $ins_ordensalida);
                 }
             }
             //Insumos de la orden
-            if (isset($obj["listainsumo"] )) {
+            if (isset($obj["listaInsumo"] )) {
                 require_once("InsumosxOrdenSalida.php");    
-                foreach ($obj["listainsumocantidad"] as $objInsumoCantidad) {
+                foreach ($obj["listaInsumoCantidad"] as $objInsumoCantidad) {
                     $ins_ordensalida= new InsumosxOrdenSalida();
-                    $ins_ordensalida->idordensalida= $this->id;
+                    $ins_ordensalida->idOrdenSalida= $this->id;
                     $ins_ordensalida->idInsumo= $objInsumoCantidad['id'];
                     $ins_ordensalida->cantidad= $objInsumoCantidad['cantidad'];
-                    array_push ($this->listainsumocantidad, $ins_ordensalida);
+                    array_push ($this->listaInsumoCantidad, $ins_ordensalida);
                 }
             }
         }
@@ -90,10 +90,10 @@ class OrdenSalida{
 
     function ReadAll(){
         try {
-            $sql='SELECT `id`,`fecha`,`numeroorden`,`idusuarioentrega`, (SELECT nombre FROM usuario WHERE id=idusuarioentrega) as usuarioentrega,
-            `idusuariorecibe`, (SELECT nombre FROM usuario WHERE id=idusuariorecibe) as usuariorecibe, `fechaliquida`, `idestado`
-                FROM     ordensalida       
-                ORDER BY numeroorden asc';
+            $sql='SELECT `id`,`fecha`,`numeroOrden`,`idUsuarioEntrega`, (SELECT nombre FROM usuario WHERE id=idUsuarioEntrega) as usuarioEntrega,
+            `idUsuarioRecibe`, (SELECT nombre FROM usuario WHERE id=idUsuarioRecibe) as usuarioRecibe, `fechaLiquida`, `idEstado`
+                FROM     ordenSalida       
+                ORDER BY numeroOrden asc';
             $data= DATA::Ejecutar($sql);
             return $data;
         }     
@@ -108,37 +108,37 @@ class OrdenSalida{
 
     function Read(){
         try {
-            $ordensalida=null;
+            $ordenSalida=null;
             $insumoxordensalida=null;
 
-            $sql_ordensalida=$sql='SELECT `id`,`fecha`,`numeroorden`,`idusuarioentrega`, (SELECT nombre FROM usuario WHERE id=idusuarioentrega) as usuarioentrega,
-            `idusuariorecibe`, (SELECT nombre FROM usuario WHERE id=idusuariorecibe) as usuariorecibe, `fechaliquida`, `idestado`
-            FROM ordensalida WHERE id=:id ORDER BY numeroorden asc';
-            $sql_insumoxordensalida='SELECT id,idordensalida,idInsumo,(SELECT nombre FROM insumo WHERE id=idInsumo) AS nombreinsumo,cantidad,costoPromedio FROM insumosxordensalida WHERE idordensalida=:id';
+            $sql_ordensalida=$sql='SELECT `id`,`fecha`,`numeroOrden`,`idUsuarioEntrega`, (SELECT nombre FROM usuario WHERE id=idUsuarioEntrega) as usuarioEntrega,
+            `idUsuarioRecibe`, (SELECT nombre FROM usuario WHERE id=idUsuarioRecibe) as usuarioRecibe, `fechaLiquida`, `idEstado`
+            FROM ordenSalida WHERE id=:id ORDER BY numeroOrden asc';
+            $sql_insumoxordensalida='SELECT id,idOrdenSalida,idInsumo,(SELECT nombre FROM insumo WHERE id=idInsumo) AS nombreInsumo,cantidad,costoPromedio FROM insumosXOrdenSalida WHERE idOrdenSalida=:id';
 
             $param= array(':id'=>$this->id);
-            $ordensalida = DATA::Ejecutar($sql_ordensalida,$param);
+            $ordenSalida = DATA::Ejecutar($sql_ordensalida,$param);
             $insumoxordensalida = DATA::Ejecutar($sql_insumoxordensalida,$param);
-            $this->id = $ordensalida[0]['id'];
-            $this->fecha = $ordensalida[0]['fecha'];
-            $this->numeroorden = $ordensalida[0]['numeroorden'];
-            $this->idusuarioentrega = $ordensalida[0]['idusuarioentrega'];
-            $this->usuarioentrega = $ordensalida[0]['usuarioentrega'];
-            $this->idusuariorecibe = $ordensalida[0]['idusuariorecibe'];
-            $this->usuariorecibe = $ordensalida[0]['usuariorecibe'];
-            $this->fechaliquida = $ordensalida[0]['fechaliquida'];
-            $this->idestado = $ordensalida[0]['idestado'];
+            $this->id = $ordenSalida[0]['id'];
+            $this->fecha = $ordenSalida[0]['fecha'];
+            $this->numeroOrden = $ordenSalida[0]['numeroOrden'];
+            $this->idUsuarioEntrega = $ordenSalida[0]['idUsuarioEntrega'];
+            $this->usuarioEntrega = $ordenSalida[0]['usuarioEntrega'];
+            $this->idUsuarioRecibe = $ordenSalida[0]['idUsuarioRecibe'];
+            $this->usuarioRecibe = $ordenSalida[0]['usuarioRecibe'];
+            $this->fechaLiquida = $ordenSalida[0]['fechaLiquida'];
+            $this->idEstado = $ordenSalida[0]['idEstado'];
             
             foreach ($insumoxordensalida as $key => $value){
                 require_once("InsumosxOrdenSalida.php");
                 $ins_ordensalida = new InsumosxOrdenSalida();
                 $ins_ordensalida->id = $value['id'];
-                $ins_ordensalida->idordensalida = $value['idordensalida'];
+                $ins_ordensalida->idOrdenSalida = $value['idOrdenSalida'];
                 $ins_ordensalida->idInsumo = $value['idInsumo'];
-                $ins_ordensalida->nombreinsumo = $value['nombreinsumo'];
+                $ins_ordensalida->nombreInsumo = $value['nombreInsumo'];
                 $ins_ordensalida->cantidad = $value['cantidad'];
                 $ins_ordensalida->costoPromedio = $value['costoPromedio'];
-                array_push ($this->listainsumo, $ins_ordensalida);
+                array_push ($this->listaInsumo, $ins_ordensalida);
             }
             return $this;
         }     
@@ -146,24 +146,28 @@ class OrdenSalida{
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
-                'msg' => 'Error al cargar el ordensalida'))
+                'msg' => 'Error al cargar el ordenSalida'))
             );
         }
     }
 
     function Create(){
         try {           
-            $sql="INSERT INTO ordenSalida (`id`,`fecha`,`idusuarioentrega`,`idusuariorecibe`,`idestado`) 
-                VALUES (:uuid,:fecha,:idusuarioentrega,:idusuariorecibe,:idestado)";
-            $param= array(':uuid'=>$this->id, ':fecha'=>$this->fecha,':idusuarioentrega'=>$this->idusuarioentrega, 
-            ':idusuariorecibe'=>$this->idusuariorecibe,':idestado'=>0);
+            $sql="INSERT INTO tropical.ordenSalida (`id`,`fecha`,`idUsuarioEntrega`,`idUsuarioRecibe`,`idEstado`) 
+                VALUES (:uuid,:fecha,:idUsuarioEntrega,:idUsuarioRecibe,:idEstado)";
+            $param= array(':uuid'=>$this->id, ':fecha'=>$this->fecha,':idUsuarioEntrega'=>$this->idUsuarioEntrega, 
+            ':idUsuarioRecibe'=>$this->idUsuarioRecibe,':idEstado'=>0);
             $data = DATA::Ejecutar($sql,$param, false);
 
             if($data)
             {
+                //Obtiene el ultimo numero de Orden
+                $sql="SELECT numeroOrden FROM tropical.ordenSalida order by numeroOrden desc limit 1;";
+                $maxid=DATA::Ejecutar($sql);
+                
                 //save array obj
-                if(InsumosxOrdenSalida::Create($this->listainsumo))
-                    return true;
+                if(InsumosxOrdenSalida::Create($this->listaInsumo))
+                    return $maxid;
                 else throw new Exception('Error al guardar los insumos.', 03);
             }
             else throw new Exception('Error al guardar.', 02);
@@ -180,13 +184,13 @@ class OrdenSalida{
 
     function Update(){
         try {
-            $sql="UPDATE ordenSalida SET idusuariorecibe=:idusuariorecibe WHERE id=:id";
-             $param= array(':id'=>$this->id,':idusuariorecibe'=>$this->idusuariorecibe);
+            $sql="UPDATE tropical.ordenSalida SET idUsuarioRecibe=:idUsuarioRecibe WHERE id=:id";
+             $param= array(':id'=>$this->id,':idUsuarioRecibe'=>$this->idUsuarioRecibe);
             $data = DATA::Ejecutar($sql,$param,false);
             if($data){
                 //update array obj
-                if($this->listainsumo!=null)
-                    if(InsumosxOrdenSalida::Update($this->listainsumo))
+                if($this->listaInsumo!=null)
+                    if(InsumosxOrdenSalida::Update($this->listaInsumo))
                         return true;            
                     else throw new Exception('Error al guardar la orden de salida.', 03);
                 else {
@@ -209,12 +213,13 @@ class OrdenSalida{
 
     private function CheckRelatedItems(){
         try{
-            $sql="SELECT idProducto
-                FROM insumosxordensalida R
-                WHERE R.idProducto= :id";                
+            $sql="SELECT id
+                FROM tropical.ordenSalida
+                WHERE id=:id and idEstado=1";          
             $param= array(':id'=>$this->id);
             $data= DATA::Ejecutar($sql, $param);
             if(count($data))
+            
                 return true;
             else return false;
         }
@@ -235,8 +240,8 @@ class OrdenSalida{
                 $sessiondata['msg']='Registro en uso'; 
                 return $sessiondata;           
             }                    
-            $sql='DELETE FROM ordensalida  
-            WHERE id= :id';
+            $sql='DELETE FROM ordenSalida  
+            WHERE id=:id';
             $param= array(':id'=>$this->id);
             $data= DATA::Ejecutar($sql, $param, false);
             if($data)
@@ -251,53 +256,33 @@ class OrdenSalida{
             );
         }
     }
-
-    function ReadNextAI(){
-        try{ 
-            $sql="SELECT numeroorden+1
-            FROM ordensalida
-            ORDER BY numeroorden DESC LIMIT 1";
-            $data= DATA::Ejecutar($sql,$param); 
-            if(count($data))
-            return $data;
-            else return false;
-            }
-            catch(Exception $e){    
-                header('HTTP/1.0 400 Bad error');
-                die(json_encode(array(
-                'code' => $e->getCode() ,
-                    'msg' => $e->getMessage()))
-    
-                );    
-            }
-    }
     
     function ReadbyOrden(){
         try {
-            $sql='SELECT `ordensalida`.`id`,
-            `ordensalida`.`numeroorden`,
-            `ordensalida`.`fecha`,
-            `ordensalida`.`idusuarioentrega`,
-            `ordensalida`.`idusuariorecibe`,
-            (SELECT nombre FROM usuario WHERE id=`ordensalida`.`idusuarioentrega`) AS usuarioentrega,
-            (SELECT nombre FROM usuario WHERE id=`ordensalida`.`idusuariorecibe`) AS usuariorecibe,
-            `ordensalida`.`fechaliquida`,
-            `ordensalida`.`idestado`
-            FROM `tropical`.`ordensalida` WHERE numeroorden=:numeroorden AND idestado=0';
-            $param= array(':numeroorden'=>$this->numeroorden);
+            $sql='SELECT `ordenSalida`.`id`,
+            `ordenSalida`.`numeroOrden`,
+            `ordenSalida`.`fecha`,
+            `ordenSalida`.`idUsuarioEntrega`,
+            `ordenSalida`.`idUsuarioRecibe`,
+            (SELECT nombre FROM usuario WHERE id=`ordenSalida`.`idUsuarioEntrega`) AS usuarioEntrega,
+            (SELECT nombre FROM usuario WHERE id=`ordenSalida`.`idUsuarioRecibe`) AS usuarioRecibe,
+            `ordenSalida`.`fechaLiquida`,
+            `ordenSalida`.`idEstado`
+            FROM `tropical`.`ordenSalida` WHERE numeroOrden=:numeroOrden AND idEstado=0';
+            $param= array(':numeroOrden'=>$this->numeroOrden);
             $data= DATA::Ejecutar($sql,$param);     
             if(count($data)){
                 $this->id = $data[0]['id'];
-                $this->numeroorden = $data[0]['numeroorden'];
+                $this->numeroOrden = $data[0]['numeroOrden'];
                 $this->fecha = $data[0]['fecha'];
-                $this->idusuarioentrega = $data[0]['idusuarioentrega'];
-                $this->idusuariorecibe = $data[0]['idusuariorecibe'];
-                $this->usuarioentrega = $data[0]['usuarioentrega'];
-                $this->usuariorecibe = $data[0]['usuariorecibe'];
-                $this->fechaliquida = $data[0]['fechaliquida'];
-                $this->idestado = $data[0]['idestado'];
+                $this->idUsuarioEntrega = $data[0]['idUsuarioEntrega'];
+                $this->idUsuarioRecibe = $data[0]['idUsuarioRecibe'];
+                $this->usuarioEntrega = $data[0]['usuarioEntrega'];
+                $this->usuarioRecibe = $data[0]['usuarioRecibe'];
+                $this->fechaLiquida = $data[0]['fechaLiquida'];
+                $this->idEstado = $data[0]['idEstado'];
                 // productos x distribucion.
-                $this->listainsumo= InsumosxOrdenSalida::Read($this->id);
+                $this->listaInsumo= InsumosxOrdenSalida::Read($this->id);
                 //
                 return $this;
             }

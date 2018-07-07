@@ -1,21 +1,20 @@
 class IpAutorizada {
     // Constructor
-    constructor(id, ip) {
-        this.id = id || null;        
-        this.ip = ip || '';
+    constructor(ip) {   
+        this.ip = ip || null;
     }
 
     //Getter
     get Read() {
-        var miAccion = this.id == null ? 'ReadAll' : 'Read';
-        if(miAccion=='ReadAll' && $('#tableBody-IpAutorizada').length==0 )
+        var miAccion = this.ip == null ? 'ReadAll' : 'Read';
+        if(miAccion=='ReadAll' && $('#tbodyItems').length==0 )
             return;
         $.ajax({
             type: "POST",
             url: "class/IpAutorizada.php",
             data: {
                 action: miAccion,
-                id: this.id
+                ip: this.ip
             }
         })
             .done(function (e) {
@@ -28,7 +27,7 @@ class IpAutorizada {
 
     get Save() {
         $('#btnIp').attr("disabled", "disabled");
-        var miAccion = this.id == null ? 'Create' : 'Update';
+        var miAccion = this.ip == null ? 'Create' : 'Update';
         this.ip = $("#ip").val();
         $.ajax({
             type: "POST",
@@ -57,7 +56,7 @@ class IpAutorizada {
             url: "class/IpAutorizada.php",
             data: {
                 action: 'Delete',
-                id: this.id
+                ip: this.ip
             }
         })
             .done(function () {
@@ -80,14 +79,14 @@ class IpAutorizada {
 
     // Methods
     Reload(e) {
-        if (this.id == null)
+        if (this.ip == null)
             this.ShowAll(e);
         else this.ShowItemData(e);
     };
 
     // Muestra información en ventana
     showInfo() {
-        //$(".modal").css({ display: "none" });   
+        //$(".modal").css({ display: "none" });
         $(".close").click();
         swal({
             
@@ -109,26 +108,22 @@ class IpAutorizada {
             footer: '<a href>Contacte a Soporte Técnico</a>',
         })
     };
-
-    LimpiaArticulos(){
-        $('#tableBody-ArticuloBodega').html("");
-    };
-
+  
     ClearCtls() {
         $("#ip").val('');
     };
 
     ShowAll(e) {
-        var url;
-        url = window.location.href;
-        // Limpia el div que contiene la tabla.
-        $('#tableBody-IpAutorizada').html("");
-        // // Carga lista
-        var data = JSON.parse(e);
+        t.clear();
+        t.rows.add(JSON.parse(e));
+        t.draw();
+        //$('.update').click(ipautorizada.UpdateEventHandler);
+        $('.delete').click(ipautorizada.DeleteEventHandler);
     };
 
     UpdateEventHandler() {
-        ipautorizada.id = $(this).parents("tr").find(".itemId").text();  //Class itemId = ID del objeto.
+        //ipautorizada.id = $(this).parents("tr").find(".itemId").text();  //Class itemId = ID del objeto no visible
+        ipautorizada.ip = $(this).parents("tr").find(".itemIdvisible").text();  //Class itemId = ID del objeto. 
         ipautorizada.Read;
     };
 
@@ -136,34 +131,16 @@ class IpAutorizada {
         // Limpia el controles
         this.ClearCtls();
         // carga objeto.
-        var data = JSON.parse(e)[0];
-        ipautorizada = new IpAutorizada(data.id, data.ip, data.nombre, data.txtColor, data.bgColor, data.nombreAbreviado, 
-        data.descripcion, data.saldoCantidad, data.costoPromedio, data.precioVenta , data.esVenta);
-        // Asigna objeto a controles
-        $("#id").val(ipautorizada.id);
+        var data = JSON.parse(e)[0];     
+        ipautorizada= new IpAutorizada(data.ip);
+        // Asigna objeto a controles        
         $("#ip").val(ipautorizada.ip);
-        $("#nombre").val(ipautorizada.nombre);
-        $("#txtColor").val(ipautorizada.txtColor);
-        $("#bgColor").val(ipautorizada.bgColor);
-        $("#nombreAbreviado").val(ipautorizada.nombreAbreviado);
-        $("#descripcion").val(ipautorizada.descripcion);
-        $("#saldoCantidad").val(ipautorizada.saldoCantidad);
-        $("#saldoCosto").val(parseFloat(ipautorizada.saldoCantidad).toFixed(2));
-        $("#costoPromedio").val(parseFloat(ipautorizada.costoPromedio).toFixed(2));
-        $("#precioVenta").val(parseFloat(ipautorizada.precioVenta).toFixed(2));
-        $("#esVenta").val(ipautorizada.esVenta);
-
-        // checkbox
-        if(ipautorizada.esVenta==1){
-            $("#esVenta")[0].checked=true;
-        }
-        else {
-            $("#esVenta")[0].checked=false;
-        }
+        // Muestra modal
+        $(".modal").modal('toggle');
     };
 
     DeleteEventHandler() {
-        ipautorizada.id = $(this).parents("tr").find(".itemId").text();  //Class itemId = ID del objeto.
+        ipautorizada.ip = $(this).parents("tr").find(".itemIdvisible").text();  //Class itemId = ID del objeto.
         // Mensaje de borrado:
         swal({
             title: 'Eliminar?',
@@ -181,60 +158,6 @@ class IpAutorizada {
                 ipautorizada.Delete;
             }
         })
-    };
-
-    AddArticuloEventHandler(){
-        var posicion=null;
-        var id=$(this).parents("tr").find("td:eq(1)").html();
-        var nombre=$(this).parents("tr").find("td:eq(2)").html();
-        var ip=$(this).parents("tr").find("td:eq(3)").html();
-        if ($(this).is(':checked')) {
-            if (ipautorizada.lista.indexOf(id)!=-1){
-                $(this).attr("checked",false);
-                return false;
-            }
-            else{
-                ipautorizada.AddTableArticulo(id,nombre);
-            }
-        }
-        else{
-            posicion = ipautorizada.lista.indexOf(id);
-            ipautorizada.lista.splice(posicion,1);
-            $('#row'+id).remove();
-        }
-    };
-
-    AddTableArticulo(id,nombre) {
-        $('#tableBody-ArticuloBodega').append(`
-            <tr id="row"${id}> 
-                <td class="itemId" >${id}</td>
-                <td>${nombre}</td>
-                <td>
-                    <input id="cantidad" class="form-control col-3" name="cantidad" type="text" placeholder="Cantidad de artículos" autofocus="" value="1">
-                </td>
-                <td>
-                    <input id="costo" class="form-control col-3" name="costo" type="text" placeholder="Costo del artículo" autofocus="" value="0">
-                </td>
-                <td class=" last">
-                    <a id ="delete_row${id}" onclick="productotemporal.Deleteproducto(this)" > <i class="glyphicon glyphicon-trash" onclick="Deleteproducto(this)"> </i> Eliminar </a>
-                </td>
-            </tr>
-        `);
-        //datatable         
-        if ( $.fn.dataTable.isDataTable( '#dsArticulo' ) ) {
-            var table = $('#dsArticulo').DataTable();
-        }
-        else 
-            $('#dsArticulo').DataTable( {               
-                columns: [
-                    { "width":"40%"},
-                    { "width":"25%"},
-                    { "width":"25%"},
-                    { "width":"10%"}
-                ],          
-                paging: true,
-                search: true
-            } );
     };
 
     Init() {

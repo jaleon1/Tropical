@@ -162,7 +162,7 @@
                         <div class="col-md-12 col-sm-12 col-xs-12">
                             <div class="x_panel">
                                 <div class="x_title">
-                                    <h2>Inventario</h2>
+                                    
                                     
                                     <div class="clearfix"></div>
                                 </div>
@@ -170,15 +170,12 @@
                                 <!--  CONTENIDO DE LA PAGINA -->
                                 <div class="x_content">
                                     <!-- TABLE -->
-                                    <div id="datatable_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
-                                        <div class="row">
-                                            <div class="col-sm-12">
-                                                <table id="dsIpAutorizada" class="table table-striped jambo_table bulk_action" role="grid" aria-describedby="datatable_info">
-                                                    <tbody id="tableBody-IpAutorizada">
-                                                    </tbody>
-
-                                                </table>
-                                            </div>
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <table id="dsItems" class="table display responsive table-striped jambo_table no-wrap" width="100%" role="grid" aria-describedby="datatable_info">
+                                                <tbody id="tbodyItems">
+                                                </tbody>
+                                            </table>
                                         </div>
                                     </div>
                                     <!-- /TABLE -->
@@ -196,38 +193,28 @@
                                                 </div>
 
                                                 <div class="modal-body">
-                                                    <form class="form-horizontal form-label-left" id="frmProducto" novalidate>
+                                                    <form class="form-horizontal form-label-left" id="frmIp" novalidate>
 
                                                         <span class="section">Datos Generales</span>
 
+                                                                   
                                                         <div class="item form-group">
-                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="codigo">Codigo
+                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="ip">Ip
                                                                 <span class="required">*</span>
                                                             </label>
                                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <input id="codigo" class="form-control col-md-7 col-xs-12" name="codigo" required="required" type="text" placeholder="Codigo del Producto"
-                                                                    autofocus>
+                                                                <input id="ip" class="form-control col-md-7 col-xs-12" name="ip" required="required" type="text" placeholder="Nombre del Producto" autofocus>
                                                             </div>
-                                                    </div>
-            
-                                                    <div class="item form-group">
-                                                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="ip">Ip
-                                                            <span class="required">*</span>
-                                                        </label>
-                                                        <div class="col-md-6 col-sm-6 col-xs-12">
-                                                            <input id="ip" class="form-control col-md-7 col-xs-12" name="ip" required="required" type="text" placeholder="Nombre del Producto"
-                                                                autofocus>
-                                                        </div>
-                                                    </div>           
-                                                    
-               
-                                                    <div class="ln_solid"></div>
-                                                        <div class="form-group">
-                                                            <div class="col-md-6 col-md-offset-3">
-                                                                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                                                                <button id="btnIp" type="submit" class="btn btn-success">Guardar</button>
+                                                        </div>                                                                   
+                
+                                                        <div class="ln_solid"></div>
+
+                                                            <div class="form-group">
+                                                                <div class="col-md-6 col-md-offset-3">
+                                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                                                                    <button id="btnIp" type="submit" class="btn btn-success">Guardar</button>
+                                                                </div>
                                                             </div>
-                                                        </div>
                                                     </form>
                                                 </div>
 
@@ -300,6 +287,7 @@
 </html>
 
 <script>
+    var t= null; // tabla
     $(document).ready(function () {
         // if(!Session.state)
         //     return;
@@ -307,35 +295,31 @@
         ipautorizada.Read;
         ipautorizada.Init();
         //Usa la variable t que es el datatable donde estan los items
-        t = $('#dsIpAutorizada').DataTable({
-            "ordering": false,
-            // "bSort": false,
-            "info": false, //Quita el pie de pagina
-            "language": {
-                "infoEmpty": "No hay ip agregadas",
-                "emptyTable": "No hay ip agregadas",
-                "search": "Buscar IP" //Cambia el texto de Search
+        t = $('#dsItems').DataTable({
+            responsive: true,
+            ordering: false,
+            info: false, //Quita el pie de página
+            pageLength: 50, // lineas por página
+            language: {
+                infoEmpty: "No hay ip agregadas",
+                emptyTable: "No hay ip agregadas",
+                search: "Buscar IP" //Cambia el texto de Search
             },
-            "columns": [
-                { "title": "ip" },
-                { "title": "Created" }
-            ], // crea las columnas
-            "scrollY": "190px",
-            // "searching": false,
-            "scrollCollapse": true,
-            "paging": true,
-            "columnDefs": [
-                {// ip
-                    "width": "85%", "targets": 0,
-                    "data": null,
-                    "visible": true
+            columns: [
+                { 
+                    title: "ip",
+                    className: "itemIdvisible",
                 },
-                {// created
-                    "width": "15%", "targets": 1,
-                    "data": null,
+                { title: "Created" },
+                {
+                    title: "Action",
+                    mRender: function () {
+                        return '<a class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>'
+                        // '<a class="update" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | ' +
+                        //     '<a class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>'
+                    },
                 }
-            ]
+            ]              
         });
-        t.columns.adjust().draw();
     });
 </script>
