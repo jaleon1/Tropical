@@ -18,6 +18,8 @@
 
     <title>FAC-CR | Facturación</title>
 
+    <!-- Load the Virtaul Num Pad CSS files -->
+    <link rel="stylesheet" href="assets/css/numPad/virNumPad.css">
     <!-- Bootstrap -->
     <link href="assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
@@ -36,8 +38,6 @@
     <link rel="stylesheet" href="assets/css/sweetalert2.min.css">
     <!-- SweetAlert -->
     <link rel="stylesheet" href="assets/css/facturaCli.css">
-    <!-- Load the jQBTK CSS files -->
-    <link rel="stylesheet" href="assets/css/jqbtk/jqbtk.min.css">
 
 </head>
 
@@ -76,9 +76,7 @@
                                         </tbody>
                                     </table>
                                 </div>
-                                
-                                <input type="tel" class="keyboard" id="telephone">
-
+ 
                                 <button type="button" id="btnFacturar" data-toggle="modal" data-target=".factura-modal-lg" class="btn btn-danger btn-lg btn-facturar">Facturar</button>
                             </div>
                             <div class="x_content">
@@ -194,14 +192,7 @@
                         <h4 class="modal-title" id="myModalLabel">Facturar</h4>
                     </div>
                     <div class="modal-body">
-                        <div class="row">
-                            <div>
-                                <center>
-                                    <h1 id="total_pagar"></h1>
-                                </center>
-
-                            </div>
-                        </div>
+                        
                         <div class="row">
                             <div id="formapago">
 
@@ -248,7 +239,7 @@
         <!-- Sweet Alert -->
         <script src="assets/js/sweetalert2.min.js"></script>
         <!-- Load the jQuery jQBTK plugin's JavaScript -->
-        <script src="assets/js/jqbtk/jqbtk.min.js"></script>
+        <script src="assets/js/virtualNumPad/virtualNumPad.js"></script>
 
 
 </body>

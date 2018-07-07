@@ -22,11 +22,9 @@ toppings = 1; //cantidad maxima de toppings a elegir
 sel_tamano = 0; //almacena el tamaño seleccionados
 
 $(document).ready(function () {
-    
+
     $('#open_modal_fac').attr("disabled", true);
-    
-    $('#telephone').keyboard();
-    
+
     btnFormaPago();
 
     // Recarga la página para limpiar todo
@@ -38,72 +36,72 @@ $(document).ready(function () {
 
     LoadAllPrdVenta();
 
-    t = $('#prd').DataTable( {
-            "paging":   false,
-            "ordering": false,
-            "info":     false,
-            "searching": false,
-            "scrollX": false,
-            "scrollY": false,
-            "scrollCollapse": true,
-            "language": {
-                "infoEmpty": "Seleccione el sabor",
-                "emptyTable": "Seleccione el sabor",
-                "search": "Buscar En Factura" //Cambia el texto de Search
+    t = $('#prd').DataTable({
+        "paging": false,
+        "ordering": false,
+        "info": false,
+        "searching": false,
+        "scrollX": false,
+        "scrollY": false,
+        "scrollCollapse": true,
+        "language": {
+            "infoEmpty": "Seleccione el sabor",
+            "emptyTable": "Seleccione el sabor",
+            "search": "Buscar En Factura" //Cambia el texto de Search
+        },
+        "columnDefs": [
+            {
+                "visible": false,
+                "targets": 0,
+                "searchable": false
             },
-            "columnDefs": [ 
-                {
-                    "visible": false,
-                    "targets": 0,
-                    "searchable": false
-                },
-                {
-                    "targets": 1,
-                    "width": "auto" 
-                },
-                {
-                    "visible": false,
-                    "targets": 2,
-                    "searchable": false
-                },
-                {  
-                    "width": "auto",
-                    "targets": 3
-                },
-                {
-                    "visible": false,
-                    "targets": 4,
-                    "searchable": false
-                },
-                {
-                    "width": "auto",
-                    "targets": 5,
-                },
-                {
-                    "visible": false,
-                    "targets": 6,
-                    "searchable": false
-                },
-                {
-                    "width": "auto",
-                    "targets": 7
-                }
-            ]
+            {
+                "targets": 1,
+                "width": "auto"
+            },
+            {
+                "visible": false,
+                "targets": 2,
+                "searchable": false
+            },
+            {
+                "width": "auto",
+                "targets": 3
+            },
+            {
+                "visible": false,
+                "targets": 4,
+                "searchable": false
+            },
+            {
+                "width": "auto",
+                "targets": 5,
+            },
+            {
+                "visible": false,
+                "targets": 6,
+                "searchable": false
+            },
+            {
+                "width": "auto",
+                "targets": 7
+            }
+        ]
     });
 
 
-    $('#prd').on( 'click', 'tr', function () {     
+    $('#prd').on('click', 'tr', function () {
         prd_row = this;
         borraPRD(prd_row);
-    } );
+    });
 
-    $('#btn_agrega_prd').attr('disabled','disabled');
-    
-    $('#btnFacturar').attr('disabled','disabled');
+    $('#btn_agrega_prd').attr('disabled', 'disabled');
 
-    $('#btnFacturar').click(function(){
+    $('#btnFacturar').attr('disabled', 'disabled');
+
+    $('#btnFacturar').click(function () {
         $('#total_pagar').empty();
-        $('#total_pagar').append("Total a Pagar: "+$("#total")[0].textContent );
+        $('#total_pagar').append("Total a Pagar: " + $("#total")[0].textContent);
     });
 });
 
@@ -127,7 +125,7 @@ function LoadAllPrdVenta() {
         type: "POST",
         url: "class/Producto.php",
         data: {
-            action: "ReadAll"
+            action: "ReadAllProductoVenta"
         }
     })
         .done(function (e) {
@@ -144,22 +142,22 @@ function DrawPrd(e) {
     $.each(productos, function (item, value) {
         switch (productos[item].esVenta) {
             case "1":
-               DrawSabor(productos[item]);
+                DrawSabor(productos[item]);
                 break;
             case "2":
                 DrawTopping(productos[item]);
                 break;
             default:
-                return false
+                break;
         };
     });
 };
 
 
-function DrawSabor(sabores){
+function DrawSabor(sabores) {
     var prd = `
-    <button id="${sabores.id}" class="btn_sabor btn_venta" style="background-color:${sabores.bgcolor};" onclick="agregaSabor('${sabores.id}', '${sabores.nombre}')">
-        <div class="btn_prd" style="color:${sabores.txtcolor}";>
+    <button id="${sabores.id}" class="btn_sabor btn_venta" style="background-color:${sabores.bgColor};" onclick="agregaSabor('${sabores.id}', '${sabores.nombre}')">
+        <div class="btn_prd" style="color:${sabores.txtColor}";>
             <h5>${sabores.nombre}</h5>
             <p id="cant_sabor_${sabores.id}"></p>
         </div>
@@ -168,16 +166,16 @@ function DrawSabor(sabores){
 };
 
 
-function DrawTopping(toppings){
+function DrawTopping(toppings) {
     var prd = `
-        <button id="${toppings.id}" style="background-color:${toppings.bgcolor};" class="btn_topping btn_venta" onclick="agrega_toppings('${toppings.id}', '${toppings.nombre}')">
-            <div style="color: ${toppings.txtcolor};">
+        <button id="${toppings.id}" style="background-color:${toppings.bgColor};" class="btn_topping btn_venta" onclick="agrega_toppings('${toppings.id}', '${toppings.nombre}')">
+            <div style="color: ${toppings.txtColor};">
 
                 <h5>${toppings.nombre}</h5>
                 <p id="cant_topping_${toppings.id}">\xa0</p>
             </div>
         </button>`;
-        $('#toppings').append(prd);
+    $('#toppings').append(prd);
 };
 
 
@@ -250,7 +248,7 @@ function agrega_toppings(id_topping, nombre_topping) {
         else {
             $("#cant_topping_" + id_topping).text((parseInt($("#cant_topping_" + id_topping).text()) + 1));
         }
-        
+
         $("#" + id_topping).addClass("selected");
 
         var prd =
@@ -283,27 +281,27 @@ function quitaTopping(id) {
 
 
 $("#btn_agrega_prd").click(function () {
-    idSabor  = new Array();
+    idSabor = new Array();
     nombresabor = new Array();
-    id_topping  = "";
+    id_topping = "";
     nombre_topping = "";
     $("#prdXbdg").find(".selected").each(function (i, item) {
-        idSabor[i] = item.id;        
+        idSabor[i] = item.id;
         nombresabor[i] = item.children["0"].childNodes[1].textContent;
         // cant[i] = $("#cant_"+id[i]).text();
-        if ($("#prdXbdg").find(".selected").length=1){
+        if ($("#prdXbdg").find(".selected").length = 1) {
             nombresabor[1] = nombresabor[i];
-            idSabor[1] = idSabor[i]; 
+            idSabor[1] = idSabor[i];
         }
-        
+
     });
 
     $("#toppings").find(".selected").each(function (i, item) {
-        id_topping = item.id;        
+        id_topping = item.id;
         nombre_topping = item.children["0"].childNodes[1].textContent;
-        
+
     });
-    
+
     var rowNode = t   //t es la tabla de productos
         .row.add([sel_tamano, codigoTamano(), idSabor[0], nombresabor[0], idSabor[1], nombresabor[1], id_topping, nombre_topping])
         .draw() //dibuja la tabla con el nuevo producto
@@ -318,7 +316,7 @@ $("#btn_agrega_prd").click(function () {
 });
 
 
-function codigoTamano(){
+function codigoTamano() {
     switch (sel_tamano) {
         case 0:
             return "Mediano";
@@ -333,27 +331,27 @@ function codigoTamano(){
 
 
 function borraPRD(row_prd) {
-    $(row_prd).addClass('borrar'); 
-    
-    t.row('.borrar').remove().draw( false );
-    calcTotal(); 
-    
+    $(row_prd).addClass('borrar');
+
+    t.row('.borrar').remove().draw(false);
+    calcTotal();
+
     btnAgregaPRD();
     btnFacturar();
 };
 
 
-function resetDash(){
+function resetDash() {
     $('#toppings_elegidos').empty();
     $('#sabores_elegidos').empty();
     $("#prdXbdg").find(".selected").removeClass("selected");
     $("#prdXbdg").find("p").text("\xa0");
-    
+
     $("#toppings").find(".selected").removeClass("selected");
     $("#toppings").find("p").text("\xa0");
 
-    sabores=2;
-    toppings =1;
+    sabores = 2;
+    toppings = 1;
 };
 
 
@@ -361,15 +359,15 @@ function resetDash(){
 function calcTotal() {
     var total = 0;
 
-    if(t.columns().data().length>0){
-        $(t.columns().data()[0]).each(function(i,item){
+    if (t.columns().data().length > 0) {
+        $(t.columns().data()[0]).each(function (i, item) {
             if (item == 1) {
-                    total=total+2000;
-                }else if (item == 0) {
-                    total=total+1000;    
-                }
-            });
-            $("#total").html("¢"+total);
+                total = total + 2500;
+            } else if (item == 0) {
+                total = total + 1800;
+            }
+        });
+        $("#total").html("¢" + total);
     }
     else {
         $("#total")[0].textContent = "¢0";
@@ -377,44 +375,214 @@ function calcTotal() {
 };
 
 function btnFacturar() {
-    if (t.row().count()>0){
+    if (t.row().count() > 0) {
         $('#btnFacturar').removeAttr('disabled');
     }
-    else{        
-        $("#btnFacturar").attr('disabled','disabled');
+    else {
+        $("#btnFacturar").attr('disabled', 'disabled');
     }
 };
 
 
 function btnAgregaPRD() {
     //Se valida que exista un sabor seleccionado para que no falle al buscar la cantidad
-    if ($("#prdXbdg").find(".selected").length>0) { 
-        if (($("#prdXbdg").find(".selected").length >= 2 ||  $("#prdXbdg").find(".selected")["0"].children["0"].childNodes[3].textContent == "2")){
-       
-            if ( $("#toppings").find(".selected").length >= 1  ){
+    if ($("#prdXbdg").find(".selected").length > 0) {
+        if (($("#prdXbdg").find(".selected").length >= 2 || $("#prdXbdg").find(".selected")["0"].children["0"].childNodes[3].textContent == "2")) {
+
+            if ($("#toppings").find(".selected").length >= 1) {
                 $('#btn_agrega_prd').removeAttr('disabled');
             }
-            else{
-                $('#btn_agrega_prd').attr('disabled','disabled');
+            else {
+                $('#btn_agrega_prd').attr('disabled', 'disabled');
             }
-        }    
-        else{        
-            $('#btn_agrega_prd').attr('disabled','disabled');
+        }
+        else {
+            $('#btn_agrega_prd').attr('disabled', 'disabled');
         }
     }
-    else{
-        $('#btn_agrega_prd').attr('disabled','disabled');
+    else {
+        $('#btn_agrega_prd').attr('disabled', 'disabled');
     }
 };
 
 
+// $("#txt_pagoCash").change(function(){
+//     alert("The text has been changed.");
+// });
+
+function facCash() {
+    $("#formapago").empty();
+    pagar = $("#total")[0].textContent;
+    var DivCash =
+        `<div class="col-md-12">
+        <div class="row">
+            <div class="col-md-12 col-md-offset-4">
+                <h1 id="total_pagar">Total a Pagar: ${pagar}</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="col-md-4 col-md-offset-2">
+                       
+                    <div class="row">
+                        <h3 class="text-left">Paga con:</h3>
+                    </div>
+    
+                    <div class="row">
+                        <input id="txt_pagoCash" class="input-lg valPago" type="number" placeholder="Ingrese Monto en Efectivo"
+                            required="" minlength="5" autofocus="">
+                    </div>
+                    <div class="row">
+                        <br>
+                    </div>
+                    <div class="row">
+                        <h3 class="text-left" id="vuelto">Su vuelto:</h3>
+                    </div>
+                </div>
+    
+                <div class="col-md-5 col-md-offset-1">
+                <ul id="keyboard">
+                    <li class="letter" onclick="sendVal('1')">1</li>
+                    <li class="letter" onclick="sendVal('2')">2</li>
+                    <li class="letter" onclick="sendVal('3')">3</li>
+                    <li class="letter clearl" onclick="sendVal('4')">4</li>
+                    <li class="letter" onclick="sendVal('5')">5</li>
+                    <li class="letter" onclick="sendVal('6')">6</li>
+
+                    <li class="letter clearl" onclick="sendVal('7')">7</li>
+                    <li class="letter" onclick="sendVal('8')">8</li>
+                    <li class="letter" onclick="sendVal('9')">9</li>
+                    <li class="letter clearl glyphicon glyphicon-arrow-left red" onclick="sendVal('left')"></li>
+                    <li class="letter" onclick="sendVal('0')">0</li>
+                    <li class="Nosend glyphicon glyphicon-ok" id="send" onclick="sendVal('enter')"></li>
+                </ul>
+            </div>
+            </div>
+        </div>
+    </div> `;
+    $("#formapago").append(DivCash);
+
+
+    $("#btn-formapago").empty();
+    var DivCash =
+        `<button type="button" id="modalFormaPago" onclick="btnFormaPago()"class="btn btn-primary">Atras</button>`;
+    $("#btn-formapago").append(DivCash);
+};
 
 
 
+function facCard() {
+    $("#formapago").empty();
+    pagar = $("#total")[0].textContent;
+    var DivCard =
+        `<div class="col-md-12">
+        <div class="row">
+            <div class="col-md-12 col-md-offset-4">
+                <h1 id="total_pagar">Total a Pagar: ${pagar}</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="col-md-4 col-md-offset-2">
+                    
+                    <div class="row">
+                        <h3 class="text-left">Ingrese Ref.:</h3>
+                    </div>
+
+                    <div class="row">
+                        <input id="txt_pagoCard" class="input-lg valPago" type="text" placeholder="Ingrese referencia"
+                            required="" minlength="5" autofocus="">
+                    </div>
+                    <div class="row">
+                        <br>
+                    </div>
+                    <div class="row">
+                        <h3 class="text-left" id="vuelto"></h3>
+                    </div>
+                </div>
+
+                <div class="col-md-5 col-md-offset-1">
+                    <ul id="keyboard">
+                        <li class="letter" onclick="sendVal('1')">1</li>
+                        <li class="letter" onclick="sendVal('2')">2</li>
+                        <li class="letter" onclick="sendVal('3')">3</li>
+                        <li class="letter clearl" onclick="sendVal('4')">4</li>
+                        <li class="letter" onclick="sendVal('5')">5</li>
+                        <li class="letter" onclick="sendVal('6')">6</li>
+    
+                        <li class="letter clearl" onclick="sendVal('7')">7</li>
+                        <li class="letter" onclick="sendVal('8')">8</li>
+                        <li class="letter" onclick="sendVal('9')">9</li>
+                        <li class="letter clearl glyphicon glyphicon-arrow-left red" onclick="sendVal('left')"></li>
+                        <li class="letter" onclick="sendVal('0')">0</li>
+                        <li class="Nosend glyphicon glyphicon-ok" id="send" onclick="sendVal('enter')"></li>
+                    </ul>
+                </div>
+                </div>
+        </div>
+    </div> `;
+
+
+    $("#formapago").append(DivCard);
+    $("#btn-formapago").empty();
+    var DivCash =
+        `<button type="button" id="modalFormaPago" onclick="btnFormaPago()"class="btn btn-primary">Atras</button>`;
+    $("#btn-formapago").append(DivCash);
+};
+
+
+function btnFormaPago() {
+    $("#formapago").empty();
+    var DivCash =
+        `<div class="col-md-2"></div>
+    <div class="col-md-3" onclick="facCard()">
+        <img id="fac-ccard" src="images/credit-cards.png" class="modal-img-pago">
+        <p class="text-center">Tarjeta</p>
+    </div>
+    <div class="col-md-2"></div>
+    <div class="col-md-3" onclick="facCash()">
+        <img id="fac-cash" src="images/cash.png" class="modal-img-pago">
+        <p class="text-center">Efectivo</p>
+    </div>`;
+    $("#formapago").append(DivCash);
+
+    $("#btn-formapago").empty();
+    var DivCash =
+        `<button type="button" id="modalPago" class="btn btn-primary" data-dismiss="modal">Atras</button>`;
+    $("#btn-formapago").append(DivCash);
+};
 
 
 
+function CreateFact() {
+    $(t.columns().data()[0]).each(function (ic, c) {
+        factura.producto[ic] = $(t.rows().data()[ic]);
+    });
 
+    var miAccion = this.id == null ? 'Create' : 'Update';
+
+    $.ajax({
+        type: "POST",
+        url: "class/Factura.php",
+        data: {
+            action: miAccion,
+            obj: JSON.stringify(factura)
+        }
+    })
+        .done(alertFact()
+
+        )
+        .fail(function (e) {
+            producto.showError(e);
+        })
+        .always(function () {
+            setTimeout('$("#btnProducto").removeAttr("disabled")', 1000);
+            producto = new Producto();
+            producto.ClearCtls();
+            producto.Read;
+            $("#nombre").focus();
+        });
+}
 
 
 
@@ -605,87 +773,6 @@ function BorraRow(prd) {
 }
 
 
-function facCard() {
-    $("#formapago").empty();
-    var DivCard =
-        `<div class="row">
-        <div class="col-md-4 col-md-offset-4 col-sm-offset-0 col-xs-6 col-xs-offset-0">
-            <h3 class="text-left" >Ingrese Ref.:</h3>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-4 col-md-offset-4">
-            <input class="input-lg valPago" type="text" onkeyup="valPago(this.value)" placeholder="Ingrese Numero Referencia" required="" minlength="5" autofocus="">
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-4 col-md-offset-4 col-sm-offset-0 col-xs-6 col-xs-offset-0">
-            <button type="button" onclick="CreateFact()" class="btn btn-primary procesarFac" disabled style="margin-top:10px;">Procesar</button>
-        </div>
-    </div>`;
-    $("#formapago").append(DivCard);
-
-
-    $("#btn-formapago").empty();
-    var DivCash =
-        `<button type="button" id="modalFormaPago" onclick="btnFormaPago()"class="btn btn-primary">Atras</button>`;
-    $("#btn-formapago").append(DivCash);
-};
-
-
-function facCash() {
-    $("#formapago").empty();
-
-    var DivCash =
-        `<div class="row">
-        <div class="col-md-4 col-md-offset-4 col-sm-offset-0 col-xs-6 col-xs-offset-0">
-            <h3 class="text-left" >Paga con:</h3>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-4 col-md-offset-4">
-            <input id="pagocash" class="input-lg valPago" onkeyup="valPago(this.value)" type="text" placeholder="Ingrese Monto en Efectivo"  required="" minlength="5" autofocus="">
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-4 col-md-offset-4 col-sm-offset-0 col-xs-6 col-xs-offset-0">
-            <button type="button" onclick="CreateFact()" class="btn btn-primary procesarFac" disabled style="margin-top:10px;">Procesar</button>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-4 col-md-offset-4 col-sm-offset-0 col-xs-6 col-xs-offset-0">
-            <h3 class="text-left" id="vuelto">Su vuelto:</h3>
-        </div>
-    </div>`;
-    $("#formapago").append(DivCash);
-
-
-    $("#btn-formapago").empty();
-    var DivCash =
-        `<button type="button" id="modalFormaPago" onclick="btnFormaPago()"class="btn btn-primary">Atras</button>`;
-    $("#btn-formapago").append(DivCash);
-};
-
-function btnFormaPago() {
-    $("#formapago").empty();
-    var DivCash =
-        `<div class="col-md-2"></div>
-    <div class="col-md-3" onclick="facCard()">
-        <img id="fac-ccard" src="images/credit-cards.png" class="modal-img-pago">
-        <p class="text-center">Tarjeta</p>
-    </div>
-    <div class="col-md-2"></div>
-    <div class="col-md-3" onclick="facCash()">
-        <img id="fac-cash" src="images/cash.png" class="modal-img-pago">
-        <p class="text-center">Efectivo</p>
-    </div>`;
-    $("#formapago").append(DivCash);
-
-    $("#btn-formapago").empty();
-    var DivCash =
-        `<button type="button" id="modalPago" class="btn btn-primary" data-dismiss="modal">Atras</button>`;
-    $("#btn-formapago").append(DivCash);
-};
 
 function valPago(val) {
 
@@ -710,35 +797,6 @@ function valPago(val) {
 
 };
 
-function CreateFact() {
-    $(t.columns().data()[0]).each(function (ic, c) {
-        factura.producto[ic] = $(t.rows().data()[ic]);
-    });
-
-    var miAccion = this.id == null ? 'Create' : 'Update';
-
-    $.ajax({
-        type: "POST",
-        url: "class/Factura.php",
-        data: {
-            action: miAccion,
-            obj: JSON.stringify(factura)
-        }
-    })
-        .done(alertFact()
-
-        )
-        .fail(function (e) {
-            producto.showError(e);
-        })
-        .always(function () {
-            setTimeout('$("#btnProducto").removeAttr("disabled")', 1000);
-            producto = new Producto();
-            producto.ClearCtls();
-            producto.Read;
-            $("#nombre").focus();
-        });
-}
 
 //informa de cantidad de producto
 function alertSwal(cant) {

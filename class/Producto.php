@@ -101,8 +101,9 @@ class Producto{
 
     function ReadAllProductoVenta(){
         try {
+            //    $_SESSION['idBodega'];
             $sql='SELECT id, codigo, nombre, txtColor, bgColor, nombreAbreviado, descripcion, saldoCantidad, saldoCosto, costoPromedio, precioVenta, esVenta
-                FROM     producto   WHERE esVenta=1     
+                FROM     producto   WHERE esVenta=1 or esVenta=2    
                 ORDER BY codigo asc';
             $data= DATA::Ejecutar($sql);
             return $data;
@@ -349,6 +350,23 @@ class Producto{
             );
         }
     } 
+
+    function ReadPrecioProductoFinal(){
+        try {
+            //    $_SESSION['idBodega'];
+            $sql='SELECT precioVenta FROM preciosXBodega 
+            WHERE idBodega = :idBodega and tamano = :tamano;';
+            $data= DATA::Ejecutar($sql);
+            return $data;
+        }     
+        catch(Exception $e) {
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar la lista'))
+            );
+        }
+    }
 
 }
 
