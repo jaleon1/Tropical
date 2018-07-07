@@ -13,6 +13,7 @@ class Usuario {
 
     //Getter
     get Read() {
+        NProgress.start();
         var miAccion = this.id == null ? 'ReadAll' : 'Read';
         if (miAccion == 'ReadAll' && $('#tbodyItems').length == 0)
             return;
@@ -29,11 +30,12 @@ class Usuario {
             })
             .fail(function (e) {
                 usuario.showError(e);
-            });
+            })
+            .always(NProgress.done());
     }
 
     get Save() {
-        // this.CheckUsername();
+        NProgress.start();
         $('#btnUsuario').attr("disabled", "disabled");
         var miAccion = this.id == null ? 'Create' : 'Update';
         this.nombre = $("#nombre").val();
@@ -63,6 +65,7 @@ class Usuario {
                 usuario.ClearCtls();
                 usuario.Read;
                 $("#nombre").focus();
+                NProgress.done();
             });
     }
 
@@ -161,7 +164,12 @@ class Usuario {
     };
 
     ShowAll(e) {
-        
+        var t= $('#dsItems').DataTable();
+        t.clear();
+        t.rows.add(JSON.parse(e));
+        t.draw();
+        $('.update').click(usuario.UpdateEventHandler);
+        $('.delete').click(usuario.DeleteEventHandler);
     };
 
     UpdateEventHandler() {
@@ -179,6 +187,7 @@ class Usuario {
         $("#id").val(usuario.id);
         $("#nombre").val(usuario.nombre);
         $("#username").val(usuario.username);
+        $("#myModalLabel").html('<h1>' + usuario.username + '<h1>' );  
         $("#password").val(usuario.password);
         $("#repetir").val(usuario.password);
         // checkbox
@@ -205,7 +214,8 @@ class Usuario {
             $('#selbodega option[value=' + item.idBodega + ']').prop("selected", true);
         });
         $("#selbodega").selectpicker("refresh");
-        
+        // modal
+        $(".modal").modal('toggle');
     };
 
     DeleteEventHandler() {
@@ -284,8 +294,6 @@ class Usuario {
         $('#username').focusout(function () {
             usuario.CheckUsername();
         });
-
-        //switchery
         
     };
 
@@ -301,10 +309,7 @@ class Usuario {
                     className: "itemId",
                     searchable: false
                 },
-                { 
-                    title: "Nombre",
-                    data: "nombre"
-                },
+                { title: "Nombre", data: "nombre" },
                 { title: "Username", data: "username" },
                 { title: "email", data: "email" },
                 { title: "Activo", data: "activo" },
@@ -313,9 +318,9 @@ class Usuario {
                     orderable: false,
                     searchable:false,
                     mRender: function () {
-                        '<a class="update" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | ' +
+                        return '<a class="update" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | ' +
                             '<a class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>'
-                    },
+                    }
                 }
             ]
         });

@@ -354,11 +354,12 @@ class Usuario{
                 //update array obj
                 $created= true;
                 $errmsg='';
-                if($this->listarol!=null)
+                if($this->listarol!=null){
                     if(!RolesXUsuario::Update($this->listarol)){
                         $created= false;
                         $errmsg= 'Error al actualizar los roles.';
                     }
+                }
                 else {
                     // no tiene roles
                     if(!RolesXUsuario::Delete($this->id)){
@@ -367,14 +368,15 @@ class Usuario{
                     }                        
                 }
                 //
-                if($this->bodegas!=null)
-                    if(usuariosXBodegas::Update($this->bodegas)){
+                if($this->bodegas!=null){
+                    if(!usuariosXBodega::Update($this->bodegas)){
                         $created= false;
                         $errmsg= 'Error al actualizar las bodegas.';
                     }                
+                }
                 else {
-                    // no tiene roles
-                    if(usuariosXBodegas::Delete($this->id)){
+                    // no tiene bodegas
+                    if(!usuariosXBodega::Delete($this->id)){
                         $created= false;
                         $errmsg= 'Error al actualizar las bodegas.';
                     }
