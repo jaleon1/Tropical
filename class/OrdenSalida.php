@@ -219,6 +219,7 @@ class OrdenSalida{
             $param= array(':id'=>$this->id);
             $data= DATA::Ejecutar($sql, $param);
             if(count($data))
+            
                 return true;
             else return false;
         }
