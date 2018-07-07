@@ -171,10 +171,11 @@ class Rol {
         t.draw();
         $('.update').click(rol.UpdateEventHandler);
         $('.delete').click(rol.DeleteEventHandler);
+        $('#dsItems tbody tr').dblclick(rol.UpdateEventHandler);
     };
 
     UpdateEventHandler() {
-        rol.id = $(this).parents("tr").find(".itemId").text();  //Class itemId = ID del objeto.
+        rol.id = $(this).parents("tr").find(".itemId").text() || $(this).find(".itemId").text();  //Class itemId = ID del objeto.
         rol.Read;
     };
 
@@ -193,6 +194,8 @@ class Rol {
             $('#evento option[value=' + item.id + ']').prop("selected", true);
         });
         $("#evento").selectpicker("refresh");
+        // modal
+        $(".modal").modal('toggle');
     };
 
     ShowList(e) {
@@ -236,14 +239,11 @@ class Rol {
                 {
                     title: "id",
                     data: "id",
-                    className: "itemId",
-                    visible: false,
+                    className: "itemId",                    
                     searchable: false
                 },
-                // { title: "Nombre", data: "nombre" },
-                // { title: "Username", data: "username" },
-                // { title: "email", data: "email" },
-                // { title: "Activo", data: "activo" },
+                { title: "Nombre", data: "nombre" },
+                { title: "Descripción", data: "descripcion" },
                 {
                     title: "Action",
                     orderable: false,

@@ -168,12 +168,14 @@ class Usuario {
         t.clear();
         t.rows.add(JSON.parse(e));
         t.draw();
+        // eventos
         $('.update').click(usuario.UpdateEventHandler);
         $('.delete').click(usuario.DeleteEventHandler);
+        $('#dsItems tbody').dblclick(usuario.UpdateEventHandler);
     };
 
     UpdateEventHandler() {
-        usuario.id = $(this).parents("tr").find(".itemId").text();  //Class itemId = ID del objeto.
+        usuario.id = $(this).parents("tr").find(".itemId").text() || $(this).find(".itemId").text(); //Class itemId = ID del objeto.
         usuario.Read;
     };
 
@@ -292,8 +294,7 @@ class Usuario {
         // Check username
         $('#username').focusout(function () {
             usuario.CheckUsername();
-        });
-        
+        });        
     };
 
     setTable(){
