@@ -12,8 +12,9 @@ class Bodega {
 
     //Getter
     get Read() {
+        NProgress.start();
         var miAccion = this.id == null ?  'ReadAll'  : 'Read';
-        if(miAccion=='ReadAll' && $('#tableBody-Bodega').length==0 )
+        if(miAccion=='ReadAll' && $('#tbodyItems').length==0 )
             return;
         $.ajax({
             type: "POST",
@@ -28,10 +29,12 @@ class Bodega {
             })
             .fail(function (e) {
                 bodega.showError(e);
-            });
+            })
+            .always(NProgress.done());
     }
 
     get Save() {
+        NProgress.start();
         $('#btnBodega').attr("disabled", "disabled");
         var miAccion = this.id == null ? 'Create' : 'Update';
         this.nombre = $("#nombre").val();
@@ -58,6 +61,7 @@ class Bodega {
                 bodega.ClearCtls();
                 bodega.Read;
                 $("#nombre").focus();
+                NProgress.done();
             });
     }
 
@@ -192,9 +196,9 @@ class Bodega {
         t.clear();
         t.rows.add(JSON.parse(e));
         t.draw();
-        $('.update').click(usuario.UpdateEventHandler);
-        $('.delete').click(usuario.DeleteEventHandler);
-        $('#dsItems tbody tr').dblclick(usuario.UpdateEventHandler);
+        $('.update').click(bodega.UpdateEventHandler);
+        $('.delete').click(bodega.DeleteEventHandler);
+        $('#dsItems tbody tr').dblclick(bodega.UpdateEventHandler);
     };
 
     ShowAllD(e) {
@@ -224,7 +228,7 @@ class Bodega {
     };
 
     UpdateEventHandler() {
-        bodega.id = $(this).parents("tr").find(".itemId").text();  //Class itemId = ID del objeto.
+        bodega.id = $(this).parents("tr").find(".itemId").text() || $(this).find(".itemId").text();
         bodega.Read;
     };
 
@@ -242,7 +246,8 @@ class Bodega {
         $("#contacto").val(bodega.contacto);
         $("#telefono").val(bodega.telefono);
         //fk 
-        $('#tipo option[value=' + bodega.tipo + ']').prop("selected", true);        
+        $('#tipo option[value=' + bodega.tipo + ']').prop("selected", true);    
+        $(".bs-bodega-modal-lg").modal('toggle');    
     };
 
     ShowListTipo(e) {
@@ -302,6 +307,7 @@ class Bodega {
                 },
                 { title: "Nombre", data: "nombre" },
                 { title: "Descripción", data: "descripcion" },
+                { title: "Tipo", data: "tipo" },
                 {
                     title: "Action",
                     orderable: false,

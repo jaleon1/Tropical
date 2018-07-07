@@ -160,33 +160,19 @@
                                         </div>
                                     </div>
                                 </div>
-                                
-                                <div class="x_content">
-                                    <div class="table-responsive">
-                                        <table id="dsitems" class="table table-striped jambo_table bulk_action">
-                                            <!-- <thead>
-                                                    <tr class="headings">
-                                                        <th>
-                                                            <input type="checkbox" id="check-all" class="flat">
-                                                        </th>
-                                                        <th class="column-title">Codigo </th>
-                                                        <th class="column-title">Descripción </th>
-                                                        <th class="column-title">Precio/U </th>
-                                                        <th class="column-title">Cantidad </th>
-                                                        <th class="column-title">Importe </th> -->
-                                            <!--<th class="column-title">Amount </th>
-                                                        <th class="column-title no-link last"><span class="nobr">Action</span>
-                                                        </th> -->
-                                            <!-- <th class="bulk-actions" colspan="7">
-                                                        <a class="antoo" style="color:#fff; font-weight:500;">Acciones Masivas ( <span class="action-cnt"> </span> ) <i class="fa fa-chevron-down"></i></a>
-                                                        </th>
-                                                    </tr>
-                                                </thead> -->
-                                            <tbody id="productos">
 
-                                            </tbody>
-                                        </table>
+                                <div class="x_content">
+                                    <!-- TABLE -->
+                                    <div class="row">
+                                        <div class="col-md-12 col-sm-12 col-xs-12">
+                                            <table id="dsItems" class="table display responsive table-striped jambo_table no-wrap" width="100%" role="grid" aria-describedby="datatable_info">
+                                                <tbody id="productos">
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
+                                    <!-- /TABLE -->
+                                    </table>
                                 </div>
                             </div>
                         </div>
@@ -270,7 +256,7 @@
                                                         <tr class="odd pointer">
                                                             <td class="">Descuento</td>
                                                             <td class="" id="desc_100" value="0">%</td>
-                                                            <td class="" id="desc_val" >¢0</td>
+                                                            <td class="" id="desc_val">¢0</td>
                                                         </tr>
                                                         <tr class="even pointer">
                                                             <td class="">Impuesto de Ventas</td>
@@ -339,16 +325,9 @@
                         <div id="datatable_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
                             <div class="row">
                                 <div class="col-sm-12">
-                                    <table id="dsBodega" class="table table-striped jambo_table bulk_action" role="grid" aria-describedby="datatable_info">
-                                        <!-- <thead>
-                                            <tr role="row" class="headings">
-                                            </tr>
-                                        </thead> -->
-
+                                    <table id="dsBodega" class="table display responsive table-striped jambo_table no-wrap" width="100%" role="grid" aria-describedby="datatable_info">
                                         <tbody id="tableBody-Bodega">
-
                                         </tbody>
-
                                     </table>
                                 </div>
                             </div>
@@ -401,10 +380,12 @@
 
 <script>
     $(document).ready(function () {
+        distr.setTable(false);
+
         $(document).on('click', '#btnAddBodega', function (event) {
             bodega.id = null;
             bodega.Read;
-            //bodega.Init();
+            bodega.setTable();
         });
         //Valida si se presiona enter -> carga el producto en la lista
         //si preciona "*" -> Quita el "*", pasa el punto de insercion a la cantidad y selecciona el valor para ser reemplazdo con el teclado
@@ -429,52 +410,52 @@
         });
 
         //Usa la variable t que es el datatable donde estan los productos
-        t = $('#dsitems').DataTable({
-            "ordering": false,
-            // "bSort": false,
-            "info": false, //Quita el pie de pagina
-            "language": {
-                "infoEmpty": "No hay productos agregados",
-                "emptyTable": "No hay productos agregados",
-                "search": "Buscar En Factura" //Cambia el texto de Search
-            },
-            "columns": [
-                { "title": "id" },
-                { "title": "Codigo" },
-                { "title": "Nombre" },
-                { "title": "Descripcion" },
-                { "title": "Cantidad" },
-                { "title": "Precio Venta" },
-                { "title": "Subtotal" },
-            ], // crea las columnas
-            "scrollY": "190px",
-            // "searching": false,
-            "scrollCollapse": true,
-            "paging": false,
-            "columnDefs": [
-                {// id.
-                    "width": "0%", "targets": 0,
-                    "visible": false,
-                    "searchable": false
-                },
-                {// cant.
-                    "width": "10%", "targets": 4,
-                    "data": null,
-                    "defaultContent": '<input class="cantidad form-control" type="number">'
-                },
-                {// precio venta
-                    "width": "10%", "targets": 5,
-                    "data": null,
-                    "defaultContent": '<input readonly class="valor"><input readonly class="display">'
-                },
-                {// cant.
-                    "width": "10%", "targets": 6,
-                    "data": null,
-                    "defaultContent": '<input readonly class="valor"><input readonly class="display">'
-                }
-            ]
-        });
-        t.columns.adjust().draw();       
+        // t = $('#dsitems').DataTable({
+        //     "ordering": false,
+        //     // "bSort": false,
+        //     "info": false, //Quita el pie de pagina
+        //     "language": {
+        //         "infoEmpty": "No hay productos agregados",
+        //         "emptyTable": "No hay productos agregados",
+        //         "search": "Buscar En Factura" //Cambia el texto de Search
+        //     },
+        //     "columns": [
+        //         { "title": "id" },
+        //         { "title": "Codigo" },
+        //         { "title": "Nombre" },
+        //         { "title": "Descripcion" },
+        //         { "title": "Cantidad" },
+        //         { "title": "Precio Venta" },
+        //         { "title": "Subtotal" },
+        //     ], // crea las columnas
+        //     "scrollY": "190px",
+        //     // "searching": false,
+        //     "scrollCollapse": true,
+        //     "paging": false,
+        //     "columnDefs": [
+        //         {// id.
+        //             "width": "0%", "targets": 0,
+        //             "visible": false,
+        //             "searchable": false
+        //         },
+        //         {// cant.
+        //             "width": "10%", "targets": 4,
+        //             "data": null,
+        //             "defaultContent": '<input class="cantidad form-control" type="number">'
+        //         },
+        //         {// precio venta
+        //             "width": "10%", "targets": 5,
+        //             "data": null,
+        //             "defaultContent": '<input readonly class="valor"><input readonly class="display">'
+        //         },
+        //         {// cant.
+        //             "width": "10%", "targets": 6,
+        //             "data": null,
+        //             "defaultContent": '<input readonly class="valor"><input readonly class="display">'
+        //         }
+        //     ]
+        // });
+        // t.columns.adjust().draw();
 
         var validator = new FormValidator({ "events": ['blur', 'input', 'change'] }, document.forms["frmBodega"]);
         $('#frmBodega').submit(function (e) {

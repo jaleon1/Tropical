@@ -308,9 +308,11 @@ class Usuario {
                     data: "id",
                     className: "itemId",                    
                     searchable: false
-                },
+                }, 
                 { title: "Nombre", data: "nombre" },
-                { title: "Descripción", data: "descripcion" },
+                { title: "username", data: "username" },
+                { title: "email", data: "email" },
+                { title: "Activo", data: "activo" },
                 {
                     title: "Action",
                     orderable: false,
