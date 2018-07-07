@@ -1,6 +1,5 @@
 var url;
 var t= null;
-var localip='192.168.1.123';
 
 $(document).ready(function () {
     //Validator.js
@@ -47,7 +46,7 @@ function Login(){
             action: 'Login',               
             username:  $("#username").val(),
             password: $("#password").val(),
-            ip: '192.168.1.123',
+            ip: localip,
             beforeSend: function(){
                  $("#error").fadeOut();
             } 
@@ -118,6 +117,7 @@ function showError(e) {
 };
 
 function ShowAll(data) {
+    // carga la tabla desde un array.
     t= $('#dsItemsBodega').DataTable ({
         responsive: true,      
         pagging: false,

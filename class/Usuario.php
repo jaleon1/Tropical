@@ -338,7 +338,7 @@ class Usuario{
         try {
             if($this->password=='NOCHANGED'){
                 $sql="UPDATE usuario 
-                    SET nombre=:nombre, username=:username, email=:email, activo=:activo, idBodega=:idBodega
+                    SET nombre=:nombre, username=:username, email=:email, activo=:activo
                     WHERE id=:id";
                 $param= array(':id'=>$this->id, ':nombre'=>$this->nombre, ':username'=>$this->username, ':email'=>$this->email, ':activo'=>$this->activo);
             }

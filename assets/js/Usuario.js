@@ -14,7 +14,7 @@ class Usuario {
     //Getter
     get Read() {
         var miAccion = this.id == null ? 'ReadAll' : 'Read';
-        if (miAccion == 'ReadAll' && $('#tableBody-Usuario').length == 0)
+        if (miAccion == 'ReadAll' && $('#tbodyItems').length == 0)
             return;
         $.ajax({
             type: "POST",
@@ -161,60 +161,7 @@ class Usuario {
     };
 
     ShowAll(e) {
-        // Limpia el div que contiene la tabla.
-        $('#tableBody-Usuario').html("");
-        // // Carga lista
-        var data = JSON.parse(e);
-        //style="display: none"
-        $.each(data, function (i, item) {
-            $('#tableBody-Usuario').append(`
-                <tr>
-                    <td class="a-center ">
-                        <input id="chckadduser${item.id}" type="checkbox" class="flat" name="table_records">
-                    </td>
-                    <td class="itemId" >${item.id}</td>
-                    <td>${item.nombre}</td>
-                    <td>${item.username}</td>
-                    <td>${item.email}</td>
-                    <td>${item.activo}</td>
-                    <td class=" last">
-                        <a id="update${item.id}" data-toggle="modal" data-target=".bs-example-modal-lg" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | 
-                        <a id="delete${item.id}"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>
-                    </td>
-                </tr>
-            `);
-            // event Handler
-            $('#update' + item.id).click(usuario.UpdateEventHandler);
-            $('#delete' + item.id).click(usuario.DeleteEventHandler);
-            if (document.URL.indexOf("ElaborarProducto.html")!=-1){
-                $('#chckadduser'+item.id).change(elaborarProducto.AddUserEventHandler);
-            }
-            if (document.URL.indexOf("OrdenSalida.html")!=-1){
-                $('#chckadduser'+item.id).change(ordenSalida.AddUserEventHandler);
-            }
         
-        })
-        //datatable         
-        if ($.fn.dataTable.isDataTable('#dsUsuario')) {
-            var table = $('#dsUsuario').DataTable();
-        }
-        else
-            $('#dsUsuario').DataTable({
-                columns: [
-                    { title: "Check" },
-                    {
-                        title: "ID"
-                        //,visible: false
-                    },
-                    { title: "Nombre" },
-                    { title: "Username" },
-                    { title: "eMail" },
-                    { title: "Activo" },
-                    { title: "Action" }
-                ],
-                paging: true,
-                search: true
-            });
     };
 
     UpdateEventHandler() {
@@ -341,6 +288,38 @@ class Usuario {
         //switchery
         
     };
+
+    setTable(){
+        //
+        $('#dsItems').DataTable({
+            responsive: true,
+            info: false,
+            columns: [
+                {
+                    title: "id",
+                    data: "id",
+                    className: "itemId",
+                    searchable: false
+                },
+                { 
+                    title: "Nombre",
+                    data: "nombre"
+                },
+                { title: "Username", data: "username" },
+                { title: "email", data: "email" },
+                { title: "Activo", data: "activo" },
+                {
+                    title: "Action",
+                    orderable: false,
+                    searchable:false,
+                    mRender: function () {
+                        '<a class="update" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | ' +
+                            '<a class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>'
+                    },
+                }
+            ]
+        });
+    }
 }
 
 //Class Instance
