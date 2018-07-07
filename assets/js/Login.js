@@ -1,5 +1,6 @@
 var url;
 var t= null;
+var localip='192.168.1.123';
 
 $(document).ready(function () {
     //Validator.js
@@ -46,7 +47,7 @@ function Login(){
             action: 'Login',               
             username:  $("#username").val(),
             password: $("#password").val(),
-            ip: localip,
+            ip: '192.168.1.123',
             beforeSend: function(){
                  $("#error").fadeOut();
             } 
