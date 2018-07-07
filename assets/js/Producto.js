@@ -271,15 +271,15 @@ class Producto {
                         <td>${parseFloat(item.precioVenta).toFixed(2)}</td>
                         <td>${item.esVenta}</td>
                         <td class=" last">
-                            <a  class="update" data-toggle="modal" data-target=".bs-example-modal-lg" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | 
-                            <a  class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>
+                            <a  id="update${item.id}" data-toggle="modal" data-target=".bs-example-modal-lg" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | 
+                            <a  id="delete${item.id}"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>
                         </td>`
                     :``}
                 </tr>
             `);
             // event Handler
-            $('.update').click(producto.UpdateEventHandler);
-            $('.delete').click(producto.DeleteEventHandler);
+            $('.update'+item.id).click(producto.UpdateEventHandler);
+            $('.delete'+item.id).click(producto.DeleteEventHandler);
             if (document.URL.indexOf("ElaborarProducto.html")!=-1) {
                 $('#chk-addproducto'+item.id).change(elaborarProducto.AddProductoEventHandler);
             }
