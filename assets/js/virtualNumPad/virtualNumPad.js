@@ -82,58 +82,63 @@ function validarRef (){
         element2.classList.remove("letter", "send", "green");
     }
 };
+
+
 function enter(){
 
+    var facUUID;
+    var miAccion = 'Create';    
     var prdVenta = new Object();
 
-    $(t.columns().data()[0]).each(function (ic, c) {
-        factura.producto[ic] = $(t.rows().data()[ic]);
-        prdVenta =1;
+    $.ajax({
+        type: "POST",
+        url: "class/ProductoXFactura.php",
+        data: {
+            action: "GenUUID",
+        }
+    })
+    .done(function(e){
+        // muestra el numero de orden: IMPRIMIR.
+        facUUID = JSON.parse(e);
+    })
+
+   
+
+    $(t.rows().data()).each(function (i, item) {
+        prdVenta.idTamano =  item[0];
+        prdVenta.idSabor1 = item[2];
+        prdVenta.idSabor2 = item[4];
+        prdVenta.idTopping1 = item[6];
+        prdVenta.numLinea = i;
+        prdVenta.cant = 1;
+        prdVenta.detalle = `${item[1]}, ${item[3]}, ${item[5]}, ${item[7]}`;
+
+        
+
+        $.ajax({
+            type: "POST",
+            url: "class/ProductoXFactura.php",
+            data: {
+                action: miAccion,
+                obj: JSON.stringify(prdVenta)
+            }
+        })
+        .done(function(e){
+            // muestra el numero de orden: IMPRIMIR.
+            var data = JSON.parse(e)[0];
+            swal({
+                type: 'success',
+                title: 'Número de Orden:' + data.orden,
+                text: 'Número de orden de Distribución:',
+                showConfirmButton: true
+            });
+        })
+        .fail(function (e) {
+            distr.showError(e);
+        })
+        .always(function () {
+            location.reload();
+        });
     });
-    //
-    // $('#btnDistribucion').attr("disabled", "disabled");
-    // var miAccion = distr.id == null ? 'Create' : 'Update';        
-    // distr.orden = $("#orden").val();
-    // distr.idBodega = bodega.id;
-    // distr.porcentajeDescuento = $("#desc_100").val();
-    // distr.porcentajeIva=$("#iv_100").val();
-    // //
-    // distr.lista = [];
-
-    // $('#productos tr').each(function(i, item) {
-    //     var objlista = new Object();
-    //     objlista.idProducto= $('#dsitems').dataTable().fnGetData(item)[0]; // id del item.
-    //     objlista.cantidad= $(this).find('td:eq(3) input').val();
-    //     objlista.valor= $(this).find('td:eq(4) input').val(); // valor: precio de venta para distrcion bodega externa. 
-    //     distr.lista.push(objlista);
-    // });
-
-    // $.ajax({
-    //     type: "POST",
-    //     url: "class/Distribucion.php",
-    //     data: {
-    //         action: miAccion,
-    //         obj: JSON.stringify(this)
-    //     }
-    // })
-    //     .done(function(e){
-    //         // muestra el numero de orden: IMPRIMIR.
-    //         var data = JSON.parse(e)[0];
-    //         swal({
-    //             type: 'success',
-    //             title: 'Número de Orden:' + data.orden,
-    //             text: 'Número de orden de Distribución:',
-    //             showConfirmButton: true
-    //         });
-    //     })
-    //     .fail(function (e) {
-    //         distr.showError(e);
-    //     })
-    //     .always(function () {
-    //         setTimeout('$("#btnDistribucion").removeAttr("disabled")', 1000);
-    //         distr = new Distribucion();
-    //         distr.CleanCtls();
-    //         $("#p_searh").focus();
-    //     });
 };
 
