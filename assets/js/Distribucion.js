@@ -201,6 +201,7 @@ class Distribucion {
 
     LoadProducto() {
         if ($("#p_searh").val() != ""){
+            NProgress.inc();
             producto.codigo =  $("#p_searh").val();
             //
             $.ajax({
@@ -217,31 +218,26 @@ class Distribucion {
             })
             .fail(function (e) {
                 distr.showError(e);
-            });
+            })
+            .always(NProgress.done());
         }
     };
 
     ValidateProductoFac(e){
-        //compara si el articulo ya existe
-        // carga lista con datos.
         if(e != "false"){
             producto = JSON.parse(e)[0];
-            var repetido = false;
-            if(document.getElementById("productos").rows.length != 0 && producto != null){
-                $(document.getElementById("productos").rows).each(function(i,item){
-                    if(item.childNodes[0].innerText==producto.codigo){
-                        swal({
-                            type: 'warning',
-                            title: 'El producto '+ producto.codigo +' ya se encuentra en la lista.',
-                            //text: '',
-                            showConfirmButton: false,
-                            timer: 3000
-                        });
-                    }     
-                });
-            }    
-            if (repetido==false)
+            var tableRow = $("#tDistribucion tbody tr td").filter(function() {
+                return $(this).text() == producto.id;
+             }).length;
+            if (tableRow==0)
                 distr.AgregaProducto();
+            else
+                swal({
+                type: 'warning',
+                title: 'El producto '+ producto.codigo +' ya está en la lista.',
+                showConfirmButton: false,
+                timer: 3000
+            });    
         }
         else{
             swal({
@@ -255,69 +251,70 @@ class Distribucion {
     };
 
     AgregaProducto(){
-        var rowNode = this.t   //t es la tabla de productos
-        .row.add(producto)
-        .draw() //dibuja la tabla con el nuevo producto
-        .node();     
+        var t = $('#tDistribucion').DataTable();
+        var rowNode = t.row.add(producto)
+            .draw()
+            .node();     
         //
-        $('td:eq(3) input', rowNode).attr({id: ("cant_"+producto.codigo), max:  "9999999999", min: "1", step:"1", value: producto.cantidad || 1}).change(function(){
+        $('td:eq(4) input', rowNode).attr({id: ("cantidad"+producto.id), value: (producto.cantidad || 1)}).change(function(){
              distr.CalcImporte($(this).parents('tr').find('td:eq(0)').html());
         }); 
-        //
-        $('td:eq(4) input.valor', rowNode).attr({id: ("precioventa_v"+producto.codigo), style: "display:none", value: producto.precioVenta });
-        $('td:eq(4) input.display', rowNode).attr({id: ("precioventa_d"+producto.codigo), value: ("$"+parseFloat(producto.precioVenta).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")) });
-        $('td:eq(5) input.valor', rowNode).attr({id: ("subtotal_v"+producto.codigo), style: "display:none"});
-        $('td:eq(5) input.display', rowNode).attr({id: ("subtotal_d"+producto.codigo)});   
-        //t.order([0, 'desc']).draw();
+        // Precio Venta
+        // $('td:eq(4) input.valor', rowNode).attr({id: ("precioventa_v"+producto.codigo), style: "display:none", value: producto.precioVenta });
+        // $('td:eq(4) input.display', rowNode).attr({id: ("precioventa_d"+producto.codigo), value: ("$"+parseFloat(producto.precioVenta).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")) });
+        $('td:eq(5)', rowNode).attr({id: ("precioVenta"+producto.id), value: producto.precioVenta, align: "right" })[0]
+            .textContent= ("¢"+parseFloat(producto.precioVenta).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+        // subtotal
+        // $('td:eq(5) input.valor', rowNode).attr({id: ("subtotal_v"+producto.codigo), style: "display:none"});
+        // $('td:eq(5) input.display', rowNode).attr({id: ("subtotal_d"+producto.codigo)});   
+        $('td:eq(6)', rowNode).attr({id: ("subtotal"+producto.id), value:0, align: "right" })[0].textContent=0;
         t.columns.adjust().draw();
-        distr.CalcImporte(producto.codigo);
-        //calcTotal();
-        //$('#open_modal_fac').attr("disabled", false);
+        //
+        distr.CalcImporte(producto.id);
+        //distr.calcTotal();
     };
 
     CalcImporte(prd){
-        producto.UltPrd = prd;//validar
-        producto.cantidad =  $(`#cant_${prd}`).val();
-        producto.precioVenta = $(`#precioventa_v${prd}`).val();
-        producto.subTotal= (producto.cantidad * producto.precioVenta).toFixed(10); // subTotal linea
-        //
-        $(`#subtotal_v${prd}`).val(producto.subTotal);
-        $(`#subtotal_d${prd}`).val("¢"+parseFloat(producto.subTotal).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+        producto.cantidad =  $(`#cantidad${prd}`).val();
+        producto.precioVenta = $(`#precioVenta${prd}`).attr('value');
+        producto.subtotal= (producto.cantidad * producto.precioVenta).toFixed(10);
+        // Subtotal de linea.
+        $(`#subtotal${prd}`).attr({value: producto.subtotal});
+        $(`#subtotal${prd}`)[0].textContent= ("¢"+parseFloat(producto.subtotal).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
         //
         distr.calcTotal();
     };
 
     calcTotal(){
-        var subTotal=0; 
+        // subtotal de la distribución.
+        var subtotal=0; 
         distr.porcentajeDescuento=0;
         distr.porcentajeIva=13;
+        //
         $('#desc_100').val(distr.porcentajeDescuento);
         $('#iv_100').val(distr.porcentajeIva);
+        $("#subtotal")[0].textContent = "¢0"; 
+        $("#desc_val")[0].textContent = "¢0";
+        $("#iv_val")[0].textContent = "¢0";
+        $("#total")[0].textContent = "¢0";
         //
-        if($(document.getElementById("productos").rows)["0"].childElementCount>2){
-            $('#productos tr').find('td:eq(5)').each(function(i,item){
-                subTotal+=  parseFloat(item.childNodes[0].value).toFixed(10);
-            });
-            $("#subTotal")[0].textContent= "¢"+ parseFloat(subTotal).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-            distr.descuento = subTotal * (parseFloat(distr.porcentajeDescuento).toFixed(2) / 100);
+        $('#tDistribucion tr').find('td:eq(6)').each(function(i, item) {
+            subtotal +=   parseFloat($(item).attr('value'));
+        });
+        if(subtotal>0){
+            $("#subtotal")[0].textContent= "¢"+ parseFloat(subtotal).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            // distr.descuento = subtotal * (parseFloat(distr.porcentajeDescuento).toFixed(2) / 100);
+            distr.descuento = subtotal * (parseFloat(distr.porcentajeDescuento) / 100);
             $("#desc_val")[0].textContent= "¢"+ parseFloat(distr.descuento).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-            distr.iva = subTotal * (parseFloat(distr.porcentajeIva).toFixed(2) / 100);
+            distr.iva = subtotal * (parseFloat(distr.porcentajeIva) / 100);
             $("#iv_val")[0].textContent= "¢" + parseFloat(distr.iva).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-            distr.total= subTotal - distr.descuento + distr.iva;
+            distr.total= subtotal - distr.descuento + distr.iva;
             $("#total")[0].textContent= "¢" + parseFloat(distr.total).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-        }
-        else{
-            //$('#open_modal_fac').attr("disabled", true);
-            $("#subTotal")[0].textContent = "¢0"; 
-            $("#desc_val")[0].textContent = "¢0";
-            $("#iv_val")[0].textContent = "¢0";
-            $("#total")[0].textContent = "¢0";
-            
         }
     };
 
-    setTable(buttons=true, ds='dsItems'){
-        this.t= $('#'+ds).DataTable({
+    setTable(buttons=true){
+        $('#tDistribucion').DataTable({
             responsive: true,
             info: false,
             columns: [
@@ -333,17 +330,15 @@ class Distribucion {
                 { 
                     title: "Cantidad", 
                     data: "cantidad",
-                    defaultContent: '<input class="cantidad form-control" type="number">'
+                    defaultContent: '<input class="cantidad form-control" type="number" min="1" max="9999999999" step="1" style="text-align:right;" >'
                 },
                 { 
                     title: "Precio Venta", 
-                    data: "precioVenta" ,
-                    defaultContent: '<input class="valor"><input readonly class="display">'
+                    data: "precioVenta"
                 },
                 { 
                     title: "Subtotal", 
-                    data: "sobtotal",
-                    defaultContent: '<input readonly class="valor"><input readonly class="display">'
+                    data: null
                 },
                 {
                     title: "Action",

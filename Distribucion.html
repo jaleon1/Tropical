@@ -134,7 +134,7 @@
 
                     <div class="page-title">
                         <div class="title_left">
-                            <h3>Distribucion de Productos</h3>
+                            <h3>Distribución de Productos</h3>
                         </div>
                         <div class="title_right">
                             <h3 id="fecha" style="float:right"></h3>
@@ -167,8 +167,8 @@
                                     <!-- TABLE -->
                                     <div class="row">
                                         <div class="col-md-12 col-sm-12 col-xs-12">
-                                            <table id="tProducto" class="table display responsive table-striped jambo_table no-wrap" width="100%" role="grid" aria-describedby="datatable_info">
-                                                <tbody id="tbodyProducto">
+                                            <table id="tDistribucion" class="table display responsive table-striped jambo_table no-wrap" width="100%" role="grid" aria-describedby="datatable_info">
+                                                <tbody id="tbodyDistribucion">
                                                 </tbody>
                                             </table>
                                         </div>
@@ -254,7 +254,7 @@
                                                         <tr class="even pointer">
                                                             <td class="">SubTotal</td>
                                                             <td class=""> </td>
-                                                            <td class="" id="subTotal">¢0</td>
+                                                            <td class="" id="subtotal">¢0</td>
                                                         </tr>
                                                         <tr class="odd pointer">
                                                             <td class="">Descuento</td>
@@ -386,29 +386,23 @@
 <script>
     $(document).ready(function () {
         distr.setTable(false);
-        bodega.setTable(false, 'dsBodega');
+        bodega.setTable(false);
+        //
         $(document).on('click', '#btnAddBodega', function (event) {
             bodega.id = null;
             bodega.Read;
         });
-        //Valida si se presiona enter -> carga el producto en la lista
-        //si preciona "*" -> Quita el "*", pasa el punto de insercion a la cantidad y selecciona el valor para ser reemplazdo con el teclado
+        //
         $("#p_searh").keyup(function (e) {
             if (e.which == 13) {
-                // Acciones a realizar, por ej: enviar formulario.
                 distr.LoadProducto();
             }
-            if (e.which == 106) {
-                $("#p_searh")[0].value = "";
-                // se usa UltPrd xq es el UltimoProductoTocado (si la cantidad del producto es alterada no hay forma de saber cual fue el ultimo modificado.)
-                $("#cant_" + producto.UltPrd).focus().select();
-            }
         });
-
+        //
         $('#reload').click(function () {
             location.reload();
         });
-
+        //
         $('#btnDistribucion').click(function () {
             $('#frmBodega').submit();
         });
