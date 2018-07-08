@@ -240,6 +240,7 @@ class Bodega {
         // Asigna objeto a controles
         $("#id").val(bodega.id);
         $("#nombre").val(bodega.nombre);
+        $("#myModalLabel").html('<h1>' + bodega.nombre + '<h1>' );
         $("#descripcion").val(bodega.descripcion);
         $("#ubicacion").val(bodega.ubicacion);
         $("#contacto").val(bodega.contacto);

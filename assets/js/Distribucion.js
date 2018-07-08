@@ -332,17 +332,17 @@ class Distribucion {
                 { title: "Descripción", data: "descripcion" },
                 { 
                     title: "Cantidad", 
-                    //data: "cantidad",
+                    data: "cantidad",
                     defaultContent: '<input class="cantidad form-control" type="number">'
                 },
                 { 
                     title: "Precio Venta", 
-                    //data: "precioventa" 
+                    data: "precioVenta" ,
                     defaultContent: '<input class="valor"><input readonly class="display">'
                 },
                 { 
                     title: "Subtotal", 
-                    //data: "sobtotal"
+                    data: "sobtotal",
                     defaultContent: '<input readonly class="valor"><input readonly class="display">'
                 },
                 {
