@@ -87,6 +87,7 @@ function Login(){
                 //
                 type: 'error',
                 title: 'Número de IP no autorizada',
+                text: 'ip: ' + localip,
                 showConfirmButton: false,
                 timer: 3000
             });

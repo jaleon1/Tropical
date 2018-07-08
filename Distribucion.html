@@ -25,15 +25,15 @@
     <!-- NProgress -->
     <link href="assets/css/nprogress/nprogress.css" rel="stylesheet">
     <!-- iCheck -->
-    <link href="assets/css/iCheck/skins/flat/green.css" rel="stylesheet">
-    <!-- Custom Theme Style -->
-    <link href="assets/css/custom.min.css" rel="stylesheet">
-    <!-- Custom TablePRD -->
+    <!-- <link href="assets/css/iCheck/skins/flat/green.css" rel="stylesheet"> -->
+    <!-- Custom -->
     <link href="assets/css/datatables.net-bs/css/dataTables.bootstrap.min.css" rel="stylesheet">
     <!-- SweetAlert -->
     <link rel="stylesheet" href="assets/css/sweetalert2.min.css">
     <!-- css -->
     <link rel="stylesheet" href="assets/css/facturaCli.css">
+    <!-- Custom Theme Style -->
+    <link href="assets/css/custom.css" rel="stylesheet">
 
 </head>
 
@@ -364,8 +364,6 @@
     <script src="assets/js/Producto.js"></script>
     <script src="assets/js/Bodega.js"></script>
     <script src="assets/js/Distribucion.js"></script>
-
-    <!--CAMBIAR por Facuracli-->
     <!-- JS dataTables -->
     <script src="assets/js/jquery.dataTables.min.js"></script>
     <script src="assets/js/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
@@ -373,6 +371,8 @@
     <script src="assets/js/moment.min.js"></script>
     <!-- Sweet Alert -->
     <script src="assets/js/sweetalert2.min.js"></script>
+    <!-- Custom Theme Scripts -->
+    <script src="assets/js/custom.min.js"></script>
 
 </body>
 
@@ -381,11 +381,10 @@
 <script>
     $(document).ready(function () {
         distr.setTable(false);
-
+        bodega.setTable(false, 'dsBodega', 'tableBody-Bodega');
         $(document).on('click', '#btnAddBodega', function (event) {
             bodega.id = null;
             bodega.Read;
-            bodega.setTable();
         });
         //Valida si se presiona enter -> carga el producto en la lista
         //si preciona "*" -> Quita el "*", pasa el punto de insercion a la cantidad y selecciona el valor para ser reemplazdo con el teclado
@@ -408,54 +407,6 @@
         $('#btnDistribucion').click(function () {
             $('#frmBodega').submit();
         });
-
-        //Usa la variable t que es el datatable donde estan los productos
-        // t = $('#dsitems').DataTable({
-        //     "ordering": false,
-        //     // "bSort": false,
-        //     "info": false, //Quita el pie de pagina
-        //     "language": {
-        //         "infoEmpty": "No hay productos agregados",
-        //         "emptyTable": "No hay productos agregados",
-        //         "search": "Buscar En Factura" //Cambia el texto de Search
-        //     },
-        //     "columns": [
-        //         { "title": "id" },
-        //         { "title": "Codigo" },
-        //         { "title": "Nombre" },
-        //         { "title": "Descripcion" },
-        //         { "title": "Cantidad" },
-        //         { "title": "Precio Venta" },
-        //         { "title": "Subtotal" },
-        //     ], // crea las columnas
-        //     "scrollY": "190px",
-        //     // "searching": false,
-        //     "scrollCollapse": true,
-        //     "paging": false,
-        //     "columnDefs": [
-        //         {// id.
-        //             "width": "0%", "targets": 0,
-        //             "visible": false,
-        //             "searchable": false
-        //         },
-        //         {// cant.
-        //             "width": "10%", "targets": 4,
-        //             "data": null,
-        //             "defaultContent": '<input class="cantidad form-control" type="number">'
-        //         },
-        //         {// precio venta
-        //             "width": "10%", "targets": 5,
-        //             "data": null,
-        //             "defaultContent": '<input readonly class="valor"><input readonly class="display">'
-        //         },
-        //         {// cant.
-        //             "width": "10%", "targets": 6,
-        //             "data": null,
-        //             "defaultContent": '<input readonly class="valor"><input readonly class="display">'
-        //         }
-        //     ]
-        // });
-        // t.columns.adjust().draw();
 
         var validator = new FormValidator({ "events": ['blur', 'input', 'change'] }, document.forms["frmBodega"]);
         $('#frmBodega').submit(function (e) {

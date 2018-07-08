@@ -11,7 +11,7 @@ class Rol {
     get Read() {
         NProgress.start();
         var miAccion = this.id == null ?  'ReadAll'  : 'Read';
-        if(miAccion=='ReadAll' && $('#tbodyItems').length==0 )
+        if(miAccion=='ReadAll' && $('#'+this.t.context[0].nTBody.id).length==0 )
             return;
         $.ajax({
             type: "POST",
@@ -165,13 +165,12 @@ class Rol {
     };
 
     ShowAll(e) {
-        var t= $('#dsItems').DataTable();
-        t.clear();
-        t.rows.add(JSON.parse(e));
-        t.draw();
+        this.t.clear();
+        this.t.rows.add(JSON.parse(e));
+        this.t.draw();
         $('.update').click(rol.UpdateEventHandler);
         $('.delete').click(rol.DeleteEventHandler);
-        $('#dsItems tbody tr').dblclick(rol.UpdateEventHandler);
+        $('#'+ this.t.context[0].sTableId +' tbody tr').dblclick(rol.UpdateEventHandler);
     };
 
     UpdateEventHandler() {
@@ -188,6 +187,7 @@ class Rol {
         // Asigna objeto a controles
         $("#id").val(rol.id);
         $("#nombre").val(rol.nombre);
+        $("#myModalLabel").html('<h1>' + rol.nombre + '<h1>' );
         $("#descripcion").val(rol.descripcion);
         // eventos.
         $.each(rol.listaEvento, function(i, item){
@@ -230,9 +230,9 @@ class Rol {
         })
     };
 
-    setTable(buttons=true){
-        //
-        $('#dsItems').DataTable({
+
+    setTable(buttons=true, ds='dsItems'){
+        this.t= $('#'+ds).DataTable({
             responsive: true,
             info: false,
             columns: [

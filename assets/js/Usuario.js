@@ -15,7 +15,7 @@ class Usuario {
     get Read() {
         NProgress.start();
         var miAccion = this.id == null ? 'ReadAll' : 'Read';
-        if (miAccion == 'ReadAll' && $('#tbodyItems').length == 0)
+        if(miAccion=='ReadAll' && $('#'+this.t.context[0].nTBody.id).length==0 )
             return;
         $.ajax({
             type: "POST",
@@ -164,14 +164,13 @@ class Usuario {
     };
 
     ShowAll(e) {
-        var t= $('#dsItems').DataTable();
-        t.clear();
-        t.rows.add(JSON.parse(e));
-        t.draw();
+        this.t.clear();
+        this.t.rows.add(JSON.parse(e));
+        this.t.draw();
         // eventos
         $('.update').click(usuario.UpdateEventHandler);
         $('.delete').click(usuario.DeleteEventHandler);
-        $('#dsItems tbody tr').dblclick(usuario.UpdateEventHandler);
+        $('#'+ this.t.context[0].sTableId +' tbody tr').dblclick(usuario.UpdateEventHandler);
     };
 
     UpdateEventHandler() {
@@ -189,7 +188,7 @@ class Usuario {
         $("#id").val(usuario.id);
         $("#nombre").val(usuario.nombre);
         $("#username").val(usuario.username);
-        $("#myModalLabel").html('<h1>' + usuario.username + '<h1>' );  
+        $("#myModalLabel").html('<h1>' + usuario.username + '<h1>' );
         $("#password").val(usuario.password);
         $("#repetir").val(usuario.password);
         // checkbox
@@ -297,9 +296,9 @@ class Usuario {
         });        
     };
 
-    setTable(buttons=true){
-        //
-        $('#dsItems').DataTable({
+
+    setTable(buttons=true, ds='dsItems'){
+        this.t= $('#'+ds).DataTable({
             responsive: true,
             info: false,
             columns: [

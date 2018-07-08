@@ -14,7 +14,7 @@ class Bodega {
     get Read() {
         NProgress.start();
         var miAccion = this.id == null ?  'ReadAll'  : 'Read';
-        if(miAccion=='ReadAll' && $('#tbodyItems').length==0 )
+        if(miAccion=='ReadAll' && $('#'+this.t.context[0].nTBody.id).length==0 )
             return;
         $.ajax({
             type: "POST",
@@ -192,13 +192,12 @@ class Bodega {
     };
 
     ShowAll(e) {
-        var t= $('#dsItems').DataTable();
-        t.clear();
-        t.rows.add(JSON.parse(e));
-        t.draw();
+        this.t.clear();
+        this.t.rows.add(JSON.parse(e));
+        this.t.draw();
         $('.update').click(bodega.UpdateEventHandler);
         $('.delete').click(bodega.DeleteEventHandler);
-        $('#dsItems tbody tr').dblclick(bodega.UpdateEventHandler);
+        $('#'+ this.t.context[0].sTableId +' tbody tr').dblclick(bodega.UpdateEventHandler);
     };
 
     ShowAllD(e) {
@@ -241,6 +240,7 @@ class Bodega {
         // Asigna objeto a controles
         $("#id").val(bodega.id);
         $("#nombre").val(bodega.nombre);
+        $("#myModalLabel").html('<h1>' + bodega.nombre + '<h1>' );
         $("#descripcion").val(bodega.descripcion);
         $("#ubicacion").val(bodega.ubicacion);
         $("#contacto").val(bodega.contacto);
@@ -293,16 +293,15 @@ class Bodega {
         })
     };
 
-    setTable(buttons=true){
-        //
-        $('#dsItems').DataTable({
+    setTable(buttons=true, ds='dsItems'){
+        this.t=$('#'+ds).DataTable({
             responsive: true,
             info: false,
             columns: [
                 {
                     title: "id",
                     data: "id",
-                    className: "itemId",                    
+                    className: "itemId",               
                     searchable: false
                 },
                 { title: "Nombre", data: "nombre" },
