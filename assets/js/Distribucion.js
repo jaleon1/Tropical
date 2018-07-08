@@ -147,7 +147,6 @@ class Distribucion {
         distr = new Distribucion(data.id, data.orden, data.fecha, data.idUsuario, data.idBodega, data.porcentajeDescuento, data.porcentajeIva, data.lista);
         // datos
         $('#orden').val(distr.orden);
-        $("#myModalLabel").html('<h1>' + distr.orden + '<h1>' );
         $('#fecha').val(distr.fecha);
         bodega.id= distr.idBodega;
         bodega.Read;
@@ -257,7 +256,7 @@ class Distribucion {
 
     AgregaProducto(){
         var rowNode = this.t   //t es la tabla de productos
-        .row.add( producto)
+        .row.add( [producto.id, producto.codigo, producto.nombre, producto.descripcion, "0", producto.precioVenta, "0"])
         .draw() //dibuja la tabla con el nuevo producto
         .node();     
         //
@@ -270,7 +269,7 @@ class Distribucion {
         $('td:eq(5) input.valor', rowNode).attr({id: ("subtotal_v"+producto.codigo), style: "display:none"});
         $('td:eq(5) input.display', rowNode).attr({id: ("subtotal_d"+producto.codigo)});   
         //t.order([0, 'desc']).draw();
-        this.t.columns.adjust().draw();
+        t.columns.adjust().draw();
         distr.CalcImporte(producto.codigo);
         //calcTotal();
         //$('#open_modal_fac').attr("disabled", false);
@@ -325,7 +324,7 @@ class Distribucion {
                 {
                     title: "id",
                     data: "id",
-                    className: "itemId",   
+                    className: "itemId",                    
                     searchable: false
                 },
                 { title: "Codigo", data: "codigo" },
@@ -333,18 +332,18 @@ class Distribucion {
                 { title: "Descripción", data: "descripcion" },
                 { 
                     title: "Cantidad", 
-                    data: "cantidad",
+                    //data: "cantidad",
                     defaultContent: '<input class="cantidad form-control" type="number">'
                 },
                 { 
                     title: "Precio Venta", 
-                    data: "precioventa" ,
+                    //data: "precioventa" 
                     defaultContent: '<input class="valor"><input readonly class="display">'
                 },
                 { 
                     title: "Subtotal", 
-                    data: "sobtotal",
-                    defaultContent: '<input class="valor"><input readonly class="display">'
+                    //data: "sobtotal"
+                    defaultContent: '<input readonly class="valor"><input readonly class="display">'
                 },
                 {
                     title: "Action",
@@ -355,7 +354,24 @@ class Distribucion {
                         return '<a class="update" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | <a class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>'                            
                     }
                 }
-            ]
+            ],
+            // columnDefs: [                
+            //     // {// cant.
+            //     //     "width": "10%", "targets": 4,
+            //     //     "data": null,
+            //     //     "defaultContent": '<input class="cantidad form-control" type="number">'
+            //     // },
+            //     // {// precio venta
+            //     //     "width": "10%", "targets": 5,
+            //     //     "data": null,
+                    
+            //     // },
+            //     // {// cant.
+            //     //     "width": "10%", "targets": 6,
+            //     //     "data": null,
+                    
+            //     // }
+            // ]
         });
     };
 }

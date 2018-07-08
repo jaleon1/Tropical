@@ -240,7 +240,6 @@ class Bodega {
         // Asigna objeto a controles
         $("#id").val(bodega.id);
         $("#nombre").val(bodega.nombre);
-        $("#myModalLabel").html('<h1>' + bodega.nombre + '<h1>' );
         $("#descripcion").val(bodega.descripcion);
         $("#ubicacion").val(bodega.ubicacion);
         $("#contacto").val(bodega.contacto);
@@ -294,14 +293,14 @@ class Bodega {
     };
 
     setTable(buttons=true, ds='dsItems'){
-        this.t=$('#'+ds).DataTable({
+        this.t= $('#'+ds).DataTable({
             responsive: true,
             info: false,
             columns: [
                 {
                     title: "id",
                     data: "id",
-                    className: "itemId",               
+                    className: "itemId",                    
                     searchable: false
                 },
                 { title: "Nombre", data: "nombre" },

@@ -30,6 +30,8 @@
     <link href="assets/css/datatables.net-bs/css/dataTables.bootstrap.min.css" rel="stylesheet">
     <!-- SweetAlert -->
     <link rel="stylesheet" href="assets/css/sweetalert2.min.css">
+    <!-- Select -->
+    <link href="assets/css/bootstrap-select.css" rel="stylesheet">
     <!-- css -->
     <link rel="stylesheet" href="assets/css/facturaCli.css">
     <!-- Custom Theme Style -->
@@ -213,7 +215,8 @@
                                                 <div class="item form-group ">
                                                     <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tipo">Tipo</label>
                                                     <div class="col-md-6 col-sm-6 col-xs-12">
-                                                        <input id="tipo" class="form-control col-md-7 col-xs-12" name="tipo" readonly>
+                                                        <!-- <input id="tipo" class="form-control col-md-7 col-xs-12" name="tipo" readonly> -->
+                                                        <select class="selectpicker show-menu-arrow form-control" id="tipo" name="tipo"></select>
                                                     </div>
                                                 </div>
                                             </div>
@@ -367,6 +370,8 @@
     <!-- JS dataTables -->
     <script src="assets/js/jquery.dataTables.min.js"></script>
     <script src="assets/js/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+    <!-- Select -->
+    <script src="assets/js/bootstrap-select.js"></script>
     <!-- JS Moments -->
     <script src="assets/js/moment.min.js"></script>
     <!-- Sweet Alert -->
@@ -381,7 +386,7 @@
 <script>
     $(document).ready(function () {
         distr.setTable(false);
-        bodega.setTable(false, 'dsBodega', 'tableBody-Bodega');
+        bodega.setTable(false, 'dsBodega');
         $(document).on('click', '#btnAddBodega', function (event) {
             bodega.id = null;
             bodega.Read;
