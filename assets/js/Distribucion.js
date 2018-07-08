@@ -256,7 +256,7 @@ class Distribucion {
 
     AgregaProducto(){
         var rowNode = this.t   //t es la tabla de productos
-        .row.add( [producto.id, producto.codigo, producto.nombre, producto.descripcion, "0", producto.precioVenta, "0"])
+        .row.add(producto)
         .draw() //dibuja la tabla con el nuevo producto
         .node();     
         //
