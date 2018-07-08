@@ -354,24 +354,7 @@ class Distribucion {
                         return '<a class="update" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | <a class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>'                            
                     }
                 }
-            ],
-            // columnDefs: [                
-            //     // {// cant.
-            //     //     "width": "10%", "targets": 4,
-            //     //     "data": null,
-            //     //     "defaultContent": '<input class="cantidad form-control" type="number">'
-            //     // },
-            //     // {// precio venta
-            //     //     "width": "10%", "targets": 5,
-            //     //     "data": null,
-                    
-            //     // },
-            //     // {// cant.
-            //     //     "width": "10%", "targets": 6,
-            //     //     "data": null,
-                    
-            //     // }
-            // ]
+            ]
         });
     };
 }
