@@ -11,7 +11,7 @@ class Rol {
     get Read() {
         NProgress.start();
         var miAccion = this.id == null ?  'ReadAll'  : 'Read';
-        if(miAccion=='ReadAll' && $('#'+this.t.context[0].nTBody.id).length==0 )
+        if(miAccion=='ReadAll' && $('#tRol tbody').length==0 )
             return;
         $.ajax({
             type: "POST",
@@ -165,12 +165,13 @@ class Rol {
     };
 
     ShowAll(e) {
-        this.t.clear();
-        this.t.rows.add(JSON.parse(e));
-        this.t.draw();
+        var t= $('#tRol').DataTable();
+        t.clear();
+        t.rows.add(JSON.parse(e));
+        t.draw();
         $('.update').click(rol.UpdateEventHandler);
         $('.delete').click(rol.DeleteEventHandler);
-        $('#'+ this.t.context[0].sTableId +' tbody tr').dblclick(rol.UpdateEventHandler);
+        $('#tRol tbody tr').dblclick(rol.UpdateEventHandler);
     };
 
     UpdateEventHandler() {
@@ -231,8 +232,8 @@ class Rol {
     };
 
 
-    setTable(buttons=true, ds='dsItems'){
-        this.t= $('#'+ds).DataTable({
+    setTable(buttons=true){
+        $('#tRol').DataTable({
             responsive: true,
             info: false,
             columns: [

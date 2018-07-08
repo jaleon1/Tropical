@@ -14,7 +14,7 @@ class Bodega {
     get Read() {
         NProgress.start();
         var miAccion = this.id == null ?  'ReadAll'  : 'Read';
-        if(miAccion=='ReadAll' && $('#'+this.t.context[0].nTBody.id).length==0 )
+        if(miAccion=='ReadAll' && $('#tbodega tbody').length==0 )
             return;
         $.ajax({
             type: "POST",
@@ -192,12 +192,13 @@ class Bodega {
     };
 
     ShowAll(e) {
-        this.t.clear();
-        this.t.rows.add(JSON.parse(e));
-        this.t.draw();
+        var t= $('#tbodega').DataTable();
+        t.clear();
+        t.rows.add(JSON.parse(e));
+        t.draw();
         $('.update').click(bodega.UpdateEventHandler);
         $('.delete').click(bodega.DeleteEventHandler);
-        $('#'+ this.t.context[0].sTableId +' tbody tr').dblclick(bodega.UpdateEventHandler);
+        $('#tbodega tbody tr').dblclick(bodega.UpdateEventHandler);
     };
 
     ShowAllD(e) {
@@ -293,8 +294,8 @@ class Bodega {
         })
     };
 
-    setTable(buttons=true, ds='dsItems'){
-        this.t= $('#'+ds).DataTable({
+    setTable(buttons=true){
+        $('#tbodega').DataTable({
             responsive: true,
             info: false,
             columns: [
