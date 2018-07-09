@@ -20,9 +20,22 @@ sabores = 2; //cantidad maxima de sabores a elegir
 toppings = 1; //cantidad maxima de toppings a elegir
 
 sel_tamano = 0; //almacena el tamaño seleccionados
+precioXTamano = 0; //almacena el tamaño seleccionados
+
+precioMediano = 0;
+precioGrande = 0;
+
+$(function()
+{
+    $(document)
+        .ajaxStart(NProgress.start)
+        .ajaxStop(NProgress.done);
+});
 
 $(document).ready(function () {
 
+    // NProgress.set(0.4)
+    
     $('#open_modal_fac').attr("disabled", true);
 
     btnFormaPago();
@@ -35,6 +48,7 @@ $(document).ready(function () {
     sel_tamano = 1; //1 Grande | 0 Mediano
 
     LoadAllPrdVenta();
+    LoadPreciosTamanos();
 
     t = $('#prd').DataTable({
         "paging": false,
@@ -136,6 +150,34 @@ function LoadAllPrdVenta() {
         });
 };
 
+
+function LoadPreciosTamanos() {
+    $.ajax({
+        type: "POST",
+        url: "class/ProductoXFactura.php",
+        data: {
+            action: "LoadPreciosTamanos"
+        }
+    })
+        .done(function (e) {
+            setPrecios(e);
+        })
+        .fail(function (e) {
+            showError(e);
+        });
+};
+
+function setPrecios(e){
+    precios = JSON.parse(e);
+
+    $.each(precios, function (i, item) {
+        if (item.tamano == 1){
+            precioGrande = item.precioVenta;
+        }else if (item.tamano == 0){
+            precioMediano = item.precioVenta;    
+        }
+    });
+};
 
 function DrawPrd(e) {
     productos = JSON.parse(e);
@@ -357,22 +399,44 @@ function resetDash() {
 
 //Calcula los totales cada vez que un producto es modificado
 function calcTotal() {
-    var total = 0;
+    total = 0;
 
-    if (t.columns().data().length > 0) {
+    if (t.columns().data()[1].length != 0) {
         $(t.columns().data()[0]).each(function (i, item) {
-            if (item == 1) {
-                total = total + 2500;
-            } else if (item == 0) {
-                total = total + 1800;
-            }
+            if (item == 1){
+                total = total + parseFloat(precioGrande);
+            }else if (item == 0){
+                total = total + parseFloat(precioMediano);
+            }     
+            $("#total").html("¢" + total);  
+
         });
         $("#total").html("¢" + total);
     }
     else {
         $("#total")[0].textContent = "¢0";
     };
+    
 };
+
+// function CheckPriceItems(idTamano){
+    
+//     var prdVenta = new Object();
+//     prdVenta.idTamano = idTamano;
+//     $.ajax({
+//         type: "POST",
+//         url: "class/ProductoXFactura.php",
+//         data: {
+//             action: "CheckPriceItems",
+//             obj: JSON.stringify(prdVenta)
+//         }
+//     })
+//     .done(function(e){
+//         precioXTamano = precioXTamano + parseFloat(JSON.parse(e)["0"].precioVenta);
+//         $("#total").html("¢" + precioXTamano);
+//     })
+
+// }
 
 function btnFacturar() {
     if (t.row().count() > 0) {

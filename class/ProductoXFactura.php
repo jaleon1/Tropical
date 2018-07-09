@@ -25,14 +25,14 @@ if(isset($_POST["action"])){
         case "Delete":
             $producto->Delete();
             break;   
-        case "CheckRelatedItems":  
-            echo json_encode($producto->CheckRelatedItems());
+        case "CheckPriceItems":  
+            echo json_encode($producto->CheckPriceItems());
             break;  
         case "ReadByCode":  
             echo json_encode($producto->ReadByCode());
             break;
-        case "GenUUID":
-            echo json_encode($producto->GenUUID());
+        case "LoadPreciosTamanos":
+            echo json_encode($producto->LoadPreciosTamanos());
             break;   
     }
 }
@@ -75,13 +75,13 @@ class Producto{
         if(isset($_POST["obj"])){
 
             $obj= json_decode($_POST["obj"],true);
-            $this->id= $obj["idTamano"] ?? null;
-            $this->nombre= $obj["idSabor1"] ?? null;
-            $this->descripcion= $obj["idSabor2"] ?? null;
-            $this->cantidad= $obj["idTopping1"] ?? null;            
-            $this->scancode= $obj["numLinea"] ?? '';
-            $this->precio= $obj["cant"] ?? 0;
-            $this->codigoRapido= $obj["detalle"] ?? '';
+            $this->idTamano= $obj["idTamano"] ?? null;
+            $this->idSabor1= $obj["idSabor1"] ?? null;
+            $this->idSabor2= $obj["idSabor2"] ?? null;
+            $this->idTopping= $obj["idTopping"] ?? null;            
+            $this->numLinea= $obj["numLinea"] ?? '';
+            $this->cant= $obj["cant"] ?? 0;
+            $this->detalle= $obj["detalle"] ?? '';
 
             // //Categorias del producto.
             // if(isset($obj["listaCategoria"] )){
@@ -175,13 +175,15 @@ class Producto{
     }
 
     
-    function GenUUID(){
+    function LoadPreciosTamanos(){
         try{     
-            require_once("UUID.php");
-            $UUID = UUID::v4();
+            $b = $_SESSION['idBodega'];
+            $sql="SELECT tamano, precioVenta FROM preciosXBodega where idBodega = :idBodega;";
+            $param= array(':idBodega'=>$b);
+            $data= DATA::Ejecutar($sql,$param);
             
-            if(count($UUID))
-                return $UUID;
+            if(count($data))
+                return $data;
             else return false;
         }
         catch(Exception $e){
@@ -258,12 +260,15 @@ class Producto{
             );
         }
     }   
-    function CheckRelatedItems(){
+    function CheckPriceItems(){
+        //  SELECT precioVenta FROM preciosXBodega where idBodega = "c617b261-75be-11e8-abed-f2f00eda9788" and tamano = 0;
         try{
-            $sql="SELECT idProducto
-                FROM categoriasXProducto x
-                WHERE x.idProducto= :id";
-            $param= array(':id'=>$this->id);
+            $b = $_SESSION['idBodega'];
+            $sql="SELECT precioVenta 
+                FROM preciosXBodega 
+                where idBodega = :idBodega 
+                and tamano = :idTamano;";
+            $param= array(':idTamano'=>$this->idTamano, ':idBodega'=>$b);
             $data= DATA::Ejecutar($sql, $param);
             if(count($data))
                 return $data;
@@ -277,6 +282,7 @@ class Producto{
             );
         }
     }
+
     function Delete(){
         try {
             // if($this->CheckRelatedItems()){

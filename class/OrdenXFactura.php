@@ -42,6 +42,11 @@ class Producto{
 // "COPOS", 1800.00, 1800.00, 0.00, "nada", 
 // 1800.00, "1", 13.00, 130.00, 1930);
 
+    public $idTamano=null;
+    public $idSabor1=null;
+    public $idSabor2=null;
+    public $idTopping=null;
+    public $estado='0';
 
     public $id=null;
     public $idFactura=null;
@@ -70,15 +75,18 @@ class Producto{
             $this->id= $_POST["id"];
         }
         if(isset($_POST["obj"])){
+            // INSERT INTO detalleOrden (id, tamano, idFactura, idSabor1, idSabor2, idTopping, estado)
+            // VALUES (uuid(), 1, uuid(), uuid(), uuid(), uuid(), 1);
 
             $obj= json_decode($_POST["obj"],true);
-            $this->id= $obj["idTamano"] ?? null;
-            $this->nombre= $obj["idSabor1"] ?? null;
-            $this->descripcion= $obj["idSabor2"] ?? null;
-            $this->cantidad= $obj["idTopping1"] ?? null;            
-            $this->scancode= $obj["numLinea"] ?? '';
-            $this->precio= $obj["cant"] ?? 0;
-            $this->codigoRapido= $obj["detalle"] ?? '';
+            $this->idFactura= $obj["idFactura"] ?? null;
+            $this->idTamano= $obj["idTamano"] ?? null;
+            $this->idSabor1= $obj["idSabor1"] ?? null;
+            $this->idSabor2= $obj["idSabor2"] ?? null;
+            $this->idTopping= $obj["idTopping"] ?? null;            
+            $this->numLinea= $obj["numLinea"] ?? '';
+            $this->cant= $obj["cant"] ?? 0;
+            $this->detalle= $obj["detalle"] ?? '';
 
             // //Categorias del producto.
             // if(isset($obj["listaCategoria"] )){
@@ -172,19 +180,14 @@ class Producto{
     }
     function Create(){
         
-//     INSERT INTO productosXFactura (id, idFactura, idPrecio, numeroLinea, cantidad, idUnidadMedida, 
-//         detalle, precioUnitario, montoTotal, montoDescuento, naturalezaDescuento,         
-//         subTotal, codigoImpuesto, tarifaImpuesto, montoImpuesto, montoTotalLinea)
-
-// VALUES (uuid(), uuid(), uuid(), 5, 1.000, 33, 
-// "COPOS", 1800.00, 1800.00, 0.00, "nada", 
-// 1800.00, "1", 13.00, 130.00, 1930);
+        // INSERT INTO detalleOrden (id, tamano, idFactura, idSabor1, idSabor2, idTopping, estado)
+        // VALUES (uuid(), 1, uuid(), uuid(), uuid(), uuid(), 1);
 
         try {
-            $sql="INSERT INTO productosXFactura (id, idFactura, idPrecio, numeroLinea, cantidad, idUnidadMedida, detalle, precioUnitario, montoTotal, montoDescuento, naturalezaDescuento, subTotal, codigoImpuesto, tarifaImpuesto, montoImpuesto, montoTotalLinea)
-                VALUES (uuid(),:nombre, :cantidad, :scancode, :precio ,:codigoRapido, :idcategoria, :fechaExpiracion, :descripcion)";              
+            $sql="INSERT INTO detalleOrden (id, tamano, idFactura, idSabor1, idSabor2, idTopping, estado)
+                VALUES (uuid(), :tamano, :idFactura, :idSabor1, :idSabor2, :idTopping, :estado)";              
             //
-            $param= array(':nombre'=>$this->nombre,':cantidad'=>$this->cantidad,':scancode'=>$this->scancode, ':precio'=>$this->precio, ':codigoRapido'=>$this->codigoRapido, ':idcategoria'=>$this->idcategoria, ':fechaExpiracion'=>$this->fechaExpiracion, ':descripcion'=>$this->descripcion );
+            $param= array(':tamano'=>$this->idTamano,':idFactura'=>$this->idFactura,':idSabor1'=>$this->idSabor1, ':idSabor2'=>$this->idSabor2, ':idTopping'=>$this->idTopping, ':estado'=>$this->estado);
             $data = DATA::Ejecutar($sql,$param,false);
             if($data)
             {
