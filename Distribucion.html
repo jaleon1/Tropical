@@ -390,7 +390,9 @@
         //
         $(document).on('click', '#btnAddBodega', function (event) {
             bodega.id = null;
+            bodega.viewEventHandler= bodega.tSelect;
             bodega.Read;
+            
         });
         //
         $("#p_searh").keyup(function (e) {

@@ -10,6 +10,18 @@ class Bodega {
         this.tipo = tipo || null;
     }
 
+    get tUpdate()  {
+        return this.update ="update"; 
+    }
+
+    get tSelect()  {
+        return this.select = "select";
+    }
+
+    set viewEventHandler(_t) {
+        this.viewType = _t;        
+    }
+
     //Getter
     get Read() {
         NProgress.start();
@@ -198,7 +210,7 @@ class Bodega {
         t.draw();
         $('.update').click(bodega.UpdateEventHandler);
         $('.delete').click(bodega.DeleteEventHandler);
-        $('#tBodega tbody tr').dblclick(bodega.UpdateEventHandler);
+        $('#tBodega tbody tr').dblclick(bodega.viewType==undefined || bodega.viewType==bodega.tUpdate ? bodega.UpdateEventHandler : bodega.SelectEventHandler);
     };
 
     ShowAllD(e) {
@@ -248,6 +260,23 @@ class Bodega {
         $("#telefono").val(bodega.telefono);
         //fk 
         $('#tipo option[value=' + bodega.tipo + ']').prop("selected", true);    
+        $(".bs-bodega-modal-lg").modal('toggle');    
+    };
+
+    SelectEventHandler() {
+        // Limpia el controles
+        bodega.ClearCtls();
+        // carga objeto.
+        bodega= new Bodega();
+        bodega.id = $(this).parents("tr").find(".itemId").text() || $(this).find(".itemId").text();
+        bodega.nombre = $(this).parents("tr").find("td:eq(1)").text() || $(this).find("td:eq(1)").text();
+        bodega.descripcion = $(this).parents("tr").find("td:eq(2)").text() || $(this).find("td:eq(2)").text();
+        bodega.tipo = $(this).parents("tr").find("td:eq(3)").text() || $(this).find("td:eq(3)").text();
+        // Asigna objeto a controles
+        $("#nombre").val(bodega.nombre);
+        $("#descripcion").val(bodega.descripcion);
+        $("#tipo").val(bodega.tipo);
+        // oculta el modal   
         $(".bs-bodega-modal-lg").modal('toggle');    
     };
 

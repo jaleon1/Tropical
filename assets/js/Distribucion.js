@@ -12,7 +12,7 @@ class Distribucion {
     }
 
     get Save() {
-        if($('# tr').length==0 ){
+        if($('#tDistribucion tr').length==0 ){
             swal({
                 type: 'warning',
                 title: 'Orden de Compra',
@@ -31,11 +31,11 @@ class Distribucion {
         distr.porcentajeIva=$("#iv_100").val();
         //
         distr.lista = [];
-        $('#productos tr').each(function(i, item) {
+        $('#tDistribucion tr').each(function(i, item) {
             var objlista = new Object();
-            objlista.idProducto= $('#').dataTable().fnGetData(item)[0]; // id del item.
-            objlista.cantidad= $(this).find('td:eq(3) input').val();
-            objlista.valor= $(this).find('td:eq(4) input').val(); // valor: precio de venta para distrcion bodega externa. 
+            objlista.idProducto= $(item).find('td:eq(0)')[0].textContent; // id del item.
+            objlista.cantidad= $(item).find('td:eq(4) input').val();
+            objlista.valor= $(item).find('td:eq(5)').attr('value') // valor: precio de venta para distribucióncion bodega externa. 
             distr.lista.push(objlista);
         });
         $.ajax({
@@ -104,7 +104,7 @@ class Distribucion {
         $('#btnDistribucion').attr("disabled", "disabled");
         var miAccion = "Aceptar";
         distr.lista = [];
-        $('#productos tr').each(function(i, item) {
+        $('#tDistribucion tr').each(function(i, item) {
             var objlista = new Object();
             objlista.idProducto= $('#').dataTable().fnGetData(item)[0]; // id del item.
             objlista.cantidad= $(this).find('td:eq(3) input').val();
@@ -186,7 +186,7 @@ class Distribucion {
         $("#p_searh").val('');
         $('#proveedor').val("");
         $('#orden').val("");
-        $('#productos').html("");
+        var t = $('#tDistribucion').DataTable();
         t.rows().remove().draw();
         // totales
         $("#subTotal")[0].textContent = "¢0"; 
