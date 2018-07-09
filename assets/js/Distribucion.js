@@ -11,6 +11,18 @@ class Distribucion {
         this.lista = lista || [];
     }
 
+    get tUpdate()  {
+        return this.update ="update"; 
+    }
+
+    get tSelect()  {
+        return this.select = "select";
+    }
+
+    set viewEventHandler(_t) {
+        this.viewType = _t;        
+    }
+
     get Save() {
         if($('#tDistribucion tr').length==0 ){
             swal({
@@ -60,7 +72,7 @@ class Distribucion {
                 distr.showError(e);
             })
             .always(function () {
-                setTimeout('$("#btnDistribucion").removeAttr("disabled")', 1000);
+                $("#btnDistribucion").removeAttr("disabled");
                 distr = new Distribucion();
                 distr.CleanCtls();
                 $("#p_searh").focus();
@@ -96,7 +108,7 @@ class Distribucion {
                 distr.showError(e);
             })
             .always(function () {
-                setTimeout('$("#orden").removeAttr("disabled")', 1000);
+                $("#orden").removeAttr("disabled");
             });
     }
 
@@ -125,7 +137,7 @@ class Distribucion {
                 distr.showError(e);
             })
             .always(function () {
-                setTimeout('$("#btnDistribucion").removeAttr("disabled")', 1000);
+                $("#btnDistribucion").removeAttr("disabled");
                 distr = new Distribucion();
                 distr.CleanCtls();
                 $("#p_searh").focus();
@@ -137,6 +149,16 @@ class Distribucion {
         if (this.id == null)
             this.ShowAll(e);
         else this.ShowItemData(e);
+    };
+
+    ShowAll(e) {
+        var t= $('#tDistribucion').DataTable();
+        t.clear();
+        t.rows.add(JSON.parse(e));
+        t.draw();
+        $('.update').click(distr.UpdateEventHandler);
+        $('.delete').click(distr.DeleteEventHandler);
+        $('#tDistribucion tbody tr').dblclick(distr.viewType==undefined || distr.viewType==distr.tUpdate ? distr.UpdateEventHandler : distr.SelectEventHandler);
     };
 
     ShowItemData(e) {

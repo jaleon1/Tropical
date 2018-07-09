@@ -27,7 +27,7 @@
     <!-- iCheck -->
     <link href="assets/css/iCheck/skins/flat/green.css" rel="stylesheet">
     <!-- Custom Theme Style -->
-    <link href="assets/css/custom.min.css" rel="stylesheet">
+    <link href="assets/css/custom.css" rel="stylesheet">
     <!-- Custom TablePRD -->
     <link href="assets/css/datatables.net-bs/css/dataTables.bootstrap.min.css" rel="stylesheet">
     <!-- SweetAlert -->
@@ -68,7 +68,8 @@
                     <!-- sidebar menu -->
                     <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
                         <div class="menu_section active">
-                            <h3 >Bienvenid@</h3>                                     <h3 class="menuName"></h3>
+                            <h3>Bienvenid@</h3>
+                            <h3 class="menuName"></h3>
                             <ul id="menubox" class="nav side-menu">
 
                             </ul>
@@ -143,7 +144,7 @@
 
                     <div class="row">
                         <!--  CONTENIDO DE LA PAGINA -->
-                        <div class="col-md-9 col-sm-9 col-xs-9">
+                        <div class="col-md-9 col-sm-12 col-xs-12">
                             <div class="x_panel">
                                 <div class="title_right">
                                     <div class="col-md-12 col-sm-12 col-xs-12 form-group top_search">
@@ -160,109 +161,110 @@
                                         </div>
                                     </div>
                                 </div>
-                                
-                                <div class="x_content">
-                                    <div class="table-responsive">
-                                        <table id="dsitems" class="table table-striped jambo_table bulk_action">
-                                           
-                                            <tbody id="productos">
 
+                                <div class="x_content">
+                                    <div class="col-md-12 col-sm-12 col-xs-12">
+                                        <table id="tDistribucion" class="table display responsive table-striped jambo_table no-wrap" width="100%" role="grid" aria-describedby="datatable_info">
+                                            <tbody id="tbodyDistribucion">
                                             </tbody>
                                         </table>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        <!-- col izq -->
+                        <div class="col-md-3 col-sm-12 col-xs-12">
+                            <div class="row">
+                                <div class="x_panel">
+                                    <div class="x_title">
+                                        <h2>Bodega</h2>
 
-                        <div class="col-md-3 col-sm-6 col-xs-3">
-                            <div class="x_panel">
-                                <div class="x_title">
-                                    <h2>Bodega</h2>
+                                        <div class="clearfix"></div>
+                                    </div>
 
-                                    <div class="clearfix"></div>
-                                </div>
-
-                                <div class="x_content">
-                                    <form class="form-horizontal form-label-left" id="frmBodega" method="POST" novalidate>
-                                        <div class="row">
-                                            <div class="col-sm-12">
-                                                <div class="item form-group">
-                                                    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="nombre">Nombre
-                                                        <span class="required">*</span>
-                                                    </label>
-                                                    <div class="col-md-6 col-sm-6 col-xs-12">
-                                                        <input id="nombre" class="form-control col-md-7 col-xs-12" name="nombre" required="required" type="text" placeholder="Nombre de la Bodega"
-                                                            readonly>
+                                    <div class="x_content">
+                                        <form class="form-horizontal form-label-left" id="frmBodega" method="POST" novalidate>
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <div class="item form-group">
+                                                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="nombre">Nombre
+                                                            <span class="required">*</span>
+                                                        </label>
+                                                        <div class="col-md-6 col-sm-6 col-xs-12">
+                                                            <input id="nombre" class="form-control col-md-7 col-xs-12" name="nombre" required="required" type="text" placeholder="Nombre de la Bodega"
+                                                                readonly>
+                                                        </div>
                                                     </div>
+                                                    <div class="item form-group ">
+                                                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="descripcion">Descripción
+                                                        </label>
+                                                        <div class="col-md-6 col-sm-6 col-xs-12">
+                                                            <input id="descripcion" class="form-control col-md-7 col-xs-12" name="descripcion" readonly>
+                                                        </div>
+                                                    </div>
+                                                    <!-- <div class="item form-group ">
+                                                                    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tipo">Tipo</label>
+                                                                    <div class="col-md-6 col-sm-6 col-xs-12">
+                                                                        <input id="tipo" class="form-control col-md-7 col-xs-12" name="tipo" readonly>
+                                                                    </div>
+                                                                </div> -->
                                                 </div>
-                                                <div class="item form-group ">
-                                                    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="descripcion">Descripción
-                                                    </label>
-                                                    <div class="col-md-6 col-sm-6 col-xs-12">
-                                                        <input id="descripcion" class="form-control col-md-7 col-xs-12" name="descripcion" readonly>
-                                                    </div>
-                                                </div>
-                                                <!-- <div class="item form-group ">
-                                                    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tipo">Tipo</label>
-                                                    <div class="col-md-6 col-sm-6 col-xs-12">
-                                                        <input id="tipo" class="form-control col-md-7 col-xs-12" name="tipo" readonly>
-                                                    </div>
-                                                </div> -->
                                             </div>
-                                        </div>
 
-                                        <div class="ln_solid"></div>
+                                            <div class="ln_solid"></div>
 
-                                        
-                                    </form>
+
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                            <div class="row">
+                                <div class="x_panel">
+                                    <div class="x_title">
+                                        <h2>Totales</h2>
 
-                        <div class="col-md-3 col-sm-3 col-xs-3 col-md-offset-9 col-sm-offset-9 col-xs-offset-9 ">
-                            <div class="x_panel">
-                                <div class="x_title">
-                                    <h2>Totales</h2>
+                                        <div class="clearfix"></div>
+                                    </div>
 
-                                    <div class="clearfix"></div>
-                                </div>
-
-                                <div class="x_content">
-                                    <form class="form-horizontal form-label-left" id="frmTotales" method="POST" novalidate>
-                                        <div class="row">
-                                            <div class="table-responsive">
-                                                <table class="table table-striped jambo_table bulk_action">
-                                                    <tbody>
-                                                        <tr class="even pointer">
-                                                            <td class="">SubTotal</td>
-                                                            <td class=""> </td>
-                                                            <td class="" id="subTotal">¢0</td>
-                                                        </tr>
-                                                        <tr class="odd pointer">
-                                                            <td class="">Descuento</td>
-                                                            <td class="" id="desc_100" value="0">%</td>
-                                                            <td class="" id="desc_val" >¢0</td>
-                                                        </tr>
-                                                        <tr class="even pointer">
-                                                            <td class="">Impuesto de Ventas</td>
-                                                            <td class="text-left" id="iv_100" value='13'>%</td>
-                                                            <td class="" id="iv_val">¢0</td>
-                                                        </tr>
-                                                        <tr class="odd pointer">
-                                                            <td class="">TOTAL</td>
-                                                            <td class=""></td>
-                                                            <td class="" id="total">¢0</td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
+                                    <div class="x_content">
+                                        <form class="form-horizontal form-label-left" id="frmTotales" method="POST" novalidate>
+                                            <div class="row">
+                                                <div class="table-responsive">
+                                                    <table class="table table-striped jambo_table bulk_action">
+                                                        <tbody>
+                                                            <tr class="even pointer">
+                                                                <td class="">SubTotal</td>
+                                                                <td class=""> </td>
+                                                                <td class="" id="subtotal">¢0</td>
+                                                            </tr>
+                                                            <tr class="odd pointer">
+                                                                <td class="">Descuento</td>
+                                                                <td class="" id="desc_100" value="0">%</td>
+                                                                <td class="" id="desc_val">¢0</td>
+                                                            </tr>
+                                                            <tr class="even pointer">
+                                                                <td class="">Impuesto de Ventas</td>
+                                                                <td class="text-left" id="iv_100" value='13'>%</td>
+                                                                <td class="" id="iv_val">¢0</td>
+                                                            </tr>
+                                                            <tr class="odd pointer">
+                                                                <td class="">TOTAL</td>
+                                                                <td class=""></td>
+                                                                <td class="" id="total">¢0</td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
                                             </div>
-                                        </div>
 
-                                        <div class="ln_solid"></div>
-                                    </form>
+                                            <div class="ln_solid"></div>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
+
                         </div>
+                        <!-- /col iz -->
                     </div>
 
                     <div class="clearfix"></div>
@@ -370,7 +372,8 @@
 </html>
 
 <script>
-    $(document).ready(function () {        
+    $(document).ready(function () {
+        distr.setTable();	
         // Busca la distribucion por numero de orden.
         $("#p_searh").keyup(function (e) {
             if (e.which == 13) {
@@ -385,77 +388,6 @@
         $('#reload').click(function () {
             location.reload();
         });
-        //Usa la variable t que es el datatable donde estan los productos
-        t = $('#dsitems').DataTable({
-            "ordering": false,
-            // "bSort": false,
-            "info": false, //Quita el pie de pagina
-            "language": {
-                "infoEmpty": "No hay productos agregados",
-                "emptyTable": "No hay productos agregados",
-                "search": "Buscar En Factura" //Cambia el texto de Search
-            },
-            "columns": [
-                { "title": "id" },
-                { "title": "Codigo" },
-                { "title": "Nombre" },
-                { "title": "Descripcion" },
-                { "title": "Cantidad" },
-                { "title": "Precio Venta" },
-                { "title": "Subtotal" },
-            ], // crea las columnas
-            "scrollY": "190px",
-            // "searching": false,
-            "scrollCollapse": true,
-            "paging": false,
-            "columnDefs": [
-                {// id.
-                    "width": "0%", "targets": 0,
-                    "visible": false,
-                    "searchable": false
-                },
-                {// cant.
-                    "width": "10%", "targets": 4,
-                    "data": null,
-                    "defaultContent": '<input class="cantidad form-control" type="number">'
-                },
-                {// precio venta
-                    "width": "10%", "targets": 5,
-                    "data": null,
-                    "defaultContent": '<input readonly class="valor"><input readonly class="display">'
-                },
-                {// cant.
-                    "width": "10%", "targets": 6,
-                    "data": null,
-                    "defaultContent": '<input readonly class="valor"><input readonly class="display">'
-                }
-            ]
-            // ,"initComplete": function (settings, json) {
-            //     this.api().columns('.sum').every(function () {
-            //         var column = this;
-            //         var sum = column
-            //         .data()
-            //         .reduce(function (a, b) { 
-            //             a = parseInt(a, 10);
-            //             if(isNaN(a)){ a = 0; }
-                        
-            //             b = parseInt(b, 10);
-            //             if(isNaN(b)){ b = 0; }                        
-            //             return a + b;
-            //         });
-            //         $(column.footer()).html('Sum: ' + sum);                    
-            //     });
-            // }
-        });
-        t.columns.adjust().draw();
 
-        // var validator = new FormValidator({ "events": ['blur', 'input', 'change'] }, document.forms["frmBodega"]);
-        // $('#frmBodega').submit(function (e) {
-        //     e.preventDefault();
-        //     var validatorResult = validator.checkAll(this);
-        //     if (validatorResult.valid)
-        //         distr.Save;
-        //     return false;
-        //});
     });
 </script>
