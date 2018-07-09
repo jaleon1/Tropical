@@ -31,7 +31,7 @@ class Distribucion {
         distr.porcentajeIva=$("#iv_100").val();
         //
         distr.lista = [];
-        $('#tDistribucion tr').each(function(i, item) {
+        $('#tDistribucion tbody tr').each(function(i, item) {
             var objlista = new Object();
             objlista.idProducto= $(item).find('td:eq(0)')[0].textContent; // id del item.
             objlista.cantidad= $(item).find('td:eq(4) input').val();
@@ -189,10 +189,14 @@ class Distribucion {
         var t = $('#tDistribucion').DataTable();
         t.rows().remove().draw();
         // totales
-        $("#subTotal")[0].textContent = "¢0"; 
+        $("#subtotal")[0].textContent = "¢0"; 
         $("#desc_val")[0].textContent = "¢0";
         $("#iv_val")[0].textContent = "¢0";
         $("#total")[0].textContent = "¢0";
+        //bodega
+         $('#nombre').val("");
+         $('#descripcion').val("");
+
     };
 
     ResetSearch() {
@@ -201,7 +205,8 @@ class Distribucion {
 
     LoadProducto() {
         if ($("#p_searh").val() != ""){
-            NProgress.inc();
+            NProgress.start();
+            $('#p_searh').attr("disabled", "disabled");
             producto.codigo =  $("#p_searh").val();
             //
             $.ajax({
@@ -219,7 +224,11 @@ class Distribucion {
             .fail(function (e) {
                 distr.showError(e);
             })
-            .always(NProgress.done());
+            .always(function () {
+                $("#p_searh").removeAttr("disabled");
+                $("#p_searh").focus();
+                NProgress.done();
+            });
         }
     };
 
