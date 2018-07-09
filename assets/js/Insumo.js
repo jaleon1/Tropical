@@ -94,15 +94,6 @@ class Insumo {
                         footer: '<a href>Contacte a Soporte Técnico</a>',
                     })
                 }
-            .done(function () {
-                swal({
-                    //
-                    type: 'success',
-                    title: 'Eliminado!',
-                    showConfirmButton: false,
-                    timer: 1000
-                });
->>>>>>> master
             })
             .fail(function (e) {
                 insumo.showError(e);

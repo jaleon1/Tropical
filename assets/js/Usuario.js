@@ -15,7 +15,7 @@ class Usuario {
     get Read() {
         NProgress.start();
         var miAccion = this.id == null ? 'ReadAll' : 'Read';
-        if(miAccion=='ReadAll' && $('#'+this.t.context[0].nTBody.id).length==0 )
+        if(miAccion=='ReadAll' && $('#tUsuario tbody').length==0 )
             return;
         $.ajax({
             type: "POST",
@@ -164,13 +164,14 @@ class Usuario {
     };
 
     ShowAll(e) {
-        this.t.clear();
-        this.t.rows.add(JSON.parse(e));
-        this.t.draw();
+        var t= $('#tUsuario').DataTable();
+        t.clear();
+        t.rows.add(JSON.parse(e));
+        t.draw();
         // eventos
         $('.update').click(usuario.UpdateEventHandler);
         $('.delete').click(usuario.DeleteEventHandler);
-        $('#'+ this.t.context[0].sTableId +' tbody tr').dblclick(usuario.UpdateEventHandler);
+        $('#tUsuario tbody tr').dblclick(usuario.UpdateEventHandler);
     };
 
     UpdateEventHandler() {
@@ -297,8 +298,8 @@ class Usuario {
     };
 
 
-    setTable(buttons=true, ds='dsItems'){
-        this.t= $('#'+ds).DataTable({
+    setTable(buttons=true){
+        $('#tUsuario').DataTable({
             responsive: true,
             info: false,
             columns: [

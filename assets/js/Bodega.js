@@ -10,11 +10,23 @@ class Bodega {
         this.tipo = tipo || null;
     }
 
+    get tUpdate()  {
+        return this.update ="update"; 
+    }
+
+    get tSelect()  {
+        return this.select = "select";
+    }
+
+    set viewEventHandler(_t) {
+        this.viewType = _t;        
+    }
+
     //Getter
     get Read() {
         NProgress.start();
         var miAccion = this.id == null ?  'ReadAll'  : 'Read';
-        if(miAccion=='ReadAll' && $('#'+this.t.context[0].nTBody.id).length==0 )
+        if(miAccion=='ReadAll' && $('#tBodega tbody').length==0 )
             return;
         $.ajax({
             type: "POST",
@@ -192,12 +204,13 @@ class Bodega {
     };
 
     ShowAll(e) {
-        this.t.clear();
-        this.t.rows.add(JSON.parse(e));
-        this.t.draw();
+        var t= $('#tBodega').DataTable();
+        t.clear();
+        t.rows.add(JSON.parse(e));
+        t.draw();
         $('.update').click(bodega.UpdateEventHandler);
         $('.delete').click(bodega.DeleteEventHandler);
-        $('#'+ this.t.context[0].sTableId +' tbody tr').dblclick(bodega.UpdateEventHandler);
+        $('#tBodega tbody tr').dblclick(bodega.viewType==undefined || bodega.viewType==bodega.tUpdate ? bodega.UpdateEventHandler : bodega.SelectEventHandler);
     };
 
     ShowAllD(e) {
@@ -250,6 +263,23 @@ class Bodega {
         $(".bs-bodega-modal-lg").modal('toggle');    
     };
 
+    SelectEventHandler() {
+        // Limpia el controles
+        bodega.ClearCtls();
+        // carga objeto.
+        bodega= new Bodega();
+        bodega.id = $(this).parents("tr").find(".itemId").text() || $(this).find(".itemId").text();
+        bodega.nombre = $(this).parents("tr").find("td:eq(1)").text() || $(this).find("td:eq(1)").text();
+        bodega.descripcion = $(this).parents("tr").find("td:eq(2)").text() || $(this).find("td:eq(2)").text();
+        bodega.tipo = $(this).parents("tr").find("td:eq(3)").text() || $(this).find("td:eq(3)").text();
+        // Asigna objeto a controles
+        $("#nombre").val(bodega.nombre);
+        $("#descripcion").val(bodega.descripcion);
+        $("#tipo").val(bodega.tipo);
+        // oculta el modal   
+        $(".bs-bodega-modal-lg").modal('toggle');    
+    };
+
     ShowListTipo(e) {
         // carga lista con datos.
         var data = JSON.parse(e);
@@ -293,8 +323,8 @@ class Bodega {
         })
     };
 
-    setTable(buttons=true, ds='dsItems'){
-        this.t= $('#'+ds).DataTable({
+    setTable(buttons=true){
+        $('#tBodega').DataTable({
             responsive: true,
             info: false,
             columns: [
