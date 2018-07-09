@@ -361,7 +361,10 @@ class Distribucion {
                 { 
                     title: "Cantidad", 
                     data: "cantidad",
-                    defaultContent: '<input class="cantidad form-control" type="number" min="1" max="9999999999" step="1" style="text-align:right;" >'
+                    // defaultContent: '<input class="cantidad form-control" type="number" min="1" max="9999999999" step="1" style="text-align:right;" >'
+                    mRender: function () {
+                        return '<input class="cantidad form-control" type="number" min="1" max="9999999999" step="1" style="text-align:right;" >'
+                    }
                 },
                 { 
                     title: "Precio Venta", 
