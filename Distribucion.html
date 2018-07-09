@@ -251,12 +251,12 @@
                                         <form class="form-horizontal form-label-left" id="frmTotales" method="POST" novalidate>
                                             <div class="row">
                                                 <div class="table-responsive">
-                                                    <table class="table table-striped jambo_table bulk_action"></table>
+                                                    <table class="table table-striped jambo_table bulk_action">
                                                         <tbody>
                                                             <tr class="even pointer">
                                                                 <td class="">SubTotal</td>
                                                                 <td class=""> </td>
-                                                                <td class="" id="subtotal">¢0</td>  
+                                                                <td class="" id="subtotal">¢0</td>
                                                             </tr>
                                                             <tr class="odd pointer">
                                                                 <td class="">Descuento</td>
@@ -370,9 +370,9 @@
     <!-- Input mask -->
     <script src="assets/js/jquery.inputmask/jquery.inputmask.bundle.min.js"></script>
     <!-- JS Scripts -->
+    <script src="assets/js/Distribucion.js"></script>
     <script src="assets/js/Producto.js"></script>
     <script src="assets/js/Bodega.js"></script>
-    <script src="assets/js/Distribucion.js"></script>
     <!-- JS dataTables -->
     <script src="assets/js/jquery.dataTables.min.js"></script>
     <script src="assets/js/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
@@ -402,7 +402,7 @@
         });
         //
         $("#p_searh").keyup(function (e) {
-            if (e.which == 13) {                
+            if (e.which == 13) {
                 distr.LoadProducto();
             }
         });
