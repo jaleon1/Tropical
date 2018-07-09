@@ -11,6 +11,18 @@ class Distribucion {
         this.lista = lista || [];
     }
 
+    get tUpdate()  {
+        return this.update ="update"; 
+    }
+
+    get tSelect()  {
+        return this.select = "select";
+    }
+
+    set viewEventHandler(_t) {
+        this.viewType = _t;        
+    }
+
     get Save() {
         if($('#tDistribucion tr').length==0 ){
             swal({
@@ -31,11 +43,11 @@ class Distribucion {
         distr.porcentajeIva=$("#iv_100").val();
         //
         distr.lista = [];
-        $('#tDistribucion tr').each(function(i, item) {
+        $('#tDistribucion tbody tr').each(function(i, item) {
             var objlista = new Object();
             objlista.idProducto= $(item).find('td:eq(0)')[0].textContent; // id del item.
             objlista.cantidad= $(item).find('td:eq(4) input').val();
-            objlista.valor= $(item).find('td:eq(5)').attr('value') // valor: precio de venta para distribucióncion bodega externa. 
+            objlista.valor= $(item).find('td:eq(5)').attr('value'); // valor: precio de venta para distribucióncion bodega externa. 
             distr.lista.push(objlista);
         });
         $.ajax({
@@ -60,7 +72,7 @@ class Distribucion {
                 distr.showError(e);
             })
             .always(function () {
-                setTimeout('$("#btnDistribucion").removeAttr("disabled")', 1000);
+                $("#btnDistribucion").removeAttr("disabled");
                 distr = new Distribucion();
                 distr.CleanCtls();
                 $("#p_searh").focus();
@@ -96,20 +108,21 @@ class Distribucion {
                 distr.showError(e);
             })
             .always(function () {
-                setTimeout('$("#orden").removeAttr("disabled")', 1000);
+                $("#orden").removeAttr("disabled");
             });
     }
+
 
     Aceptar(){
         $('#btnDistribucion').attr("disabled", "disabled");
         var miAccion = "Aceptar";
         distr.lista = [];
-        $('#tDistribucion tr').each(function(i, item) {
+        $('#tDistribucion tbody tr').each(function(i, item) {
             var objlista = new Object();
-            objlista.idProducto= $('#').dataTable().fnGetData(item)[0]; // id del item.
-            objlista.cantidad= $(this).find('td:eq(3) input').val();
-            objlista.costo= $(this).find('td:eq(4) input').val(); // costo: precio de venta para distrcion bodega externa. 
-            objlista.valor= parseFloat(parseInt(objlista.cantidad) * parseFloat(objlista.costo).toFixed(10)).toFixed(10); // valor. costo*cantidad.
+            objlista.idProducto= $(item).find('td:eq(0)')[0].textContent;
+            objlista.cantidad= $(item).find('td:eq(4) input').val();
+            objlista.costo= $(item).find('td:eq(5)').attr('value'); // costo: precio de venta para distrcion bodega externa. 
+            objlista.valor= parseFloat(parseInt(objlista.cantidad) * parseFloat(objlista.costo)); // valor. costo*cantidad.
             distr.lista.push(objlista);
         });
         $.ajax({
@@ -125,7 +138,7 @@ class Distribucion {
                 distr.showError(e);
             })
             .always(function () {
-                setTimeout('$("#btnDistribucion").removeAttr("disabled")', 1000);
+                $("#btnDistribucion").removeAttr("disabled");
                 distr = new Distribucion();
                 distr.CleanCtls();
                 $("#p_searh").focus();
@@ -137,6 +150,16 @@ class Distribucion {
         if (this.id == null)
             this.ShowAll(e);
         else this.ShowItemData(e);
+    };
+
+    ShowAll(e) {
+        var t= $('#tDistribucion').DataTable();
+        t.clear();
+        t.rows.add(JSON.parse(e));
+        t.draw();
+        $('.update').click(distr.UpdateEventHandler);
+        $('.delete').click(distr.DeleteEventHandler);
+        $('#tDistribucion tbody tr').dblclick(distr.viewType==undefined || distr.viewType==distr.tUpdate ? distr.UpdateEventHandler : distr.SelectEventHandler);
     };
 
     ShowItemData(e) {
@@ -189,10 +212,14 @@ class Distribucion {
         var t = $('#tDistribucion').DataTable();
         t.rows().remove().draw();
         // totales
-        $("#subTotal")[0].textContent = "¢0"; 
+        $("#subtotal")[0].textContent = "¢0"; 
         $("#desc_val")[0].textContent = "¢0";
         $("#iv_val")[0].textContent = "¢0";
         $("#total")[0].textContent = "¢0";
+        //bodega
+         $('#nombre').val("");
+         $('#descripcion').val("");
+
     };
 
     ResetSearch() {
@@ -201,7 +228,8 @@ class Distribucion {
 
     LoadProducto() {
         if ($("#p_searh").val() != ""){
-            NProgress.inc();
+            NProgress.start();
+            $('#p_searh').attr("disabled", "disabled");
             producto.codigo =  $("#p_searh").val();
             //
             $.ajax({
@@ -219,7 +247,11 @@ class Distribucion {
             .fail(function (e) {
                 distr.showError(e);
             })
-            .always(NProgress.done());
+            .always(function () {
+                $("#p_searh").removeAttr("disabled");
+                $("#p_searh").focus();
+                NProgress.done();
+            });
         }
     };
 
@@ -330,7 +362,10 @@ class Distribucion {
                 { 
                     title: "Cantidad", 
                     data: "cantidad",
-                    defaultContent: '<input class="cantidad form-control" type="number" min="1" max="9999999999" step="1" style="text-align:right;" >'
+                    // defaultContent: '<input class="cantidad form-control" type="number" min="1" max="9999999999" step="1" style="text-align:right;" >'
+                    mRender: function () {
+                        return '<input class="cantidad form-control" type="number" min="1" max="9999999999" step="1" style="text-align:right;" >'
+                    }
                 },
                 { 
                     title: "Precio Venta", 

@@ -145,7 +145,7 @@
 
                     <div class="row">
                         <!--  CONTENIDO DE LA PAGINA -->
-                        <div class="col-md-9 col-sm-9 col-xs-9">
+                        <div class="col-md-9 col-sm-12 col-xs-12">
                             <div class="x_panel">
                                 <div class="title_right">
                                     <div class="col-md-12 col-sm-12 col-xs-12 form-group top_search">
@@ -179,109 +179,115 @@
                             </div>
                         </div>
 
-                        <!-- bodega -->
-                        <div class="col-md-3 col-sm-6 col-xs-3">
-                            <div class="x_panel">
-                                <div class="x_title">
-                                    <h2>Bodega</h2>
+                        <!-- COL IZQ -->
+                        <div class="col-md-3 col-sm-12 col-xs-12">
+                            <!-- bodega  -->
+                            <div class="row">
+                                <div class="x_panel">
+                                    <div class="x_title">
+                                        <h2>Bodega</h2>
 
-                                    <div class="clearfix"></div>
-                                </div>
+                                        <div class="clearfix"></div>
+                                    </div>
 
-                                <div class="x_content">
-                                    <form class="form-horizontal form-label-left" id="frmBodega" method="POST" novalidate>
+                                    <div class="x_content">
+                                        <form class="form-horizontal form-label-left" id="frmBodega" method="POST" novalidate>
 
-                                        <div id="reportrange" class="pull-right">
-                                            <button id="btnAddBodega" data-toggle="modal" data-target=".bs-bodega-modal-lg" type="button" class="btn btn-info btn-lg">+</button>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-sm-12">
-                                                <div class="item form-group">
-                                                    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="nombre">Nombre
-                                                        <span class="required">*</span>
-                                                    </label>
-                                                    <div class="col-md-6 col-sm-6 col-xs-12">
-                                                        <input id="nombre" class="form-control col-md-7 col-xs-12" name="nombre" required="required" type="text" placeholder="Nombre de la Bodega"
-                                                            readonly>
-                                                    </div>
-                                                </div>
-                                                <div class="item form-group ">
-                                                    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="descripcion">Descripción
-                                                    </label>
-                                                    <div class="col-md-6 col-sm-6 col-xs-12">
-                                                        <input id="descripcion" class="form-control col-md-7 col-xs-12" name="descripcion" readonly>
-                                                    </div>
-                                                </div>
-                                                <!-- <div class="item form-group ">
-                                                    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tipo">Tipo</label>
-                                                    <div class="col-md-6 col-sm-6 col-xs-12">
-                                                        <input id="tipo" class="form-control col-md-7 col-xs-12" name="tipo" readonly>
-                                                        <select class="selectpicker show-menu-arrow form-control" id="tipo" name="tipo"></select>
-                                                    </div>
-                                                </div> -->
+                                            <div id="reportrange" class="pull-right">
+                                                <button id="btnAddBodega" data-toggle="modal" data-target=".bs-bodega-modal-lg" type="button" class="btn btn-info btn-lg">+</button>
                                             </div>
-                                        </div>
-
-                                        <div class="ln_solid"></div>
-
-                                        <!-- <div class="form-group">
-                                            <div class="col-md-6 col-md-offset-3">
-                                                <button type="reset" class="btn btn-primary">Reset</button>
-                                                <button id="btnDistribucion" type="submit" class="btn btn-success">Submit</button>
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <div class="item form-group">
+                                                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="nombre">Nombre
+                                                            <span class="required">*</span>
+                                                        </label>
+                                                        <div class="col-md-6 col-sm-6 col-xs-12">
+                                                            <input id="nombre" class="form-control col-md-7 col-xs-12" name="nombre" required="required" type="text" placeholder="Nombre de la Bodega"
+                                                                readonly>
+                                                        </div>
+                                                    </div>
+                                                    <div class="item form-group ">
+                                                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="descripcion">Descripción
+                                                        </label>
+                                                        <div class="col-md-6 col-sm-6 col-xs-12">
+                                                            <input id="descripcion" class="form-control col-md-7 col-xs-12" name="descripcion" readonly>
+                                                        </div>
+                                                    </div>
+                                                    <!-- <div class="item form-group ">
+                                                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tipo">Tipo</label>
+                                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                                    <input id="tipo" class="form-control col-md-7 col-xs-12" name="tipo" readonly>
+                                                                    <select class="selectpicker show-menu-arrow form-control" id="tipo" name="tipo"></select>
+                                                                </div>
+                                                            </div> -->
+                                                </div>
                                             </div>
-                                        </div> -->
-                                    </form>
+
+                                            <div class="ln_solid"></div>
+
+                                            <!-- <div class="form-group">
+                                                        <div class="col-md-6 col-md-offset-3">
+                                                            <button type="reset" class="btn btn-primary">Reset</button>
+                                                            <button id="btnDistribucion" type="submit" class="btn btn-success">Submit</button>
+                                                        </div>
+                                                    </div> -->
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <!-- /bodega -->
+                            <!-- /bodega -->
 
-                        <!-- totales -->
-                        <div class="col-md-3 col-sm-3 col-xs-3 col-md-offset-9 col-sm-offset-9 col-xs-offset-9 ">
-                            <div class="x_panel">
-                                <div class="x_title">
-                                    <h2>Totales</h2>
+                            <div class="row">
+                                <!-- totales -->
+                                <div class="x_panel">
+                                    <div class="x_title">
+                                        <h2>Totales</h2>
 
-                                    <div class="clearfix"></div>
-                                </div>
+                                        <div class="clearfix"></div>
+                                    </div>
 
-                                <div class="x_content">
-                                    <form class="form-horizontal form-label-left" id="frmTotales" method="POST" novalidate>
-                                        <div class="row">
-                                            <div class="table-responsive">
-                                                <table class="table table-striped jambo_table bulk_action">
-                                                    <tbody>
-                                                        <tr class="even pointer">
-                                                            <td class="">SubTotal</td>
-                                                            <td class=""> </td>
-                                                            <td class="" id="subtotal">¢0</td>
-                                                        </tr>
-                                                        <tr class="odd pointer">
-                                                            <td class="">Descuento</td>
-                                                            <td class="" id="desc_100" value="0">%</td>
-                                                            <td class="" id="desc_val">¢0</td>
-                                                        </tr>
-                                                        <tr class="even pointer">
-                                                            <td class="">Impuesto de Ventas</td>
-                                                            <td class="text-left" id="iv_100" value='13'>%</td>
-                                                            <td class="" id="iv_val">¢0</td>
-                                                        </tr>
-                                                        <tr class="odd pointer">
-                                                            <td class="">TOTAL</td>
-                                                            <td class=""></td>
-                                                            <td class="" id="total">¢0</td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
+                                    <div class="x_content">
+                                        <form class="form-horizontal form-label-left" id="frmTotales" method="POST" novalidate>
+                                            <div class="row">
+                                                <div class="table-responsive">
+                                                    <table class="table table-striped jambo_table bulk_action">
+                                                        <tbody>
+                                                            <tr class="even pointer">
+                                                                <td class="">SubTotal</td>
+                                                                <td class=""> </td>
+                                                                <td class="" id="subtotal">¢0</td>
+                                                            </tr>
+                                                            <tr class="odd pointer">
+                                                                <td class="">Descuento</td>
+                                                                <td class="" id="desc_100" value="0">%</td>
+                                                                <td class="" id="desc_val">¢0</td>
+                                                            </tr>
+                                                            <tr class="even pointer">
+                                                                <td class="">Impuesto de Ventas</td>
+                                                                <td class="text-left" id="iv_100" value='13'>%</td>
+                                                                <td class="" id="iv_val">¢0</td>
+                                                            </tr>
+                                                            <tr class="odd pointer">
+                                                                <td class="">TOTAL</td>
+                                                                <td class=""></td>
+                                                                <td class="" id="total">¢0</td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
                                             </div>
-                                        </div>
 
-                                        <div class="ln_solid"></div>
-                                    </form>
+                                            <div class="ln_solid"></div>
+                                        </form>
+                                    </div>
                                 </div>
+                                <!-- /totales -->
                             </div>
+
                         </div>
-                        <!-- /totales -->
+                        <!-- /col izq -->
+
                     </div>
 
                     <div class="clearfix"></div>
@@ -359,14 +365,12 @@
     <script src="assets/js/iCheck/icheck.min.js"></script>
     <!-- Validator -->
     <script src="assets/js/validator.js"></script>
-    <!-- Custom Theme Scripts -->
-    <script src="assets/js/custom.min.js"></script>
     <!-- Input mask -->
     <script src="assets/js/jquery.inputmask/jquery.inputmask.bundle.min.js"></script>
     <!-- JS Scripts -->
+    <script src="assets/js/Distribucion.js"></script>
     <script src="assets/js/Producto.js"></script>
     <script src="assets/js/Bodega.js"></script>
-    <script src="assets/js/Distribucion.js"></script>
     <!-- JS dataTables -->
     <script src="assets/js/jquery.dataTables.min.js"></script>
     <script src="assets/js/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
@@ -390,9 +394,9 @@
         //
         $(document).on('click', '#btnAddBodega', function (event) {
             bodega.id = null;
-            bodega.viewEventHandler= bodega.tSelect;
+            bodega.viewEventHandler = bodega.tSelect;
             bodega.Read;
-            
+
         });
         //
         $("#p_searh").keyup(function (e) {

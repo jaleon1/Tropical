@@ -131,7 +131,17 @@ class OrdenCompra {
     ValidateInsumoFac(e){
         //compara si el articulo ya existe
         // carga lista con datos.
-        if(e != "false"){
+        if(e == "[]"){
+            swal({
+                type: 'warning',
+                title: 'Orden de Compra',
+                text: 'El item ' + insumo.codigo + ' No existe.',
+                showConfirmButton: false,
+                timer: 3000
+            });
+            return;
+        }
+        if(e != "false" && e != ''){
             insumo = JSON.parse(e)[0];
             insumo.UltPrd = insumo.codigo;
             var repetido = false;
