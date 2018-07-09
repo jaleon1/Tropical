@@ -47,7 +47,7 @@ class Distribucion {
             var objlista = new Object();
             objlista.idProducto= $(item).find('td:eq(0)')[0].textContent; // id del item.
             objlista.cantidad= $(item).find('td:eq(4) input').val();
-            objlista.valor= $(item).find('td:eq(5)').attr('value') // valor: precio de venta para distribucióncion bodega externa. 
+            objlista.valor= $(item).find('td:eq(5)').attr('value'); // valor: precio de venta para distribucióncion bodega externa. 
             distr.lista.push(objlista);
         });
         $.ajax({
@@ -112,16 +112,17 @@ class Distribucion {
             });
     }
 
+
     Aceptar(){
         $('#btnDistribucion').attr("disabled", "disabled");
         var miAccion = "Aceptar";
         distr.lista = [];
-        $('#tDistribucion tr').each(function(i, item) {
+        $('#tDistribucion tbody tr').each(function(i, item) {
             var objlista = new Object();
-            objlista.idProducto= $('#').dataTable().fnGetData(item)[0]; // id del item.
-            objlista.cantidad= $(this).find('td:eq(3) input').val();
-            objlista.costo= $(this).find('td:eq(4) input').val(); // costo: precio de venta para distrcion bodega externa. 
-            objlista.valor= parseFloat(parseInt(objlista.cantidad) * parseFloat(objlista.costo).toFixed(10)).toFixed(10); // valor. costo*cantidad.
+            objlista.idProducto= $(item).find('td:eq(0)')[0].textContent;
+            objlista.cantidad= $(item).find('td:eq(4) input').val();
+            objlista.costo= $(item).find('td:eq(5)').attr('value'); // costo: precio de venta para distrcion bodega externa. 
+            objlista.valor= parseFloat(parseInt(objlista.cantidad) * parseFloat(objlista.costo)); // valor. costo*cantidad.
             distr.lista.push(objlista);
         });
         $.ajax({
