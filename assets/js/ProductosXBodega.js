@@ -1,12 +1,9 @@
 class ProductoBodega {
     // Constructor
-    constructor(id, idBodega, idProducto, producto, cantidad, costo, lista) {
+    constructor(id, idBodega, precioVenta, lista) {
         this.id = id || null;
         this.idBodega = idBodega || '';
-        this.idProducto = idProducto || '';
-        this.producto = producto || '';
-        this.cantidad = cantidad || 0;
-        this.costo = costo || 0;
+        this.precioVenta = precioVenta || 0;
         this.lista = lista || [];
     }
 
@@ -392,6 +389,34 @@ class ProductoBodega {
                 }
             ]
         });
+    };
+
+    ActualizarPrecios(){
+        productobodega.lista = [];
+        $('#tDeterminacion tbody tr').each(function(i, item) {
+            var objlista = new Object();
+            objlista.id= $(item).find('td:eq(0)')[0].textContent;
+            objlista.precioVenta= $(this).find('td:eq(2) input').val();
+            productobodega.lista.push(objlista);
+        });
+        $.ajax({
+            type: "POST",
+            url: "class/ProductosXBodega.php",
+            data: {
+                action: "ActualizaPrecios",
+                obj: JSON.stringify(this)
+            }
+        })
+            .done(producto.showInfo)
+            .fail(function (e) {
+                producto.showError(e);
+            })
+            .always(function () {
+                setTimeout('$("#btnSubmit").removeAttr("disabled")', 1000);
+                producto = new Producto();
+                //producto.CleanCtls();
+                $("#p_searh").focus();
+            });
     };
 
     Init() {

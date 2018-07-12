@@ -30,17 +30,22 @@ if(isset($_POST["action"])){
         case "Delete":
             echo json_encode($productosxbodega->Delete());
             break;   
+        case "ActualizaPrecios":
+            $productosxbodega->ActualizaPrecios();
+            break;
     }
 }
 
 class ProductosXBodega{
     public $id=null;
     public $idBodega='';
-    public $idProducto='';
-    public $producto='';
-    public $cantidad=0;
-    public $costo=0;
+    public $Tamano='1'; //1: Grande; 0: Mediano.
+    public $precioVenta=0;
     public $lista=array();
+    // public $idProducto='';
+    // public $producto='';
+    // public $cantidad=0;
+    // public $costo=0;    
 
     function __construct(){
         // identificador único
@@ -61,14 +66,18 @@ class ProductosXBodega{
             unset($_POST['obj']);
             // En caso de ser una lista de articulos para agregar O lista de productos por distribuir.
             if(isset($obj["lista"] )){
-                require_once("Producto.php");
+                //require_once("Producto.php");
                 foreach ($obj["lista"] as $item) {
-                    $prodTemp =  new Producto();
-                    $prodTemp->id= $item['id'];            
-                    $prodTemp->idBodega= $item['idBodega'];
-                    $prodTemp->idProducto= $item['idProducto'];
-                    $prodTemp->cantidad= $item['cantidad'];
-                    $prodTemp->costo= $item['costo'];
+                    // $prodTemp =  new Producto();
+                    // $prodTemp->id= $item['id'];            
+                    // $prodTemp->idBodega= $item['idBodega'];
+                    // $prodTemp->idProducto= $item['idProducto'];
+                    // $prodTemp->cantidad= $item['cantidad'];
+                    // $prodTemp->costo= $item['costo'];
+                    // array_push ($this->lista, $prodTemp);
+                    $prodTemp =  new ProductosXBodega();
+                    $prodTemp->id= $item['id'];
+                    $prodTemp->precioVenta= $item['precioVenta'];
                     array_push ($this->lista, $prodTemp);
                 }
                 unset($_POST['lista']);
@@ -263,6 +272,32 @@ class ProductosXBodega{
                 throw new Exception('Error al guardar.', 02);
         }     
         catch(Exception $e) {
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }
+    }
+
+    function ActualizaPrecios(){
+        try{     
+            $created = true;
+            foreach ($this->lista as $item) {
+                $sql="UPDATE preciosXBodega
+                    SET precioVenta=:precioVenta
+                    WHERE id= :id";
+                $param= array(':id'=>$item->id, ':precioVenta'=>$item->precioVenta);
+                $data= DATA::Ejecutar($sql,$param, false);
+                if(!$data)
+                    $created= false;                
+            }
+            if(!$created)
+                throw new Exception('Error al actualizar precios, REVISAR manualmente.', 666);
+            else return true;
+            // 
+        }
+        catch(Exception $e){
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
