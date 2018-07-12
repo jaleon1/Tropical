@@ -175,7 +175,7 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
     // Muestra información en ventana
     showInfo(e) {e
         /* IMPRIMIR */
-        // ordenSalida.ticketPrint(e);
+        ordenSalida.ticketPrint(e);
         $(".close").click();
         swal({
             position: 'top-end',
@@ -188,19 +188,24 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
 
     ticketPrint(e){
         var data = JSON.parse(e);
-        location.href ="/Tropical/TicketOrdenSalida.html";
+        localStorage.setItem("lsNumeroOrden",data[0][0]);
+        localStorage.setItem("lsFechaOrdensalida",ordenSalida.fecha);
+        localStorage.setItem("lsUsuarioRecibe",$("#usuarioRecibe").val());
+        localStorage.setItem("lsListaInsumo",JSON.stringify(this.listaInsumo));
 
-        $("#numeroOrden").val(data[0][0]);
-        $("#fechaOrdenSalida").val(ordenSalida.fecha);
-        $("#usuarioRecibe").val('Jairo León');
-        $.each(this.listaInsumo, function (i, item) {
-            $('#tableBody-TicketOrdenSalida').append(`
-                <tr> 
-                    <td>${item.nombreInsumo}</td>
-                    <td class="itemId">${item.cantidad}</td>
-                </tr>
-            `);
-        }) 
+        location.href ="/Tropical/TicketOrdenSalida.html";
+        
+        // $("#numeroOrden").val(data[0][0]);
+        // $("#fechaOrdenSalida").val(ordenSalida.fecha);
+        // $("#usuarioRecibe").val('Jairo León');
+        // $.each(this.listaInsumo, function (i, item) {
+        //     $('#tableBody-TicketOrdenSalida').append(`
+        //         <tr> 
+        //             <td>${item.nombreInsumo}</td>
+        //             <td class="itemId">${item.cantidad}</td>
+        //         </tr>
+        //     `);
+        // }) 
     }
 
     // Muestra errores en ventana

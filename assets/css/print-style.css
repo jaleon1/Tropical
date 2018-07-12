@@ -1,0 +1,36 @@
+@media print{
+	font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+	font-size: 1em;
+	margin-top: 3cm;
+	margin-right: 0.03cm;
+	margin-bottom: 0.03cm;
+	margin-left: 2cm;
+}
+
+header, footer, nav, aside, button, h2 {
+    display: none;
+}
+
+ul, img, table {
+	page-break-inside: avoid;
+}
+
+.x_panel{
+    border: 0px;
+}
+
+#btnAddInsumo{
+    display: none;
+}
+
+.clearfix{
+    display: none;
+}
+
+.ln_solid{
+    display: none;
+}
+
+.section{
+    display: none;
+}

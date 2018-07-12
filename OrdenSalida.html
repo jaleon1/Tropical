@@ -501,6 +501,16 @@
         var dateTime = new Date();
         var now = moment(dateTime).format("YYYY-MM-DD HH:mm:ss A");
         $('#dt_fecha').val(now);
+        if(localStorage.getItem("lsPrintOK")=="OK"){
+            $(".close").click();
+            swal({
+                position: 'top-end',
+                type: 'success',
+                title: 'Good!',
+                showConfirmButton: false,
+                timer: 1000
+            });
+        }
     });
 
     $(document).on('click', '#btnAddInsumo', function (event) {
