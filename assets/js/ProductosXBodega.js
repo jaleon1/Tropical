@@ -25,7 +25,7 @@ class ProductoBodega {
     //Getter
     get Read() {
         var miAccion = this.id == null ?  'ReadAll'  : 'Read';
-        if(miAccion=='ReadAll' && $('#tDistribucion tbody').length==0 )
+        if(miAccion=='ReadAll' && $('#tDeterminacion tbody').length==0 )
             return;
         $.ajax({
             type: "POST",
@@ -229,11 +229,18 @@ class ProductoBodega {
     ShowAll(e) {
         var t= $('#tDeterminacion').DataTable();
         t.clear();
-        t.rows.add(JSON.parse(e));
+        var data = JSON.parse(e);
+        t.rows.add(data);   
         t.draw();
-        $('.update').click(productobodega.UpdateEventHandler);
-        $('.delete').click(productobodega.DeleteEventHandler);
-        $('#tDeterminacion tbody tr').dblclick(productobodega.viewType==undefined || productobodega.viewType==productobodega.tUpdate ? productobodega.UpdateEventHandler : productobodega.SelectEventHandler);
+
+        // $.each(data, function (i, item) {
+        //     var rowNode= t.rows.add(data);            
+        // });
+        // $('td:eq(2) input', rowNode).attr({id: ("precioVenta"+producto.id), value: (producto.precioVenta || 1)});
+        // t.draw();
+        // $('.update').click(productobodega.UpdateEventHandler);
+        // $('.delete').click(productobodega.DeleteEventHandler);
+        // $('#tDeterminacion tbody tr').dblclick(productobodega.viewType==undefined || productobodega.viewType==productobodega.tUpdate ? productobodega.UpdateEventHandler : productobodega.SelectEventHandler);
         // agregar / editar producto temporal
         //$('#btnAddCantidadCosto').click(productobodega.AddEventHandler);
     };
@@ -356,13 +363,23 @@ class ProductoBodega {
                     className: "itemId",                    
                     searchable: false
                 },
-                { title: "Tamaño", data: "tamano" },
                 { 
-                    title: "Precio Venta", 
-                    data: "precioVenta",
-                    mRender: function () {
-                        return '<input class="cantidad form-control" type="number" min="1" max="9999999999" step="1" style="text-align:right;" >'
-                    }
+                    title: "Tamaño", 
+                    data: null,
+                    render: function (data, type, row) {                        
+                        var fdata='';                        
+                        if(row['tamano'] === '1')
+                            fdata= 'Grande';
+                        else fdata= 'Mediano';
+                        return fdata;
+                    }                    
+                },
+                { 
+                    title: "precioVenta",                     
+                    mRender: function (data, row) {                        
+                        return '<input class="cantidad form-control" type="number" min="1" max="9999999999" step="1" style="text-align:right;" precioVenta='+ data +'  value= '+ parseFloat(data).toFixed(2) +' >'
+                    },
+                    data: "precioVenta"
                 },
                 {
                     title: "Action",
