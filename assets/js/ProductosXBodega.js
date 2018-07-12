@@ -10,10 +10,22 @@ class ProductoBodega {
         this.lista = lista || [];
     }
 
+    get tUpdate()  {
+        return this.update ="update"; 
+    }
+
+    get tSelect()  {
+        return this.select = "select";
+    }
+
+    set viewEventHandler(_t) {
+        this.viewType = _t;        
+    }
+
     //Getter
     get Read() {
         var miAccion = this.id == null ?  'ReadAll'  : 'Read';
-        if(miAccion=='ReadAll' && $('#tableBody-ProductoBodega').length==0 )
+        if(miAccion=='ReadAll' && $('#tDistribucion tbody').length==0 )
             return;
         $.ajax({
             type: "POST",
@@ -21,7 +33,7 @@ class ProductoBodega {
             data: {
                 action: miAccion,
                 id: this.id,
-                idBodega: this.idBodega
+                // idBodega: this.idBodega no envpia el idBodega, toma el de la sesion.
             }
         })
             .done(function (e) {
@@ -115,7 +127,6 @@ class ProductoBodega {
                 productobodega.Read;
             });
     }
-  
   
     get UpdateValue() {
         $('#btnCantidadCosto').attr("disabled", "disabled");
@@ -216,57 +227,15 @@ class ProductoBodega {
     };
 
     ShowAll(e) {
-        // Limpia el div que contiene la tabla.
-        $('#tableBody-ProductoBodega').html("");
-        // Carga lista
-        var data = JSON.parse(e);
-        //style="display: none"
-        $.each(data, function (i, item) {
-            $('#tableBody-ProductoBodega').append(`
-                <tr class='trproducto'> 
-                    <td class="a-center ">
-                        <input id="chk-addproducto${item.id}" type="checkbox" class="flat" name="table_records">
-                    </td>
-                    <td class="itemId" >${item.id}</td>
-                    <td class="itemId" >${item.idProducto}</td>
-                    <td>${item.producto}</td>
-                    <td>${item.cantidad}</td>
-                    <td>${item.costo}</td>
-                    <td class=" last">
-                        <a id="update${item.id}" data-toggle="modal" data-target=".bs-ProductoCantidad-modal-lg" > <i class="glyphicon glyphicon-edit" > </i> Editar |</a>                         
-                        <a id="delete${item.id}"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>
-                    </td>
-                </tr>
-            `);
-            $('#update'+item.id).click(productobodega.UpdateEventHandler);            
-            $('#delete'+item.id).click(productobodega.DeleteEventHandler);
-            if (document.URL.indexOf("Distribucion.html")!=-1) {
-                $('#chk-addproducto'+item.id).change(productobodega.AddProductoEventHandler);
-                //$('.trproducto').dblclick(productobodega.AddProductoEventHandler);
-            }
-        })
-        //datatable         
-        if ($.fn.dataTable.isDataTable('#dsProducto')) {
-            var table = $('#dsProducto').DataTable();
-        }
-        else
-            $('#dsProducto').DataTable({
-                columns: [
-                    { title: "Check" },
-                    {
-                        title: "ID"
-                        // ,visible: false
-                    },
-                    { title: "Producto" },
-                    { title: "Cantidad" },
-                    { title: "Costo" },
-                    { title: "Action" }
-                ],
-                paging: true,
-                search: true
-            });
+        var t= $('#tDeterminacion').DataTable();
+        t.clear();
+        t.rows.add(JSON.parse(e));
+        t.draw();
+        $('.update').click(productobodega.UpdateEventHandler);
+        $('.delete').click(productobodega.DeleteEventHandler);
+        $('#tDeterminacion tbody tr').dblclick(productobodega.viewType==undefined || productobodega.viewType==productobodega.tUpdate ? productobodega.UpdateEventHandler : productobodega.SelectEventHandler);
         // agregar / editar producto temporal
-        $('#btnAddCantidadCosto').click(productobodega.AddEventHandler);
+        //$('#btnAddCantidadCosto').click(productobodega.AddEventHandler);
     };
 
     AddProductoEventHandler(){
@@ -335,7 +304,7 @@ class ProductoBodega {
     };
 
     UpdateEventHandler() {
-        productobodega.id = $(this).parents("tr").find(".itemId").text();  //Class itemId = ID del objeto.             
+        productobodega.id = $(this).parents("tr").find(".itemId").text() || $(this).find(".itemId").text();           
         // abre modal para editar la cantidad.
         productobodega.Read;
     };
@@ -351,6 +320,8 @@ class ProductoBodega {
         $("#productonombre").val(productobodega.producto);
         $("#cantidad").val(productobodega.cantidad);
         $("#costo").val(productobodega.costo);
+        //
+        $("#myModalLabel").html('<h1>' + usuario.nombre + '<h1>' );
     };
 
     DeleteEventHandler() {
@@ -372,6 +343,38 @@ class ProductoBodega {
                 productobodega.Delete;
             }
         })
+    };
+
+    setTable(buttons=true){
+        $('#tDeterminacion').DataTable({
+            responsive: true,
+            info: false,
+            columns: [
+                {
+                    title: "id",
+                    data: "id",
+                    className: "itemId",                    
+                    searchable: false
+                },
+                { title: "Tamaño", data: "tamano" },
+                { 
+                    title: "Precio Venta", 
+                    data: "precioVenta",
+                    mRender: function () {
+                        return '<input class="cantidad form-control" type="number" min="1" max="9999999999" step="1" style="text-align:right;" >'
+                    }
+                },
+                {
+                    title: "Action",
+                    orderable: false,
+                    searchable:false,
+                    visible: buttons,
+                    mRender: function () {
+                        return '<a class="update" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | <a class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>'                            
+                    }
+                }
+            ]
+        });
     };
 
     Init() {

@@ -134,7 +134,7 @@
 
                     <div class="page-title">
                         <div class="title_left">
-                            <h3>Determinación de Precios</h3>
+                            <h3 id='callBodega'>Determinación de Precios</h3>
                         </div>
                         <div class="title_right">
                             <h3 id="fecha" style="float:right"></h3>
@@ -144,73 +144,24 @@
                     <div class="clearfix"></div>
 
                     <div class="row">
-                        <div class="col-md-9 col-sm-9 col-xs-9">
+                        <div class="col-md-12 col-sm-12 col-xs-12">
                             <div class="x_panel">
                                 <div class="title_right">
-
-                                    <div class="col-md-12 col-sm-12 col-xs-12 form-group ">
-                                        <div class="input-group">
-                                            <input autofocus type="text" class="form-control" id="p_searh" placeholder="Ingresar el código del producto...">
-                                            <span class="input-group-btn">
-                                                <button class="btn btn-default" type="button">Buscar</button>x
-                                            </span>
-                                        </div>
-                                    </div>
-
                                 </div>
 
                                 <!--  CONTENIDO DE LA PAGINA -->
 
                                 <div class="x_content">
-                                    <div class="table-responsive">
-                                        <table id="dsItems" class="table table-striped jambo_table bulk_action">
-                                            <tbody id="tbodyItems">
-                                            </tbody>
-                                        </table>
+                                    <!-- TABLE -->
+                                    <div class="row">
+                                        <div class="col-md-12 col-sm-12 col-xs-12">
+                                            <table id="tDeterminacion" class="table display responsive table-striped jambo_table no-wrap" width="100%" role="grid" aria-describedby="datatable_info">
+                                                <tbody id="tbodytDeterminacion">
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-md-3 col-sm-3 col-xs-3 form-group ">
-                            <div class="x_panel">
-                                <div class="title_right">
-                                    <form class="form-horizontal form-label-left" id="frmBodega" method="POST" novalidate>
-
-                                        <div id="reportrange" class="pull-right">
-                                            <button id="btnAddBodega" data-toggle="modal" data-target=".bs-bodega-modal-lg" type="button" class="btn btn-info btn-lg">+</button>
-                                        </div>
-
-                                        <div class="row">
-                                            <div class="col-sm-12">
-                                                <div class="item form-group">
-                                                    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="nombre">Nombre
-                                                        <span class="required">*</span>
-                                                    </label>
-                                                    <div class="col-md-6 col-sm-6 col-xs-12">
-                                                        <input id="nombre" class="form-control col-md-7 col-xs-12" name="nombre" required="required" type="text" placeholder="Nombre de la Bodega"
-                                                            readonly>
-                                                    </div>
-                                                </div>
-                                                <div class="item form-group ">
-                                                    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="descripcion">Descripción
-                                                    </label>
-                                                    <div class="col-md-6 col-sm-6 col-xs-12">
-                                                        <input id="descripcion" class="form-control col-md-7 col-xs-12" name="descripcion" readonly>
-                                                    </div>
-                                                </div>
-                                                <div class="item form-group ">
-                                                    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tipo">Tipo</label>
-                                                    <div class="col-md-6 col-sm-6 col-xs-12">
-                                                        <input id="tipo" class="form-control col-md-7 col-xs-12" name="tipo" readonly>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="ln_solid"></div>
-
-                                    </form>
+                                    <!-- /TABLE -->
                                 </div>
                             </div>
                         </div>
@@ -228,52 +179,8 @@
                     </div>
                 </div>
             </div>
-            <!-- /page content -->
-
-            <!-- footer content -->
-            <!-- <footer>
-                <div class="pull-right">
-                    Ventas y administración de Inventario <a href="http://faccr.com">Fac-CR</a>
-                </div>
-                <div class="clearfix"></div>
-            </footer> -->
-            <!-- /footer content -->
         </div>
     </div>
-
-    <!-- modals -->
-    <div id="modal-bodega" class="modal fade bs-bodega-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                    <h4 class="modal-title" id="myModalLabel">Seleccionar Bodega</h4>
-                </div>
-
-                <div class="modal-body">
-                    <div id="datatable_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <table id="dsItemsBodega" class="table table-striped jambo_table bulk_action no-wrap" width="100%" role="grid" aria-describedby="datatable_info">
-                                    <tbody id="tbodyItemsBodega">
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="ln_solid"></div>
-                </div>
-
-                <div class="modal-footer">
-                </div>
-
-            </div>
-        </div>
-    </div>
-    <!-- /modal -->
 
     <!-- jQuery -->
     <script src="assets/js/jquery.min.js"></script>
@@ -293,6 +200,7 @@
     <script src="assets/js/jquery.inputmask/jquery.inputmask.bundle.min.js"></script>
     <!-- JS Scripts -->
     <script src="assets/js/Producto.js"></script>
+    <script src="assets/js/ProductosXBodega.js"></script>
     <script src="assets/js/Bodega.js"></script>
     <!--CAMBIAR por Facuracli-->
     <!-- JS dataTables -->
@@ -307,100 +215,19 @@
 
 </html>
 
-<script>
-    var t = null; // tabla
-    var b = null; // tabla
+<script>    
     $(document).ready(function () {
-        bodega.id = null;
-        bodega.readByUser;
-
-        //ordenCompra.Init();
+        //$('#nombrebodega').text($(this).parents("tr").find("td").eq(2).text());
+        productobodega.setTable();	
+        productobodega.Read;
+        //
         $('#btnSubmit').click(function () {
-            producto.ActualizarPrecios();
-        });
-        //Valida si se presiona enter -> carga el producto en la lista
-        //si preciona "*" -> Quita el "*", pasa el punto de insercion a la cantidad y selecciona el valor para ser reemplazdo con el teclado
-        $("#p_searh").keyup(function (e) {
-            if (e.which == 13) {
-                // Acciones a realizar, por ej: enviar formulario.
-                producto.LoadProducto();
-            }
+            // producto.ActualizarPrecios();
         });
 
         // Recarga la página para limpiar todo
         $('#reload').click(function () {
             location.reload();
         });
-
-        $('#dsItemsBodega tbody').on('dblclick', 'tr', function () {
-            var data = b.row(this).data();
-            alert('You clicked on ' + data[0] + '\'s row');
-        });
-
-        // productos
-        t = $('#dsItems').DataTable({
-            responsive: true,
-            "ordering": false,
-            "searching": true,
-            "paging": true,
-            "info": false, //Quita el pie de pagina
-            "language": {
-                "infoEmpty": "No hay productos agregados",
-                "emptyTable": "No hay productos agregados",
-                "search": "Buscar En Productos" //Cambia el texto de Search
-            },
-            "columns": [
-                { "title": "id" },
-                { "title": "Codigo" },
-                { "title": "Nombre" },
-                { "title": "costoPromedio" },
-                { "title": "precioVenta" }
-            ],
-            "columnDefs": [
-                {//id
-                    "targets": 0,
-                    "visible": false,
-                    "searchable": false,
-                    "className": "itemId",
-                },
-                {
-                    "width": "25%", "targets": 3,
-                    "data": null,
-                    "defaultContent": '<input class="cantidad form-control" readonly>'
-                },
-                {
-                    "width": "25%", "targets": 4,
-                    "data": null,
-                    "defaultContent": '<input class="cantidad form-control" type="number">'
-                }
-            ]
-        });
-        // bodegas
-        b = $('#dsItemsBodega').DataTable({
-            responsive: true,
-            ordering: false,
-            searching: true,
-            paging: true,
-            info: false, //Quita el pie de pagina
-            language: {
-                infoEmpty: "No hay bodegas agregadas",
-                emptyTable: "No hay bodegas agregadas",
-                search: "Buscar en bodegas" //Cambia el texto de Search
-            },
-            columns: [
-                { title: "id" },
-                { title: "Nombre" },
-                { title: "Descripción" },
-                { title: "Tipo" }
-            ],
-            columnDefs: [
-                {//id
-                    targets: 0,
-                    visible: false,
-                    searchable: false,
-                    className: "itemId",
-                }
-            ]
-        });
-    });
+    });        
 </script>
