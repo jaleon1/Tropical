@@ -26,7 +26,7 @@ if(isset($_POST["action"])){
             echo json_encode($ordenSalida->ReadbyOrden());
             break;
         case "Update":
-            $ordenSalida->Update();
+        echo json_encode($ordenSalida->Update());
             break;
         case "Delete":
             echo json_encode($ordenSalida->Delete());
@@ -185,13 +185,17 @@ class OrdenSalida{
     function Update(){
         try {
             $sql="UPDATE tropical.ordenSalida SET idUsuarioRecibe=:idUsuarioRecibe WHERE id=:id";
-             $param= array(':id'=>$this->id,':idUsuarioRecibe'=>$this->idUsuarioRecibe);
+            $param= array(':id'=>$this->id,':idUsuarioRecibe'=>$this->idUsuarioRecibe);
             $data = DATA::Ejecutar($sql,$param,false);
             if($data){
+                $sql="SELECT numeroOrden FROM tropical.ordenSalida WHERE id=:id;";
+                $param= array(':id'=>$this->id);
+                $numeroOrden=DATA::Ejecutar($sql,$param);
+
                 //update array obj
                 if($this->listaInsumo!=null)
                     if(InsumosxOrdenSalida::Update($this->listaInsumo))
-                        return true;            
+                        return $numeroOrden;            
                     else throw new Exception('Error al guardar la orden de salida.', 03);
                 else {
                     // no tiene roles
@@ -240,6 +244,13 @@ class OrdenSalida{
                 $sessiondata['msg']='Registro en uso'; 
                 return $sessiondata;           
             }                    
+            //Volver a sumar al Inventario de Insumos
+            //Selecciona lista de insumos ligados a la orden
+            $sql="SELECT idInsumo, idOrdenSalida, cantidad FROM insumosXOrdenSalida WHERE idOrdenSalida=:idOrdenSalida;";
+            $param= array(':idOrdenSalida'=>$this->id);
+            $cantidadinsumos= DATA::Ejecutar($sql, $param);
+            InsumosxOrdenSalida::UpdateSaldoCantidadInsumo2($cantidadinsumos);
+            
             $sql='DELETE FROM ordenSalida  
             WHERE id=:id';
             $param= array(':id'=>$this->id);

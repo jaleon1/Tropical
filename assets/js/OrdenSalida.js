@@ -177,36 +177,16 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
     showInfo(e) {e
         /* IMPRIMIR */
         ordenSalida.ticketPrint(e);
-        $(".close").click();
-        swal({
-            
-            type: 'success',
-            title: 'Good!',
-            showConfirmButton: false,
-            timer: 1000
-        });
     };
 
     ticketPrint(e){
         var data = JSON.parse(e);
         localStorage.setItem("lsNumeroOrden",data[0][0]);
         localStorage.setItem("lsFechaOrdensalida",ordenSalida.fecha);
-        localStorage.setItem("lsUsuarioRecibe",$("#usuarioRecibe").val());
+        localStorage.setItem("lsUsuarioRecibe",$("#nombre").val());
         localStorage.setItem("lsListaInsumo",JSON.stringify(this.listaInsumo));
 
         location.href ="/Tropical/TicketOrdenSalida.html";
-        
-        // $("#numeroOrden").val(data[0][0]);
-        // $("#fechaOrdenSalida").val(ordenSalida.fecha);
-        // $("#usuarioRecibe").val('Jairo León');
-        // $.each(this.listaInsumo, function (i, item) {
-        //     $('#tableBody-TicketOrdenSalida').append(`
-        //         <tr> 
-        //             <td>${item.nombreInsumo}</td>
-        //             <td class="itemId">${item.cantidad}</td>
-        //         </tr>
-        //     `);
-        // }) 
     }
 
     // Muestra errores en ventana
@@ -367,9 +347,15 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
     }
 
     UpdateEventHandler() {
-        // 
-        ordenSalida.id = $(this).parents("tr").find(".itemId").text(); //Class itemId = ID del objeto.
-        ordenSalida.Read;
+            ordenSalida.id = $(this).parents("tr").find(".itemId").text(); //Class itemId = ID del objeto.
+            
+            if($(this).parents("tr").find("td:eq(9)").html()=="LIQUIDADO"){
+                swal({
+                    type: 'info',
+                    title: 'La orden ya ha sido liquidada, No se puede modificar...'                    
+                });            
+            }
+            ordenSalida.Read;     
     };
 
     ShowItemData(e) {
@@ -499,7 +485,7 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
                 this.listaInsumo = data.listaInsumo;
                 $("#numeroOrden").val(data.numeroOrden);
                 $("#dt_fecha").val(data.fecha);
-                $("#usuarioEntrega").val(data.usuarioEntrega);
+                $("#nombre").val(data.usuarioEntrega);
                 $("#usuarioRecibe").val(data.usuarioRecibe); 
                 
                 ordenSalida.listaInsumoCantidad = [];

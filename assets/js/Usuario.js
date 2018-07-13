@@ -24,7 +24,7 @@ class Usuario {
     }
     //Getter
     get Read() {
-        NProgress.start();
+        // NProgress.start();
         var miAccion = this.id == null ? 'ReadAll' : 'Read';
         if(miAccion=='ReadAll' && $('#tUsuario tbody').length==0 )
             return;
@@ -42,7 +42,7 @@ class Usuario {
             .fail(function (e) {
                 usuario.showError(e);
             })
-            .always(NProgress.done());
+            .always(/*NProgress.done()*/);
     }
 
     get Save() {
