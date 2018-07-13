@@ -228,10 +228,10 @@ class Producto {
         $("#bgColor").val('');
         $("#nombreAbreviado").val('');
         $("#descripcion").val('');
-        $("#saldoCantidad").val('');
-        $("#saldoCosto").val('');
-        $("#costoPromedio").val('');
-        $("#precioVenta").val(''); 
+        $("#saldoCantidad").val('0');
+        $("#saldoCosto").val('0');
+        $("#costoPromedio").val('0');
+        $("#precioVenta").val('0'); 
         $('#tipoProducto option').prop("selected", false);
         $("#tipoProducto").selectpicker("refresh");
     };
@@ -453,6 +453,16 @@ class Producto {
                 producto.AgregaProducto();
                 producto.ResetSearch();
             }
+        }
+        else {
+            swal({
+                type: 'warning',
+                title: 'Determinación de Producto',
+                text: 'El producto No existe.',
+                showConfirmButton: false,
+                timer: 3000
+            });
+            return;
         }
     };
 

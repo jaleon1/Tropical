@@ -169,7 +169,8 @@ class Usuario {
         if($("#rol").length>0)
             $("#rol").selectpicker("refresh");
         $('#selbodega option').prop("selected", false);
-        $("#selbodega").selectpicker("refresh");
+        if($("#selbodega").length>0)
+            $("#selbodega").selectpicker("refresh");
         //
         $('#checkusername').removeClass('fa-check-circle');
         $('#checkusername').removeClass('fa-times-circle');

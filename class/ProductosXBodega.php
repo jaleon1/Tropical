@@ -144,17 +144,43 @@ class ProductosXBodega{
         }
     }
 
-    function Create(){
+    // function Create2_borrar_si_no_se_usa(){
+    //     try {
+    //         $sql="INSERT INTO preciosXBodega (id, idBodega, idProducto, cantidad, costo) VALUES (uuid(),:idBodega, :idProducto, :cantidad, 
+    //         (SELECT SUM(costo) FROM insumosxproducto WHERE idProductoTemporal=:idProductoTemporal) );";
+    //         //
+    //         $param= array(':idBodega'=>$this->idBodega, ':idProducto'=>$this->idProducto, ':cantidad'=>$this->cantidad,':idProductoTemporal'=>$_POST["idProductoTemporal"]);
+    //         $data = DATA::Ejecutar($sql,$param, false);
+    //         $sql2 = "UPDATE elaborarProducto SET estado=1 WHERE id=:idProductoTemporal";
+    //         $param2=array(':idProductoTemporal'=>$_POST["idProductoTemporal"]);
+    //         $data2 = DATA::Ejecutar($sql2, $param2, false);
+    //         if($data && $data2)
+    //         {
+    //             return true;
+    //         }
+    //         else throw new Exception('Error al guardar.', 02);
+    //     }     
+    //     catch(Exception $e) {
+    //         header('HTTP/1.0 400 Bad error');
+    //         die(json_encode(array(
+    //             'code' => $e->getCode() ,
+    //             'msg' => $e->getMessage()))
+    //         );
+    //     }
+    // }
+
+    function create(){
         try {
-            $sql="INSERT INTO preciosXBodega (id, idBodega, idProducto, cantidad, costo) VALUES (uuid(),:idBodega, :idProducto, :cantidad, 
-            (SELECT SUM(costo) FROM insumosxproducto WHERE idProductoTemporal=:idProductoTemporal) );";
+            $sql="INSERT INTO preciosXBodega (id, idBodega, tamano, precioVenta) 
+                VALUES (uuid(), :idBodega, :tamano, :precioVenta);";
             //
-            $param= array(':idBodega'=>$this->idBodega, ':idProducto'=>$this->idProducto, ':cantidad'=>$this->cantidad,':idProductoTemporal'=>$_POST["idProductoTemporal"]);
+            $this->tamano=0;
+            $param= array(':idBodega'=>$this->idBodega, ':tamano'=>$this->tamano, ':precioVenta'=>$this->precioVenta );
             $data = DATA::Ejecutar($sql,$param, false);
-            $sql2 = "UPDATE elaborarProducto SET estado=1 WHERE id=:idProductoTemporal";
-            $param2=array(':idProductoTemporal'=>$_POST["idProductoTemporal"]);
-            $data2 = DATA::Ejecutar($sql2, $param2, false);
-            if($data && $data2)
+            $this->tamano=1;
+            $param= array(':idBodega'=>$this->idBodega, ':tamano'=>$this->tamano, ':precioVenta'=>$this->precioVenta );
+            $data = DATA::Ejecutar($sql, $param, false);
+            if($data)
             {
                 return true;
             }

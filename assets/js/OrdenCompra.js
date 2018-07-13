@@ -226,6 +226,7 @@ class OrdenCompra {
         $('#proveedor').val("");
         $('#orden').val("");
         $('#productos').html("");
+        t.clear();
     };
 
     ResetSearch() {
