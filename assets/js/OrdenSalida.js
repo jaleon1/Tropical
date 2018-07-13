@@ -443,6 +443,7 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
                 $("#fecha").val(data.fecha);
                 $("#usuarioEntrega").val(data.usuarioEntrega);
                 $("#usuarioRecibe").val(data.usuarioRecibe);
+                
                 if (ordenSalida.idEstado==0) 
                     $('#estado option:contains("EN PROCESO")')
                 else
@@ -500,7 +501,7 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
                 $("#dt_fecha").val(data.fecha);
                 $("#usuarioEntrega").val(data.usuarioEntrega);
                 $("#usuarioRecibe").val(data.usuarioRecibe); 
-
+                
                 ordenSalida.listaInsumoCantidad = [];
                 $('#tableBody-InsumosOrdenSalida tr').each(function() {
                     var objInsumo = new Object();
