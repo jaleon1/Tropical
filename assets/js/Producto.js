@@ -454,6 +454,16 @@ class Producto {
                 producto.ResetSearch();
             }
         }
+        else {
+            swal({
+                type: 'warning',
+                title: 'Determinación de Producto',
+                text: 'El producto No existe.',
+                showConfirmButton: false,
+                timer: 3000
+            });
+            return;
+        }
     };
 
     ResetSearch() {
