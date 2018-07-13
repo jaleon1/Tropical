@@ -53,7 +53,7 @@ var Session=  {
         );
         $('#call_name').text(n);
         // bodega
-        $('.menuName').text(b);
+        $('.call_Bodega').text(b);
 
     },
     setMenu(eventos){        

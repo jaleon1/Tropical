@@ -24,7 +24,8 @@ $(document).ready(function () {
             url: "class/Usuario.php",
             data: {
                 action: 'setBodega',               
-                idBodega: data.idBodega
+                idBodega: data.idBodega,
+                nombre: data.nombre
             }        
         })
         .done(function( e ) {       

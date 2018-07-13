@@ -208,8 +208,10 @@ class Usuario{
                         // Bodegas del usuario
                         $this->bodegas= usuariosXBodega::Read($this->id);
                         // si solo tiene una bodega, asigna la sesion.
-                        if(count($this->bodegas)==1)
+                        if(count($this->bodegas)==1){
                             $this->idBodega= $this->bodegas[0]->idBodega;
+                            $this->bodega= $this->bodegas[0]->nombre;
+                        }
                     }
                     else { // password invalido
                         unset($_SESSION["userSession"]);
@@ -467,6 +469,7 @@ class Usuario{
 
     function setBodega(){
         $_SESSION["userSession"]->idBodega= $_POST['idBodega'];
+        $_SESSION["userSession"]->bodega= $_POST['nombre'];
     }
 
 }
