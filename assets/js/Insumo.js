@@ -141,9 +141,9 @@ class Insumo {
         $("#codigo").val('');
         $("#nombre").val('');
         $("#descripcion").val('');
-        $("#saldoCantidad").val('');
-        $("#saldoCosto").val('');
-        $("#costoPromedio").val('');
+        $("#saldoCantidad").val('0');
+        $("#saldoCosto").val('0');
+        $("#costoPromedio").val('0');
     };
 
     ShowAll(e) {
