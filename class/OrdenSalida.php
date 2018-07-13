@@ -240,6 +240,8 @@ class OrdenSalida{
                 $sessiondata['msg']='Registro en uso'; 
                 return $sessiondata;           
             }                    
+            //Volver a sumar al Inventario de Insumos
+            
             $sql='DELETE FROM ordenSalida  
             WHERE id=:id';
             $param= array(':id'=>$this->id);

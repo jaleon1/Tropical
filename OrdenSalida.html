@@ -263,7 +263,7 @@
                                                         <span class="required">*</span>
                                                     </label>
                                                     <div class="col-md-6 col-sm-6 col-xs-12">
-                                                        <input id="usuarioRecibe" class="form-control col-md-7 col-xs-12" name="usuarioRecibe" required="required" data-validate-minmax="1,99999" placeholder="Seleccione Usuario" readonly>
+                                                        <input id="nombre" class="form-control col-md-7 col-xs-12" name="nombre" required="required" data-validate-minmax="1,99999" placeholder="Seleccione Usuario" readonly>
                                                     </div>
                                                 </div>
                                             </div>
@@ -416,7 +416,7 @@
                                             <div id="datatable_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
                                                 <div class="row">
                                                     <div class="col-sm-12">
-                                                        <table id="dsUsuario" class="table table-striped table-bordered dataTable no-footer jambo_table " role="grid" aria-describedby="datatable_info">
+                                                        <!-- <table id="dsUsuario" class="table table-striped table-bordered dataTable no-footer jambo_table " role="grid" aria-describedby="datatable_info">
                                                             <thead>
                                                                 <tr role="row" class="headings">
                                                                 </tr>
@@ -425,6 +425,10 @@
                                                             <tbody id="tableBody-Usuario">
                                                             </tbody>
         
+                                                        </table> -->
+                                                        <table id="tUsuario" class="table display responsive table-striped jambo_table no-wrap" width="100%" role="grid" aria-describedby="datatable_info">
+                                                            <tbody id="tbodyUsuario">
+                                                            </tbody>
                                                         </table>
                                                     </div>
                                                 </div>
@@ -502,6 +506,7 @@
         var now = moment(dateTime).format("YYYY-MM-DD HH:mm:ss A");
         $('#dt_fecha').val(now);
         if(localStorage.getItem("lsPrintOK")=="OK"){
+            localStorage.getItem("lsPrintOK")="NOT";
             $(".close").click();
             swal({
                 position: 'top-end',
