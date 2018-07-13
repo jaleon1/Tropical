@@ -35,9 +35,9 @@ function sendRef(a){
 };
 
 function addNumber(a){
-        //21 numeros maximo
-        $('.valPago').val($('.valPago').val()+a)   
-        validarMonto (); 
+    //21 numeros maximo
+    $('.valPago').val($('.valPago').val()+a)   
+    validarMonto (); 
 };
 
 function addRef(a){
@@ -57,12 +57,19 @@ function validarMonto (){
     totalXPagar = parseFloat($('#total')["0"].textContent.replace("¢", ""));
     // parseFloat($('#total').val());
     if (( $('.valPago').val() ) >= totalXPagar) {
+        document.getElementById('vuelto').style.color = '#FF0000';
+
+        document.getElementById("vuelto").textContent = ("Su vuelto: " + ( (totalXPagar * -1) + parseFloat( $('.valPago').val() ) ).toString() );
+
         var element = document.getElementsByClassName("Nosend")[0];
         element.classList.add("green", "letter", "send");        
         // element.classList.add("letter");
         element.classList.remove("Nosend");
     }
     else {
+        document.getElementById('vuelto').style.color = '#73879C';
+
+        document.getElementById("vuelto").textContent = ("Su vuelto: ");
         var element2 = document.getElementsByClassName("send")[0];
         element2.classList.add("Nosend");
         element2.classList.remove("letter", "send", "green");
@@ -85,67 +92,60 @@ function validarRef (){
 
 
 function enter(){
-    crearFactura();
-    crearDetalle();
-    crearOrden();
+    facturar();
 };
 
 
 function crearFactura (){ 
-    // INSERT INTO factura (id, fechaCreacion, consecutivo, local, terminal, 
-    //                     idCondicionVenta,idSituacionComprobante,idEstadoComprobante, 
-    //                     idMedioPago,fechaEmision, totalVenta, totalDescuentos,
-    //                     totalVentaneta, totalImpuesto, totalComprobante, idEmisor)
-
-    // VALUES (uuid(), "2018-07-08 22:00", "000000003", "001", "00001", 
-    //         1, 1, "1",
-    //         1, "Dom 08 de julio 2018", 18.00000,18.00000,
-    //         18.00000, 18.00000, 18.00000,uuid());
 
     var miAccion = 'Create';    
-    var prdVenta = new Object();    
-   
-    $(t.rows().data()).each(function (i, item) {
-        prdVenta.idTamano =  item[0];
-        prdVenta.idSabor1 = item[2];
-        prdVenta.idSabor2 = item[4];
-        prdVenta.idTopping = item[6];
-        prdVenta.detalle = `${item[1]}, ${item[3]}, ${item[5]}, ${item[7]}`;     
-        prdVenta.numLinea = i; 
-        prdVenta.cant = 1;
+    var facVenta = new Object();   
+    facVenta.totalVenta = 0; 
 
+    $(t.rows().data()).each(function (i, item) {
+
+        switch (item[0]) {
+            case (0):
+                facVenta.totalVenta = facVenta.totalVenta + parseFloat(precioMediano);
+                break;
+            case (1):
+                facVenta.totalVenta = facVenta.totalVenta + parseFloat(precioGrande);
+                break;
+        };    
+          
         $.ajax({
             type: "POST",
-            url: "class/OrdenXFactura.php",
+            url: "class/Factura.php",
             data: {
                 action: miAccion,
-                obj: JSON.stringify(prdVenta)
+                obj: JSON.stringify(facVenta)
             }
         })
         .done(function(e){
             // muestra el numero de orden: IMPRIMIR.
-            var data = JSON.parse(e)[0];
-            swal({
-                type: 'success',
-                title: 'Número de Orden:' + data.orden,
-                text: 'Número de orden de Distribución:',
-                showConfirmButton: true
-            });
+            //var facUUID = JSON.parse(e)[0];    
+            var facUUID = "3b31b046-75eb-11e8-abed-f2f00eda2018";
+            crearDetalle(facUUID);
+            // swal({
+            //     type: 'success',
+            //     title: 'Número de Orden:' + data.orden,
+            //     text: 'Número de orden de Distribución:',
+            //     showConfirmButton: true
+            // });
         })
         .fail(function (e) {
             distr.showError(e);
         })
-        .always(function () {
-            location.reload();
-        });
+        // .always(function () {
+        //     location.reload();
+        // });
     });
    
 
 };
 
-
-function crearDetalle(){
-    // INSERT INTO productosXFactura   (id, idFactura, idPrecio, numeroLinea, cantidad, idUnidadMedida,
+function crearDetalle(facUUID){
+ // INSERT INTO productosXFactura   (id, idFactura, idPrecio, numeroLinea, cantidad, idUnidadMedida,
     //                                 detalle, precioUnitario, montoTotal, 
     //                                 subTotal, montoTotalLinea)
     // VALUES  (uuid(), uuid(), uuid(), 5, 1.000, 33, 
@@ -154,20 +154,27 @@ function crearDetalle(){
 
     var miAccion = 'Create';    
     var prdVenta = new Object();
-
-    prdVenta.idFactura="3b31b046-75eb-11e8-abed-f2f00eda2018";
-
+    prdVenta.idFactura = facUUID;
 
     $(t.rows().data()).each(function (i, item) {
-        prdVenta.idTamano =  item[0];
-        prdVenta.idSabor1 = item[2];
-        prdVenta.idSabor2 = item[4];
-        prdVenta.idTopping = item[6];
+        switch (item[0]) {
+            case (0):
+                prdVenta.totalVenta = parseFloat(precioMediano);
+                break;
+            case (1):
+                prdVenta.totalVenta = parseFloat(precioGrande);
+                break;
+        };    
+        prdVenta.numeroLinea = i;
+        // prdVenta.idTamano =  item[0];
+        // prdVenta.idSabor1 = item[2];
+        // prdVenta.idSabor2 = item[4];
+        // prdVenta.idTopping = item[6];
         prdVenta.detalle = `${item[1]}, ${item[3]}, ${item[5]}, ${item[7]}`;      
 
         $.ajax({
             type: "POST",
-            url: "class/OrdenXFactura.php",
+            url: "class/ProductoXFactura.php",
             data: {
                 action: miAccion,
                 obj: JSON.stringify(prdVenta)
@@ -175,20 +182,156 @@ function crearDetalle(){
         })
         .done(function(e){
             // muestra el numero de orden: IMPRIMIR.
-            var data = JSON.parse(e)[0];
-            swal({
-                type: 'success',
-                title: 'Número de Orden:' + data.orden,
-                text: 'Número de orden de Distribución:',
-                showConfirmButton: true
-            });
+            // var facUUID = JSON.parse(e)[0];
+            var facUUID = "3b31b046-75eb-11e8-abed-f2f00eda2018";
+            crearOrden(facUUID);
+            // swal({
+            //     type: 'success',
+            //     title: 'Número de Orden:' + data.orden,
+            //     text: 'Número de orden de Distribución:',
+            //     showConfirmButton: true
+            // });
         })
         .fail(function (e) {
             distr.showError(e);
         })
-        .always(function () {
-            location.reload();
-        });
+        // .always(function () {
+        //     location.reload();
+        // });
     });
 
 };
+
+function crearOrden(facUUID){
+         // INSERT INTO detalleOrden (id, tamano, idFactura, idSabor1, idSabor2, idTopping, estado)
+        // VALUES (uuid(), 1, uuid(), uuid(), uuid(), uuid(), 1);
+   
+        var miAccion = 'Create';    
+        var newOrden = new Object();
+        newOrden.idFactura = facUUID;    
+    
+        $(t.rows().data()).each(function (i, item) {
+            newOrden.idTamano =  item[0];
+            newOrden.idSabor1 = item[2];
+            newOrden.idSabor2 = item[4];
+            newOrden.idTopping = item[6];
+
+            $.ajax({
+                type: "POST",
+                url: "class/OrdenXFactura.php",
+                data: {
+                    action: miAccion,
+                    obj: JSON.stringify(newOrden)
+                }
+            })
+            .done(function(e){
+                swal({
+                    type: 'success',
+                    // title: 'Número de Orden:' + data.orden,
+                    text: 'Número de orden de Distribución:',
+                    showConfirmButton: true
+                });
+            })
+            .fail(function (e) {
+                distr.showError(e);
+            })
+            .always(function () {
+                location.reload();
+            });
+        });
+
+};
+
+
+function facturar (){
+    var miAccion = 'Create';   
+    facturaCli.totalVenta = 0;
+    facturaCli.detalleFactura = [];
+    facturaCli.detalleOrden = [];
+    
+
+    $(t.rows().data()).each(function (i, item) {
+
+        var precioUnitario;
+        var idPrecio;
+        switch (item[0]) {
+            case (0):
+                precioUnitario = parseFloat(precioMediano.precio);
+                idPrecio = precioMediano.id;
+                // facturaCli.totalVenta = facturaCli.totalVenta + parseFloat(precioMediano);
+                break;
+            case (1):
+                precioUnitario = parseFloat(precioGrande.precio);
+                idPrecio = precioGrande.id;
+                // facturaCli.totalVenta = facturaCli.totalVenta + parseFloat(precioGrande);
+                break;
+        }; 
+
+        facturaCli.totalVenta = facturaCli.totalVenta + precioUnitario;
+
+        var objetoDetalleFactura = new Object();
+        objetoDetalleFactura.numeroLinea = i+1;
+        objetoDetalleFactura.precioUnitario = precioUnitario;
+        objetoDetalleFactura.detalle = `${item[1]}, ${item[3]}, ${item[5]}, ${item[7]}`;
+        objetoDetalleFactura.idPrecio = idPrecio;
+        facturaCli.detalleFactura.push(objetoDetalleFactura);
+
+
+        var objetoDetalleOrden = new Object();
+    
+        objetoDetalleOrden.idTamano = item[0];
+        objetoDetalleOrden.idSabor1 = item[2];
+        objetoDetalleOrden.idSabor2 = item[4];
+        objetoDetalleOrden.idTopping = item[6];
+
+        facturaCli.detalleOrden.push(objetoDetalleOrden);
+
+    }); 
+
+    $.ajax({
+        type: "POST",
+        url: "class/Factura.php",
+        data: {
+            action: miAccion,
+            obj: JSON.stringify(facturaCli)
+        }
+    })
+    .done(function(e){
+        // muestra el numero de orden: IMPRIMIR.
+        //var facUUID = JSON.parse(e)[0];    
+        swal({
+            type: 'success',
+            title: 'Orden enviada',
+            text: 'Número de orden de Distribución:',
+            showConfirmButton: true
+        });
+    })
+    .fail(function (e) {
+        distr.showError(e);
+    })
+    .always(function () {
+        location.reload();
+    });
+// });
+
+    // detalleFactura.totalVenta = lineaXFactura;
+    
+
+    ///////////////////////////////////////
+    //           Crea la ORDEN           //
+    ///////////////////////////////////////
+    // var newOrden = new Object();
+    // newOrden.idFactura = facUUID;    
+
+    // $(t.rows().data()).each(function (i, item) {
+    //     newOrden[i].idTamano =  item[0];
+    //     newOrden[i].idSabor1 = item[2];
+    //     newOrden[i].idSabor2 = item[4];
+    //     newOrden[i].idTopping = item[6];
+
+          
+       
+
+}
+
+

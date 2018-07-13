@@ -1,106 +1,33 @@
 <?php
-if(isset($_POST["action"])){
-    $opt= $_POST["action"];
-    unset($_POST['action']);
-    // Classes
     require_once("Conexion.php");
-    // Session
-    if (!isset($_SESSION))
-        session_start();
-    // Instance
-    $producto= new Producto();
-    switch($opt){
-        case "ReadAll":
-            echo json_encode($producto->ReadAll());
-            break;
-        case "Read":
-            echo json_encode($producto->Read());
-            break;
-        case "Create":
-            $producto->Create();
-            break;
-        case "Update":
-            $producto->Update();
-            break;
-        case "Delete":
-            $producto->Delete();
-            break;   
-        case "CheckRelatedItems":  
-            echo json_encode($producto->CheckRelatedItems());
-            break;  
-        case "ReadByCode":  
-            echo json_encode($producto->ReadByCode());
-            break;
-    }
-}
-class Producto{
-    // id, idFactura, idPrecio, numeroLinea, cantidad, idUnidadMedida, 
-        // detalle, precioUnitario, montoTotal, montoDescuento, naturalezaDescuento,         
-//         subTotal, codigoImpuesto, tarifaImpuesto, montoImpuesto, montoTotalLinea
+class OrdenXFactura{
 
-// VALUES (uuid(), uuid(), uuid(), 5, 1.000, 33, 
-// "COPOS", 1800.00, 1800.00, 0.00, "nada", 
-// 1800.00, "1", 13.00, 130.00, 1930);
+    public static $id=null;
+    // public $idTamano=null;
+    // public $idSabor1=null;
+    // public $idSabor2=null;
+    // public $idTopping=null;
+    // public $estado='0';
 
-    public $idTamano=null;
-    public $idSabor1=null;
-    public $idSabor2=null;
-    public $idTopping=null;
-    public $estado='0';
+    // public $id=null;
+    // public $idFactura=null;
+    // public $idPrecio=null;
+    // public $numeroLinea=0;
+    // public $cantidad=0.000;
+    // public $idUnidadMedida=33; //codigo "33" para unidades
 
-    public $id=null;
-    public $idFactura=null;
-    public $idPrecio=null;
-    public $numeroLinea=0;
-    public $cantidad=0.000;
-    public $idUnidadMedida=33; //codigo "33" para unidades
+    // public $detalle='';
+    // public $precioUnitario=0.00;
+    // public $montoTotal=0.00;
+    // public $montoDescuento=0.00;
+    // public $naturalezaDescuento='';
 
-    public $detalle='';
-    public $precioUnitario=0.00;
-    public $montoTotal=0.00;
-    public $montoDescuento=0.00;
-    public $naturalezaDescuento='';
+    // public $subTotal=0.00;
+    // public $codigoImpuesto='';
+    // public $tarifaImpuesto=13.00;
+    // public $montoImpuesto=0.00;
+    // public $montoTotalLinea=0.00;
 
-    public $subTotal=0.00;
-    public $codigoImpuesto='';
-    public $tarifaImpuesto=13.00;
-    public $montoImpuesto=0.00;
-    public $montoTotalLinea=0.00;
-
-    function __construct(){
-        require_once("Conexion.php");
-
-        // identificador único
-        if(isset($_POST["id"])){
-            $this->id= $_POST["id"];
-        }
-        if(isset($_POST["obj"])){
-            // INSERT INTO detalleOrden (id, tamano, idFactura, idSabor1, idSabor2, idTopping, estado)
-            // VALUES (uuid(), 1, uuid(), uuid(), uuid(), uuid(), 1);
-
-            $obj= json_decode($_POST["obj"],true);
-            $this->idFactura= $obj["idFactura"] ?? null;
-            $this->idTamano= $obj["idTamano"] ?? null;
-            $this->idSabor1= $obj["idSabor1"] ?? null;
-            $this->idSabor2= $obj["idSabor2"] ?? null;
-            $this->idTopping= $obj["idTopping"] ?? null;            
-            $this->numLinea= $obj["numLinea"] ?? '';
-            $this->cant= $obj["cant"] ?? 0;
-            $this->detalle= $obj["detalle"] ?? '';
-
-            // //Categorias del producto.
-            // if(isset($obj["listaCategoria"] )){
-            //     require_once("CategoriasXProducto.php");
-            //     //
-            //     foreach ($obj["listaCategoria"] as $idcat) {
-            //         $catprod= new CategoriasXProducto();
-            //         $catprod->idcategoria= $idcat;
-            //         $catprod->idProducto= $this->id;
-            //         array_push ($this->listaCategoria, $catprod);
-            //     }
-            // }
-        }
-    }
     function ReadAll(){
         try {
             $sql='SELECT id, nombre, cantidad, scancode, cantidad, precio , codigoRapido
@@ -178,25 +105,31 @@ class Producto{
             );
         }
     }
-    function Create(){
+    public static function Create($obj){
         
         // INSERT INTO detalleOrden (id, tamano, idFactura, idSabor1, idSabor2, idTopping, estado)
         // VALUES (uuid(), 1, uuid(), uuid(), uuid(), uuid(), 1);
 
         try {
-            $sql="INSERT INTO detalleOrden (id, tamano, idFactura, idSabor1, idSabor2, idTopping, estado)
+            $estado = 1;
+            foreach ($obj as $item) {
+                                
+                $sql="INSERT INTO detalleOrden (id, tamano, idFactura, idSabor1, idSabor2, idTopping, estado)
                 VALUES (uuid(), :tamano, :idFactura, :idSabor1, :idSabor2, :idTopping, :estado)";              
-            //
-            $param= array(':tamano'=>$this->idTamano,':idFactura'=>$this->idFactura,':idSabor1'=>$this->idSabor1, ':idSabor2'=>$this->idSabor2, ':idTopping'=>$this->idTopping, ':estado'=>$this->estado);
-            $data = DATA::Ejecutar($sql,$param,false);
-            if($data)
-            {
-                //save array obj
-                //if(CategoriasXProducto::Create($this->listaCategoria))
+                //
+                $param= array(':tamano'=>$item->idTamano,':idFactura'=>self::$id,':idSabor1'=>$item->idSabor1, ':idSabor2'=>$item->idSabor2, ':idTopping'=>$item->idTopping, ':estado'=>$estado);
+                $data = DATA::Ejecutar($sql,$param,false);
+                if($data)
+                {
+                    //save array obj
+                    //if(CategoriasXProducto::Create($this->listaCategoria))
                     return true;
-                //else throw new Exception('Error al guardar las categorias.', 03);
-            }
-            else throw new Exception('Error al guardar.', 02);
+                    //else throw new Exception('Error al guardar las categorias.', 03);
+                }
+                else throw new Exception('Error al guardar.', 02);
+
+                }
+                return $created;
         }     
         catch(Exception $e) {
             header('HTTP/1.0 400 Bad error');

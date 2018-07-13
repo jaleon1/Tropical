@@ -1,16 +1,16 @@
 class FacturaCli {
     // Constructor
-    constructor(id, cajero, producto, descuento, total, fechaCreacion, importe, t, idUsuario, idcliente) {
+    constructor(id, totalVenta, detalleOrden, detalleFactura) {
         this.id = id || null;
-        this.cajero = cajero || '';
-        this.idUsuario = idUsuario || '';
-        this.idcliente = idcliente || '';
-        this.descuento = descuento || 0;
-        this.producto = producto || new Array(new Array());
-        this.total = total || '';
-        this.fechaCreacion = fechaCreacion || null;
-        this.importe = importe || 0;
-        this.t = t || null;
+        this.totalVenta = totalVenta || '';
+        this.detalleFactura = detalleFactura || new Array();
+        this.detalleOrden = detalleOrden || new Array();
+        // this.descuento = descuento || 0;
+        // this.producto = producto || new Array(new Array());
+        // this.total = total || '';
+        // this.fechaCreacion = fechaCreacion || null;
+        // this.importe = importe || 0;
+        // this.t = t || null;
     }
 }
 
@@ -22,8 +22,11 @@ toppings = 1; //cantidad maxima de toppings a elegir
 sel_tamano = 0; //almacena el tamaño seleccionados
 precioXTamano = 0; //almacena el tamaño seleccionados
 
-precioMediano = 0;
-precioGrande = 0;
+var precioMediano = new Object();
+var precioGrande = new Object();
+
+precioGrande.precio = 0;
+precioMediano.precio = 0
 
 $(function()
 {
@@ -154,7 +157,7 @@ function LoadAllPrdVenta() {
 function LoadPreciosTamanos() {
     $.ajax({
         type: "POST",
-        url: "class/ProductoXFactura.php",
+        url: "class/Factura.php",
         data: {
             action: "LoadPreciosTamanos"
         }
@@ -172,9 +175,11 @@ function setPrecios(e){
 
     $.each(precios, function (i, item) {
         if (item.tamano == 1){
-            precioGrande = item.precioVenta;
+            precioGrande.precio = item.precioVenta;
+            precioGrande.id = item.id;
         }else if (item.tamano == 0){
-            precioMediano = item.precioVenta;    
+            precioMediano.precio = item.precioVenta;
+            precioMediano.id = item.id;
         }
     });
 };
@@ -404,9 +409,9 @@ function calcTotal() {
     if (t.columns().data()[1].length != 0) {
         $(t.columns().data()[0]).each(function (i, item) {
             if (item == 1){
-                total = total + parseFloat(precioGrande);
+                total = total + parseFloat(precioGrande.precio);
             }else if (item == 0){
-                total = total + parseFloat(precioMediano);
+                total = total + parseFloat(precioMediano.precio);
             }     
             $("#total").html("¢" + total);  
 
