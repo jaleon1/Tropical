@@ -90,6 +90,37 @@ class InsumosxOrdenSalida{
             return false;
         }
     }
+
+    public static function UpdateSaldoCantidadInsumo2($insumo){
+        try {
+            $created = true;
+            for ($i=0; $i < count($insumo)-1; $i++) { 
+                //Selecciona la cantidad de Insumos
+                $sql_insumo="SELECT saldoCantidad FROM insumo WHERE id=:idInsumo";
+                $param_insumo= array(':idInsumo'=>$insumo[$i]['idInsumo']);
+                $cantidadinsumo = DATA::Ejecutar($sql_insumo,$param_insumo);
+                
+                //Selecciona la cantidad de Insumos
+                $sql_insumo="SELECT cantidad FROM insumosXOrdenSalida WHERE idOrdenSalida=:idOrdenSalida AND idInsumo=:idInsumo";
+                $param_orden= array(':idOrdenSalida'=>$insumo[$i]['idOrdenSalida'],':idInsumo'=>$insumo[$i]['idInsumo']);
+                $cantidadorden = DATA::Ejecutar($sql_insumo,$param_orden);
+                
+                $saldoCantidad = $cantidadinsumo[0][0] + $cantidadorden[0][0];
+
+                //Actualiza la cantidad de Insumos
+                $sql_insumo="UPDATE insumo SET saldoCantidad=:saldoCantidad WHERE id=:idInsumo";
+                $param= array(':saldoCantidad'=>$saldoCantidad, ':idInsumo'=>$insumo[$i]['idInsumo']);
+                $data_insumo = DATA::Ejecutar($sql_insumo,$param,false);
+            
+                if(!$data_insumo)
+                $created= false;
+            }
+            return $created;
+        }     
+        catch(Exception $e) {
+            return false;
+        }
+    }
     
     public static function Update($obj){
         try {

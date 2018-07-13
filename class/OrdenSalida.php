@@ -241,6 +241,11 @@ class OrdenSalida{
                 return $sessiondata;           
             }                    
             //Volver a sumar al Inventario de Insumos
+            //Selecciona lista de insumos ligados a la orden
+            $sql="SELECT idInsumo, idOrdenSalida, cantidad FROM insumosXOrdenSalida WHERE idOrdenSalida=:idOrdenSalida;";
+            $param= array(':idOrdenSalida'=>$this->id);
+            $cantidadinsumos= DATA::Ejecutar($sql, $param);
+            InsumosxOrdenSalida::UpdateSaldoCantidadInsumo2($cantidadinsumos);
             
             $sql='DELETE FROM ordenSalida  
             WHERE id=:id';

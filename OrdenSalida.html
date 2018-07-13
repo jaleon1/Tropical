@@ -502,7 +502,7 @@
         var now = moment(dateTime).format("YYYY-MM-DD HH:mm:ss A");
         $('#dt_fecha').val(now);
         if(localStorage.getItem("lsPrintOK")=="OK"){
-            localStorage.getItem("lsPrintOK")="NOT";
+            localStorage.setItem("lsPrintOK","NOT");
             $(".close").click();
             swal({
                 position: 'top-end',

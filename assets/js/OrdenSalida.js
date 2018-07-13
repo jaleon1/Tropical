@@ -177,14 +177,14 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
     showInfo(e) {e
         /* IMPRIMIR */
         ordenSalida.ticketPrint(e);
-        $(".close").click();
-        swal({
+        // $(".close").click();
+        // swal({
             
-            type: 'success',
-            title: 'Good!',
-            showConfirmButton: false,
-            timer: 1000
-        });
+        //     type: 'success',
+        //     title: 'Good!',
+        //     showConfirmButton: false,
+        //     timer: 1000
+        // });
     };
 
     ticketPrint(e){
