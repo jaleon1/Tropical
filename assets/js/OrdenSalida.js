@@ -44,7 +44,8 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
         $('#btnOrdenSalida').attr("disabled", "disabled");
         var miAccion = this.id == null ? 'Create' : 'Update';
         this.fecha = $("#dt_fecha").val();
-        this.usuarioRecibe = ordenSalida.idUsuarioRecibe;
+        // this.usuarioRecibe = ordenSalida.idUsuarioRecibe;
+        this.usuarioRecibe = usuario.id;
         this.estado = 0;
         // lista de insumos
         ordenSalida.listaInsumo = [];

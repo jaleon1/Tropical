@@ -11,6 +11,17 @@ class Usuario {
         this.bodegas = b || null;
     }
 
+    get tUpdate()  {
+        return this.update ="update"; 
+    }
+
+    get tSelect()  {
+        return this.select = "select";
+    }
+
+    set viewEventHandler(_t) {
+        this.viewType = _t;        
+    }
     //Getter
     get Read() {
         // NProgress.start();
@@ -152,9 +163,11 @@ class Usuario {
         $("#password").val('');
         $("#repetir").val('');
         $("#email").val('');
-        $("#activo")[0].checked=true;        
+        if($("#activo").length>0)
+            $("#activo")[0].checked=true;        
         $('#rol option').prop("selected", false);
-        $("#rol").selectpicker("refresh");
+        if($("#rol").length>0)
+            $("#rol").selectpicker("refresh");
         $('#selbodega option').prop("selected", false);
         $("#selbodega").selectpicker("refresh");
         //
@@ -171,12 +184,33 @@ class Usuario {
         // eventos
         $('.update').click(usuario.UpdateEventHandler);
         $('.delete').click(usuario.DeleteEventHandler);
-        $('#tUsuario tbody tr').dblclick(usuario.UpdateEventHandler);
+        $('#tUsuario tbody tr').dblclick(usuario.viewType==undefined || usuario.viewType==usuario.tUpdate ? usuario.UpdateEventHandler : usuario.SelectEventHandler);
     };
 
     UpdateEventHandler() {
         usuario.id = $(this).parents("tr").find(".itemId").text() || $(this).find(".itemId").text(); //Class itemId = ID del objeto.
         usuario.Read;
+    };
+
+    SelectEventHandler() {
+        // Limpia el controles
+        //bodega.ClearCtls();
+        // carga objeto.
+        usuario= new Usuario();
+        usuario.id = $(this).parents("tr").find(".itemId").text() || $(this).find(".itemId").text();
+        usuario.nombre = $(this).parents("tr").find("td:eq(1)").text() || $(this).find("td:eq(1)").text();
+        usuario.username = $(this).parents("tr").find("td:eq(2)").text() || $(this).find("td:eq(2)").text();
+        usuario.email = $(this).parents("tr").find("td:eq(3)").text() || $(this).find("td:eq(3)").text();
+        // Asigna objeto a controles
+        $("#nombre").val(usuario.nombre);
+        $("#username").val(usuario.descripcion);
+        $("#email").val(usuario.tipo);
+        // oculta el modal   
+        $('#modalUsuario').modal('toggle');
+        // $("#usuarioRecibe").val($(this).parents("tr").find("td:eq(2)").html());
+        // ordenSalida.idUsuarioRecibe = $(this).parents("tr").find("td:eq(1)").html();
+        // $('#modal-usuarioRecibe').modal('toggle');
+        // $("#estado").focus();
     };
 
     ShowItemData(e) {

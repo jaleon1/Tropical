@@ -35,7 +35,7 @@
     <link href="../vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css" rel="stylesheet">
     <link href="../vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css" rel="stylesheet">
     <link href="../vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css" rel="stylesheet">
-    <link href="../vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css" rel="stylesheet">    
+    <link href="../vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom Theme Style -->
     <link href="assets/css/custom.css" rel="stylesheet">
@@ -74,7 +74,7 @@
                         <div class="menu_section">
                             <h3 class="menuName"></h3>
                             <ul id="menubox" class="nav side-menu">
-                                
+
                             </ul>
                         </div>
                     </div>
@@ -169,15 +169,15 @@
                                                 <table id="dsInsumosOrdenSalida" class="table table-striped jambo_table bulk_action" role="grid" aria-describedby="datatable_info">
                                                     <thead>
                                                         <tr role="row" class="headings">
-                                                                <th class='itemId'>ID</th>
-                                                                <th class='oculto'>Coigo</th>
-                                                                <th>Nombre</th>
-                                                                <th>Cantidad</th>
-                                                                <th class='oculto'>Descripción</th>
-                                                                <th class='oculto'>Saldo Cantidad</th>
-                                                                <th class='oculto'>Saldo Costo</th>
-                                                                <th class='oculto'>Costo Promedio</th>
-                                                                <th>Acción</th>
+                                                            <th class='itemId'>ID</th>
+                                                            <th class='oculto'>Coigo</th>
+                                                            <th>Nombre</th>
+                                                            <th>Cantidad</th>
+                                                            <th class='oculto'>Descripción</th>
+                                                            <th class='oculto'>Saldo Cantidad</th>
+                                                            <th class='oculto'>Saldo Costo</th>
+                                                            <th class='oculto'>Costo Promedio</th>
+                                                            <th>Acción</th>
                                                         </tr>
                                                     </thead>
 
@@ -218,34 +218,35 @@
                                         <span class="section">Inserte los datos Generales
 
                                         </span>
-                                        
+
                                         <div class="row">
                                             <div class="col-sm-11">
                                                 <div class="item form-group ">
                                                     <label class="control-label col-md-3 col-sm-3 col-xs-12" for="valor">Número de Orden
-                                            
+
                                                     </label>
                                                     <div class="col-md-6 col-sm-6 col-xs-12">
-                                                        <input id="numeroOrden" class="form-control col-md-7 col-xs-12" name="numeroOrden" data-validate-minmax="1,99999" placeholder="Nueva" readonly="readonly">
+                                                        <input id="numeroOrden" class="form-control col-md-7 col-xs-12" name="numeroOrden" data-validate-minmax="1,99999" placeholder="Nueva"
+                                                            readonly="readonly">
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="col-sm-1">
-                                                
+
                                             </div>
                                         </div>
-                                        
+
                                         <div class="row">
                                             <div class="col-sm-11">
                                                 <div class="item form-group ">
                                                     <label class="control-label col-md-3 col-sm-3 col-xs-12" for="valor">Fecha
-                                                        
+
                                                     </label>
                                                     <div class="col-md-6 col-sm-6 col-xs-12">
                                                         <div class="input-group date" id="myDatepicker1">
-                                                            <input id="dt_fecha" type="text" class="form-control"  readonly>
+                                                            <input id="dt_fecha" type="text" class="form-control" readonly>
                                                             <span class="input-group-addon">
-                                                               <span class="glyphicon glyphicon-calendar"></span>
+                                                                <span class="glyphicon glyphicon-calendar"></span>
                                                             </span>
                                                         </div>
                                                     </div>
@@ -263,12 +264,13 @@
                                                         <span class="required">*</span>
                                                     </label>
                                                     <div class="col-md-6 col-sm-6 col-xs-12">
-                                                        <input id="nombre" class="form-control col-md-7 col-xs-12" name="nombre" required="required" data-validate-minmax="1,99999" placeholder="Seleccione Usuario" readonly>
+                                                        <input id="nombre" class="form-control col-md-7 col-xs-12" name="usuarioRecibe" required="required" data-validate-minmax="1,99999"
+                                                            placeholder="Seleccione Usuario" readonly>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="col-sm-1">
-                                                <button id="btnAddUsuarioRecibe" data-toggle="modal" data-target=".bs-example-modal-lg-usuarioRecibe" type="button" class="btn btn-info btn-lg">+</button>
+                                                <button id="btnAddUsuarioRecibe" data-toggle="modal" data-target=".bs-modal-usuario" type="button" class="btn btn-info btn-lg">+</button>
                                             </div>
                                         </div>
 
@@ -399,7 +401,7 @@
                             </div>
                         </div>
                     </div>
-                    <div id="modal-usuarioRecibe" class="modal fade bs-example-modal-lg-usuarioRecibe" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div id="modalUsuario" class="modal fade bs-modal-usuario" tabindex="-1" role="dialog" aria-hidden="true">
                         <div class="modal-dialog modal-lg">
                             <div class="modal-content">
 
@@ -413,26 +415,20 @@
                                 <div class="modal-body">
                                     <form class="form-horizontal form-label-left" id="frmUsuarioRecibe" novalidate>
                                         <span class="section">Usuarios</span>
-                                            <div id="datatable_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
-                                                <div class="row">
-                                                    <div class="col-sm-12">
-                                                        <!-- <table id="dsUsuario" class="table table-striped table-bordered dataTable no-footer jambo_table " role="grid" aria-describedby="datatable_info">
-                                                            <thead>
+
+                                        <div class="row">
+                                            <table id="tUsuario" class="table display responsive table-striped jambo_table no-wrap" width="100%" role="grid" aria-describedby="datatable_info"></table>
+                                            <!-- <thead>
                                                                 <tr role="row" class="headings">
                                                                 </tr>
-                                                            </thead>
-        
-                                                            <tbody id="tableBody-Usuario">
-                                                            </tbody>
-        
-                                                        </table> -->
-                                                        <table id="tUsuario" class="table display responsive table-striped jambo_table no-wrap" width="100%" role="grid" aria-describedby="datatable_info">
-                                                            <tbody id="tbodyUsuario">
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                                            </thead> -->
+
+                                            <tbody id="tbodyUsuario">
+                                            </tbody>
+
+                                            </table>
+                                        </div>
+
                                         <div class="ln_solid"></div>
                                     </form>
                                 </div>
@@ -489,9 +485,9 @@
     <script src="assets/js/custom.min.js"></script>
     <!-- Custom Theme Scripts -->
     <!-- <script src="../build/js/custom.min.js"></script> -->
-    <!-- Moment -->    
+    <!-- Moment -->
     <!-- <script src="assets/bootstrap/js/moment.js"></script> -->
-    <!-- bootstrap-datetimepicker -->    
+    <!-- bootstrap-datetimepicker -->
     <script src="assets/bootstrap/js/bootstrap-datetimepicker.min.js"></script>
 </body>
 
@@ -501,7 +497,7 @@
     $(document).ready(function () {
         ordenSalida.Init();
         $('#myDatepicker1').datetimepicker();
-        $('#myDatepicker2').datetimepicker({format:'YYYY-MM-DD hh:mm:ss A'});
+        $('#myDatepicker2').datetimepicker({ format: 'YYYY-MM-DD hh:mm:ss A' });
         var dateTime = new Date();
         var now = moment(dateTime).format("YYYY-MM-DD HH:mm:ss A");
         $('#dt_fecha').val(now);
@@ -524,8 +520,10 @@
         insumo.Init();
     });
 
-    $(document).on('click', '#btnAddUsuarioRecibe', function (event) {    
+    $(document).on('click', '#btnAddUsuarioRecibe', function (event) {
         usuario.id = null;
+        usuario.viewEventHandler = usuario.tSelect;
+        usuario.setTable(false);
         usuario.Read;
         usuario.Init();
     });
