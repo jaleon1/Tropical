@@ -1,83 +1,33 @@
 <?php
-if(isset($_POST["action"])){
-    $opt= $_POST["action"];
-    unset($_POST['action']);
-    // Classes
     require_once("Conexion.php");
-    // Session
-    if (!isset($_SESSION))
-        session_start();
-    // Instance
-    $producto= new Producto();
-    switch($opt){
-        case "ReadAll":
-            echo json_encode($producto->ReadAll());
-            break;
-        case "Read":
-            echo json_encode($producto->Read());
-            break;
-        case "Create":
-            $producto->Create();
-            break;
-        case "Update":
-            $producto->Update();
-            break;
-        case "Delete":
-            $producto->Delete();
-            break;   
-        case "CheckRelatedItems":  
-            echo json_encode($producto->CheckRelatedItems());
-            break;  
-        case "ReadByCode":  
-            echo json_encode($producto->ReadByCode());
-            break;
-    }
-}
-class Producto{
-    public $id=null;
-    public $nombre='';
-    public $cantidad=0;
-    public $scancode='';
-    public $precio=0;
-    public $codigoRapido='';
-    public $idcategoria='';
-    public $fechaExpiracion=null;
-    public $descripcion='';
-    public $codigo='';
-    public $articulo=0;
-    function __construct(){
-        require_once("Conexion.php");
-        //require_once("Log.php");
-        //require_once('Globals.php');
-        //
-        // identificador único
-        if(isset($_POST["id"])){
-            $this->id= $_POST["id"];
-        }
-        if(isset($_POST["obj"])){
-            $obj= json_decode($_POST["obj"],true);
-            $this->id= $obj["id"] ?? null;
-            $this->nombre= $obj["nombre"] ?? '';
-            $this->descripcion= $obj["descripcion"] ?? '';
-            $this->cantidad= $obj["cantidad"] ?? 0;            
-            $this->scancode= $obj["scancode"] ?? '';
-            $this->precio= $obj["precio"] ?? 0;
-            $this->codigoRapido= $obj["codigoRapido"] ?? 0;
-            $this->idcategoria= $obj["idcategoria"] ?? null;
-            $this->fechaExpiracion= $obj["fechaExpiracion"] ?? null;
-            //Categorias del producto.
-            if(isset($obj["listaCategoria"] )){
-                require_once("CategoriasXProducto.php");
-                //
-                foreach ($obj["listaCategoria"] as $idcat) {
-                    $catprod= new CategoriasXProducto();
-                    $catprod->idcategoria= $idcat;
-                    $catprod->idProducto= $this->id;
-                    array_push ($this->listaCategoria, $catprod);
-                }
-            }
-        }
-    }
+class OrdenXFactura{
+
+    public static $id=null;
+    // public $idTamano=null;
+    // public $idSabor1=null;
+    // public $idSabor2=null;
+    // public $idTopping=null;
+    // public $estado='0';
+
+    // public $id=null;
+    // public $idFactura=null;
+    // public $idPrecio=null;
+    // public $numeroLinea=0;
+    // public $cantidad=0.000;
+    // public $idUnidadMedida=33; //codigo "33" para unidades
+
+    // public $detalle='';
+    // public $precioUnitario=0.00;
+    // public $montoTotal=0.00;
+    // public $montoDescuento=0.00;
+    // public $naturalezaDescuento='';
+
+    // public $subTotal=0.00;
+    // public $codigoImpuesto='';
+    // public $tarifaImpuesto=13.00;
+    // public $montoImpuesto=0.00;
+    // public $montoTotalLinea=0.00;
+
     function ReadAll(){
         try {
             $sql='SELECT id, nombre, cantidad, scancode, cantidad, precio , codigoRapido
@@ -155,21 +105,31 @@ class Producto{
             );
         }
     }
-    function Create(){
+    public static function Create($obj){
+        
+        // INSERT INTO detalleOrden (id, tamano, idFactura, idSabor1, idSabor2, idTopping, estado)
+        // VALUES (uuid(), 1, uuid(), uuid(), uuid(), uuid(), 1);
+
         try {
-            $sql="INSERT INTO producto   (id,nombre, cantidad, scancode, precio ,codigoRapido, idcategoria, fechaExpiracion, descripcion)
-                VALUES (uuid(),:nombre, :cantidad, :scancode, :precio ,:codigoRapido, :idcategoria, :fechaExpiracion, :descripcion)";              
-            //
-            $param= array(':nombre'=>$this->nombre,':cantidad'=>$this->cantidad,':scancode'=>$this->scancode, ':precio'=>$this->precio, ':codigoRapido'=>$this->codigoRapido, ':idcategoria'=>$this->idcategoria, ':fechaExpiracion'=>$this->fechaExpiracion, ':descripcion'=>$this->descripcion );
-            $data = DATA::Ejecutar($sql,$param,false);
-            if($data)
-            {
-                //save array obj
-                //if(CategoriasXProducto::Create($this->listaCategoria))
+            $estado = 1;
+            foreach ($obj as $item) {
+                                
+                $sql="INSERT INTO detalleOrden (id, tamano, idFactura, idSabor1, idSabor2, idTopping, estado)
+                VALUES (uuid(), :tamano, :idFactura, :idSabor1, :idSabor2, :idTopping, :estado)";              
+                //
+                $param= array(':tamano'=>$item->idTamano,':idFactura'=>self::$id,':idSabor1'=>$item->idSabor1, ':idSabor2'=>$item->idSabor2, ':idTopping'=>$item->idTopping, ':estado'=>$estado);
+                $data = DATA::Ejecutar($sql,$param,false);
+                if($data)
+                {
+                    //save array obj
+                    //if(CategoriasXProducto::Create($this->listaCategoria))
                     return true;
-                //else throw new Exception('Error al guardar las categorias.', 03);
-            }
-            else throw new Exception('Error al guardar.', 02);
+                    //else throw new Exception('Error al guardar las categorias.', 03);
+                }
+                else throw new Exception('Error al guardar.', 02);
+
+                }
+                return $created;
         }     
         catch(Exception $e) {
             header('HTTP/1.0 400 Bad error');

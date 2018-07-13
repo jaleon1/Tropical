@@ -1,4 +1,7 @@
 <?php
+date_default_timezone_set('America/Costa_Rica');
+
+
 if(isset($_POST["action"])){
     $opt= $_POST["action"];
     unset($_POST['action']);
@@ -7,6 +10,9 @@ if(isset($_POST["action"])){
     // Session
     if (!isset($_SESSION))
         session_start();
+        
+    require_once("OrdenXFactura.php");
+    require_once("ProductoXFactura.php");
     // Instance
     $factura= new Factura();
     switch($opt){
@@ -25,42 +31,86 @@ if(isset($_POST["action"])){
         case "Delete":
             echo json_encode($factura->Delete());
             break;   
+        case "LoadPreciosTamanos":
+            echo json_encode($factura->LoadPreciosTamanos());
+            break; 
     }
+    
 }
 
 class Factura{
-    public $id=null;
-    public $idUsuario=null;
-    public $fecha=null;
-    //
-    public $subTotal=0;    
-    public $iva=0;
-    public $porcentajeIva=0;
-    public $descuento=0;
-    public $porcentajeDescuento=0;
-    public $total=0;
-    //
-    public $tipoPago='';
-    public $pagaCon=0;
-    public $vuelto=0;
-    //
-    // public $listaProducto= array();
+    ////////////////////////////////////   
+    /////Factura
+    public $local="";
+    public $terminal="";
+    public $idCondicionVenta=null;
+    public $idSituacionComprobante=null;
+    public $idEstadoComprobante="";
+    public $idMedioPago=null;
+    public $fechaEmision="";
+    public $totalVenta=null; //Precio del producto
+    public $totalDescuentos=null;
+    public $totalVentaneta=null;
+    public $totalImpuestos=null;
+    public $totalComprobante=null;
+    public $idEmisor=null;
+    public $detalleFactura = [];
+    public $detalleOrden = [];
+    ///////////////////////////////////
     
     function __construct(){
         // identificador único
         if(isset($_POST["id"])){
             $this->id= $_POST["id"];
         }
+
         if(isset($_POST["obj"])){
             $obj= json_decode($_POST["obj"],true);
+            //Necesarias para la factura (Segun M Hacienda)
             require_once("UUID.php");
             $this->id= $obj["id"] ?? UUID::v4();
-            $this->idUsuario= $obj["idUsuario"] ?? '';
-            $this->idcliente= $obj["idcliente"] ?? '';
-            $this->fecha= $obj["fecha"] ?? '';
-            $this->producto= $obj["producto"] ?? 0;          
-            $this->impventas= $obj["impuesto"] ?? '';
-            $this->descuento= $obj["descuento"] ?? '';            
+            $this->totalVenta= $obj["totalVenta"] ?? 0;
+
+            $this->fechaCreacion= $obj["fechaCreacion"] ?? '';
+            $this->local= $obj["local"] ?? '001';
+            $this->terminal= $obj["terminal"] ?? '00001';
+            $this->idCondicionVenta= $obj["idCondicionVenta"] ?? 1;          
+            $this->idSituacionComprobante= $obj["idSituacionComprobante"] ?? 1;
+            $this->idEstadoComprobante= $obj["idEstadoComprobante"] ?? '1';
+            $this->idMedioPago= $obj["idMedioPago"] ?? '1';
+            $this->fechaEmision= $obj["fechaEmision"] ?? '';
+            $this->totalDescuentos= $obj["totalDescuentos"] ?? 0;
+            $this->totalVentaneta= $obj["totalVentaneta"] ?? 0;
+            $this->totalImpuesto= $obj["totalImpuesto"] ?? 0;
+            $this->totalComprobante= $obj["totalComprobante"] ?? 0;
+            $this->idEmisor= "1f85f425-1c4b-4212-9d97-72e413cffb3c";
+
+            if(isset($obj["detalleFactura"] )){
+
+                foreach ($obj["detalleFactura"] as $itemDetalle) {
+                    $item= new ProductoXFactura();
+                    $item->precioUnitario= $itemDetalle['precioUnitario'];
+                    $item->detalle= $itemDetalle['detalle'];
+                    $item->numeroLinea= $itemDetalle['numeroLinea'];
+                    $item->idPrecio= $itemDetalle['idPrecio'];
+                    array_push ($this->detalleFactura, $item);
+                }
+            }
+
+
+            if(isset($obj["detalleOrden"] )){
+
+                foreach ($obj["detalleOrden"] as $itemOrden) {
+                    $item= new OrdenXFactura();
+                    $item->idTamano= $itemOrden['idTamano'];
+                    $item->idSabor1= $itemOrden['idSabor1'];
+                    $item->idSabor2= $itemOrden['idSabor2'];
+                    $item->idTopping= $itemOrden['idTopping'];
+                    array_push ($this->detalleOrden, $item);
+                }
+            }
+            
+
             // $this->subTotal= $obj["subTotal"] ?? ''; 
             // $this->iva= $obj["iva"] ?? 0;            
             // $this->porcentajeIva= $obj["porcentajeIva"] ?? 0;
@@ -141,66 +191,32 @@ class Factura{
             );
         }
     }
-/////////////////////////////////////////////
-// function Insert(){
-//     try {
-//         $sql="INSERT INTO factura   (id, usuario, fecha, impventas, cliente, descuento)
-//             VALUES (uuid(), :usuario, :fecha, :impventas, :cliente, :descuento)"; 
-//         $param= array(':usuario'=>$this->usuario,':cliente'=>$this->cliente, ':fecha'=>$this->fecha, 'impventas'=>$this->impventas, 'descuento'=>$this->descuento);
-//         $data = DATA::Ejecutar($sql,$param,false);
-//         if($data)
-//         {
-//             foreach ($this->producto as $insprod) {
-//                 $sql="INSERT INTO productosxfactura   (idfactura, idProducto, precio, cantidad)
-//                     VALUES (:idfactura, :idProducto, :precio, :cantidad)";              
-//                 //
-//                 $param= array(':idfactura'=>"ad23718a-5fec-11e8-af02-c85b76da12f5",':idProducto'=>$insprod[0], ':precio'=>$insprod[3], ':cantidad'=>$insprod[4]);
-//                 $data = DATA::Ejecutar($sql,$param,false);
-//                 if($data)
-//                 {
-//                     // return true;
-//                 }
-//                 else throw new Exception('Error al guardar.', 02);
-//             }
-//         }
-//         else throw new Exception('Error al guardar.', 02);
-//     }     
-//     catch(Exception $e) {
-//         header('HTTP/1.0 400 Bad error');
-//         die(json_encode(array(
-//             'code' => $e->getCode() ,
-//             'msg' => $e->getMessage()))
-//         );
-//     }
-// }
-/////////////////////////////////////////////
     function Create(){
-        try {
-            // $sql="INSERT INTO factura   (id, idUsuario, fecha, subTotal, iva, porcentajeIva, descuento, porcentajeDescuento, total)
-            //     VALUES (:uuid, :idUsuario, :fecha, :subTotal, :iva, :porcentajeIva, :descuento, :porcentajeDescuento, :total)";
-            //
-            $sql="INSERT INTO factura   (id, idUsuario, idcliente, fecha, impventas, descuento)
-            VALUES (:uuid, :idUsuario, :idcliente, :fecha, :impventas, :descuento)"; 
-        
-            // $param= array(':usuario'=>$this->idUsuario,':cliente'=>$this->cliente, ':fecha'=>$this->fecha, 'impventas'=>$this->impventas, 'descuento'=>$this->descuento);
+        try {   
+
+            $this->fechaCreacion = date("Y-m-d H:i:s");
+            $this->fechaEmision = date("D \d\\e F Y");
+
+            $sql="INSERT INTO factura   (id, fechaCreacion, local, terminal, idCondicionVenta,idSituacionComprobante,idEstadoComprobante, idMedioPago,fechaEmision, totalVenta, totalDescuentos, totalVentaneta, totalImpuesto, totalComprobante, idEmisor)
+                                       
+            VALUES  (:uuid, :fechaCreacion, :local, :terminal, :idCondicionVenta, :idSituacionComprobante, :idEstadoComprobante, :idMedioPago, :fechaEmision, :totalVenta, :totalDescuentos, :totalVentaneta, :totalImpuesto, :totalComprobante, :idEmisor)"; 
        
-            $param= array(':uuid'=>$this->id, ':idUsuario'=>$this->idUsuario, ':idcliente'=>$this->idcliente, ':fecha'=>$this->fecha, 
-            ':impventas'=>$this->impventas, ':descuento'=>$this->descuento);
+            $param= array(':uuid'=>$this->id, ':fechaCreacion'=>$this->fechaCreacion, ':local'=>$this->local, ':terminal'=>$this->terminal, 
+                    ':idCondicionVenta'=>$this->idCondicionVenta, ':idSituacionComprobante'=>$this->idSituacionComprobante, ':idEstadoComprobante'=>$this->idEstadoComprobante, 
+                    ':idMedioPago'=>$this->idMedioPago, ':fechaEmision'=>$this->fechaEmision, ':totalVenta'=>$this->totalVenta, ':totalDescuentos'=>$this->totalDescuentos, 
+                    ':totalVentaneta'=>$this->totalVentaneta, ':totalImpuesto'=>$this->totalImpuesto, ':totalComprobante'=>$this->totalComprobante, ':idEmisor'=>$this->idEmisor);
             $data = DATA::Ejecutar($sql,$param, false);
             if($data)
             {
-                foreach ($this->producto as $insprod) {
-                    $sql="INSERT INTO productosxfactura   (idfactura, idProducto, precio, cantidad)
-                        VALUES (:idfactura, :idProducto, :precio, :cantidad)";              
-                    //
-                    $param= array(':idfactura'=>$this->id,':idProducto'=>$insprod[0], ':precio'=>$insprod[3], ':cantidad'=>$insprod[4]);
-                    $data = DATA::Ejecutar($sql,$param,false);
-                    if($data)
-                    {
-                        // return true;
-                    }
-                    else throw new Exception('Error al guardar.', 02);
+                ProductoXFactura::$id=$this->id;
+                 //save array obj
+                 if(ProductoXFactura::Create($this->detalleFactura)){
+                    // retorna orden autogenerada.
+                    OrdenXFactura::$id=$this->id;
+                    OrdenXFactura::Create($this->detalleOrden);
+                    return true;
                 }
+                else throw new Exception('Error al guardar los productos.', 03);
             }
             else throw new Exception('Error al guardar.', 02);
         }     
@@ -284,6 +300,26 @@ class Factura{
             else throw new Exception('Error al eliminar.', 978);
         }
         catch(Exception $e) {
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }
+    }
+
+    function LoadPreciosTamanos(){
+        try{     
+            $b = $_SESSION['idBodega'];
+            $sql="SELECT id, tamano, precioVenta FROM preciosXBodega where idBodega = :idBodega;";
+            $param= array(':idBodega'=>$b);
+            $data= DATA::Ejecutar($sql,$param);
+            
+            if(count($data))
+                return $data;
+            else return false;
+        }
+        catch(Exception $e){
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
