@@ -53,7 +53,8 @@ class Bodega{
         }
         if(isset($_POST["obj"])){
             $obj= json_decode($_POST["obj"],true);
-            $this->id= $obj["id"] ?? null;
+            require_once("UUID.php");
+            $this->id= $obj["id"] ?? UUID::v4();
             $this->nombre= $obj["nombre"] ?? '';
             $this->ubicacion= $obj["ubicacion"] ?? '';
             $this->descripcion= $obj["descripcion"] ?? '';
@@ -160,13 +161,17 @@ class Bodega{
     function Create(){
         try {
             $sql="INSERT INTO bodega   (id, nombre, ubicacion, descripcion, contacto, telefono, idTipoBodega)
-                VALUES (uuid(), :nombre, :ubicacion, :descripcion, :contacto, :telefono, :tipo)";
+                VALUES (:id, :nombre, :ubicacion, :descripcion, :contacto, :telefono, :tipo);";
             //
-            $param= array(':nombre'=>$this->nombre, ':ubicacion'=>$this->ubicacion, ':descripcion'=>$this->descripcion, 
+            $param= array(':id'=>$this->id, ':nombre'=>$this->nombre, ':ubicacion'=>$this->ubicacion, ':descripcion'=>$this->descripcion, 
                 ':contacto'=>$this->contacto, ':telefono'=>$this->telefono, ':tipo'=>$this->tipo);
             $data = DATA::Ejecutar($sql,$param, false);
             if($data)
             {
+                require_once("productosXBodega.php");
+                $pb = new ProductosXBodega();
+                $pb->idBodega= $this->id;
+                $pb->create();
                 return true;            
             }
             else throw new Exception('Error al guardar.', 02);
