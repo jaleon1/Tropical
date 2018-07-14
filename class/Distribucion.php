@@ -123,20 +123,50 @@ class Distribucion{
         }
     }
 
+    // function Read(){
+    //     try {
+    //         $sql='SELECT id, fecha, orden, idUsuario, idBodega, porcentajeDescuento, porcentajeIva 
+    //             FROM distribucion  
+    //             where id=:id';
+    //         $param= array(':id'=>$this->id);
+    //         $data= DATA::Ejecutar($sql,$param);
+    //         return $data;
+    //     }     
+    //     catch(Exception $e) {
+    //         header('HTTP/1.0 400 Bad error');
+    //         die(json_encode(array(
+    //             'code' => $e->getCode() ,
+    //             'msg' => 'Error al cargar el producto'))
+    //         );
+    //     }
+    // }
+
     function Read(){
         try {
-            $sql='SELECT id, fecha, orden, idUsuario, idBodega, porcentajeDescuento, porcentajeIva 
-                FROM distribucion  
+            $sql='SELECT id, fecha, orden, idUsuario, idBodega, porcentajeDescuento, porcentajeIva
+                FROM distribucion
                 where id=:id';
             $param= array(':id'=>$this->id);
-            $data= DATA::Ejecutar($sql,$param);
-            return $data;
+            $data= DATA::Ejecutar($sql,$param);     
+            if(count($data)){
+                $this->id = $data[0]['id'];
+                $this->fecha = $data[0]['fecha'];
+                $this->idUsuario = $data[0]['idUsuario'];
+                $this->idBodega = $data[0]['idBodega'];
+                $this->porcentajeDescuento = $data[0]['porcentajeDescuento'];
+                $this->porcentajeIva = $data[0]['porcentajeIva'];
+                // productos x distribucion.
+                $this->lista= ProductosXDistribucion::Read($this->id);
+                //
+                return $this;
+            }
+            else return null;
         }     
         catch(Exception $e) {
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
-                'msg' => 'Error al cargar el producto'))
+                'msg' => 'Error al cargar el distribucion'))
             );
         }
     }
