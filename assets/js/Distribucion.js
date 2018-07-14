@@ -353,7 +353,7 @@ class Distribucion {
                 {
                     title: "id",
                     data: "id",
-                    className: "itemId",                    
+                    // className: "itemId",                    
                     searchable: false
                 },
                 { title: "Codigo", data: "codigo" },

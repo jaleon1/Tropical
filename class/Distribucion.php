@@ -95,9 +95,9 @@ class Distribucion{
 
     function ReadbyOrden(){
         try {
-            $sql='SELECT id, fecha, orden, idUsuario, idBodega, porcentajeDescuento, porcentajeIva 
+            $sql='SELECT id, fecha, orden, idUsuario, idBodega, porcentajeDescuento, porcentajeIva
                 FROM distribucion
-                WHERE orden=:orden';
+                WHERE orden=:orden AND estado=0';
             $param= array(':orden'=>$this->orden);
             $data= DATA::Ejecutar($sql,$param);     
             if(count($data)){
@@ -175,7 +175,14 @@ class Distribucion{
     function Aceptar(){
         try {
             $created=true;
-            foreach ($this->lista as $item) {       
+            $sql="UPDATE distribucion
+                SET estado=1, fechaAceptacion= NOW()
+                WHERE id=:id";
+            $param= array(':id'=> $this->id);
+            $data = DATA::Ejecutar($sql,$param,false);
+            // if(!$data)
+            //     // $created=false;
+            foreach ($this->lista as $item) {
                 $sql="CALL spUpdateSaldosPromedioInsumoBodegaEntrada(:nidproducto, :nidbodega, :ncantidad, :ncosto)";
                 $param= array(':nidproducto'=> $item->idProducto, 
                     ':nidbodega'=> $this->idBodega,
