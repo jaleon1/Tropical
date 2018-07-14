@@ -41,7 +41,6 @@
       $("#usuarioRecibe").text(localStorage.getItem("lsUsuarioRecibe"));
       var listaInsumo = localStorage.getItem("lsListaInsumo");
       listaInsumo = JSON.parse(listaInsumo);
-      // $('#tableBody-TicketOrdenSalida').append("<tr><spa>___________________________</spa></tr>");
       $.each(listaInsumo, function (i, item) {
           $('#tableBody-TicketOrdenSalida').append(`
                 <tr> 

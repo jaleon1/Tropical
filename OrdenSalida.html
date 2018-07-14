@@ -496,14 +496,13 @@
         var now = moment(dateTime).format("YYYY-MM-DD HH:mm:ss A");
         $('#dt_fecha').val(now);
         if(localStorage.getItem("lsPrintOK")=="OK"){
-            localStorage.setItem("lsPrintOK","NOT");
-            $(".close").click();
             swal({
-                position: 'top-end',
                 type: 'success',
-                title: 'Good!',
-                showConfirmButton: false,
-                timer: 1000
+                title: 'Número de Orden:' + localStorage.getItem("lsNumeroOrden"),
+                text: 'Número de orden de Salida:',
+                showConfirmButton: true
+            }).then(function () { 
+                localStorage.setItem("lsPrintOK","NOT");    
             });
         }
     });

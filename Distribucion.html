@@ -389,14 +389,14 @@
 
 <script>
     $(document).ready(function () {
-        if(localStorage.getItem("lsOrden")!=null){
+        if(localStorage.getItem("lsPrintOK")=="OK"){
             swal({
                 type: 'success',
                 title: 'Número de Orden:' + localStorage.getItem("lsOrden"),
                 text: 'Número de orden de Distribución:',
                 showConfirmButton: true
             }).then(function () { 
-                localStorage.setItem("lsOrden",null);    
+                localStorage.setItem("lsPrintOK","NOT");    
             });
         }
         

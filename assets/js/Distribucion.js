@@ -82,15 +82,15 @@ class Distribucion {
 
     ticketPrint(e){
         var data = JSON.parse(e);
-        localStorage.setItem("lsOrden",data[0].orden);
+        localStorage.setItem("lsOrden",data.orden);
         localStorage.setItem("lsBodega",$("#nombre").val());
         localStorage.setItem("lsDescripcion",$("#descripcion").val());
         localStorage.setItem("lsSubTotal",$("#subtotal").text());
         localStorage.setItem("lsTotal",$("#total").text());
-        localStorage.setItem("lsFechaDistribucion",data[0].fecha);
-        localStorage.setItem("lsPorcentajeDescuento",data[0].porcentajeDescuento);
-        localStorage.setItem("lsPorcentajeIva",data[0].porcentajeIva);
-        localStorage.setItem("lsListaProducto",JSON.stringify(distr.lista));
+        localStorage.setItem("lsFechaDistribucion",data.fecha);
+        localStorage.setItem("lsPorcentajeDescuento",data.porcentajeDescuento);
+        localStorage.setItem("lsPorcentajeIva",data.porcentajeIva);
+        localStorage.setItem("lsListaProducto",JSON.stringify(data.lista));
 
         location.href ="/Tropical/TicketDistribucion.html";
     }
