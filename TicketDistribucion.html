@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <!-- <link rel="stylesheet" href="style.css"> -->
+  <script src="assets/js/jquery.min.js"></script>
+  <script src="assets/js/Session.js"></script>
+  <!-- <script>Session.Check();</script> -->
+</head>
+
+<body>
+  <div class="ticket">
+    <p class="centrado">TROPICAL SNO.<br>
+      DISTRIBUCION # <label id=orden></label><br>
+      Fecha: <label id="fechaDistribucion"></label><br>
+      Bodega: <label id="bodega"></label><br>
+      Descripcion: <label id="descripcion"></label><br>
+      Usuario: <label id="usuario"></label>
+    </p>
+    <table>
+      <thead>
+        <tr>
+          <th  style="width:60%; text-align:left;">PRODUCTO&nbsp;&nbsp;</th>
+          <th  style="width:40%; text-align:left;">CANTIDAD&nbsp;&nbsp;</th>
+          <th  style="width:40%; text-align:left;">PRECIO</th>
+          <spa>________________________</spa>
+        </tr>
+      </thead>
+      <tbody id="tableBody-TicketDistribucion">
+      </tbody>
+    </table>
+    <p class="centrado">TOTALES<br>
+        Sub Total: <label id=subtotal></label><br>
+        Descuento: <label id="descuento"></label><br>
+        Impuesto de Ventas: <label id="iva"></label><br>
+        TOTAL: <label id="total"></label>
+      </p>
+    <p class="centrado">Orden Distribuida...</p>
+  </div>
+  <script src="assets/js/Distribucion.js"></script>
+</body>
+
+</html>
+
+<script>
+    $(document).ready(function () {
+      $("#orden").text(localStorage.getItem("lsOrden"));
+      $("#fechaDistribucion").text(localStorage.getItem("lsFechaDistribucion"));
+      $("#bodega").text(localStorage.getItem("lsBodega"));
+      $("#descripcion").text(localStorage.getItem("lsDescripcion"));
+    
+      //   $("#usuario").text(localStorage.getItem("lsUsuarioRecibe"));
+    //   var listaProducto = localStorage.getItem("lsListaProducto");
+    //   var subtotal=0;
+    //   var total=0;
+    //   listaProducto = JSON.parse(listaProducto);
+    //   $.each(listaProducto, function (i, item) {
+    //       $('#tableBody-Distribucion').append(`
+    //             <tr> 
+    //                 <td style="width:60%; text-align:left;">${item.nombre}</td>
+    //                 <td style="width:40%; text-align:left;">&nbsp;&nbsp;${item.cantidad}</td>
+    //                 <td style="width:40%; text-align:left;">&nbsp;&nbsp;${item.valor}</td>
+    //             </tr>
+    //         `);
+    //     }) 
+    
+      $("#subtotal").text(localStorage.getItem("lsSubTotal"));
+      $("#descuento").text(localStorage.getItem("lsPorcentajeDescuento"));
+      $("#iva").text(localStorage.getItem("lsPorcentajeIva"));
+      $("#total").text(localStorage.getItem("lsTotal"));
+
+      window.print();
+      localStorage.setItem("lsOrden",$("#orden").text());
+      location.href ="/Tropical/Distribucion.html";
+  });  
+</script>
