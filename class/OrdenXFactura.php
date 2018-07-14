@@ -111,7 +111,7 @@ class OrdenXFactura{
         // VALUES (uuid(), 1, uuid(), uuid(), uuid(), uuid(), 1);
 
         try {
-            $estado = 1;
+            $estado = 0;
             foreach ($obj as $item) {
                                 
                 $sql="INSERT INTO detalleOrden (id, tamano, idFactura, idSabor1, idSabor2, idTopping, estado)
