@@ -151,6 +151,7 @@ class Distribucion{
             if(count($data)){
                 $this->id = $data[0]['id'];
                 $this->fecha = $data[0]['fecha'];
+                $this->orden = $data[0]['orden'];
                 $this->idUsuario = $data[0]['idUsuario'];
                 $this->idBodega = $data[0]['idBodega'];
                 $this->porcentajeDescuento = $data[0]['porcentajeDescuento'];
