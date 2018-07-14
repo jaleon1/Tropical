@@ -54,8 +54,8 @@ class Distribucion{
             $obj= json_decode($_POST["obj"],true);
             require_once("UUID.php");
             $this->id= $obj["id"] ?? UUID::v4();
-            //$this->fecha= $obj["fecha"] ?? '';
-            $this->idBodega= $obj["idBodega"] ?? null;
+            //$this->fecha= $obj["fecha"] ?? '';            
+            $this->idBodega= $obj["idBodega"] ?? $_SESSION["userSession"]->idBodega; // si no está seteada el idBodega, toma el de la sesion.
             $this->porcentajeDescuento= $obj["porcentajeDescuento"] ?? 0;
             $this->porcentajeIva= $obj["porcentajeIva"] ?? '';
             $this->orden= $obj["orden"] ?? '';      
@@ -97,8 +97,8 @@ class Distribucion{
         try {
             $sql='SELECT id, fecha, orden, idUsuario, idBodega, porcentajeDescuento, porcentajeIva
                 FROM distribucion
-                WHERE orden=:orden AND estado=0';
-            $param= array(':orden'=>$this->orden);
+                WHERE orden=:orden AND idBodega=:idBodega AND estado=0';
+            $param= array(':orden'=>$this->orden, ':idBodega'=>$this->idBodega);
             $data= DATA::Ejecutar($sql,$param);     
             if(count($data)){
                 $this->id = $data[0]['id'];

@@ -114,8 +114,9 @@ class Distribucion {
                         
                         type: 'warning',
                         title: 'Orden no encontrada!',
+                        title: 'La Orden no existe o no se encuentra disponible para esta bodega.',
                         showConfirmButton: false,
-                        timer: 1000
+                        timer: 3000
                     });
                 }
                 else distr.ShowItemData(e);
