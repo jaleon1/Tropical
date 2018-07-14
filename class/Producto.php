@@ -388,24 +388,6 @@ class Producto{
             );
         }
     } 
-
-    function ReadPrecioProductoFinal(){
-        try {
-            //    $_SESSION['idBodega'];
-            $sql='SELECT precioVenta FROM preciosXBodega 
-            WHERE idBodega = :idBodega and tamano = :tamano;';
-            $data= DATA::Ejecutar($sql);
-            return $data;
-        }     
-        catch(Exception $e) {
-            header('HTTP/1.0 400 Bad error');
-            die(json_encode(array(
-                'code' => $e->getCode() ,
-                'msg' => 'Error al cargar la lista'))
-            );
-        }
-    }
-
 }
 
 
