@@ -10,7 +10,7 @@ class ProductosXDistribucion{
     //
     public static function Read($id){
         try{
-            $sql="SELECT pd.id, pd.idProducto, pd.cantidad, pd.valor,
+            $sql="SELECT pd.idProducto as id, pd.cantidad, pd.valor,
                     p.codigo, p.nombre, p.descripcion
                 FROM productosXDistribucion pd INNER JOIN producto p on p.id = pd.idProducto	
                 WHERE pd.idDistribucion= :idDistribucion";
@@ -19,8 +19,8 @@ class ProductosXDistribucion{
             $lista = [];
             foreach ($data as $key => $value){
                 $producto = new ProductosXDistribucion();
-                $producto->id = $value['id'];
-                $producto->idProducto = $value['idProducto'];
+                $producto->id = $value['id']; //id del producto.
+                //$producto->idProducto = $value['idProducto'];
                 $producto->cantidad = $value['cantidad'];
                 $producto->precioVenta = $value['valor'];
                 //
