@@ -24,7 +24,7 @@ class Distribucion {
     }
 
     get Save() {
-        if($('#tDistribucion tr').length==0 ){
+        if($('#tDistribucion tbody tr').length==0 ){
             swal({
                 type: 'warning',
                 title: 'Orden de Compra',
@@ -60,7 +60,7 @@ class Distribucion {
         })
             .done(function(e){
                 // muestra el numero de orden: IMPRIMIR.
-                var data = JSON.parse(e)[0];
+                var data = JSON.parse(e);
                 swal({
                     type: 'success',
                     title: 'Número de Orden:' + data.orden,
@@ -353,7 +353,7 @@ class Distribucion {
                 {
                     title: "id",
                     data: "id",
-                    // className: "itemId",                    
+                    className: "itemId",                    
                     searchable: false
                 },
                 { title: "Codigo", data: "codigo" },
