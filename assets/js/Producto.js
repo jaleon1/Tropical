@@ -110,6 +110,7 @@ class Producto {
                 producto.ClearCtls();
                 producto.Read;
                 $("#nombre").focus();
+                producto.ValorDefault();
             });
     }
 
@@ -278,8 +279,8 @@ class Producto {
                 </tr>
             `);
             // event Handler
-            $('.update'+item.id).click(producto.UpdateEventHandler);
-            $('.delete'+item.id).click(producto.DeleteEventHandler);
+            $('#update'+item.id).click(producto.UpdateEventHandler);
+            $('#delete'+item.id).click(producto.DeleteEventHandler);
             if (document.URL.indexOf("ElaborarProducto.html")!=-1) {
                 $('#chk-addproducto'+item.id).change(elaborarProducto.AddProductoEventHandler);
             }
@@ -471,6 +472,13 @@ class Producto {
         });
         $('td:eq(3) input', rowNode).attr({id: ("precio"+producto.id), max:  "9999999999999", min: "0", step:"1", value: producto.precioVenta });
     };
+
+    ValorDefault(){
+        $("#saldoCantidad").val('0');
+        $("#saldoCosto").val('0.00');
+        $("#costoPromedio").val('0.00');
+        $("#precioVenta").val('0.00');
+    }
 
     ActualizarPrecios(){
         producto.lista = [];

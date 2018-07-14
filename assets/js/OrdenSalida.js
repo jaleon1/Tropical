@@ -348,14 +348,15 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
 
     UpdateEventHandler() {
             ordenSalida.id = $(this).parents("tr").find(".itemId").text(); //Class itemId = ID del objeto.
-            
-            if($(this).parents("tr").find("td:eq(9)").html()=="LIQUIDADO"){
-                swal({
-                    type: 'info',
-                    title: 'La orden ya ha sido liquidada, No se puede modificar...'                    
-                });            
-            }
             ordenSalida.Read;     
+            if($(this).parents("tr").find("td:eq(9)").html()=="LIQUIDADO"){              
+                swal ({ 
+                    type: 'info',
+                    title: 'La orden ya ha sido liquidada, No se puede modificar...'                     
+                    }).then(function () { 
+                        $('#btnOrdenSalida').attr("disabled", true);
+                    });
+            }
     };
 
     ShowItemData(e) {

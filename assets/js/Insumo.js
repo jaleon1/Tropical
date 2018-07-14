@@ -58,6 +58,7 @@ class Insumo {
                 insumo.ClearCtls();
                 insumo.Read;
                 $("#nombre").focus();
+                insumo.ValorDefault();
             });
     }
 
@@ -242,6 +243,12 @@ class Insumo {
             }
         })
     };
+
+    ValorDefault(){
+        $("#saldoCantidad").val('0');
+        $("#saldoCosto").val('0.00');
+        $("#costoPromedio").val('0.00');
+    }
 
     Init() {
         // validator.js

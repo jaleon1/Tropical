@@ -56,16 +56,18 @@ class ElaborarProducto{
             $data = DATA::Ejecutar($sql,$param,false);
 
             //averiguar cuantos productos de venta llevo para dividir el costo.
-            $cantidadproducto = count($this->listaProducto);
+            $cantidadproductos = 0;
             foreach ($this->listaProducto as $item) 
             {
-                $costoxproducto = $item->costoPromedio/$cantidadproducto;
+                $cantidadproductos = $cantidadproductos + $item->saldoCantidad;
             }
 
             foreach ($this->listaProducto as $item) 
             {
+                $costounitario = $item->costoPromedio/$cantidadproductos;
+                $totalproducto = $costounitario * $item->saldoCantidad;
                 // Actualiza los saldos y calcula promedio
-                Producto::UpdateSaldoProducto($item->id, $item->saldoCantidad, $costoxproducto);
+                Producto::UpdateSaldoProducto($item->id, $item->saldoCantidad, $totalproducto);
             }
             return $created;
         }     
