@@ -18,9 +18,9 @@
     <table>
       <thead>
         <tr>
-          <th  style="width:60%; text-align:left;">INSUMO</th>
-          <th  style="width:40%; text-align:left;">CANTIDAD</th>
-          <spa>__________________________</spa>
+          <th  style="width:60%; text-align:left;">INSUMO&nbsp;&nbsp;</th>
+          <th  style="width:40%; text-align:left;">&nbsp;&nbsp;CANTIDAD</th>
+          <spa>________________________</spa>
         </tr>
       </thead>
       <tbody id="tableBody-TicketOrdenSalida">
@@ -29,7 +29,7 @@
     <br>
     <p class="centrado">Orden Iniciada...</p>
   </div>
-  <script src="assets/js/Orden<tr>Salida.js"></script>
+  <script src="assets/js/OrdenSalida.js"></script>
 </body>
 
 </html>
@@ -41,7 +41,6 @@
       $("#usuarioRecibe").text(localStorage.getItem("lsUsuarioRecibe"));
       var listaInsumo = localStorage.getItem("lsListaInsumo");
       listaInsumo = JSON.parse(listaInsumo);
-      // $('#tableBody-TicketOrdenSalida').append("<tr><spa>___________________________</spa></tr>");
       $.each(listaInsumo, function (i, item) {
           $('#tableBody-TicketOrdenSalida').append(`
                 <tr> 

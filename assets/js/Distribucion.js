@@ -60,13 +60,14 @@ class Distribucion {
         })
             .done(function(e){
                 // muestra el numero de orden: IMPRIMIR.
-                var data = JSON.parse(e);
-                swal({
-                    type: 'success',
-                    title: 'Número de Orden:' + data.orden,
-                    text: 'Número de orden de Distribución:',
-                    showConfirmButton: true
-                });
+                distr.ticketPrint(e)
+                // var data = JSON.parse(e)[0];
+                // swal({
+                //     type: 'success',
+                //     title: 'Número de Orden:' + data.orden,
+                //     text: 'Número de orden de Distribución:',
+                //     showConfirmButton: true
+                // });
             })
             .fail(function (e) {
                 distr.showError(e);
@@ -78,6 +79,21 @@ class Distribucion {
                 $("#p_searh").focus();
             });
     };
+
+    ticketPrint(e){
+        var data = JSON.parse(e);
+        localStorage.setItem("lsOrden",data.orden);
+        localStorage.setItem("lsBodega",$("#nombre").val());
+        localStorage.setItem("lsDescripcion",$("#descripcion").val());
+        localStorage.setItem("lsSubTotal",$("#subtotal").text());
+        localStorage.setItem("lsTotal",$("#total").text());
+        localStorage.setItem("lsFechaDistribucion",data.fecha);
+        localStorage.setItem("lsPorcentajeDescuento",data.porcentajeDescuento);
+        localStorage.setItem("lsPorcentajeIva",data.porcentajeIva);
+        localStorage.setItem("lsListaProducto",JSON.stringify(data.lista));
+
+        location.href ="/Tropical/TicketDistribucion.html";
+    }
 
     get ReadbyOrden() {
         $('#orden').attr("disabled", "disabled");
