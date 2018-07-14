@@ -7,6 +7,7 @@ if(isset($_POST["action"])){
     unset($_POST['action']);
     // Classes
     require_once("Conexion.php");
+    require_once("Usuario.php");
     // Session
     if (!isset($_SESSION))
         session_start();
@@ -310,9 +311,11 @@ class Factura{
 
     function LoadPreciosTamanos(){
         try{     
-            $b = $_SESSION['idBodega'];
+            // require_once("Rol.php");
+            // require_once("Bodega.php");
+
             $sql="SELECT id, tamano, precioVenta FROM preciosXBodega where idBodega = :idBodega;";
-            $param= array(':idBodega'=>$b);
+            $param= array(':idBodega'=>$_SESSION["userSession"]->idBodega);
             $data= DATA::Ejecutar($sql,$param);
             
             if(count($data))
