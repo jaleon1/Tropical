@@ -95,9 +95,9 @@ class Distribucion{
 
     function ReadbyOrden(){
         try {
-            $sql='SELECT id, fecha, orden, idUsuario, idBodega, porcentajeDescuento, porcentajeIva 
+            $sql='SELECT id, fecha, orden, idUsuario, idBodega, porcentajeDescuento, porcentajeIva
                 FROM distribucion
-                WHERE orden=:orden';
+                WHERE orden=:orden AND estado=0';
             $param= array(':orden'=>$this->orden);
             $data= DATA::Ejecutar($sql,$param);     
             if(count($data)){
@@ -123,20 +123,51 @@ class Distribucion{
         }
     }
 
+    // function Read(){
+    //     try {
+    //         $sql='SELECT id, fecha, orden, idUsuario, idBodega, porcentajeDescuento, porcentajeIva 
+    //             FROM distribucion  
+    //             where id=:id';
+    //         $param= array(':id'=>$this->id);
+    //         $data= DATA::Ejecutar($sql,$param);
+    //         return $data;
+    //     }     
+    //     catch(Exception $e) {
+    //         header('HTTP/1.0 400 Bad error');
+    //         die(json_encode(array(
+    //             'code' => $e->getCode() ,
+    //             'msg' => 'Error al cargar el producto'))
+    //         );
+    //     }
+    // }
+
     function Read(){
         try {
-            $sql='SELECT id, fecha, orden, idUsuario, idBodega, porcentajeDescuento, porcentajeIva 
-                FROM distribucion  
+            $sql='SELECT id, fecha, orden, idUsuario, idBodega, porcentajeDescuento, porcentajeIva
+                FROM distribucion
                 where id=:id';
             $param= array(':id'=>$this->id);
-            $data= DATA::Ejecutar($sql,$param);
-            return $data;
+            $data= DATA::Ejecutar($sql,$param);     
+            if(count($data)){
+                $this->id = $data[0]['id'];
+                $this->fecha = $data[0]['fecha'];
+                $this->orden = $data[0]['orden'];
+                $this->idUsuario = $data[0]['idUsuario'];
+                $this->idBodega = $data[0]['idBodega'];
+                $this->porcentajeDescuento = $data[0]['porcentajeDescuento'];
+                $this->porcentajeIva = $data[0]['porcentajeIva'];
+                // productos x distribucion.
+                $this->lista= ProductosXDistribucion::Read($this->id);
+                //
+                return $this;
+            }
+            else return null;
         }     
         catch(Exception $e) {
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
-                'msg' => 'Error al cargar el producto'))
+                'msg' => 'Error al cargar el distribucion'))
             );
         }
     }
@@ -175,7 +206,14 @@ class Distribucion{
     function Aceptar(){
         try {
             $created=true;
-            foreach ($this->lista as $item) {       
+            $sql="UPDATE distribucion
+                SET estado=1, fechaAceptacion= NOW()
+                WHERE id=:id";
+            $param= array(':id'=> $this->id);
+            $data = DATA::Ejecutar($sql,$param,false);
+            // if(!$data)
+            //     // $created=false;
+            foreach ($this->lista as $item) {
                 $sql="CALL spUpdateSaldosPromedioInsumoBodegaEntrada(:nidproducto, :nidbodega, :ncantidad, :ncosto)";
                 $param= array(':nidproducto'=> $item->idProducto, 
                     ':nidbodega'=> $this->idBodega,

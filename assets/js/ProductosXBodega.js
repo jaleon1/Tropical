@@ -238,7 +238,7 @@ class ProductoBodega {
         // $('.update').click(productobodega.UpdateEventHandler);
         // $('.delete').click(productobodega.DeleteEventHandler);
         // $('#tDeterminacion tbody tr').dblclick(productobodega.viewType==undefined || productobodega.viewType==productobodega.tUpdate ? productobodega.UpdateEventHandler : productobodega.SelectEventHandler);
-        // agregar / editar producto temporal
+        // agregar / editar producto
         //$('#btnAddCantidadCosto').click(productobodega.AddEventHandler);
     };
 

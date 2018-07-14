@@ -24,7 +24,7 @@ class Distribucion {
     }
 
     get Save() {
-        if($('#tDistribucion tr').length==0 ){
+        if($('#tDistribucion tbody tr').length==0 ){
             swal({
                 type: 'warning',
                 title: 'Orden de Compra',
