@@ -78,7 +78,7 @@ class Factura{
             $this->idCondicionVenta= $obj["idCondicionVenta"] ?? 1;          
             $this->idSituacionComprobante= $obj["idSituacionComprobante"] ?? 1;
             $this->idEstadoComprobante= $obj["idEstadoComprobante"] ?? '1';
-            $this->idMedioPago= $obj["idMedioPago"] ?? '1';
+            $this->idMedioPago= $obj["idMedioPago"] ?? 1;
             $this->fechaEmision= $obj["fechaEmision"] ?? '';
             $this->totalDescuentos= $obj["totalDescuentos"] ?? 0;
             $this->totalVentaneta= $obj["totalVentaneta"] ?? 0;
