@@ -109,7 +109,7 @@ class Producto {
                 producto = new Producto();
                 producto.ClearCtls();
                 producto.Read;
-                $("#nombre").focus();
+                $("#codigo").focus();
                 producto.ValorDefault();
             });
     }
