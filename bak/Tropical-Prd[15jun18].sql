@@ -1002,6 +1002,7 @@ CREATE TABLE `proveedor` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
+INSERT INTO proveedor VALUES ('0f8aef81-7400-4a36-93f9-b929d4889d0e','Estándar');
 
 --
 -- Dumping data for table `proveedor`
