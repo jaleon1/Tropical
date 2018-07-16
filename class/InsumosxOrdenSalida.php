@@ -94,27 +94,32 @@ class InsumosxOrdenSalida{
     public static function UpdateSaldoCantidadInsumo2($insumo){
         try {
             $created = true;
-            for ($i=0; $i < count($insumo)-1; $i++) { 
+            foreach($insumo as $ins) { 
                 //Selecciona la cantidad de Insumos
                 $sql_insumo="SELECT saldoCantidad FROM insumo WHERE id=:idInsumo";
-                $param_insumo= array(':idInsumo'=>$insumo[$i]['idInsumo']);
+                $param_insumo= array(':idInsumo'=>$ins['idInsumo']);
                 $cantidadinsumo = DATA::Ejecutar($sql_insumo,$param_insumo);
                 
                 //Selecciona la cantidad de Insumos
                 $sql_insumo="SELECT cantidad FROM insumosXOrdenSalida WHERE idOrdenSalida=:idOrdenSalida AND idInsumo=:idInsumo";
-                $param_orden= array(':idOrdenSalida'=>$insumo[$i]['idOrdenSalida'],':idInsumo'=>$insumo[$i]['idInsumo']);
+                $param_orden= array(':idOrdenSalida'=>$ins['idOrdenSalida'],':idInsumo'=>$ins['idInsumo']);
                 $cantidadorden = DATA::Ejecutar($sql_insumo,$param_orden);
                 
                 $saldoCantidad = $cantidadinsumo[0][0] + $cantidadorden[0][0];
 
                 //Actualiza la cantidad de Insumos
                 $sql_insumo="UPDATE insumo SET saldoCantidad=:saldoCantidad WHERE id=:idInsumo";
-                $param= array(':saldoCantidad'=>$saldoCantidad, ':idInsumo'=>$insumo[$i]['idInsumo']);
+                $param= array(':saldoCantidad'=>$saldoCantidad, ':idInsumo'=>$ins['idInsumo']);
                 $data_insumo = DATA::Ejecutar($sql_insumo,$param,false);
-            
+
                 if(!$data_insumo)
                 $created= false;
             }
+            $sql='DELETE FROM insumosXOrdenSalida  
+            WHERE idOrdenSalida=:idOrdenSalida';
+            $param= array(':idOrdenSalida'=>$insumo[0]['idOrdenSalida']);
+            $data= DATA::Ejecutar($sql, $param, false);
+            
             return $created;
         }     
         catch(Exception $e) {
