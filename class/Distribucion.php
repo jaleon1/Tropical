@@ -97,7 +97,7 @@ class Distribucion{
         try {
             $sql='SELECT id, fecha, orden, idUsuario, idBodega, porcentajeDescuento, porcentajeIva
                 FROM distribucion
-                WHERE orden=:orden AND idBodega=:idBodega AND estado=0';
+                WHERE orden=:orden AND idBodega=:idBodega AND idEstado=0';
             $param= array(':orden'=>$this->orden, ':idBodega'=>$this->idBodega);
             $data= DATA::Ejecutar($sql,$param);     
             if(count($data)){
@@ -207,7 +207,7 @@ class Distribucion{
         try {
             $created=true;
             $sql="UPDATE distribucion
-                SET estado=1, fechaAceptacion= NOW()
+                SET idEstado=1, fechaAceptacion= NOW()
                 WHERE id=:id";
             $param= array(':id'=> $this->id);
             $data = DATA::Ejecutar($sql,$param,false);
