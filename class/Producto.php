@@ -115,9 +115,10 @@ class Producto{
     function ReadAllProductoVenta(){
         try {
             //    $_SESSION['idBodega'];
-            $sql='SELECT id, codigo, nombre, txtColor, bgColor, nombreAbreviado, descripcion, saldoCantidad, saldoCosto, costoPromedio, precioVenta, esVenta
-                FROM     producto   WHERE esVenta=1 or esVenta=2    
-                ORDER BY codigo asc';
+            $sql='SELECT ib.id, p.codigo, p.nombre, p.txtColor, p.bgColor, p.nombreAbreviado, p.descripcion, ib.saldoCantidad, p.esVenta
+            FROM     insumosXBodega as ib  
+            INNER JOIN  producto as p on p.id = ib.idProducto
+            WHERE esVenta=1 or esVenta=2';
             $data= DATA::Ejecutar($sql);
             return $data;
         }     
