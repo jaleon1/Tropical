@@ -34,8 +34,8 @@ CREATE TABLE `bodega` (
   `telefono` varchar(30) DEFAULT NULL,
   `ip` varchar(15) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `fk_idTipoBodega` (`idTipoBodega`),
-  CONSTRAINT `bodega_ibfk_1` FOREIGN KEY (`idTipoBodega`) REFERENCES `tipoBodega` (`id`)
+  KEY `fk_bodega_tipoBodega1_idx` (`idTipoBodega`),
+  CONSTRAINT `fk_bodega_tipoBodega1` FOREIGN KEY (`idTipoBodega`) REFERENCES `tipoBodega` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -45,6 +45,7 @@ CREATE TABLE `bodega` (
 
 LOCK TABLES `bodega` WRITE;
 /*!40000 ALTER TABLE `bodega` DISABLE KEYS */;
+INSERT INTO `bodega` VALUES ('72a5afa7-dcba-4539-8257-ed1e18b1ce94','22a80c9e-5639-11e8-8242-54ee75873a11','Tropical Sno Tres Ríos','Agencia Interna Tropical Sno','San Juan, La Unión','','',NULL);
 /*!40000 ALTER TABLE `bodega` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -83,7 +84,7 @@ CREATE TABLE `clienteFE` (
 
 LOCK TABLES `clienteFE` WRITE;
 /*!40000 ALTER TABLE `clienteFE` DISABLE KEYS */;
-INSERT INTO `clienteFE` VALUES ('1f85f425-1c4b-4212-9d97-72e413cffb3c','91239911',506,'Carlos Chacon',1,'000111870763','Carlos Chacon',1,1,1,1,'San Pedro',1,'84316310',NULL,NULL,'carlos.echc11@gmail.com');
+INSERT INTO `clienteFE` VALUES ('1f85f425-1c4b-4212-9d97-72e413cffb3c','91239911',506,'Gustavo Reyes',1,'000','Tropical Sno',1,1,1,1,'Guadalupe',1,'',NULL,NULL,'');
 /*!40000 ALTER TABLE `clienteFE` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -127,7 +128,15 @@ CREATE TABLE `detalleOrden` (
   `idSabor2` char(36) NOT NULL,
   `idTopping` char(36) NOT NULL,
   `estado` tinyint(1) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `fk_detalleOrden_factura1_idx` (`idFactura`),
+  KEY `fk_detalleOrden_sabor1_idx` (`idSabor1`),
+  KEY `fk_detalleOrden_sabor2_idx` (`idSabor2`),
+  KEY `fk_detalleOrden_topping_idx` (`idTopping`),
+  CONSTRAINT `fk_detalleOrden_sabor1` FOREIGN KEY (`idSabor1`) REFERENCES `insumosXBodega` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_detalleOrden_sabor2` FOREIGN KEY (`idSabor2`) REFERENCES `insumosXBodega` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_detalleOrden_topping` FOREIGN KEY (`idTopping`) REFERENCES `insumosXBodega` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_detalleOrden_factura1` FOREIGN KEY (`idFactura`) REFERENCES `factura` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Detalle de la orden vendida, tamaño, sabores, toppin';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -155,8 +164,16 @@ CREATE TABLE `distribucion` (
   `idBodega` char(36) NOT NULL,
   `porcentajeDescuento` decimal(5,2) NOT NULL DEFAULT '0.00',
   `porcentajeIva` decimal(5,2) DEFAULT '0.00',
+  `idEstado` char(36) NOT NULL DEFAULT '0',
+  `fechaAceptacion` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `id_UNIQUE` (`id`)
+  UNIQUE KEY `id_UNIQUE` (`id`),
+  KEY `fk_distribucion_usuario1_idx` (`idUsuario`),
+  KEY `fk_distribucion_bodega1_idx` (`idBodega`),
+  KEY `fk_distribucion_estado1_idx` (`idEstado`),
+  CONSTRAINT `fk_distribucion_bodega1` FOREIGN KEY (`idBodega`) REFERENCES `bodega` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_distribucion_estado1` FOREIGN KEY (`idEstado`) REFERENCES `estado` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_distribucion_usuario1` FOREIGN KEY (`idUsuario`) REFERENCES `usuario` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -177,7 +194,7 @@ UNLOCK TABLES;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = '' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`storydb`@`%`*/ /*!50003 TRIGGER `tropical`.`distribucion_BEFORE_INSERT` BEFORE INSERT ON `distribucion` FOR EACH ROW
+/*!50003 CREATE*/ /*!50017 DEFINER=`tropicalusr`@`%`*/ /*!50003 TRIGGER `tropical`.`distribucion_BEFORE_INSERT` BEFORE INSERT ON `distribucion` FOR EACH ROW
 BEGIN
 	-- ultima orden
 	SELECT orden
@@ -266,7 +283,7 @@ CREATE TABLE `estado` (
 
 LOCK TABLES `estado` WRITE;
 /*!40000 ALTER TABLE `estado` DISABLE KEYS */;
-INSERT INTO `estado` VALUES ('1ed3a48c-3e44-11e8-9ddb-54ee75873a60','EN PROCESO'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a61','LIQUIDADO');
+INSERT INTO `estado` VALUES ('0','EN PROCESO'),('1','LIQUIDADO');
 /*!40000 ALTER TABLE `estado` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -318,7 +335,7 @@ CREATE TABLE `evento` (
 
 LOCK TABLES `evento` WRITE;
 /*!40000 ALTER TABLE `evento` DISABLE KEYS */;
-INSERT INTO `evento` VALUES ('1ed3a48c-3e44-11e8-9ddb-54ee75873a69','Dashboard','Dashboard.html','Bodega',NULL),('1ed3a48c-3e44-11e8-9ddb-54ee75873a70','Producto','Producto.html','Inventario',NULL),('1ed3a48c-3e44-11e8-9ddb-54ee75873a71','Inventario de Productos','InventarioProducto.html','Inventario',NULL),('1ed3a48c-3e44-11e8-9ddb-54ee75873a72','Factura de Productos','FacturaCli.html','Facturacion',NULL),('1ed3a48c-3e44-11e8-9ddb-54ee75873a73','Inventario de Facturas','InventarioFactura.html','Facturacion',NULL),('1ed3a48c-3e44-11e8-9ddb-54ee75873a74','Nuevo Usuario','Usuario.html','Sistema',NULL),('1ed3a48c-3e44-11e8-9ddb-54ee75873a75','Inventario de Usuarios','InventarioUsuario.html','Sistema',NULL),('1ed3a48c-3e44-11e8-9ddb-54ee75873a76','Nuevo Rol','Rol.html','Sistema',NULL),('1ed3a48c-3e44-11e8-9ddb-54ee75873a77','Inventario de Roles','InventarioRol.html','Sistema',NULL),('1ed3a48c-3e44-11e8-9ddb-54ee75873a78','Insumo','Insumo.html','Inventario',NULL),('1ed3a48c-3e44-11e8-9ddb-54ee75873a79','Inventario de Insumos','InventarioInsumo.html','Inventario',NULL),('1ed3a48c-3e44-11e8-9ddb-54ee75873a80','Elaborar Producto','ElaborarProducto.html','Inventario',NULL),('1ed3a48c-3e44-11e8-9ddb-54ee75873a82','Bodega','Bodega.html','Bodega',NULL),('1ed3a48c-3e44-11e8-9ddb-54ee75873a83','Lista de Bodegas','InventarioBodega.html','Bodega',NULL),('1ed3a48c-3e44-11e8-9ddb-54ee75873a85','Distribución','Distribucion.html','Bodega',NULL),('1ed3a48c-3e44-11e8-9ddb-54ee75873a86','Orden de Compra','OrdenCompra.html','Inventario',NULL),('1ed3a48c-3e44-11e8-9ddb-54ee75873a87','Orden de Salida','OrdenSalida.html','Inventario',NULL),('1ed3a48c-3e44-11e8-9ddb-54ee75873a88','Inventario Orden Salida','InventarioOrdenSalida.html','Inventario',NULL),('1ed3a48c-3e44-11e8-9ddb-54ee75873a89','Aceptar Distribucion','AceptarDistribucion.html','Bodega',NULL),('1ed3a48c-3e44-11e8-9ddb-54ee75873a90','Ip','ip.html','Sistema',NULL),('1ed3a48c-3e44-11e8-9ddb-54ee75873a91','Inventario Ip','InventarioIp.html','Sistema',NULL),('1ed3a48c-3e44-11e8-9ddb-54ee75873a92','Determinacion de Precios','DeterminacionPrecio.html','Inventario',NULL),('1ed3a48c-3e44-11e8-9ddb-54ee75873a93','Determinacion de Precios Ventas','DeterminacionPrecioVenta.html','Inventario',NULL);
+INSERT INTO `evento` VALUES ('1ed3a48c-3e44-11e8-9ddb-54ee75873a69','Dashboard','Dashboard.html','Bodega',NULL),('1ed3a48c-3e44-11e8-9ddb-54ee75873a70','Producto','Producto.html','Inventario',NULL),('1ed3a48c-3e44-11e8-9ddb-54ee75873a71','Inventario de Productos','InventarioProducto.html','Inventario',NULL),('1ed3a48c-3e44-11e8-9ddb-54ee75873a72','Factura de Productos','FacturaCli.html','Facturacion',NULL),('1ed3a48c-3e44-11e8-9ddb-54ee75873a73','Inventario de Facturas','InventarioFactura.html','Facturacion',NULL),('1ed3a48c-3e44-11e8-9ddb-54ee75873a74','Nuevo Usuario','Usuario.html','Sistema',NULL),('1ed3a48c-3e44-11e8-9ddb-54ee75873a75','Inventario de Usuarios','InventarioUsuario.html','Sistema',NULL),('1ed3a48c-3e44-11e8-9ddb-54ee75873a76','Nuevo Rol','Rol.html','Sistema',NULL),('1ed3a48c-3e44-11e8-9ddb-54ee75873a77','Inventario de Roles','InventarioRol.html','Sistema',NULL),('1ed3a48c-3e44-11e8-9ddb-54ee75873a78','Insumo','Insumo.html','Inventario',NULL),('1ed3a48c-3e44-11e8-9ddb-54ee75873a79','Inventario de Insumos','InventarioInsumo.html','Inventario',NULL),('1ed3a48c-3e44-11e8-9ddb-54ee75873a80','Elaborar Producto','ElaborarProducto.html','Inventario',NULL),('1ed3a48c-3e44-11e8-9ddb-54ee75873a82','Bodega','Bodega.html','Bodega',NULL),('1ed3a48c-3e44-11e8-9ddb-54ee75873a83','Lista de Bodegas','InventarioBodega.html','Bodega',NULL),('1ed3a48c-3e44-11e8-9ddb-54ee75873a85','Distribución','Distribucion.html','Bodega',NULL),('1ed3a48c-3e44-11e8-9ddb-54ee75873a86','Orden de Compra','OrdenCompra.html','Inventario',NULL),('1ed3a48c-3e44-11e8-9ddb-54ee75873a87','Orden de Salida','OrdenSalida.html','Inventario',NULL),('1ed3a48c-3e44-11e8-9ddb-54ee75873a88','Inventario Orden Salida','InventarioOrdenSalida.html','Inventario',NULL),('1ed3a48c-3e44-11e8-9ddb-54ee75873a89','Aceptar Distribucion','AceptarDistribucion.html','Bodega',NULL),('1ed3a48c-3e44-11e8-9ddb-54ee75873a90','Ip','ip.html','Sistema',NULL),('1ed3a48c-3e44-11e8-9ddb-54ee75873a91','Inventario Ip','InventarioIp.html','Sistema',NULL),('1ed3a48c-3e44-11e8-9ddb-54ee75873a92','Determinacion de Precios','DeterminacionPrecio.html','Inventario',NULL),('1ed3a48c-3e44-11e8-9ddb-54ee75873a93','Determinacion de Precios Ventas','DeterminacionPrecioVenta.html','Inventario',NULL),('1ed3a48c-3e44-11e8-9ddb-54ee75873a94','Inventario de Bodega','InsumosBodega.html','Inventario',NULL),('1ed3a48c-3e44-11e8-9ddb-54ee75873a95','Fabricar','Fabricar.html','Facturacion',NULL);
 /*!40000 ALTER TABLE `evento` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -333,9 +350,9 @@ CREATE TABLE `eventosXRol` (
   `idEvento` char(36) NOT NULL,
   `idRol` char(36) NOT NULL,
   PRIMARY KEY (`idEvento`,`idRol`),
-  KEY `rol_idx` (`idRol`),
-  CONSTRAINT `evento` FOREIGN KEY (`idEvento`) REFERENCES `evento` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `rol` FOREIGN KEY (`idRol`) REFERENCES `rol` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  KEY `fk_eventosXRol_rol1_idx` (`idRol`),
+  CONSTRAINT `fk_eventosXRol_evento1` FOREIGN KEY (`idEvento`) REFERENCES `evento` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_eventosXRol_rol1` FOREIGN KEY (`idRol`) REFERENCES `rol` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -345,7 +362,7 @@ CREATE TABLE `eventosXRol` (
 
 LOCK TABLES `eventosXRol` WRITE;
 /*!40000 ALTER TABLE `eventosXRol` DISABLE KEYS */;
-INSERT INTO `eventosXRol` VALUES ('1ed3a48c-3e44-11e8-9ddb-54ee75873a69','1ed3a48c-3e44-11e8-9ddb-54ee75873a80'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a70','1ed3a48c-3e44-11e8-9ddb-54ee75873a80'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a71','1ed3a48c-3e44-11e8-9ddb-54ee75873a80'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a72','1ed3a48c-3e44-11e8-9ddb-54ee75873a80'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a73','1ed3a48c-3e44-11e8-9ddb-54ee75873a80'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a74','1ed3a48c-3e44-11e8-9ddb-54ee75873a80'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a75','1ed3a48c-3e44-11e8-9ddb-54ee75873a80'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a76','1ed3a48c-3e44-11e8-9ddb-54ee75873a80'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a77','1ed3a48c-3e44-11e8-9ddb-54ee75873a80'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a78','1ed3a48c-3e44-11e8-9ddb-54ee75873a80'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a79','1ed3a48c-3e44-11e8-9ddb-54ee75873a80'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a80','1ed3a48c-3e44-11e8-9ddb-54ee75873a80'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a82','1ed3a48c-3e44-11e8-9ddb-54ee75873a80'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a83','1ed3a48c-3e44-11e8-9ddb-54ee75873a80'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a85','1ed3a48c-3e44-11e8-9ddb-54ee75873a80'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a86','1ed3a48c-3e44-11e8-9ddb-54ee75873a80'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a87','1ed3a48c-3e44-11e8-9ddb-54ee75873a80'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a88','1ed3a48c-3e44-11e8-9ddb-54ee75873a80'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a89','1ed3a48c-3e44-11e8-9ddb-54ee75873a80'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a90','1ed3a48c-3e44-11e8-9ddb-54ee75873a80'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a91','1ed3a48c-3e44-11e8-9ddb-54ee75873a80'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a92','1ed3a48c-3e44-11e8-9ddb-54ee75873a80'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a93','1ed3a48c-3e44-11e8-9ddb-54ee75873a80');
+INSERT INTO `eventosXRol` VALUES ('1ed3a48c-3e44-11e8-9ddb-54ee75873a69','1ed3a48c-3e44-11e8-9ddb-54ee75873a80'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a69','7f9f8011-f9db-4330-b931-552141a089a4'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a69','e8d2f620-dd38-4e21-8b7f-7949412f65d6'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a70','1ed3a48c-3e44-11e8-9ddb-54ee75873a80'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a70','7f9f8011-f9db-4330-b931-552141a089a4'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a71','1ed3a48c-3e44-11e8-9ddb-54ee75873a80'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a71','7f9f8011-f9db-4330-b931-552141a089a4'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a72','1ed3a48c-3e44-11e8-9ddb-54ee75873a80'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a72','e8d2f620-dd38-4e21-8b7f-7949412f65d6'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a73','1ed3a48c-3e44-11e8-9ddb-54ee75873a80'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a73','7f9f8011-f9db-4330-b931-552141a089a4'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a73','e8d2f620-dd38-4e21-8b7f-7949412f65d6'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a74','0f8aef81-7400-4a36-93f9-b929d4889d0e'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a74','1ed3a48c-3e44-11e8-9ddb-54ee75873a80'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a75','0f8aef81-7400-4a36-93f9-b929d4889d0e'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a75','1ed3a48c-3e44-11e8-9ddb-54ee75873a80'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a76','0f8aef81-7400-4a36-93f9-b929d4889d0e'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a76','1ed3a48c-3e44-11e8-9ddb-54ee75873a80'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a77','0f8aef81-7400-4a36-93f9-b929d4889d0e'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a77','1ed3a48c-3e44-11e8-9ddb-54ee75873a80'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a78','1ed3a48c-3e44-11e8-9ddb-54ee75873a80'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a78','7f9f8011-f9db-4330-b931-552141a089a4'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a79','1ed3a48c-3e44-11e8-9ddb-54ee75873a80'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a79','7f9f8011-f9db-4330-b931-552141a089a4'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a80','1ed3a48c-3e44-11e8-9ddb-54ee75873a80'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a80','7f9f8011-f9db-4330-b931-552141a089a4'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a82','1ed3a48c-3e44-11e8-9ddb-54ee75873a80'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a82','7f9f8011-f9db-4330-b931-552141a089a4'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a83','1ed3a48c-3e44-11e8-9ddb-54ee75873a80'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a83','7f9f8011-f9db-4330-b931-552141a089a4'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a85','1ed3a48c-3e44-11e8-9ddb-54ee75873a80'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a85','7f9f8011-f9db-4330-b931-552141a089a4'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a86','1ed3a48c-3e44-11e8-9ddb-54ee75873a80'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a86','7f9f8011-f9db-4330-b931-552141a089a4'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a87','1ed3a48c-3e44-11e8-9ddb-54ee75873a80'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a87','7f9f8011-f9db-4330-b931-552141a089a4'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a88','1ed3a48c-3e44-11e8-9ddb-54ee75873a80'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a88','7f9f8011-f9db-4330-b931-552141a089a4'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a89','1ed3a48c-3e44-11e8-9ddb-54ee75873a80'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a89','e8d2f620-dd38-4e21-8b7f-7949412f65d6'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a90','0f8aef81-7400-4a36-93f9-b929d4889d0e'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a90','1ed3a48c-3e44-11e8-9ddb-54ee75873a80'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a91','0f8aef81-7400-4a36-93f9-b929d4889d0e'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a91','1ed3a48c-3e44-11e8-9ddb-54ee75873a80'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a92','1ed3a48c-3e44-11e8-9ddb-54ee75873a80'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a92','7f9f8011-f9db-4330-b931-552141a089a4'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a93','1ed3a48c-3e44-11e8-9ddb-54ee75873a80'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a93','e8d2f620-dd38-4e21-8b7f-7949412f65d6'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a94','1ed3a48c-3e44-11e8-9ddb-54ee75873a80'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a94','e8d2f620-dd38-4e21-8b7f-7949412f65d6'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a95','1ed3a48c-3e44-11e8-9ddb-54ee75873a80'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a95','e8d2f620-dd38-4e21-8b7f-7949412f65d6');
 /*!40000 ALTER TABLE `eventosXRol` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -385,7 +402,12 @@ CREATE TABLE `factura` (
   `totalComprobante` decimal(18,5) NOT NULL,
   `idReceptor` char(36) DEFAULT NULL,
   `idEmisor` char(36) NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `fk_factura_clienteFE1_idx` (`idEmisor`),
+  KEY `fk_factura_receptor1_idx` (`idReceptor`),
+  KEY `fk_factura_medioPago1_idx` (`idMedioPago`),
+  CONSTRAINT `fk_factura_clienteFE1` FOREIGN KEY (`idEmisor`) REFERENCES `clienteFE` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_factura_receptor1` FOREIGN KEY (`idReceptor`) REFERENCES `receptor` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='facturas de ventas';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -406,7 +428,7 @@ UNLOCK TABLES;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = '' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`storydb`@`%`*/ /*!50003 TRIGGER `tropical`.`factura_BEFORE_INSERT` BEFORE INSERT ON `factura` FOR EACH ROW
+/*!50003 CREATE*/ /*!50017 DEFINER=`tropicalusr`@`%`*/ /*!50003 TRIGGER `tropical`.`factura_BEFORE_INSERT` BEFORE INSERT ON `factura` FOR EACH ROW
 BEGIN
 	-- ultima orden
 	SELECT consecutivo
@@ -495,7 +517,8 @@ CREATE TABLE `insumosXBodega` (
   `saldoCantidad` decimal(10,0) NOT NULL,
   `saldoCosto` decimal(20,10) NOT NULL,
   `costoPromedio` decimal(20,10) NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `fk_insumosXBodega_bodega1_idx` (`idBodega`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='insumos para la elaboración del producto final facturable al cliente';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -517,14 +540,16 @@ DROP TABLE IF EXISTS `insumosXOrdenCompra`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `insumosXOrdenCompra` (
   `id` char(36) NOT NULL,
-  `idOrdenCompra` char(36) DEFAULT NULL,
-  `idInsumo` char(36) NOT NULL,
+  `idOrdenCompra` char(36) NOT NULL,
+  `idInsumo` char(36) NOT NULL COMMENT 'INSUMO / ARTICULO - NO RELACIONADO POR DIRECTRIZ DEL NEGOCIO.',
   `costoUnitario` decimal(20,10) NOT NULL COMMENT 'valor unitario del producto (precio del proveedor)',
   `cantidadBueno` decimal(10,0) NOT NULL,
   `cantidadMalo` decimal(10,0) NOT NULL,
   `valorBueno` decimal(20,10) NOT NULL COMMENT 'Cuanto cuesta ',
   `valorMalo` decimal(20,10) NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `fk_insumosXOrdenCompra_ordenCompra1_idx` (`idOrdenCompra`),
+  CONSTRAINT `fk_insumosXOrdenCompra_ordenCompra1` FOREIGN KEY (`idOrdenCompra`) REFERENCES `ordenCompra` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Almacena historial de Ordenes de compra o Facturas del proveedor y el valor historico original de los items comprados.';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -546,14 +571,18 @@ DROP TABLE IF EXISTS `insumosXOrdenCompraXBodega`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `insumosXOrdenCompraXBodega` (
   `id` char(36) NOT NULL,
-  `idordenCompraBodega` char(36) NOT NULL,
-  `idInsumo` varchar(45) DEFAULT NULL,
+  `idOrdenCompraBodega` char(36) NOT NULL,
+  `idInsumo` char(36) NOT NULL,
   `costoUnitario` decimal(20,10) NOT NULL COMMENT 'valor unitario del producto (precio del proveedor)',
   `cantidadBueno` decimal(10,0) NOT NULL,
   `cantidadMalo` decimal(10,0) NOT NULL,
   `valorBueno` decimal(20,10) NOT NULL COMMENT 'Cuanto cuesta ',
   `valorMalo` decimal(20,10) NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `fk_insumosXOrdenCompraXBodega_ordenCompraXBodega1_idx` (`idOrdenCompraBodega`),
+  KEY `fk_insumosXOrdenCompraXBodega_producto1_idx` (`idInsumo`),
+  CONSTRAINT `fk_insumosXOrdenCompraXBodega_ordenCompraXBodega1` FOREIGN KEY (`idOrdenCompraBodega`) REFERENCES `ordenCompraXBodega` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_insumosXOrdenCompraXBodega_producto1` FOREIGN KEY (`idInsumo`) REFERENCES `producto` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='detalle de la orden de compra de la bodega. ';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -579,7 +608,11 @@ CREATE TABLE `insumosXOrdenSalida` (
   `idInsumo` char(36) NOT NULL,
   `cantidad` decimal(10,0) NOT NULL,
   `costoPromedio` decimal(20,10) NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `fk_insumosXOrdenSalida_ordenSalida1_idx` (`idOrdenSalida`),
+  KEY `fk_insumosXOrdenSalida_insumo1_idx` (`idInsumo`),
+  CONSTRAINT `fk_insumosXOrdenSalida_ordenSalida1` FOREIGN KEY (`idOrdenSalida`) REFERENCES `ordenSalida` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_insumosXOrdenSalida_insumo1` FOREIGN KEY (`idInsumo`) REFERENCES `insumo` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -612,7 +645,7 @@ CREATE TABLE `ipAutorizada` (
 
 LOCK TABLES `ipAutorizada` WRITE;
 /*!40000 ALTER TABLE `ipAutorizada` DISABLE KEYS */;
-INSERT INTO `ipAutorizada` VALUES ('10.129.29.217','2018-07-07 16:13:54'),('10.129.29.85','2018-07-12 20:45:58'),('10.129.6.59','2018-07-12 20:47:01'),('10.34.164.24','2018-07-05 19:50:17'),('10.34.165.15','2018-07-05 20:08:03'),('190.7.197.205','2018-07-08 01:10:49'),('192.168.1.120','2018-07-07 00:27:25'),('192.168.1.123','2018-07-07 00:36:27'),('192.168.1.155','2018-07-07 00:37:20'),('192.168.1.18','2018-07-07 23:28:50'),('192.168.1.8','2018-07-07 23:28:50'),('192.168.43.235','2018-07-08 01:10:49'),('x','2018-07-13 03:50:11');
+INSERT INTO `ipAutorizada` VALUES ('10.129.29.217','2018-07-07 16:13:54'),('10.129.29.48','2018-07-16 04:25:49'),('10.129.29.64','2018-07-17 05:47:45'),('10.129.29.85','2018-07-12 20:45:58'),('10.129.6.48','2018-07-16 04:26:21'),('10.129.6.59','2018-07-12 20:47:01'),('10.129.6.73','2018-07-08 01:10:49'),('10.34.164.24','2018-07-05 19:50:17'),('10.34.165.15','2018-07-05 20:08:03'),('190.7.197.205','2018-07-08 01:10:49'),('192.168.0.100','2018-07-17 17:18:00'),('192.168.0.14','2018-07-14 01:50:22'),('192.168.1.120','2018-07-07 00:27:25'),('192.168.1.123','2018-07-07 00:36:27'),('192.168.1.155','2018-07-07 00:37:20'),('192.168.1.18','2018-07-07 23:28:50'),('192.168.1.8','2018-07-07 23:28:50'),('192.168.1.81','2018-07-14 18:22:32'),('192.168.43.235','2018-07-08 01:10:49');
 /*!40000 ALTER TABLE `ipAutorizada` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -701,10 +734,12 @@ DROP TABLE IF EXISTS `ordenCompra`;
 CREATE TABLE `ordenCompra` (
   `id` char(36) NOT NULL,
   `fecha` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `idProveedor` char(36) DEFAULT NULL,
+  `idProveedor` char(36) NOT NULL DEFAULT '0f8aef81-7400-4a36-93f9-b929d4889d0e',
   `orden` varchar(100) DEFAULT NULL,
   `idUsuario` char(36) NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `fk_ordenCompra_usuario1_idx` (`idUsuario`),
+  CONSTRAINT `fk_ordenCompra_usuario1` FOREIGN KEY (`idUsuario`) REFERENCES `usuario` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Almacena historial de Ordenes de compra o Facturas del proveedor y el valor historico original de los items comprados.';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -725,12 +760,16 @@ DROP TABLE IF EXISTS `ordenCompraXBodega`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `ordenCompraXBodega` (
-  `id` int(11) NOT NULL,
+  `id` char(36) NOT NULL,
   `fecha` timestamp NULL DEFAULT NULL,
   `orden` varchar(45) DEFAULT NULL,
-  `idUsuario` char(36) DEFAULT NULL,
-  `idBodega` char(36) DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  `idUsuario` char(36) NOT NULL,
+  `idBodega` char(36) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_ordenCompraXBodega_usuario1_idx` (`idUsuario`),
+  KEY `fk_ordenCompraXBodega_bodega1_idx` (`idBodega`),
+  CONSTRAINT `fk_ordenCompraXBodega_bodega1` FOREIGN KEY (`idBodega`) REFERENCES `bodega` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_ordenCompraXBodega_usuario1` FOREIGN KEY (`idUsuario`) REFERENCES `usuario` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Ordenes de compra de productos en las franquicias. Una bodega interna mantiene el costopromedio del prodcuto de la "Bodega principal" una bodega externa es el precio venta del la bodega principal el que define su costo';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -758,7 +797,14 @@ CREATE TABLE `ordenSalida` (
   `idUsuarioRecibe` char(36) DEFAULT NULL,
   `fechaLiquida` timestamp NULL DEFAULT NULL,
   `idEstado` char(36) NOT NULL COMMENT 'PROCESO\nLIQUIDADO',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `fk_ordenSalida_usuario1_idx` (`idUsuarioEntrega`),
+  KEY `fk_ordenSalida_usuario2_idx` (`idUsuarioRecibe`),
+  KEY `fk_ordenSalida_estado1_idx` (`idEstado`),
+  KEY `Orden` (`numeroOrden`),
+  CONSTRAINT `fk_ordenSalida_estado1` FOREIGN KEY (`idEstado`) REFERENCES `estado` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_ordenSalida_usuario1` FOREIGN KEY (`idUsuarioEntrega`) REFERENCES `usuario` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_ordenSalida_usuario2` FOREIGN KEY (`idUsuarioRecibe`) REFERENCES `usuario` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Orden de salida de materia prima o insumo para elaboración de producto';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -779,7 +825,7 @@ UNLOCK TABLES;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = '' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`storydb`@`%`*/ /*!50003 TRIGGER `tropical`.`ordensalida_BEFORE_INSERT` BEFORE INSERT ON `ordenSalida` FOR EACH ROW
+/*!50003 CREATE*/ /*!50017 DEFINER=`tropicalusr`@`%`*/ /*!50003 TRIGGER `tropical`.`ordensalida_BEFORE_INSERT` BEFORE INSERT ON `ordenSalida` FOR EACH ROW
 BEGIN
 	-- ultima orden
 	SELECT numeroOrden
@@ -810,7 +856,9 @@ CREATE TABLE `preciosXBodega` (
   `idBodega` char(36) NOT NULL,
   `tamano` varchar(4) NOT NULL COMMENT 'Tamaño del copo',
   `precioVenta` decimal(18,5) NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `fk_preciosXBodega_bodega1_idx` (`idBodega`),
+  CONSTRAINT `fk_preciosXBodega_bodega1` FOREIGN KEY (`idBodega`) REFERENCES `bodega` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -820,6 +868,7 @@ CREATE TABLE `preciosXBodega` (
 
 LOCK TABLES `preciosXBodega` WRITE;
 /*!40000 ALTER TABLE `preciosXBodega` DISABLE KEYS */;
+INSERT INTO `preciosXBodega` VALUES ('88bed187-8a3e-11e8-abed-f2f00eda9788','72a5afa7-dcba-4539-8257-ed1e18b1ce94','1',0.00000),('88d26ca7-8a3e-11e8-abed-f2f00eda9788','72a5afa7-dcba-4539-8257-ed1e18b1ce94','0',0.00000);
 /*!40000 ALTER TABLE `preciosXBodega` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -870,7 +919,11 @@ CREATE TABLE `productosXDistribucion` (
   `idProducto` char(36) NOT NULL,
   `cantidad` decimal(10,0) NOT NULL,
   `valor` decimal(20,10) NOT NULL COMMENT 'Cuanto cuesta ',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `fk_productosXDistribucion_distribucion1_idx` (`idDistribucion`),
+  KEY `fk_productosXDistribucion_producto1_idx` (`idProducto`),
+  CONSTRAINT `fk_productosXDistribucion_distribucion1` FOREIGN KEY (`idDistribucion`) REFERENCES `distribucion` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_productosXDistribucion_producto1` FOREIGN KEY (`idProducto`) REFERENCES `producto` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -911,7 +964,9 @@ CREATE TABLE `productosXFactura` (
   `montoImpuesto` decimal(18,5) DEFAULT NULL,
   `idExoneracionImpuesto` int(11) DEFAULT NULL,
   `montoTotalLinea` decimal(18,5) NOT NULL DEFAULT '0.00000',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `fk_productosXFactura_factura1_idx` (`idFactura`),
+  CONSTRAINT `fk_productosXFactura_factura1` FOREIGN KEY (`idFactura`) REFERENCES `factura` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Productos vendidos en una factura (Detalle).';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -944,6 +999,7 @@ CREATE TABLE `proveedor` (
 
 LOCK TABLES `proveedor` WRITE;
 /*!40000 ALTER TABLE `proveedor` DISABLE KEYS */;
+INSERT INTO `proveedor` VALUES ('0f8aef81-7400-4a36-93f9-b929d4889d0e','Estándar');
 /*!40000 ALTER TABLE `proveedor` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -972,7 +1028,9 @@ CREATE TABLE `receptor` (
   `idCodigoPaisFax` char(11) DEFAULT NULL,
   `numTelefonoFax` varchar(20) DEFAULT NULL,
   `correoElectronico` varchar(200) DEFAULT NULL COMMENT '\\s*\\w+([-+.'']\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*\\s* ',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `fk_receptor_tipoIdentificacion1_idx` (`idTipoIdentificacion`),
+  CONSTRAINT `fk_receptor_tipoIdentificacion1` FOREIGN KEY (`idTipoIdentificacion`) REFERENCES `tipoIdentificacion` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Receptor de facturas de ventas - Clientes';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -1031,7 +1089,7 @@ CREATE TABLE `rol` (
 
 LOCK TABLES `rol` WRITE;
 /*!40000 ALTER TABLE `rol` DISABLE KEYS */;
-INSERT INTO `rol` VALUES ('1ed3a48c-3e44-11e8-9ddb-54ee75873a80','Admin','Administrador del Sistema');
+INSERT INTO `rol` VALUES ('0f8aef81-7400-4a36-93f9-b929d4889d0e','admin-seguridad','administra usuarios y conexiones'),('1ed3a48c-3e44-11e8-9ddb-54ee75873a80','Admin','Administrador del Sistema'),('7f9f8011-f9db-4330-b931-552141a089a4','admin-tropical','administrador de sistema Tropical'),('e8d2f620-dd38-4e21-8b7f-7949412f65d6','local-comercial','administrado de local comercial');
 /*!40000 ALTER TABLE `rol` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1046,9 +1104,9 @@ CREATE TABLE `rolesXUsuario` (
   `idRol` char(36) NOT NULL,
   `idUsuario` char(36) NOT NULL,
   PRIMARY KEY (`idRol`,`idUsuario`),
-  KEY `usuario_idx` (`idUsuario`),
-  CONSTRAINT `rol_usuario` FOREIGN KEY (`idRol`) REFERENCES `rol` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `usuario_usuario` FOREIGN KEY (`idUsuario`) REFERENCES `usuario` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  KEY `fk_rolesXUsuario_usuario1_idx` (`idUsuario`),
+  CONSTRAINT `fk_rolesXUsuario_rol1` FOREIGN KEY (`idRol`) REFERENCES `rol` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_rolesXUsuario_usuario1` FOREIGN KEY (`idUsuario`) REFERENCES `usuario` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -1224,7 +1282,10 @@ DROP TABLE IF EXISTS `usuariosXBodega`;
 CREATE TABLE `usuariosXBodega` (
   `idUsuario` char(36) NOT NULL,
   `idBodega` char(36) NOT NULL,
-  PRIMARY KEY (`idUsuario`,`idBodega`)
+  PRIMARY KEY (`idUsuario`,`idBodega`),
+  KEY `fk_usuariosXBodega_bodega1_idx` (`idBodega`),
+  CONSTRAINT `fk_usuariosXBodega_usuario1` FOREIGN KEY (`idUsuario`) REFERENCES `usuario` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_usuariosXBodega_bodega1` FOREIGN KEY (`idBodega`) REFERENCES `bodega` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -1234,6 +1295,7 @@ CREATE TABLE `usuariosXBodega` (
 
 LOCK TABLES `usuariosXBodega` WRITE;
 /*!40000 ALTER TABLE `usuariosXBodega` DISABLE KEYS */;
+INSERT INTO `usuariosXBodega` VALUES ('1ed3a48c-3e44-11e8-9ddb-54ee75873a60','72a5afa7-dcba-4539-8257-ed1e18b1ce94');
 /*!40000 ALTER TABLE `usuariosXBodega` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1254,7 +1316,7 @@ UNLOCK TABLES;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = '' */ ;
 DELIMITER ;;
-CREATE DEFINER=`storydb`@`%` PROCEDURE `spUpdateSaldosPromedioArticuloEntrada`(
+CREATE DEFINER=`tropicalusr`@`%` PROCEDURE `spUpdateSaldosPromedioArticuloEntrada`(
 	IN mid char(36),
 	IN ncantidad DECIMAL(10,0),
     IN ncosto DECIMAL(15,10)
@@ -1293,7 +1355,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = '' */ ;
 DELIMITER ;;
-CREATE DEFINER=`storydb`@`%` PROCEDURE `spUpdateSaldosPromedioInsumoBodegaEntrada`(
+CREATE DEFINER=`tropicalusr`@`%` PROCEDURE `spUpdateSaldosPromedioInsumoBodegaEntrada`(
 	-- IN mid char(36),
 	IN nidproducto char(36),
 	IN nidbodega char(36),
@@ -1340,7 +1402,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = '' */ ;
 DELIMITER ;;
-CREATE DEFINER=`storydb`@`%` PROCEDURE `spUpdateSaldosPromedioInsumoEntrada`(
+CREATE DEFINER=`tropicalusr`@`%` PROCEDURE `spUpdateSaldosPromedioInsumoEntrada`(
 	IN mid char(36),
 	IN ncantidad DECIMAL(10,0),
     IN ncosto DECIMAL(20,10)
@@ -1382,7 +1444,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = '' */ ;
 DELIMITER ;;
-CREATE DEFINER=`storydb`@`%` PROCEDURE `spUpdateSaldosPromedioProducto`(
+CREATE DEFINER=`tropicalusr`@`%` PROCEDURE `spUpdateSaldosPromedioProducto`(
 	IN nidproducto char(36),
 	IN ncantidad DECIMAL(10,0),
     IN ncosto DECIMAL(20,10)
@@ -1421,7 +1483,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = '' */ ;
 DELIMITER ;;
-CREATE DEFINER=`storydb`@`%` PROCEDURE `spUpdateSaldosPromedioProductoSalida`(
+CREATE DEFINER=`tropicalusr`@`%` PROCEDURE `spUpdateSaldosPromedioProductoSalida`(
 	IN mid char(36),
 	IN ncantidad DECIMAL(10,0)
 )
@@ -1457,4 +1519,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-07-13 10:49:47
+-- Dump completed on 2018-07-17 21:57:48

@@ -1,3 +1,4 @@
+use tropical;
 delete from detalleOrden;
 delete from productosXDistribucion;
 delete from productosXFactura;
