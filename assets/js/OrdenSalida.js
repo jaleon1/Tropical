@@ -174,7 +174,7 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
     };
 
     // Muestra información en ventana
-    showInfo(e) {e
+    showInfo(e) {
         /* IMPRIMIR */
         ordenSalida.ticketPrint(e);
     };
@@ -186,7 +186,7 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
         localStorage.setItem("lsUsuarioRecibe",$("#nombre").val());
         localStorage.setItem("lsListaInsumo",JSON.stringify(this.listaInsumo));
 
-        location.href ="/Tropical/TicketOrdenSalida.html";
+        location.href ="/TicketOrdenSalida.html";
     }
 
     // Muestra errores en ventana
@@ -347,16 +347,22 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
     }
 
     UpdateEventHandler() {
-            ordenSalida.id = $(this).parents("tr").find(".itemId").text(); //Class itemId = ID del objeto.
-            ordenSalida.Read;     
-            if($(this).parents("tr").find("td:eq(9)").html()=="LIQUIDADO"){              
-                swal ({ 
-                    type: 'info',
-                    title: 'La orden ya ha sido liquidada, No se puede modificar...'                     
-                    }).then(function () { 
-                        $('#btnOrdenSalida').attr("disabled", true);
-                    });
-            }
+        $('#btnOrdenSalida').attr("disabled", false);
+        $('#btnAddUsuarioRecibe').attr("disabled", false);
+        $('#btnAddInsumo').attr("disabled", false);
+        ordenSalida.id = $(this).parents("tr").find(".itemId").text(); //Class itemId = ID del objeto.
+        ordenSalida.Read;     
+        
+        if($(this).parents("tr").find("td:eq(9)").html()=="LIQUIDADO"){              
+            swal ({ 
+                type: 'info',
+                title: 'La orden ya ha sido liquidada, No se puede modificar...'                     
+                }).then(function () { 
+                    $('#btnOrdenSalida').attr("disabled", true);
+                    $('#btnAddUsuarioRecibe').attr("disabled", true);
+                    $('#btnAddInsumo').attr("disabled", true);
+                });
+        }
     };
 
     ShowItemData(e) {

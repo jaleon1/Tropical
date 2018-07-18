@@ -310,22 +310,33 @@ class Producto {
         this.ClearCtls();
         // carga objeto.
         var data = JSON.parse(e)[0];
-        producto = new Producto(data.id, data.codigo, data.nombre, data.txtColor, data.bgColor, data.nombreAbreviado, 
-        data.descripcion, data.saldoCantidad, data.saldoCosto, data.costoPromedio, data.precioVenta , data.esVenta);
+        // producto = new Producto(data.id, data.codigo, data.nombre, data.txtColor, data.bgColor, data.nombreAbreviado, 
+        // data.descripcion, data.saldoCantidad, data.saldoCosto, data.costoPromedio, data.precioVenta , data.esVenta);
         // Asigna objeto a controles
-        $("#id").val(producto.id);
-        $("#codigo").val(producto.codigo);
-        $("#nombre").val(producto.nombre);
-        $("#txtColor").val(producto.txtColor);
-        $("#bgColor").val(producto.bgColor);
-        $("#nombreAbreviado").val(producto.nombreAbreviado);
-        $("#descripcion").val(producto.descripcion);
-        $("#saldoCantidad").val(producto.saldoCantidad);
-        $("#saldoCosto").val(parseFloat(producto.saldoCantidad).toFixed(2));
-        $("#costoPromedio").val(parseFloat(producto.costoPromedio).toFixed(2));
-        $("#precioVenta").val(parseFloat(producto.precioVenta).toFixed(2));
-        //$("#tipoProducto").val(producto.tipoProducto);
-        $('#tipoProducto option[value=' + producto.tipoProducto + ']').prop("selected", true);
+        $("#id").val(data.id);
+        $("#codigo").val(data.codigo);
+        $("#nombre").val(data.nombre);
+        $("#txtColor").val(data.txtColor);
+        $("#bgColor").val(data.bgColor);
+        $("#nombreAbreviado").val(data.nombreAbreviado);
+        $("#descripcion").val(data.descripcion);
+        $("#saldoCantidad").val(data.saldoCantidad);
+        $("#saldoCosto").val(parseFloat(data.saldoCantidad).toFixed(2));
+        $("#costoPromedio").val(parseFloat(data.costoPromedio).toFixed(2));
+        $("#precioVenta").val(parseFloat(data.precioVenta).toFixed(2));
+        $('#tipoProducto option[value=' + data.tipoProducto + ']').prop("selected", true);
+        // $("#id").val(producto.id);
+        // $("#codigo").val(producto.codigo);
+        // $("#nombre").val(producto.nombre);
+        // $("#txtColor").val(producto.txtColor);
+        // $("#bgColor").val(producto.bgColor);
+        // $("#nombreAbreviado").val(producto.nombreAbreviado);
+        // $("#descripcion").val(producto.descripcion);
+        // $("#saldoCantidad").val(producto.saldoCantidad);
+        // $("#saldoCosto").val(parseFloat(producto.saldoCantidad).toFixed(2));
+        // $("#costoPromedio").val(parseFloat(producto.costoPromedio).toFixed(2));
+        // $("#precioVenta").val(parseFloat(producto.precioVenta).toFixed(2));
+        // $('#tipoProducto option[value=' + producto.tipoProducto + ']').prop("selected", true);
         $("#tipoProducto").selectpicker("refresh");
     };
 

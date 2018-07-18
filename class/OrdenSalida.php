@@ -248,8 +248,8 @@ class OrdenSalida{
             //Selecciona lista de insumos ligados a la orden
             $sql="SELECT idInsumo, idOrdenSalida, cantidad FROM insumosXOrdenSalida WHERE idOrdenSalida=:idOrdenSalida;";
             $param= array(':idOrdenSalida'=>$this->id);
-            $cantidadinsumos= DATA::Ejecutar($sql, $param);
-            InsumosxOrdenSalida::UpdateSaldoCantidadInsumo2($cantidadinsumos);
+            $insumos= DATA::Ejecutar($sql, $param);
+            InsumosxOrdenSalida::UpdateSaldoCantidadInsumo2($insumos);
             
             $sql='DELETE FROM ordenSalida  
             WHERE id=:id';
