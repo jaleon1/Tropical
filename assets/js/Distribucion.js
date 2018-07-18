@@ -92,7 +92,7 @@ class Distribucion {
         localStorage.setItem("lsPorcentajeIva",data.porcentajeIva);
         localStorage.setItem("lsListaProducto",JSON.stringify(data.lista));
 
-        location.href ="/Tropical/TicketDistribucion.html";
+        location.href ="/TicketDistribucion.html";
     }
 
     get ReadbyOrden() {
