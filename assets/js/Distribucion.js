@@ -366,6 +366,7 @@ class Distribucion {
         $('#tDistribucion').DataTable({
             responsive: true,
             info: false,
+            iDisplayLength: 100,
             columns: [
                 {
                     title: "id",
