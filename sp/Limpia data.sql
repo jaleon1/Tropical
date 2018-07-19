@@ -7,7 +7,7 @@ delete from insumosXBodega;
 delete from insumosXOrdenCompra;
 delete from insumosXOrdenCompraXBodega;
 delete from insumosXOrdenSalida;
-delete from insumo;
+-- delete from insumo;
 delete from ordenCompraXBodega;
 delete from ordenCompra;
 delete from ordenSalida;
@@ -32,7 +32,7 @@ VALUES
 '72a5afa7-dcba-4539-8257-ed1e18b1ce94',
 '0',
 0);
-delete from producto;
+-- delete from producto;
 delete from factura;
 delete from rolesXUsuario where idUsuario!='1ed3a48c-3e44-11e8-9ddb-54ee75873a60';
 delete from usuariosXBodega where idUsuario!='1ed3a48c-3e44-11e8-9ddb-54ee75873a60';

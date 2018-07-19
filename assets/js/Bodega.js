@@ -260,6 +260,7 @@ class Bodega {
         $("#telefono").val(bodega.telefono);
         //fk 
         $('#tipo option[value=' + bodega.tipo + ']').prop("selected", true);    
+        $("#tipo").selectpicker("refresh");
         $(".bs-bodega-modal-lg").modal('toggle');    
     };
 
@@ -277,7 +278,11 @@ class Bodega {
         $("#descripcion").val(bodega.descripcion);
         $("#tipo").val(bodega.tipo);
         // oculta el modal   
-        $(".bs-bodega-modal-lg").modal('toggle');    
+        $(".bs-bodega-modal-lg").modal('toggle');
+        if(bodega.tipo=='Interna')
+            $("#frmTotales").hide();
+        else
+            $("frmTotales").show(); 
     };
 
     ShowListTipo(e) {
