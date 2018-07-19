@@ -166,10 +166,11 @@ class Insumo {
                     <td>${item.codigo}</td>
                     <td>${item.nombre}</td>
                     <td>${item.descripcion}</td>
-                    ${document.URL.indexOf("OrdenSalida.html")>=1 ? 
+                    ${document.URL.indexOf("OrdenSalida.html")>=1 || document.URL.indexOf("InventarioOrdenSalida.html")>=1 ? 
                         `<td class="oculto">${item.saldoCantidad}</td>
                          <td class="oculto">${parseFloat(item.saldoCosto).toFixed(2)}</td>
-                         <td class="oculto">${parseFloat(item.costoPromedio).toFixed(2)}</td>`
+                         <td class="oculto">${parseFloat(item.costoPromedio).toFixed(2)}</td>
+                         <td class="oculto"></td>`
                     :``}
                     ${document.URL.indexOf("Insumo.html")>=1 ? 
                         `<td>${item.saldoCantidad}</td>
@@ -189,15 +190,15 @@ class Insumo {
                 $('#chk-addinsumo'+item.id).change(ordenSalida.AddInsumoEventHandler);
         })
 
-        //datatable         
         if ( $.fn.dataTable.isDataTable( '#dsInsumo' ) ) {
-            var table = $('#dsInsumo').DataTable();
-            //table.destroy();
+            // var table = $('#dsInsumo').DataTable();
+            // table.destroy();
         }
         else 
             $('#dsInsumo').DataTable( {          
                 paging: true,
-                search: true
+                search: true,
+                iDisplayLength: 10
             });
     };
 
@@ -211,8 +212,8 @@ class Insumo {
         this.ClearCtls();
         // carga objeto.
         var data = JSON.parse(e)[0];
-        insumo = new Insumo(data.id, data.codigo, data.nombre, data.descripcion,
-            data.saldoCantidad, data.saldoCosto, data.costoPromedio);
+        // insumo = new Insumo(data.id, data.codigo, data.nombre, data.descripcion,
+        //     data.saldoCantidad, data.saldoCosto, data.costoPromedio);
         // Asigna objeto a controles
         $("#id").val(data.id);
         $("#codigo").val(data.codigo);
