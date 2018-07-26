@@ -148,6 +148,7 @@ class Factura{
         }
     }
 
+    //Chacon lo usa???
     function Read(){
         try {
             $sql='SELECT p.id, p.idUsuario, p.fecha, p.subTotal, iva, porcentajeIva, descuento, porcentajeDescuento, total, c.id as idcategoria,c.idUsuario as nombrecategoria
@@ -192,6 +193,54 @@ class Factura{
             );
         }
     }
+
+    
+    function ReadbyID(){
+        try {
+            $sql='SELECT p.id, p.idUsuario, p.fecha, p.subTotal, iva, porcentajeIva, descuento, porcentajeDescuento, total, c.id as idcategoria,c.idUsuario as nombrecategoria
+                FROM factura  p LEFT JOIN categoriasXProducto cp on cp.idProducto = p.id
+                    LEFT join categoria c on c.id = cp.idcategoria
+                where p.id=:id';
+            $param= array(':id'=>$this->id);
+            $data= DATA::Ejecutar($sql,$param);     
+            foreach ($data as $key => $value){
+                require_once("Categoria.php");
+                $cat= new Categoria(); // categorias del factura
+                if($key==0){
+                    $this->id = $value['id'];
+                    $this->idUsuario = $value['idUsuario'];
+                    $this->fecha = $value['fecha'];
+                    $this->subTotal = $value['subTotal'];
+                    $this->iva = $value['iva'];
+                    $this->porcentajeIva = $value['porcentajeIva'];
+                    $this->descuento = $value['descuento'];
+                    $this->porcentajeDescuento = $value['porcentajeDescuento'];
+                    $this->total = $value['total'];
+                    //categoria
+                    if($value['idcategoria']!=null){
+                        $cat->id = $value['idcategoria'];
+                        $cat->idusuario = $value['nombrecategoria'];
+                        array_push ($this->listaProducto, $cat);
+                    }
+                }
+                else {
+                    $cat->id = $value['idcategoria'];
+                    $cat->idusuario = $value['nombrecategoria'];
+                    array_push ($this->listaProducto, $cat);
+                }
+            }
+            return $this;
+        }     
+        catch(Exception $e) {
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar el factura'))
+            );
+        }
+    }
+
+
     function Create(){
         try {   
 

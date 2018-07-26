@@ -4,6 +4,7 @@
 <head>
   <script src="assets/js/jquery.min.js"></script>
   <script src="assets/js/Session.js"></script>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 </head>
 
 <body>
@@ -43,8 +44,8 @@
 
 <script>
     $(document).ready(function () {
-      $("#factura").text(localStorage.getItem("lsFactura"));
-      $("#fecha").text(localStorage.getItem("lsFecha"));
+      $("#factura").text(localStorage.getItem("lsFactura")); //Numero de factura
+      $("#fecha").text(localStorage.getItem("lsFecha"));  //
       $("#bodega").text(localStorage.getItem("lsBodega"));
       $("#usuario").text(localStorage.getItem("lsUsuario"));
       
@@ -60,8 +61,8 @@
             `);
         }) 
       $("#subtotal").text(localStorage.getItem("lsSubTotal"));
-      $("#descuento").text(localStorage.getItem("lsPorcentajeDescuento"));
-      $("#iva").text(localStorage.getItem("lsPorcentajeIva"));
+      // $("#descuento").text(localStorage.getItem("lsPorcentajeDescuento"));
+      // $("#iva").text(localStorage.getItem("lsPorcentajeIva"));
       $("#total").text(localStorage.getItem("lsTotal"));
       window.print();
       localStorage.setItem("lsPrintOK","OK");

@@ -298,7 +298,8 @@ function facturar (){
     })
     .done(function(e){
         // muestra el numero de orden: IMPRIMIR.
-        //var facUUID = JSON.parse(e)[0];    
+        //var facUUID = JSON.parse(e)[0];  
+        ticketPrint(e);  
         swal({
             type: 'success',
             title: 'Orden enviada',
