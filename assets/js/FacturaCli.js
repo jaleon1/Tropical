@@ -899,9 +899,7 @@ function ticketPrint(e){
     localStorage.setItem("lsBodega",$("#nombre").val());
     localStorage.setItem("lsSubTotal",$("#subtotal").text());
     localStorage.setItem("lsTotal",$("#total").text());
-    localStorage.setItem("lsFechaDistribucion",data.fecha);
-    localStorage.setItem("lsPorcentajeDescuento",data.porcentajeDescuento);
-    localStorage.setItem("lsPorcentajeIva",data.porcentajeIva);
+    localStorage.setItem("lsFecha",data.fecha);
     localStorage.setItem("lsListaProducto",JSON.stringify(data.lista));
 
     location.href ="/Tropical/TicketFactura.html";
