@@ -895,12 +895,12 @@ function alertFact() {
 
 function ticketPrint(e){
     var data = JSON.parse(e);
-    localStorage.setItem("lsFactura",data.orden);
-    localStorage.setItem("lsBodega",$("#nombre").val());
-    localStorage.setItem("lsSubTotal",$("#subtotal").text());
-    localStorage.setItem("lsTotal",$("#total").text());
-    localStorage.setItem("lsFecha",data.fecha);
-    localStorage.setItem("lsListaProducto",JSON.stringify(data.lista));
+    localStorage.setItem("lsFactura","");
+    localStorage.setItem("lsBodega","");
+    localStorage.setItem("lsSubTotal","");
+    localStorage.setItem("lsTotal","");
+    localStorage.setItem("lsFecha","");
+    localStorage.setItem("lsListaProducto",JSON.stringify("array"));
 
     location.href ="/Tropical/TicketFactura.html";
 }
