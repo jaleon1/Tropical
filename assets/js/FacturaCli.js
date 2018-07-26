@@ -892,6 +892,7 @@ function alertFact() {
 
 function ticketPrint(e){
     var data = JSON.parse(e);
+<<<<<<< HEAD
     localStorage.setItem("lsFactura",data.orden); //Numero de factura
     localStorage.setItem("lsBodega",$("#nombre").val()); //Nombre de odega Ej: Tres Rios
     localStorage.setItem("lsSubTotal",$("#subtotal").text()); //SubTotal
@@ -902,6 +903,17 @@ function ticketPrint(e){
     localStorage.setItem("lsListaProducto",JSON.stringify(data.lista));
 
     location.href ="/Tropical/TicketFactura.html";
+=======
+    localStorage.setItem("lsFactura","");
+    localStorage.setItem("lsFecha","");
+    localStorage.setItem("lsBodega","");
+    localStorage.setItem("lsUsuario","");
+    localStorage.setItem("lsSubTotal","");
+    localStorage.setItem("lsTotal","");
+    localStorage.setItem("lsListaProducto",JSON.stringify("array"));
+
+    location.href ="/Tropical/TicketFacturacion.html";
+>>>>>>> a56473e2706c65a1a2e30785f5b7275806cbaf4a
 }
 
 function calcVuelto(pago, xPagar) {

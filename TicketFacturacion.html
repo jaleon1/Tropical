@@ -29,8 +29,6 @@
     </table>
     <p style="text-align:right;">TOTALES<br>
         Sub Total: <label id=subtotal></label><br>
-        Descuento: <label id="descuento"></label><br>
-        Impuesto de Ventas: <label id="iva"></label><br>
         TOTAL: <label id="total"></label>
       </p>
     <p class="centrado">Facturado Descripción...</p>
@@ -61,8 +59,11 @@
             `);
         }) 
       $("#subtotal").text(localStorage.getItem("lsSubTotal"));
+<<<<<<< HEAD
       // $("#descuento").text(localStorage.getItem("lsPorcentajeDescuento"));
       // $("#iva").text(localStorage.getItem("lsPorcentajeIva"));
+=======
+>>>>>>> a56473e2706c65a1a2e30785f5b7275806cbaf4a
       $("#total").text(localStorage.getItem("lsTotal"));
       window.print();
       localStorage.setItem("lsPrintOK","OK");
