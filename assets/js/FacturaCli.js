@@ -635,8 +635,9 @@ function CreateFact() {
             obj: JSON.stringify(factura)
         }
     })
-        .done(alertFact()
-
+        .done(function(e){
+            ticketPrint(e)
+        }
         )
         .fail(function (e) {
             producto.showError(e);
@@ -887,6 +888,20 @@ function alertFact() {
     $(".procesarFac").prop('disabled', true);
     // calcVuelto();
     setTimeout(function () { location.reload(); }, 2000);
+}
+
+function ticketPrint(e){
+    var data = JSON.parse(e);
+    localStorage.setItem("lsFactura",data.orden);
+    localStorage.setItem("lsBodega",$("#nombre").val());
+    localStorage.setItem("lsSubTotal",$("#subtotal").text());
+    localStorage.setItem("lsTotal",$("#total").text());
+    localStorage.setItem("lsFechaDistribucion",data.fecha);
+    localStorage.setItem("lsPorcentajeDescuento",data.porcentajeDescuento);
+    localStorage.setItem("lsPorcentajeIva",data.porcentajeIva);
+    localStorage.setItem("lsListaProducto",JSON.stringify(data.lista));
+
+    location.href ="/Tropical/TicketFactura.html";
 }
 
 function calcVuelto(pago, xPagar) {

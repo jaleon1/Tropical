@@ -215,7 +215,7 @@ class Factura{
                     // retorna orden autogenerada.
                     OrdenXFactura::$id=$this->id;
                     OrdenXFactura::Create($this->detalleOrden);
-                    return true;
+                    return $this->Read();
                 }
                 else throw new Exception('Error al guardar los productos.', 03);
             }
