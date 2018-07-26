@@ -2,59 +2,56 @@
 <html>
 
 <head>
-  <!-- <link rel="stylesheet" href="style.css"> -->
   <script src="assets/js/jquery.min.js"></script>
   <script src="assets/js/Session.js"></script>
-  <!-- <script>Session.Check();</script> -->
 </head>
 
 <body>
   <div class="ticket">
     <p class="centrado">TROPICAL SNO.<br>
-      DISTRIBUCION # <label id=orden></label><br>
-      Fecha: <label id="fechaDistribucion"></label><br>
+      FACTURA # <label id=factura></label><br>
+      Fecha: <label id="fecha"></label><br>
       Bodega: <label id="bodega"></label><br>
-      Descripcion: <label id="descripcion"></label><br>
       Usuario: <label id="usuario"></label>
     </p>
     <table>
       <thead>
         <tr>
           <th  style="width:40%; text-align:left;">PRODUCTO&nbsp;&nbsp;</th>
-          <th  style="width:30%; text-align:left;">CANTIDAD&nbsp;&nbsp;</th>
-          <th  style="width:30%; text-align:left;">PRECIO</th>
-          <spa>_______________________________</spa>
+          <th  style="width:30%; text-align:right;">CANTIDAD&nbsp;&nbsp;</th>
+          <th  style="width:30%; text-align:right;">PRECIO</th>
+          <spa>_______________________________________</spa>
         </tr>
       </thead>
-      <tbody id="tableBody-TicketDistribucion">
+      <tbody id="tableBody-TicketFactura">
       </tbody>
     </table>
-    <p class="centrado">TOTALES<br>
+    <p style="text-align:right;">TOTALES<br>
         Sub Total: <label id=subtotal></label><br>
         Descuento: <label id="descuento"></label><br>
         Impuesto de Ventas: <label id="iva"></label><br>
         TOTAL: <label id="total"></label>
       </p>
-    <p class="centrado">Orden Distribuida...</p>
+    <p class="centrado">Facturado Descripción...</p>
     </br>
     <spa>_______________________________</spa>
   </div>
-  <script src="assets/js/Distribucion.js"></script>
+  <script src="assets/js/Factura.js"></script>
 </body>
 
 </html>
 
 <script>
     $(document).ready(function () {
-      $("#orden").text(localStorage.getItem("lsOrden"));
-      $("#fechaDistribucion").text(localStorage.getItem("lsFechaDistribucion"));
+      $("#factura").text(localStorage.getItem("lsFactura"));
+      $("#fecha").text(localStorage.getItem("lsFecha"));
       $("#bodega").text(localStorage.getItem("lsBodega"));
-      $("#descripcion").text(localStorage.getItem("lsDescripcion"));
-      //   $("#usuario").text(localStorage.getItem("lsUsuarioRecibe"));
+      $("#usuario").text(localStorage.getItem("lsUsuario"));
+      
       var listaProducto = localStorage.getItem("lsListaProducto");
       listaProducto = JSON.parse(listaProducto);
       $.each(listaProducto, function (i, item) {
-          $('#tableBody-TicketDistribucion').append(`
+          $('#tableBody-TicketFactura').append(`
                 <tr> 
                     <td style="width:40%; text-align:left;">${item.nombre}</td>
                     <td style="width:30%; text-align:left;">&nbsp;&nbsp;${item.cantidad}</td>
@@ -68,6 +65,6 @@
       $("#total").text(localStorage.getItem("lsTotal"));
       window.print();
       localStorage.setItem("lsPrintOK","OK");
-      location.href ="/Tropical/Distribucion.html";
+      location.href ="/Tropical/FacturaCli.html";
   });  
 </script>
