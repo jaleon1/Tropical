@@ -896,13 +896,14 @@ function alertFact() {
 function ticketPrint(e){
     var data = JSON.parse(e);
     localStorage.setItem("lsFactura","");
+    localStorage.setItem("lsFecha","");
     localStorage.setItem("lsBodega","");
+    localStorage.setItem("lsUsuario","");
     localStorage.setItem("lsSubTotal","");
     localStorage.setItem("lsTotal","");
-    localStorage.setItem("lsFecha","");
     localStorage.setItem("lsListaProducto",JSON.stringify("array"));
 
-    location.href ="/Tropical/TicketFactura.html";
+    location.href ="/Tropical/TicketFacturacion.html";
 }
 
 function calcVuelto(pago, xPagar) {
