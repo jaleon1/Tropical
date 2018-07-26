@@ -138,7 +138,7 @@ class Producto{
         try {
             $sql='SELECT id, codigo, nombre, txtColor, bgColor, nombreAbreviado, descripcion, saldoCantidad, saldoCosto, costoPromedio, precioVenta, esVenta
                 FROM     producto       
-                WHERE esVenta=1
+                WHERE esVenta=1 or esVenta=2
                 ORDER BY codigo asc';
             $data= DATA::Ejecutar($sql);
             return $data;

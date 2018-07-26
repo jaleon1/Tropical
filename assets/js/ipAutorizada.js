@@ -11,7 +11,7 @@ class IpAutorizada {
             return;
         $.ajax({
             type: "POST",
-            url: "class/IpAutorizada.php",
+            url: "class/ipAutorizada.php",
             data: {
                 action: miAccion,
                 ip: this.ip
@@ -31,7 +31,7 @@ class IpAutorizada {
         this.ip = $("#ip").val();
         $.ajax({
             type: "POST",
-            url: "class/IpAutorizada.php",
+            url: "class/ipAutorizada.php",
             data: {
                 action: miAccion,
                 ip: this.ip
@@ -53,7 +53,7 @@ class IpAutorizada {
     get Delete() {
         $.ajax({
             type: "POST",
-            url: "class/IpAutorizada.php",
+            url: "class/ipAutorizada.php",
             data: {
                 action: 'Delete',
                 ip: this.ip

@@ -92,7 +92,7 @@ class Distribucion {
         localStorage.setItem("lsPorcentajeIva",data.porcentajeIva);
         localStorage.setItem("lsListaProducto",JSON.stringify(data.lista));
 
-        location.href ="/Tropical/TicketDistribucion.html";
+        location.href ="/TicketDistribucion.html";
     }
 
     get ReadbyOrden() {
@@ -366,6 +366,7 @@ class Distribucion {
         $('#tDistribucion').DataTable({
             responsive: true,
             info: false,
+            iDisplayLength: 100,
             columns: [
                 {
                     title: "id",
