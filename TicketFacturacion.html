@@ -28,8 +28,6 @@
     </table>
     <p style="text-align:right;">TOTALES<br>
         Sub Total: <label id=subtotal></label><br>
-        Descuento: <label id="descuento"></label><br>
-        Impuesto de Ventas: <label id="iva"></label><br>
         TOTAL: <label id="total"></label>
       </p>
     <p class="centrado">Facturado Descripción...</p>
@@ -60,8 +58,6 @@
             `);
         }) 
       $("#subtotal").text(localStorage.getItem("lsSubTotal"));
-      $("#descuento").text(localStorage.getItem("lsPorcentajeDescuento"));
-      $("#iva").text(localStorage.getItem("lsPorcentajeIva"));
       $("#total").text(localStorage.getItem("lsTotal"));
       window.print();
       localStorage.setItem("lsPrintOK","OK");

@@ -892,16 +892,15 @@ function alertFact() {
 
 function ticketPrint(e){
     var data = JSON.parse(e);
-    localStorage.setItem("lsFactura",data.orden);
-    localStorage.setItem("lsBodega",$("#nombre").val());
-    localStorage.setItem("lsSubTotal",$("#subtotal").text());
-    localStorage.setItem("lsTotal",$("#total").text());
-    localStorage.setItem("lsFechaDistribucion",data.fecha);
-    localStorage.setItem("lsPorcentajeDescuento",data.porcentajeDescuento);
-    localStorage.setItem("lsPorcentajeIva",data.porcentajeIva);
-    localStorage.setItem("lsListaProducto",JSON.stringify(data.lista));
+    localStorage.setItem("lsFactura","");
+    localStorage.setItem("lsFecha","");
+    localStorage.setItem("lsBodega","");
+    localStorage.setItem("lsUsuario","");
+    localStorage.setItem("lsSubTotal","");
+    localStorage.setItem("lsTotal","");
+    localStorage.setItem("lsListaProducto",JSON.stringify("array"));
 
-    location.href ="/Tropical/TicketFactura.html";
+    location.href ="/Tropical/TicketFacturacion.html";
 }
 
 function calcVuelto(pago, xPagar) {
