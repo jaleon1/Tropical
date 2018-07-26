@@ -565,9 +565,6 @@ function facCard() {
                     <div class="row">
                         <br>
                     </div>
-                    <div class="row">
-                        <h3 class="text-left" id="vuelto"></h3>
-                    </div>
                 </div>
 
                 <div class="col-md-5 col-md-offset-1">
