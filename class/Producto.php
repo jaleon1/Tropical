@@ -4,6 +4,7 @@ if(isset($_POST["action"])){
     unset($_POST['action']);
     // Classes
     require_once("Conexion.php");
+    require_once("Usuario.php");
     // Session
     if (!isset($_SESSION))
         session_start();
@@ -114,12 +115,13 @@ class Producto{
 
     function ReadAllProductoVenta(){
         try {
-            //    $_SESSION['idBodega'];
             $sql='SELECT ib.id, p.codigo, p.nombre, p.txtColor, p.bgColor, p.nombreAbreviado, p.descripcion, ib.saldoCantidad, p.esVenta
-            FROM     insumosXBodega as ib  
+            FROM     insumosXBodega as ib
             INNER JOIN  producto as p on p.id = ib.idProducto
-            WHERE esVenta=1 or esVenta=2';
-            $data= DATA::Ejecutar($sql);
+            WHERE (esVenta=1 and ib.idBodega = :idBodega)
+            ORDER BY p.nombre';
+            $param= array(':idBodega'=>$_SESSION["userSession"]->idBodega);
+            $data= DATA::Ejecutar($sql,$param);
             return $data;
         }     
         catch(Exception $e) {
