@@ -892,28 +892,15 @@ function alertFact() {
 
 function ticketPrint(e){
     var data = JSON.parse(e);
-<<<<<<< HEAD
-    localStorage.setItem("lsFactura",data.orden); //Numero de factura
-    localStorage.setItem("lsBodega",$("#nombre").val()); //Nombre de odega Ej: Tres Rios
-    localStorage.setItem("lsSubTotal",$("#subtotal").text()); //SubTotal
-    localStorage.setItem("lsTotal",$("#total").text()); 
-    localStorage.setItem("lsFecha",data.fecha); 
-    // localStorage.setItem("lsPorcentajeDescuento",data.porcentajeDescuento);
-    // localStorage.setItem("lsPorcentajeIva",data.porcentajeIva);
+    localStorage.setItem("lsFactura",data.consecutivo);
+    localStorage.setItem("lsFecha",data.fechaCreacion);
+    localStorage.setItem("lsBodega",data.local);
+    localStorage.setItem("lsUsuario",data.terminal);
+    localStorage.setItem("lsSubTotal",data.totalComprobante);
+    localStorage.setItem("lsTotal",data.totalComprobante);
     localStorage.setItem("lsListaProducto",JSON.stringify(data.lista));
 
-    location.href ="/Tropical/TicketFactura.html";
-=======
-    localStorage.setItem("lsFactura","");
-    localStorage.setItem("lsFecha","");
-    localStorage.setItem("lsBodega","");
-    localStorage.setItem("lsUsuario","");
-    localStorage.setItem("lsSubTotal","");
-    localStorage.setItem("lsTotal","");
-    localStorage.setItem("lsListaProducto",JSON.stringify("array"));
-
     location.href ="/Tropical/TicketFacturacion.html";
->>>>>>> a56473e2706c65a1a2e30785f5b7275806cbaf4a
 }
 
 function calcVuelto(pago, xPagar) {

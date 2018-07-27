@@ -4,7 +4,26 @@
 class ProductoXFactura{
    
     public static $id=null;
-    
+
+    public static function Read($id){
+        try{
+            $sql="SELECT detalle from productosXFactura
+            where idFactura = :idDistribucion";
+            $param= array(':idDistribucion'=>$id);
+            $data = DATA::Ejecutar($sql,$param);            
+            $lista = [];
+            foreach ($data as $key => $value){
+                $producto = new ProductoXFactura();
+                $producto->detalle = $value['detalle']; //id del producto.       
+                array_push ($lista, $producto);
+            }
+            return $lista;
+        }
+        catch(Exception $e) {
+            return false;
+        }
+    }
+
     public static function Create($obj){
         try {
             $created = true;
