@@ -574,7 +574,7 @@ function facCard() {
                     </div>
 
                     <div class="row">
-                        <input id="txt_pagoCard" class="input-lg valPago" type="text" placeholder="Ingrese referencia"
+                        <input id="txt_pagoCard" class="input-lg valRef" type="text" placeholder="Ingrese referencia"
                             required="" minlength="5" autofocus="">
                     </div>
                     <div class="row">
@@ -584,19 +584,19 @@ function facCard() {
 
                 <div class="col-md-5 col-md-offset-1">
                     <ul id="keyboard">
-                        <li class="letter" onclick="sendVal('1')">1</li>
-                        <li class="letter" onclick="sendVal('2')">2</li>
-                        <li class="letter" onclick="sendVal('3')">3</li>
-                        <li class="letter clearl" onclick="sendVal('4')">4</li>
-                        <li class="letter" onclick="sendVal('5')">5</li>
-                        <li class="letter" onclick="sendVal('6')">6</li>
+                        <li class="letter" onclick="sendRef('1')">1</li>
+                        <li class="letter" onclick="sendRef('2')">2</li>
+                        <li class="letter" onclick="sendRef('3')">3</li>
+                        <li class="letter clearl" onclick="sendRef('4')">4</li>
+                        <li class="letter" onclick="sendRef('5')">5</li>
+                        <li class="letter" onclick="sendRef('6')">6</li>
     
-                        <li class="letter clearl" onclick="sendVal('7')">7</li>
-                        <li class="letter" onclick="sendVal('8')">8</li>
-                        <li class="letter" onclick="sendVal('9')">9</li>
-                        <li class="letter clearl glyphicon glyphicon-arrow-left red" onclick="sendVal('left')"></li>
-                        <li class="letter" onclick="sendVal('0')">0</li>
-                        <li class="Nosend glyphicon glyphicon-ok" id="send" onclick="sendVal('enter')"></li>
+                        <li class="letter clearl" onclick="sendRef('7')">7</li>
+                        <li class="letter" onclick="sendRef('8')">8</li>
+                        <li class="letter" onclick="sendRef('9')">9</li>
+                        <li class="letter clearl glyphicon glyphicon-arrow-left red" onclick="sendRef('left')"></li>
+                        <li class="letter" onclick="sendRef('0')">0</li>
+                        <li class="Nosend glyphicon glyphicon-ok" id="send" onclick="sendRef('enter')"></li>
                     </ul>
                 </div>
                 </div>
