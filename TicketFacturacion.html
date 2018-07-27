@@ -62,14 +62,14 @@
                 <tr> 
                     <td style="width:40%; text-align:left;">${item.detalle}</td>
 
-                    <td style="width:30%; text-align:left;">&nbsp;&nbsp; 1 </td>
+                    <td style="width:30%; text-align:right;">1</td>
 
-                    <td style="width:30%; text-align:left;">&nbsp;&nbsp;${item.precioUnitario}</td>
+                    <td style="width:30%; text-align:right;">${item.precioUnitario.toFixed(2)}</td>
                 </tr>
             `);
         }) 
-      $("#subtotal").text(localStorage.getItem("lsSubTotal"));
-      $("#total").text(localStorage.getItem("lsTotal"));
+      $("#subtotal").text(parseFloat(localStorage.getItem("lsSubTotal")).toFixed(2));
+      $("#total").text(parseFloat(localStorage.getItem("lsTotal")).toFixed(2));
       window.print();
       localStorage.setItem("lsPrintOK","OK");
       // location.href ="/Tropical/FacturaCli.html";
