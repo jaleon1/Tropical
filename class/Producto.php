@@ -116,7 +116,7 @@ class Producto{
     function ReadAllProductoVenta(){
         try {
             $sql='SELECT ib.id, p.codigo, p.nombre, p.txtColor, p.bgColor, p.nombreAbreviado, p.descripcion, ib.saldoCantidad, p.esVenta
-            FROM     insumosXBodega as ib
+            FROM insumosXBodega as ib
             INNER JOIN  producto as p on p.id = ib.idProducto
             WHERE esVenta=1 or esVenta=2
             ORDER BY p.nombre';

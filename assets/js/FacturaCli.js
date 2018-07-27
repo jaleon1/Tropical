@@ -892,13 +892,13 @@ function alertFact() {
 
 function ticketPrint(e){
     var data = JSON.parse(e);
-    localStorage.setItem("lsFactura","");
-    localStorage.setItem("lsFecha","");
-    localStorage.setItem("lsBodega","");
-    localStorage.setItem("lsUsuario","");
-    localStorage.setItem("lsSubTotal","");
-    localStorage.setItem("lsTotal","");
-    localStorage.setItem("lsListaProducto",JSON.stringify("array"));
+    localStorage.setItem("lsFactura",data.consecutivo);
+    localStorage.setItem("lsFecha",data.fechaCreacion);
+    localStorage.setItem("lsBodega",data.local);
+    localStorage.setItem("lsUsuario",data.terminal);
+    localStorage.setItem("lsSubTotal",data.totalComprobante);
+    localStorage.setItem("lsTotal",data.totalComprobante);
+    localStorage.setItem("lsListaProducto",JSON.stringify(data.lista));
 
     location.href ="/Tropical/TicketFacturacion.html";
 }

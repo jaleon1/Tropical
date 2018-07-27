@@ -24,7 +24,7 @@ if(isset($_POST["action"])){
             echo json_encode($factura->Read());
             break;
         case "Create":
-            $factura->Create();
+            echo json_encode($factura->Create());
             break;
         case "Update":
             $factura->Update();
@@ -57,6 +57,11 @@ class Factura{
     public $idEmisor=null;
     public $detalleFactura = [];
     public $detalleOrden = [];
+    public $lista= [];// Se usa para retornar los detalles de una factura
+    public $consecutivo= [];
+    public $usuario="";
+    public $bodega="";
+    
     ///////////////////////////////////
     
     function __construct(){
@@ -85,6 +90,8 @@ class Factura{
             $this->totalImpuesto= $obj["totalImpuesto"] ?? 0;
             $this->totalComprobante= $obj["totalComprobante"] ?? 0;
             $this->idEmisor= "1f85f425-1c4b-4212-9d97-72e413cffb3c";
+            
+            $this->consecutivo = $obj["consecutivo"] ?? "";
 
             if(isset($obj["detalleFactura"] )){
 
@@ -148,6 +155,7 @@ class Factura{
         }
     }
 
+    //Chacon lo usa???
     function Read(){
         try {
             $sql='SELECT p.id, p.idUsuario, p.fecha, p.subTotal, iva, porcentajeIva, descuento, porcentajeDescuento, total, c.id as idcategoria,c.idUsuario as nombrecategoria
@@ -192,6 +200,38 @@ class Factura{
             );
         }
     }
+
+    
+    function ReadbyID(){
+        try {
+            $sql='SELECT f.consecutivo, f.fechaCreacion, f.local, f.terminal, f.totalVenta
+                FROM factura f
+                WHERE f.id=:id';
+            $param= array(':id'=>$this->id);
+            $data= DATA::Ejecutar($sql,$param);     
+            if($data)
+            {
+                $this->consecutivo = $data[0]['consecutivo'];
+                $this->fechaEmision = $data[0]['fechaCreacion'];
+                $this->bodega = $_SESSION["userSession"]->bodega;
+                $this->usuario = $_SESSION["userSession"]->username;
+                $this->totalComprobante = $data[0]['totalVenta'];
+                $this->lista= ProductoXFactura::Read($this->id);
+                //$_SESSION["userSession"]->idBodega)
+                // retorna orden autogenerada.
+            }            
+            return $this;
+        }     
+        catch(Exception $e) {
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar el factura'))
+            );
+        }
+    }
+
+
     function Create(){
         try {   
 
@@ -215,7 +255,7 @@ class Factura{
                     // retorna orden autogenerada.
                     OrdenXFactura::$id=$this->id;
                     OrdenXFactura::Create($this->detalleOrden);
-                    return $this->Read();
+                    return $this->ReadbyID();
                 }
                 else throw new Exception('Error al guardar los productos.', 03);
             }
