@@ -19,15 +19,14 @@ $(document).ready(function () {
         mouseY = e.pageY;
     }); 
 
-    $('#username').keyboard();  
-    
-    $('#btnKeyboard-username').click(function(){     
-      
-        $('#numPad').css({'top':mouseY,'left':mouseX}).fadeIn('10000');
+    $('#btnKeyboard-username').click(function(){           
+        $('#numPad').css({'top':mouseY,'left':mouseX+50}).fadeIn('slow');
+        selector = $('#username');
     });
 
     $('#btnKeyboard-password').click(function(){     
-        $('#numPad').css({'top':mouseY,'left':mouseX}).fadeIn('slow');
+        $('#numPad').css({'top':mouseY,'left':mouseX+50}).fadeIn('slow');
+        selector = $('#password');
     });
 
     // on form "reset" event
