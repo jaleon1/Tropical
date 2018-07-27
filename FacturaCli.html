@@ -55,6 +55,9 @@
                         <!-- COLUMNA CON TOTALES + LISTA PRD -->
                         <div class="col-md-3 col-xs-12">
                             <div class="x_content">
+                                <div class="x_title">
+                                    <h3 class='call_Bodega'></h3>
+                                </div>
                                 <div class="table-responsive">
                                     <table class="table table-striped jambo_table bulk_action">
                                         <tbody>
@@ -76,7 +79,7 @@
                                         </tbody>
                                     </table>
                                 </div>
- 
+
                                 <button type="button" id="btnFacturar" data-toggle="modal" data-target=".factura-modal-lg" class="btn btn-danger btn-lg btn-facturar">Facturar</button>
                             </div>
                             <div class="x_content">
@@ -192,7 +195,7 @@
                         <h4 class="modal-title" id="myModalLabel">Facturar</h4>
                     </div>
                     <div class="modal-body">
-                        
+
                         <div class="row">
                             <div id="formapago">
 
@@ -248,14 +251,14 @@
 
 <script>
     $(document).ready(function () {
-        if(localStorage.getItem("lsPrintOK")=="OK"){
+        if (localStorage.getItem("lsPrintOK") == "OK") {
             swal({
                 type: 'success',
                 text: 'Factura Lista!',
                 timer: 2000
                 // showConfirmButton: true
-            }).then(function () { 
-                localStorage.setItem("lsPrintOK","NOT");    
+            }).then(function () {
+                localStorage.setItem("lsPrintOK", "NOT");
             });
             $(".procesarFac").prop('disabled', true);
             // setTimeout(function () { location.reload(); }, 2000);
