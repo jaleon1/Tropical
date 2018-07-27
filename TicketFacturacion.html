@@ -4,7 +4,7 @@
 <head>
   <script src="assets/js/jquery.min.js"></script>
   <script src="assets/js/Session.js"></script>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <!-- <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"> -->
 </head>
 
 <body>
@@ -35,7 +35,8 @@
     </br>
     <spa>_______________________________________</spa>
   </div>
-  <script src="assets/js/Factura.js"></script>
+  <script src="assets/js/FacturaCli.js"></script>
+  <script src="assets/js/virtualNumPad/virtualNumPad.js"></script>
 </body>
 
 </html>
@@ -52,18 +53,13 @@
       $.each(listaProducto, function (i, item) {
           $('#tableBody-TicketFactura').append(`
                 <tr> 
-                    <td style="width:40%; text-align:left;">${item.nombre}</td>
-                    <td style="width:30%; text-align:left;">&nbsp;&nbsp;${item.cantidad}</td>
-                    <td style="width:30%; text-align:left;">&nbsp;&nbsp;${item.precioVenta}</td>
+                    <td style="width:40%; text-align:left;">${item.detalle}</td>
+                    <td style="width:30%; text-align:left;">&nbsp;&nbsp;1</td>
+                    <td style="width:30%; text-align:left;">&nbsp;&nbsp;${item.precioUnitario}</td>
                 </tr>
             `);
         }) 
       $("#subtotal").text(localStorage.getItem("lsSubTotal"));
-<<<<<<< HEAD
-      // $("#descuento").text(localStorage.getItem("lsPorcentajeDescuento"));
-      // $("#iva").text(localStorage.getItem("lsPorcentajeIva"));
-=======
->>>>>>> a56473e2706c65a1a2e30785f5b7275806cbaf4a
       $("#total").text(localStorage.getItem("lsTotal"));
       window.print();
       localStorage.setItem("lsPrintOK","OK");
