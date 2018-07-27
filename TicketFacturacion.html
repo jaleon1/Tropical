@@ -39,9 +39,10 @@
       </p>
     <p class="centrado">Facturado Descripción...</p>
     </br>
-    <spa>_______________________________</spa>
+    <spa>_______________________________________</spa>
   </div>
-  <script src="assets/js/Factura.js"></script>
+  <script src="assets/js/FacturaCli.js"></script>
+  <script src="assets/js/virtualNumPad/virtualNumPad.js"></script>
 </body>
 
 </html>
@@ -60,7 +61,9 @@
           $('#tableBody-TicketFactura').append(`
                 <tr> 
                     <td style="width:40%; text-align:left;">${item.detalle}</td>
+
                     <td style="width:30%; text-align:left;">&nbsp;&nbsp; 1 </td>
+
                     <td style="width:30%; text-align:left;">&nbsp;&nbsp;${item.precioUnitario}</td>
                 </tr>
             `);
