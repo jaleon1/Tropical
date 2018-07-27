@@ -27,7 +27,7 @@ function sendRef(a){
             enter();
             break;
         case ("left"):
-            left();
+            leftRef();
             break;
         default:
             return false
@@ -42,7 +42,7 @@ function addNumber(a){
 
 function addRef(a){
     //21 numeros maximo
-    $('.valPago').val($('.valPago').val()+a)   
+    $('.valRef').val($('.valRef').val()+a)   
     validarRef (); 
 };
 
@@ -50,6 +50,12 @@ function left(){
     precio=$('.valPago').val();
     $('.valPago').val(precio.substring(0,precio.length-1)); 
     validarMonto (); 
+};
+
+function leftRef(){
+    precio=$('.valRef').val();
+    $('.valRef').val(precio.substring(0,precio.length-1)); 
+    validarRef (); 
 };
 
 
@@ -77,7 +83,7 @@ function validarMonto (){
 };
 
 function validarRef (){
-    if (( $('.valPago').length() ) >= 5) {
+    if (( $('.valRef')["0"].value.length ) >= 5) {
         var element = document.getElementsByClassName("Nosend")[0];
         element.classList.add("green", "letter", "send");        
         // element.classList.add("letter");
@@ -300,12 +306,11 @@ function facturar (){
         // muestra el numero de orden: IMPRIMIR.
         //var facUUID = JSON.parse(e)[0];  
         ticketPrint(e);  
-        // swal({
-        //     type: 'success',
-        //     title: 'Orden enviada',
-        //     text: 'Número de orden de Distribución:',
-        //     showConfirmButton: true
-        // });
+        swal({
+            type: 'success',
+            title: 'Orden enviada',
+            text: 'Número de orden de Distribución:'
+        });
 
     })
     .fail(function (e) {
