@@ -282,7 +282,7 @@ class Bodega {
         if(bodega.tipo=='Interna')
             $("#frmTotales").hide();
         else
-            $("frmTotales").show(); 
+            $("#frmTotales").show(); 
     };
 
     ShowListTipo(e) {
