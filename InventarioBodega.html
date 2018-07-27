@@ -135,16 +135,12 @@
                 <div class="">
                     <div class="page-title">
                         <div class="title_left">
-                            <h3>BODEGAS</h3>
+                            <h3>AGENCIAS</h3>
                         </div>
 
                         <div class="title_right">
                             <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
                                 <div class="input-group">
-                                    <!-- <input type="text" class="form-control" placeholder="Search for...">
-                                    <span class="input-group-btn">
-                                        <button class="btn btn-default" type="button">Go!</button>
-                                    </span> -->
                                 </div>
                             </div>
                         </div>
@@ -185,9 +181,7 @@
                                                 </div>
 
                                                 <div class="modal-body">
-                                                    <form class="form-horizontal form-label-left" id="frmBodega" novalidate>
-
-                                                        
+                                                    <form class="form-horizontal form-label-left" id="frmBodega" novalidate>                                                        
 
                                                         <div class="item form-group">
                                                             <label class="control-label col-md-3 col-sm-3 col-xs-12" for="nombre">Nombre
@@ -254,8 +248,8 @@
                                     </div>
                                     <!-- /modal -->
 
-                                    <!-- MODAL PRODUCTOS X BODEGA -->
-                                    <div class="modal fade bs-producto-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
+                                    <!-- MODAL INSUMOS X BODEGA -->
+                                    <div class="modal fade bs-insumo-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
                                         <div class="modal-dialog modal-lg">
                                             <div class="modal-content">
 
@@ -263,7 +257,7 @@
                                                     <button type="button" class="close" data-dismiss="modal">
                                                         <span aria-hidden="true">×</span>
                                                     </button>
-                                                    <h4 class="modal-title" id="nombrebodega"> BODEGA </h4>
+                                                    <h4 class="modal-title" id="nombrebodega"> AGENCIA X </h4>
                                                 </div>
 
                                                 <div class="modal-body">
@@ -274,8 +268,8 @@
                                                                 <!-- TABLE -->
                                                                 <div class="row">
                                                                     <div class="col-md-12 col-sm-12 col-xs-12">
-                                                                        <table id="dsProducto" class="table display responsive table-striped jambo_table no-wrap" width="100%" role="grid" aria-describedby="datatable_info">
-                                                                            <tbody id="tableBody-ProductoBodega">
+                                                                        <table id="tInsumo" class="table display responsive table-striped jambo_table no-wrap" width="100%" role="grid" aria-describedby="datatable_info">                                                                        
+                                                                            <tbody id="tBodyInsumo">
                                                                             </tbody>
                                                                         </table>
                                                                     </div>
@@ -289,129 +283,6 @@
 
                                                 <div class="modal-footer">
 
-                                                </div>
-
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- /modal -->
-
-                                    <!-- MODAL PRODCUCTO BODEGA - CANTIDAD- -->
-                                    <div class="modal fade bs-ProductoCantidad-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
-                                        <div class="modal-dialog modal-lg">
-                                            <div class="modal-content">
-
-                                                <div class="modal-header">
-                                                    <button type="button" class="close" data-dismiss="modal">
-                                                        <span aria-hidden="true">×</span>
-                                                    </button>
-                                                    <h4 class="modal-title">Editar Producto / Artículo</h4>
-                                                </div>
-
-                                                <div class="modal-body">
-                                                    <form class="form-horizontal form-label-left" id="frmProductosXBodega" novalidate>
-
-                                                        <div class="item form-group">
-                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="nombre">Producto
-                                                                <span class="required">*</span>
-                                                            </label>
-                                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <input id="productonombre" class="form-control col-md-7 col-xs-12" readonly name="productonombre" type="text" placeholder="Nombre completo Del producto">
-                                                            </div>
-                                                            <div id="reportrange" class="pull-right">
-                                                                <button id="btnAddCantidadCosto" data-toggle="modal" data-target=".bs-cantidadcosto-modal-lg" type="button" class="btn btn-info btn-lg">+</button>
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="item form-group ">
-                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="valor">Cantidad</label>
-                                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <input id="cantidad" class="form-control col-md-7 col-xs-12" name="cantidad" type="number" data-validate-minmax="0,999999999"
-                                                                    placeholder="Cantidad Producto">
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="item form-group ">
-                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="valor">Costo</label>
-                                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <input id="costo" class="form-control col-md-7 col-xs-12" name="costo" type="number" data-validate-minmax="0,999999999" placeholder="Costo del Producto">
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="ln_solid"></div>
-
-                                                        <div class="form-group">
-                                                            <div class="col-md-6 col-md-offset-3">
-                                                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                                                <button id="btnProductosXBodega" type="submit" class="btn btn-success">Submit</button>
-                                                            </div>
-                                                        </div>
-                                                    </form>
-                                                </div>
-
-                                                <div class="modal-footer">
-                                                </div>
-
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- /modal -->
-
-                                    <!-- MODAL CANTIDAD - COSTO -->
-                                    <div class="modal fade bs-cantidadcosto-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
-                                        <div class="modal-dialog modal-lg">
-                                            <div class="modal-content">
-
-                                                <div class="modal-header">
-                                                    <button type="button" class="close" data-dismiss="modal">
-                                                        <span aria-hidden="true">×</span>
-                                                    </button>
-                                                    <h4 class="modal-title" id="editarnombreproducto">Agregar Cantidad/Costo</h4>
-                                                </div>
-
-                                                <div class="modal-body">
-                                                    <form class="form-horizontal form-label-left" id="frmCantidadCostoxProducto" novalidate>
-
-                                                        <!-- <div class="item form-group">
-                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="articulonombre">Artículo
-                                                                <span class="required">*</span>
-                                                            </label>
-                                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <input id="articulonombre" class="form-control col-md-7 col-xs-12" readonly name="articulonombre" type="text" placeholder="Nombre Del Artículo">
-                                                            </div>
-                                                            <div class="pull-right">
-                                                                <button id="btnAddarticulo" data-toggle="modal" data-target=".bs-listaarticulos-modal-lg" type="button" class="btn btn-info btn-lg">+</button>    
-                                                            </div>
-                                                        </div> -->
-
-                                                        <div class="item form-group ">
-                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="cantidadproductoagregar">Cantidad</label>
-                                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <input id="cantidadproductoagregar" class="form-control col-md-7 col-xs-12" value="0" name="cantidadproductoagregar" type="number"
-                                                                    data-validate-minmax="0,999999999" placeholder="Cantidad a sumar">
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="item form-group ">
-                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="costoproductoagregar">Costo</label>
-                                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <input id="costoproductoagregar" class="form-control col-md-7 col-xs-12" value="0" name="costoproductoagregar" type="number"
-                                                                    data-validate-minmax="0,999999999" placeholder="Costo del Producto">
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="ln_solid"></div>
-
-                                                        <div class="form-group">
-                                                            <div class="col-md-6 col-md-offset-3">
-                                                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                                                <button id="btnCantidadCosto" type="submit" class="btn btn-success">Agregar</button>
-                                                            </div>
-                                                        </div>
-                                                    </form>
-                                                </div>
-
-                                                <div class="modal-footer">
                                                 </div>
 
                                             </div>
@@ -460,7 +331,7 @@
     <script src="assets/js/jquery.inputmask/jquery.inputmask.bundle.min.js"></script>
     <!-- JS Scripts -->
     <script src="assets/js/Bodega.js"></script>
-    <script src="assets/js/ProductosXBodega.js"></script>
+    <script src="assets/js/InsumosXBodega.js"></script>
     <script src="assets/js/sweetalert2.min.js"></script>
     <!-- Datatables -->
     <script src="../vendors/datatables.net/js/jquery.dataTables.min.js"></script>
@@ -480,7 +351,8 @@
         bodega.Read;
         bodega.ListTipos;
         bodega.Init();
-        productobodega.id = null;
-        productobodega.Init();
+        insumobodega.id = null;
+        insumobodega.Init();
+        insumobodega.setTable(false);
     });
 </script>

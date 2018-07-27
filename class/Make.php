@@ -18,15 +18,6 @@ if(isset($_POST["action"])){
         try {
             if(isset($_POST['local'])){
                 $local= $_POST["local"];
-                //
-                // $sql='SELECT d.id as id, f.consecutivo , d.tamano , p1.nombre as sabor1, 
-                //         p2.nombre as sabor2, p3.nombre as topping, f.fechaCreacion
-                //     FROM detalleOrden d inner join factura f on f.id=d.idfactura
-                //         -- left join insumosXBodega ib on ib.id= d.idSabor1 
-                //         left join producto p1 on p1.id=d.idsabor1
-                //         left join producto p2 on p2.id=d.idsabor2
-                //         left join producto p3 on p3.id=d.idTopping
-                //     WHERE estado= 0 AND f.local=:local';
                 $sql= 'SELECT d.id, f.consecutivo, d.tamano, p1.nombre as sabor1, 
                         p2.nombre as sabor2, p3.nombre as topping, f.fechaCreacion
                     FROM tropical.detalleOrden d inner join factura f on f.id=d.idFactura

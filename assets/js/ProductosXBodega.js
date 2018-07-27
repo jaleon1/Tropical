@@ -229,17 +229,6 @@ class ProductoBodega {
         var data = JSON.parse(e);
         t.rows.add(data);   
         t.draw();
-
-        // $.each(data, function (i, item) {
-        //     var rowNode= t.rows.add(data);            
-        // });
-        // $('td:eq(2) input', rowNode).attr({id: ("precioVenta"+producto.id), value: (producto.precioVenta || 1)});
-        // t.draw();
-        // $('.update').click(productobodega.UpdateEventHandler);
-        // $('.delete').click(productobodega.DeleteEventHandler);
-        // $('#tDeterminacion tbody tr').dblclick(productobodega.viewType==undefined || productobodega.viewType==productobodega.tUpdate ? productobodega.UpdateEventHandler : productobodega.SelectEventHandler);
-        // agregar / editar producto
-        //$('#btnAddCantidadCosto').click(productobodega.AddEventHandler);
     };
 
     AddProductoEventHandler(){

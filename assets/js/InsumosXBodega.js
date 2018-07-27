@@ -25,7 +25,7 @@ class InsumoBodega {
 
     get Read() {
         var miAccion = this.id == null ?  'ReadAll'  : 'Read';
-        if(miAccion=='ReadAll' && $('#tBodega tbody').length==0 )
+        if(miAccion=='ReadAll' && $('#tInsumo tbody').length==0 )
             return;
         $.ajax({
             type: "POST",
@@ -34,6 +34,26 @@ class InsumoBodega {
                 action: miAccion,
                 id: this.id,
                 // idBodega: this.idBodega no envpia el idBodega, toma el de la sesion.
+            }
+        })
+            .done(function (e) {
+                insumobodega.Reload(e);
+            })
+            .fail(function (e) {
+                insumobodega.showError(e);
+            });
+    }
+
+    get ReadByBodega() {
+        var miAccion = this.id == null ?  'ReadAll'  : 'Read';
+        if(miAccion=='ReadAll' && $('#tInsumo tbody').length==0 )
+            return;
+        $.ajax({
+            type: "POST",
+            url: "class/InsumosXBodega.php",
+            data: {
+                action: miAccion,                
+                idBodega: this.idBodega
             }
         })
             .done(function (e) {
@@ -108,7 +128,7 @@ class InsumoBodega {
     };
 
     ShowAll(e) {
-        var t= $('#tBodega').DataTable();
+        var t= $('#tInsumo').DataTable();
         t.clear();
         var data = JSON.parse(e);
         t.rows.add(data);   
@@ -159,7 +179,7 @@ class InsumoBodega {
     };
 
     setTable(buttons=true){
-        $('#tBodega').DataTable({
+        $('#tInsumo').DataTable({
             responsive: true,
             info: false,
             columns: [
