@@ -12,6 +12,19 @@ class FacturaCli {
         // this.importe = importe || 0;
         // this.t = t || null;
     }
+
+    ticketPrint(e){
+        var data = JSON.parse(e);
+        localStorage.setItem("lsFactura",data.consecutivo);
+        localStorage.setItem("lsFecha",data.fechaCreacion);
+        localStorage.setItem("lsBodega",data.local);
+        localStorage.setItem("lsUsuario",data.terminal);
+        localStorage.setItem("lsSubTotal",data.totalComprobante);
+        localStorage.setItem("lsTotal",data.totalComprobante);
+        localStorage.setItem("lsListaProducto",JSON.stringify(data.detalleFactura));
+    
+        location.href ="/Tropical/TicketFacturacion.html";
+    }
 }
 
 let facturaCli = new FacturaCli();
@@ -902,6 +915,7 @@ function ticketPrint(e){
 
     location.href ="Tropical/TicketFacturacion.html";
 }
+
 
 function calcVuelto(pago, xPagar) {
     // $("#vuelto").val(pago-xPagar);
