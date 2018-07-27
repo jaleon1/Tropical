@@ -29,6 +29,8 @@
   <link href="../vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css" rel="stylesheet">
   <link href="../vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css" rel="stylesheet">
   <link href="../vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css" rel="stylesheet">
+  <!-- Load the Virtaul Num Pad CSS files -->
+  <link rel="stylesheet" href="assets/css/numPad/virNumPad.css">
 
 </head>
 
@@ -36,6 +38,24 @@
   <div>
     <a class="hiddenanchor" id="signup"></a>
     <a class="hiddenanchor" id="signin"></a>
+
+    <div id='numPad'>
+      <ul id="keyboard">
+        <li class="letter" onclick="sendVal('1')">1</li>
+        <li class="letter" onclick="sendVal('2')">2</li>
+        <li class="letter" onclick="sendVal('3')">3</li>
+        <li class="letter clearl" onclick="sendVal('4')">4</li>
+        <li class="letter" onclick="sendVal('5')">5</li>
+        <li class="letter" onclick="sendVal('6')">6</li>
+  
+        <li class="letter clearl" onclick="sendVal('7')">7</li>
+        <li class="letter" onclick="sendVal('8')">8</li>
+        <li class="letter" onclick="sendVal('9')">9</li>
+        <li class="letter clearl glyphicon glyphicon-arrow-left red" onclick="sendVal('left')"></li>
+        <li class="letter" onclick="sendVal('0')">0</li>
+        <li class="send glyphicon glyphicon-ok" id="send" onclick="sendVal('enter')"></li>
+      </ul>
+    </div>
 
     <div class="login_wrapper">
       <div class="animate form login_form">
@@ -45,20 +65,22 @@
             <h1>Login Form</h1>
 
             <fieldset style="margin:0; padding:0;">
-              <div class="item form-group">
-                <input type="text" class="form-control col-lg-12 col-md-12 col-xs-12" placeholder="Username" id="username" required="required"
-                />
+
+              <div class="item form-group" style="height: 50px;">
+                <input type="text" class="form-control col-lg-12 col-md-12 col-xs-12 " placeholder="Username" id="username" required="required"/>
+                <i id="btnKeyboard-username" class="glyphicon glyphicon-th"></i>
               </div>
 
               <div class="form-group">
-                <input type="password" class="form-control ol-lg-12 col-md-12 col-xs-12" placeholder="Password" id="password" required="required"
-                />
+                <input type="password" class="form-control ol-lg-12 col-md-12 col-xs-12" placeholder="Password" id="password" required="required"/>
+                <i id="btnKeyboard-password" class="glyphicon glyphicon-th"></i>               
               </div>
             </fieldset>
 
             <fieldset>
               <div class="item form-group">
                 <button id="btnProducto" type="submit" class="btn btn-success">Log in</button>
+                
               </div>
             </fieldset>
 
@@ -147,7 +169,7 @@
     </div>
   </div>
   <!-- /modal -->
-  
+
   <!-- jQuery -->
   <script src="assets/js/jquery.min.js"></script>
   <script src="assets/bootstrap/js/bootstrap.min.js"></script>
@@ -158,13 +180,12 @@
   <!-- JS Scripts -->
   <script src="assets/js/Login.js"></script>
   <script src="assets/js/ip.js"></script>
-
   <!-- Custom Theme Scripts -->
   <script src="assets/js/custom.min.js"></script>
-
   <!-- Sweet Alert -->
   <script src="assets/js/sweetalert2.min.js"></script>
+  <!-- Load the jQuery jQBTK plugin's JavaScript -->
+  <script src="assets/js/virtualNumPad/vNumPad.js"></script>
 </body>
 
 </html>
-
