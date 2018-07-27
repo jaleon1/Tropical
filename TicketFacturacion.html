@@ -3,7 +3,13 @@
 
 <head>
   <script src="assets/js/jquery.min.js"></script>
-  <script src="assets/js/Session.js"></script>
+  <script src="assets/js/Session.js"></script>         
+  <!-- JS Moments -->
+  <script src="assets/js/moment.min.js"></script>
+  <!-- JS dataTables -->
+  <script src="assets/js/jquery.dataTables.min.js"></script>
+  <script src="assets/js/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+  
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 </head>
 
@@ -42,6 +48,7 @@
 
 <script>
     $(document).ready(function () {
+
       $("#factura").text(localStorage.getItem("lsFactura")); //Numero de factura
       $("#fecha").text(localStorage.getItem("lsFecha"));  //
       $("#bodega").text(localStorage.getItem("lsBodega"));
@@ -52,21 +59,17 @@
       $.each(listaProducto, function (i, item) {
           $('#tableBody-TicketFactura').append(`
                 <tr> 
-                    <td style="width:40%; text-align:left;">${item.nombre}</td>
-                    <td style="width:30%; text-align:left;">&nbsp;&nbsp;${item.cantidad}</td>
-                    <td style="width:30%; text-align:left;">&nbsp;&nbsp;${item.precioVenta}</td>
+                    <td style="width:40%; text-align:left;">${item.detalle}</td>
+                    <td style="width:30%; text-align:left;">&nbsp;&nbsp; 1 </td>
+                    <td style="width:30%; text-align:left;">&nbsp;&nbsp;${item.precioUnitario}</td>
                 </tr>
             `);
         }) 
       $("#subtotal").text(localStorage.getItem("lsSubTotal"));
-<<<<<<< HEAD
-      // $("#descuento").text(localStorage.getItem("lsPorcentajeDescuento"));
-      // $("#iva").text(localStorage.getItem("lsPorcentajeIva"));
-=======
->>>>>>> a56473e2706c65a1a2e30785f5b7275806cbaf4a
       $("#total").text(localStorage.getItem("lsTotal"));
       window.print();
       localStorage.setItem("lsPrintOK","OK");
       location.href ="/Tropical/FacturaCli.html";
+      alert("ok");
   });  
 </script>
