@@ -261,7 +261,7 @@ class Bodega {
         //fk 
         $('#tipo option[value=' + bodega.tipo + ']').prop("selected", true);    
         $("#tipo").selectpicker("refresh");
-        $(".bs-bodega-modal-lg").modal('toggle');    
+        $(".bs-bodega-modal-lg").modal('toggle');
     };
 
     SelectEventHandler() {
