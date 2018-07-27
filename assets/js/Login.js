@@ -1,5 +1,7 @@
 var url;
 var t= null;
+var mouseX;
+var mouseY;
 
 $(document).ready(function () {
     //Validator.js
@@ -10,6 +12,22 @@ $(document).ready(function () {
         if (validatorResult.valid)
             Login();    
         return false;
+    });
+
+    $(document).mousemove( function(e) {
+        mouseX = e.pageX; 
+        mouseY = e.pageY;
+    }); 
+
+    $('#username').keyboard();  
+    
+    $('#btnKeyboard-username').click(function(){     
+      
+        $('#numPad').css({'top':mouseY,'left':mouseX}).fadeIn('10000');
+    });
+
+    $('#btnKeyboard-password').click(function(){     
+        $('#numPad').css({'top':mouseY,'left':mouseX}).fadeIn('slow');
     });
 
     // on form "reset" event

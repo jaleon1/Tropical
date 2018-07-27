@@ -8,6 +8,10 @@ input[type=number]::-webkit-outer-spin-button {
   -webkit-appearance: none; 
   margin: 0; 
 }
+
+#numPad{
+    display: none;
+}
     
 #keyboard {  
     -webkit-user-select: none;

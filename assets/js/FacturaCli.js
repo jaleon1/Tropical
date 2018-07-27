@@ -25,7 +25,8 @@ class FacturaCli {
     }
 
     direcciona(){
-        location.href ="/Tropical/TicketFacturacion.html";
+        // location.href ="/Tropical/TicketFacturacion.html";
+        location.href ="/TicketFacturacion.html";
     }
 }
 
@@ -915,7 +916,9 @@ function ticketPrint(e){
     localStorage.setItem("lsTotal",data.totalComprobante);
     localStorage.setItem("lsListaProducto",JSON.stringify(data.detalleFactura));
 
-    location.href ="/Tropical/TicketFacturacion.html";
+    // location.href ="/Tropical/TicketFacturacion.html";
+    location.href ="/TicketFacturacion.html";
+
 }
 
 
