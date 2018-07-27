@@ -292,7 +292,7 @@ class Producto {
                         <td>${parseFloat(item.precioVenta).toFixed(2)}</td>
                         <td>${item.esVenta}</td>
                         <td class=" last">
-                            <a  id="update${item.id}" data-toggle="modal" data-target=".bs-example-modal-lg" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | 
+                            <a  id="update${item.id}" data-toggle="modal" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | 
                             <a  id="delete${item.id}"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>
                         </td>`
                     :``}
@@ -344,20 +344,9 @@ class Producto {
         $("#saldoCosto").val(parseFloat(data.saldoCantidad).toFixed(2));
         $("#costoPromedio").val(parseFloat(data.costoPromedio).toFixed(2));
         $("#precioVenta").val(parseFloat(data.precioVenta).toFixed(2));
-        $('#tipoProducto option[value=' + data.tipoProducto + ']').prop("selected", true);
-        // $("#id").val(producto.id);
-        // $("#codigo").val(producto.codigo);
-        // $("#nombre").val(producto.nombre);
-        // $("#txtColor").val(producto.txtColor);
-        // $("#bgColor").val(producto.bgColor);
-        // $("#nombreAbreviado").val(producto.nombreAbreviado);
-        // $("#descripcion").val(producto.descripcion);
-        // $("#saldoCantidad").val(producto.saldoCantidad);
-        // $("#saldoCosto").val(parseFloat(producto.saldoCantidad).toFixed(2));
-        // $("#costoPromedio").val(parseFloat(producto.costoPromedio).toFixed(2));
-        // $("#precioVenta").val(parseFloat(producto.precioVenta).toFixed(2));
-        // $('#tipoProducto option[value=' + producto.tipoProducto + ']').prop("selected", true);
+        $('#tipoProducto option[value=' + data.esVenta + ']').prop("selected", true); // esVenta = tipoProducto.
         $("#tipoProducto").selectpicker("refresh");
+        $(".bs-example-modal-lg").modal('toggle');
     };
 
     DeleteEventHandler() {
