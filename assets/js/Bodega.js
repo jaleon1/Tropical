@@ -210,6 +210,7 @@ class Bodega {
         t.draw();
         $('.update').click(bodega.UpdateEventHandler);
         $('.delete').click(bodega.DeleteEventHandler);
+        $('.open').click(bodega.OpenEventHandler);
         $('#tBodega tbody tr').dblclick(bodega.viewType==undefined || bodega.viewType==bodega.tUpdate ? bodega.UpdateEventHandler : bodega.SelectEventHandler);
     };
 
@@ -234,9 +235,15 @@ class Bodega {
     };
 
     OpenEventHandler() {
-        productobodega.idBodega = $(this).parents("tr").find(".itemId").text();  //Class itemId = ID del objeto.
-        $('#nombrebodega').text($(this).parents("tr").find("td").eq(2).text());
-        productobodega.Read;
+        // limpia dt
+        var t= $('#tInsumo').DataTable();
+        t.clear();
+        t.draw();
+        //
+        insumobodega.idBodega = $(this).parents("tr").find(".itemId").text();  //Class itemId = ID del objeto.
+        insumobodega.ReadByBodega;
+        $(".bs-insumo-modal-lg").modal('toggle');
+        $("#nombrebodega").text($(this).parents("tr").find("td:eq(1)").text());        
     };
 
     UpdateEventHandler() {
@@ -348,7 +355,7 @@ class Bodega {
                     searchable:false,
                     visible: buttons,
                     mRender: function () {
-                        return '<a class="update" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | <a class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>'                            
+                        return '<a class="update" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | <a class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a> | <a class="open"> <i class="glyphicon glyphicon-eye-open"> </i> Abrir </a>' 
                     }
                 }
             ]
