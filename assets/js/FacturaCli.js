@@ -22,7 +22,9 @@ class FacturaCli {
         localStorage.setItem("lsSubTotal",data.totalComprobante);
         localStorage.setItem("lsTotal",data.totalComprobante);
         localStorage.setItem("lsListaProducto",JSON.stringify(data.detalleFactura));
-    
+    }
+
+    direcciona(){
         location.href ="/Tropical/TicketFacturacion.html";
     }
 }
@@ -41,12 +43,12 @@ var precioGrande = new Object();
 precioGrande.precio = 0;
 precioMediano.precio = 0
 
-$(function()
-{
-    $(document)
-        .ajaxStart(NProgress.start)
-        .ajaxStop(NProgress.done);
-});
+// $(function()
+// {
+//     $(document)
+//         .ajaxStart(NProgress.start)
+//         .ajaxStop(NProgress.done);
+// });
 
 $(document).ready(function () {
 
