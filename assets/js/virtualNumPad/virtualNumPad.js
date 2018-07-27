@@ -71,7 +71,7 @@ function validarMonto (){
 
         document.getElementById("vuelto").textContent = ("Su vuelto: ");
         var element2 = document.getElementsByClassName("send")[0];
-        element2.classList.add("Nosend");
+        // element2.classList.add("Nosend");
         element2.classList.remove("letter", "send", "green");
     }
 };
@@ -306,6 +306,7 @@ function facturar (){
         //     text: 'Número de orden de Distribución:',
         //     showConfirmButton: true
         // });
+
     })
     .fail(function (e) {
         distr.showError(e);
