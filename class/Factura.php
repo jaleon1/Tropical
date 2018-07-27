@@ -94,7 +94,6 @@ class Factura{
             $this->consecutivo = $obj["consecutivo"] ?? "";
 
             if(isset($obj["detalleFactura"] )){
-
                 foreach ($obj["detalleFactura"] as $itemDetalle) {
                     $item= new ProductoXFactura();
                     $item->precioUnitario= $itemDetalle['precioUnitario'];
@@ -107,7 +106,6 @@ class Factura{
 
 
             if(isset($obj["detalleOrden"] )){
-
                 foreach ($obj["detalleOrden"] as $itemOrden) {
                     $item= new OrdenXFactura();
                     $item->idTamano= $itemOrden['idTamano'];
