@@ -24,7 +24,7 @@ if(isset($_POST["action"])){
             echo json_encode($factura->Read());
             break;
         case "Create":
-            $factura->Create();
+            echo json_encode($factura->Create());
             break;
         case "Update":
             $factura->Update();
@@ -57,6 +57,11 @@ class Factura{
     public $idEmisor=null;
     public $detalleFactura = [];
     public $detalleOrden = [];
+    public $lista= [];// Se usa para retornar los detalles de una factura
+    public $consecutivo= [];
+    public $usuario="";
+    public $bodega="";
+    
     ///////////////////////////////////
     
     function __construct(){
@@ -85,6 +90,8 @@ class Factura{
             $this->totalImpuesto= $obj["totalImpuesto"] ?? 0;
             $this->totalComprobante= $obj["totalComprobante"] ?? 0;
             $this->idEmisor= "1f85f425-1c4b-4212-9d97-72e413cffb3c";
+            
+            $this->consecutivo = $obj["consecutivo"] ?? "";
 
             if(isset($obj["detalleFactura"] )){
 
@@ -197,38 +204,22 @@ class Factura{
     
     function ReadbyID(){
         try {
-            $sql='SELECT p.id, p.idUsuario, p.fecha, p.subTotal, iva, porcentajeIva, descuento, porcentajeDescuento, total, c.id as idcategoria,c.idUsuario as nombrecategoria
-                FROM factura  p LEFT JOIN categoriasXProducto cp on cp.idProducto = p.id
-                    LEFT join categoria c on c.id = cp.idcategoria
-                where p.id=:id';
+            $sql='SELECT f.consecutivo, f.fechaCreacion, f.local, f.terminal, f.totalVenta
+                FROM factura f
+                WHERE f.id=:id';
             $param= array(':id'=>$this->id);
             $data= DATA::Ejecutar($sql,$param);     
-            foreach ($data as $key => $value){
-                require_once("Categoria.php");
-                $cat= new Categoria(); // categorias del factura
-                if($key==0){
-                    $this->id = $value['id'];
-                    $this->idUsuario = $value['idUsuario'];
-                    $this->fecha = $value['fecha'];
-                    $this->subTotal = $value['subTotal'];
-                    $this->iva = $value['iva'];
-                    $this->porcentajeIva = $value['porcentajeIva'];
-                    $this->descuento = $value['descuento'];
-                    $this->porcentajeDescuento = $value['porcentajeDescuento'];
-                    $this->total = $value['total'];
-                    //categoria
-                    if($value['idcategoria']!=null){
-                        $cat->id = $value['idcategoria'];
-                        $cat->idusuario = $value['nombrecategoria'];
-                        array_push ($this->listaProducto, $cat);
-                    }
-                }
-                else {
-                    $cat->id = $value['idcategoria'];
-                    $cat->idusuario = $value['nombrecategoria'];
-                    array_push ($this->listaProducto, $cat);
-                }
-            }
+            if($data)
+            {
+                $this->consecutivo = $data[0]['consecutivo'];
+                $this->fechaEmision = $data[0]['fechaCreacion'];
+                $this->bodega = $_SESSION["userSession"]->bodega;
+                $this->usuario = $_SESSION["userSession"]->username;
+                $this->totalComprobante = $data[0]['totalVenta'];
+                $this->lista= ProductoXFactura::Read($this->id);
+                //$_SESSION["userSession"]->idBodega)
+                // retorna orden autogenerada.
+            }            
             return $this;
         }     
         catch(Exception $e) {
@@ -264,7 +255,7 @@ class Factura{
                     // retorna orden autogenerada.
                     OrdenXFactura::$id=$this->id;
                     OrdenXFactura::Create($this->detalleOrden);
-                    return $this->Read();
+                    return $this->ReadbyID();
                 }
                 else throw new Exception('Error al guardar los productos.', 03);
             }
