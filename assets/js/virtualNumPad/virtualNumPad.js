@@ -299,13 +299,16 @@ function facturar (){
     .done(function(e){
         // muestra el numero de orden: IMPRIMIR.
         //var facUUID = JSON.parse(e)[0];  
-        ticketPrint(e);  
-        swal({
-            type: 'success',
-            title: 'Orden enviada',
-            text: 'Número de orden de Distribución:',
-            showConfirmButton: true
-        });
+        facturaCli.ticketPrint(e);  
+        // $(function () {
+        //     $('#myModalLabel').modal('toggle');
+        //  });
+        // swal({
+        //     type: 'success',
+        //     title: 'Orden enviada',
+        //     text: 'Número de orden de Distribución:',
+        //     showConfirmButton: true
+        // });
     })
     .fail(function (e) {
         distr.showError(e);
