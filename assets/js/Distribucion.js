@@ -23,6 +23,28 @@ class Distribucion {
         this.viewType = _t;        
     }
 
+    get Read() {
+        NProgress.start();
+        var miAccion = this.id == null ?  'ReadAll'  : 'Read';
+        if(miAccion=='ReadAll' && $('#tDistribucion tbody').length==0 )
+            return;
+        $.ajax({
+            type: "POST",
+            url: "class/Distribucion.php",
+            data: {
+                action: miAccion,
+                id: this.id
+            }
+        })
+            .done(function (e) {
+                distr.Reload(e);
+            })
+            .fail(function (e) {
+                distr.showError(e);
+            })
+            .always(NProgress.done());
+    }
+
     get Save() {
         if($('#tDistribucion tbody tr').length==0 ){
             swal({
@@ -129,7 +151,6 @@ class Distribucion {
                 $("#orden").removeAttr("disabled");
             });
     }
-
 
     Aceptar(){
         $('#btnDistribucion').attr("disabled", "disabled");
@@ -406,6 +427,44 @@ class Distribucion {
             ]
         });
     };
+
+    setTableVista(buttons=true){
+        $('#tDistribucion').DataTable({
+            responsive: true,
+            info: false,
+            iDisplayLength: 100,
+            columns: [
+                {
+                    title: "id",
+                    data: "id",
+                    className: "itemId",                    
+                    searchable: false
+                },
+                { title: "Fecha", data: "fecha" },
+                { title: "Orden", data: "orden" },
+                { title: "Usuario", data: "userName" },
+                { title: "Bodega", data: "bodega" },
+                { 
+                    title: "Total", 
+                    data: "total"
+                },
+                { 
+                    title: "Estado", 
+                    data: "estado"
+                },
+                {
+                    title: "Action",
+                    orderable: false,
+                    searchable:false,
+                    visible: buttons,
+                    mRender: function () {
+                        return '<a class="update" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | <a class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>'                            
+                    }
+                }
+            ]
+        });
+    };
+
 }
 
 

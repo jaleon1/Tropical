@@ -78,9 +78,18 @@ class Distribucion{
 
     function ReadAll(){
         try {
-            $sql='SELECT id, fecha, idBodega, orden, idUsuario
-                FROM     distribucion       
-                ORDER BY fecha asc';
+            // $sql='SELECT id, fecha, idBodega, orden, idUsuario
+            //     FROM     distribucion       
+            //     ORDER BY fecha asc';
+            $sql= 'SELECT d.id, fecha, orden, u.userName, b.nombre as bodega, e.nombre as estado, 
+                    (sum(cantidad*valor) + sum(cantidad*valor)*0.13) as total
+                FROM tropical.distribucion d 
+                    INNER JOIN usuario u on u.id=d.idUsuario
+                    INNER JOIN bodega b on b.id=d.idBodega
+                    INNER JOIN estado e on e.id=d.idEstado
+                    INNER JOIN productosXDistribucion p on p.idDistribucion=d.id
+                GROUP BY orden
+                ORDER BY fecha desc';
             $data= DATA::Ejecutar($sql);
             return $data;
         }     
