@@ -23,7 +23,7 @@ if(isset($_POST["action"])){
                     FROM tropical.detalleOrden d inner join factura f on f.id=d.idFactura
                         left join insumosXBodega i on i.id= d.idSabor1 inner join producto p1 on p1.id=i.idProducto
                         left join insumosXBodega i2 on i2.id= d.idSabor2 inner join producto p2 on p2.id=i2.idProducto
-                        left join insumosXBodega i3 on i3.id= d.idTopping inner join producto p3 on p3.id=i3.idProducto
+                        left join insumosXBodega i3 on i3.id= d.idTopping left join producto p3 on p3.id=i3.idProducto
                         WHERE estado= 0 AND f.local=:local';
                 $param= array(':local'=>$local);
                 $data= DATA::Ejecutar($sql, $param);
