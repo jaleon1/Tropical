@@ -112,24 +112,23 @@ class OrdenXFactura{
 
         try {
             $estado = 0;
+            $sql="";
+            $param="";
             foreach ($obj as $item) {
-                                
-                $sql="INSERT INTO detalleOrden (id, tamano, idFactura, idSabor1, idSabor2, idTopping, estado)
-                VALUES (uuid(), :tamano, :idFactura, :idSabor1, :idSabor2, :idTopping, :estado)";              
-                //
-                $param= array(':tamano'=>$item->idTamano,':idFactura'=>self::$id,':idSabor1'=>$item->idSabor1, ':idSabor2'=>$item->idSabor2, ':idTopping'=>$item->idTopping, ':estado'=>$estado);
+                if ($item->idTopping== "null"){
+                    $sql="INSERT INTO detalleOrden (id, tamano, idFactura, idSabor1, idSabor2, estado)
+                    VALUES (uuid(), :tamano, :idFactura, :idSabor1, :idSabor2, :estado)";              
+                    //
+                    $param= array(':tamano'=>$item->idTamano,':idFactura'=>self::$id,':idSabor1'=>$item->idSabor1, ':idSabor2'=>$item->idSabor2, ':estado'=>$estado);
+                }
+                else{                                
+                    $sql="INSERT INTO detalleOrden (id, tamano, idFactura, idSabor1, idSabor2, idTopping, estado)
+                    VALUES (uuid(), :tamano, :idFactura, :idSabor1, :idSabor2, :idTopping, :estado)";              
+                    //
+                    $param= array(':tamano'=>$item->idTamano,':idFactura'=>self::$id,':idSabor1'=>$item->idSabor1, ':idSabor2'=>$item->idSabor2, ':idTopping'=>$item->idTopping, ':estado'=>$estado);                
+                    }
                 $data = DATA::Ejecutar($sql,$param,false);
-                if($data)
-                {
-                    //save array obj
-                    //if(CategoriasXProducto::Create($this->listaCategoria))
-                    return true;
-                    //else throw new Exception('Error al guardar las categorias.', 03);
                 }
-                else throw new Exception('Error al guardar.', 02);
-
-                }
-                return $created;
         }     
         catch(Exception $e) {
             header('HTTP/1.0 400 Bad error');
