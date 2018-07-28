@@ -112,13 +112,22 @@ class OrdenXFactura{
 
         try {
             $estado = 0;
+            $sql="";
+            $param="";
             foreach ($obj as $item) {
-                                
-                $sql="INSERT INTO detalleOrden (id, tamano, idFactura, idSabor1, idSabor2, idTopping, estado)
-                VALUES (uuid(), :tamano, :idFactura, :idSabor1, :idSabor2, :idTopping, :estado)";              
-                //
-                $param= array(':tamano'=>$item->idTamano,':idFactura'=>self::$id,':idSabor1'=>$item->idSabor1, ':idSabor2'=>$item->idSabor2, ':idTopping'=>$item->idTopping, ':estado'=>$estado);
-                $data = DATA::Ejecutar($sql,$param,false);                
+                if ($item->idTopping== "null"){
+                    $sql="INSERT INTO detalleOrden (id, tamano, idFactura, idSabor1, idSabor2, estado)
+                    VALUES (uuid(), :tamano, :idFactura, :idSabor1, :idSabor2, :estado)";              
+                    //
+                    $param= array(':tamano'=>$item->idTamano,':idFactura'=>self::$id,':idSabor1'=>$item->idSabor1, ':idSabor2'=>$item->idSabor2, ':estado'=>$estado);
+                }
+                else{                                
+                    $sql="INSERT INTO detalleOrden (id, tamano, idFactura, idSabor1, idSabor2, idTopping, estado)
+                    VALUES (uuid(), :tamano, :idFactura, :idSabor1, :idSabor2, :idTopping, :estado)";              
+                    //
+                    $param= array(':tamano'=>$item->idTamano,':idFactura'=>self::$id,':idSabor1'=>$item->idSabor1, ':idSabor2'=>$item->idSabor2, ':idTopping'=>$item->idTopping, ':estado'=>$estado);                
+                    }
+                $data = DATA::Ejecutar($sql,$param,false);
                 }
         }     
         catch(Exception $e) {
