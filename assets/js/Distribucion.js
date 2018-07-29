@@ -195,6 +195,7 @@ class Distribucion {
         var t= $('#tDistribucion').DataTable();
         t.clear();
         t.rows.add(JSON.parse(e));
+        // $('td:eq(4)').attr({ align: "right" });   
         t.draw();
         $('.update').click(distr.UpdateEventHandler);
         $('.delete').click(distr.DeleteEventHandler);
@@ -432,7 +433,7 @@ class Distribucion {
         $('#tDistribucion').DataTable({
             responsive: true,
             info: false,
-            iDisplayLength: 100,
+            iDisplayLength: 100,            
             columns: [
                 {
                     title: "id",
@@ -446,7 +447,11 @@ class Distribucion {
                 { title: "Bodega", data: "bodega" },
                 { 
                     title: "Total", 
-                    data: "total"
+                    data: "total",
+                    className: "total",
+                    mRender: function ( e ) {
+                        return parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                    }
                 },
                 { 
                     title: "Estado", 
