@@ -144,7 +144,7 @@ class ProductoTemporal{
             $sql="INSERT INTO productotemporal   (id, idproducto, idusuario, idusuariorecibe, cantidad, estado, fecha) 
                 VALUES (:uuid, :idproducto, :idusuario, :idusuariorecibe, :cantidad, :estado, now())";
             //
-            $param= array(':uuid'=>$this->id, ':idproducto'=>$this->idproducto, ':idusuario'=>$_SESSION['usersession']->id, 
+            $param= array(':uuid'=>$this->id, ':idproducto'=>$this->idproducto, ':idusuario'=>$_SESSION['userSession']->id, 
             ':idusuariorecibe'=>$this->idusuariorecibe, ':cantidad'=>$this->cantidad, ':estado'=>$this->estado);
             $data = DATA::Ejecutar($sql,$param, false);
 

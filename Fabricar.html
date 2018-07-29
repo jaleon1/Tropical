@@ -95,7 +95,7 @@
             $(this)[0].firstChild.textContent= moment(this.children[0].textContent).fromNow();     
         });
         var t = setTimeout(updateTime, 30000);
-    }
+    };
 
     function addmsg(data){
         $.each(data, function(i, item){
@@ -107,7 +107,7 @@
                         <div class="avatar avatar-left"> 
                             <div class="avatar-letter" style="background-color: rgb(154, 108, 224)" title="${item.tamano}">${item.tamano}</div> 
                         </div>
-                        <p>${item.consecutivo}</p>
+                        <p>Orden Número: ${item.consecutivo}</p>
                         <h3><p>${item.sabor1} | ${item.sabor2} | ${item.topping}</p></h3>
                         
                         <span class="time-right">${moment(item.fechaCreacion).fromNow()}
@@ -145,10 +145,8 @@
             url: "class/Make.php",
             async: true, /* If set to non-async, browser shows page as "Loading.."*/
             cache: false,
-            timeout:45000, /* Timeout in ms */
             data: { 
-                action: 'Read',
-                local:'001' // número de local según el usuario registrado.
+                action: 'Read'
             },            
             success: function(e){ 
                 if(e!=''){
@@ -156,7 +154,7 @@
                     addmsg(data); 
                     setTimeout(
                         waitForMsg, /* Request next message */
-                        5000 /* ..after x seconds */
+                        20000 /* ..after x seconds */
                     );
                 }
             },
