@@ -160,7 +160,7 @@ class Insumo {
             $('#tableBody-Insumo').append(`
                 <tr> 
                     <td class="a-center ">
-                        <input id="chk-addinsumo${item.id}" type="checkbox" class="flat" name="table_records">
+                        <input id="chk-addinsumo${item.id}" type="checkbox" class="chk-addinsumo" name="table_records">
                     </td>
                     <td class="itemId">${item.id}</td>
                     <td>${item.codigo}</td>
@@ -186,13 +186,18 @@ class Insumo {
             // event Handler
             $(".update").click(insumo.UpdateEventHandler);
             $(".delete").click(insumo.DeleteEventHandler);
-            if (document.URL.indexOf("OrdenSalida.html")!=-1)
-                $('#chk-addinsumo'+item.id).change(ordenSalida.AddInsumoEventHandler);
+            // if (document.URL.indexOf("OrdenSalida.html")!=-1)
+            //     $('#chk-addinsumo'+item.id).change(ordenSalida.AddInsumoEventHandler);
         })
 
         if ( $.fn.dataTable.isDataTable( '#dsInsumo' ) ) {
-            // var table = $('#dsInsumo').DataTable();
-            // table.destroy();
+            var table = $('#dsInsumo').DataTable();
+            table.destroy();
+            $('#dsInsumo').DataTable( {          
+                paging: true,
+                search: true,
+                iDisplayLength: 10
+            });
         }
         else 
             $('#dsInsumo').DataTable( {          

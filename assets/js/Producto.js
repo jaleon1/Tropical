@@ -269,7 +269,7 @@ class Producto {
             $('#tableBody-Producto').append(`
                 <tr> 
                     <td>
-                        <input class="flat" type="checkbox" id="chk-addproducto${item.id}">
+                        <input class="chk-addproducto" type="checkbox" id="chk-addproducto${item.id}">
                     </td>
                     <td class="itemId">${item.id}</td>
                     <td>${item.codigo}</td>
@@ -301,9 +301,9 @@ class Producto {
             // event Handler
             $('#update'+item.id).click(producto.UpdateEventHandler);
             $('#delete'+item.id).click(producto.DeleteEventHandler);
-            if (document.URL.indexOf("ElaborarProducto.html")!=-1) {
-                $('#chk-addproducto'+item.id).change(elaborarProducto.AddProductoEventHandler);
-            }
+            // if (document.URL.indexOf("ElaborarProducto.html")!=-1) {
+            //     $('#chk-addproducto'+item.id).change(elaborarProducto.AddProductoEventHandler);
+            // }
             if (document.URL.indexOf("Articulo.html")!=-1 || url.indexOf("Distribucion.html")!=-1) {
                 $('#chk-addproducto'+item.id).change(producto.AddArticuloEventHandler);
             }
@@ -312,6 +312,11 @@ class Producto {
         //datatable         
         if ( $.fn.dataTable.isDataTable( '#dsProducto' ) ) {
             var table = $('#dsProducto').DataTable();
+            table.destroy();
+            $('#dsProducto').DataTable( {
+                paging: true,
+                search: true
+            } );
         }
         else 
             $('#dsProducto').DataTable( {

@@ -238,7 +238,7 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
                         <td>${item.usuarioRecibe}</td>
                         <td>${item.fechaLiquida}</td>
                         <td>${estado}</td>
-                        ${document.URL.indexOf("InventarioOrdensalida.html")>=1 ? 
+                        ${document.URL.indexOf("InventarioOrdensalida.html")<0 ? 
                         `<td class=" last">
                             <a id="update${item.id}" class="update" data-toggle="modal" data-target=".bs-example-modal-lg" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | 
                             <a id="delete${item.id}" class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>
@@ -246,53 +246,54 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
                         :``}
                     </tr>
                 `);
-                if (document.URL.indexOf("Ordensalida.html")!=-1)
+                if (document.URL.indexOf("Ordensalida.html")<0)
                     $('#chkaddordensalida'+item.id).click(elaborarProducto.AddOrdenSalida);
-                    if (document.URL.indexOf("InventarioOrdensalida.html")!=-1){
-                        $('#update'+item.id).click(ordenSalida.UpdateEventHandler);
-                        $('#delete'+item.id).click(ordenSalida.DeleteEventHandler);
-                    }
+                if (document.URL.indexOf("InventarioOrdensalida.html")<0){
+                    $('#update'+item.id).click(ordenSalida.UpdateEventHandler);
+                    $('#delete'+item.id).click(ordenSalida.DeleteEventHandler);
+                }
             })    
         
-            // Limpia el div que contiene la tabla.
-            $('#tableBody-OrdenSalida').html("");
-            // // Carga lista
-            var data = JSON.parse(e);
-            //style="display: none"
-            var estado="EN PROCESO";
-            $.each(data, function (i, item) {
-                if (item.idEstado=="0") 
-                    estado="EN PROCESO";
-                else
-                    estado="LIQUIDADO";
-                $('#tableBody-OrdenSalida').append(`
-                    <tr> 
-                        <td class="a-center ">
-                        <input id="chkaddordensalida${item.id}" type="checkbox" class="flat" name="table_records">
-                        </td>
-                        <td>${item.numeroOrden}</td>
-                        <td class="itemId">${item.id}</td>
-                        <td class="oculto">${item.idUsuarioEntrega}</td>
-                        <td class="oculto">${item.idUsuarioRecibe}</td>
-                        <td>${item.fecha}</td>
-                        <td>${item.usuarioEntrega}</td>
-                        <td>${item.usuarioRecibe}</td>
-                        <td>${item.fechaLiquida}</td>
-                        <td>${estado}</td>
-                        <td class=" last">
-                            <a id="update${item.id}" class="update" data-toggle="modal" data-target=".bs-example-modal-lg" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | 
-                            <a id="delete${item.id}" class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>
-                        </td>
-                    </tr>
-                `);
-                $('#update'+item.id).click(ordenSalida.UpdateEventHandler);
-                $('#delete'+item.id).click(ordenSalida.DeleteEventHandler);
-            })    
+            // // Limpia el div que contiene la tabla.
+            // $('#tableBody-OrdenSalida').html("");
+            // // // Carga lista
+            // var data = JSON.parse(e);
+            // //style="display: none"
+            // var estado="EN PROCESO";
+            // $.each(data, function (i, item) {
+            //     if (item.idEstado=="0") 
+            //         estado="EN PROCESO";
+            //     else
+            //         estado="LIQUIDADO";
+            //     $('#tableBody-OrdenSalida').append(`
+            //         <tr> 
+            //             <td class="a-center ">
+            //             <input id="chkaddordensalida${item.id}" type="checkbox" class="flat" name="table_records">
+            //             </td>
+            //             <td>${item.numeroOrden}</td>
+            //             <td class="itemId">${item.id}</td>
+            //             <td class="oculto">${item.idUsuarioEntrega}</td>
+            //             <td class="oculto">${item.idUsuarioRecibe}</td>
+            //             <td>${item.fecha}</td>
+            //             <td>${item.usuarioEntrega}</td>
+            //             <td>${item.usuarioRecibe}</td>
+            //             <td>${item.fechaLiquida}</td>
+            //             <td>${estado}</td>
+            //             <td class=" last">
+            //                 <a id="update${item.id}" class="update" data-toggle="modal" data-target=".bs-example-modal-lg" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | 
+            //                 <a id="delete${item.id}" class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>
+            //             </td>
+            //         </tr>
+            //     `);
+            //     $('#update'+item.id).click(ordenSalida.UpdateEventHandler);
+            //     $('#delete'+item.id).click(ordenSalida.DeleteEventHandler);
+            // })    
     
         //datatable         
         if ( $.fn.dataTable.isDataTable( '#dsOrdenSalida' ) ) {
             var table = $('#dsOrdenSalida').DataTable();
-
+            table.destroy();
+            $('#dsOrdenSalida').DataTable();
         }
         else 
             $('#dsOrdenSalida').DataTable();
@@ -319,6 +320,8 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
         //datatable         
         if ( $.fn.dataTable.isDataTable( '#dsInsumosOrdenSalida' ) ) {
             var table = $('#dsInsumosOrdenSalida').DataTable();
+            // table.destroy();
+            // $('#dsInsumosOrdenSalida').DataTable();
         }
         else 
             $('#dsInsumosOrdenSalida').DataTable( {
@@ -411,6 +414,8 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
                     //datatable         
                     if ( $.fn.dataTable.isDataTable( '#dsInsumosOrdenSalida' ) ) {
                         var table = $('#dsInsumosOrdenSalida').DataTable();
+                        // table.destroy();
+                        // $('#dsInsumosOrdenSalida').DataTable();
                     }
                     else 
                         $('#dsInsumosOrdenSalida').DataTable( {
@@ -464,6 +469,8 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
                     //datatable         
                     if ( $.fn.dataTable.isDataTable( '#dsInsumosOrdenSalida' ) ) {
                         var table = $('#dsInsumosOrdenSalida').DataTable();
+                        // table.destroy();
+                        // $('#dsInsumosOrdenSalida').DataTable();
                     }
                     else 
                         $('#dsInsumosOrdenSalida').DataTable( {
@@ -534,29 +541,19 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
         $("#estado").focus();
     }
 
-    AddInsumoEventHandler(){
-        var id=$(this).parents("tr").find("td:eq(1)").html();
-        var codigo=$(this).parents("tr").find("td:eq(2)").html(); 
-        var nombre=$(this).parents("tr").find("td:eq(3)").html();
-        var descripcion=$(this).parents("tr").find("td:eq(4)").html();
-        var saldoCantidad=$(this).parents("tr").find("td:eq(5)").html();
-        var saldoCosto=$(this).parents("tr").find("td:eq(6)").html();
-        var costoPromedio=$(this).parents("tr").find("td:eq(7)").html();
+    AddInsumoEventHandler(id,codigo,nombre,descripcion,saldoCantidad,saldoCosto,costoPromedio){
         var ids_insumos = [];
-
-        if ($(this).is(':checked')) {
-            $('#tableBody-InsumosOrdenSalida tr').each(function() {
-                ids_insumos.push($(this).find('td:eq(0)').html());   
-            });
-            if (ids_insumos.length==0) {
+        $('#tableBody-InsumosOrdenSalida tr').each(function() {
+            ids_insumos.push($(this).find('td:eq(0)').html());   
+        });
+        if (ids_insumos.length==0) {
+            ordenSalida.AddTableInsumo(id,codigo,nombre,descripcion,saldoCantidad,saldoCosto,costoPromedio);
+        }
+        else{
+            if (ids_insumos.indexOf(id)!=-1) 
+                $('#chk-addinsumo'+id).attr("checked",false);
+            else
                 ordenSalida.AddTableInsumo(id,codigo,nombre,descripcion,saldoCantidad,saldoCosto,costoPromedio);
-            }
-            else{
-                if (ids_insumos.indexOf(id)!=-1) 
-                    $('#chk-addinsumo'+id).attr("checked",false);
-                else
-                    ordenSalida.AddTableInsumo(id,codigo,nombre,descripcion,saldoCantidad,saldoCosto,costoPromedio);
-            }
         }
     }
 
