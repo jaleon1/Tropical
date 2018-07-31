@@ -25,7 +25,8 @@ if(isset($_POST["action"])){
                     left join insumosXBodega i on i.id= d.idSabor1 inner join producto p1 on p1.id=i.idProducto
                     left join insumosXBodega i2 on i2.id= d.idSabor2 inner join producto p2 on p2.id=i2.idProducto
                     left join insumosXBodega i3 on i3.id= d.idTopping left join producto p3 on p3.id=i3.idProducto
-                    WHERE estado= 0 AND f.idBodega=:idBodega';
+                    WHERE estado= 0 AND f.idBodega=:idBodega
+                    ORDER BY f.fechaCreacion asc';
             $param= array(':idBodega'=>$_SESSION['userSession']->idBodega);
             $data= DATA::Ejecutar($sql, $param);
             if(count($data)){
@@ -38,7 +39,7 @@ if(isset($_POST["action"])){
                         "tamano" => $value['tamano']==0?'8':'12',                             
                         "sabor1" =>  $value['sabor1'],
                         "sabor2" =>  $value['sabor2'],
-                        "topping" => $value['topping']=='null'?'Sin Topping':'Topping: ' . $value['topping'],
+                        "topping" => $value['topping']==null?'Sin Topping':'Topping: ' . $value['topping'],
                         "fechaCreacion" => $value['fechaCreacion']
                     );
                     array_push($items, $item);
