@@ -146,26 +146,6 @@
                     <div class="row">
                         <div class="col-md-12 col-sm-12 col-xs-12">
                             <div class="x_panel">
-                                <!-- <div class="title_right">
-                                    <div class="col-md-6 col-sm-6 col-xs-6 form-group pull-right top_search">
-                                        <div class="input-group">
-                                            <input type="text" class="form-control col-md-7 col-xs-12" id="orden" placeholder="Número de Orden">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6 col-sm-6 col-xs-6 form-group pull-left top_search">
-                                            <div class="input-group">
-                                                <input type="text" readonly class="form-control col-md-7 col-xs-12" id="proveedor" placeholder="Proveedor" value='Proveedor Estándar'>
-                                            </div>
-                                        </div>
-                                    <div class="col-md-12 col-sm-12 col-xs-12 form-group pull-right top_search">
-                                        <div class="input-group">
-                                            <input autofocus type="text" class="form-control" id="p_searh" placeholder="Ingresar Materia Prima/Producto...">
-                                            <span class="input-group-btn">
-                                                <button class="btn btn-default" type="button">Buscar</button>
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div> -->
                                 <!--  CONTENIDO DE LA PAGINA -->
                                 <div class="x_content">
                                     <div class="table-responsive">
@@ -194,38 +174,47 @@
 
     <!-- modals -->
     <!-- Large modal -->
-    <!-- <div class="modal fade factura-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
+    <div id="modalFac" class="modal fade factura-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content modal-factura">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                    <h4 class="modal-title" id="myModalLabel">Facturar</h4>
+                <div id="detalleFac" class="modal-header">
+
                 </div>
                 <div class="modal-body">
                     <div class="row">
-                        <div>
-                            <center>
-                                <h1 id="total_pagar"></h1>
-                            </center>
+                        <div class="clearfix"></div>
 
+                        <div class="row">
+                            <div class="col-md-12 col-sm-12 col-xs-12">
+                                <!-- <div class="x_panel"> -->
+                                    <!--  CONTENIDO DE LA PAGINA -->
+                                    <div class="x_content">
+                                        <div class="table-responsive">
+                                            <table id="tb_detalle_fact" style="width:100%" class="table table-striped jambo_table bulk_action">
+                                                <thead>
+                                                    
+                                                </thead>
+                                                <tbody id="detalle_prd">
+    
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                <!-- </div> -->
+                            </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div id="formapago">
+    
+                        <div class="clearfix"></div>
 
-                        </div>
                     </div>
-                </div>
                 <div class="modal-footer">
-                    <div id="btn-formapago">
-
+                    <div id="totalFact">
+                        
                     </div>
                 </div>
             </div>
         </div>
-    </div> -->
+    </div>
     <!-- modals -->
     <!-- Large modal -->
 
