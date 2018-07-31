@@ -5,7 +5,7 @@
 .avatar-letter {
     line-height: 48px;
     width: 48px;
-    font-size: 25px;
+    font-size: 18px;
     background-color: rgb(154, 108, 224);
     text-align: center;
   }
@@ -27,6 +27,14 @@
 .container {
     border: 2px solid #dedede;
     background-color: #f1f1f1;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 10px 0;
+}
+
+.containerPar {
+    border: 2px solid #dedede;
+    background-color: #e7d7eb;
     border-radius: 5px;
     padding: 10px;
     margin: 10px 0;
@@ -72,3 +80,16 @@
     float: left;
     color: #999;
 }
+
+.cod{
+    font-size: 18px;    
+}
+
+.onz{
+    font-size: 10px; 
+}
+
+.topping{
+    color: rgb(154, 105, 224);
+}
+
