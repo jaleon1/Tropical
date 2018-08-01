@@ -187,14 +187,30 @@ class Producto {
                 id: this.id
             }
         })
-            .done(function () {
-                swal({
-                    //
-                    type: 'success',
-                    title: 'Eliminado!',
-                    showConfirmButton: false,
-                    timer: 1000
-                });
+            .done(function (e) {
+                var data = JSON.parse(e);
+                if (data == 0){
+                    swal({
+                        type: 'success',
+                        title: 'Eliminado!',
+                        showConfirmButton: false,
+                        timer: 1000
+                    });}
+                else if (data.status == 1) {
+                    swal({
+                        type: 'error',
+                        title: 'No es posible eliminar...',
+                        text: 'El registro que intenta eliminar ya se ecnuentra liquidado'                        
+                    });
+                }
+                else {
+                    swal({
+                        type: 'error',
+                        title: 'Ha ocurrido un error...',
+                        text: 'El registro no ha sido eliminado',
+                        footer: '<a href>Contacte a Soporte Técnico</a>',
+                    })
+                }
             })
             .fail(function (e) {
                 producto.showError(e);
@@ -262,6 +278,8 @@ class Producto {
         url = window.location.href;
         // Limpia el div que contiene la tabla.
         $('#tableBody-Producto').html("");
+        var table = $('#dsProducto').DataTable();
+        table.destroy();
         // // Carga lista
         var data = JSON.parse(e);
 
@@ -310,16 +328,30 @@ class Producto {
         })    
                 
         //datatable         
-        if ( $.fn.dataTable.isDataTable( '#dsProducto' ) ) {
-            var table = $('#dsProducto').DataTable();
-            table.destroy();
+        // if ( $.fn.dataTable.isDataTable( '#dsProducto' ) ) {
+        //     var table = $('#dsProducto').DataTable();
+        //     table.destroy();
+        //     $('#dsProducto').DataTable( {
+        //         paging: true,
+        //         search: true
+        //     } );
+        // }
+        // else 
             $('#dsProducto').DataTable( {
-                paging: true,
-                search: true
-            } );
-        }
-        else 
-            $('#dsProducto').DataTable( {
+                columns: [
+                    { "width":"5%"},
+                    { "width":"0%"},
+                    { "width":"auto"},
+                    { "width":"auto"},
+                    { "width":"auto"},
+                    { "width":"auto"},
+                    { "width":"auto"},
+                    { "width":"auto"},
+                    { "width":"auto"},
+                    { "width":"auto"},
+                    { "width":"auto"},
+                    { "width":"15%"}
+                ],     
                 paging: true,
                 search: true
             } );

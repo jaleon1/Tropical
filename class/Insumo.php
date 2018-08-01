@@ -138,8 +138,8 @@ class Insumo{
     private function CheckRelatedItems(){
         try{
             $sql="SELECT id
-                FROM insumosXOrdenSalida R
-                WHERE R.idInsumo= :id";                
+                FROM insumosXOrdenSalida
+                WHERE idInsumo= :id";                
             $param= array(':id'=>$this->id);
             $data= DATA::Ejecutar($sql, $param);
             if(count($data))
