@@ -138,9 +138,11 @@ class Factura{
 
     function ReadAll(){
         try {
-            $sql='SELECT id, idUsuario, fecha, descuento, iva, porcentajeIva , porcentajeDescuento
-                FROM     factura       
-                ORDER BY idUsuario asc';
+            $sql='SELECT f.id, f.consecutivo, f.fechaCreacion, f.totalVenta, b.nombre, u.userName
+                FROM factura f
+                INNER JOIN bodega b on f.idBodega = b.id
+                INNER JOIN usuario u on u.id = f.idusuario   
+                ORDER BY f.consecutivo asc';
             $data= DATA::Ejecutar($sql);
             return $data;
         }     
@@ -153,6 +155,22 @@ class Factura{
         }
     }
 
+    // function loadColumns(){
+    //     try {
+    //         $sql='SELECT f.consecutivo, f.fechaCreacion, f.totalVenta
+    //             FROM factura f      
+    //             ORDER BY f.consecutivo desc';
+    //         $data= DATA::Ejecutar($sql);
+    //         return $data;
+    //     }     
+    //     catch(Exception $e) {
+    //         header('HTTP/1.0 400 Bad error');
+    //         die(json_encode(array(
+    //             'code' => $e->getCode() ,
+    //             'msg' => 'Error al cargar la lista'))
+    //         );
+    //     }
+    // }
     //Chacon lo usa???
     function Read(){
         try {
@@ -215,7 +233,6 @@ class Factura{
                 $this->usuario = $_SESSION["userSession"]->username;
                 $this->totalComprobante = $data[0]['totalVenta'];
                 $this->lista= ProductoXFactura::Read($this->id);
-                //$_SESSION["userSession"]->idBodega)
                 // retorna orden autogenerada.
             }            
             return $this;
@@ -236,14 +253,14 @@ class Factura{
             $this->fechaCreacion = date("Y-m-d H:i:s");
             $this->fechaEmision = date("D \d\\e F Y");
 
-            $sql="INSERT INTO factura   (id, idBodega, fechaCreacion, local, terminal, idCondicionVenta,idSituacionComprobante,idEstadoComprobante, idMedioPago,fechaEmision, totalVenta, totalDescuentos, totalVentaneta, totalImpuesto, totalComprobante, idEmisor)
+            $sql="INSERT INTO factura   (id, idBodega, fechaCreacion, local, terminal, idCondicionVenta,idSituacionComprobante,idEstadoComprobante, idMedioPago,fechaEmision, totalVenta, totalDescuentos, totalVentaneta, totalImpuesto, totalComprobante, idEmisor, idUsuario)
                                        
-            VALUES  (:uuid, :idBodega, :fechaCreacion, :local, :terminal, :idCondicionVenta, :idSituacionComprobante, :idEstadoComprobante, :idMedioPago, :fechaEmision, :totalVenta, :totalDescuentos, :totalVentaneta, :totalImpuesto, :totalComprobante, :idEmisor)"; 
+            VALUES  (:uuid, :idBodega, :fechaCreacion, :local, :terminal, :idCondicionVenta, :idSituacionComprobante, :idEstadoComprobante, :idMedioPago, :fechaEmision, :totalVenta, :totalDescuentos, :totalVentaneta, :totalImpuesto, :totalComprobante, :idEmisor, :idUsuario)"; 
        
             $param= array(':uuid'=>$this->id, ':idBodega'=>$_SESSION["userSession"]->idBodega, ':fechaCreacion'=>$this->fechaCreacion, ':local'=>$this->local, ':terminal'=>$this->terminal, 
                     ':idCondicionVenta'=>$this->idCondicionVenta, ':idSituacionComprobante'=>$this->idSituacionComprobante, ':idEstadoComprobante'=>$this->idEstadoComprobante, 
                     ':idMedioPago'=>$this->idMedioPago, ':fechaEmision'=>$this->fechaEmision, ':totalVenta'=>$this->totalVenta, ':totalDescuentos'=>$this->totalDescuentos, 
-                    ':totalVentaneta'=>$this->totalVentaneta, ':totalImpuesto'=>$this->totalImpuesto, ':totalComprobante'=>$this->totalComprobante, ':idEmisor'=>$this->idEmisor);
+                    ':totalVentaneta'=>$this->totalVentaneta, ':totalImpuesto'=>$this->totalImpuesto, ':totalComprobante'=>$this->totalComprobante, ':idEmisor'=>$this->idEmisor, ':idUsuario'=>$_SESSION["userSession"]->id);
             $data = DATA::Ejecutar($sql,$param, false);
             if($data)
             {

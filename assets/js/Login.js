@@ -4,6 +4,13 @@ var mouseX;
 var mouseY;
 
 $(document).ready(function () {
+    //keyboard
+    $(function () {
+        "use strict";
+    
+        jqKeyboard.init();
+    });
+        
     //Validator.js
     var validator = new FormValidator({ "events": ['blur', 'input', 'change'] }, document.forms[0]);
     $('#frmLogin').submit(function(e){
@@ -19,14 +26,9 @@ $(document).ready(function () {
         mouseY = e.pageY;
     }); 
 
-    $('#btnKeyboard-username').click(function(){           
+    $('#btnKeyboar').click(function(){           
         $('#numPad').css({'top':mouseY,'left':mouseX+50}).fadeIn('slow');
         selector = $('#username');
-    });
-
-    $('#btnKeyboard-password').click(function(){     
-        $('#numPad').css({'top':mouseY,'left':mouseX+50}).fadeIn('slow');
-        selector = $('#password');
     });
 
     // on form "reset" event

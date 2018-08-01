@@ -103,15 +103,15 @@
             //
             if(render.length==0){
                 $(".row").append(`                                 
-                    <div id="${item.id}" class="container">   
+                    <div id="${item.id}" class="${item.consecutivo%2?`container`:`containerPar`}">   
                         <div class="avatar avatar-left"> 
-                            <div class="avatar-letter" style="background-color: rgb(154, 108, 224)" title="${item.tamano}">${item.tamano}</div> 
+                            <div class="avatar-letter" style="background-color: rgb(154, 108, 224)" title="${item.tamano}">${item.tamano}<span class='onz'>onz</span></div> 
                         </div>
-                        <p>Orden Número: ${item.consecutivo}</p>
-                        <h3><p>${item.sabor1} | ${item.sabor2} | ${item.topping}</p></h3>
+                        <p>Orden Número: <span class='cod'>${item.consecutivo}</span></p>
+                        <h3><p>${item.sabor1} | ${item.sabor2} | <span class='topping'>${item.topping}</span></p></h3>
                         
-                        <span class="time-right">${moment(item.fechaCreacion).fromNow()}
-                            <span class="idBox">${item.fechaCreacion}</span>
+                        <span class="time-right cod">${moment(item.fechaCreacion).fromNow()}
+                            <span class="idBox cod">${item.fechaCreacion}</span>
                         </span>
                         <p class='idBox'>${item.id}<p>
                     </div>

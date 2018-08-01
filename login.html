@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <!-- Meta, title, CSS, favicons, etc. -->
+  
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -21,41 +20,21 @@
   <!-- validate -->
   <link href="assets/css/fv.css" rel="stylesheet">
   <!-- Custom Theme Style -->
-  <link href="assets/css/custom.css" rel="stylesheet">
+  <link href="assets/css/custom.min.css" rel="stylesheet">
   <!-- SweetAlert -->
   <link rel="stylesheet" href="assets/css/sweetalert2.min.css">
-  <link href="../vendors/datatables.net-bs/css/dataTables.bootstrap.min.css" rel="stylesheet">
-  <link href="../vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css" rel="stylesheet">
-  <link href="../vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css" rel="stylesheet">
-  <link href="../vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css" rel="stylesheet">
-  <link href="../vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css" rel="stylesheet">
+  <!-- Custom -->
+  <link href="assets/css/datatables.net-bs/css/dataTables.bootstrap.min.css" rel="stylesheet">
   <!-- Load the Virtaul Num Pad CSS files -->
   <link rel="stylesheet" href="assets/css/numPad/virNumPad.css">
-
+  <!-- key -->
+  <link rel="stylesheet" href="assets/css/Flat-Virtual-Keyboard/jqkeyboard.css">
 </head>
 
 <body class="login">
   <div>
     <a class="hiddenanchor" id="signup"></a>
     <a class="hiddenanchor" id="signin"></a>
-
-    <div id='numPad'>
-      <ul id="keyboard">
-        <li class="letter" onclick="sendVal('1')">1</li>
-        <li class="letter" onclick="sendVal('2')">2</li>
-        <li class="letter" onclick="sendVal('3')">3</li>
-        <li class="letter clearl" onclick="sendVal('4')">4</li>
-        <li class="letter" onclick="sendVal('5')">5</li>
-        <li class="letter" onclick="sendVal('6')">6</li>
-  
-        <li class="letter clearl" onclick="sendVal('7')">7</li>
-        <li class="letter" onclick="sendVal('8')">8</li>
-        <li class="letter" onclick="sendVal('9')">9</li>
-        <li class="letter clearl glyphicon glyphicon-arrow-left red" onclick="sendVal('left')"></li>
-        <li class="letter" onclick="sendVal('0')">0</li>
-        <li class="send glyphicon glyphicon-ok" id="send" onclick="sendVal('enter')"></li>
-      </ul>
-    </div>
 
     <div class="login_wrapper">
       <div class="animate form login_form">
@@ -65,15 +44,12 @@
             <h1>Login Form</h1>
 
             <fieldset style="margin:0; padding:0;">
-
               <div class="item form-group" style="height: 50px;">
                 <input type="text" class="form-control col-lg-12 col-md-12 col-xs-12 " placeholder="Username" id="username" required="required"/>
-                <i id="btnKeyboard-username" class="glyphicon glyphicon-th"></i>
               </div>
 
               <div class="form-group">
-                <input type="password" class="form-control ol-lg-12 col-md-12 col-xs-12" placeholder="Password" id="password" required="required"/>
-                <i id="btnKeyboard-password" class="glyphicon glyphicon-th"></i>               
+                <input type="password" class="form-control ol-lg-12 col-md-12 col-xs-12" placeholder="Password" id="password" required="required"/>                 
               </div>
             </fieldset>
 
@@ -172,9 +148,12 @@
 
   <!-- jQuery -->
   <script src="assets/js/jquery.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+  <!-- BS -->
   <script src="assets/bootstrap/js/bootstrap.min.js"></script>
-  <!-- Datatables -->
-  <script src="../vendors/datatables.net/js/jquery.dataTables.min.js"></script>
+  <!-- JS dataTables -->
+  <script src="assets/js/jquery.dataTables.min.js"></script>
+  <script src="assets/js/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
   <!-- Validator -->
   <script src="assets/js/validator.js"></script>
   <!-- JS Scripts -->
@@ -184,8 +163,9 @@
   <script src="assets/js/custom.min.js"></script>
   <!-- Sweet Alert -->
   <script src="assets/js/sweetalert2.min.js"></script>
-  <!-- Load the jQuery jQBTK plugin's JavaScript -->
-  <script src="assets/js/virtualNumPad/vNumPad.js"></script>
+  <!-- keyboard -->
+  <script src="assets/js/Flat-Virtual-Keyboard/jqkeyboard-min.js"></script>
+  <script src="assets/js/Flat-Virtual-Keyboard/jqk.layout.en.js"></script>
 </body>
 
 </html>
