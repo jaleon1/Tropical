@@ -152,15 +152,16 @@ class Insumo {
         url = window.location.href;
         // Limpia el div que contiene la tabla.
         $('#tableBody-Insumo').html("");
+        var table = $('#dsInsumo').DataTable();
+        table.destroy();
         // // Carga lista
         var data = JSON.parse(e);
-        //style="display: none"
         
         $.each(data, function (i, item) {
             $('#tableBody-Insumo').append(`
                 <tr> 
                     <td class="a-center ">
-                        <input id="chk-addinsumo${item.id}" type="checkbox" class="flat" name="table_records">
+                        <input id="chk-addinsumo${item.id}" type="checkbox" class="chk-addinsumo" name="table_records">
                     </td>
                     <td class="itemId">${item.id}</td>
                     <td>${item.codigo}</td>
@@ -177,25 +178,41 @@ class Insumo {
                         <td>${parseFloat(item.saldoCosto).toFixed(2)}</td>
                         <td>${parseFloat(item.costoPromedio).toFixed(2)}</td>
                         <td class=" last">
-                            <a  id="update" class="update" data-toggle="modal" data-target=".bs-example-modal-lg" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | 
-                            <a  id="delete" class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>
+                            <a  id="update${item.id}" class="update" data-toggle="modal" data-target=".bs-example-modal-lg" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | 
+                            <a  id="delete${item.id}" class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>
                         </td>`
                     :``}
                 </tr>
             `);
             // event Handler
-            $(".update").click(insumo.UpdateEventHandler);
-            $(".delete").click(insumo.DeleteEventHandler);
-            if (document.URL.indexOf("OrdenSalida.html")!=-1)
-                $('#chk-addinsumo'+item.id).change(ordenSalida.AddInsumoEventHandler);
+            $("#update"+item.id).click(insumo.UpdateEventHandler);
+            $("#delete"+item.id).click(insumo.DeleteEventHandler);
+            // if (document.URL.indexOf("OrdenSalida.html")!=-1)
+            //     $('#chk-addinsumo'+item.id).change(ordenSalida.AddInsumoEventHandler);
         })
 
-        if ( $.fn.dataTable.isDataTable( '#dsInsumo' ) ) {
-            // var table = $('#dsInsumo').DataTable();
-            // table.destroy();
-        }
-        else 
-            $('#dsInsumo').DataTable( {          
+        // if ( $.fn.dataTable.isDataTable( '#dsInsumo' ) ) {
+        //     var table = $('#dsInsumo').DataTable();
+        //     table.destroy();
+        //     $('#dsInsumo').DataTable( {          
+        //         paging: true,
+        //         search: true,
+        //         iDisplayLength: 10
+        //     });
+        // }
+        // else 
+            $('#dsInsumo').DataTable( {      
+                columns: [
+                    { "width":"5%"},
+                    { "width":"0%"},
+                    { "width":"auto"},
+                    { "width":"auto"},
+                    { "width":"auto"},
+                    { "width":"auto"},
+                    { "width":"auto"},
+                    { "width":"auto"},
+                    { "width":"15%"}
+                ],     
                 paging: true,
                 search: true,
                 iDisplayLength: 10

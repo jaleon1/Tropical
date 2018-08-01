@@ -525,6 +525,19 @@
         usuario.Read;
         usuario.Init();
     });
+    $(document).on('change', '.chk-addproducto', function (event) {
+        var id=$(this).parents("tr").find("td:eq(1)").html();
+        var codigo=$(this).parents("tr").find("td:eq(2)").html();
+        var nombre=$(this).parents("tr").find("td:eq(3)").html();
+        var nombreAbreviado=$(this).parents("tr").find("td:eq(4)").html();
+        var descripcion=$(this).parents("tr").find("td:eq(5)").html();
+        var saldoCantidad=$(this).parents("tr").find("td:eq(6)").html();
+        var saldoCosto=$(this).parents("tr").find("td:eq(7)").html();
+        var costoPromedio=$(this).parents("tr").find("td:eq(8)").html();
+        var precioVenta=$(this).parents("tr").find("td:eq(9)").html();
+        var esVenta=$(this).parents("tr").find("td:eq(10)").html();
+        elaborarProducto.AddProductoEventHandler(id,codigo,nombre,nombreAbreviado,descripcion,saldoCantidad,saldoCosto,costoPromedio,precioVenta,esVenta);
+    });
     $("#p_searh").keyup(function (e) {
         if (e.which == 13)
             ordenSalida.ReadbyOrden;
