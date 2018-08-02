@@ -16,7 +16,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Tropical | Producto</title>
+    <title>Tropical Sno | Cliente Factura Electrónica</title>
 
     <!-- Bootstrap -->
     <link href="assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -24,17 +24,13 @@
     <link href="assets/css/font-awesome/css/font-awesome.min.css" rel="stylesheet">
     <!-- NProgress -->
     <link href="assets/css/nprogress/nprogress.css" rel="stylesheet">
-    <!-- bootstrap-datetimepicker -->
-    <link href="assets/css/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css" rel="stylesheet">
     <!-- SweetAlert -->
-    <link href="assets/css/sweetalert2.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/sweetalert2.min.css">
+    <link href="assets/css/bootstrap-select.css" rel="stylesheet">
     <!-- Custom Theme Style -->
     <link href="assets/css/custom.css" rel="stylesheet">
-    <!-- Bootstrap Colorpicker -->
-    <link href="assets/bootstrap/css/bootstrap-colorpicker.min.css" rel="stylesheet">
-    <!-- Select -->
-    <link href="assets/css/bootstrap-select.css" rel="stylesheet">
-
+    <!-- Dropzone.js -->
+    <link href="../vendors/dropzone/dist/min/dropzone.min.css" rel="stylesheet">
 </head>
 
 <body class="nav-md">
@@ -45,7 +41,7 @@
                     <div class="navbar nav_title" style="border: 0;">
                         <a href="index.html" class="site_title">
                             <i class="glyphicon glyphicon-share-alt"></i>
-                            <span>Tropical Sno</span>
+                            <span>Tropical Sno!</span>
                         </a>
                     </div>
 
@@ -54,7 +50,7 @@
                     <!-- menu profile quick info -->
                     <div class="profile clearfix">
                         <div class="profile_pic">
-                            
+                            <img src="images/user.png" alt="..." class="img-circle profile_img">
                         </div>
                         <div class="profile_info">
                             <span>Bienvenido,</span>
@@ -68,10 +64,9 @@
 
                     <!-- sidebar menu -->
                     <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
-                        <div class="menu_section active">
+                        <div class="menu_section">
                             <h3 class='call_Bodega'>Menu</h3>
                             <ul id="menubox" class="nav side-menu">
-
                             </ul>
                         </div>
                     </div>
@@ -108,7 +103,7 @@
 
                         <ul class="nav navbar-nav navbar-right">
                             <li class="">
-                                <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false" id='call_username' >
+                                <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false" id='call_username'>
                                 </a>
                                 <ul class="dropdown-menu dropdown-usermenu pull-right">
                                     <li>
@@ -132,9 +127,15 @@
                 <div class="">
                     <div class="page-title">
                         <div class="title_left">
-                            <h3>PRODUCTOS Y ARTÍCULOS</h3>
+                            <h3>Contribuyente de Factura Electrónica</h3>
                         </div>
-                        
+
+                        <div class="title_right">
+                            <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
+                                <div class="input-group">
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="clearfix"></div>
@@ -143,129 +144,171 @@
                         <div class="col-md-12 col-sm-12 col-xs-12">
                             <div class="x_panel">
                                 <div class="x_title">
-                                    
                                     <div class="clearfix"></div>
                                 </div>
+
                                 <!--  CONTENIDO DE LA PAGINA -->
-
                                 <div class="x_content">
-                                    <form class="form-horizontal form-label-left" id="frmProducto" method="POST" novalidate>
-
-                                        <div class="item form-group">
-                                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="codigo">Codigo
-                                                    <span class="required">*</span>
-                                                </label>
-                                                <div class="col-md-6 col-sm-6 col-xs-12">
-                                                    <input id="codigo" class="form-control col-md-7 col-xs-12" name="codigo" required="required" type="text" placeholder="Codigo del Producto"
-                                                        autofocus>
-                                                </div>
-                                        </div>
+                                    <form class="form-horizontal form-label-left" id="frm" novalidate>
 
                                         <div class="item form-group">
                                             <label class="control-label col-md-3 col-sm-3 col-xs-12" for="nombre">Nombre
                                                 <span class="required">*</span>
                                             </label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <input id="nombre" class="form-control col-md-7 col-xs-12" name="nombre" required="required" type="text" placeholder="Nombre del Producto">
+                                                <input id="nombre" class="form-control col-md-7 col-xs-12" data-validate-length-range="10,80" name="nombre" required="required"
+                                                    type="text" placeholder="Nombre completo" autofocus>
                                             </div>
                                         </div>
 
                                         <div class="item form-group">
-                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="nombreAbreviado">Nombre Abreviado
+                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="codigoSeguridad">Código de Seguridad
                                                 <span class="required">*</span>
                                             </label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <input id="nombreAbreviado" class="form-control col-md-7 col-xs-12" name="nombreAbreviado" required="required" type="text" placeholder="Nombre Abreviado">
+                                                <input id="codigoSeguridad" class="form-control col-md-7 col-xs-12" data-validate-length-range="8,8" name="codigoSeguridad"
+                                                    required="required" type="number" placeholder="8 dígitos">
                                             </div>
                                         </div>
 
                                         <div class="item form-group">
-                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="descripcion">Descripción
+                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="codigoPais">Código del Pais
                                                 <span class="required">*</span>
                                             </label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <input id="descripcion" class="form-control col-md-7 col-xs-12" name="descripcion" required="required" type="text" placeholder="Descripción">
+                                                <input id="codigoPais" class="form-control col-md-7 col-xs-12" data-validate-length-range="3,3" name="codigoPais" readonly
+                                                    required="required" type="number" placeholder="3 dígitos" value="506">
                                             </div>
                                         </div>
 
                                         <div class="item form-group">
-                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="saldoCantidad">Saldo Cantidad
+                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tipoIdentificacion">Tipo Identificacion
                                                 <span class="required">*</span>
                                             </label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <input id="saldoCantidad" class="form-control col-md-7 col-xs-12" name="saldoCantidad" required="required" type="text" placeholder="Saldo Cantidad"
-                                                value ="0" readonly="readonly">
+                                                <select class="selectpicker show-menu-arrow form-control" required="required" id="tipoIdentificacion" name="tipoIdentificacion"></select>
                                             </div>
                                         </div>
 
                                         <div class="item form-group">
-                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="saldoCosto">Saldo Costo
+                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="identificacion">Identificación
                                                 <span class="required">*</span>
                                             </label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <input id="saldoCosto" class="form-control col-md-7 col-xs-12" name="saldoCosto" required="required" type="text" placeholder="Saldo Costo"
-                                                value ="0" readonly="readonly" autofocus>
+                                                <input id="identificacion" class="form-control col-md-7 col-xs-12" name="identificacion" required="required" type="text">
                                             </div>
                                         </div>
 
                                         <div class="item form-group">
-                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="costoPromedio">Costo Promedio
+                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="nombreComercial">Nombre Comercial
                                                 <span class="required">*</span>
                                             </label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <input id="costoPromedio" class="form-control col-md-7 col-xs-12" name="costoPromedio" required="required" type="text" placeholder="Costo Promedio"
-                                                value ="0" readonly="readonly">
+                                                <input id="nombreComercial" class="form-control col-md-7 col-xs-12" data-validate-length-range="1,80" name="nombreComercial"
+                                                    required="required" type="text">
                                             </div>
                                         </div>
 
+                                        <div class="title_left">
+                                            <h3>Ubicación</h3>
+                                        </div>
+                                        <div class="ln_solid"></div>
+
                                         <div class="item form-group">
-                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="precioVenta">Precio Venta
+                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="idProvincia">Provincia
                                                 <span class="required">*</span>
                                             </label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <input id="precioVenta" class="form-control col-md-7 col-xs-12" name="precioVenta" required="required" type="text" placeholder="Precio Venta"
-                                                    value ="0" >
+                                                <select class="selectpicker show-menu-arrow form-control" required="required" id="idProvincia" name="idProvincia"></select>
                                             </div>
                                         </div>
 
                                         <div class="item form-group">
-                                            <label class="control-label col-md-3 col-sm-3 col-xs-12">Txt Color</label>
-                                            <div class="col-md-6 col-sm-6 col-xs-12 input-group btncolorpicker">
-                                                <input id="txtColor" type="text" value="#000000" class="form-control col-md-7 col-xs-12">
-                                                <span class="input-group-addon"><i></i></span>
-                                            </div>
-                                        </div>
-
-                                        <div class="item form-group">
-                                            <label class="control-label col-md-3 col-sm-3 col-xs-12">Background Color</label>
-                                            <div class="col-md-6 col-sm-6 col-xs-12 input-group btncolorpicker">
-                                                <input id="bgColor" type="text" value="ffffff" class="form-control col-md-7 col-xs-12">
-                                                <span class="input-group-addon"><i></i></span>
-                                            </div>
-                                        </div>
-
-                                        <div class="item form-group">
-                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="esVenta">Tipo de Producto</label>
+                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="idCanton">Canton
+                                                <span class="required">*</span>
+                                            </label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                    <select class="selectpicker show-menu-arrow form-control" id="tipoProducto" name="tipoProducto">
-                                                        <option value="0">Artículo</option>
-                                                        <option value="1" selected>Sabor</option>
-                                                        <option value="2">Topping</option>
-                                                    </select>
+                                                <select class="selectpicker show-menu-arrow form-control" required="required" id="idCanton" name="idCanton"></select>
                                             </div>
+                                        </div>
+
+                                        <div class="item form-group">
+                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="idDistrito">Distrito
+                                                <span class="required">*</span>
+                                            </label>
+                                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                                <select class="selectpicker show-menu-arrow form-control" required="required" id="idDistrito" name="idDistrito"></select>
+                                            </div>
+                                        </div>
+
+                                        <div class="item form-group">
+                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="idBarrio">Barrio</label>
+                                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                                <select class="selectpicker show-menu-arrow form-control" id="idBarrio" name="idBarrio"></select>
+                                            </div>
+                                        </div>
+
+                                        <div class="item form-group">
+                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="otrasSenas">Otras Señas
+                                                <span class="required">*</span>
+                                            </label>
+                                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                                <input id="otrasSenas" class="form-control col-md-7 col-xs-12" data-validate-length-range="5,160" name="otrasSenas" required="required"
+                                                    type="text" placeholder="Mínimo 5 caracteres">
+                                            </div>
+                                        </div>
+
+                                        <div class="title_left">
+                                            <h3>Contacto</h3>
                                         </div>
 
                                         <div class="ln_solid"></div>
 
-                                        <div class="form-group">
-                                            <div class="col-md-6 col-md-offset-3">
-                                                <button type="reset" class="btn btn-primary">Borrar</button>
-                                                <button id="btnProducto" type="submit" class="btn btn-success">Guardar</button>
+                                        <div class="item form-group">
+                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="numTelefono">Número de Teléfono</label>
+                                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                                <input id="numTelefono" class="form-control col-md-7 col-xs-12" data-validate-length-range="1,20" name="numTelefono" type="text">
                                             </div>
                                         </div>
+
+                                        <div class="item form-group">
+                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="correoElectronico">Correo Electrónico</label>
+                                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                                <input id="correoElectronico" class="form-control col-md-7 col-xs-12" name="correoElectronico" type="mail">
+                                            </div>
+                                        </div>
+                                        
                                     </form>
+                                    
+                                    <div class="col-md-12 col-sm-12 col-xs-12">
+                                        <div class="x_panel">
+                                            <div class="title_left">
+                                                <h3>Llave Criptográfica</h3>
+                                            </div>
+    
+                                            <div class="ln_solid"></div>
+                                            
+                                            <div class="x_content">
+                                                <p></p>
+                                                <form action="clienteFE.html" class="dropzone dz-clickable" id="frmLlave">
+                                                    <div class="dz-default dz-message">
+                                                        <span>Arrastre la llave Criptográfica aquí</span>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>                                     
+
+                                    <div class="form-group">
+                                        <div class="col-md-6 col-md-offset-3">
+                                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                            <button id="btnSubmit" type="submit" class="btn btn-success">Submit</button>
+                                        </div>
+                                    </div>
+
                                 </div>
                                 <!--  /CONTENIDO DE LA PAGINA -->
+
                             </div>
                         </div>
                     </div>
@@ -276,7 +319,7 @@
             <!-- footer content -->
             <footer>
                 <div class="pull-right">
-                    Tropical SNO
+                    Sistema de Administración
                     <a href="http://storylabscr.com">powered by Story Labs</a>
                 </div>
                 <div class="clearfix"></div>
@@ -291,24 +334,21 @@
     <script src="assets/js/fastclick/lib/fastclick.js"></script>
     <!-- NProgress -->
     <script src="assets/js/nprogress/nprogress.js"></script>
-    <!-- Moment -->
-    <script src="assets/js/moment.min.js"></script>
-    <!-- bootstrap-datetimepicker -->
-    <script src="assets/js/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js"></script>
-    <!-- Custom Theme Scripts -->
-    <script src="assets/js/custom.min.js"></script>
     <!-- Validator -->
     <script src="assets/js/validator.js"></script>
     <!-- Input mask -->
     <script src="assets/js/jquery.inputmask/jquery.inputmask.bundle.min.js"></script>
     <!-- JS Scripts -->
-    <script src="assets/js/Producto.js"></script>
+    <script src="assets/js/clienteFE.js"></script>
     <!-- Sweet Alert -->
     <script src="assets/js/sweetalert2.min.js"></script>
-    <!-- Bootstrap Colorpicker -->
-    <script src="assets/bootstrap/js/bootstrap-colorpicker.min.js"></script>
     <!-- Select -->
     <script src="assets/js/bootstrap-select.js"></script>
+    <!-- Dropzone.js -->
+    <script src="../vendors/dropzone/dist/min/dropzone.min.js"></script>
+    <!-- Custom Theme Scripts -->
+    <script src="assets/js/custom.min.js"></script>
+    <input type="file" multiple="multiple" class="dz-hidden-input" style="visibility: hidden; position: absolute; top: 0px; left: 0px; height: 0px; width: 0px;">
 
 </body>
 
@@ -316,8 +356,6 @@
 
 <script>
     $(document).ready(function () {
-        producto.Init();
-        $(".btncolorpicker").colorpicker();
+        clientefe.Init();
     });
-    
 </script>
