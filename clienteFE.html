@@ -167,7 +167,7 @@
                                             </label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
                                                 <input id="codigoSeguridad" class="form-control col-md-7 col-xs-12" data-validate-length-range="8,8" name="codigoSeguridad"
-                                                    required="required" type="number" placeholder="8 dígitos">
+                                                    required="required" type="number" placeholder="8 dígitos Aleatorios">
                                             </div>
                                         </div>
 
@@ -186,7 +186,7 @@
                                                 <span class="required">*</span>
                                             </label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <select class="selectpicker show-menu-arrow form-control" required="required" id="tipoIdentificacion" name="tipoIdentificacion"></select>
+                                                <select class="selectpicker show-menu-arrow form-control" type="select" required="required" id="tipoIdentificacion" name="tipoIdentificacion"></select>
                                             </div>
                                         </div>
 
@@ -195,7 +195,7 @@
                                                 <span class="required">*</span>
                                             </label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <input id="identificacion" class="form-control col-md-7 col-xs-12" name="identificacion" required="required" type="text">
+                                                <input id="identificacion" class="form-control col-md-7 col-xs-12" pattern="([0-9]){9,9}" data-validate-length-range="9,9" name="identificacion" required="required" type="text" placeholder="9 digitos, sin cero al inicio y sin guiones." >
                                             </div>
                                         </div>
 
@@ -204,8 +204,7 @@
                                                 <span class="required">*</span>
                                             </label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <input id="nombreComercial" class="form-control col-md-7 col-xs-12" data-validate-length-range="1,80" name="nombreComercial"
-                                                    required="required" type="text">
+                                                <input id="nombreComercial" class="form-control col-md-7 col-xs-12" data-validate-length-range="1,80" name="nombreComercial" required="required" type="text" >
                                             </div>
                                         </div>
 
@@ -274,7 +273,7 @@
                                         <div class="item form-group">
                                             <label class="control-label col-md-3 col-sm-3 col-xs-12" for="correoElectronico">Correo Electrónico</label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <input id="correoElectronico" class="form-control col-md-7 col-xs-12" name="correoElectronico" type="mail">
+                                                <input id="correoElectronico" class="optional form-control col-md-7 col-xs-12" name="correoElectronico" type="email" required>
                                             </div>
                                         </div>
                                         
@@ -292,7 +291,8 @@
                                                 <p></p>
                                                 <form action="clienteFE.html" class="dropzone dz-clickable" id="frmLlave">
                                                     <div class="dz-default dz-message">
-                                                        <span>Arrastre la llave Criptográfica aquí</span>
+                                                        <span>Arrastre la llave Criptográfica aquí.</span>
+                                                        <input type="file" id="file" name="file" class="dz-hidden-input" style="visibility: hidden; position: absolute; top: 0px; left: 0px; height: 0px; width: 0px;">
                                                     </div>
                                                 </form>
                                             </div>
@@ -347,8 +347,7 @@
     <!-- Dropzone.js -->
     <script src="../vendors/dropzone/dist/min/dropzone.min.js"></script>
     <!-- Custom Theme Scripts -->
-    <script src="assets/js/custom.min.js"></script>
-    <input type="file" multiple="multiple" class="dz-hidden-input" style="visibility: hidden; position: absolute; top: 0px; left: 0px; height: 0px; width: 0px;">
+    <script src="assets/js/custom.min.js"></script>    
 
 </body>
 
@@ -357,5 +356,6 @@
 <script>
     $(document).ready(function () {
         clientefe.Init();
+        clientefe.ReadAllTipoIdentificacion
     });
 </script>

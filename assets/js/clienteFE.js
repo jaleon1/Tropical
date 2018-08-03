@@ -20,7 +20,7 @@ class ClienteFE {
 
     set viewEventHandler(_t) {
         this.viewType = _t;        
-    }
+    }   
 
     //Getter
     get Read() {
@@ -45,9 +45,29 @@ class ClienteFE {
             .always(NProgress.done());
     }
 
+    get ReadAllTipoIdentificacion() {
+        var miAccion= 'ReadAllTipoIdentificacion';
+        $.ajax({
+            type: "POST",
+            url: "class/ClienteFE.php",
+            data: { 
+                action: miAccion
+            }
+        })
+        .done(function( e ) {
+            clientefe.ShowList(e, $('#tipoIdentificacion'));
+        })    
+        .fail(function (e) {
+            clientefe.showError(e);
+        })
+        .always(function (e){
+            //$("#tipoIdentificacion").selectpicker("refresh");
+        });
+    }
+
     get Save() {
-        NProgress.start();
-        $('#btnclientefe').attr("disabled", "disabled");
+        // NProgress.start();
+        $('#btnSubmit').attr("disabled", "disabled");
         var miAccion = this.id == null ? 'Create' : 'Update';
         this.nombre = $("#nombre").val();
         this.codigoSeguridad = $("#codigoSeguridad").val();
@@ -55,6 +75,8 @@ class ClienteFE {
         this.idnombreComercialIdentificacion = $("#idnombreComercialIdentificacion").val();        
         this.identificacion = $("#identificacion").val();
         this.nombreComercial = $('#nombreComercial option:selected').val();
+        // Llave criptográfica
+        //
         $.ajax({
             type: "POST",
             url: "class/clientefe.php",
@@ -68,12 +90,12 @@ class ClienteFE {
                 clientefe.showError(e);
             })
             .always(function () {
-                setTimeout('$("#btnclientefe").removeAttr("disabled")', 1000);
-                clientefe = new clientefe();
-                clientefe.ClearCtls();
-                clientefe.Read;
-                $("#nombre").focus();
-                NProgress.done();
+                $("#btnSubmit").removeAttr("disabled");
+                //clientefe = new clientefe();
+                //clientefe.ClearCtls();
+                //clientefe.Read;
+                //$("#nombre").focus();
+                // NProgress.done();
             });
     }
 
@@ -109,6 +131,19 @@ class ClienteFE {
         if (this.id == null)
             this.ShowAll(e);
         else this.ShowItemData(e);
+    };
+
+    ShowList(e, selector) {
+        // carga lista con datos.
+        var data = JSON.parse(e);
+        // Recorre arreglo.
+        $.each(data, function (i, item) {
+                selector.append(`
+                    <option value=${item.id}>${item.value}</option>
+                `);
+        })
+        //
+        selector.selectpicker("refresh");
     };
 
     // Muestra información en ventana
@@ -187,11 +222,61 @@ class ClienteFE {
                 clientefe.Save;
             return false;
         });
-
         // on form "reset" event
         document.forms["frm"].onreset = function (e) {
             validator.reset();
         }
+        //NProgress
+        $(function()
+        {
+            $(document)
+                .ajaxStart(NProgress.start)
+                .ajaxStop(NProgress.done);
+        });
+        // validaciones segun el tipo de ident.
+        $('#tipoIdentificacion').on('change', function(e){
+            var p,lr,ph;
+            switch($(this).val()){
+                case '1': // física
+                    p= "([0-9])";
+                    lr= "9,9";
+                    ph=  "9 digitos, sin cero al inicio y sin guiones.";                    
+                    break;
+                case '2': // jurídica
+                    p= "([0-9]){9,10}$";
+                    lr= "10,10";
+                    ph= "10 digitos y sin guiones.";
+                    break;
+                case '3': // DIMEX
+                    p= "([0-9]){9,10}$";
+                    lr= "11,12";
+                    ph= "11 o 12 digitos, sin ceros al inicio y sin guiones.";                    
+                    break;
+                case '4': // NITE
+                    p= "([0-9]){10,10}$";
+                    lr="10,10";
+                    ph= "10 digitos y sin guiones.";
+                    break;
+            }
+            $('#identificacion').attr('pattern', p);
+            $('#identificacion').attr('data-validate-length-range', lr);
+            $('#identificacion').attr('placeholder', ph);
+            clientefe.Init();
+        });
+        // submit
+        $('#btnSubmit').click(function () {
+            $('#frm').submit();
+        });
+        // dropzone
+        Dropzone.options.frmLlave = {
+            init: function() {
+              this.on("addedfile", function(file) { alert("Added file."); });
+            },
+            accept : ".p12",
+            maxFiles: 1
+          };
+        // var myDropzone = new Dropzone("div#myId", { url: "/file/post"});
+        // $("div#myId").dropzone({ url: "/file/post" });
 
     };
 }
