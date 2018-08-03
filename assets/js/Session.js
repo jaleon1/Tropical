@@ -21,6 +21,7 @@ var Session=  {
                     Session.setUsername(data.username, data.nombre, data.bodega);
                     Session.setMenu(data.eventos);  
                     Session.state=true;
+                    Session.sideBarDraw(data);
                     break;
                 case 'nocredencial':
                     $('.right_col').hide();
@@ -122,5 +123,50 @@ var Session=  {
             showError(e);
             //location.href= 'login.html';
         });
+    },
+    sideBarDraw(dataMenu) {
+
+        if ( $("#sidebar-menu").length ) {
+
+            $("#sidebar-menu").empty();
+    
+            var menu_section =
+                `<div class="menu_section">
+                <h3>${dataMenu.bodega}</h3>
+                <ul id="menu" class="nav side-menu">
+                    
+                </ul>
+            </div>`;
+            $("#sidebar-menu").append(menu_section);
+    
+            $.each(dataMenu.eventos, function (i, item) {
+                if ($('#' + item.menuPadre).length) {
+                    var link =
+                        `<ul class="nav child_menu">
+                        <li><a href="${item.url}">${item.nombre}</a></li>
+                    </ul>`
+                    $("#" + item.menuPadre).append(link);
+                } else {
+                    var menu =
+                        `<li id="${item.menuPadre}" ><a><i class="${item.icono}"></i> ${item.menuPadre} <span class="fa fa-chevron-down"></span></a>
+                            <ul class="nav child_menu">
+                                <li><a href="${item.url}">${item.nombre}</a></li>
+                            </ul>
+                        </li>`
+                    $("#menu").append(menu);
+                }
+            });  
+            
+            init_sidebar();   
+        }    
+
+           
     }
+
+
+
+
+
+
+
 }
