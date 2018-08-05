@@ -182,11 +182,11 @@
                                         </div>
 
                                         <div class="item form-group">
-                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tipoIdentificacion">Tipo Identificacion
+                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="idTipoIdentificacion">Tipo Identificacion
                                                 <span class="required">*</span>
                                             </label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <select class="selectpicker show-menu-arrow form-control" type="select" required="required" id="tipoIdentificacion" name="tipoIdentificacion"></select>
+                                                <select class="selectpicker show-menu-arrow form-control" type="select" required="required" id="idTipoIdentificacion" name="idTipoIdentificacion"></select>
                                             </div>
                                         </div>
 
@@ -195,7 +195,8 @@
                                                 <span class="required">*</span>
                                             </label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <input id="identificacion" class="form-control col-md-7 col-xs-12" pattern="([0-9]){9,9}" data-validate-length-range="9,9" name="identificacion" required="required" type="text" placeholder="9 digitos, sin cero al inicio y sin guiones." >
+                                                <input id="identificacion" class="form-control col-md-7 col-xs-12" pattern="([0-9]){9,9}" data-validate-length-range="9,9"
+                                                    name="identificacion" required="required" type="text" placeholder="9 digitos, sin cero al inicio y sin guiones.">
                                             </div>
                                         </div>
 
@@ -204,7 +205,8 @@
                                                 <span class="required">*</span>
                                             </label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <input id="nombreComercial" class="form-control col-md-7 col-xs-12" data-validate-length-range="1,80" name="nombreComercial" required="required" type="text" >
+                                                <input id="nombreComercial" class="form-control col-md-7 col-xs-12" data-validate-length-range="1,80" name="nombreComercial"
+                                                    required="required" type="text">
                                             </div>
                                         </div>
 
@@ -218,7 +220,9 @@
                                                 <span class="required">*</span>
                                             </label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <select class="selectpicker show-menu-arrow form-control" required="required" id="idProvincia" name="idProvincia"></select>
+                                                <select class="selectpicker show-menu-arrow form-control ubicacion" required="required" id="idProvincia" name="idProvincia"
+                                                    type='select'>
+                                                </select>
                                             </div>
                                         </div>
 
@@ -227,7 +231,7 @@
                                                 <span class="required">*</span>
                                             </label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <select class="selectpicker show-menu-arrow form-control" required="required" id="idCanton" name="idCanton"></select>
+                                                <select class="selectpicker show-menu-arrow form-control ubicacion" required="required" id="idCanton" name="idCanton" type='select'></select>
                                             </div>
                                         </div>
 
@@ -236,14 +240,15 @@
                                                 <span class="required">*</span>
                                             </label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <select class="selectpicker show-menu-arrow form-control" required="required" id="idDistrito" name="idDistrito"></select>
+                                                <select class="selectpicker show-menu-arrow form-control ubicacion" required="required" id="idDistrito" name="idDistrito"
+                                                    type='select'></select>
                                             </div>
                                         </div>
 
                                         <div class="item form-group">
                                             <label class="control-label col-md-3 col-sm-3 col-xs-12" for="idBarrio">Barrio</label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <select class="selectpicker show-menu-arrow form-control" id="idBarrio" name="idBarrio"></select>
+                                                <select class="selectpicker show-menu-arrow form-control ubicacion" id="idBarrio" name="idBarrio" type='select'></select>
                                             </div>
                                         </div>
 
@@ -276,28 +281,28 @@
                                                 <input id="correoElectronico" class="optional form-control col-md-7 col-xs-12" name="correoElectronico" type="email" required>
                                             </div>
                                         </div>
-                                        
+
                                     </form>
-                                    
+
                                     <div class="col-md-12 col-sm-12 col-xs-12">
                                         <div class="x_panel">
                                             <div class="title_left">
                                                 <h3>Llave Criptográfica</h3>
                                             </div>
-    
+
                                             <div class="ln_solid"></div>
-                                            
+
                                             <div class="x_content">
                                                 <p></p>
                                                 <form action="clienteFE.html" class="dropzone dz-clickable" id="frmLlave">
                                                     <div class="dz-default dz-message">
                                                         <span>Arrastre la llave Criptográfica aquí.</span>
-                                                        <input type="file" id="file" name="file" class="dz-hidden-input" style="visibility: hidden; position: absolute; top: 0px; left: 0px; height: 0px; width: 0px;">
+                                                        <input type="file" required id="file" name="file" class="dz-hidden-input" style="visibility: hidden; position: absolute; top: 0px; left: 0px; height: 0px; width: 0px;">
                                                     </div>
                                                 </form>
                                             </div>
                                         </div>
-                                    </div>                                     
+                                    </div>
 
                                     <div class="form-group">
                                         <div class="col-md-6 col-md-offset-3">
@@ -347,7 +352,7 @@
     <!-- Dropzone.js -->
     <script src="../vendors/dropzone/dist/min/dropzone.min.js"></script>
     <!-- Custom Theme Scripts -->
-    <script src="assets/js/custom.min.js"></script>    
+    <script src="assets/js/custom.min.js"></script>
 
 </body>
 
@@ -356,6 +361,10 @@
 <script>
     $(document).ready(function () {
         clientefe.Init();
-        clientefe.ReadAllTipoIdentificacion
+        clientefe.ReadAllTipoIdentificacion;
+        clientefe.ReadAllUbicacion;
+        // clientefe.ReadAllCanton;
+        // clientefe.ReadAllDistrito;
+        // clientefe.ReadAllBarrio;
     });
 </script>

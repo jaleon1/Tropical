@@ -1,13 +1,24 @@
 class ClienteFE {
     // Constructor
-    constructor(id, nombre, codigoSeguridad, idCodigoPais, idnombreComercialIdentificacion, identificacion, nombreComercial, idProvincia, idCanton, idDistrito, idBarrio, otrasSenas, idCodigoPaisTel, numTelefono, idCodigoPaisFax, numTelefonoFax) {
+    constructor(id, nombre, codigoSeguridad, idCodigoPais, idTipoIdentificacion, identificacion, nombreComercial, idProvincia, idCanton, idDistrito, idBarrio, otrasSenas, 
+        idCodigoPaisTel, numTelefono, idCodigoPaisFax, numTelefonoFax, correoElectronico) {
         this.id = id || null;
         this.nombre = nombre || '';
         this.codigoSeguridad = codigoSeguridad || '';
         this.idCodigoPais = idCodigoPais || '';
-        this.idnombreComercialIdentificacion = idnombreComercialIdentificacion || '';
+        this.idTipoIdentificacion = idTipoIdentificacion || '';
         this.identificacion = identificacion || '';
-        this.nombreComercial = nombreComercial || null;
+        this.nombreComercial = nombreComercial || '';
+        this.idProvincia = idProvincia || null;
+        this.idCanton = idCanton || null;
+        this.idDistrito = idDistrito || null;
+        this.idBarrio = idBarrio || null;
+        this.otrasSenas = otrasSenas || null;
+        this.idCodigoPaisTel = idCodigoPaisTel || null;
+        this.numTelefono = numTelefono || null;
+        this.idCodigoPaisFax = idCodigoPaisFax || null;
+        this.numTelefonoFax = numTelefonoFax || null;
+        this.correoElectronico = correoElectronico || null;
     }
 
     get tUpdate()  {
@@ -24,7 +35,7 @@ class ClienteFE {
 
     //Getter
     get Read() {
-        NProgress.start();
+        //NProgress.start();
         var miAccion = this.id == null ?  'ReadAll'  : 'Read';
         if(miAccion=='ReadAll' && $('#tclientefe tbody').length==0 )
             return;
@@ -41,8 +52,8 @@ class ClienteFE {
             })
             .fail(function (e) {
                 clientefe.showError(e);
-            })
-            .always(NProgress.done());
+            });
+            //.always(NProgress.done());
     }
 
     get ReadAllTipoIdentificacion() {
@@ -55,15 +66,114 @@ class ClienteFE {
             }
         })
         .done(function( e ) {
-            clientefe.ShowList(e, $('#tipoIdentificacion'));
+            clientefe.ShowTipoIdentificacion(e, $('#idTipoIdentificacion'));
         })    
         .fail(function (e) {
             clientefe.showError(e);
-        })
-        .always(function (e){
-            //$("#tipoIdentificacion").selectpicker("refresh");
         });
     }
+
+    get ReadAllUbicacion() {
+        $('.ubicacion').attr("disabled", "disabled");
+        this.idProvincia = $('#idProvincia option:selected').val() || 1;
+        this.idCanton = $('#idCanton option:selected').val() || 1;
+        this.idDistrito = $('#idDistrito option:selected').val() || 1;
+        var miAccion= 'ReadAllUbicacion';
+        $.ajax({
+            type: "POST",
+            url: "class/ClienteFE.php",
+            data: { 
+                action: miAccion,
+                idProvincia: this.idProvincia,
+                idCanton: this.idCanton,
+                idDistrito: this.idDistrito
+            }
+        })
+        .done(function( e ) {
+            clientefe.ShowList(e);
+        })    
+        .fail(function (e) {
+            clientefe.showError(e);
+        });
+    };
+
+    // get ReadAllProvincia() {
+    //     $('.ubicacion').attr("disabled", "disabled");
+    //     var miAccion= 'ReadAllProvincia';
+    //     $.ajax({
+    //         type: "POST",
+    //         url: "class/ClienteFE.php",
+    //         data: { 
+    //             action: miAccion
+    //         }
+    //     })
+    //     .done(function( e ) {
+    //         clientefe.ShowList(e, $('#idProvincia'));
+    //     })    
+    //     .fail(function (e) {
+    //         clientefe.showError(e);
+    //     })
+    //     .always(function(){
+    //         $(".ubicacion").removeAttr("disabled");
+    //     });
+    // };
+
+    get ReadAllCanton() {
+        var miAccion= 'ReadAllCanton';
+        this.idProvincia = $('#idProvincia option:selected').val() || 1;
+        $.ajax({
+            type: "POST",
+            url: "class/ClienteFE.php",
+            data: { 
+                action: miAccion,
+                idProvincia: this.idProvincia
+            }
+        })
+        .done(function( e ) {
+            clientefe.ShowList(e, $('#idCanton'));
+        })    
+        .fail(function (e) {
+            clientefe.showError(e);
+        });
+    };
+
+    get ReadAllDistrito() {
+        var miAccion= 'ReadAllDistrito';
+        this.idCanton = $('#idProvincia option:selected').val() || 1;
+        $.ajax({
+            type: "POST",
+            url: "class/ClienteFE.php",
+            data: { 
+                action: miAccion,
+                idCanton: this.idCanton
+            }
+        })
+        .done(function( e ) {
+            clientefe.ShowList(e, $('#idDistrito'));
+        })    
+        .fail(function (e) {
+            clientefe.showError(e);
+        });
+    };
+
+    get ReadAllBarrio() {
+        var miAccion= 'ReadAllBarrio';
+        this.idDistrito = $('#idProvincia option:selected').val() || 1;
+        $.ajax({
+            type: "POST",
+            url: "class/ClienteFE.php",
+            data: { 
+                action: miAccion,
+                idDistrito: this.idDistrito
+            }
+        })
+        .done(function( e ) {
+            clientefe.ShowList(e, $('#idBarrio'));
+        })    
+        .fail(function (e) {
+            clientefe.showError(e);
+        });
+    };
 
     get Save() {
         // NProgress.start();
@@ -71,12 +181,49 @@ class ClienteFE {
         var miAccion = this.id == null ? 'Create' : 'Update';
         this.nombre = $("#nombre").val();
         this.codigoSeguridad = $("#codigoSeguridad").val();
-        this.idCodigoPais = $("#idCodigoPais").val();
-        this.idnombreComercialIdentificacion = $("#idnombreComercialIdentificacion").val();        
+        this.idCodigoPais = '52'; //$("#codigoPais").val();
+        this.idTipoIdentificacion = $('#idTipoIdentificacion option:selected').val();
         this.identificacion = $("#identificacion").val();
-        this.nombreComercial = $('#nombreComercial option:selected').val();
+        this.nombreComercial = $("#nombreComercial").val();
+        if($('#idProvincia option:selected').val()!="null")
+            this.idProvincia = $('#idProvincia option:selected').val();
+        else {
+            swal({
+                type: 'warning',
+                title: 'Ubicación...',
+                text: 'Debe seleccionar la Provincia'
+            });
+            return false;
+        }
+        if($('#idCanton option:selected').val()!="null")
+            this.idCanton = $('#idCanton option:selected').val();
+        else {
+            swal({
+                type: 'warning',
+                title: 'Ubicación...',
+                text: 'Debe seleccionar el Cantón'
+            });
+            return false;
+        }
+        if($('#idDistrito option:selected').val()!="null")
+            this.idDistrito = $('#idDistrito option:selected').val();
+        else {
+            swal({
+                type: 'warning',
+                title: 'Ubicación...',
+                text: 'Debe seleccionar el Cantón'
+            });
+            return false;
+        }        
+        this.idBarrio = $('#idBarrio option:selected').val();
+        this.otrasSenas = $("#otrasSenas").val();
+        this.idCodigoPaisTel = '52';//$("#codigoPais").val(); // mismo código del país.
+        this.numTelefono = $("#numTelefono").val();
+        this.correoElectronico = $("#correoElectronico").val();
+        //
         // Llave criptográfica
         //
+        
         $.ajax({
             type: "POST",
             url: "class/clientefe.php",
@@ -133,16 +280,50 @@ class ClienteFE {
         else this.ShowItemData(e);
     };
 
-    ShowList(e, selector) {
+    ShowList(e) {
         // carga lista con datos.
         var data = JSON.parse(e);
+        //selector.html('<option value=null >Sin seleccionar </option>');
+        // Recorre arreglo.
+        var selector;
+        $.each(data, function (i, item) {
+            switch(i){
+                case 0:
+                    selector = $('#idProvincia');
+                break;
+                case 1:
+                    selector = $('#idCanton');
+                break;
+                case 2:
+                    selector = $('#idDistrito');
+                break;
+                case 3:
+                    selector = $('#idBarrio');
+                break;
+            }
+            selector.html('');
+            $.each(item, function (n, d) {
+                selector.append(`
+                    <option value=${d.id}>${d.value}</option>
+                `);
+            })
+            selector.removeAttr("disabled");
+            //$('.ubicacion').attr("disabled", "disabled");
+            selector.selectpicker("refresh");
+            
+        })
+    };
+
+    ShowTipoIdentificacion(e, selector) {
+        // carga lista con datos.
+        var data = JSON.parse(e);
+        //selector.html('<option value=null >Sin seleccionar </option>');
         // Recorre arreglo.
         $.each(data, function (i, item) {
-                selector.append(`
-                    <option value=${item.id}>${item.value}</option>
-                `);
+            selector.append(`
+                <option value=${item.id} ${i==0?`selected`:``} >${item.value}</option>
+            `);            
         })
-        //
         selector.selectpicker("refresh");
     };
 
@@ -186,10 +367,10 @@ class ClienteFE {
         t.clear();
         t.rows.add(JSON.parse(e));
         t.draw();
-        $('.update').click(clientefe.UpdateEventHandler);
-        $('.delete').click(clientefe.DeleteEventHandler);
-        $('.open').click(clientefe.OpenEventHandler);
-        $('#tclientefe tbody tr').dblclick(clientefe.viewType==undefined || clientefe.viewType==clientefe.tUpdate ? clientefe.UpdateEventHandler : clientefe.SelectEventHandler);
+        // $('.update').click(clientefe.UpdateEventHandler);
+        // $('.delete').click(clientefe.DeleteEventHandler);
+        // $('.open').click(clientefe.OpenEventHandler);
+        // $('#tclientefe tbody tr').dblclick(clientefe.viewType==undefined || clientefe.viewType==clientefe.tUpdate ? clientefe.UpdateEventHandler : clientefe.SelectEventHandler);
     };
 
     ShowItemData(e) {
@@ -234,7 +415,7 @@ class ClienteFE {
                 .ajaxStop(NProgress.done);
         });
         // validaciones segun el tipo de ident.
-        $('#tipoIdentificacion').on('change', function(e){
+        $('#idTipoIdentificacion').on('change', function(e){
             var p,lr,ph;
             switch($(this).val()){
                 case '1': // física
@@ -262,6 +443,21 @@ class ClienteFE {
             $('#identificacion').attr('data-validate-length-range', lr);
             $('#identificacion').attr('placeholder', ph);
             clientefe.Init();
+        });
+        // ubicaciones
+        $('#idProvincia').on('change', function(e){
+            clientefe.ReadAllUbicacion;
+            // clientefe.ReadAllDistrito;
+            // clientefe.ReadAllBarrio;
+        });
+        $('#idCanton').on('change', function(e){
+            clientefe.ReadAllUbicacion;
+            // clientefe.ReadAllDistrito;
+            // clientefe.ReadAllBarrio;
+        });
+        $('#idDistrito').on('change', function(e){
+            clientefe.ReadAllUbicacion;
+            // clientefe.ReadAllBarrio;
         });
         // submit
         $('#btnSubmit').click(function () {

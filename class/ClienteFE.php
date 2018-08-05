@@ -16,18 +16,12 @@ if(isset($_POST["action"])){
         case "ReadAllTipoIdentificacion":
             echo json_encode($clientefe->ReadAllTipoIdentificacion());
             break;
-        case "ReadAllProvincia":
-            echo json_encode($clientefe->ReadAllProvincia());
-            break;
-        case "ReadAllCanton":
-            echo json_encode($clientefe->ReadAllCanton());
-            break;
-        case "ReadAllDistrito":
-            echo json_encode($clientefe->ReadAllDistrito());
-            break;
-        case "ReadAllBarrio":
-            echo json_encode($clientefe->ReadAllBarrio());
-            break;
+        case "ReadAllUbicacion":
+            $clientefe->idProvincia = $_POST['idProvincia'];
+            $clientefe->idCanton = $_POST['idCanton'];
+            $clientefe->idDistrito = $_POST['idDistrito'];
+            echo json_encode($clientefe->ReadAllUbicacion());
+            break;        
         case "Create":
             echo $clientefe->Create();
             break;
@@ -37,6 +31,120 @@ if(isset($_POST["action"])){
         case "Delete":
             $clientefe->Delete();
             break;   
+    }
+}
+
+class Provincia{
+    public $id;
+    public $value;
+    public static function Read(){
+        try {
+            $sql= 'SELECT id, provincia as value
+                FROM tropical.provincia';
+            $data= DATA::Ejecutar($sql);
+            $lista = [];
+            foreach ($data as $key => $value){
+                $item = new Provincia();
+                $item->id = $value['id']; 
+                $item->value = $value['value'];
+                array_push ($lista, $item);
+            }
+            return $lista;
+        }     
+        catch(Exception $e) {
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar la lista'))
+            );
+        }
+    }
+}
+
+class Canton{
+    public $id;
+    public $value;
+    public static function Read($idProvincia){
+        try {
+            $sql= 'SELECT id, canton as value
+                FROM tropical.canton
+                WHERE idProvincia=:idProvincia';
+            $param= array(':idProvincia'=>$idProvincia);
+            $data= DATA::Ejecutar($sql,$param);
+            $lista = [];
+            foreach ($data as $key => $value){
+                $item = new Canton();
+                $item->id = $value['id']; 
+                $item->value = $value['value'];
+                array_push ($lista, $item);
+            }
+            return $lista;
+        }     
+        catch(Exception $e) {
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar la lista'))
+            );
+        }
+    }
+}
+
+class Distrito{
+    public $id;
+    public $value;
+    public static function Read($idCanton){
+        try {
+            $sql= 'SELECT id, distrito as value
+                FROM tropical.distrito
+                WHERE idCanton=:idCanton';
+            $param= array(':idCanton'=>$idCanton);
+            $data= DATA::Ejecutar($sql,$param);
+            $lista = [];
+            foreach ($data as $key => $value){
+                $item = new Distrito();
+                $item->id = $value['id']; 
+                $item->value = $value['value'];
+                array_push ($lista, $item);
+            }
+            return $lista;
+        }     
+        catch(Exception $e) {
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar la lista'))
+            );
+        }
+    }
+}
+
+class Barrio{
+    public $id;
+    public $value;
+    public static function Read($idDistrito){
+        try {
+            $sql= 'SELECT id, barrio as value
+                FROM tropical.barrio
+                WHERE idDistrito=:idDistrito';
+            $param= array(':idDistrito'=>$idDistrito);
+            $data= DATA::Ejecutar($sql,$param);
+            $lista = [];
+            foreach ($data as $key => $value){
+                $item = new Barrio();
+                $item->id = $value['id']; 
+                $item->value = $value['value'];
+                array_push ($lista, $item);
+            }
+            return $lista;
+        }     
+        catch(Exception $e) {
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar la lista'))
+            );
+        }
     }
 }
 
@@ -58,6 +166,8 @@ class ClienteFE{
     public $idCodigoPaisFax=null;
     public $numTelefonoFax=null;
     public $correoElectronico=null;
+    //
+    public $ubicacion= [];
 
     function __construct(){
         // identificador único
@@ -79,7 +189,7 @@ class ClienteFE{
             $this->idDistrito= $obj["idDistrito"] ?? null;
             $this->idBarrio= $obj["idBarrio"] ?? null;
             $this->otrasSenas= $obj["otrasSenas"] ?? null;
-            //$this->idCodigoPaisTel= $obj["idCodigoPaisTel"] ?? null;
+            $this->idCodigoPaisTel= $obj["idCodigoPaisTel"] ?? null;
             $this->numTelefono= $obj["numTelefono"] ?? null;
             //$this->idCodigoPaisFax= $obj["idCodigoPaisFax"] ?? null;
             //$this->numTelefonoFax= $obj["numTelefonoFax"] ?? null;
@@ -118,56 +228,13 @@ class ClienteFE{
         }
     }
 
-    function ReadAllProvincia(){
+    function ReadAllUbicacion(){
         try {
-            $sql= '';
-            $data= DATA::Ejecutar($sql);
-            return $data;
-        }     
-        catch(Exception $e) {
-            header('HTTP/1.0 400 Bad error');
-            die(json_encode(array(
-                'code' => $e->getCode() ,
-                'msg' => 'Error al cargar la lista'))
-            );
-        }
-    }
-
-    function ReadAllCanton(){
-        try {
-            $sql= '';
-            $data= DATA::Ejecutar($sql);
-            return $data;
-        }     
-        catch(Exception $e) {
-            header('HTTP/1.0 400 Bad error');
-            die(json_encode(array(
-                'code' => $e->getCode() ,
-                'msg' => 'Error al cargar la lista'))
-            );
-        }
-    }
-
-    function ReadAllDistrito(){
-        try {
-            $sql= '';
-            $data= DATA::Ejecutar($sql);
-            return $data;
-        }     
-        catch(Exception $e) {
-            header('HTTP/1.0 400 Bad error');
-            die(json_encode(array(
-                'code' => $e->getCode() ,
-                'msg' => 'Error al cargar la lista'))
-            );
-        }
-    }
-
-    function ReadAllBarrio(){
-        try {
-            $sql= '';
-            $data= DATA::Ejecutar($sql);
-            return $data;
+            array_push ($this->ubicacion,Provincia::Read());
+            array_push ($this->ubicacion,Canton::Read($this->idProvincia));
+            array_push ($this->ubicacion,Distrito::Read($this->idCanton));
+            array_push ($this->ubicacion,Barrio::Read($this->idDistrito));
+            return $this->ubicacion;
         }     
         catch(Exception $e) {
             header('HTTP/1.0 400 Bad error');
@@ -180,8 +247,9 @@ class ClienteFE{
 
     function Read(){
         try {
-            $sql='SELECT id, nombre, idCodigoPais, idTipoIdentificacion, codigoSeguridad, identificacion, nombreComercial 
-                FROM clientefe  
+            $sql='SELECT id, codigoSeguridad, idCodigoPais, nombre, idTipoIdentificacion, identificacion, nombreComercial, idProvincia,idCanton, idDistrito, idBarrio, otrasSenas, 
+                idCodigoPaisTel, numTelefono, correoElectronico
+                FROM clienteFE  
                 where id=:id';
             $param= array(':id'=>$this->id);
             $data= DATA::Ejecutar($sql,$param);
@@ -198,13 +266,15 @@ class ClienteFE{
 
     function Create(){
         try {
-            $sql="INSERT INTO clientefe  (id, codigoSeguridad, idCodigoPais, nombre, idTipoIdentificacion, identificacion, nombreComercial, idProvincia, idCanton, idDistrito, idBarrio, otrasSenas, idCodigoPaisTel, numTelefono, correoElectronico) 
-                VALUES (:id, :codigoSeguridad, :idCodigoPais, :nombre, :idTipoIdentificacion, :identificacion, :nombreComercial, :idProvincia, :idCanton, :idDistrito, :idBarrio, :otrasSenas, :idCodigoPaisTel, :numTelefono, :correoElectronico);";
+            $sql="INSERT INTO clienteFE  (id, codigoSeguridad, idCodigoPais, nombre, idTipoIdentificacion, identificacion, nombreComercial, idProvincia,idCanton, idDistrito, idBarrio, otrasSenas, 
+                idCodigoPaisTel, numTelefono, correoElectronico) 
+                VALUES (:id, :codigoSeguridad, :idCodigoPais, :nombre, :idTipoIdentificacion, :identificacion, :nombreComercial, :idProvincia, :idCanton, :idDistrito, :idBarrio, :otrasSenas, 
+                    :idCodigoPaisTel, :numTelefono, :correoElectronico);";
             $param= array(':id'=>$this->id ,
                 ':codigoSeguridad'=>$this->codigoSeguridad, 
                 ':idCodigoPais'=>$this->idCodigoPais, 
                 ':nombre'=>$this->nombre,
-                ':idTipoIdentificacion'=>$_SESSION['userSession']->id,
+                ':idTipoIdentificacion'=>$this->idTipoIdentificacion,
                 ':identificacion'=>$this->identificacion,
                 ':nombreComercial'=>$this->nombreComercial,
                 ':idProvincia'=>$this->idProvincia,
@@ -212,7 +282,7 @@ class ClienteFE{
                 ':idDistrito'=>$this->idDistrito,
                 ':idBarrio'=>$this->idBarrio,
                 ':otrasSenas'=>$this->otrasSenas,
-                ':idCodigoPais'=>$this->idCodigoPais,
+                ':idCodigoPaisTel'=>$this->idCodigoPaisTel,
                 ':numTelefono'=>$this->numTelefono,
                 ':correoElectronico'=>$this->correoElectronico
             );
@@ -235,7 +305,7 @@ class ClienteFE{
 
     function Update(){
         try {
-            $sql="UPDATE clientefe 
+            $sql="UPDATE clienteFE 
                 SET nombre=:nombre, codigoSeguridad=:codigoSeguridad, idCodigoPais=:idCodigoPais, idTipoIdentificacion=:idTipoIdentificacion
                 WHERE id=:id";
             $param= array(':id'=>$this->id, ':nombre'=>$this->nombre, ':codigoSeguridad'=>$this->codigoSeguridad, ':idCodigoPais'=>$this->idCodigoPais, ':idTipoIdentificacion'=>$this->idTipoIdentificacion);
@@ -281,7 +351,7 @@ class ClienteFE{
             //     $sessiondata['msg']='Registro en uso'; 
             //     return $sessiondata;           
             // }                    
-            $sql='DELETE FROM clientefe  
+            $sql='DELETE FROM clienteFE  
             WHERE id= :id';
             $param= array(':id'=>$this->id);
             $data= DATA::Ejecutar($sql, $param, false);
