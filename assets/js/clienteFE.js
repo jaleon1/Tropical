@@ -88,7 +88,9 @@ class ClienteFE {
             }
         })
         .done(function( e ) {
-            clientefe.ShowList(e, $('#idTipoIdentificacion'));
+            clientefe.ShowList(e, $('#idTipoIdentificacion'));     
+            // luego de cargar las listas, lee el clienteFE.
+            clientefe.ReadProfile;       
         })    
         .fail(function (e) {
             clientefe.showError(e);
@@ -96,10 +98,21 @@ class ClienteFE {
     }
 
     get ReadAllUbicacion() {
-        $('.ubicacion').attr("disabled", "disabled");
         this.idProvincia = $('#idProvincia option:selected').val() || 1;
         this.idCanton = $('#idCanton option:selected').val() || 1;
         this.idDistrito = $('#idDistrito option:selected').val() || 1;
+        $('#idProvincia').html("");
+        $('#idCanton').html("");
+        $('#idDistrito').html("");
+        $('#idBarrio').html("");
+        $('#idProvincia').attr("title", "Cargando ...");
+        $('#idCanton').attr("title", "Cargando ...");
+        $('#idDistrito').attr("title", "Cargando ...");
+        $('#idBarrio').attr("title", "Cargando ...");
+        $('#idProvincia').selectpicker("refresh");
+        $('#idCanton').selectpicker("refresh");
+        $('#idDistrito').selectpicker("refresh");
+        $('#idBarrio').selectpicker("refresh");
         var miAccion= 'ReadAllUbicacion';
         $.ajax({
             type: "POST",
@@ -120,7 +133,6 @@ class ClienteFE {
     };
 
     get ReadAllProvincia() {
-        $('.ubicacion').attr("disabled", "disabled");
         var miAccion= 'ReadAllProvincia';
         $.ajax({
             type: "POST",
@@ -131,6 +143,9 @@ class ClienteFE {
         })
         .done(function( e ) {
             clientefe.ShowList(e, $('#idProvincia'));
+            $('#idProvincia option[value=' + clientefe.idProvincia + ']').prop("selected", true);  
+            $("#idProvincia").selectpicker("refresh");
+            clientefe.ReadAllCanton;
         })    
         .fail(function (e) {
             clientefe.showError(e);
@@ -138,7 +153,15 @@ class ClienteFE {
     };
 
     get ReadAllCanton() {
-        // $('#idCanton').attr("disabled", "disabled");
+        $('#idCanton').html("");
+        $('#idDistrito').html("");
+        $('#idBarrio').html("");
+        $('#idCanton').attr("title", "Cargando ...");
+        $('#idDistrito').attr("title", "Cargando ...");
+        $('#idBarrio').attr("title", "Cargando ...");
+        $('#idCanton').selectpicker("refresh");
+        $('#idDistrito').selectpicker("refresh");
+        $('#idBarrio').selectpicker("refresh");
         var miAccion= 'ReadAllCanton';
         this.idProvincia = $('#idProvincia option:selected').val() || 1;
         $.ajax({
@@ -150,7 +173,9 @@ class ClienteFE {
             }
         })
         .done(function( e ) {
-            clientefe.ShowList(e, $('#idCanton'));                      
+            clientefe.ShowList(e, $('#idCanton'));      
+            $('#idCanton option[value=' + clientefe.idCanton + ']').prop("selected", true);  
+            $("#idCanton").selectpicker("refresh");                
             // modifica la lista de distritos según la selección de cantón.
             clientefe.ReadAllDistrito;
         })    
@@ -163,7 +188,12 @@ class ClienteFE {
     };
 
     get ReadAllDistrito() {
-        //$('.ubicacion').attr("disabled", "disabled");
+        $('#idDistrito').html("");
+        $('#idBarrio').html("");
+        $('#idDistrito').attr("title", "Cargando ...");
+        $('#idBarrio').attr("title", "Cargando ...");
+        $('#idDistrito').selectpicker("refresh");
+        $('#idBarrio').selectpicker("refresh");
         var miAccion= 'ReadAllDistrito';
         this.idCanton = $('#idCanton option:selected').val() || 1;
         $.ajax({
@@ -176,6 +206,8 @@ class ClienteFE {
         })
         .done(function( e ) {
             clientefe.ShowList(e, $('#idDistrito'));
+            $('#idDistrito option[value=' + clientefe.idDistrito + ']').prop("selected", true);  
+            $("#idDistrito").selectpicker("refresh");
             // modifica la lista de barrios según la selección de distrito.
             clientefe.ReadAllBarrio;
         })    
@@ -185,7 +217,9 @@ class ClienteFE {
     };
 
     get ReadAllBarrio() {
-        //$('.ubicacion').attr("disabled", "disabled");        
+        $('#idBarrio').html("");
+        $('#idBarrio').attr("title", "Cargando ...");
+        $('#idBarrio').selectpicker("refresh");
         var miAccion= 'ReadAllBarrio';
         this.idDistrito = $('#idDistrito option:selected').val() || 1;
         $.ajax({
@@ -198,6 +232,8 @@ class ClienteFE {
         })
         .done(function( e ) {
             clientefe.ShowList(e, $('#idBarrio'));
+            $('#idBarrio option[value=' + clientefe.idBarrio + ']').prop("selected", true);  
+            $("#idBarrio").selectpicker("refresh");
         })    
         .fail(function (e) {
             clientefe.showError(e);
@@ -213,7 +249,7 @@ class ClienteFE {
         this.idTipoIdentificacion = $('#idTipoIdentificacion option:selected').val();
         this.identificacion = $("#identificacion").val();
         this.nombreComercial = $("#nombreComercial").val();
-        if($('#idProvincia option:selected').val()!="null")
+        if($('#idProvincia option:selected').val()!="null" && $('#idProvincia option:selected').val() != undefined)
             this.idProvincia = $('#idProvincia option:selected').val();
         else {
             swal({
@@ -223,7 +259,7 @@ class ClienteFE {
             });
             return false;
         }
-        if($('#idCanton option:selected').val()!="null")
+        if($('#idCanton option:selected').val()!="null" && $('#idCanton option:selected').val() != undefined)
             this.idCanton = $('#idCanton option:selected').val();
         else {
             swal({
@@ -233,7 +269,7 @@ class ClienteFE {
             });
             return false;
         }
-        if($('#idDistrito option:selected').val()!="null")
+        if($('#idDistrito option:selected').val()!="null" && $('#idDistrito option:selected').val() != undefined)
             this.idDistrito = $('#idDistrito option:selected').val();
         else {
             swal({
@@ -321,50 +357,67 @@ class ClienteFE {
     };
 
     ShowListUbicacion(e) {
-        // carga lista con datos.
-        var data = JSON.parse(e);
-        //selector.html('<option value=null >Sin seleccionar </option>');
-        // Recorre arreglo.
-        var selector;
-        $.each(data, function (i, item) {
-            switch(i){
-                case 0:
-                    selector = $('#idProvincia');
-                break;
-                case 1:
-                    selector = $('#idCanton');
-                break;
-                case 2:
-                    selector = $('#idDistrito');
-                break;
-                case 3:
-                    selector = $('#idBarrio');
-                break;
-            }
-            selector.html('');
-            $.each(item, function (n, d) {
-                selector.append(`
-                    <option value=${d.id}>${d.value}</option>
-                `);
+        if(e!='[]'){
+            // carga lista con datos.
+            var data = JSON.parse(e);
+            // Recorre arreglo.
+            var selector;
+            $.each(data, function (i, item) {
+                switch(i){
+                    case 0:
+                        selector = $('#idProvincia');
+                    break;
+                    case 1:
+                        selector = $('#idCanton');
+                    break;
+                    case 2:
+                        selector = $('#idDistrito');
+                    break;
+                    case 3:
+                        selector = $('#idBarrio');
+                    break;
+                }
+                selector.html('');
+                $.each(item, function (n, d) {
+                    selector.append(`
+                        <option value=${d.id} ${n==0?`selected`:``}> ${d.value}</option>
+                    `);
+                })
+                selector.selectpicker("refresh");
+            })        
+        }
+        else {
+            swal({
+                type: 'error',
+                title: 'Oops...',
+                text: 'Algo no está bien, La lista de ubicaciones no puede ser cargada',
+                footer: '<a href>Contacte a Soporte Técnico</a>',
             })
-            selector.removeAttr("disabled");
-            selector.selectpicker("refresh");
-            
-        })
+        }
     };
 
     ShowList(e, selector) {
-        // carga lista con datos.
-        var data = JSON.parse(e);
-        //selector.html('<option value=null >Sin seleccionar </option>');
-        // Recorre arreglo.
-        selector.html('');
-        $.each(data, function (i, item) {
-            selector.append(`
-                <option value=${item.id} ${i==0?`selected`:``} >${item.value}</option>
-            `);            
-        })
-        selector.selectpicker("refresh");
+        if(e!='[]'){
+            // carga lista con datos.
+            var data = JSON.parse(e);
+            //selector.html('<option value=null >Sin seleccionar </option>');
+            // Recorre arreglo.
+            selector.html('');
+            $.each(data, function (i, item) {
+                selector.append(`
+                    <option value=${item.id} ${i==0?`selected`:``} >${item.value}</option>
+                `);            
+            })
+            selector.selectpicker("refresh");
+        }
+        else {
+            swal({
+                type: 'error',
+                title: 'Oops...',
+                text: 'Algo no está bien, La lista no puede ser cargada',
+                footer: '<a href>Contacte a Soporte Técnico</a>',
+            })
+        }
     };
 
     // Muestra información en ventana
@@ -394,12 +447,23 @@ class ClienteFE {
 
     ClearCtls() {
         $("#id").val('');
+        $("#idBodega").val('');
         $("#nombre").val('');
         $("#codigoSeguridad").val('');
         $("#idCodigoPais").val('');
-        $('#idTipoIdentificacion option').prop("selected", false);        
+        $('#idTipoIdentificacion option').prop("selected", false);    
+        $("#idTipoIdentificacion").selectpicker("refresh"); 
         $("#identificacion").val('');
         $("#nombreComercial").val('');
+        $('#idProvincia option').prop("selected", false);
+        $('#idCanton option').prop("selected", false);
+        $('#idDistrito option').prop("selected", false);
+        $('#idBarrio option').prop("selected", false);
+        $("#otrasSenas").val('');
+        $("#numTelefono").val('');
+        $("#correoElectronico").val('');
+        $("#username").val('');
+        $("#password").val('');
     };
 
     ShowAll(e) {
@@ -416,24 +480,67 @@ class ClienteFE {
     ShowItemData(e) {
         // Limpia el controles
         this.ClearCtls();
-        // carga objeto.
-        var data = JSON.parse(e)[0];
-        clientefe= new ClienteFE(data.id, data.nombre, data.codigoSeguridad, data.idCodigoPais, data.idTipoIdentificacion, data.identificacion, data.nombreComercial, data.idProvincia, data.idCanton, data.idDistrito, data.idBarrio, data.otrasSenas, data.
-            idCodigoPaisTel, data.numTelefono, data.idCodigoPaisFax, data.numTelefonoFax, data.correoElectronico, data.username, data.password, data.llave);
-        // Asigna objeto a controles
         $("#idBodega").val($('.call_Bodega').text());
-        $("#id").val(clientefe.id);
-        $("#nombre").val(clientefe.nombre);
-        $("#contribuyente").html('<h3>Registro de Contribuyente de Factura Electrónica: ' + $('.call_Bodega').text() + '<h3>' );
-        $("#codigoSeguridad").val(clientefe.codigoSeguridad);
-        $("#idCodigoPais").val(clientefe.idCodigoPais);
-        $('#idTipoIdentificacion option[value=' + clientefe.idTipoIdentificacion + ']').prop("selected", true);  
-        $("#idTipoIdentificacion").selectpicker("refresh");
-        $("#identificacion").val(clientefe.identificacion);
-        $("#nombreComercial").val(clientefe.nombreComercial);
-
-        
+        if(e!='[]'){
+            // carga objeto.
+            var data = JSON.parse(e)[0];
+            clientefe= new ClienteFE(data.id, data.nombre, data.codigoSeguridad, data.idCodigoPais, data.idTipoIdentificacion, data.identificacion, data.nombreComercial, data.idProvincia, data.idCanton, data.idDistrito, data.idBarrio, data.otrasSenas, data.
+                idCodigoPaisTel, data.numTelefono, data.idCodigoPaisFax, data.numTelefonoFax, data.correoElectronico, data.username, data.password, data.llave);
+            // Asigna objeto a controles        
+            $("#id").val(clientefe.id);
+            $("#nombre").val(clientefe.nombre);
+            $("#contribuyente").html('<h3>Registro de Contribuyente de Factura Electrónica: ' + $('.call_Bodega').text() + '<h3>' );
+            $("#codigoSeguridad").val(clientefe.codigoSeguridad);
+            $("#idCodigoPais").val(clientefe.idCodigoPais);
+            $('#idTipoIdentificacion option[value=' + clientefe.idTipoIdentificacion + ']').prop("selected", true);  
+            $("#idTipoIdentificacion").selectpicker("refresh");
+            clientefe.ReglasTipoIdentificacion(clientefe.idTipoIdentificacion);
+            $("#identificacion").val(clientefe.identificacion);
+            $("#nombreComercial").val(clientefe.nombreComercial);
+            // lee las provincias - cantones - distritos - barrios de la provincia seleccionada.
+            clientefe.ReadAllProvincia;            
+            //
+            $("#otrasSenas").val(clientefe.otrasSenas);
+            $("#numTelefono").val(clientefe.numTelefono);
+            $("#correoElectronico").val(clientefe.correoElectronico);
+            $("#username").val(clientefe.username);
+            $("#password").val(clientefe.password);
+        }
+        else {
+            clientefe.ReadAllUbicacion;
+        }
     };
+
+    ReglasTipoIdentificacion(opt){
+        var p,lr,ph;
+        switch(opt){
+            case '1': // física
+                p= "([0-9])";
+                lr= "9,9";
+                ph=  "9 digitos, sin cero al inicio y sin guiones.";                    
+                break;
+            case '2': // jurídica
+                p= "([0-9]){9,10}$";
+                lr= "10,10";
+                ph= "10 digitos y sin guiones.";
+                break;
+            case '3': // DIMEX
+                p= "([0-9]){9,10}$";
+                lr= "11,12";
+                ph= "11 o 12 digitos, sin ceros al inicio y sin guiones.";                    
+                break;
+            case '4': // NITE
+                p= "([0-9]){10,10}$";
+                lr="10,10";
+                ph= "10 digitos y sin guiones.";
+                break;
+        }
+        $('#identificacion').attr('pattern', p);
+        $('#identificacion').attr('data-validate-length-range', lr);
+        $('#identificacion').attr('placeholder', ph);
+        // clientefe.Init();
+        var validator = new FormValidator({ "events": ['blur', 'input', 'change'] }, document.forms["frm"]);
+    }
 
     Init() {
         // validator.js
@@ -458,33 +565,8 @@ class ClienteFE {
         });
         // validaciones segun el tipo de ident.
         $('#idTipoIdentificacion').on('change', function(e){
-            var p,lr,ph;
-            switch($(this).val()){
-                case '1': // física
-                    p= "([0-9])";
-                    lr= "9,9";
-                    ph=  "9 digitos, sin cero al inicio y sin guiones.";                    
-                    break;
-                case '2': // jurídica
-                    p= "([0-9]){9,10}$";
-                    lr= "10,10";
-                    ph= "10 digitos y sin guiones.";
-                    break;
-                case '3': // DIMEX
-                    p= "([0-9]){9,10}$";
-                    lr= "11,12";
-                    ph= "11 o 12 digitos, sin ceros al inicio y sin guiones.";                    
-                    break;
-                case '4': // NITE
-                    p= "([0-9]){10,10}$";
-                    lr="10,10";
-                    ph= "10 digitos y sin guiones.";
-                    break;
-            }
-            $('#identificacion').attr('pattern', p);
-            $('#identificacion').attr('data-validate-length-range', lr);
-            $('#identificacion').attr('placeholder', ph);
-            clientefe.Init();
+            validator.reset();
+            clientefe.ReglasTipoIdentificacion($(this).val());
         });
         // ubicaciones
         $('#idProvincia').on('change', function(e){

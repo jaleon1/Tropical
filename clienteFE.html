@@ -238,11 +238,14 @@
 
                                         <div class="item form-group">
                                             <label class="control-label col-md-3 col-sm-3 col-xs-12" for="idCanton">Canton
-                                                <span class="required">*</span>
+                                                <span class="required">*</span>                                                
                                             </label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <select class="selectpicker show-menu-arrow form-control ubicacion" required="required" id="idCanton" name="idCanton" type='select'></select>
+                                                <select class="selectpicker show-menu-arrow form-control ubicacion" required="required" id="idCanton" name="idCanton" type='select' >
+                                                    
+                                                </select>                                                
                                             </div>
+                                            
                                         </div>
 
                                         <div class="item form-group">
@@ -390,9 +393,9 @@
 
 <script>
     $(document).ready(function () {
-        clientefe.Init();
+        clientefe.Init();        
         clientefe.ReadAllTipoIdentificacion;
-        clientefe.ReadAllUbicacion;
-        clientefe.ReadProfile;
+        //clientefe.ReadAllUbicacion;
+        // clientefe.ReadProfile;
     });
 </script>

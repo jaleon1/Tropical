@@ -274,8 +274,7 @@ class ClienteFE{
 
     function ReadAllProvincia(){
         try {
-            array_push ($this->ubicacion,Provincia::Read());
-            return $this->ubicacion;
+            return Provincia::Read();            
         }     
         catch(Exception $e) {
             header('HTTP/1.0 400 Bad error');
@@ -329,10 +328,10 @@ class ClienteFE{
     function Read(){
         try {
             $sql='SELECT id, codigoSeguridad, idCodigoPais, nombre, idTipoIdentificacion, identificacion, nombreComercial, idProvincia,idCanton, idDistrito, idBarrio, otrasSenas, 
-            idCodigoPaisTel, numTelefono, correoElectronico, username, password, certificado
+            idCodigoPaisTel, numTelefono, correoElectronico, username, password, certificado, idBodega
                 FROM clienteFE  
-                where idBodega=:idBodega';
-            $param= array(':idBodega'=>$this->idBodega);
+                where id=:id';
+            $param= array(':id'=>$this->id);
             $data= DATA::Ejecutar($sql,$param);
             return $data;
         }     
@@ -385,9 +384,12 @@ class ClienteFE{
                 ':idCodigoPaisTel'=>$this->idCodigoPaisTel,
                 ':numTelefono'=>$this->numTelefono,
                 ':correoElectronico'=>$this->correoElectronico,
-                ':username'=>password_hash($this->username, PASSWORD_DEFAULT),
-                ':password'=>password_hash($this->password, PASSWORD_DEFAULT),
-                ':llave'=>password_hash($this->llave, PASSWORD_DEFAULT),
+                // ':username'=>password_hash($this->username, PASSWORD_DEFAULT),
+                // ':password'=>password_hash($this->password, PASSWORD_DEFAULT),
+                // ':llave'=>password_hash($this->llave, PASSWORD_DEFAULT),
+                ':username'=>$this->username,
+                ':password'=>$this->password,
+                ':llave'=>$this->llave, 
                 ':idBodega'=>$this->idBodega
             );
             $data = DATA::Ejecutar($sql,$param,false);
@@ -410,9 +412,17 @@ class ClienteFE{
     function Update(){
         try {
             $sql="UPDATE clienteFE 
-                SET nombre=:nombre, codigoSeguridad=:codigoSeguridad, idCodigoPais=:idCodigoPais, idTipoIdentificacion=:idTipoIdentificacion
+                SET nombre=:nombre, codigoSeguridad=:codigoSeguridad, idCodigoPais=:idCodigoPais, idTipoIdentificacion=:idTipoIdentificacion, 
+                    identificacion=:identificacion, nombreComercial=:nombreComercial, idProvincia=:idProvincia, idCanton=:idCanton, idDistrito=:idDistrito, 
+                    idBarrio=:idBarrio, otrasSenas=:otrasSenas, numTelefono=:numTelefono, correoElectronico=:correoElectronico, username=:username, password=:password, 
+                    certificado=:certificado, idBodega=:idBodega
                 WHERE id=:id";
-            $param= array(':id'=>$this->id, ':nombre'=>$this->nombre, ':codigoSeguridad'=>$this->codigoSeguridad, ':idCodigoPais'=>$this->idCodigoPais, ':idTipoIdentificacion'=>$this->idTipoIdentificacion);
+            $param= array(':id'=>$this->id, ':nombre'=>$this->nombre, ':codigoSeguridad'=>$this->codigoSeguridad, ':idCodigoPais'=>$this->idCodigoPais, ':idTipoIdentificacion'=>$this->idTipoIdentificacion,
+                ':identificacion'=>$this->identificacion, ':nombreComercial'=>$this->nombreComercial, ':idProvincia'=>$this->idProvincia,
+                ':idCanton'=>$this->idCanton, ':idDistrito'=>$this->idDistrito, ':idBarrio'=>$this->idBarrio,
+                ':otrasSenas'=>$this->otrasSenas, ':numTelefono'=>$this->numTelefono, ':correoElectronico'=>$this->correoElectronico,
+                ':username'=>$this->username, ':password'=>$this->password, ':certificado'=>$this->certificado, ':idBodega'=>$this->idBodega
+            );
             $data = DATA::Ejecutar($sql,$param,false);
             if($data)
                 return true;
