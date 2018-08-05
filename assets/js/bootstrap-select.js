@@ -371,7 +371,7 @@
     dropupAuto: true,
     header: false,
     liveSearch: false,
-    liveSearchPlaceholder: null,
+    liveSearchPlaceholder: 'Seleccione una opción',
     liveSearchNormalize: false,
     liveSearchStyle: 'contains',
     actionsBox: false,
