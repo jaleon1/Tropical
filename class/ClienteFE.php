@@ -4,6 +4,7 @@ if(isset($_POST["action"])){
     unset($_POST['action']);
     // Classes
     require_once("Conexion.php");
+    require_once("Usuario.php");
     // Session
     if (!isset($_SESSION))
         session_start();
@@ -12,6 +13,9 @@ if(isset($_POST["action"])){
     switch($opt){
         case "ReadAll":
             echo json_encode($clientefe->ReadAll());
+            break;
+        case "ReadProfile":
+            echo json_encode($clientefe->ReadProfile());
             break;
         case "ReadAllTipoIdentificacion":
             echo json_encode($clientefe->ReadAllTipoIdentificacion());
@@ -22,6 +26,21 @@ if(isset($_POST["action"])){
             $clientefe->idDistrito = $_POST['idDistrito'];
             echo json_encode($clientefe->ReadAllUbicacion());
             break;        
+        case "ReadAllProvincia":
+            echo json_encode($clientefe->ReadAllProvincia());
+            break;
+        case "ReadAllCanton":
+        $clientefe->idProvincia = $_POST['idProvincia'];
+            echo json_encode($clientefe->ReadAllCanton());
+            break;
+        case "ReadAllDistrito":
+            $clientefe->idCanton = $_POST['idCanton'];
+            echo json_encode($clientefe->ReadAllDistrito());
+            break;
+        case "ReadAllBarrio":
+            $clientefe->idDistrito = $_POST['idDistrito'];
+            echo json_encode($clientefe->ReadAllBarrio());
+            break;
         case "Create":
             echo $clientefe->Create();
             break;
@@ -166,6 +185,7 @@ class ClienteFE{
     public $idCodigoPaisFax=null;
     public $numTelefonoFax=null;
     public $correoElectronico=null;
+    public $idBodega=null;
     //
     public $ubicacion= [];
 
@@ -174,6 +194,9 @@ class ClienteFE{
         if(isset($_POST["id"])){
             $this->id= $_POST["id"];
         }
+        if(isset($_POST["idBodega"]))
+            $this->idBodega= $obj["idBodega"];
+        else $this->idBodega= $_SESSION['userSession']->idBodega;
         if(isset($_POST["obj"])){
             $obj= json_decode($_POST["obj"],true);
             require_once("UUID.php");
@@ -194,6 +217,10 @@ class ClienteFE{
             //$this->idCodigoPaisFax= $obj["idCodigoPaisFax"] ?? null;
             //$this->numTelefonoFax= $obj["numTelefonoFax"] ?? null;
             $this->correoElectronico= $obj["correoElectronico"] ?? null;
+            $this->username= $obj["username"] ?? null;
+            $this->password= $obj["password"] ?? null;
+            $this->llave= $obj["llave"] ?? null;
+            
         }
     }
 
@@ -245,13 +272,86 @@ class ClienteFE{
         }
     }
 
+    function ReadAllProvincia(){
+        try {
+            array_push ($this->ubicacion,Provincia::Read());
+            return $this->ubicacion;
+        }     
+        catch(Exception $e) {
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar la lista'))
+            );
+        }
+    }
+
+    function ReadAllCanton(){
+        try {
+            return Canton::Read($this->idProvincia);
+        }     
+        catch(Exception $e) {
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar la lista'))
+            );
+        }
+    }
+
+    function ReadAllDistrito(){
+        try {
+            return Distrito::Read($this->idCanton);
+        }     
+        catch(Exception $e) {
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar la lista'))
+            );
+        }
+    }
+
+    function ReadAllBarrio(){
+        try {
+            return Barrio::Read($this->idDistrito);
+        }     
+        catch(Exception $e) {
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar la lista'))
+            );
+        }
+    }
+
+
     function Read(){
         try {
             $sql='SELECT id, codigoSeguridad, idCodigoPais, nombre, idTipoIdentificacion, identificacion, nombreComercial, idProvincia,idCanton, idDistrito, idBarrio, otrasSenas, 
-                idCodigoPaisTel, numTelefono, correoElectronico
+            idCodigoPaisTel, numTelefono, correoElectronico, username, password, certificado
                 FROM clienteFE  
-                where id=:id';
-            $param= array(':id'=>$this->id);
+                where idBodega=:idBodega';
+            $param= array(':idBodega'=>$this->idBodega);
+            $data= DATA::Ejecutar($sql,$param);
+            return $data;
+        }     
+        catch(Exception $e) {
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar el producto'))
+            );
+        }
+    }
+
+    function ReadProfile(){
+        try {
+            $sql='SELECT id, codigoSeguridad, idCodigoPais, nombre, idTipoIdentificacion, identificacion, nombreComercial, idProvincia,idCanton, idDistrito, idBarrio, otrasSenas, 
+            idCodigoPaisTel, numTelefono, correoElectronico, username, password, certificado
+                FROM clienteFE  
+                where idBodega=:idBodega';
+            $param= array(':idBodega'=>$this->idBodega);
             $data= DATA::Ejecutar($sql,$param);
             return $data;
         }     
@@ -267,9 +367,9 @@ class ClienteFE{
     function Create(){
         try {
             $sql="INSERT INTO clienteFE  (id, codigoSeguridad, idCodigoPais, nombre, idTipoIdentificacion, identificacion, nombreComercial, idProvincia,idCanton, idDistrito, idBarrio, otrasSenas, 
-                idCodigoPaisTel, numTelefono, correoElectronico) 
+                idCodigoPaisTel, numTelefono, correoElectronico, username, password, certificado, idBodega)
                 VALUES (:id, :codigoSeguridad, :idCodigoPais, :nombre, :idTipoIdentificacion, :identificacion, :nombreComercial, :idProvincia, :idCanton, :idDistrito, :idBarrio, :otrasSenas, 
-                    :idCodigoPaisTel, :numTelefono, :correoElectronico);";
+                    :idCodigoPaisTel, :numTelefono, :correoElectronico, :username, :password, :llave, :idBodega);";
             $param= array(':id'=>$this->id ,
                 ':codigoSeguridad'=>$this->codigoSeguridad, 
                 ':idCodigoPais'=>$this->idCodigoPais, 
@@ -284,7 +384,11 @@ class ClienteFE{
                 ':otrasSenas'=>$this->otrasSenas,
                 ':idCodigoPaisTel'=>$this->idCodigoPaisTel,
                 ':numTelefono'=>$this->numTelefono,
-                ':correoElectronico'=>$this->correoElectronico
+                ':correoElectronico'=>$this->correoElectronico,
+                ':username'=>password_hash($this->username, PASSWORD_DEFAULT),
+                ':password'=>password_hash($this->password, PASSWORD_DEFAULT),
+                ':llave'=>password_hash($this->llave, PASSWORD_DEFAULT),
+                ':idBodega'=>$this->idBodega
             );
             $data = DATA::Ejecutar($sql,$param,false);
             if($data)
