@@ -314,8 +314,8 @@ class Factura{
                 $total = $total +  $data->detalleFactura[$i]->precioUnitario;
             }
             $printer->text("\n------------------------------------------------");
-            $printer->text("\n"."                           Sub Total C". $total.".00");
-            $printer->text("\n"."                               TOTAL C". $total.".00\n");
+            $printer->text("\n"."                          Sub Total ₡ ". $total.".00");
+            $printer->text("\n"."                              TOTAL ₡ ". $total.".00\n");
             $printer->text("\n"."... Descripción ley ...");
             $printer->feed(3);
             $printer->cut();            
