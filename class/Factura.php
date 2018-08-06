@@ -327,7 +327,7 @@ class Factura{
                 header('HTTP/1.0 400 Bad error');
                 die(json_encode(array(
                     'code' => $e->getCode() ,
-                    'msg' => 'Error al cargar la lista'))
+                    'msg' => 'Error al imprimir factura'))
                 );
             }
     }
