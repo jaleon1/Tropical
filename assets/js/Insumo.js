@@ -161,7 +161,7 @@ class Insumo {
                     responsive: true,
                     destroy: true,
                     data: data,
-                    order: [[ 0, "asc" ]],
+                    order: [[ 1, "asc" ]],
                     columnDefs: [{className: "text-right", "targets": [4]}],
                     columns: [
                         {
@@ -214,7 +214,7 @@ class Insumo {
                     responsive: true,
                     destroy: true,
                     data: data,
-                    order: [[ 0, "asc" ]],
+                    order: [[ 1, "asc" ]],
                     columnDefs: [{className: "text-right", "targets": [4,5,6]}],
                     columns: [
                         {
