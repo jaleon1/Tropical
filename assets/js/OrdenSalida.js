@@ -268,14 +268,14 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
                     orderable: false,
                     searchable:false,
                     mRender: function () {
-                        return '<a class="update"> <i class="glyphicon glyphicon-edit" > </i> Editar </a> | '+
-                                '<a class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>' 
+                        return '<a class="updateOrdenSalida"> <i class="glyphicon glyphicon-edit" > </i> Editar </a> | '+
+                                '<a class="deleteOrdenSalida"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>' 
                     },
                     "width":"12%"}
             ]
         });
-        $('.update').click(ordenSalida.UpdateEventHandler);
-        $('.delete').click(ordenSalida.DeleteEventHandler);
+        // $('.updateOrdenSalida').click(ordenSalida.UpdateEventHandler);
+        // $('.deleteOrdenSalida').click(ordenSalida.DeleteEventHandler);
     };
 
     AddTableInsumo(id,codigo,nombre,descripcion,saldoCantidad,saldoCosto,costoPromedio) {
