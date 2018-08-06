@@ -274,8 +274,8 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
                     "width":"12%"}
             ]
         });
-        // $('.updateOrdenSalida').click(ordenSalida.UpdateEventHandler);
-        // $('.deleteOrdenSalida').click(ordenSalida.DeleteEventHandler);
+        $('.updateOrdenSalida').click(ordenSalida.UpdateEventHandler);
+        $('.deleteOrdenSalida').click(ordenSalida.DeleteEventHandler);
     };
 
     AddTableInsumo(id,codigo,nombre,descripcion,saldoCantidad,saldoCosto,costoPromedio) {
