@@ -275,86 +275,6 @@ class Producto {
     };
 
     ShowAll(e) {
-        // var url;
-        // url = window.location.href;
-        // // Limpia el div que contiene la tabla.
-        // $('#tableBody-Producto').html("");
-        // var table = $('#dsProducto').DataTable();
-        // table.destroy();
-        // // // Carga lista
-        // var data = JSON.parse(e);
-
-        // $.each(data, function (i, item) {
-        //     $('#tableBody-Producto').append(`
-        //         <tr> 
-        //             <td>
-        //                 <input class="chk-addproducto" type="checkbox" id="chk-addproducto${item.id}">
-        //             </td>
-        //             <td class="itemId">${item.id}</td>
-        //             <td>${item.codigo}</td>
-        //             <td>${item.nombre}</td>
-        //             <td>${item.nombreAbreviado}</td>
-        //             <td>${item.descripcion}</td>
-        //             ${document.URL.indexOf("ElaborarProducto.html")>=1 ?                                       
-        //                 `<td class="oculto">${item.saldoCantidad}</td>
-        //                 <td class="oculto">${parseFloat(item.saldoCosto).toFixed(2)}</td>
-        //                 <td class="oculto">${parseFloat(item.costoPromedio).toFixed(2)}</td>
-        //                 <td class="oculto">${parseFloat(item.precioVenta).toFixed(2)}</td>
-        //                 <td class="oculto">${item.esVenta}</td>`
-        //             :``}
-        //             ${document.URL.indexOf("InventarioProducto.html")>=1 ?                                       
-        //                 `<td>${item.saldoCantidad}</td>
-        //                 <td>${parseFloat(item.saldoCosto).toFixed(2)}</td>
-        //                 <td>${parseFloat(item.costoPromedio).toFixed(2)}</td>
-        //                 <td>${parseFloat(item.precioVenta).toFixed(2)}</td>
-        //                 <td>${item.esVenta}</td>
-        //                 <td class=" last">
-        //                     <a  id="update${item.id}" data-toggle="modal" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | 
-        //                     <a  id="delete${item.id}"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>
-        //                 </td>`
-        //             :``}
-        //         </tr>
-        //     `);
-        //     // event Handler
-        //     $('#update'+item.id).click(producto.UpdateEventHandler);
-        //     $('#delete'+item.id).click(producto.DeleteEventHandler);
-        //     // if (document.URL.indexOf("ElaborarProducto.html")!=-1) {
-        //     //     $('#chk-addproducto'+item.id).change(elaborarProducto.AddProductoEventHandler);
-        //     // }
-        //     if (document.URL.indexOf("Articulo.html")!=-1 || url.indexOf("Distribucion.html")!=-1) {
-        //         $('#chk-addproducto'+item.id).change(producto.AddArticuloEventHandler);
-        //     }
-        // })    
-                
-        // //datatable         
-        // // if ( $.fn.dataTable.isDataTable( '#dsProducto' ) ) {
-        // //     var table = $('#dsProducto').DataTable();
-        // //     table.destroy();
-        // //     $('#dsProducto').DataTable( {
-        // //         paging: true,
-        // //         search: true
-        // //     } );
-        // // }
-        // // else 
-        //     $('#dsProducto').DataTable( {
-        //         columns: [
-        //             { "width":"5%"},
-        //             { "width":"0%"},
-        //             { "width":"auto"},
-        //             { "width":"auto"},
-        //             { "width":"auto"},
-        //             { "width":"auto"},
-        //             { "width":"auto"},
-        //             { "width":"auto"},
-        //             { "width":"auto"},
-        //             { "width":"auto"},
-        //             { "width":"auto"},
-        //             { "width":"15%"}
-        //         ],     
-        //         paging: true,
-        //         search: true
-        //     } );
-
         var data = JSON.parse(e);
 
         $.each(data, function (i, item) {
@@ -429,6 +349,7 @@ class Producto {
                         visible:false}
                 ]
             });
+            $('#dsProducto tbody tr').click(producto.AddProducto);
         }
         if (document.URL.indexOf("InventarioProducto.html")!=-1){
             this.tablaproducto = $('#dsProducto').DataTable( {
@@ -495,6 +416,23 @@ class Producto {
         }
     };
 
+    AddProducto(){
+        var id=$(this).find("td:eq(0)").html();
+        var codigo=$(this).find("td:eq(1)").html();
+        var nombre=$(this).find("td:eq(2)").html();
+        var nombreAbreviado=$(this).find("td:eq(3)").html();
+        var descripcion=$(this).find("td:eq(4)").html();
+        var saldoCantidad=$(this).find("td:eq(5)").html();
+        var saldoCosto = producto.tablaproducto.row(this).data()[8];
+        var costoPromedio = producto.tablaproducto.row(this).data()[9];
+        var precioVenta = producto.tablaproducto.row(this).data()[10];
+        if ($(this).find("td:eq(9)").html()=="SABOR") 
+            var esVenta="1";
+        else
+            var esVenta="2";
+        elaborarProducto.AddProductoEventHandler(id,codigo,nombre,nombreAbreviado,descripcion,saldoCantidad,saldoCosto,costoPromedio,precioVenta,esVenta);
+    }; 
+
     UpdateEventHandler() {
         producto.id = $(this).parents("tr").find(".itemId").text();  //Class itemId = ID del objeto.
         producto.Read;
@@ -513,6 +451,8 @@ class Producto {
         $("#nombre").val(data.nombre);
         $("#txtColor").val(data.txtColor);
         $("#bgColor").val(data.bgColor);
+        $("#txtColorSpan").css("background-color",data.txtColor);
+        $("#bgColorSpan").css("background-color",data.bgColor);
         $("#nombreAbreviado").val(data.nombreAbreviado);
         $("#descripcion").val(data.descripcion);
         $("#saldoCantidad").val(data.saldoCantidad);
