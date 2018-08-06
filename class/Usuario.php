@@ -161,7 +161,7 @@ class Usuario{
     }
 
     function Login(){
-        try { 
+        try {
             //Check activo & password.
             $sql= 'SELECT u.id, u.username, u.nombre, activo, password, idEvento, e.nombre as nombreUrl, e.url, menuPadre, subMenuPadre
             FROM usuario u inner join rolesXUsuario ru on ru.idUsuario = u.id

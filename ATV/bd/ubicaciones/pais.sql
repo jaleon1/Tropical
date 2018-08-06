@@ -14,7 +14,7 @@ Date: 2018-04-07 10:26:59
 */
 
 SET FOREIGN_KEY_CHECKS=0;
-
+use tropical;
 -- ----------------------------
 -- Table structure for pais
 -- ----------------------------

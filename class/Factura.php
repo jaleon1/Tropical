@@ -43,8 +43,7 @@ if(isset($_POST["action"])){
 }
 
 class Factura{
-    ////////////////////////////////////   
-    /////Factura
+    //Factura
     public $local="";
     public $terminal="";
     public $idCondicionVenta=null;
@@ -64,9 +63,7 @@ class Factura{
     public $consecutivo= [];
     public $usuario="";
     public $bodega="";
-    
-    ///////////////////////////////////
-    
+
     function __construct(){
         // identificador único
         if(isset($_POST["id"])){
@@ -251,7 +248,7 @@ class Factura{
 
 
     function Create(){
-        try {   
+        try {
 
             $this->fechaCreacion = date("Y-m-d H:i:s");
             $this->fechaEmision = date("D \d\\e F Y");
