@@ -284,9 +284,6 @@ class Insumo {
         this.ClearCtls();
         // carga objeto.
         var data = JSON.parse(e)[0];
-        // insumo = new Insumo(data.id, data.codigo, data.nombre, data.descripcion,
-        //     data.saldoCantidad, data.saldoCosto, data.costoPromedio);
-        // Asigna objeto a controles
         $("#id").val(data.id);
         $("#codigo").val(data.codigo);
         $("#nombre").val(data.nombre);
@@ -294,13 +291,7 @@ class Insumo {
         $("#saldoCantidad").val(data.saldoCantidad);
         $("#saldoCosto").val(parseFloat(data.saldoCosto).toFixed(2));
         $("#costoPromedio").val(parseFloat(data.costoPromedio).toFixed(2));
-        // $("#id").val(insumo.id);
-        // $("#codigo").val(insumo.codigo);
-        // $("#nombre").val(insumo.nombre);
-        // $("#descripcion").val(insumo.descripcion);
-        // $("#saldoCantidad").val(insumo.saldoCantidad);
-        // $("#saldoCosto").val(parseFloat(insumo.saldoCosto).toFixed(2));
-        // $("#costoPromedio").val(parseFloat(insumo.costoPromedio).toFixed(2));
+        $(".bs-example-modal-lg").modal('toggle');
     };
 
     DeleteEventHandler() {
