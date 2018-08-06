@@ -294,7 +294,7 @@ class Producto {
                 responsive: true,
                 destroy: true,
                 data: data,
-                order: [[ 0, "asc" ]],
+                order: [[ 1, "asc" ]],
                 columnDefs: [{className: "text-right", "targets": [5]}],
                 columns: [
                     {
@@ -356,7 +356,7 @@ class Producto {
                 responsive: true,
                 destroy: true,
                 data: data,
-                order: [[ 0, "asc" ]],
+                order: [[ 1, "asc" ]],
                 columnDefs: [{className: "text-right", "targets": [5,6,7,8]}],
                 columns: [
                     {
