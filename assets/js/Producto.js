@@ -1,6 +1,6 @@
 class Producto {
     // Constructor
-    constructor(id, codigo, nombre, txtColor, bgColor, nombreAbreviado, descripcion, saldoCantidad, saldoCosto, costoPromedio, precioVenta, tipoProducto, lista) {
+    constructor(id, codigo, nombre, txtColor, bgColor, nombreAbreviado, descripcion, saldoCantidad, saldoCosto, costoPromedio, precioVenta, tipoProducto, lista, tablaproducto) {
         this.id = id || null;        
         this.codigo = codigo || '';
         this.nombre = nombre || '';
@@ -14,6 +14,7 @@ class Producto {
         this.precioVenta = precioVenta || 0;
         this.tipoProducto = tipoProducto || 0; //1: producto para vender, 0 articulo no vendible.
         this.lista = lista || [];
+        this.tablaproducto;
     }
 
     //Getter
@@ -274,88 +275,163 @@ class Producto {
     };
 
     ShowAll(e) {
-        var url;
-        url = window.location.href;
-        // Limpia el div que contiene la tabla.
-        $('#tableBody-Producto').html("");
-        var table = $('#dsProducto').DataTable();
-        table.destroy();
-        // // Carga lista
         var data = JSON.parse(e);
 
         $.each(data, function (i, item) {
-            $('#tableBody-Producto').append(`
-                <tr> 
-                    <td>
-                        <input class="chk-addproducto" type="checkbox" id="chk-addproducto${item.id}">
-                    </td>
-                    <td class="itemId">${item.id}</td>
-                    <td>${item.codigo}</td>
-                    <td>${item.nombre}</td>
-                    <td>${item.nombreAbreviado}</td>
-                    <td>${item.descripcion}</td>
-                    ${document.URL.indexOf("ElaborarProducto.html")>=1 ?                                       
-                        `<td class="oculto">${item.saldoCantidad}</td>
-                        <td class="oculto">${parseFloat(item.saldoCosto).toFixed(2)}</td>
-                        <td class="oculto">${parseFloat(item.costoPromedio).toFixed(2)}</td>
-                        <td class="oculto">${parseFloat(item.precioVenta).toFixed(2)}</td>
-                        <td class="oculto">${item.esVenta}</td>`
-                    :``}
-                    ${document.URL.indexOf("InventarioProducto.html")>=1 ?                                       
-                        `<td>${item.saldoCantidad}</td>
+            if (item.esVenta=="0") 
+                item.esVenta="ARTICULO";
+            if (item.esVenta=="1") 
+                item.esVenta="SABOR";
+            if (item.esVenta=="2") 
+                item.esVenta="TOPPING";
+            item.saldoCosto = (parseFloat(item.saldoCosto).toFixed(2)).toString()+"$";
+            item.costoPromedio = (parseFloat(item.costoPromedio).toFixed(2)).toString()+"$";
+            item.precioVenta = (parseFloat(item.precioVenta).toFixed(2)).toString()+"$";
+        });
 
-                        
-                        <td>${parseFloat(item.saldoCosto).toFixed(2)}</td>
-                        <td>${parseFloat(item.costoPromedio).toFixed(2)}</td>
-                        <td>${parseFloat(item.precioVenta).toFixed(2)}</td>
-                        <td>${item.esVenta}</td>
-                        <td class=" last">
-                            <a  id="update${item.id}" data-toggle="modal" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | 
-                            <a  id="delete${item.id}"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>
-                        </td>`
-                    :``}
-                </tr>
-            `);
-            // event Handler
-            $('#update'+item.id).click(producto.UpdateEventHandler);
-            $('#delete'+item.id).click(producto.DeleteEventHandler);
-            // if (document.URL.indexOf("ElaborarProducto.html")!=-1) {
-            //     $('#chk-addproducto'+item.id).change(elaborarProducto.AddProductoEventHandler);
-            // }
-            if (document.URL.indexOf("Articulo.html")!=-1 || url.indexOf("Distribucion.html")!=-1) {
-                $('#chk-addproducto'+item.id).change(producto.AddArticuloEventHandler);
-            }
-        })    
-                
-        //datatable         
-        // if ( $.fn.dataTable.isDataTable( '#dsProducto' ) ) {
-        //     var table = $('#dsProducto').DataTable();
-        //     table.destroy();
-        //     $('#dsProducto').DataTable( {
-        //         paging: true,
-        //         search: true
-        //     } );
-        // }
-        // else 
-            $('#dsProducto').DataTable( {
+        if (document.URL.indexOf("ElaborarProducto.html")!=-1){
+            this.tablaproducto = $('#dsProducto').DataTable( {
+                responsive: true,
+                destroy: true,
+                data: data,
+                order: [[ 0, "asc" ]],
+                columnDefs: [{className: "text-right", "targets": [5]}],
                 columns: [
-                    { "width":"5%"},
-                    { "width":"0%"},
-                    { "width":"auto"},
-                    { "width":"auto"},
-                    { "width":"auto"},
-                    { "width":"auto"},
-                    { "width":"auto"},
-                    { "width":"auto"},
-                    { "width":"auto"},
-                    { "width":"auto"},
-                    { "width":"auto"},
-                    { "width":"15%"}
-                ],     
-                paging: true,
-                search: true
-            } );
+                    {
+                        title:"ID",
+                        data:"id",
+                        className:"itemId",                    
+                        width:"auto"},
+                    {
+                        title:"CODIGO",
+                        data:"codigo",
+                        width:"auto"},
+                    {
+                        title:"NOMBRE",
+                        data:"nombre",
+                        width:"auto"},
+                    {
+                        title:"ABREVIATURA",
+                        data:"nombreAbreviado",
+                        width:"auto"},
+                    {
+                        title:"DESCRIPCION",
+                        data:"descripcion",
+                        width:"auto"},
+                    {
+                        title:"S CANTIDAD",
+                        data:"saldoCantidad",
+                        width:"auto"},
+                    {
+                        title:"S COSTO",
+                        data:"saldoCosto",
+                        visible:false},
+                    {
+                        title:"C PROMEDIO",
+                        data:"costoPromedio",
+                        visible:false},
+                    {
+                        title:"P VENTA",
+                        data:"precioVenta",
+                        visible:false},
+                    {
+                        title:"TIPO",
+                        data:"esVenta",
+                        width:"auto"},
+                    {
+                        title:"ACCIÓN",
+                        orderable: false,
+                        searchable:false,
+                        mRender: function () {
+                            return '<a class="update"> <i class="glyphicon glyphicon-edit" > </i> Editar </a> | '+
+                                    '<a class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>' 
+                        },
+                        visible:false}
+                ]
+            });
+            $('#dsProducto tbody tr').click(producto.AddProducto);
+        }
+        if (document.URL.indexOf("InventarioProducto.html")!=-1){
+            this.tablaproducto = $('#dsProducto').DataTable( {
+                responsive: true,
+                destroy: true,
+                data: data,
+                order: [[ 0, "asc" ]],
+                columnDefs: [{className: "text-right", "targets": [5,6,7,8]}],
+                columns: [
+                    {
+                        title:"ID",
+                        data:"id",
+                        className:"itemId",                    
+                        width:"auto"},
+                    {
+                        title:"CODIGO",
+                        data:"codigo",
+                        width:"auto"},
+                    {
+                        title:"NOMBRE",
+                        data:"nombre",
+                        width:"auto"},
+                    {
+                        title:"ABREVIATURA",
+                        data:"nombreAbreviado",
+                        width:"auto"},
+                    {
+                        title:"DESCRIPCION",
+                        data:"descripcion",
+                        width:"auto"},
+                    {
+                        title:"S CANTIDAD",
+                        data:"saldoCantidad",
+                        width:"auto"},
+                    {
+                        title:"S COSTO",
+                        data:"saldoCosto",
+                        width:"auto"},
+                    {
+                        title:"C PROMEDIO",
+                        data:"costoPromedio",
+                        width:"auto"},
+                    {
+                        title:"P VENTA",
+                        data:"precioVenta",
+                        width:"auto"},
+                    {
+                        title:"TIPO",
+                        data:"esVenta",
+                        width:"auto"},
+                    {
+                        title:"ACCIÓN",
+                        orderable: false,
+                        searchable:false,
+                        mRender: function () {
+                            return '<a class="update"> <i class="glyphicon glyphicon-edit" > </i> Editar </a> | '+
+                                    '<a class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>' 
+                        },
+                        width:"12%"}
+                ]
+            });
+            $('.update').click(producto.UpdateEventHandler);
+            $('.delete').click(producto.DeleteEventHandler);
+        }
     };
+
+    AddProducto(){
+        var id=$(this).find("td:eq(0)").html();
+        var codigo=$(this).find("td:eq(1)").html();
+        var nombre=$(this).find("td:eq(2)").html();
+        var nombreAbreviado=$(this).find("td:eq(3)").html();
+        var descripcion=$(this).find("td:eq(4)").html();
+        var saldoCantidad=$(this).find("td:eq(5)").html();
+        var saldoCosto = producto.tablaproducto.row(this).data()[8];
+        var costoPromedio = producto.tablaproducto.row(this).data()[9];
+        var precioVenta = producto.tablaproducto.row(this).data()[10];
+        if ($(this).find("td:eq(9)").html()=="SABOR") 
+            var esVenta="1";
+        else
+            var esVenta="2";
+        elaborarProducto.AddProductoEventHandler(id,codigo,nombre,nombreAbreviado,descripcion,saldoCantidad,saldoCosto,costoPromedio,precioVenta,esVenta);
+    }; 
 
     UpdateEventHandler() {
         producto.id = $(this).parents("tr").find(".itemId").text();  //Class itemId = ID del objeto.
@@ -375,6 +451,8 @@ class Producto {
         $("#nombre").val(data.nombre);
         $("#txtColor").val(data.txtColor);
         $("#bgColor").val(data.bgColor);
+        $("#txtColorSpan").css("background-color",data.txtColor);
+        $("#bgColorSpan").css("background-color",data.bgColor);
         $("#nombreAbreviado").val(data.nombreAbreviado);
         $("#descripcion").val(data.descripcion);
         $("#saldoCantidad").val(data.saldoCantidad);
