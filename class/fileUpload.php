@@ -1,5 +1,10 @@
 <?php 
-$uploaddir= '../../certUploads/';
+require_once("Usuario.php");
+if (!isset($_SESSION))
+        session_start();
+$uploaddir= '../../certUploads/'.$_SESSION['userSession']->idBodega.'/';
+if (!file_exists($uploaddir)) 
+    mkdir($uploaddir, 0600, true);
 //$hashName= password_hash($_FILES['file']['name'], PASSWORD_DEFAULT);
 //$uploadfile = $uploaddir . basename($hashName);
 $uploadfile = $uploaddir . basename($_FILES['file']['name']);

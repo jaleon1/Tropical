@@ -53,7 +53,43 @@ if(isset($_POST["action"])){
         case "DeleteCertificado":
             $clientefe->certificado = $_POST['certificado'];
             $clientefe->DeleteCertificado();
-            break;
+            break;        
+    }
+}
+else {
+    //$clientefe->certificado = $_GET['certificado'];
+    //$clientefe->DownloadCertificado();
+    try {
+        require_once("Usuario.php");
+        // Session
+        if (!isset($_SESSION))
+            session_start();
+        //$file= '../../certUploads/'.$_SESSION['userSession']->idBodega.'/'.$_GET['certificado'];
+        $file = "fileUpload.php";
+        if (file_exists($file)) {
+            // header('Content-Description: File Transfer');
+            // header('Content-Type: application/octet-stream');
+            // // header('Content-Disposition: attachment; filename="'.basename($file).'"');
+            // header('Content-Disposition: attachment; filename="'. $file .'"');
+            // header('Expires: 0');
+            // header('Cache-Control: must-revalidate');
+            // header('Pragma: public');
+            // header('Content-Length: ' . filesize($file));
+            // readfile($file);
+            // //exit;
+            header("Cache-Control: public");
+            header("Content-Description: File Transfer");
+            header("Content-Disposition: attachment; filename= fileUpload.php");
+            header("Content-Transfer-Encoding: binary");    
+            readfile("fileUpload.php");
+        }
+    }
+    catch(Exception $e) {
+        header('HTTP/1.0 400 Bad error');
+        die(json_encode(array(
+            'code' => $e->getCode() ,
+            'msg' => $e->getMessage()))
+        );
     }
 }
 
@@ -193,6 +229,7 @@ class ClienteFE{
     public $filesize= null;
     public $filename= null;
     public $filetype= null;
+    public $estadoCertificado= 1;
     //
     public $ubicacion= [];
 
@@ -331,7 +368,6 @@ class ClienteFE{
         }
     }
 
-
     function Read(){
         try {
             $sql='SELECT id, codigoSeguridad, idCodigoPais, nombre, idTipoIdentificacion, identificacion, nombreComercial, idProvincia,idCanton, idDistrito, idBarrio, otrasSenas, 
@@ -383,6 +419,10 @@ class ClienteFE{
                 $param= array(':idBodega'=>$this->idBodega);
                 $data= DATA::Ejecutar($sql,$param);
                 $this->certificado= $data[0]['certificado'];
+                // estado del certificado.
+                if(file_exists('../../certUploads/'.$_SESSION['userSession']->idBodega.'/'.$this->certificado))
+                    $this->estadoCertificado=1;
+                else $this->estadoCertificado=0;                
                 // info del archivo físico.
                 // $fPath= '../../certUploads/'.$data[0]['certificado'];                
                 // $this->filesize= filesize($fPath);
@@ -528,7 +568,31 @@ class ClienteFE{
             $param= array(':id'=>$this->id);
             $data= DATA::Ejecutar($sql, $param, false);
             if($data)
-                unlink('../../certUploads/'.$this->certificado);
+                unlink('../../certUploads/'.$_SESSION['userSession']->idBodega.'/'.$this->certificado);
+        }
+        catch(Exception $e) {
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }
+    }
+
+    function DownloadCertificado(){
+        try {
+            $file= '../../certUploads/'.$_SESSION['userSession']->idBodega.'/'.$_GET['certificado'];
+            if (file_exists($file)) {
+                header('Content-Description: File Transfer');
+                header('Content-Type: application/octet-stream');
+                header('Content-Disposition: attachment; filename="'.basename($file).'"');
+                header('Expires: 0');
+                header('Cache-Control: must-revalidate');
+                header('Pragma: public');
+                header('Content-Length: ' . filesize($file));
+                readfile($file);
+                //exit;
+            }
         }
         catch(Exception $e) {
             header('HTTP/1.0 400 Bad error');

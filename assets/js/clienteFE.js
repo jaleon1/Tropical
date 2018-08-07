@@ -1,7 +1,7 @@
 class ClienteFE {
     // Constructor
     constructor(id, nombre, codigoSeguridad, idCodigoPais, idTipoIdentificacion, identificacion, nombreComercial, idProvincia, idCanton, idDistrito, idBarrio, otrasSenas, 
-        idCodigoPaisTel, numTelefono, idCodigoPaisFax, numTelefonoFax, correoElectronico, username, password, certificado, idBodega, filename, filesize, filetype) {
+        idCodigoPaisTel, numTelefono, idCodigoPaisFax, numTelefonoFax, correoElectronico, username, password, certificado, idBodega, filename, filesize, filetype, estadoCertificado) {
         this.id = id || null;
         this.nombre = nombre || '';
         this.codigoSeguridad = codigoSeguridad || '';
@@ -26,6 +26,7 @@ class ClienteFE {
         this.filename = filename || null;
         this.filesize = filesize || null;
         this.filetype = filetype || null;
+        this.estadoCertificado= estadoCertificado || 0;
     }
 
     get tUpdate()  {
@@ -118,6 +119,7 @@ class ClienteFE {
         $('#idDistrito').selectpicker("refresh");
         $('#idBarrio').selectpicker("refresh");
         var miAccion= 'ReadAllUbicacion';
+        $('#btnSubmit').attr("disabled", "disabled");
         $.ajax({
             type: "POST",
             url: "class/ClienteFE.php",
@@ -130,6 +132,7 @@ class ClienteFE {
         })
         .done(function( e ) {
             clientefe.ShowListUbicacion(e);
+            $("#btnSubmit").removeAttr("disabled");
         })    
         .fail(function (e) {
             clientefe.showError(e);
@@ -138,6 +141,7 @@ class ClienteFE {
 
     get ReadAllProvincia() {
         var miAccion= 'ReadAllProvincia';
+        $('#btnSubmit').attr("disabled", "disabled");
         $.ajax({
             type: "POST",
             url: "class/ClienteFE.php",
@@ -185,9 +189,6 @@ class ClienteFE {
         })    
         .fail(function (e) {
             clientefe.showError(e);
-        })
-        .always(function(){
-            $('#idCanton').removeAttr("disabled");  
         });
     };
 
@@ -238,6 +239,7 @@ class ClienteFE {
             clientefe.ShowList(e, $('#idBarrio'));
             $('#idBarrio option[value=' + clientefe.idBarrio + ']').prop("selected", true);  
             $("#idBarrio").selectpicker("refresh");
+            $("#btnSubmit").removeAttr("disabled");
         })    
         .fail(function (e) {
             clientefe.showError(e);
@@ -299,7 +301,9 @@ class ClienteFE {
             });
             return false;
         }                    
-        //
+        // Sube el certificado y crea/actualiza cliente.
+        if(dz!=undefined)
+            dz.processQueue();
         $('#btnSubmit').attr("disabled", "disabled");
         $.ajax({
             type: "POST",
@@ -310,17 +314,17 @@ class ClienteFE {
             }
         })
             .done(function(){
-                dz.processQueue();
-                clientefe.showInfo();
+                if(dz==undefined) // No hay cola para subir.
+                    clientefe.showInfo();
             })
             .fail(function (e) {
                 clientefe.showError(e);
             })
             .always(function () {
                 $("#btnSubmit").removeAttr("disabled");
-                //clientefe = new clientefe();
-                //clientefe.ClearCtls();
-                //clientefe.Read;
+                clientefe = new ClienteFE();
+                clientefe.ClearCtls();
+                clientefe.ReadProfile;
                 //$("#nombre").focus();
                 // NProgress.done();
             });
@@ -356,7 +360,7 @@ class ClienteFE {
     get DeleteCertificado() {
         $.ajax({
             type: "POST",
-            url: "class/clientefe.php",
+            url: "class/ClienteFE.php",
             data: {
                 action: 'DeleteCertificado',
                 certificado: clientefe.certificado,
@@ -377,6 +381,27 @@ class ClienteFE {
             .fail(function (e) {
                 clientefe.showError(e);
             });
+    }
+
+    get DownloadCertificado() {
+    //     $.ajax({
+    //         type: "GET",
+    //         url: "class/ClienteFE.php",
+    //         data: {
+    //             action: 'DownloadCertificado',
+    //             certificado: clientefe.certificado,
+    //             id: clientefe.id
+    //         }
+    //     })
+    //         .done(function () {
+                
+    //         })
+    //         .fail(function (e) {
+    //             clientefe.showError(e);
+    //         });
+    var xhr = new XMLHttpRequest();
+        xhr.open("GET", "class/ClienteFE.php");
+        xhr.send();
     }
 
     // Methods
@@ -494,6 +519,9 @@ class ClienteFE {
         $("#correoElectronico").val('');
         $("#username").val('');
         $("#password").val('');
+        $("#filelist").html('');
+        if(dz!=undefined)
+            dz.removeAllFiles();
     };
 
     ShowAll(e) {
@@ -515,7 +543,7 @@ class ClienteFE {
             var data = JSON.parse(e);
             clientefe= new ClienteFE(data.id, data.nombre, data.codigoSeguridad, data.idCodigoPais, data.idTipoIdentificacion, data.identificacion, data.nombreComercial, data.idProvincia, data.idCanton, data.idDistrito, data.idBarrio, data.otrasSenas, data.
                 idCodigoPaisTel, data.numTelefono, data.idCodigoPaisFax, data.numTelefonoFax, data.correoElectronico, data.username, data.password, data.certificado, data.idBodega,
-                data.filename, data.filesize, data.filetype
+                data.filename, data.filesize, data.filetype, data.estadoCertificado
             );
             // Asigna objeto a controles        
             $("#id").val(clientefe.id);
@@ -539,8 +567,8 @@ class ClienteFE {
             //            
             $('#filelist').append(`
                 <div class="btn-group">
-                    <button type="button" class="btn btn-danger">${clientefe.certificado}</button>
-                    <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                    <button type="button" class="btn ${clientefe.estadoCertificado==1? `btn-success` : `btn-danger` }">${clientefe.certificado}</button>
+                    <button type="button" class="btn ${clientefe.estadoCertificado==1? `btn-success` : `btn-danger` } dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                         <span class="caret"></span>
                         <span class="sr-only">Toggle Dropdown</span>
                     </button>
@@ -551,6 +579,13 @@ class ClienteFE {
                     </ul>
                 </div>           
             `);
+            if(clientefe.estadoCertificado==0)
+                swal({
+                    type: 'error',
+                    title: 'Oops...',
+                    text: 'Ha ocurrido un error al localizar el Certificado.',
+                    footer: '<a href>Contacte a Soporte Técnico</a>',
+                });  
             // eventos
             $('#certEliminar').click(function(){
                 swal({
@@ -573,7 +608,7 @@ class ClienteFE {
                 
             });
             $('#certDescargar').click(function(){
-                alert('desc');
+                clientefe.DownloadCertificado;
             });
             //var mockFile = { name: clientefe.filename, size: clientefe.filesize, type: 'application/x-pkcs12' };
             // dz.options.addedfile.call(dz, mockFile);
@@ -662,14 +697,18 @@ class ClienteFE {
                     clientefe.certificado= dz.files[0].name;
                 });    
                 this.on("complete", function(file) { 
-                    if(file.xhr.response!='UPLOADED')
+                    if(file.xhr.response!='UPLOADED'){
                         swal({
                             type: 'error',
                             title: 'Oops...',
                             text: 'Ha ocurrido un error al subir el Certificado.',
                             footer: '<a href>Contacte a Soporte Técnico</a>',
-                        })
-                    //else this.removeAllFiles();
+                        });                        
+                        $(file.previewElement).addClass('dz-error-message');
+                        $('#filelist').html('');
+                        clientefe.certificado= null;
+                    }
+                    else clientefe.showInfo();
                 });
                 this.on("error", function(file) {
                     swal({
