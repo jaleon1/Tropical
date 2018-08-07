@@ -142,14 +142,12 @@ var Session=  {
             $.each(dataMenu.eventos, function (i, item) {
                 if ($('#' + item.menuPadre).length) {
                     var link =
-                        `<ul class="nav child_menu">
-                        <li><a href="${item.url}">${item.nombre}</a></li>
-                    </ul>`
-                    $("#" + item.menuPadre).append(link);
+                        ` <li><a href="${item.url}">${item.nombre}</a></li>`
+                    $("#list_" + item.menuPadre).append(link);
                 } else {
                     var menu =
                         `<li id="${item.menuPadre}" ><a><i class="${item.icono}"></i> ${item.menuPadre} <span class="fa fa-chevron-down"></span></a>
-                            <ul class="nav child_menu">
+                            <ul id="list_${item.menuPadre}" class="nav child_menu">
                                 <li><a href="${item.url}">${item.nombre}</a></li>
                             </ul>
                         </li>`
