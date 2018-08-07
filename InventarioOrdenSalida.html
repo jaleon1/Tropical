@@ -170,7 +170,7 @@
                                         <div class="row">
                                             <div class="col-sm-12">
                                                 <table id="dsOrdenSalida" class="table table-striped jambo_table bulk_action" role="grid" aria-describedby="datatable_info">
-                                                    <thead>
+                                                    <!-- <thead>
                                                         <tr role="row" class="headings">
                                                             <th>
                                                                 <input type='checkbox' id='check-all' class='iCheck-helper'>
@@ -186,7 +186,7 @@
                                                             <th>Estado</th>
                                                             <th>Acción</th>
                                                         </tr>
-                                                    </thead>
+                                                    </thead> -->
 
                                                     <tbody id="tableBody-OrdenSalida">
 
@@ -524,7 +524,7 @@
             <footer>
                 <div class="pull-right">
                     Tropical SNO
-                    <a href="http://storylabscr.com">powered by Stroy Labs</a>
+                    <a href="http://storylabscr.com">powered by Story Labs</a>
                 </div>
                 <div class="clearfix"></div>
             </footer>
@@ -590,5 +590,15 @@
         usuario.setTable(false);
         usuario.Read;
         usuario.Init();
+    });
+    $(document).on('change', '.chk-addinsumo', function (event) {
+        var id=$(this).parents("tr").find("td:eq(1)").html();
+        var codigo=$(this).parents("tr").find("td:eq(2)").html(); 
+        var nombre=$(this).parents("tr").find("td:eq(3)").html();
+        var descripcion=$(this).parents("tr").find("td:eq(4)").html();
+        var saldoCantidad=$(this).parents("tr").find("td:eq(5)").html();
+        var saldoCosto=$(this).parents("tr").find("td:eq(6)").html();
+        var costoPromedio=$(this).parents("tr").find("td:eq(7)").html();
+        ordenSalida.AddInsumoEventHandler(id,codigo,nombre,descripcion,saldoCantidad,saldoCosto,costoPromedio);
     });
 </script>

@@ -1,6 +1,9 @@
 <?php
 date_default_timezone_set('America/Costa_Rica');
 
+require __DIR__ . '/../ticket/autoload.php';
+use Mike42\Escpos\Printer;
+use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
 
 if(isset($_POST["action"])){
     $opt= $_POST["action"];
@@ -40,8 +43,7 @@ if(isset($_POST["action"])){
 }
 
 class Factura{
-    ////////////////////////////////////   
-    /////Factura
+    //Factura
     public $local="";
     public $terminal="";
     public $idCondicionVenta=null;
@@ -61,9 +63,7 @@ class Factura{
     public $consecutivo= [];
     public $usuario="";
     public $bodega="";
-    
-    ///////////////////////////////////
-    
+
     function __construct(){
         // identificador único
         if(isset($_POST["id"])){
@@ -248,7 +248,7 @@ class Factura{
 
 
     function Create(){
-        try {   
+        try {
 
             $this->fechaCreacion = date("Y-m-d H:i:s");
             $this->fechaEmision = date("D \d\\e F Y");
@@ -270,7 +270,12 @@ class Factura{
                     // retorna orden autogenerada.
                     OrdenXFactura::$id=$this->id;
                     OrdenXFactura::Create($this->detalleOrden);
-                    return $this->ReadbyID();
+                    if($this->TicketPrint($this->ReadbyID())){
+                        $this->TicketPrint($this->ReadbyID());
+                        return true;
+                    }
+                    else
+                        return false;
                 }
                 else throw new Exception('Error al guardar los productos.', 03);
             }
@@ -283,6 +288,45 @@ class Factura{
                 'msg' => $e->getMessage()))
             );
         }
+    }
+
+    function TicketPrint($data){
+        try {
+            $connector = new WindowsPrintConnector('TMT20II');
+            $printer = new Printer($connector);
+            $total=0;
+            $printer->setJustification(Printer::JUSTIFY_CENTER);
+            $printer->text("\n------------------------------------------------");
+            $printer->text("\n"."TROPICAL SNO");
+            $printer->text("\n------------------------------------------------");
+            $printer->text("\n"."Factura #:". $data->consecutivo);
+            $printer->text("\n"."Fecha :". $data->fechaCreacion);
+            $printer->text("\n"."Agencia :". $data->bodega);
+            $printer->text("\n"."Usuario :". $data->usuario);
+            $printer->text("\n------------------------------------------------");
+            $printer->text("\n"."CANTIDAD  "."DETALLE                   "."PRECIO I.V.I");
+            $printer->text("\n------------------------------------------------");
+            for ($i=0; $i < count($data->detalleFactura); $i++) { 
+                $printer->text("\n"."1         ".$data->detalleFactura[$i]->detalle."  ".$data->detalleFactura[$i]->precioUnitario);
+                $total = $total +  $data->detalleFactura[$i]->precioUnitario;
+            }
+            $printer->text("\n------------------------------------------------");
+            $printer->text("\n"."                          Sub Total ₡ ". $total.".00");
+            $printer->text("\n"."                              TOTAL ₡ ". $total.".00\n");
+            $printer->text("\n"."... Descripción ley ...");
+            $printer->feed(3);
+            $printer->cut();            
+            $printer->pulse();
+            $printer->close();
+            return true;
+            }     
+            catch(Exception $e) {
+                header('HTTP/1.0 400 Bad error');
+                die(json_encode(array(
+                    'code' => $e->getCode() ,
+                    'msg' => 'Error al imprimir factura'))
+                );
+            }
     }
 
     function Update(){

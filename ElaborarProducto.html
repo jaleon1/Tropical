@@ -24,8 +24,6 @@
     <link href="assets/css/font-awesome/css/font-awesome.min.css" rel="stylesheet">
     <!-- NProgress -->
     <link href="assets/css/nprogress/nprogress.css" rel="stylesheet">
-    <!-- bootstrap-datetimepicker -->
-    <!-- <link href="assets/css/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css" rel="stylesheet"> -->
     <!-- iCheck -->
     <link href="assets/css/iCheck/skins/flat/green.css" rel="stylesheet">
     <!-- SweetAlert -->
@@ -314,7 +312,7 @@
                                             <div class="row">
                                                 <div class="col-sm-12">
                                                     <table id="dsProducto" class="table table-striped jambo_table bulk_action" role="grid" aria-describedby="datatable_info">
-                                                        <thead>
+                                                        <!-- <thead>
                                                             <tr role="row" class="headings">
                                                                 <th>
                                                                     <input type='checkbox' id='check-all' class='iCheck-helper'>
@@ -330,7 +328,7 @@
                                                                 <th class='oculto'>Precio Venta</th>
                                                                 <th class='oculto'>Es Venta</th>
                                                             </tr>
-                                                        </thead>
+                                                        </thead> -->
 
                                                         <tbody id="tableBody-Producto">
 
@@ -456,7 +454,7 @@
             <footer>
                 <div class="pull-right">
                     Tropical SNO
-                    <a href="http://storylabscr.com">powered by Stroy Labs</a>
+                    <a href="http://storylabscr.com">powered by Story Labs</a>
                 </div>
                 <div class="clearfix"></div>
             </footer>
@@ -526,6 +524,19 @@
         usuario.id = null;
         usuario.Read;
         usuario.Init();
+    });
+    $(document).on('change', '.chk-addproducto', function (event) {
+        var id=$(this).parents("tr").find("td:eq(1)").html();
+        var codigo=$(this).parents("tr").find("td:eq(2)").html();
+        var nombre=$(this).parents("tr").find("td:eq(3)").html();
+        var nombreAbreviado=$(this).parents("tr").find("td:eq(4)").html();
+        var descripcion=$(this).parents("tr").find("td:eq(5)").html();
+        var saldoCantidad=$(this).parents("tr").find("td:eq(6)").html();
+        var saldoCosto=$(this).parents("tr").find("td:eq(7)").html();
+        var costoPromedio=$(this).parents("tr").find("td:eq(8)").html();
+        var precioVenta=$(this).parents("tr").find("td:eq(9)").html();
+        var esVenta=$(this).parents("tr").find("td:eq(10)").html();
+        elaborarProducto.AddProductoEventHandler(id,codigo,nombre,nombreAbreviado,descripcion,saldoCantidad,saldoCosto,costoPromedio,precioVenta,esVenta);
     });
     $("#p_searh").keyup(function (e) {
         if (e.which == 13)

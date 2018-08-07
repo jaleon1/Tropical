@@ -368,33 +368,19 @@ constructor(numeroOrden, p) {
         $("#saldoCantidad").focus();
     }
     
-    AddProductoEventHandler(){
-        var id=$(this).parents("tr").find("td:eq(1)").html();
-        var codigo=$(this).parents("tr").find("td:eq(2)").html();
-        var nombre=$(this).parents("tr").find("td:eq(3)").html();
-        var nombreAbreviado=$(this).parents("tr").find("td:eq(4)").html();
-        var descripcion=$(this).parents("tr").find("td:eq(5)").html();
-        var saldoCantidad=$(this).parents("tr").find("td:eq(6)").html();
-        var saldoCosto=$(this).parents("tr").find("td:eq(7)").html();
-        var costoPromedio=$(this).parents("tr").find("td:eq(8)").html();
-        var precioVenta=$(this).parents("tr").find("td:eq(9)").html();
-        var esVenta=$(this).parents("tr").find("td:eq(10)").html();
-        
+    AddProductoEventHandler(id,codigo,nombre,nombreAbreviado,descripcion,saldoCantidad,saldoCosto,costoPromedio,precioVenta,esVenta){
         var ids_productos = [];
-
-        if ($(this).is(':checked')) {
-            $('#tableBody-ProductoGenerado tr').each(function() {
-                ids_productos.push($(this).find('td:eq(0)').html());   
-            });
-            if (ids_productos.length==0) {
+        $('#tableBody-ProductoGenerado tr').each(function() {
+            ids_productos.push($(this).find('td:eq(0)').html());   
+        });
+        if (ids_productos.length==0) {
+            elaborarProducto.AddTableProducto(id,codigo,nombre,nombreAbreviado,descripcion,saldoCantidad,saldoCosto,costoPromedio,precioVenta,esVenta);
+        }
+        else{
+            if (ids_productos.indexOf(id)!=-1) 
+                $('#chk-addproducto'+id).attr("checked",false);
+            else
                 elaborarProducto.AddTableProducto(id,codigo,nombre,nombreAbreviado,descripcion,saldoCantidad,saldoCosto,costoPromedio,precioVenta,esVenta);
-            }
-            else{
-                if (ids_productos.indexOf(id)!=-1) 
-                    $('#chk-addproducto'+id).attr("checked",false);
-                else
-                    elaborarProducto.AddTableProducto(id,codigo,nombre,nombreAbreviado,descripcion,saldoCantidad,saldoCosto,costoPromedio,precioVenta,esVenta);
-            }
         }
     }
 

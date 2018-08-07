@@ -1,6 +1,6 @@
 class Insumo {
     // Constructor
-    constructor(id, codigo,nombre, descripcion, saldoCantidad, saldoCosto, costoPromedio) {
+    constructor(id, codigo,nombre, descripcion, saldoCantidad, saldoCosto, costoPromedio, tablainsumo) {
         this.id = id || null;
         this.codigo = codigo || '';
         this.nombre = nombre || '';
@@ -8,6 +8,7 @@ class Insumo {
         this.saldoCantidad = saldoCantidad || 0;
         this.saldoCosto = saldoCosto || 0;
         this.costoPromedio = costoPromedio || 0;
+        this.tablainsumo;
     }
 
     //Getter
@@ -148,59 +149,130 @@ class Insumo {
     };
 
     ShowAll(e) {
-        var url;
-        url = window.location.href;
-        // Limpia el div que contiene la tabla.
-        $('#tableBody-Insumo').html("");
-        // // Carga lista
-        var data = JSON.parse(e);
-        //style="display: none"
-        
-        $.each(data, function (i, item) {
-            $('#tableBody-Insumo').append(`
-                <tr> 
-                    <td class="a-center ">
-                        <input id="chk-addinsumo${item.id}" type="checkbox" class="flat" name="table_records">
-                    </td>
-                    <td class="itemId">${item.id}</td>
-                    <td>${item.codigo}</td>
-                    <td>${item.nombre}</td>
-                    <td>${item.descripcion}</td>
-                    ${document.URL.indexOf("OrdenSalida.html")>=1 || document.URL.indexOf("InventarioOrdenSalida.html")>=1 ? 
-                        `<td class="oculto">${item.saldoCantidad}</td>
-                         <td class="oculto">${parseFloat(item.saldoCosto).toFixed(2)}</td>
-                         <td class="oculto">${parseFloat(item.costoPromedio).toFixed(2)}</td>
-                         <td class="oculto"></td>`
-                    :``}
-                    ${document.URL.indexOf("Insumo.html")>=1 ? 
-                        `<td>${item.saldoCantidad}</td>
-                        <td>${parseFloat(item.saldoCosto).toFixed(2)}</td>
-                        <td>${parseFloat(item.costoPromedio).toFixed(2)}</td>
-                        <td class=" last">
-                            <a  id="update" class="update" data-toggle="modal" data-target=".bs-example-modal-lg" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | 
-                            <a  id="delete" class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>
-                        </td>`
-                    :``}
-                </tr>
-            `);
-            // event Handler
-            $(".update").click(insumo.UpdateEventHandler);
-            $(".delete").click(insumo.DeleteEventHandler);
-            if (document.URL.indexOf("OrdenSalida.html")!=-1)
-                $('#chk-addinsumo'+item.id).change(ordenSalida.AddInsumoEventHandler);
-        })
+            var data = JSON.parse(e);
 
-        if ( $.fn.dataTable.isDataTable( '#dsInsumo' ) ) {
-            // var table = $('#dsInsumo').DataTable();
-            // table.destroy();
-        }
-        else 
-            $('#dsInsumo').DataTable( {          
-                paging: true,
-                search: true,
-                iDisplayLength: 10
+            $.each(data, function (i, item) {
+                item.saldoCosto = (parseFloat(item.saldoCosto).toFixed(2)).toString()+"$";
+                item.costoPromedio = (parseFloat(item.costoPromedio).toFixed(2)).toString()+"$";
             });
+    
+            if (document.URL.indexOf("OrdenSalida.html")!=-1){
+                this.tablainsumo = $('#dsInsumo').DataTable( {
+                    responsive: true,
+                    destroy: true,
+                    data: data,
+                    order: [[ 1, "asc" ]],
+                    columnDefs: [{className: "text-right", "targets": [4]}],
+                    columns: [
+                        {
+                            title:"ID",
+                            data:"id",
+                            className:"itemId",                    
+                            width:"auto"},
+                        {
+                            title:"CODIGO",
+                            data:"codigo",
+                            width:"auto"},
+                        {
+                            title:"NOMBRE",
+                            data:"nombre",
+                            width:"auto"},
+                        {
+                            title:"DESCRIPCION",
+                            data:"descripcion",
+                            width:"auto"},
+                        {
+                            title:"S CANTIDAD",
+                            data:"saldoCantidad",
+                            width:"auto"},
+                        {
+                            title:"S COSTO",
+                            data:"saldoCosto",
+                            className:"oculto_saldoCosto", 
+                            visible:false},
+                        {
+                            title:"C PROMEDIO",
+                            data:"costoPromedio",
+                            className:"oculto_costoPromedio", 
+                            visible:false},
+                        {
+                            title:"ACCIÓN",
+                            orderable: false,
+                            searchable:false,
+                            mRender: function () {
+                                return '<a class="update"> <i class="glyphicon glyphicon-edit" > </i> Editar </a> | '+
+                                        '<a class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>' 
+                            },
+                            visible:false}
+                    ]
+                });
+                $('#dsInsumo tbody tr').click(insumo.AddInsumo);
+            }
+
+            if (document.URL.indexOf("InventarioInsumo.html")!=-1){
+                this.tablainsumo = $('#dsInsumo').DataTable( {
+                    responsive: true,
+                    destroy: true,
+                    data: data,
+                    order: [[ 1, "asc" ]],
+                    columnDefs: [{className: "text-right", "targets": [4,5,6]}],
+                    columns: [
+                        {
+                            title:"ID",
+                            data:"id",
+                            className:"itemId",                    
+                            width:"auto"},
+                        {
+                            title:"CODIGO",
+                            data:"codigo",
+                            width:"auto"},
+                        {
+                            title:"NOMBRE",
+                            data:"nombre",
+                            width:"auto"},
+                        {
+                            title:"DESCRIPCION",
+                            data:"descripcion",
+                            width:"auto"},
+                        {
+                            title:"S CANTIDAD",
+                            data:"saldoCantidad",
+                            width:"auto"},
+                        {
+                            title:"S COSTO",
+                            data:"saldoCosto",
+                            width:"auto"},
+                        {
+                            title:"C PROMEDIO",
+                            data:"costoPromedio",
+                            width:"auto"},
+                        {
+                            title:"ACCIÓN",
+                            orderable: false,
+                            searchable:false,
+                            mRender: function () {
+                                return '<a class="update"> <i class="glyphicon glyphicon-edit" > </i> Editar </a> | '+
+                                        '<a class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>' 
+                            },
+                            width:"12%"}
+                    ]
+                });
+                $('.update').click(insumo.UpdateEventHandler);
+                $('.delete').click(insumo.DeleteEventHandler);
+            }
     };
+
+    AddInsumo(){
+        var id=$(this).find("td:eq(0)").html();
+        var codigo=$(this).find("td:eq(1)").html(); 
+        var nombre=$(this).find("td:eq(2)").html();
+        var descripcion=$(this).find("td:eq(3)").html();
+        var saldoCantidad=$(this).find("td:eq(4)").html();
+        //Para campos ocultos
+        var saldoCosto = insumo.tablainsumo.row(this).data()[5];
+        var costoPromedio = insumo.tablainsumo.row(this).data()[6];
+        ordenSalida.AddInsumoEventHandler(id,codigo,nombre,descripcion,saldoCantidad,saldoCosto,costoPromedio);
+    }; 
 
     UpdateEventHandler() {
         insumo.id = $(this).parents("tr").find(".itemId").text();  //Class itemId = ID del objeto.
@@ -212,9 +284,6 @@ class Insumo {
         this.ClearCtls();
         // carga objeto.
         var data = JSON.parse(e)[0];
-        // insumo = new Insumo(data.id, data.codigo, data.nombre, data.descripcion,
-        //     data.saldoCantidad, data.saldoCosto, data.costoPromedio);
-        // Asigna objeto a controles
         $("#id").val(data.id);
         $("#codigo").val(data.codigo);
         $("#nombre").val(data.nombre);
@@ -222,13 +291,7 @@ class Insumo {
         $("#saldoCantidad").val(data.saldoCantidad);
         $("#saldoCosto").val(parseFloat(data.saldoCosto).toFixed(2));
         $("#costoPromedio").val(parseFloat(data.costoPromedio).toFixed(2));
-        // $("#id").val(insumo.id);
-        // $("#codigo").val(insumo.codigo);
-        // $("#nombre").val(insumo.nombre);
-        // $("#descripcion").val(insumo.descripcion);
-        // $("#saldoCantidad").val(insumo.saldoCantidad);
-        // $("#saldoCosto").val(parseFloat(insumo.saldoCosto).toFixed(2));
-        // $("#costoPromedio").val(parseFloat(insumo.costoPromedio).toFixed(2));
+        $(".bs-example-modal-lg").modal('toggle');
     };
 
     DeleteEventHandler() {

@@ -1,0 +1,8 @@
+#ticket{
+    size:  auto;   /* auto es el valor inicial */
+    margin-top: 0mm;  /* afecta el margen en la configuración de impresión */
+    margin-bottom: 0mm;
+    max-height: 150mm;
+    width: 80mm;
+    background-color: aqua;
+}
