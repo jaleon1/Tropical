@@ -30,7 +30,7 @@ if(isset($_POST["action"])){
             echo json_encode($clientefe->ReadAllProvincia());
             break;
         case "ReadAllCanton":
-        $clientefe->idProvincia = $_POST['idProvincia'];
+            $clientefe->idProvincia = $_POST['idProvincia'];
             echo json_encode($clientefe->ReadAllCanton());
             break;
         case "ReadAllDistrito":
@@ -49,7 +49,47 @@ if(isset($_POST["action"])){
             break;
         case "Delete":
             $clientefe->Delete();
-            break;   
+            break;
+        case "DeleteCertificado":
+            $clientefe->certificado = $_POST['certificado'];
+            $clientefe->DeleteCertificado();
+            break;        
+    }
+}
+else {
+    //$clientefe->certificado = $_GET['certificado'];
+    //$clientefe->DownloadCertificado();
+    try {
+        require_once("Usuario.php");
+        // Session
+        if (!isset($_SESSION))
+            session_start();
+        //$file= '../../certUploads/'.$_SESSION['userSession']->idBodega.'/'.$_GET['certificado'];
+        $file = "fileUpload.php";
+        if (file_exists($file)) {
+            // header('Content-Description: File Transfer');
+            // header('Content-Type: application/octet-stream');
+            // // header('Content-Disposition: attachment; filename="'.basename($file).'"');
+            // header('Content-Disposition: attachment; filename="'. $file .'"');
+            // header('Expires: 0');
+            // header('Cache-Control: must-revalidate');
+            // header('Pragma: public');
+            // header('Content-Length: ' . filesize($file));
+            // readfile($file);
+            // //exit;
+            header("Cache-Control: public");
+            header("Content-Description: File Transfer");
+            header("Content-Disposition: attachment; filename= fileUpload.php");
+            header("Content-Transfer-Encoding: binary");    
+            readfile("fileUpload.php");
+        }
+    }
+    catch(Exception $e) {
+        header('HTTP/1.0 400 Bad error');
+        die(json_encode(array(
+            'code' => $e->getCode() ,
+            'msg' => $e->getMessage()))
+        );
     }
 }
 
@@ -186,6 +226,10 @@ class ClienteFE{
     public $numTelefonoFax=null;
     public $correoElectronico=null;
     public $idBodega=null;
+    public $filesize= null;
+    public $filename= null;
+    public $filetype= null;
+    public $estadoCertificado= 1;
     //
     public $ubicacion= [];
 
@@ -219,7 +263,7 @@ class ClienteFE{
             $this->correoElectronico= $obj["correoElectronico"] ?? null;
             $this->username= $obj["username"] ?? null;
             $this->password= $obj["password"] ?? null;
-            $this->llave= $obj["llave"] ?? null;
+            $this->certificado= $obj["certificado"] ?? null;
             
         }
     }
@@ -324,7 +368,6 @@ class ClienteFE{
         }
     }
 
-
     function Read(){
         try {
             $sql='SELECT id, codigoSeguridad, idCodigoPais, nombre, idTipoIdentificacion, identificacion, nombreComercial, idProvincia,idCanton, idDistrito, idBarrio, otrasSenas, 
@@ -346,13 +389,48 @@ class ClienteFE{
 
     function ReadProfile(){
         try {
-            $sql='SELECT id, codigoSeguridad, idCodigoPais, nombre, idTipoIdentificacion, identificacion, nombreComercial, idProvincia,idCanton, idDistrito, idBarrio, otrasSenas, 
-            idCodigoPaisTel, numTelefono, correoElectronico, username, password, certificado
+            $sql='SELECT id, codigoSeguridad, idCodigoPais, nombre, idTipoIdentificacion, identificacion, nombreComercial, idProvincia, idCanton, idDistrito, idBarrio, otrasSenas, 
+                numTelefono, correoElectronico, username, password
                 FROM clienteFE  
                 where idBodega=:idBodega';
             $param= array(':idBodega'=>$this->idBodega);
             $data= DATA::Ejecutar($sql,$param);
-            return $data;
+            if($data){
+                $this->id= $data[0]['id'];
+                $this->codigoSeguridad= $data[0]['codigoSeguridad'];
+                $this->idCodigoPais= $data[0]['idCodigoPais'];
+                $this->nombre= $data[0]['nombre'];
+                $this->idTipoIdentificacion= $data[0]['idTipoIdentificacion'];
+                $this->identificacion= $data[0]['identificacion'];
+                $this->nombreComercial= $data[0]['nombreComercial'];
+                $this->idProvincia= $data[0]['idProvincia'];
+                $this->idCanton= $data[0]['idCanton'];
+                $this->idDistrito= $data[0]['idDistrito'];
+                $this->idBarrio= $data[0]['idBarrio'];
+                $this->otrasSenas= $data[0]['otrasSenas'];
+                $this->numTelefono= $data[0]['numTelefono']; 
+                $this->correoElectronico= $data[0]['correoElectronico'];
+                $this->username= $data[0]['username'];
+                $this->password= $data[0]['password'];
+                // certificado
+                $sql='SELECT certificado
+                    FROM clienteFE  
+                    where idBodega=:idBodega';
+                $param= array(':idBodega'=>$this->idBodega);
+                $data= DATA::Ejecutar($sql,$param);
+                $this->certificado= $data[0]['certificado'];
+                // estado del certificado.
+                if(file_exists('../../certUploads/'.$_SESSION['userSession']->idBodega.'/'.$this->certificado))
+                    $this->estadoCertificado=1;
+                else $this->estadoCertificado=0;                
+                // info del archivo físico.
+                // $fPath= '../../certUploads/'.$data[0]['certificado'];                
+                // $this->filesize= filesize($fPath);
+                // $this->filename= explode("/", glob($fPath)[0])[3];
+                // $this->filetype= pathinfo($fPath, PATHINFO_EXTENSION);
+                return $this;
+            }
+            return null;
         }     
         catch(Exception $e) {
             header('HTTP/1.0 400 Bad error');
@@ -368,7 +446,7 @@ class ClienteFE{
             $sql="INSERT INTO clienteFE  (id, codigoSeguridad, idCodigoPais, nombre, idTipoIdentificacion, identificacion, nombreComercial, idProvincia,idCanton, idDistrito, idBarrio, otrasSenas, 
                 idCodigoPaisTel, numTelefono, correoElectronico, username, password, certificado, idBodega)
                 VALUES (:id, :codigoSeguridad, :idCodigoPais, :nombre, :idTipoIdentificacion, :identificacion, :nombreComercial, :idProvincia, :idCanton, :idDistrito, :idBarrio, :otrasSenas, 
-                    :idCodigoPaisTel, :numTelefono, :correoElectronico, :username, :password, :llave, :idBodega);";
+                    :idCodigoPaisTel, :numTelefono, :correoElectronico, :username, :password, :certificado, :idBodega);";
             $param= array(':id'=>$this->id ,
                 ':codigoSeguridad'=>$this->codigoSeguridad, 
                 ':idCodigoPais'=>$this->idCodigoPais, 
@@ -386,10 +464,10 @@ class ClienteFE{
                 ':correoElectronico'=>$this->correoElectronico,
                 // ':username'=>password_hash($this->username, PASSWORD_DEFAULT),
                 // ':password'=>password_hash($this->password, PASSWORD_DEFAULT),
-                // ':llave'=>password_hash($this->llave, PASSWORD_DEFAULT),
+                // ':certificado'=>password_hash($this->certificado, PASSWORD_DEFAULT),
                 ':username'=>$this->username,
                 ':password'=>$this->password,
-                ':llave'=>$this->llave, 
+                ':certificado'=>$this->certificado, 
                 ':idBodega'=>$this->idBodega
             );
             $data = DATA::Ejecutar($sql,$param,false);
@@ -472,6 +550,49 @@ class ClienteFE{
             if($data)
                 return $sessiondata['status']=0; 
             else throw new Exception('Error al eliminar.', 978);
+        }
+        catch(Exception $e) {
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }
+    }
+
+    function DeleteCertificado(){
+        try {
+            $sql='UPDATE clienteFE  
+                SET certificado= "<eliminado por el usuario>"
+                WHERE id= :id';
+            $param= array(':id'=>$this->id);
+            $data= DATA::Ejecutar($sql, $param, false);
+            if($data)
+                unlink('../../certUploads/'.$_SESSION['userSession']->idBodega.'/'.$this->certificado);
+        }
+        catch(Exception $e) {
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }
+    }
+
+    function DownloadCertificado(){
+        try {
+            $file= '../../certUploads/'.$_SESSION['userSession']->idBodega.'/'.$_GET['certificado'];
+            if (file_exists($file)) {
+                header('Content-Description: File Transfer');
+                header('Content-Type: application/octet-stream');
+                header('Content-Disposition: attachment; filename="'.basename($file).'"');
+                header('Expires: 0');
+                header('Cache-Control: must-revalidate');
+                header('Pragma: public');
+                header('Content-Length: ' . filesize($file));
+                readfile($file);
+                //exit;
+            }
         }
         catch(Exception $e) {
             header('HTTP/1.0 400 Bad error');
