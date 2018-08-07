@@ -303,7 +303,13 @@ function facturar (){
         }
     })
     .done(function(e){
-        ticketPrint(e)
+        if (e==true) {
+            swal({
+                type: 'success',
+                text: 'Factura Lista!',
+                timer: 2000
+            });    
+        }
     })
     .fail(function (e) {
         distr.showError(e);
