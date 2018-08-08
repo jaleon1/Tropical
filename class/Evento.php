@@ -27,7 +27,7 @@ class Evento{
 
     function ReadAll(){
         try {
-            $sql='SELECT id, nombre, url
+            $sql='SELECT id, nombre, url, icono, menuPadre
                 FROM     evento       
                 ORDER BY nombre asc';
             $data= DATA::Ejecutar($sql);

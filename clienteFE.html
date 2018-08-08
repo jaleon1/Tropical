@@ -323,17 +323,24 @@
 
                                     <div class="title_left">
                                         <h3>Llave Criptográfica</h3>
-                                    </div>
+                                        <p>Si requiere ayuda comuníquese con Soporte Técnico.</p>
+                                    </div> 
 
                                     <div class="ln_solid"></div>
 
-                                    <p>Si requiere ayuda comuníquese con Soporte Técnico.</p>
+                                    <div class="form-group col-md-12 col-sm-12 col-xs-12" id="filelist"></div>
+                                    <br>
+                                    <br>
+                                    <br>
                                     <form action="class/fileUpload.php" method="post" enctype="multipart/form-data" class="dropzone dz-clickable" id="frmLlave">
                                         <div class="dz-default dz-message">
                                             <span>Arrastre la llave Criptográfica aquí.</span>
                                             <input type="file" required id="file" name="file" class="dz-hidden-input" style="visibility: hidden; position: absolute; top: 0px; left: 0px; height: 0px; width: 0px;">
                                         </div>
+                                        
                                     </form>
+
+                                    
 
                                     <div class="ln_solid"></div>
 
@@ -385,7 +392,7 @@
     <!-- Dropzone.js -->
     <script src="../vendors/dropzone/dist/min/dropzone.min.js"></script>
     <!-- Custom Theme Scripts -->
-    <script src="assets/js/custom.min.js"></script>
+    <script src="assets/js/custom.js"></script>
 
 </body>
 
@@ -393,7 +400,7 @@
 
 <script>
     $(document).ready(function () {
-        clientefe.Init();        
+        clientefe.Init();                
         clientefe.ReadAllTipoIdentificacion;
         //clientefe.ReadAllUbicacion;
         // clientefe.ReadProfile;
