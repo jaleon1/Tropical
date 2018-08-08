@@ -295,7 +295,7 @@ class Factura{
     function TicketPrint($data){
         try {
             
-            // $connector = new WindowsPrintConnector('TMT20II');
+            $connector = new WindowsPrintConnector('TMT20II');
             // $printer = new Printer($connector);
             // $total=0;
             // $printer->setJustification(Printer::JUSTIFY_CENTER);
