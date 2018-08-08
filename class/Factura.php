@@ -318,7 +318,7 @@ class Factura{
             $printer->text("\n"."                              TOTAL  ". $total.".00\n");
             $printer->text("\n"."... Descripción ley ...");
             $printer->feed(3);
-            // $printer->cut();            
+            $printer->cut();            
             // $printer->pulse();
             // $printer->close();
 
