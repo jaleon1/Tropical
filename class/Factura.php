@@ -275,7 +275,7 @@ class Factura{
                         return true;
                     }
                     else
-                        return false;
+                        throw new Exception('Error al imprimir.', 04);
                 }
                 else throw new Exception('Error al guardar los productos.', 03);
             }
