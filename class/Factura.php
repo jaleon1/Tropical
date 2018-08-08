@@ -295,39 +295,39 @@ class Factura{
     function TicketPrint($data){
         try {
             
-            $connector = new WindowsPrintConnector('TMT20II');
-            $printer = new Printer($connector);
-            $total=0;
-            $printer->setJustification(Printer::JUSTIFY_CENTER);
-            $printer->text("\n------------------------------------------------");
-            $printer->text("\n"."TROPICAL SNO");
-            $printer->text("\n------------------------------------------------");
-            $printer->text("\n"."Factura #:". $data->consecutivo);
-            $printer->text("\n"."Fecha :". $data->fechaCreacion);
-            $printer->text("\n"."Agencia :". $data->bodega);
-            $printer->text("\n"."Usuario :". $data->usuario);
-            $printer->text("\n------------------------------------------------");
-            $printer->text("\n"."CANTIDAD  "."DETALLE                   "."PRECIO I.V.I");
-            $printer->text("\n------------------------------------------------");
-            for ($i=0; $i < count($data->detalleFactura); $i++) { 
-                $printer->text("\n"."1         ".$data->detalleFactura[$i]->detalle."  ".$data->detalleFactura[$i]->precioUnitario);
-                $total = $total +  $data->detalleFactura[$i]->precioUnitario;
-            }
-            $printer->text("\n------------------------------------------------");
-            $printer->text("\n"."                          Sub Total  ". $total.".00");
-            $printer->text("\n"."                              TOTAL  ". $total.".00\n");
-            $printer->text("\n"."... Descripción ley ...");
-            $printer->feed(3);
-            $printer->cut();            
-            $printer->pulse();
-            $printer->close();
+            // $connector = new WindowsPrintConnector('TMT20II');
+            // $printer = new Printer($connector);
+            // $total=0;
+            // $printer->setJustification(Printer::JUSTIFY_CENTER);
+            // $printer->text("\n------------------------------------------------");
+            // $printer->text("\n"."TROPICAL SNO");
+            // $printer->text("\n------------------------------------------------");
+            // $printer->text("\n"."Factura #:". $data->consecutivo);
+            // $printer->text("\n"."Fecha :". $data->fechaCreacion);
+            // $printer->text("\n"."Agencia :". $data->bodega);
+            // $printer->text("\n"."Usuario :". $data->usuario);
+            // $printer->text("\n------------------------------------------------");
+            // $printer->text("\n"."CANTIDAD  "."DETALLE                   "."PRECIO I.V.I");
+            // $printer->text("\n------------------------------------------------");
+            // for ($i=0; $i < count($data->detalleFactura); $i++) { 
+            //     $printer->text("\n"."1         ".$data->detalleFactura[$i]->detalle."  ".$data->detalleFactura[$i]->precioUnitario);
+            //     $total = $total +  $data->detalleFactura[$i]->precioUnitario;
+            // }
+            // $printer->text("\n------------------------------------------------");
+            // $printer->text("\n"."                          Sub Total  ". $total.".00");
+            // $printer->text("\n"."                              TOTAL  ". $total.".00\n");
+            // $printer->text("\n"."... Descripción ley ...");
+            // $printer->feed(3);
+            // $printer->cut();            
+            // $printer->pulse();
+            // $printer->close();
 
 
 
             return true;
             }     
             catch(Exception $e) {
-                header('HTTP/1.0 400 Bad error');
+                header('HTTP/1.0 777 Bad error');
                 die(json_encode(array(
                     'code' => $e->getCode() ,
                     'msg' => 'Error al imprimir factura'))
