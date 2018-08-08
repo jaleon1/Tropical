@@ -296,23 +296,23 @@ class Factura{
         try {
             
             $connector = new WindowsPrintConnector('TMT20II');
-            // $printer = new Printer($connector);
-            // $total=0;
-            // $printer->setJustification(Printer::JUSTIFY_CENTER);
-            // $printer->text("\n------------------------------------------------");
-            // $printer->text("\n"."TROPICAL SNO");
-            // $printer->text("\n------------------------------------------------");
-            // $printer->text("\n"."Factura #:". $data->consecutivo);
-            // $printer->text("\n"."Fecha :". $data->fechaCreacion);
-            // $printer->text("\n"."Agencia :". $data->bodega);
-            // $printer->text("\n"."Usuario :". $data->usuario);
-            // $printer->text("\n------------------------------------------------");
-            // $printer->text("\n"."CANTIDAD  "."DETALLE                   "."PRECIO I.V.I");
-            // $printer->text("\n------------------------------------------------");
-            // for ($i=0; $i < count($data->detalleFactura); $i++) { 
-            //     $printer->text("\n"."1         ".$data->detalleFactura[$i]->detalle."  ".$data->detalleFactura[$i]->precioUnitario);
-            //     $total = $total +  $data->detalleFactura[$i]->precioUnitario;
-            // }
+            $printer = new Printer($connector);
+            $total=0;
+            $printer->setJustification(Printer::JUSTIFY_CENTER);
+            $printer->text("\n------------------------------------------------");
+            $printer->text("\n"."TROPICAL SNO");
+            $printer->text("\n------------------------------------------------");
+            $printer->text("\n"."Factura #:". $data->consecutivo);
+            $printer->text("\n"."Fecha :". $data->fechaCreacion);
+            $printer->text("\n"."Agencia :". $data->bodega);
+            $printer->text("\n"."Usuario :". $data->usuario);
+            $printer->text("\n------------------------------------------------");
+            $printer->text("\n"."CANTIDAD  "."DETALLE                   "."PRECIO I.V.I");
+            $printer->text("\n------------------------------------------------");
+            for ($i=0; $i < count($data->detalleFactura); $i++) { 
+                $printer->text("\n"."1         ".$data->detalleFactura[$i]->detalle."  ".$data->detalleFactura[$i]->precioUnitario);
+                $total = $total +  $data->detalleFactura[$i]->precioUnitario;
+            }
             // $printer->text("\n------------------------------------------------");
             // $printer->text("\n"."                          Sub Total  ". $total.".00");
             // $printer->text("\n"."                              TOTAL  ". $total.".00\n");
