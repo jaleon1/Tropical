@@ -438,6 +438,5 @@ class Factura{
 
 }
 
-fclose($file);
 
 ?>
