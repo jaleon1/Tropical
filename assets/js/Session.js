@@ -154,12 +154,13 @@ var Session=  {
                     $("#menu").append(menu);
                 }
             });  
+            //
             if (typeof init_sidebar === "function") 
                 init_sidebar();
             else {
                 setTimeout(function(){
                     init_sidebar()                     
-                 }, 3000);
+                 }, 1000);
                 
             }
         }    
