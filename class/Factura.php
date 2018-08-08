@@ -319,7 +319,7 @@ class Factura{
             $printer->text("\n"."... Descripción ley ...");
             $printer->feed(3);
             $printer->cut();            
-            // $printer->pulse();
+            $printer->pulse();
             // $printer->close();
 
 
