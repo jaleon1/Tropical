@@ -27,7 +27,7 @@ if(isset($_POST["action"])){
             echo json_encode($factura->Read());
             break;
         case "Create":
-            echo json_encode($factura->Create());
+            $factura->Create();
             break;
         case "Update":
             $factura->Update();
@@ -272,7 +272,7 @@ class Factura{
                     OrdenXFactura::Create($this->detalleOrden);
                     if($this->TicketPrint($this->ReadbyID())){
                         $this->TicketPrint($this->ReadbyID());
-                        return true;
+                        // echo "true";
                     }
                     else
                         throw new Exception('Error al imprimir.', 04);
@@ -311,13 +311,14 @@ class Factura{
                 $total = $total +  $data->detalleFactura[$i]->precioUnitario;
             }
             $printer->text("\n------------------------------------------------");
-            $printer->text("\n"."                          Sub Total ₡ ". $total.".00");
-            $printer->text("\n"."                              TOTAL ₡ ". $total.".00\n");
+            $printer->text("\n"."                          Sub Total  ". $total.".00");
+            $printer->text("\n"."                              TOTAL  ". $total.".00\n");
             $printer->text("\n"."... Descripción ley ...");
             $printer->feed(3);
             $printer->cut();            
             $printer->pulse();
             $printer->close();
+            
             return true;
             }     
             catch(Exception $e) {
