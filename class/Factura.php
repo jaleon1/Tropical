@@ -2,7 +2,7 @@
 date_default_timezone_set('America/Costa_Rica');
 
 
-require __DIR__ . '/../ticket/autoload.php';
+require __DIR__ . '../ticket/autoload.php';
 use Mike42\Escpos\Printer;
 use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
 
@@ -64,12 +64,6 @@ class Factura{
     public $consecutivo= [];
     public $usuario="";
     public $bodega="";
-
-
-    public $file = fopen("factura.log", "w");
-    fwrite($file, "Inicia" . PHP_EOL);
-
-
 
     function __construct(){
         // identificador único
@@ -277,12 +271,8 @@ class Factura{
                     // retorna orden autogenerada.
                     OrdenXFactura::$id=$this->id;
                     
-                    fwrite($file, "antes de validar ticketprint" . PHP_EOL);
-
                     OrdenXFactura::Create($this->detalleOrden);
                     if($this->TicketPrint($this->ReadbyID())){
-                        
-                        fwrite($file, "entro al primer ticket" . PHP_EOL);
                         $this->TicketPrint($this->ReadbyID());
                         // echo "true";
                     }
@@ -305,7 +295,6 @@ class Factura{
     function TicketPrint($data){
         try {
             
-            fwrite($file, "entro a TicketPrint" . PHP_EOL);
             $connector = new WindowsPrintConnector('TMT20II');
             $printer = new Printer($connector);
             $total=0;
