@@ -320,7 +320,7 @@ class Factura{
             $printer->feed(3);
             $printer->cut();            
             $printer->pulse();
-            // $printer->close();
+            $printer->close();
 
 
 
