@@ -154,7 +154,7 @@ var Session=  {
                     $("#menu").append(menu);
                 }
             });  
-            if (typeof init_sidebar === "func1tion") 
+            if (typeof init_sidebar === "function") 
                 init_sidebar();
             else {
                 setTimeout(function(){
