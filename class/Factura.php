@@ -318,7 +318,11 @@ class Factura{
             $printer->cut();            
             $printer->pulse();
             $printer->close();
-            
+
+            $file = fopen("factura.log", "w");
+            fwrite($file, "ejemplo" . PHP_EOL);
+            fclose($file);
+
             return true;
             }     
             catch(Exception $e) {
