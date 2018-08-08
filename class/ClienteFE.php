@@ -56,42 +56,43 @@ if(isset($_POST["action"])){
             break;        
     }
 }
-else {
-    //$clientefe->certificado = $_GET['certificado'];
-    //$clientefe->DownloadCertificado();
-    try {
-        require_once("Usuario.php");
-        // Session
-        if (!isset($_SESSION))
-            session_start();
-        //$file= '../../certUploads/'.$_SESSION['userSession']->idBodega.'/'.$_GET['certificado'];
-        $file = "fileUpload.php";
-        if (file_exists($file)) {
-            // header('Content-Description: File Transfer');
-            // header('Content-Type: application/octet-stream');
-            // // header('Content-Disposition: attachment; filename="'.basename($file).'"');
-            // header('Content-Disposition: attachment; filename="'. $file .'"');
-            // header('Expires: 0');
-            // header('Cache-Control: must-revalidate');
-            // header('Pragma: public');
-            // header('Content-Length: ' . filesize($file));
-            // readfile($file);
-            // //exit;
-            header("Cache-Control: public");
-            header("Content-Description: File Transfer");
-            header("Content-Disposition: attachment; filename= fileUpload.php");
-            header("Content-Transfer-Encoding: binary");    
-            readfile("fileUpload.php");
-        }
-    }
-    catch(Exception $e) {
-        header('HTTP/1.0 400 Bad error');
-        die(json_encode(array(
-            'code' => $e->getCode() ,
-            'msg' => $e->getMessage()))
-        );
-    }
-}
+// else {
+//     //$clientefe->certificado = $_GET['certificado'];
+//     //$clientefe->DownloadCertificado();
+//     try {
+        
+//         // Session
+        
+//         //
+//         $file = "fileUpload.php";
+        
+//             // header('Content-Description: File Transfer');
+//             // header('Content-Type: application/octet-stream');
+//             // // header('Content-Disposition: attachment; filename="'.basename($file).'"');
+//             // header('Content-Disposition: attachment; filename="'. $file .'"');
+//             // header('Expires: 0');
+//             // header('Cache-Control: must-revalidate');
+//             // header('Pragma: public');
+//             // header('Content-Length: ' . filesize($file));
+//             // readfile($file);
+//             // //exit;
+//             // header("Cache-Control: public");
+//             // header("Content-Description: File Transfer");
+//             // header("Content-Disposition: attachment; filename= fileUpload.php");
+//             // header("Content-Transfer-Encoding: binary");    
+//             // readfile("fileUpload.php");
+//             $file = "a.txt"; 
+            
+//         }
+//     }
+//     catch(Exception $e) {
+//         header('HTTP/1.0 400 Bad error');
+//         die(json_encode(array(
+//             'code' => $e->getCode() ,
+//             'msg' => $e->getMessage()))
+//         );
+//     }
+// }
 
 class Provincia{
     public $id;
