@@ -1,8 +1,6 @@
 <?php
 date_default_timezone_set('America/Costa_Rica');
 
-$file = fopen("factura.log", "w");
-fwrite($file, "Inicia" . PHP_EOL);
 
 require __DIR__ . '/../ticket/autoload.php';
 use Mike42\Escpos\Printer;
@@ -66,6 +64,12 @@ class Factura{
     public $consecutivo= [];
     public $usuario="";
     public $bodega="";
+
+
+    public $file = fopen("factura.log", "w");
+    fwrite($file, "Inicia" . PHP_EOL);
+
+
 
     function __construct(){
         // identificador único
@@ -301,7 +305,7 @@ class Factura{
     function TicketPrint($data){
         try {
             
-fwrite($file, "entro a TicketPrint" . PHP_EOL);
+            fwrite($file, "entro a TicketPrint" . PHP_EOL);
             $connector = new WindowsPrintConnector('TMT20II');
             $printer = new Printer($connector);
             $total=0;
