@@ -5,25 +5,25 @@ class InventarioFacturas {
         this.tb_facturas = tb_facturas || null;
     };
 
-    CargaFacturas(){
+    CargaFacturas() {
         $.ajax({
             type: "POST",
             url: "class/Factura.php",
             data: {
                 action: "ReadAll"
-                }
-            })
-        .done(function(e){
-            inventarioFacturas.drawFac(e)
-        });
+            }
+        })
+            .done(function (e) {
+                inventarioFacturas.drawFac(e)
+            });
     };
 
-    drawFac(e){
+    drawFac(e) {
         var facturas = JSON.parse(e);
-    
-        this.tb_facturas = $('#tb_facturas').DataTable( {
+
+        this.tb_facturas = $('#tb_facturas').DataTable({
             data: facturas,
-            "order": [[ 1, "desc" ]],
+            "order": [[1, "desc"]],
             columns: [
                 {
                     title: "ID Factura",
@@ -51,13 +51,13 @@ class InventarioFacturas {
                     data: "totalVenta"
                 },
             ]
-        });    
+        });
     };
 
-    ReadbyID(id){   
+    ReadbyID(id) {
 
         $("#detalleFac").empty();
-            var detalleFac =
+        var detalleFac =
             `<button type="button" class="close" data-dismiss="modal">
                 <span aria-hidden="true">X</span>
             </button>
@@ -80,11 +80,11 @@ class InventarioFacturas {
             </div>`;
         $("#detalleFac").append(detalleFac);
 
-    
+
         $("#totalFact").empty();
-        
+
         var totalFact =
-        `<h4>Total: ¢${Math.round(id.totalVenta)}</h4>`;
+            `<h4>Total: ¢${Math.round(id.totalVenta)}</h4>`;
         $("#totalFact").append(totalFact);
 
 
@@ -94,26 +94,25 @@ class InventarioFacturas {
             data: {
                 action: "ReadbyID",
                 obj: JSON.stringify(id.id)
-                }
-            })
-        .done(function(e){
-            inventarioFacturas.drawFactDetail(e);
-        });
+            }
+        })
+            .done(function (e) {
+                inventarioFacturas.drawFactDetail(e);
+            });
     };
 
-    drawFactDetail(e){
+    drawFactDetail(e) {
         var facturas = JSON.parse(e);
 
-
-        this.tb_prdXFact = $('#tb_detalle_fact').DataTable( {
+        this.tb_prdXFact = $('#tb_detalle_fact').DataTable({
             data: facturas,
             destroy: true,
             "searching": false,
-            "paging":   false,
-            "info":     false,
+            "paging": false,
+            "info": false,
             "ordering": false,
-            "retrieve": true,
-            "order": [[ 0, "desc" ]],
+            // "retrieve": true,
+            "order": [[0, "desc"]],
             columns: [
                 {
                     title: "Producto",
@@ -128,21 +127,22 @@ class InventarioFacturas {
                     data: "montoTotalLinea"
                 }
             ]
-        });   
-        
-        
+        });
 
-        $('#modalFac').modal('toggle'); 
+        $('#modalFac').modal('toggle');
+
     };
-}
 
+}
 //Class Instance
 let inventarioFacturas = new InventarioFacturas();
 
-$(document).ready( function() {
+$(document).ready(function () {
     inventarioFacturas.CargaFacturas();
 });
 
 $('#tb_facturas tbody').on('click', 'tr', function () {
     inventarioFacturas.ReadbyID(inventarioFacturas.tb_facturas.row(this).data());
-} );
+});
+
+
