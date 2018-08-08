@@ -2,8 +2,8 @@
 date_default_timezone_set('America/Costa_Rica');
 
 require __DIR__ . '/../ticket/autoload.php';
-use Mike42\Escpos\Printer;
-use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
+use src\Mike42\Escpos\Printer;
+use src\Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
 
 if(isset($_POST["action"])){
     $opt= $_POST["action"];

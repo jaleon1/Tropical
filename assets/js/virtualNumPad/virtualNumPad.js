@@ -76,9 +76,11 @@ function validarMonto (){
         document.getElementById('vuelto').style.color = '#73879C';
 
         document.getElementById("vuelto").textContent = ("Su vuelto: ");
-        var element2 = document.getElementsByClassName("send")[0];
-        // element2.classList.add("Nosend");
-        element2.classList.remove("letter", "send", "green");
+        if (document.getElementsByClassName("send")[0]){
+            var element2 = document.getElementsByClassName("send")[0];
+            // element2.classList.add("Nosend");
+            element2.classList.remove("letter", "send", "green");
+        }
     }
 };
 
@@ -90,9 +92,11 @@ function validarRef (){
         element.classList.remove("Nosend");
     }
     else {
-        var element2 = document.getElementsByClassName("send")[0];
-        element2.classList.add("Nosend");
-        element2.classList.remove("letter", "send", "green");
+        if(document.getElementsByClassName("send")[0]){
+            var element2 = document.getElementsByClassName("send")[0];
+            element2.classList.add("Nosend");
+            element2.classList.remove("letter", "send", "green");
+        }        
     }
 };
 
