@@ -1,9 +1,9 @@
 <?php
 date_default_timezone_set('America/Costa_Rica');
 
-require __DIR__ . '/../ticket/autoload.php';
-use src\Mike42\Escpos\Printer;
-use src\Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
+require '../ticket/autoload.php';
+use Mike42\Escpos\Printer;
+use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
 
 if(isset($_POST["action"])){
     $opt= $_POST["action"];
@@ -27,7 +27,7 @@ if(isset($_POST["action"])){
             echo json_encode($factura->Read());
             break;
         case "Create":
-            echo json_encode($factura->Create());
+            $factura->Create();
             break;
         case "Update":
             $factura->Update();
@@ -269,13 +269,14 @@ class Factura{
                  if(ProductoXFactura::Create($this->detalleFactura)){
                     // retorna orden autogenerada.
                     OrdenXFactura::$id=$this->id;
+                    
                     OrdenXFactura::Create($this->detalleOrden);
                     if($this->TicketPrint($this->ReadbyID())){
                         $this->TicketPrint($this->ReadbyID());
-                        return true;
+                        // echo "true";
                     }
                     else
-                        return false;
+                        throw new Exception('Error al imprimir.', 04);
                 }
                 else throw new Exception('Error al guardar los productos.', 03);
             }
@@ -292,6 +293,7 @@ class Factura{
 
     function TicketPrint($data){
         try {
+            
             $connector = new WindowsPrintConnector('TMT20II');
             $printer = new Printer($connector);
             $total=0;
@@ -311,17 +313,20 @@ class Factura{
                 $total = $total +  $data->detalleFactura[$i]->precioUnitario;
             }
             $printer->text("\n------------------------------------------------");
-            $printer->text("\n"."                          Sub Total ₡ ". $total.".00");
-            $printer->text("\n"."                              TOTAL ₡ ". $total.".00\n");
+            $printer->text("\n"."                          Sub Total  ". $total.".00");
+            $printer->text("\n"."                              TOTAL  ". $total.".00\n");
             $printer->text("\n"."... Descripción ley ...");
             $printer->feed(3);
             $printer->cut();            
             $printer->pulse();
             $printer->close();
+
+
+
             return true;
             }     
             catch(Exception $e) {
-                header('HTTP/1.0 400 Bad error');
+                header('HTTP/1.0 777 Bad error');
                 die(json_encode(array(
                     'code' => $e->getCode() ,
                     'msg' => 'Error al imprimir factura'))
@@ -431,7 +436,6 @@ class Factura{
     }
 
 }
-
 
 
 ?>

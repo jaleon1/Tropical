@@ -306,11 +306,19 @@ function facturar (){
             obj: JSON.stringify(facturaCli)
         }
     })
-    .done(function(e){
-        ticketPrint(e)
+    .done(function(){
+            swal({
+                type: 'success',
+                text: 'Factura Lista!',
+                timer: 1000
+            });    
     })
     .fail(function (e) {
-        distr.showError(e);
+        swal({
+            type: 'error',
+            text: 'Error al imprimir!',
+            timer: 1000
+        });
     })
     .always(function () {
         // location.reload();

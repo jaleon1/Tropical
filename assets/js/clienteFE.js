@@ -384,24 +384,24 @@ class ClienteFE {
     }
 
     get DownloadCertificado() {
-    //     $.ajax({
-    //         type: "GET",
-    //         url: "class/ClienteFE.php",
-    //         data: {
-    //             action: 'DownloadCertificado',
-    //             certificado: clientefe.certificado,
-    //             id: clientefe.id
-    //         }
-    //     })
-    //         .done(function () {
+        $.ajax({
+            type: "GET",
+            url: "class/downloadCert.php",
+            data: {
+                action: 'DownloadCertificado',
+                certificado: clientefe.certificado,
+                id: clientefe.id
+            }
+        })
+            .done(function () {
                 
-    //         })
-    //         .fail(function (e) {
-    //             clientefe.showError(e);
-    //         });
-    var xhr = new XMLHttpRequest();
-        xhr.open("GET", "class/ClienteFE.php");
-        xhr.send();
+            })
+            .fail(function (e) {
+                clientefe.showError(e);
+            });
+        // var xhr = new XMLHttpRequest();
+        // xhr.open("GET", "class/downloadCert.php");
+        // xhr.send();
     }
 
     // Methods
@@ -575,7 +575,7 @@ class ClienteFE {
                     <ul class="dropdown-menu" role="menu">
                         <li><a id='certEliminar'>Eliminar</a></li>
                         <li class="divider"></li>
-                        <li><a id='certDescargar'>Descargar</a></li>
+                        <li><a href='class/downloadCert.php?certificado="${clientefe.certificado}"' id='certDescargar'>Descargar</a></li>
                     </ul>
                 </div>           
             `);
@@ -607,9 +607,9 @@ class ClienteFE {
                 })
                 
             });
-            $('#certDescargar').click(function(){
-                clientefe.DownloadCertificado;
-            });
+            // $('#certDescargar').click(function(){
+            //     clientefe.DownloadCertificado;
+            // });
             //var mockFile = { name: clientefe.filename, size: clientefe.filesize, type: 'application/x-pkcs12' };
             // dz.options.addedfile.call(dz, mockFile);
         }
