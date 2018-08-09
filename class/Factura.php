@@ -295,7 +295,8 @@ class Factura{
     function TicketPrint($data){
         try {
             
-            $connector = new WindowsPrintConnector('/dev/usb/lp0');
+            // $connector = new WindowsPrintConnector('/dev/usb/lp0');
+            $connector = new FilePrintConnector("/dev/usb/lp0");
             $printer = new Printer($connector);
             $total=0;
             $printer->setJustification(Printer::JUSTIFY_CENTER);
