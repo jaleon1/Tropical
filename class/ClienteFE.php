@@ -5,6 +5,7 @@ if(isset($_POST["action"])){
     // Classes
     require_once("Conexion.php");
     require_once("Usuario.php");
+    require_once("encdes.php");
     // Session
     if (!isset($_SESSION))
         session_start();
@@ -53,46 +54,9 @@ if(isset($_POST["action"])){
         case "DeleteCertificado":
             $clientefe->certificado = $_POST['certificado'];
             $clientefe->DeleteCertificado();
-            break;        
+            break;      
     }
 }
-// else {
-//     //$clientefe->certificado = $_GET['certificado'];
-//     //$clientefe->DownloadCertificado();
-//     try {
-        
-//         // Session
-        
-//         //
-//         $file = "fileUpload.php";
-        
-//             // header('Content-Description: File Transfer');
-//             // header('Content-Type: application/octet-stream');
-//             // // header('Content-Disposition: attachment; filename="'.basename($file).'"');
-//             // header('Content-Disposition: attachment; filename="'. $file .'"');
-//             // header('Expires: 0');
-//             // header('Cache-Control: must-revalidate');
-//             // header('Pragma: public');
-//             // header('Content-Length: ' . filesize($file));
-//             // readfile($file);
-//             // //exit;
-//             // header("Cache-Control: public");
-//             // header("Content-Description: File Transfer");
-//             // header("Content-Disposition: attachment; filename= fileUpload.php");
-//             // header("Content-Transfer-Encoding: binary");    
-//             // readfile("fileUpload.php");
-//             $file = "a.txt"; 
-            
-//         }
-//     }
-//     catch(Exception $e) {
-//         header('HTTP/1.0 400 Bad error');
-//         die(json_encode(array(
-//             'code' => $e->getCode() ,
-//             'msg' => $e->getMessage()))
-//         );
-//     }
-// }
 
 class Provincia{
     public $id;
@@ -411,24 +375,21 @@ class ClienteFE{
                 $this->otrasSenas= $data[0]['otrasSenas'];
                 $this->numTelefono= $data[0]['numTelefono']; 
                 $this->correoElectronico= $data[0]['correoElectronico'];
-                $this->username= $data[0]['username'];
-                $this->password= $data[0]['password'];
+                $this->username= encdes::decifrar($data[0]['username']);
+                $this->password= encdes::decifrar($data[0]['password']);
                 // certificado
-                $sql='SELECT certificado
+                $sql='SELECT certificado, cpath
                     FROM clienteFE  
                     where idBodega=:idBodega';
                 $param= array(':idBodega'=>$this->idBodega);
                 $data= DATA::Ejecutar($sql,$param);
                 $this->certificado= $data[0]['certificado'];
+                $cpath = $data[0]['cpath'];
                 // estado del certificado.
-                if(file_exists('../../certUploads/'.$_SESSION['userSession']->idBodega.'/'.$this->certificado))
+                if(file_exists('../../CU/'.$_SESSION['userSession']->idBodega.'/'.$cpath))
                     $this->estadoCertificado=1;
-                else $this->estadoCertificado=0;                
-                // info del archivo físico.
-                // $fPath= '../../certUploads/'.$data[0]['certificado'];                
-                // $this->filesize= filesize($fPath);
-                // $this->filename= explode("/", glob($fPath)[0])[3];
-                // $this->filetype= pathinfo($fPath, PATHINFO_EXTENSION);
+                else $this->estadoCertificado=0;      
+                $this->certificado= encdes::decifrar($data[0]['certificado']);
                 return $this;
             }
             return null;
@@ -463,12 +424,11 @@ class ClienteFE{
                 ':idCodigoPaisTel'=>$this->idCodigoPaisTel,
                 ':numTelefono'=>$this->numTelefono,
                 ':correoElectronico'=>$this->correoElectronico,
-                // ':username'=>password_hash($this->username, PASSWORD_DEFAULT),
                 // ':password'=>password_hash($this->password, PASSWORD_DEFAULT),
                 // ':certificado'=>password_hash($this->certificado, PASSWORD_DEFAULT),
-                ':username'=>$this->username,
-                ':password'=>$this->password,
-                ':certificado'=>$this->certificado, 
+                ':username'=>encdes::cifrar($this->username),
+                ':password'=>encdes::cifrar($this->password),
+                ':certificado'=>encdes::cifrar($this->certificado), 
                 ':idBodega'=>$this->idBodega
             );
             $data = DATA::Ejecutar($sql,$param,false);
@@ -486,7 +446,7 @@ class ClienteFE{
                 'msg' => $e->getMessage()))
             );
         }
-    }
+    } 
 
     function Update(){
         try {
@@ -500,7 +460,7 @@ class ClienteFE{
                 ':identificacion'=>$this->identificacion, ':nombreComercial'=>$this->nombreComercial, ':idProvincia'=>$this->idProvincia,
                 ':idCanton'=>$this->idCanton, ':idDistrito'=>$this->idDistrito, ':idBarrio'=>$this->idBarrio,
                 ':otrasSenas'=>$this->otrasSenas, ':numTelefono'=>$this->numTelefono, ':correoElectronico'=>$this->correoElectronico,
-                ':username'=>$this->username, ':password'=>$this->password, ':certificado'=>$this->certificado, ':idBodega'=>$this->idBodega
+                ':username'=>encdes::cifrar($this->username), ':password'=>encdes::cifrar($this->password), ':certificado'=>encdes::cifrar($this->certificado), ':idBodega'=>$this->idBodega
             );
             $data = DATA::Ejecutar($sql,$param,false);
             if($data)
@@ -537,19 +497,14 @@ class ClienteFE{
     }
 
     function Delete(){
-        try {
-            // if($this->CheckRelatedItems()){
-            //     //$sessiondata array que devuelve si hay relaciones del objeto con otras tablas.
-            //     $sessiondata['status']=1; 
-            //     $sessiondata['msg']='Registro en uso'; 
-            //     return $sessiondata;           
-            // }                    
+        try {              
             $sql='DELETE FROM clienteFE  
             WHERE id= :id';
             $param= array(':id'=>$this->id);
             $data= DATA::Ejecutar($sql, $param, false);
-            if($data)
+            if($data){
                 return $sessiondata['status']=0; 
+            }
             else throw new Exception('Error al eliminar.', 978);
         }
         catch(Exception $e) {
@@ -562,14 +517,21 @@ class ClienteFE{
     }
 
     function DeleteCertificado(){
-        try {
-            $sql='UPDATE clienteFE  
-                SET certificado= "<eliminado por el usuario>"
+        try {   
+            //borra el certificado fisico
+            $sql='SELECT cpath
+                FROM clienteFE
+                where idBodega=:idBodega';
+            $param= array(':idBodega'=>$_SESSION['userSession']->idBodega);
+            $data= DATA::Ejecutar($sql,$param);
+            $cpath = $data[0]['cpath'];
+            unlink('../../CU/'.$_SESSION['userSession']->idBodega.'/'.$cpath);   
+            //borra registro
+            $sql='UPDATE clienteFE
+                SET certificado= "<eliminado por el usuario>", cpath= "", nkey= ""
                 WHERE id= :id';
             $param= array(':id'=>$this->id);
-            $data= DATA::Ejecutar($sql, $param, false);
-            if($data)
-                unlink('../../certUploads/'.$_SESSION['userSession']->idBodega.'/'.$this->certificado);
+            DATA::Ejecutar($sql, $param, false);                         
         }
         catch(Exception $e) {
             header('HTTP/1.0 400 Bad error');
@@ -580,29 +542,6 @@ class ClienteFE{
         }
     }
 
-    function DownloadCertificado(){
-        try {
-            $file= '../../certUploads/'.$_SESSION['userSession']->idBodega.'/'.$_GET['certificado'];
-            if (file_exists($file)) {
-                header('Content-Description: File Transfer');
-                header('Content-Type: application/octet-stream');
-                header('Content-Disposition: attachment; filename="'.basename($file).'"');
-                header('Expires: 0');
-                header('Cache-Control: must-revalidate');
-                header('Pragma: public');
-                header('Content-Length: ' . filesize($file));
-                readfile($file);
-                //exit;
-            }
-        }
-        catch(Exception $e) {
-            header('HTTP/1.0 400 Bad error');
-            die(json_encode(array(
-                'code' => $e->getCode() ,
-                'msg' => $e->getMessage()))
-            );
-        }
-    }
 }
 
 ?>
