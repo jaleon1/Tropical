@@ -300,29 +300,41 @@ class Factura{
             $total=0;
             $printer->setJustification(Printer::JUSTIFY_CENTER);
             $printer->text("\n------------------------------------------------");
-            $printer->text("\n"."TROPICAL SNO");
+            $printer->text("\n"."TROPICAL SNO".$data->bodega);
             $printer->text("\n------------------------------------------------");
+            $printer->text("\n"."3-102-655700,  S.R.L.");
+            $printer->text("\n"."Tel.2245-0515, Fax: 2297-0998");
             $printer->text("\n"."Factura #:". $data->consecutivo);
             $printer->text("\n"."Fecha :". $data->fechaCreacion);
-            $printer->text("\n"."Agencia :". $data->bodega);
-            $printer->text("\n"."Usuario :". $data->usuario);
+            $printer->text("\n"."Usuario :". $data->usuario."\n");
             $printer->text("\n------------------------------------------------");
-            $printer->text("\n"."CANTIDAD  "."DETALLE                   "."PRECIO I.V.I");
+            $printer->text("\n"."CN    "."DETALLE                "."PRECIO    "."TOTAL     ");
             $printer->text("\n------------------------------------------------");
             for ($i=0; $i < count($data->detalleFactura); $i++) { 
                 $printer->text("\n"."1         ".$data->detalleFactura[$i]->detalle."  ".$data->detalleFactura[$i]->precioUnitario);
                 $total = $total +  $data->detalleFactura[$i]->precioUnitario;
             }
             $printer->text("\n------------------------------------------------");
-            $printer->text("\n"."                          Sub Total  ". $total.".00");
-            $printer->text("\n"."                              TOTAL  ". $total.".00\n");
-            $printer->text("\n"."... Descripción ley ...");
+            $printer->text("\n"."Total I.V.I                            ". $total.".00"); 
+            $printer->text("\n"."Tipo de Pago:------------------------------------");
+            $printer->text("\n"."      Efectivo:                        ". $total.".00");
+            $printer->text("\n"."      Vuelto:                          ". $total.".00");
+            $printer->text("\n"."      Dif:                             ". $total.".00");
+            $printer->text("\n"."Tarjeta de Credito:                    ". $total.".00\n");
+            $printer->text("\n------------------------------------------------");
+            $printer->text("\n"."Gracias por su Compra                        ");
+            $printer->text("\n"."Una vez facturado no se aceptan cambios o    ");
+            $printer->text("\n"."devoluciones.                                \n");
+            $printer->text("\n"."Autorizado para impresión mediante           ");
+            $printer->text("\n"."Resolución 48-2016 de DGTD                   \n");
+            $printer->text("\n"."Autorizado para impresión mediante           ");
+            $printer->text("\n"."Resolución 48-2016 de DGTD                   ");
+            $printer->text("\n"."Visitenos en Facebook:  TSCR y déjenos sus   ");
+            $printer->text("\n"."comentarios.                                 ");
             $printer->feed(3);
             $printer->cut();            
             $printer->pulse();
             $printer->close();
-
-
 
             return true;
             }     
