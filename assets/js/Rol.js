@@ -171,7 +171,7 @@ class Rol {
         t.draw();
         $('.update').click(rol.UpdateEventHandler);
         $('.delete').click(rol.DeleteEventHandler);
-        $('#tRol tbody tr').dblclick(rol.UpdateEventHandler);
+        $('#tRol tbody tr').click(rol.UpdateEventHandler);
     };
 
     UpdateEventHandler() {

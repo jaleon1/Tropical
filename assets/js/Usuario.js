@@ -185,7 +185,7 @@ class Usuario {
         // eventos
         $('.update').click(usuario.UpdateEventHandler);
         $('.delete').click(usuario.DeleteEventHandler);
-        $('#tUsuario tbody tr').dblclick(usuario.viewType==undefined || usuario.viewType==usuario.tUpdate ? usuario.UpdateEventHandler : usuario.SelectEventHandler);
+        $('#tUsuario tbody tr').click(usuario.viewType==undefined || usuario.viewType==usuario.tUpdate ? usuario.UpdateEventHandler : usuario.SelectEventHandler);
     };
 
     UpdateEventHandler() {

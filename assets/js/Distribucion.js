@@ -199,7 +199,7 @@ class Distribucion {
         t.draw();
         $('.update').click(distr.UpdateEventHandler);
         $('.delete').click(distr.DeleteEventHandler);
-        $('#tDistribucion tbody tr').dblclick(distr.viewType==undefined || distr.viewType==distr.tUpdate ? distr.UpdateEventHandler : distr.SelectEventHandler);
+        $('#tDistribucion tbody tr').click(distr.viewType==undefined || distr.viewType==distr.tUpdate ? distr.UpdateEventHandler : distr.SelectEventHandler);
     };
 
     ShowItemData(e) {

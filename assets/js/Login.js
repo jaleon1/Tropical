@@ -36,7 +36,7 @@ $(document).ready(function () {
       validator.reset();
     }    
     //
-    $('#dsItemsBodega tbody').on('dblclick', 'tr', function () {
+    $('#dsItemsBodega tbody').on('click', 'tr', function () {
         var data = t.row(this).data();
         $.ajax({
             type: "POST",
@@ -145,6 +145,7 @@ function ShowAll(data) {
         searching: false,
         bPaginate: false,
         bLengthChange: false,
+        distroy: true,
         info:false,
         data : data.bodegas,
         columns : [
