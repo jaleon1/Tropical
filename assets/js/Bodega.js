@@ -211,7 +211,7 @@ class Bodega {
         $('.update').click(bodega.UpdateEventHandler);
         $('.delete').click(bodega.DeleteEventHandler);
         $('.open').click(bodega.OpenEventHandler);
-        $('#tBodega tbody tr').dblclick(bodega.viewType==undefined || bodega.viewType==bodega.tUpdate ? bodega.UpdateEventHandler : bodega.SelectEventHandler);
+        $('#tBodega tbody tr').click(bodega.viewType==undefined || bodega.viewType==bodega.tUpdate ? bodega.UpdateEventHandler : bodega.SelectEventHandler);
     };
 
     ShowAllD(e) {

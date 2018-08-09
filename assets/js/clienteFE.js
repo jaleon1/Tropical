@@ -532,7 +532,7 @@ class ClienteFE {
         // $('.update').click(clientefe.UpdateEventHandler);
         // $('.delete').click(clientefe.DeleteEventHandler);
         // $('.open').click(clientefe.OpenEventHandler);
-        // $('#tclientefe tbody tr').dblclick(clientefe.viewType==undefined || clientefe.viewType==clientefe.tUpdate ? clientefe.UpdateEventHandler : clientefe.SelectEventHandler);
+        // $('#tclientefe tbody tr').click(clientefe.viewType==undefined || clientefe.viewType==clientefe.tUpdate ? clientefe.UpdateEventHandler : clientefe.SelectEventHandler);
     };
 
     ShowItemData(e) {
@@ -572,13 +572,15 @@ class ClienteFE {
                         <span class="caret"></span>
                         <span class="sr-only">Toggle Dropdown</span>
                     </button>
-                    <ul class="dropdown-menu" role="menu">
-                        <li><a id='certEliminar'>Eliminar</a></li>
-                        <li class="divider"></li>
-                        <li><a href='class/downloadCert.php?certificado="${clientefe.certificado}"' id='certDescargar'>Descargar</a></li>
-                    </ul>
+                    ${clientefe.estadoCertificado==1? `
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a id='certEliminar'>Eliminar</a></li>
+                            <li class="divider"></li>
+                            <li><a href='class/downloadCert.php?certificado=${clientefe.certificado}' id='certDescargar'>Descargar</a></li>
+                        </ul>` 
+                    : `` }
                 </div>           
-            `);
+            `).fadeIn();
             if(clientefe.estadoCertificado==0)
                 swal({
                     type: 'error',
