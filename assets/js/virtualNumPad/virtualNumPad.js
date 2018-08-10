@@ -1,6 +1,10 @@
 var selector = "#txt_pago";
 
 function sendVal(a){
+    localStorage.setItem("lsTarjetaCredito","0.00");
+    localStorage.setItem("lsEfectivo",document.getElementById("txt_pagoCash").value);
+    localStorage.setItem("lsVuelto",(document.getElementById("vuelto").innerHTML).substr(11));
+    localStorage.setItem("lsDif","0.00");
     // a=parseInt(a);
     switch (a) {
         case ((a>=0 && a<=9)?a:-1):
@@ -18,6 +22,10 @@ function sendVal(a){
 };
 
 function sendRef(a){
+    localStorage.setItem("lsTarjetaCredito",(document.getElementById("total_pagar").innerHTML).substr(16));
+    localStorage.setItem("lsEfectivo","0.00");
+    localStorage.setItem("lsVuelto","0.00");
+    localStorage.setItem("lsDif","0.00");
     // a=parseInt(a);
     switch (a) {
         case ((a>=0 && a<=9)?a:-1):
