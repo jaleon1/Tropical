@@ -538,8 +538,6 @@ function facCash() {
     $("#btn-formapago").append(DivCash);
 };
 
-
-
 function facCard() {
     $("#formapago").empty();
     pagar = $("#total")[0].textContent;

@@ -35,13 +35,7 @@
     </table>
     <label>--------------------------------------------------------</label>
     <table style="width:100%;">
-      <tbody>
-        <tr><td><label style="width:60%; text-align:left;">Total I.V.I.</label></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td style="width:20%; text-align:right;"><label style="width:40%; text-align:right;" id="totalivi"></label></td></tr>
-        <tr><td><label style="width:60%; text-align:left;">Tipo de Pago:</labe></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td style="width:20%; text-align:right;">----------</td></tr>
-        <tr><td><label style="width:60%; text-align:left;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Efectivo:</label></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td style="width:20%; text-align:right;"><label style="width:40%; text-align:right;" id="efectivo"></label></td></tr>
-        <tr><td><label style="width:60%; text-align:left;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vuelto:</label></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td style="width:20%; text-align:right;"><label style="width:40%; text-align:right;" id="vuelto"></label></td></tr>
-        <tr><td><label style="width:60%; text-align:left;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Diferencia:</label></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td style="width:20%; text-align:right;"><label style="width:40%; text-align:right;" id="dif"></label></td></tr>
-        <tr><td><label style="width:60%; text-align:left;">Tarjeta Crédito:</label></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td style="width:20%; text-align:right;"><label style="text-align:right;" id="tarjetaCredito"></label></td></tr>
+      <tbody id="tableBody-TicketTotal">
       </tbody>
     </table>
     <label>--------------------------------------------------------</label>
@@ -57,6 +51,7 @@
     <label>--------------------------------------------------------</label>
   </div>
   <script src="assets/js/FacturaCli.js"></script>
+  <script src="assets/js/Factura.js"></script>
   <script src="assets/js/virtualNumPad/virtualNumPad.js"></script>
 </body>
 
@@ -65,17 +60,14 @@
 <script>
     $(document).ready(function () {
 
-      $("#factura").text(localStorage.getItem("lsFactura")); //Numero de factura
-      $("#fecha").text(localStorage.getItem("lsFecha"));  //
+      $("#factura").text(localStorage.getItem("lsFactura"));
+      $("#fecha").text(localStorage.getItem("lsFecha"));  
       $("#bodega").text(localStorage.getItem("lsBodega"));
       $("#usuario").text(localStorage.getItem("lsUsuario"));
-      var x=localStorage.getItem("lsCredit");
-      if(x==true)
-        $("#tarjetaCredito").text(localStorage.getItem("lsTotal"));  
-      // $("#efectivo").text(localStorage.getItem("lsEfectivo"));
-      // $("#vuelto").text(localStorage.getItem("lsVuelto"));
-      // $("#dif").text(localStorage.getItem("lsDif"));
-      // $("#tarjetaCredito").text(localStorage.getItem("lstarjetaCredito"));
+      $("#tarjetaCredito").text(localStorage.getItem("lsTarjetaCredito"));  
+      $("#efectivo").text(localStorage.getItem("lsEfectivo"));
+      $("#vuelto").text(localStorage.getItem("lsVuelto"));
+      $("#dif").text(localStorage.getItem("lsDif"));
       
       var listaProducto = localStorage.getItem("lsListaProducto");
       listaProducto = JSON.parse(listaProducto);
@@ -84,15 +76,23 @@
               <tr> 
                   <td style="width:10%; text-align:left;">1</td>
                   <td style="width:40%; text-align:left;">${item.detalle}</td>
-                  <td style="width:20%; text-align:left;">${item.precioUnitario.toFixed(2)}</td>
+                  <td style="width:20%; text-align:left;">¢${item.precioUnitario.toFixed(2)}</td>
                   <td style="width:20%; text-align:right;"></td>
               </tr>
           `);
       }) 
-      $("#totalivi").text(parseFloat(localStorage.getItem("lsTotal")).toFixed(2));
+      $('#tableBody-TicketTotal').append(`
+        <tr><td><label style="width:60%; text-align:left;">Total I.V.I.</label></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td style="width:20%; text-align:right;">¢${parseFloat(localStorage.getItem("lsTotal")).toFixed(2)}</td></tr>
+        <tr><td><label style="width:60%; text-align:left;">Tipo de Pago:</labe></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td style="width:20%; text-align:right;">----------</td></tr>
+        <tr><td><label style="width:60%; text-align:left;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Efectivo:</label></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td id="efectivo" style="width:20%; text-align:right;">¢${localStorage.getItem("lsEfectivo")}</td></tr>
+        <tr><td><label style="width:60%; text-align:left;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vuelto:</label></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td id="vuelto" style="width:20%; text-align:right;">¢${localStorage.getItem("lsVuelto")}</td></tr>
+        <tr><td><label style="width:60%; text-align:left;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dif:</label></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td id="dif" style="width:20%; text-align:right;">¢${localStorage.getItem("lsDif")}</td></tr>
+        <tr><td><label style="width:60%; text-align:left;">Tarjeta Crédito:</label></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td id="tarjetaCredito" style="width:20%; text-align:right;">¢${localStorage.getItem("lsTarjetaCredito")}</td></tr>
+      `);
+        //$("#totalivi").text(parseFloat(localStorage.getItem("lsTotal")).toFixed(2));
       window.print();
       localStorage.setItem("lsPrintOK","OK");
-      //location.href ="/Tropical/FacturaCli.html";
+      // location.href ="/Tropical/FacturaCli.html";
       location.href ="/FacturaCli.html";
   });  
 </script>

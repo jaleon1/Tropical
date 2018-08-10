@@ -159,9 +159,6 @@ function importe(codigorapido){
 
 $( "#fac-ccard" ).click(function(event) {
     $("#formapago").empty();
-    localStorage.setItem("lsCredit",true);
-    localStorage.setItem("lsFacCash",false);
-
     var newDiv =
     `<div class="row">
         <div class="col-md-4 col-md-offset-4 col-sm-offset-0 col-xs-6 col-xs-offset-0">
@@ -187,9 +184,6 @@ $( "#fac-ccard" ).click(function(event) {
 
 $( "#fac-cash" ).click(function(event) {
     $("#formapago").empty();
-    localStorage.setItem("lsCredit","creditFalse");
-    localStorage.setItem("lsFacCash","cashTrue");
-
     var newDiv =
     `<div class="row">
         <div class="col-md-4 col-md-offset-4 col-sm-offset-0 col-xs-6 col-xs-offset-0">
