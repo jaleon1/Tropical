@@ -28,7 +28,7 @@ if(isset($_POST["action"])){
             echo json_encode($factura->Read());
             break;
         case "Create":
-            $factura->Create();
+        echo json_encode($factura->Create());
             break;
         case "Update":
             $factura->Update();
