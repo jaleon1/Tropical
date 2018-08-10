@@ -836,19 +836,19 @@ function alertFact() {
     setTimeout(function () { location.reload(); }, 2000);
 }
 
-// function ticketPrint(e){
-//     var data = JSON.parse(e);
-//     localStorage.setItem("lsFactura",data.consecutivo);
-//     localStorage.setItem("lsFecha",data.fechaCreacion);
-//     localStorage.setItem("lsBodega",data.bodega);
-//     localStorage.setItem("lsUsuario",data.usuario);
-//     localStorage.setItem("lsSubTotal",data.totalComprobante);
-//     localStorage.setItem("lsTotal",data.totalComprobante);
-//     localStorage.setItem("lsListaProducto",JSON.stringify(data.detalleFactura));
+function ticketPrint(e){
+    var data = JSON.parse(e);
+    localStorage.setItem("lsFactura",data.consecutivo);
+    localStorage.setItem("lsFecha",data.fechaCreacion);
+    localStorage.setItem("lsBodega",data.bodega);
+    localStorage.setItem("lsUsuario",data.usuario);
+    localStorage.setItem("lsSubTotal",data.totalComprobante);
+    localStorage.setItem("lsTotal",data.totalComprobante);
+    localStorage.setItem("lsListaProducto",JSON.stringify(data.detalleFactura));
 
-//     // location.href ="/Tropical/TicketFacturacion.html";
-//     location.href ="/TicketFacturacion.html";
-// }
+    // location.href ="/Tropical/TicketFacturacion.html";
+    location.href ="/TicketFacturacion.html";
+}
 
 function calcVuelto(pago, xPagar) {
     // $("#vuelto").val(pago-xPagar);

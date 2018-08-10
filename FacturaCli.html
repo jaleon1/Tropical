@@ -251,18 +251,18 @@
 </html>
 
 <script>
-    // $(document).ready(function () {
-    //     if (localStorage.getItem("lsPrintOK") == "OK") {
-    //         swal({
-    //             type: 'success',
-    //             text: 'Factura Lista!',
-    //             timer: 2000
-    //             // showConfirmButton: true
-    //         }).then(function () {
-    //             localStorage.setItem("lsPrintOK", "NOT");
-    //         });
-    //         $(".procesarFac").prop('disabled', true);
-    //         // setTimeout(function () { location.reload(); }, 2000);
-    //     }
-    // });
+    $(document).ready(function () {
+        if (localStorage.getItem("lsPrintOK") == "OK") {
+            swal({
+                type: 'success',
+                text: 'Factura Lista!',
+                timer: 2000
+                // showConfirmButton: true
+            }).then(function () {
+                localStorage.setItem("lsPrintOK", "NOT");
+            });
+            $(".procesarFac").prop('disabled', true);
+            setTimeout(function () { location.reload(); }, 1000);
+        }
+    });
 </script>
