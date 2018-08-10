@@ -15,31 +15,46 @@
 
 <body>
   <div id="ticket">
-    <p class="centrado">TROPICAL SNO.<br>
+    <p class="centrado">TROPICAL SNO. <label id="bodega"></label><br>
+      3-102-655700,  S.R.L.<br>
+      Tel.2245-0515, Fax: 2297-0998<br>
       FACTURA # <label id=factura></label><br>
       Fecha: <label id="fecha"></label><br>
-      Bodega: <label id="bodega"></label><br>
       Usuario: <label id="usuario"></label>
     </p>
+    <label>--------------------------------------------------------</label>
     <table>
-      <thead>
-        <tr>
-          <th  style="width:40%; text-align:left;">PRODUCTO&nbsp;&nbsp;</th>
-          <th  style="width:30%; text-align:right;">CANTIDAD&nbsp;&nbsp;</th>
-          <th  style="width:30%; text-align:right;">PRECIO</th>
-          <spa>_______________________________________</spa>
-        </tr>
-      </thead>
       <tbody id="tableBody-TicketFactura">
+        <tr>
+            <td style="width:10%; text-align:left;">CN</td>
+            <td style="width:40%; text-align:left;">Detalle</td>
+            <td style="width:20%; text-align:left;">Precio</td>
+            <td style="width:20%; text-align:right;">Total</td>
+          </tr>
       </tbody>
     </table>
-    <p style="text-align:right;">TOTALES<br>
-        Sub Total: <label id=subtotal></label><br>
-        TOTAL: <label id="total"></label>
-      </p>
-    <p class="centrado">Facturado Descripción...</p>
-    </br>
-    <spa>_______________________________________</spa>
+    <label>--------------------------------------------------------</label>
+    <table style="width:100%;">
+      <tbody>
+        <tr><td><label style="width:60%; text-align:left;">Total I.V.I.</label></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td style="width:20%; text-align:right;"><label style="width:40%; text-align:right;" id="totalivi"></label></td></tr>
+        <tr><td><label style="width:60%; text-align:left;">Tipo de Pago:</labe></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td style="width:20%; text-align:right;">----------</td></tr>
+        <tr><td><label style="width:60%; text-align:left;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Efectivo:</label></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td style="width:20%; text-align:right;"><label style="width:40%; text-align:right;" id="efectivo"></label></td></tr>
+        <tr><td><label style="width:60%; text-align:left;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vuelto:</label></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td style="width:20%; text-align:right;"><label style="width:40%; text-align:right;" id="vuelto"></label></td></tr>
+        <tr><td><label style="width:60%; text-align:left;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Diferencia:</label></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td style="width:20%; text-align:right;"><label style="width:40%; text-align:right;" id="dif"></label></td></tr>
+        <tr><td><label style="width:60%; text-align:left;">Tarjeta Crédito:</label></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td style="width:20%; text-align:right;"><label style="text-align:right;" id="tarjetaCredito"></label></td></tr>
+      </tbody>
+    </table>
+    <label>--------------------------------------------------------</label>
+    <p style="text-align:left;">
+        Gracias por su Compra</br>
+        Una vez facturado no se aceptan</br> 
+        cambios o devoluciones.</br></br>
+        Autorizado para impresión mediante</br>
+        Resolución 48-2016 de DGTD</br></br>
+        Visitenos en Facebook:  TSCR y déjenos</br> 
+        sus comentarios
+    </p>
+    <label>--------------------------------------------------------</label>
   </div>
   <script src="assets/js/FacturaCli.js"></script>
   <script src="assets/js/virtualNumPad/virtualNumPad.js"></script>
@@ -54,22 +69,27 @@
       $("#fecha").text(localStorage.getItem("lsFecha"));  //
       $("#bodega").text(localStorage.getItem("lsBodega"));
       $("#usuario").text(localStorage.getItem("lsUsuario"));
+      var x=localStorage.getItem("lsCredit");
+      if(x==true)
+        $("#tarjetaCredito").text(localStorage.getItem("lsTotal"));  
+      // $("#efectivo").text(localStorage.getItem("lsEfectivo"));
+      // $("#vuelto").text(localStorage.getItem("lsVuelto"));
+      // $("#dif").text(localStorage.getItem("lsDif"));
+      // $("#tarjetaCredito").text(localStorage.getItem("lstarjetaCredito"));
       
       var listaProducto = localStorage.getItem("lsListaProducto");
       listaProducto = JSON.parse(listaProducto);
       $.each(listaProducto, function (i, item) {
-          $('#tableBody-TicketFactura').append(`
-                <tr> 
-                    <td style="width:40%; text-align:left;">${item.detalle}</td>
-
-                    <td style="width:30%; text-align:right;">1</td>
-
-                    <td style="width:30%; text-align:right;">${item.precioUnitario.toFixed(2)}</td>
-                </tr>
-            `);
-        }) 
-      $("#subtotal").text(parseFloat(localStorage.getItem("lsSubTotal")).toFixed(2));
-      $("#total").text(parseFloat(localStorage.getItem("lsTotal")).toFixed(2));
+        $('#tableBody-TicketFactura').append(`
+              <tr> 
+                  <td style="width:10%; text-align:left;">1</td>
+                  <td style="width:40%; text-align:left;">${item.detalle}</td>
+                  <td style="width:20%; text-align:left;">${item.precioUnitario.toFixed(2)}</td>
+                  <td style="width:20%; text-align:right;"></td>
+              </tr>
+          `);
+      }) 
+      $("#totalivi").text(parseFloat(localStorage.getItem("lsTotal")).toFixed(2));
       window.print();
       localStorage.setItem("lsPrintOK","OK");
       //location.href ="/Tropical/FacturaCli.html";
