@@ -270,14 +270,8 @@ class Factura{
                  if(ProductoXFactura::Create($this->detalleFactura)){
                     // retorna orden autogenerada.
                     OrdenXFactura::$id=$this->id;
-                    
                     OrdenXFactura::Create($this->detalleOrden);
-                    if($this->TicketPrint($this->ReadbyID())){
-                        $this->TicketPrint($this->ReadbyID());
-                        // echo "true";
-                    }
-                    else
-                        throw new Exception('Error al imprimir.', 04);
+                    return $this->ReadbyID();
                 }
                 else throw new Exception('Error al guardar los productos.', 03);
             }
