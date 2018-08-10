@@ -302,17 +302,13 @@ function facturar (){
             obj: JSON.stringify(facturaCli)
         }
     })
-    .done(function(){
-            swal({
-                type: 'success',
-                text: 'Factura Lista!',
-                timer: 1000
-            });    
+    .done(function(e){
+        ticketPrint(e)
     })
     .fail(function (e) {
         swal({
             type: 'error',
-            text: 'Error al imprimir!',
+            text: 'Error al facturar!',
             timer: 1000
         });
     })
