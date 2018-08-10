@@ -635,26 +635,19 @@ function CreateFact() {
             obj: JSON.stringify(factura)
         }
     })
-        .done(function(e){
-            if(e==true)
-                swal({
-                    type: 'success',
-                    text: 'Factura Lista!',
-                    timer: 2000
-                    // showConfirmButton: true
-                });
-        }
-        )
-        .fail(function (e) {
-            producto.showError(e);
-        })
-        .always(function () {
-            setTimeout('$("#btnProducto").removeAttr("disabled")', 1000);
-            producto = new Producto();
-            producto.ClearCtls();
-            producto.Read;
-            $("#nombre").focus();
-        });
+    .done(function(e){
+        ticketPrint(e)
+    })
+    .fail(function (e) {
+        producto.showError(e);
+    })
+    .always(function () {
+        setTimeout('$("#btnProducto").removeAttr("disabled")', 1000);
+        producto = new Producto();
+        producto.ClearCtls();
+        producto.Read;
+        $("#nombre").focus();
+    });
 }
 
 //VALIDAR SI SE NECESITA
