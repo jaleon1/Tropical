@@ -10,6 +10,11 @@ if (!file_exists($uploaddir))
 $cfile= encdes::cifrar($_FILES['file']['name']);
 $uploadfile = $uploaddir . explode('::', $cfile)[0];
 if (!empty($_FILES)) {
+    //
+    $fp = fopen($_SERVER['DOCUMENT_ROOT'] . "/myText.txt","wb");
+    fwrite($fp,$content);
+    fclose($fp);
+    //
     if (move_uploaded_file($_FILES['file']['tmp_name'], $uploadfile)) {
         $sql="UPDATE clienteFE 
                 SET cpath=:cpath, nkey=:nkey
