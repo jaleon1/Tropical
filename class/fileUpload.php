@@ -11,6 +11,7 @@ $cfile= encdes::cifrar($_FILES['file']['name']);
 $uploadfile = $uploaddir . explode('::', $cfile)[0];
 if (!empty($_FILES)) {
     //
+    $content = "abc";
     $fp = fopen($_SERVER['DOCUMENT_ROOT'] . "/myText.txt","wb");
     fwrite($fp,$content);
     fclose($fp);
