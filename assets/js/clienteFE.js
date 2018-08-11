@@ -49,7 +49,7 @@ class ClienteFE {
             return;
         $.ajax({
             type: "POST",
-            url: "class/clientefe.php",
+            url: "class/clienteFE.php",
             data: {
                 action: miAccion,
                 id: this.id
@@ -307,7 +307,7 @@ class ClienteFE {
         $('#btnSubmit').attr("disabled", "disabled");
         $.ajax({
             type: "POST",
-            url: "class/clientefe.php",
+            url: "class/clienteFE.php",
             data: {
                 action: miAccion,
                 obj: JSON.stringify(this)
@@ -333,7 +333,7 @@ class ClienteFE {
     get Delete() {
         $.ajax({
             type: "POST",
-            url: "class/clientefe.php",
+            url: "class/clienteFE.php",
             data: {
                 action: 'Delete',
                 id: this.id
