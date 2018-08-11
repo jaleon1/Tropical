@@ -49,7 +49,7 @@ class ClienteFE {
             return;
         $.ajax({
             type: "POST",
-            url: "class/clienteFE.php",
+            url: "class/ClienteFE.php",
             data: {
                 action: miAccion,
                 id: this.id
@@ -69,7 +69,7 @@ class ClienteFE {
         var miAccion = 'ReadProfile';
         $.ajax({
             type: "POST",
-            url: "class/clienteFE.php",
+            url: "class/ClienteFE.php",
             data: {
                 action: miAccion
             }
@@ -86,7 +86,7 @@ class ClienteFE {
         var miAccion= 'ReadAllTipoIdentificacion';
         $.ajax({
             type: "POST",
-            url: "class/clienteFE.php",
+            url: "class/ClienteFE.php",
             data: { 
                 action: miAccion
             }
@@ -122,7 +122,7 @@ class ClienteFE {
         $('#btnSubmit').attr("disabled", "disabled");
         $.ajax({
             type: "POST",
-            url: "class/clienteFE.php",
+            url: "class/ClienteFE.php",
             data: { 
                 action: miAccion,
                 idProvincia: this.idProvincia,
@@ -144,7 +144,7 @@ class ClienteFE {
         $('#btnSubmit').attr("disabled", "disabled");
         $.ajax({
             type: "POST",
-            url: "class/clienteFE.php",
+            url: "class/ClienteFE.php",
             data: { 
                 action: miAccion
             }
@@ -174,7 +174,7 @@ class ClienteFE {
         this.idProvincia = $('#idProvincia option:selected').val() || 1;
         $.ajax({
             type: "POST",
-            url: "class/clienteFE.php",
+            url: "class/ClienteFE.php",
             data: { 
                 action: miAccion,
                 idProvincia: this.idProvincia
@@ -203,7 +203,7 @@ class ClienteFE {
         this.idCanton = $('#idCanton option:selected').val() || 1;
         $.ajax({
             type: "POST",
-            url: "class/clienteFE.php",
+            url: "class/ClienteFE.php",
             data: { 
                 action: miAccion,
                 idCanton: this.idCanton
@@ -229,7 +229,7 @@ class ClienteFE {
         this.idDistrito = $('#idDistrito option:selected').val() || 1;
         $.ajax({
             type: "POST",
-            url: "class/clienteFE.php",
+            url: "class/ClienteFE.php",
             data: { 
                 action: miAccion,
                 idDistrito: this.idDistrito
@@ -307,7 +307,7 @@ class ClienteFE {
         $('#btnSubmit').attr("disabled", "disabled");
         $.ajax({
             type: "POST",
-            url: "class/clienteFE.php",
+            url: "class/ClienteFE.php",
             data: {
                 action: miAccion,
                 obj: JSON.stringify(this)
@@ -333,7 +333,7 @@ class ClienteFE {
     get Delete() {
         $.ajax({
             type: "POST",
-            url: "class/clienteFE.php",
+            url: "class/ClienteFE.php",
             data: {
                 action: 'Delete',
                 id: this.id
@@ -360,7 +360,7 @@ class ClienteFE {
     get DeleteCertificado() {
         $.ajax({
             type: "POST",
-            url: "class/clienteFE.php",
+            url: "class/ClienteFE.php",
             data: {
                 action: 'DeleteCertificado',
                 certificado: clientefe.certificado,
