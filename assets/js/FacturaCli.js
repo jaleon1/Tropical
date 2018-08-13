@@ -366,10 +366,10 @@ $("#btn_agrega_prd").click(function () {
 function codigoTamano() {
     switch (sel_tamano) {
         case 0:
-            return "Mediano";
+            return "8oz";
             break;
         case 1:
-            return "Grande";
+            return "12oz";
             break;
         default:
             return false;
