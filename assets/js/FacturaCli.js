@@ -205,6 +205,7 @@ function DrawSabor(sabores) {
     var prd = `
     <button id="${sabores.id}" class="btn_sabor btn_venta" style="background-color:${sabores.bgColor};" onclick="agregaSabor('${sabores.id}', '${sabores.nombre}')">
         <div class="btn_prd" style="color:${sabores.txtColor}";>
+            <h5 hidden>${sabores.nombreAbreviado}</h5>
             <h5>${sabores.nombre}</h5>
             <p id="cant_sabor_${sabores.id}"></p>
         </div>
@@ -837,8 +838,8 @@ function ticketPrint(e){
     localStorage.setItem("lsTotal",data.totalComprobante);
     localStorage.setItem("lsListaProducto",JSON.stringify(data.detalleFactura));
 
-    // location.href ="/Tropical/TicketFacturacion.html";
-    location.href ="/TicketFacturacion.html";
+    location.href ="/Tropical/TicketFacturacion.html";
+    // location.href ="/TicketFacturacion.html";
 }
 
 function calcVuelto(pago, xPagar) {
