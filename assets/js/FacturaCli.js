@@ -218,7 +218,7 @@ function DrawTopping(toppings) {
     var prd = `
         <button id="${toppings.id}" style="background-color:${toppings.bgColor};" class="btn_topping btn_venta" onclick="agrega_toppings('${toppings.id}', '${toppings.nombre}')">
             <div style="color: ${toppings.txtColor};">
-
+                <h5 hidden>${toppings.nombreAbreviado}</h5>
                 <h5>${toppings.nombre}</h5>
                 <p id="cant_topping_${toppings.id}">\xa0</p>
             </div>
