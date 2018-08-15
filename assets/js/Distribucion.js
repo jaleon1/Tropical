@@ -197,7 +197,7 @@ class Distribucion {
         t.rows.add(JSON.parse(e));
         // $('td:eq(4)').attr({ align: "right" });   
         t.draw();
-        $('.update').click(distr.UpdateEventHandler);
+        $('.update').click($('#tDistribucion tbody tr').click());
         $('.delete').click(distr.DeleteEventHandler);
         $('#tDistribucion tbody tr').click(distr.viewType==undefined || distr.viewType==distr.tUpdate ? distr.UpdateEventHandler : distr.SelectEventHandler);
     };

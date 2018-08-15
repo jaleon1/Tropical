@@ -183,7 +183,7 @@ class Usuario {
         t.rows.add(JSON.parse(e));
         t.draw();
         // eventos
-        $('.update').click(usuario.UpdateEventHandler);
+        $('.update').click($('#tUsuario tbody tr').click());
         $('.delete').click(usuario.DeleteEventHandler);
         $('#tUsuario tbody tr').click(usuario.viewType==undefined || usuario.viewType==usuario.tUpdate ? usuario.UpdateEventHandler : usuario.SelectEventHandler);
     };

@@ -208,7 +208,7 @@ class Bodega {
         t.clear();
         t.rows.add(JSON.parse(e));
         t.draw();
-        $('.update').click(bodega.UpdateEventHandler);
+        $('.update').click($('#tBodega tbody tr').click());
         $('.delete').click(bodega.DeleteEventHandler);
         $('.open').click(bodega.OpenEventHandler);
         $('#tBodega tbody tr').click(bodega.viewType==undefined || bodega.viewType==bodega.tUpdate ? bodega.UpdateEventHandler : bodega.SelectEventHandler);

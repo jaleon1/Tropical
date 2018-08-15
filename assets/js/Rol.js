@@ -169,7 +169,7 @@ class Rol {
         t.clear();
         t.rows.add(JSON.parse(e));
         t.draw();
-        $('.update').click(rol.UpdateEventHandler);
+        $('.update').click($('#tRol tbody tr').click());
         $('.delete').click(rol.DeleteEventHandler);
         $('#tRol tbody tr').click(rol.UpdateEventHandler);
     };
