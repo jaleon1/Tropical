@@ -231,7 +231,6 @@ class Distribucion{
                 $data = DATA::Ejecutar($sql,$param,false);
                 if(!$data)
                     $created= false;
-                
             }
             if($created)
                 return true;

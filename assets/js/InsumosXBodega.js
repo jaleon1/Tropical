@@ -218,8 +218,10 @@ class InsumoBodega {
                     orderable: false,
                     searchable:false,
                     visible: buttons,
+                    className: "buttons",
+                    width: '5%',
                     mRender: function () {
-                        return '<a class="update" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | <a class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>'                            
+                        return '<a class="delete"> <i class="glyphicon glyphicon-trash"> </i>  </a>'                            
                     }
                 }
             ]

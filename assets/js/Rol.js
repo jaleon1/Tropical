@@ -169,9 +169,10 @@ class Rol {
         t.clear();
         t.rows.add(JSON.parse(e));
         t.draw();
-        $('.update').click(rol.UpdateEventHandler);
-        $('.delete').click(rol.DeleteEventHandler);
-        $('#tRol tbody tr').click(rol.UpdateEventHandler);
+        $( document ).on( 'click', '.delete', rol.DeleteEventHandler);
+        $( document ).on( 'click', '#tRol tbody tr td:not(.buttons)', 
+            rol.viewType==undefined || rol.viewType==rol.tUpdate ? rol.UpdateEventHandler : rol.SelectEventHandler
+        );
     };
 
     UpdateEventHandler() {
@@ -250,8 +251,10 @@ class Rol {
                     orderable: false,
                     searchable:false,
                     visible: buttons,
+                    className: "buttons",
+                    width: '5%',
                     mRender: function () {
-                        return '<a class="update" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | <a class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>'                            
+                        return '<a class="delete" style="cursor: pointer;"> <i class="glyphicon glyphicon-trash"> </i>  </a>'                            
                     }
                 }
             ]

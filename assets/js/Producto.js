@@ -342,14 +342,15 @@ class Producto {
                         title:"ACCIÓN",
                         orderable: false,
                         searchable:false,
+                        width: '5%',
                         mRender: function () {
-                            return '<a class="update"> <i class="glyphicon glyphicon-edit" > </i> Editar </a> | '+
-                                    '<a class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>' 
+                            return '<a class="update" style="cursor: pointer;"> <i class="glyphicon glyphicon-edit" > </i> Editar </a> | '+
+                                    '<a class="delete" style="cursor: pointer;"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>' 
                         },
                         visible:false}
                 ]
             });
-            $('#dsProducto tbody tr').click(producto.AddProducto);
+            $( document ).on( 'click', '#dsProducto tbody tr', producto.AddProducto);
         }
         if (document.URL.indexOf("InventarioProducto.html")!=-1){
             this.tablaproducto = $('#dsProducto').DataTable( {
@@ -404,15 +405,15 @@ class Producto {
                         title:"ACCIÓN",
                         orderable: false,
                         searchable:false,
+                        className: 'buttons',
                         mRender: function () {
-                            return '<a class="update"> <i class="glyphicon glyphicon-edit" > </i> Editar </a> | '+
-                                    '<a class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>' 
+                            return '<a class="delete" style="cursor: pointer;"> <i class="glyphicon glyphicon-trash"> </i> </a>' 
                         },
-                        width:"12%"}
+                        width:"5%"}
                 ]
             });
-            $('.update').click(producto.UpdateEventHandler);
-            $('.delete').click(producto.DeleteEventHandler);
+            $( document ).on( 'click', '.delete', producto.DeleteEventHandler);
+            $( document ).on( 'click', '#dsProducto tbody tr td:not(.buttons)', producto.UpdateEventHandler);
         }
     };
 

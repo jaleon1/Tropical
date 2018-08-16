@@ -197,9 +197,13 @@ class Distribucion {
         t.rows.add(JSON.parse(e));
         // $('td:eq(4)').attr({ align: "right" });   
         t.draw();
-        $('.update').click(distr.UpdateEventHandler);
-        $('.delete').click(distr.DeleteEventHandler);
-        $('#tDistribucion tbody tr').click(distr.viewType==undefined || distr.viewType==distr.tUpdate ? distr.UpdateEventHandler : distr.SelectEventHandler);
+        //$('.delete').click(distr.DeleteEventHandler);
+        //$( "#tDistribucion tbody tr" ).live("click", distr.viewType==undefined || distr.viewType==distr.tUpdate ? distr.UpdateEventHandler : distr.SelectEventHandler);
+        //
+        //$( document ).on( 'click', '.update', distr.UpdateEventHandler);
+        $( document ).on( 'click', '#tDistribucion tbody tr td:not(.buttons)', distr.viewType==undefined || distr.viewType==distr.tUpdate ? distr.UpdateEventHandler : distr.SelectEventHandler);
+        $( document ).on( 'click', '.delete', distr.DeleteEventHandler);
+        // $( document ).on( 'click', '.open', distr.OpenEventHandler);
     };
 
     ShowItemData(e) {
@@ -389,12 +393,12 @@ class Distribucion {
         $('#tDistribucion').DataTable({
             responsive: true,
             info: false,
-            iDisplayLength: 100,
+            iDisplayLength: 10,
             columns: [
                 {
                     title: "id",
                     data: "id",
-                    className: "itemId",                    
+                    className: "itemId",
                     searchable: false
                 },
                 { title: "Codigo", data: "codigo" },
@@ -421,8 +425,10 @@ class Distribucion {
                     orderable: false,
                     searchable:false,
                     visible: buttons,
+                    className: "buttons",
+                    width: '5%',
                     mRender: function () {
-                        return '<a class="update" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | <a class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>'                            
+                        return '<a class="delete" style="cursor: pointer;"> <i class="glyphicon glyphicon-trash"> </i>  </a>'                            
                     }
                 }
             ]
@@ -433,7 +439,7 @@ class Distribucion {
         $('#tDistribucion').DataTable({
             responsive: true,
             info: false,
-            iDisplayLength: 100,            
+            iDisplayLength: 10,            
             columns: [
                 {
                     title: "id",
@@ -462,8 +468,10 @@ class Distribucion {
                     orderable: false,
                     searchable:false,
                     visible: buttons,
+                    className: "buttons",
+                    width: '5%',
                     mRender: function () {
-                        return '<a class="update" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | <a class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>'                            
+                        return '<a class="delete" style="cursor: pointer;"> <i class="glyphicon glyphicon-trash"> </i>  </a>'                            
                     }
                 }
             ]
