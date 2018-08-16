@@ -269,6 +269,7 @@ class Factura{
                 ProductoXFactura::$id=$this->id;
                  //save array obj
                  if(ProductoXFactura::Create($this->detalleFactura)){
+                    $this->restartInsumo($this->detalleOrden);
                     // retorna orden autogenerada.
                     OrdenXFactura::$id=$this->id;
                     OrdenXFactura::Create($this->detalleOrden);
@@ -286,6 +287,30 @@ class Factura{
             );
         }
     }
+
+    function restartInsumo($insumos){
+        foreach ($insumos as $key => $value){
+            $sql="UPDATE insumosXBodega 
+            SET saldoCantidad = saldoCantidad - 1
+            WHERE id =:idSabor1;"; 
+            $param= array(':idSabor1'=>$value->idSabor1);
+            $data = DATA::Ejecutar($sql,$param, false);
+
+            $sql="UPDATE insumosXBodega 
+            SET saldoCantidad = saldoCantidad - 1
+            WHERE id =:idSabor2;"; 
+            $param= array(':idSabor2'=>$value->idSabor2);
+            $data = DATA::Ejecutar($sql,$param, false);
+
+            $sql="UPDATE insumosXBodega 
+            SET saldoCantidad = saldoCantidad - 1
+            WHERE id =:idTopping;"; 
+            $param= array(':idTopping'=>$value->idTopping);
+            $data = DATA::Ejecutar($sql,$param, false);
+        };
+
+    }
+
 
     function TicketPrint($data){
         try {
