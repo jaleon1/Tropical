@@ -250,15 +250,16 @@ class Insumo {
                             title:"ACCIÓN",
                             orderable: false,
                             searchable:false,
+                            className: "buttons",
+                            width: '5%',
                             mRender: function () {
-                                return '<a class="update"> <i class="glyphicon glyphicon-edit" > </i> Editar </a> | '+
-                                        '<a class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>' 
+                                return '<a class="delete" style="cursor: pointer;"> <i class="glyphicon glyphicon-trash"> </i> </a>' 
                             },
-                            width:"12%"}
+                        }
                     ]
                 });
-                $('.update').click(insumo.UpdateEventHandler);
-                $('.delete').click(insumo.DeleteEventHandler);
+                $( document ).on( 'click', '#dsInsumo tbody tr td:not(.buttons)', insumo.UpdateEventHandler);
+                $( document ).on( 'click', '.delete', insumo.DeleteEventHandler);
             }
     };
 

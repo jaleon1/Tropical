@@ -267,15 +267,17 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
                     title:"ACCIÓN",
                     orderable: false,
                     searchable:false,
+                    className: 'buttons',
                     mRender: function () {
-                        return '<a class="updateOrdenSalida"> <i class="glyphicon glyphicon-edit" > </i> Editar </a> | '+
-                                '<a class="deleteOrdenSalida"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>' 
+                        return '<a class="deleteOrdenSalida" style="cursor: pointer;" > <i class="glyphicon glyphicon-trash"> </i> </a>' 
                     },
-                    "width":"12%"}
+                    "width":"5%"}
             ]
         });
-        $('.updateOrdenSalida').click(ordenSalida.UpdateEventHandler);
-        $('.deleteOrdenSalida').click(ordenSalida.DeleteEventHandler);
+        // $('.updateOrdenSalida').click(ordenSalida.UpdateEventHandler);
+        // $('.deleteOrdenSalida').click(ordenSalida.DeleteEventHandler);
+        $( document ).on( 'click', '#dsOrdenSalida tbody tr td:not(.buttons)', ordenSalida.UpdateEventHandler);
+            $( document ).on( 'click', '.deleteOrdenSalida', ordenSalida.DeleteEventHandler);
     };
 
     AddTableInsumo(id,codigo,nombre,descripcion,saldoCantidad,saldoCosto,costoPromedio) {
