@@ -1,11 +1,12 @@
 class Distribucion {
     // Constructor
-    constructor(id, orden, fecha, idUsuario, idBodega, porcentajeDescuento, porcentajeIva, lista) {
+    constructor(id, orden, fecha, idUsuario, idBodega, porcentajeDescuento, porcentajeIva, lista, bodega) {
         this.id = id || null;        
         this.orden = orden || '';
         this.fecha = fecha || '';
         this.idUsuario = idUsuario || null;
         this.idBodega = idBodega || null;
+        this.bodega = bodega || null;
         this.porcentajeDescuento = porcentajeDescuento || 0;
         this.porcentajeIva = porcentajeIva || 0;
         this.lista = lista || [];
@@ -42,7 +43,7 @@ class Distribucion {
             .fail(function (e) {
                 distr.showError(e);
             })
-            .always(NProgress.done());
+            .always(NProgress.done()); 
     }
 
     get Save() {
@@ -196,33 +197,100 @@ class Distribucion {
         t.clear();
         t.rows.add(JSON.parse(e));
         // $('td:eq(4)').attr({ align: "right" });   
-        t.draw();
+        t.order([1, 'desc']).draw();
         //$('.delete').click(distr.DeleteEventHandler);
         //$( "#tDistribucion tbody tr" ).live("click", distr.viewType==undefined || distr.viewType==distr.tUpdate ? distr.UpdateEventHandler : distr.SelectEventHandler);
         //
         //$( document ).on( 'click', '.update', distr.UpdateEventHandler);
         $( document ).on( 'click', '#tDistribucion tbody tr td:not(.buttons)', distr.viewType==undefined || distr.viewType==distr.tUpdate ? distr.UpdateEventHandler : distr.SelectEventHandler);
-        $( document ).on( 'click', '.delete', distr.DeleteEventHandler);
+        // $( document ).on( 'click', '.delete', distr.DeleteEventHandler);
         // $( document ).on( 'click', '.open', distr.OpenEventHandler);
     };
 
-    ShowItemData(e) {
-        // Limpia el controles
-        this.CleanCtls();
-        // carga objeto.
+    // ShowItemData(e) {
+    //     // Limpia el controles
+    //     this.CleanCtls();
+    //     // carga objeto.
+    //     var data = JSON.parse(e);
+    //     distr = new Distribucion(data.id, data.orden, data.fecha, data.idUsuario, data.idBodega, data.porcentajeDescuento, data.porcentajeIva, data.lista);
+    //     // datos
+    //     $('#orden').val(distr.orden);
+    //     $('#fecha').val(distr.fecha);
+    //     bodega.id= distr.idBodega;
+    //     bodega.Read;
+    //     // carga lista.
+    //     $.each(distr.lista, function (i, item) {
+    //         producto= item;
+    //         distr.AgregaProducto();
+    //     });
+    // };
+
+    ShowItemData(e){
         var data = JSON.parse(e);
-        distr = new Distribucion(data.id, data.orden, data.fecha, data.idUsuario, data.idBodega, data.porcentajeDescuento, data.porcentajeIva, data.lista);
-        // datos
-        $('#orden').val(distr.orden);
-        $('#fecha').val(distr.fecha);
-        bodega.id= distr.idBodega;
-        bodega.Read;
-        // carga lista.
-        $.each(distr.lista, function (i, item) {
-            producto= item;
-            distr.AgregaProducto();
+        distr = new Distribucion(data.id, data.orden, data.fecha, data.idUsuario, data.idBodega, data.porcentajeDescuento, data.porcentajeIva, data.lista, data.bodega);
+        $("#detalleDistribucion").empty();
+        var detalleDistribucion =
+            `<button type="button" class="close" data-dismiss="modal">
+                <span aria-hidden="true">X</span>
+            </button>
+            <h4 class="modal-title" id="myModalLabel">Traslado #${distr.orden}.</h4>
+            <div class="row">
+                
+                <div class="col-md-6 col-sm-6 col-xs-6">
+                    <p>Fecha: ${distr.fecha}</p>
+                </div>
+            </div>
+            <div class="row">                
+                <div class="col-md-6 col-sm-6 col-xs-6">
+                    <p>Destino: ${distr.bodega}</p>
+                </div>
+            </div>`;
+        $("#detalleDistribucion").append(detalleDistribucion);
+
+
+        $("#totalDistribucion").empty();
+
+        // var totalDistribucion =
+        //     `<h4>Total: ¢${Math.round(0)}</h4>`;
+        // $("#totalDistribucion").append(totalDistribucion);
+        // detalle
+        this.tb_prdXFact = $('#tb_detalle_distribucion').DataTable({
+            data: distr.lista,
+            destroy: true,
+            "searching": false,
+            "paging": false,
+            "info": false,
+            "ordering": false,
+            // "retrieve": true,
+            "order": [[0, "desc"]],
+            columns: [
+                {
+                    title: "Codigo",
+                    data: "codigo"
+                },
+                {
+                    title: "Nombre",
+                    data: "nombre"
+                },
+                {
+                    title: "Cantidad",
+                    data: "cantidad"
+                },
+                {
+                    title: "Precio Venta",
+                    data: "precioVenta"
+                }
+                // ,
+                // {
+                //     title: "Subtotal",
+                //     data: "subtotal"
+                // }
+            ]
         });
-    };
+
+        $('#modal').modal('toggle');
+
+    }
 
     // Muestra información en ventana
     showInfo() {
@@ -350,6 +418,17 @@ class Distribucion {
         //distr.calcTotal();
     };
 
+    UpdateEventHandler() {
+        distr.id = $(this).parents("tr").find(".itemId").text() || $(this).find(".itemId").text();
+        distr.Read;
+    };
+
+    DeleteEventHandler(btn){
+        // producto.id = $(this).parents("tr").find(".itemId").text() || $(this).find(".itemId").text();
+        var row = btn.parentNode.parentNode;
+        row.parentNode.removeChild(row);
+    }
+
     CalcImporte(prd){
         producto.cantidad =  $(`#cantidad${prd}`).val();
         producto.precioVenta = $(`#precioVenta${prd}`).attr('value');
@@ -428,7 +507,7 @@ class Distribucion {
                     className: "buttons",
                     width: '5%',
                     mRender: function () {
-                        return '<a class="delete" style="cursor: pointer;"> <i class="glyphicon glyphicon-trash"> </i>  </a>'                            
+                        return '<a class="delete" onclick="distr.DeleteEventHandler(this)" style="cursor: pointer;"> <i class="glyphicon glyphicon-trash"> </i>  </a>'                            
                     }
                 }
             ]

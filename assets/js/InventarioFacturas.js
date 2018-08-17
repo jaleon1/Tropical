@@ -63,9 +63,7 @@ class InventarioFacturas {
             </button>
             <h4 class="modal-title" id="myModalLabel">Factura #${id.consecutivo}.</h4>
             <div class="row">
-                <div class="col-md-6 col-sm-6 col-xs-6">
-                    <p>Tropical Sno.</p>
-                </div>
+                
                 <div class="col-md-6 col-sm-6 col-xs-6">
                     <p>Fecha: ${id.fechaCreacion}</p>
                 </div>
@@ -83,9 +81,9 @@ class InventarioFacturas {
 
         $("#totalFact").empty();
 
-        var totalFact =
-            `<h4>Total: ¢${Math.round(id.totalVenta)}</h4>`;
-        $("#totalFact").append(totalFact);
+        // var totalFact =
+        //     `<h4>Total: ¢${Math.round(id.totalVenta)}</h4>`;
+        // $("#totalFact").append(totalFact);
 
 
         $.ajax({
