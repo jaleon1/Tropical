@@ -11,34 +11,36 @@
 
 <body>
   <div class="ticket">
-    <p class="centrado">TROPICAL SNO.<br>
-      DISTRIBUCION # <label id=orden></label><br>
-      Fecha: <label id="fechaDistribucion"></label><br>
-      Bodega: <label id="bodega"></label><br>
-      Descripcion: <label id="descripcion"></label><br>
-      Usuario: <label id="usuario"></label>
-    </p>
     <table>
-      <thead>
-        <tr>
-          <th  style="width:40%; text-align:left;">PRODUCTO&nbsp;&nbsp;</th>
-          <th  style="width:30%; text-align:left;">CANTIDAD&nbsp;&nbsp;</th>
-          <th  style="width:30%; text-align:left;">PRECIO</th>
-          <spa>_______________________________</spa>
-        </tr>
-      </thead>
+        <tbody>
+          <tr><td><label>----------------------------------------------------</label></td></tr>
+          <tr style="text-align: center;"><td>
+            TROPICAL SNO. <label id="bodega"></label>
+          </td></tr>
+          <tr><td><label>----------------------------------------------------</label></td></tr>
+          <tr style="text-align: center;"><td>DISTRIBUCION # <label id=orden></label></label></td></tr>
+          <tr style="text-align: center;"><td>Fecha: <label id="fechaDistribucion"></label></td></tr>
+          <tr style="text-align: center;"><td>Usuario: <label id="usuario"></label></td></tr>
+        </tbody>
+      </table>
+    <table>
       <tbody id="tableBody-TicketDistribucion">
+          <tr><td colspan="3"><label>----------------------------------------------------</label></td></tr>
+          <tr>
+              <td  style="width:15%; text-align:left;">CN</td>
+            <td  style="width:65%; text-align:left;">Detalle</td>
+            <td  style="width:20%; text-align:left;">Precio</td>
+          </tr>
+          <tr><td colspan="3"><label>----------------------------------------------------</label></td></tr>
       </tbody>
     </table>
-    <p class="centrado">TOTALES<br>
-        Sub Total: <label id=subtotal></label><br>
-        Descuento: <label id="descuento"></label><br>
-        Impuesto de Ventas: <label id="iva"></label><br>
-        TOTAL: <label id="total"></label>
-      </p>
+    <table style="width:100%;">
+        <tbody id="tableBody-TicketTotal">
+        </tbody>
+    </table>
     <p class="centrado">Orden Distribuida...</p>
     </br>
-    <spa>_______________________________</spa>
+    
   </div>
   <script src="assets/js/Distribucion.js"></script>
 </body>
@@ -57,19 +59,34 @@
       $.each(listaProducto, function (i, item) {
           $('#tableBody-TicketDistribucion').append(`
                 <tr> 
-                    <td style="width:40%; text-align:left;">${item.nombre}</td>
-                    <td style="width:30%; text-align:left;">&nbsp;&nbsp;${item.cantidad}</td>
-                    <td style="width:30%; text-align:left;">&nbsp;&nbsp;${item.precioVenta}</td>
+                    <td style="width:15%; text-align:left;">${item.cantidad}</td>
+                    <td style="width:65%; text-align:left;">${item.nombre}</td>
+                    <td style="width:20%; text-align:left;">¢${parseFloat(item.precioVenta).toFixed(2).toString()}</td>
                 </tr>
             `);
-        }) 
-      $("#subtotal").text(localStorage.getItem("lsSubTotal"));
-      $("#descuento").text(localStorage.getItem("lsPorcentajeDescuento"));
-      $("#iva").text(localStorage.getItem("lsPorcentajeIva"));
-      $("#total").text(localStorage.getItem("lsTotal"));
+        });
+        $('#tableBody-TicketTotal').append(`
+        <tr><td colspan="3"><label>----------------------------------------------------</label></td></tr>
+        <tr>
+          <td style="width:65%; text-align:left;">
+            <label>SubTotal</label>
+          </td>
+          <td style="width:35%; text-align:right;">
+            ${localStorage.getItem("lsSubTotal")}
+          </td>
+        </tr>
+        <tr><td style="width:65%; text-align:left;"><label>Descuento:</label></td><td style="width:35%; text-align:right;">${localStorage.getItem("lsPorcentajeDescuento")}</td></tr>
+        <tr><td style="width:65%; text-align:left;"><label>IVA:</label></td><td style="width:35%; text-align:right;">${localStorage.getItem("lsPorcentajeIva")}</td></tr>
+        <tr><td style="width:65%; text-align:left;"><label>Total:</label></td><td style="width:35%; text-align:right;">${localStorage.getItem("lsTotal")}</td></tr>
+        <tr><td colspan="3"><label>----------------------------------------------------</label></td></tr>
+        `); 
+      // $("#subtotal").text(localStorage.getItem("lsSubTotal"));
+      // $("#descuento").text(localStorage.getItem("lsPorcentajeDescuento"));
+      // $("#iva").text(localStorage.getItem("lsPorcentajeIva"));
+      // $("#total").text(localStorage.getItem("lsTotal"));
       window.print();
       localStorage.setItem("lsPrintOK","OK");
-      // location.href ="/Tropical/Distribucion.html";
-      location.href ="/Distribucion.html";
+      location.href ="/Tropical/Distribucion.html";
+      // location.href ="/Distribucion.html";
   });  
 </script>
