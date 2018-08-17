@@ -111,11 +111,11 @@ class Distribucion {
         localStorage.setItem("lsSubTotal",$("#subtotal").text());
         localStorage.setItem("lsTotal",$("#total").text());
         localStorage.setItem("lsFechaDistribucion",data.fecha);
-        localStorage.setItem("lsPorcentajeDescuento",data.porcentajeDescuento);
-        localStorage.setItem("lsPorcentajeIva",data.porcentajeIva);
+        localStorage.setItem("lsPorcentajeDescuento",$("#desc_val").text());
+        localStorage.setItem("lsPorcentajeIva",$("#iv_val").text());
         localStorage.setItem("lsListaProducto",JSON.stringify(data.lista));
-
-        //location.href ="/Tropical/TicketDistribucion.html";
+        localStorage.setItem("lsUsuarioDistribucion",$("#call_username").text());
+        // location.href ="/Tropical/TicketDistribucion.html";
         location.href ="/TicketDistribucion.html";
     }
 

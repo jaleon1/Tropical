@@ -284,9 +284,9 @@ class Producto {
                 item.esVenta="SABOR";
             if (item.esVenta=="2") 
                 item.esVenta="TOPPING";
-            item.saldoCosto = (parseFloat(item.saldoCosto).toFixed(2)).toString()+"$";
-            item.costoPromedio = (parseFloat(item.costoPromedio).toFixed(2)).toString()+"$";
-            item.precioVenta = (parseFloat(item.precioVenta).toFixed(2)).toString()+"$";
+            item.saldoCosto = "¢"+(parseFloat(item.saldoCosto).toFixed(2)).toString();
+            item.costoPromedio = "¢"+(parseFloat(item.costoPromedio).toFixed(2)).toString();
+            item.precioVenta = "¢"+(parseFloat(item.precioVenta).toFixed(2)).toString();
         });
 
         if (document.URL.indexOf("ElaborarProducto.html")!=-1){
@@ -319,15 +319,15 @@ class Producto {
                         data:"descripcion",
                         width:"auto"},
                     {
-                        title:"S CANTIDAD",
+                        title:"SALDO CANTIDAD",
                         data:"saldoCantidad",
                         width:"auto"},
                     {
-                        title:"S COSTO",
+                        title:"SALDO COSTO",
                         data:"saldoCosto",
                         visible:false},
                     {
-                        title:"C PROMEDIO",
+                        title:"COSTO PROMEDIO",
                         data:"costoPromedio",
                         visible:false},
                     {
@@ -382,15 +382,15 @@ class Producto {
                         data:"descripcion",
                         width:"auto"},
                     {
-                        title:"S CANTIDAD",
+                        title:"SALDO CANTIDAD",
                         data:"saldoCantidad",
                         width:"auto"},
                     {
-                        title:"S COSTO",
+                        title:"SALDO COSTO",
                         data:"saldoCosto",
                         width:"auto"},
                     {
-                        title:"C PROMEDIO",
+                        title:"COSTO PROMEDIO",
                         data:"costoPromedio",
                         width:"auto"},
                     {

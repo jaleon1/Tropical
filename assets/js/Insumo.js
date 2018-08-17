@@ -152,8 +152,8 @@ class Insumo {
             var data = JSON.parse(e);
 
             $.each(data, function (i, item) {
-                item.saldoCosto = (parseFloat(item.saldoCosto).toFixed(2)).toString()+"$";
-                item.costoPromedio = (parseFloat(item.costoPromedio).toFixed(2)).toString()+"$";
+                item.saldoCosto = "¢"+(parseFloat(item.saldoCosto).toFixed(2)).toString();
+                item.costoPromedio = "¢"+(parseFloat(item.costoPromedio).toFixed(2)).toString();
             });
     
             if (document.URL.indexOf("OrdenSalida.html")!=-1){
@@ -182,16 +182,16 @@ class Insumo {
                             data:"descripcion",
                             width:"auto"},
                         {
-                            title:"S CANTIDAD",
+                            title:"SALDO CANTIDAD",
                             data:"saldoCantidad",
                             width:"auto"},
                         {
-                            title:"S COSTO",
+                            title:"SALDO COSTO",
                             data:"saldoCosto",
                             className:"oculto_saldoCosto", 
                             visible:false},
                         {
-                            title:"C PROMEDIO",
+                            title:"COSTO PROMEDIO",
                             data:"costoPromedio",
                             className:"oculto_costoPromedio", 
                             visible:false},
@@ -235,15 +235,15 @@ class Insumo {
                             data:"descripcion",
                             width:"auto"},
                         {
-                            title:"S CANTIDAD",
+                            title:"SALDO CANTIDAD",
                             data:"saldoCantidad",
                             width:"auto"},
                         {
-                            title:"S COSTO",
+                            title:"SALDO COSTO",
                             data:"saldoCosto",
                             width:"auto"},
                         {
-                            title:"C PROMEDIO",
+                            title:"COSTO PROMEDIO",
                             data:"costoPromedio",
                             width:"auto"},
                         {
