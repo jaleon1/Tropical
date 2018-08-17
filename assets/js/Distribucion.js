@@ -42,7 +42,7 @@ class Distribucion {
             .fail(function (e) {
                 distr.showError(e);
             })
-            .always(NProgress.done());
+            .always(NProgress.done()); 
     }
 
     get Save() {
@@ -202,7 +202,7 @@ class Distribucion {
         //
         //$( document ).on( 'click', '.update', distr.UpdateEventHandler);
         $( document ).on( 'click', '#tDistribucion tbody tr td:not(.buttons)', distr.viewType==undefined || distr.viewType==distr.tUpdate ? distr.UpdateEventHandler : distr.SelectEventHandler);
-        $( document ).on( 'click', '.delete', distr.DeleteEventHandler);
+        // $( document ).on( 'click', '.delete', distr.DeleteEventHandler);
         // $( document ).on( 'click', '.open', distr.OpenEventHandler);
     };
 
@@ -350,6 +350,34 @@ class Distribucion {
         //distr.calcTotal();
     };
 
+    UpdateEventHandler() {
+        distr.id = $(this).parents("tr").find(".itemId").text() || $(this).find(".itemId").text();
+        
+        
+        $('#btnOrdenSalida').attr("disabled", false);
+        $('#btnAddUsuarioRecibe').attr("disabled", false);
+        $('#btnAddInsumo').attr("disabled", false);
+        
+        ordenSalida.Read;     
+        
+        if($(this).parents("tr").find("td:eq(6)").html()=="LIQUIDADO"){              
+            swal ({ 
+                type: 'info',
+                title: 'La orden ya ha sido liquidada, No se puede modificar...'                     
+                }).then(function () { 
+                    $('#btnOrdenSalida').attr("disabled", true);
+                    $('#btnAddUsuarioRecibe').attr("disabled", true);
+                    $('#btnAddInsumo').attr("disabled", true);
+                });
+        }
+    };
+
+    DeleteEventHandler(btn){
+        // producto.id = $(this).parents("tr").find(".itemId").text() || $(this).find(".itemId").text();
+        var row = btn.parentNode.parentNode;
+        row.parentNode.removeChild(row);
+    }
+
     CalcImporte(prd){
         producto.cantidad =  $(`#cantidad${prd}`).val();
         producto.precioVenta = $(`#precioVenta${prd}`).attr('value');
@@ -428,7 +456,7 @@ class Distribucion {
                     className: "buttons",
                     width: '5%',
                     mRender: function () {
-                        return '<a class="delete" style="cursor: pointer;"> <i class="glyphicon glyphicon-trash"> </i>  </a>'                            
+                        return '<a class="delete" onclick="distr.DeleteEventHandler(this)" style="cursor: pointer;"> <i class="glyphicon glyphicon-trash"> </i>  </a>'                            
                     }
                 }
             ]

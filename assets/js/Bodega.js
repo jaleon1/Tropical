@@ -204,21 +204,22 @@ class Bodega {
     };
 
     ShowAll(e) {
+        // revisa si el dt ya está cargado.
         var t= $('#tBodega').DataTable();
-        t.clear();
-        t.rows.add(JSON.parse(e));
-        t.draw();
-        $( document ).on( 'click', '#tBodega tbody tr td:not(.buttons)', bodega.viewType==undefined || bodega.viewType==bodega.tUpdate ? bodega.UpdateEventHandler : bodega.SelectEventHandler);
-        $( document ).on( 'click', '.delete', bodega.DeleteEventHandler);
-        $( document ).on( 'click', '.open', bodega.OpenEventHandler);
+        if(t.rows().count()==0){
+            t.clear();
+            t.rows.add(JSON.parse(e));
+            t.draw();
+            $( document ).on( 'click', '#tBodega tbody tr td:not(.buttons)', bodega.viewType==undefined || bodega.viewType==bodega.tUpdate ? bodega.UpdateEventHandler : bodega.SelectEventHandler);
+            $( document ).on( 'click', '.delete', bodega.DeleteEventHandler);
+            $( document ).on( 'click', '.open', bodega.OpenEventHandler);
+        }
     };
 
     ShowAllD(e) {
         b.clear();
         b.rows.add(JSON.parse(e));
         b.draw();
-        //$('.update').click(ipautorizada.UpdateEventHandler);
-        //$('.delete').click(ipautorizada.DeleteEventHandler);
     };
 
     AddBodegaEventHandler(){
