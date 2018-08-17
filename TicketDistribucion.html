@@ -25,13 +25,13 @@
       </table>
     <table>
       <tbody id="tableBody-TicketDistribucion">
-          <tr><td colspan="3"><label>----------------------------------------------------</label></td></tr>
+          <tr><td colspan="2"><label>----------------------------------------------------</label></td></tr>
           <tr>
-              <td  style="width:15%; text-align:left;">CN</td>
-            <td  style="width:65%; text-align:left;">Detalle</td>
-            <td  style="width:20%; text-align:left;">Precio</td>
+              <td  style="width:20%; text-align:left;">CN</td>
+            <td  style="width:80%; text-align:left;">Detalle</td>
+            <!-- <td  style="width:20%; text-align:left;">Precio</td> -->
           </tr>
-          <tr><td colspan="3"><label>----------------------------------------------------</label></td></tr>
+          <tr><td colspan="2"><label>----------------------------------------------------</label></td></tr>
       </tbody>
     </table>
     <table style="width:100%;">
@@ -53,34 +53,35 @@
       $("#fechaDistribucion").text(localStorage.getItem("lsFechaDistribucion"));
       $("#bodega").text(localStorage.getItem("lsBodega"));
       $("#descripcion").text(localStorage.getItem("lsDescripcion"));
-      //   $("#usuario").text(localStorage.getItem("lsUsuarioRecibe"));
+      $("#usuario").text(localStorage.getItem("lsUsuarioDistribucion"));
       var listaProducto = localStorage.getItem("lsListaProducto");
       listaProducto = JSON.parse(listaProducto);
       $.each(listaProducto, function (i, item) {
           $('#tableBody-TicketDistribucion').append(`
                 <tr> 
-                    <td style="width:15%; text-align:left;">${item.cantidad}</td>
-                    <td style="width:65%; text-align:left;">${item.nombre}</td>
-                    <td style="width:20%; text-align:left;">¢${parseFloat(item.precioVenta).toFixed(2).toString()}</td>
+                    <td style="width:20%; text-align:left;">${item.cantidad}</td>
+                    <td style="width:80%; text-align:left;">${item.nombre}</td>
                 </tr>
             `);
         });
-        $('#tableBody-TicketTotal').append(`
-        <tr><td colspan="3"><label>----------------------------------------------------</label></td></tr>
-        <tr>
-          <td style="width:65%; text-align:left;">
-            <label>SubTotal</label>
-          </td>
-          <td style="width:35%; text-align:right;">
-            ${localStorage.getItem("lsSubTotal")}
-          </td>
-        </tr>
-        <tr><td style="width:65%; text-align:left;"><label>Descuento:</label></td><td style="width:35%; text-align:right;">${localStorage.getItem("lsPorcentajeDescuento")}</td></tr>
-        <tr><td style="width:65%; text-align:left;"><label>IVA:</label></td><td style="width:35%; text-align:right;">${localStorage.getItem("lsPorcentajeIva")}</td></tr>
-        <tr><td style="width:65%; text-align:left;"><label>Total:</label></td><td style="width:35%; text-align:right;">${localStorage.getItem("lsTotal")}</td></tr>
-        <tr><td colspan="3"><label>----------------------------------------------------</label></td></tr>
-        `); 
+        // <td style="width:20%; text-align:left;">¢${parseFloat(item.precioVenta).toFixed(2).toString()}</td>
+        // $('#tableBody-TicketTotal').append(`
+        // <tr><td colspan="3"><label>----------------------------------------------------</label></td></tr>
+        // <tr>
+        //   <td style="width:65%; text-align:left;">
+        //     <label>SubTotal</label>
+        //   </td>
+        //   <td style="width:35%; text-align:right;">
+        //     ${localStorage.getItem("lsSubTotal")}
+        //   </td>
+        // </tr>
+        // <tr><td style="width:65%; text-align:left;"><label>Descuento:</label></td><td style="width:35%; text-align:right;">${localStorage.getItem("lsPorcentajeDescuento")}</td></tr>
+        // <tr><td style="width:65%; text-align:left;"><label>IVA:</label></td><td style="width:35%; text-align:right;">${localStorage.getItem("lsPorcentajeIva")}</td></tr>
+        // <tr><td style="width:65%; text-align:left;"><label>Total:</label></td><td style="width:35%; text-align:right;">${localStorage.getItem("lsTotal")}</td></tr>
+        // <tr><td colspan="3"><label>----------------------------------------------------</label></td></tr>
+        // `); 
       // $("#subtotal").text(localStorage.getItem("lsSubTotal"));
+      //
       // $("#descuento").text(localStorage.getItem("lsPorcentajeDescuento"));
       // $("#iva").text(localStorage.getItem("lsPorcentajeIva"));
       // $("#total").text(localStorage.getItem("lsTotal"));

@@ -182,16 +182,16 @@ class Insumo {
                             data:"descripcion",
                             width:"auto"},
                         {
-                            title:"S CANTIDAD",
+                            title:"SALDO CANTIDAD",
                             data:"saldoCantidad",
                             width:"auto"},
                         {
-                            title:"S COSTO",
+                            title:"SALDO COSTO",
                             data:"saldoCosto",
                             className:"oculto_saldoCosto", 
                             visible:false},
                         {
-                            title:"C PROMEDIO",
+                            title:"COSTO PROMEDIO",
                             data:"costoPromedio",
                             className:"oculto_costoPromedio", 
                             visible:false},
@@ -235,15 +235,15 @@ class Insumo {
                             data:"descripcion",
                             width:"auto"},
                         {
-                            title:"S CANTIDAD",
+                            title:"SALDO CANTIDAD",
                             data:"saldoCantidad",
                             width:"auto"},
                         {
-                            title:"S COSTO",
+                            title:"SALDO COSTO",
                             data:"saldoCosto",
                             width:"auto"},
                         {
-                            title:"C PROMEDIO",
+                            title:"COSTO PROMEDIO",
                             data:"costoPromedio",
                             width:"auto"},
                         {

@@ -225,7 +225,7 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
             responsive: true,
             data: data,
             destroy: true,
-            "order": [[ 0, "asc" ]],
+            order: [[ 0, "desc" ]],
             columns: [
                 {
                     title:"Orden",
