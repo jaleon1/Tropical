@@ -1,11 +1,12 @@
 class Distribucion {
     // Constructor
-    constructor(id, orden, fecha, idUsuario, idBodega, porcentajeDescuento, porcentajeIva, lista) {
+    constructor(id, orden, fecha, idUsuario, idBodega, porcentajeDescuento, porcentajeIva, lista, bodega) {
         this.id = id || null;        
         this.orden = orden || '';
         this.fecha = fecha || '';
         this.idUsuario = idUsuario || null;
         this.idBodega = idBodega || null;
+        this.bodega = bodega || null;
         this.porcentajeDescuento = porcentajeDescuento || 0;
         this.porcentajeIva = porcentajeIva || 0;
         this.lista = lista || [];
@@ -196,7 +197,7 @@ class Distribucion {
         t.clear();
         t.rows.add(JSON.parse(e));
         // $('td:eq(4)').attr({ align: "right" });   
-        t.draw();
+        t.order([1, 'desc']).draw();
         //$('.delete').click(distr.DeleteEventHandler);
         //$( "#tDistribucion tbody tr" ).live("click", distr.viewType==undefined || distr.viewType==distr.tUpdate ? distr.UpdateEventHandler : distr.SelectEventHandler);
         //
@@ -206,23 +207,90 @@ class Distribucion {
         // $( document ).on( 'click', '.open', distr.OpenEventHandler);
     };
 
-    ShowItemData(e) {
-        // Limpia el controles
-        this.CleanCtls();
-        // carga objeto.
+    // ShowItemData(e) {
+    //     // Limpia el controles
+    //     this.CleanCtls();
+    //     // carga objeto.
+    //     var data = JSON.parse(e);
+    //     distr = new Distribucion(data.id, data.orden, data.fecha, data.idUsuario, data.idBodega, data.porcentajeDescuento, data.porcentajeIva, data.lista);
+    //     // datos
+    //     $('#orden').val(distr.orden);
+    //     $('#fecha').val(distr.fecha);
+    //     bodega.id= distr.idBodega;
+    //     bodega.Read;
+    //     // carga lista.
+    //     $.each(distr.lista, function (i, item) {
+    //         producto= item;
+    //         distr.AgregaProducto();
+    //     });
+    // };
+
+    ShowItemData(e){
         var data = JSON.parse(e);
-        distr = new Distribucion(data.id, data.orden, data.fecha, data.idUsuario, data.idBodega, data.porcentajeDescuento, data.porcentajeIva, data.lista);
-        // datos
-        $('#orden').val(distr.orden);
-        $('#fecha').val(distr.fecha);
-        bodega.id= distr.idBodega;
-        bodega.Read;
-        // carga lista.
-        $.each(distr.lista, function (i, item) {
-            producto= item;
-            distr.AgregaProducto();
+        distr = new Distribucion(data.id, data.orden, data.fecha, data.idUsuario, data.idBodega, data.porcentajeDescuento, data.porcentajeIva, data.lista, data.bodega);
+        $("#detalleDistribucion").empty();
+        var detalleDistribucion =
+            `<button type="button" class="close" data-dismiss="modal">
+                <span aria-hidden="true">X</span>
+            </button>
+            <h4 class="modal-title" id="myModalLabel">Traslado #${distr.orden}.</h4>
+            <div class="row">
+                
+                <div class="col-md-6 col-sm-6 col-xs-6">
+                    <p>Fecha: ${distr.fecha}</p>
+                </div>
+            </div>
+            <div class="row">                
+                <div class="col-md-6 col-sm-6 col-xs-6">
+                    <p>Destino: ${distr.bodega}</p>
+                </div>
+            </div>`;
+        $("#detalleDistribucion").append(detalleDistribucion);
+
+
+        $("#totalDistribucion").empty();
+
+        // var totalDistribucion =
+        //     `<h4>Total: ¢${Math.round(0)}</h4>`;
+        // $("#totalDistribucion").append(totalDistribucion);
+        // detalle
+        this.tb_prdXFact = $('#tb_detalle_distribucion').DataTable({
+            data: distr.lista,
+            destroy: true,
+            "searching": false,
+            "paging": false,
+            "info": false,
+            "ordering": false,
+            // "retrieve": true,
+            "order": [[0, "desc"]],
+            columns: [
+                {
+                    title: "Codigo",
+                    data: "codigo"
+                },
+                {
+                    title: "Nombre",
+                    data: "nombre"
+                },
+                {
+                    title: "Cantidad",
+                    data: "cantidad"
+                },
+                {
+                    title: "Precio Venta",
+                    data: "precioVenta"
+                }
+                // ,
+                // {
+                //     title: "Subtotal",
+                //     data: "subtotal"
+                // }
+            ]
         });
-    };
+
+        $('#modal').modal('toggle');
+
+    }
 
     // Muestra información en ventana
     showInfo() {
@@ -352,24 +420,7 @@ class Distribucion {
 
     UpdateEventHandler() {
         distr.id = $(this).parents("tr").find(".itemId").text() || $(this).find(".itemId").text();
-        
-        
-        $('#btnOrdenSalida').attr("disabled", false);
-        $('#btnAddUsuarioRecibe').attr("disabled", false);
-        $('#btnAddInsumo').attr("disabled", false);
-        
-        ordenSalida.Read;     
-        
-        if($(this).parents("tr").find("td:eq(6)").html()=="LIQUIDADO"){              
-            swal ({ 
-                type: 'info',
-                title: 'La orden ya ha sido liquidada, No se puede modificar...'                     
-                }).then(function () { 
-                    $('#btnOrdenSalida').attr("disabled", true);
-                    $('#btnAddUsuarioRecibe').attr("disabled", true);
-                    $('#btnAddInsumo').attr("disabled", true);
-                });
-        }
+        distr.Read;
     };
 
     DeleteEventHandler(btn){

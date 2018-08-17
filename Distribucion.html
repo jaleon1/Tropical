@@ -147,6 +147,10 @@
                         <!--  CONTENIDO DE LA PAGINA -->
                         <div class="col-md-9 col-sm-12 col-xs-12">
                             <div class="x_panel">
+                                <div class="x_title">
+                                    <h2>Origen</h2>
+                                    <div class="clearfix"></div>
+                                </div>
                                 <div class="title_right">
                                     <div class="col-md-12 col-sm-12 col-xs-12 form-group top_search">
                                         <div class="input-group">
@@ -185,7 +189,7 @@
                             <div class="row">
                                 <div class="x_panel">
                                     <div class="x_title">
-                                        <h2>Agencia</h2>
+                                        <h2>Destino</h2>
 
                                         <div class="clearfix"></div>
                                     </div>
@@ -296,7 +300,7 @@
 
                     <div class="form-group">
                         <div class="col-md-12 col-md-offset-9">
-                            <button id="reset" type="reset"  class="btn btn-primary">Limpiar</button>
+                            <button id="reset" type="reset" class="btn btn-primary">Limpiar</button>
                             <button id="btnDistribucion" type="submit" class="btn btn-success">Aceptar</button>
                         </div>
                     </div>
@@ -389,17 +393,17 @@
 
 <script>
     $(document).ready(function () {
-        if(localStorage.getItem("lsPrintOK")=="OK"){
+        if (localStorage.getItem("lsPrintOK") == "OK") {
             swal({
                 type: 'success',
                 title: 'Número de Orden:' + localStorage.getItem("lsOrden"),
                 text: 'Número de orden de Distribución:',
                 showConfirmButton: true
-            }).then(function () { 
-                localStorage.setItem("lsPrintOK","NOT");    
+            }).then(function () {
+                localStorage.setItem("lsPrintOK", "NOT");
             });
         }
-        
+
         distr.setTable();
         bodega.setTable(false);
         //
