@@ -114,8 +114,8 @@ class Distribucion {
         localStorage.setItem("lsPorcentajeIva",$("#iv_val").text());
         localStorage.setItem("lsListaProducto",JSON.stringify(data.lista));
         localStorage.setItem("lsUsuarioDistribucion",$("#call_username").text());
-        location.href ="/Tropical/TicketDistribucion.html";
-        // location.href ="/TicketDistribucion.html";
+        // location.href ="/Tropical/TicketDistribucion.html";
+        location.href ="/TicketDistribucion.html";
     }
 
     get ReadbyOrden() {
