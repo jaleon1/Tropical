@@ -152,8 +152,8 @@ class Insumo {
             var data = JSON.parse(e);
 
             $.each(data, function (i, item) {
-                item.saldoCosto = (parseFloat(item.saldoCosto).toFixed(2)).toString()+"$";
-                item.costoPromedio = (parseFloat(item.costoPromedio).toFixed(2)).toString()+"$";
+                item.saldoCosto = "¢"+(parseFloat(item.saldoCosto).toFixed(2)).toString();
+                item.costoPromedio = "¢"+(parseFloat(item.costoPromedio).toFixed(2)).toString();
             });
     
             if (document.URL.indexOf("OrdenSalida.html")!=-1){
