@@ -424,8 +424,18 @@ class Distribucion {
 
     DeleteEventHandler(btn){
         // producto.id = $(this).parents("tr").find(".itemId").text() || $(this).find(".itemId").text();
-        var row = btn.parentNode.parentNode;
-        row.parentNode.removeChild(row);
+        //var row = btn.parentNode.parentNode;
+        //row.parentNode.removeChild(row);
+        var t = $('#tDistribucion').DataTable();
+        t.row( $(this).parents('tr') )
+        .remove()
+        .draw();
+        // $('#tDistribucion tbody').on( 'click', '.delete', function () {
+        //     table
+        //         .row( $(this).parents('tr') )
+        //         .remove()
+        //         .draw();
+        // } );        
     }
 
     CalcImporte(prd){
@@ -551,7 +561,7 @@ class Distribucion {
                     className: "buttons",
                     width: '5%',
                     mRender: function () {
-                        return '<a class="delete" style="cursor: pointer;"> <i class="glyphicon glyphicon-trash"> </i>  </a>'                            
+                        return '<a class="delete" style="cursor: pointer;"> <i class="glyphicon glyphicon-trash delete"> </i>  </a>'                            
                     }
                 }
             ]
