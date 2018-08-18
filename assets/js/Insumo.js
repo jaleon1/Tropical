@@ -206,7 +206,7 @@ class Insumo {
                             visible:false}
                     ]
                 });
-                $('#dsInsumo tbody tr').click(insumo.AddInsumo);
+                $( document ).on( 'click', '#dsInsumo tbody tr', insumo.AddInsumo);
             }
 
             if (document.URL.indexOf("InventarioInsumo.html")!=-1){

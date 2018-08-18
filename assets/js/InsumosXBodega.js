@@ -131,6 +131,10 @@ class InsumoBodega {
         var t= $('#tInsumo').DataTable();
         t.clear();
         var data = JSON.parse(e);
+        $.each(data, function (i, item) {
+            item.saldoCosto = "¢"+(parseFloat(item.saldoCosto).toFixed(2)).toString();
+            item.costoPromedio = "¢"+(parseFloat(item.costoPromedio).toFixed(2)).toString();
+        });
         t.rows.add(data);   
         t.draw();
     };
@@ -182,6 +186,7 @@ class InsumoBodega {
         $('#tInsumo').DataTable({
             responsive: true,
             info: false,
+            columnDefs: [{className: "text-right", "targets": [4,5,6]}],
             columns: [
                 {
                     title: "id",
