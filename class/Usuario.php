@@ -163,7 +163,7 @@ class Usuario{
     function Login(){
         try {
             //Check activo & password.
-            $sql= 'SELECT u.id, u.username, u.nombre, activo, password, idEvento, e.nombre as nombreUrl, e.url, menuPadre, subMenuPadre, icono
+            $sql= 'SELECT DISTINCT u.id, u.username, u.nombre, activo, password, idEvento, e.nombre as nombreUrl, e.url, menuPadre, subMenuPadre, icono
             FROM usuario u inner join rolesXUsuario ru on ru.idUsuario = u.id
                 inner join eventosXRol er on er.idRol = ru.idRol
                 inner join evento e on e.id = er.idEvento

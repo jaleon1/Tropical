@@ -50,7 +50,7 @@ class Distribucion {
         if($('#tDistribucion tbody tr').length==0 ){
             swal({
                 type: 'warning',
-                title: 'Orden de Compra',
+                title: 'Orden de Traslado',
                 text: 'Debe agregar items a la lista',
                 showConfirmButton: false,
                 timer: 3000
@@ -143,7 +143,7 @@ class Distribucion {
                         timer: 3000
                     });
                 }
-                else distr.ShowItemData(e);
+                else distr.ShowOrderData(e);
             })
             .fail(function (e) {
                 distr.showError(e);
@@ -207,23 +207,23 @@ class Distribucion {
         // $( document ).on( 'click', '.open', distr.OpenEventHandler);
     };
 
-    // ShowItemData(e) {
-    //     // Limpia el controles
-    //     this.CleanCtls();
-    //     // carga objeto.
-    //     var data = JSON.parse(e);
-    //     distr = new Distribucion(data.id, data.orden, data.fecha, data.idUsuario, data.idBodega, data.porcentajeDescuento, data.porcentajeIva, data.lista);
-    //     // datos
-    //     $('#orden').val(distr.orden);
-    //     $('#fecha').val(distr.fecha);
-    //     bodega.id= distr.idBodega;
-    //     bodega.Read;
-    //     // carga lista.
-    //     $.each(distr.lista, function (i, item) {
-    //         producto= item;
-    //         distr.AgregaProducto();
-    //     });
-    // };
+    ShowOrderData(e) {
+        // Limpia el controles
+        this.CleanCtls();
+        // carga objeto.
+        var data = JSON.parse(e);
+        distr = new Distribucion(data.id, data.orden, data.fecha, data.idUsuario, data.idBodega, data.porcentajeDescuento, data.porcentajeIva, data.lista);
+        // datos
+        $('#orden').val(distr.orden);
+        $('#fecha').val(distr.fecha);
+        bodega.id= distr.idBodega;
+        bodega.Read;
+        // carga lista.
+        $.each(distr.lista, function (i, item) {
+            producto= item;
+            distr.AgregaProducto();
+        });
+    };
 
     ShowItemData(e){
         var data = JSON.parse(e);
@@ -246,7 +246,6 @@ class Distribucion {
                 </div>
             </div>`;
         $("#detalleDistribucion").append(detalleDistribucion);
-
 
         $("#totalDistribucion").empty();
 
@@ -424,9 +423,10 @@ class Distribucion {
     };
 
     DeleteEventHandler(btn){
-        // producto.id = $(this).parents("tr").find(".itemId").text() || $(this).find(".itemId").text();
-        var row = btn.parentNode.parentNode;
-        row.parentNode.removeChild(row);
+        var t = $('#tDistribucion').DataTable();
+        t.row( $(btn).parents('tr') )
+        .remove()
+        .draw();      
     }
 
     CalcImporte(prd){
@@ -468,11 +468,12 @@ class Distribucion {
         }
     };
 
-    setTable(buttons=true){
+    setTable(buttons=true, nPaging=10){
         $('#tDistribucion').DataTable({
             responsive: true,
             info: false,
-            iDisplayLength: 10,
+            iDisplayLength: nPaging,
+            paging: false,
             columns: [
                 {
                     title: "id",
@@ -533,9 +534,10 @@ class Distribucion {
                 { 
                     title: "Total", 
                     data: "total",
-                    className: "total",
+                    className: "text-right",
+                    // className: "total",
                     mRender: function ( e ) {
-                        return parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                        return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ".")
                     }
                 },
                 { 
@@ -550,7 +552,7 @@ class Distribucion {
                     className: "buttons",
                     width: '5%',
                     mRender: function () {
-                        return '<a class="delete" style="cursor: pointer;"> <i class="glyphicon glyphicon-trash"> </i>  </a>'                            
+                        return '<a class="delete" style="cursor: pointer;"> <i class="glyphicon glyphicon-trash delete"> </i>  </a>'                            
                     }
                 }
             ]
