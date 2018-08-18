@@ -68,7 +68,7 @@ class Bodega {
                 bodega.showError(e);
             })
             .always(function () {
-                setTimeout('$("#btnBodega").removeAttr("disabled")', 1000);
+                $("#btnBodega").removeAttr("disabled");
                 bodega = new Bodega();
                 bodega.ClearCtls();
                 bodega.Read;
@@ -206,14 +206,18 @@ class Bodega {
     ShowAll(e) {
         // revisa si el dt ya está cargado.
         var t= $('#tBodega').DataTable();
-        if(t.rows().count()==0){
+         if(t.rows().count()==0){
             t.clear();
             t.rows.add(JSON.parse(e));
             t.draw();
             $( document ).on( 'click', '#tBodega tbody tr td:not(.buttons)', bodega.viewType==undefined || bodega.viewType==bodega.tUpdate ? bodega.UpdateEventHandler : bodega.SelectEventHandler);
             $( document ).on( 'click', '.delete', bodega.DeleteEventHandler);
-            $( document ).on( 'click', '.open', bodega.OpenEventHandler);
-        }
+            $( document ).on( 'click', '.openView', bodega.OpenEventHandler);
+         }else{
+            t.clear();
+            t.rows.add(JSON.parse(e));
+            t.draw();
+         }
     };
 
     ShowAllD(e) {
@@ -358,7 +362,7 @@ class Bodega {
                     className: "buttons",
                     width: '5%',
                     mRender: function () {
-                        return '<a class="delete" style="cursor: pointer;"> <i class="glyphicon glyphicon-trash"> </i> </a> | <a class="open" style="cursor: pointer;"> <i class="glyphicon glyphicon-eye-open"> </i>  </a>' 
+                        return '<a class="delete" style="cursor: pointer;"> <i class="glyphicon glyphicon-trash"> </i> </a> | <a class="openView" style="cursor: pointer;"> <i class="glyphicon glyphicon-eye-open"> </i>  </a>' 
                     }
                 }
             ]
