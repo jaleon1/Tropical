@@ -423,19 +423,10 @@ class Distribucion {
     };
 
     DeleteEventHandler(btn){
-        // producto.id = $(this).parents("tr").find(".itemId").text() || $(this).find(".itemId").text();
-        //var row = btn.parentNode.parentNode;
-        //row.parentNode.removeChild(row);
         var t = $('#tDistribucion').DataTable();
-        t.row( $(this).parents('tr') )
+        t.row( $(btn).parents('tr') )
         .remove()
-        .draw();
-        // $('#tDistribucion tbody').on( 'click', '.delete', function () {
-        //     table
-        //         .row( $(this).parents('tr') )
-        //         .remove()
-        //         .draw();
-        // } );        
+        .draw();      
     }
 
     CalcImporte(prd){
