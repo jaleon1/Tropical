@@ -182,6 +182,15 @@ class Distribucion{
             {
                 //save array obj
                 if(ProductosXDistribucion::Create($this->lista)){
+                    // si es una bodega interna, acepta la distribución.
+                    $sql="SELECT t.nombre
+                        FROM tropical.bodega b
+                        INNER JOIN tipoBodega t on t.id = b.idTipoBodega
+                        WHERE b.id=:idBodega and t.nombre= 'Interna' ";
+                    $param= array(':idBodega'=>$this->idBodega);
+                    $data = DATA::Ejecutar($sql,$param);
+                    if(count($data))
+                        $this->Aceptar();
                     // retorna orden autogenerada.
                     return $this->Read();
                 }

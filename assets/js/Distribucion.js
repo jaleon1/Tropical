@@ -50,7 +50,7 @@ class Distribucion {
         if($('#tDistribucion tbody tr').length==0 ){
             swal({
                 type: 'warning',
-                title: 'Orden de Compra',
+                title: 'Orden de Traslado',
                 text: 'Debe agregar items a la lista',
                 showConfirmButton: false,
                 timer: 3000
@@ -247,7 +247,6 @@ class Distribucion {
             </div>`;
         $("#detalleDistribucion").append(detalleDistribucion);
 
-
         $("#totalDistribucion").empty();
 
         // var totalDistribucion =
@@ -424,9 +423,10 @@ class Distribucion {
     };
 
     DeleteEventHandler(btn){
-        // producto.id = $(this).parents("tr").find(".itemId").text() || $(this).find(".itemId").text();
-        var row = btn.parentNode.parentNode;
-        row.parentNode.removeChild(row);
+        var t = $('#tDistribucion').DataTable();
+        t.row( $(btn).parents('tr') )
+        .remove()
+        .draw();      
     }
 
     CalcImporte(prd){
@@ -552,7 +552,7 @@ class Distribucion {
                     className: "buttons",
                     width: '5%',
                     mRender: function () {
-                        return '<a class="delete" style="cursor: pointer;"> <i class="glyphicon glyphicon-trash"> </i>  </a>'                            
+                        return '<a class="delete" style="cursor: pointer;"> <i class="glyphicon glyphicon-trash delete"> </i>  </a>'                            
                     }
                 }
             ]
