@@ -143,7 +143,7 @@ class Distribucion {
                         timer: 3000
                     });
                 }
-                else distr.ShowItemData(e);
+                else distr.ShowOrderData(e);
             })
             .fail(function (e) {
                 distr.showError(e);
@@ -207,23 +207,23 @@ class Distribucion {
         // $( document ).on( 'click', '.open', distr.OpenEventHandler);
     };
 
-    // ShowItemData(e) {
-    //     // Limpia el controles
-    //     this.CleanCtls();
-    //     // carga objeto.
-    //     var data = JSON.parse(e);
-    //     distr = new Distribucion(data.id, data.orden, data.fecha, data.idUsuario, data.idBodega, data.porcentajeDescuento, data.porcentajeIva, data.lista);
-    //     // datos
-    //     $('#orden').val(distr.orden);
-    //     $('#fecha').val(distr.fecha);
-    //     bodega.id= distr.idBodega;
-    //     bodega.Read;
-    //     // carga lista.
-    //     $.each(distr.lista, function (i, item) {
-    //         producto= item;
-    //         distr.AgregaProducto();
-    //     });
-    // };
+    ShowOrderData(e) {
+        // Limpia el controles
+        this.CleanCtls();
+        // carga objeto.
+        var data = JSON.parse(e);
+        distr = new Distribucion(data.id, data.orden, data.fecha, data.idUsuario, data.idBodega, data.porcentajeDescuento, data.porcentajeIva, data.lista);
+        // datos
+        $('#orden').val(distr.orden);
+        $('#fecha').val(distr.fecha);
+        bodega.id= distr.idBodega;
+        bodega.Read;
+        // carga lista.
+        $.each(distr.lista, function (i, item) {
+            producto= item;
+            distr.AgregaProducto();
+        });
+    };
 
     ShowItemData(e){
         var data = JSON.parse(e);
@@ -468,11 +468,12 @@ class Distribucion {
         }
     };
 
-    setTable(buttons=true){
+    setTable(buttons=true, nPaging=10){
         $('#tDistribucion').DataTable({
             responsive: true,
             info: false,
-            iDisplayLength: 10,
+            iDisplayLength: nPaging,
+            paging: false,
             columns: [
                 {
                     title: "id",
@@ -533,9 +534,10 @@ class Distribucion {
                 { 
                     title: "Total", 
                     data: "total",
-                    className: "total",
+                    className: "text-right",
+                    // className: "total",
                     mRender: function ( e ) {
-                        return parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                        return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ".")
                     }
                 },
                 { 

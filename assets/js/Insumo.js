@@ -201,7 +201,7 @@ class Insumo {
                             searchable:false,
                             mRender: function () {
                                 return '<a class="update"> <i class="glyphicon glyphicon-edit" > </i> Editar </a> | '+
-                                        '<a class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>' 
+                                        '<a class="delete"> <i class="glyphicon glyphicon-trash"> </i> </a>' 
                             },
                             visible:false}
                     ]
