@@ -50,7 +50,7 @@ class Distribucion {
         if($('#tDistribucion tbody tr').length==0 ){
             swal({
                 type: 'warning',
-                title: 'Orden de Compra',
+                title: 'Orden de Traslado',
                 text: 'Debe agregar items a la lista',
                 showConfirmButton: false,
                 timer: 3000
@@ -246,7 +246,6 @@ class Distribucion {
                 </div>
             </div>`;
         $("#detalleDistribucion").append(detalleDistribucion);
-
 
         $("#totalDistribucion").empty();
 
