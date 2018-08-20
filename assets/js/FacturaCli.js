@@ -69,38 +69,46 @@ $(document).ready(function () {
         },
         "columnDefs": [
             {
+                "title": "idTamaño",
                 "visible": false,
                 "targets": 0,
                 "searchable": false
             },
             {
+                "title": "Tamaño",
                 "targets": 1,
                 "width": "auto"
             },
             {
+                "title": "idSabor01",
                 "visible": false,
                 "targets": 2,
                 "searchable": false
             },
             {
+                "title": "Sabor",
                 "width": "auto",
                 "targets": 3
             },
             {
+                "title": "idSabor02",
                 "visible": false,
                 "targets": 4,
                 "searchable": false
             },
             {
+                "title": "Sabor",
                 "width": "auto",
                 "targets": 5,
             },
             {
+                "title": "idTopping",
                 "visible": false,
                 "targets": 6,
                 "searchable": false
             },
             {
+                "title": "Topping",
                 "width": "auto",
                 "targets": 7
             }
