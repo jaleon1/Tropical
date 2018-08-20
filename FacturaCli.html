@@ -42,7 +42,7 @@
 
 </head>
 
-<body>
+<body  id="body">
     <div class="container body">
         <div class="main_container">
 
@@ -265,4 +265,11 @@
             $(".procesarFac").prop('disabled', true);
         }
     });
+
+    var elem = document.getElementById("body");
+
+    elem.onclick = function() {
+        req = elem.requestFullScreen || elem.webkitRequestFullScreen || elem.mozRequestFullScreen;
+        req.call(elem);
+    }
 </script>
