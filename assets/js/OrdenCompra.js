@@ -279,11 +279,11 @@ class OrdenCompra {
         insumo.subTotal= insumo.valorBueno + insumo.valorMalo; // subTotal linea
         //
         $(`#valorBueno_v${prd}`).val(insumo.valorBueno.toFixed(10));
-        $(`#valorBueno_d${prd}`).val("$"+insumo.valorBueno.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+        $(`#valorBueno_d${prd}`).val("¢"+insumo.valorBueno.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
         $(`#valorMalo_v${prd}`).val(insumo.valorMalo.toFixed(10));
-        $(`#valorMalo_d${prd}`).val("$"+insumo.valorMalo.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+        $(`#valorMalo_d${prd}`).val("¢"+insumo.valorMalo.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
         $(`#subtotal_v${prd}`).val(insumo.subTotal.toFixed(10));
-        $(`#subtotal_d${prd}`).val("$"+insumo.subTotal.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+        $(`#subtotal_d${prd}`).val("¢"+insumo.subTotal.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
     };
 
     Init() {

@@ -1,11 +1,12 @@
 class Distribucion {
     // Constructor
-    constructor(id, orden, fecha, idUsuario, idBodega, porcentajeDescuento, porcentajeIva, lista) {
+    constructor(id, orden, fecha, idUsuario, idBodega, porcentajeDescuento, porcentajeIva, lista, bodega) {
         this.id = id || null;        
         this.orden = orden || '';
         this.fecha = fecha || '';
         this.idUsuario = idUsuario || null;
         this.idBodega = idBodega || null;
+        this.bodega = bodega || null;
         this.porcentajeDescuento = porcentajeDescuento || 0;
         this.porcentajeIva = porcentajeIva || 0;
         this.lista = lista || [];
@@ -42,14 +43,14 @@ class Distribucion {
             .fail(function (e) {
                 distr.showError(e);
             })
-            .always(NProgress.done());
+            .always(NProgress.done()); 
     }
 
     get Save() {
         if($('#tDistribucion tbody tr').length==0 ){
             swal({
                 type: 'warning',
-                title: 'Orden de Compra',
+                title: 'Orden de Traslado',
                 text: 'Debe agregar items a la lista',
                 showConfirmButton: false,
                 timer: 3000
@@ -110,11 +111,11 @@ class Distribucion {
         localStorage.setItem("lsSubTotal",$("#subtotal").text());
         localStorage.setItem("lsTotal",$("#total").text());
         localStorage.setItem("lsFechaDistribucion",data.fecha);
-        localStorage.setItem("lsPorcentajeDescuento",data.porcentajeDescuento);
-        localStorage.setItem("lsPorcentajeIva",data.porcentajeIva);
+        localStorage.setItem("lsPorcentajeDescuento",$("#desc_val").text());
+        localStorage.setItem("lsPorcentajeIva",$("#iv_val").text());
         localStorage.setItem("lsListaProducto",JSON.stringify(data.lista));
-
-        //location.href ="/Tropical/TicketDistribucion.html";
+        localStorage.setItem("lsUsuarioDistribucion",$("#call_username").text());
+        // location.href ="/Tropical/TicketDistribucion.html";
         location.href ="/TicketDistribucion.html";
     }
 
@@ -142,7 +143,7 @@ class Distribucion {
                         timer: 3000
                     });
                 }
-                else distr.ShowItemData(e);
+                else distr.ShowOrderData(e);
             })
             .fail(function (e) {
                 distr.showError(e);
@@ -196,13 +197,17 @@ class Distribucion {
         t.clear();
         t.rows.add(JSON.parse(e));
         // $('td:eq(4)').attr({ align: "right" });   
-        t.draw();
-        $('.update').click(distr.UpdateEventHandler);
-        $('.delete').click(distr.DeleteEventHandler);
-        $('#tDistribucion tbody tr').click(distr.viewType==undefined || distr.viewType==distr.tUpdate ? distr.UpdateEventHandler : distr.SelectEventHandler);
+        t.order([1, 'desc']).draw();
+        //$('.delete').click(distr.DeleteEventHandler);
+        //$( "#tDistribucion tbody tr" ).live("click", distr.viewType==undefined || distr.viewType==distr.tUpdate ? distr.UpdateEventHandler : distr.SelectEventHandler);
+        //
+        //$( document ).on( 'click', '.update', distr.UpdateEventHandler);
+        $( document ).on( 'click', '#tDistribucion tbody tr td:not(.buttons)', distr.viewType==undefined || distr.viewType==distr.tUpdate ? distr.UpdateEventHandler : distr.SelectEventHandler);
+        // $( document ).on( 'click', '.delete', distr.DeleteEventHandler);
+        // $( document ).on( 'click', '.open', distr.OpenEventHandler);
     };
 
-    ShowItemData(e) {
+    ShowOrderData(e) {
         // Limpia el controles
         this.CleanCtls();
         // carga objeto.
@@ -219,6 +224,72 @@ class Distribucion {
             distr.AgregaProducto();
         });
     };
+
+    ShowItemData(e){
+        var data = JSON.parse(e);
+        distr = new Distribucion(data.id, data.orden, data.fecha, data.idUsuario, data.idBodega, data.porcentajeDescuento, data.porcentajeIva, data.lista, data.bodega);
+        $("#detalleDistribucion").empty();
+        var detalleDistribucion =
+            `<button type="button" class="close" data-dismiss="modal">
+                <span aria-hidden="true">X</span>
+            </button>
+            <h4 class="modal-title" id="myModalLabel">Traslado #${distr.orden}.</h4>
+            <div class="row">
+                
+                <div class="col-md-6 col-sm-6 col-xs-6">
+                    <p>Fecha: ${distr.fecha}</p>
+                </div>
+            </div>
+            <div class="row">                
+                <div class="col-md-6 col-sm-6 col-xs-6">
+                    <p>Destino: ${distr.bodega}</p>
+                </div>
+            </div>`;
+        $("#detalleDistribucion").append(detalleDistribucion);
+
+        $("#totalDistribucion").empty();
+
+        // var totalDistribucion =
+        //     `<h4>Total: ¢${Math.round(0)}</h4>`;
+        // $("#totalDistribucion").append(totalDistribucion);
+        // detalle
+        this.tb_prdXFact = $('#tb_detalle_distribucion').DataTable({
+            data: distr.lista,
+            destroy: true,
+            "searching": false,
+            "paging": false,
+            "info": false,
+            "ordering": false,
+            // "retrieve": true,
+            "order": [[0, "desc"]],
+            columns: [
+                {
+                    title: "Codigo",
+                    data: "codigo"
+                },
+                {
+                    title: "Nombre",
+                    data: "nombre"
+                },
+                {
+                    title: "Cantidad",
+                    data: "cantidad"
+                },
+                {
+                    title: "Precio Venta",
+                    data: "precioVenta"
+                }
+                // ,
+                // {
+                //     title: "Subtotal",
+                //     data: "subtotal"
+                // }
+            ]
+        });
+
+        $('#modal').modal('toggle');
+
+    }
 
     // Muestra información en ventana
     showInfo() {
@@ -346,6 +417,18 @@ class Distribucion {
         //distr.calcTotal();
     };
 
+    UpdateEventHandler() {
+        distr.id = $(this).parents("tr").find(".itemId").text() || $(this).find(".itemId").text();
+        distr.Read;
+    };
+
+    DeleteEventHandler(btn){
+        var t = $('#tDistribucion').DataTable();
+        t.row( $(btn).parents('tr') )
+        .remove()
+        .draw();      
+    }
+
     CalcImporte(prd){
         producto.cantidad =  $(`#cantidad${prd}`).val();
         producto.precioVenta = $(`#precioVenta${prd}`).attr('value');
@@ -385,16 +468,17 @@ class Distribucion {
         }
     };
 
-    setTable(buttons=true){
+    setTable(buttons=true, nPaging=10){
         $('#tDistribucion').DataTable({
             responsive: true,
             info: false,
-            iDisplayLength: 100,
+            iDisplayLength: nPaging,
+            paging: false,
             columns: [
                 {
                     title: "id",
                     data: "id",
-                    className: "itemId",                    
+                    className: "itemId",
                     searchable: false
                 },
                 { title: "Codigo", data: "codigo" },
@@ -421,8 +505,10 @@ class Distribucion {
                     orderable: false,
                     searchable:false,
                     visible: buttons,
+                    className: "buttons",
+                    width: '5%',
                     mRender: function () {
-                        return '<a class="update" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | <a class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>'                            
+                        return '<a class="delete" onclick="distr.DeleteEventHandler(this)" style="cursor: pointer;"> <i class="glyphicon glyphicon-trash"> </i>  </a>'                            
                     }
                 }
             ]
@@ -433,7 +519,7 @@ class Distribucion {
         $('#tDistribucion').DataTable({
             responsive: true,
             info: false,
-            iDisplayLength: 100,            
+            iDisplayLength: 10,            
             columns: [
                 {
                     title: "id",
@@ -448,9 +534,10 @@ class Distribucion {
                 { 
                     title: "Total", 
                     data: "total",
-                    className: "total",
+                    className: "text-right",
+                    // className: "total",
                     mRender: function ( e ) {
-                        return parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                        return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ".")
                     }
                 },
                 { 
@@ -462,8 +549,10 @@ class Distribucion {
                     orderable: false,
                     searchable:false,
                     visible: buttons,
+                    className: "buttons",
+                    width: '5%',
                     mRender: function () {
-                        return '<a class="update" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | <a class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>'                            
+                        return '<a class="delete" style="cursor: pointer;"> <i class="glyphicon glyphicon-trash delete"> </i>  </a>'                            
                     }
                 }
             ]

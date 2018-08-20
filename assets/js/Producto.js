@@ -284,9 +284,9 @@ class Producto {
                 item.esVenta="SABOR";
             if (item.esVenta=="2") 
                 item.esVenta="TOPPING";
-            item.saldoCosto = (parseFloat(item.saldoCosto).toFixed(2)).toString()+"$";
-            item.costoPromedio = (parseFloat(item.costoPromedio).toFixed(2)).toString()+"$";
-            item.precioVenta = (parseFloat(item.precioVenta).toFixed(2)).toString()+"$";
+            item.saldoCosto = "¢"+(parseFloat(item.saldoCosto).toFixed(2)).toString();
+            item.costoPromedio = "¢"+(parseFloat(item.costoPromedio).toFixed(2)).toString();
+            item.precioVenta = "¢"+(parseFloat(item.precioVenta).toFixed(2)).toString();
         });
 
         if (document.URL.indexOf("ElaborarProducto.html")!=-1){
@@ -319,15 +319,15 @@ class Producto {
                         data:"descripcion",
                         width:"auto"},
                     {
-                        title:"S CANTIDAD",
+                        title:"SALDO CANTIDAD",
                         data:"saldoCantidad",
                         width:"auto"},
                     {
-                        title:"S COSTO",
+                        title:"SALDO COSTO",
                         data:"saldoCosto",
                         visible:false},
                     {
-                        title:"C PROMEDIO",
+                        title:"COSTO PROMEDIO",
                         data:"costoPromedio",
                         visible:false},
                     {
@@ -342,14 +342,15 @@ class Producto {
                         title:"ACCIÓN",
                         orderable: false,
                         searchable:false,
+                        width: '5%',
                         mRender: function () {
-                            return '<a class="update"> <i class="glyphicon glyphicon-edit" > </i> Editar </a> | '+
-                                    '<a class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>' 
+                            return '<a class="update" style="cursor: pointer;"> <i class="glyphicon glyphicon-edit" > </i> Editar </a> | '+
+                                    '<a class="delete" style="cursor: pointer;"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>' 
                         },
                         visible:false}
                 ]
             });
-            $('#dsProducto tbody tr').click(producto.AddProducto);
+            $( document ).on( 'click', '#dsProducto tbody tr', producto.AddProducto);
         }
         if (document.URL.indexOf("InventarioProducto.html")!=-1){
             this.tablaproducto = $('#dsProducto').DataTable( {
@@ -381,15 +382,15 @@ class Producto {
                         data:"descripcion",
                         width:"auto"},
                     {
-                        title:"S CANTIDAD",
+                        title:"SALDO CANTIDAD",
                         data:"saldoCantidad",
                         width:"auto"},
                     {
-                        title:"S COSTO",
+                        title:"SALDO COSTO",
                         data:"saldoCosto",
                         width:"auto"},
                     {
-                        title:"C PROMEDIO",
+                        title:"COSTO PROMEDIO",
                         data:"costoPromedio",
                         width:"auto"},
                     {
@@ -404,15 +405,15 @@ class Producto {
                         title:"ACCIÓN",
                         orderable: false,
                         searchable:false,
+                        className: 'buttons',
                         mRender: function () {
-                            return '<a class="update"> <i class="glyphicon glyphicon-edit" > </i> Editar </a> | '+
-                                    '<a class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>' 
+                            return '<a class="delete" style="cursor: pointer;"> <i class="glyphicon glyphicon-trash"> </i> </a>' 
                         },
-                        width:"12%"}
+                        width:"5%"}
                 ]
             });
-            $('.update').click(producto.UpdateEventHandler);
-            $('.delete').click(producto.DeleteEventHandler);
+            $( document ).on( 'click', '.delete', producto.DeleteEventHandler);
+            $( document ).on( 'click', '#dsProducto tbody tr td:not(.buttons)', producto.UpdateEventHandler);
         }
     };
 

@@ -68,7 +68,7 @@ class Bodega {
                 bodega.showError(e);
             })
             .always(function () {
-                setTimeout('$("#btnBodega").removeAttr("disabled")', 1000);
+                $("#btnBodega").removeAttr("disabled");
                 bodega = new Bodega();
                 bodega.ClearCtls();
                 bodega.Read;
@@ -204,22 +204,26 @@ class Bodega {
     };
 
     ShowAll(e) {
+        // revisa si el dt ya está cargado.
         var t= $('#tBodega').DataTable();
-        t.clear();
-        t.rows.add(JSON.parse(e));
-        t.draw();
-        $('.update').click(bodega.UpdateEventHandler);
-        $('.delete').click(bodega.DeleteEventHandler);
-        $('.open').click(bodega.OpenEventHandler);
-        $('#tBodega tbody tr').click(bodega.viewType==undefined || bodega.viewType==bodega.tUpdate ? bodega.UpdateEventHandler : bodega.SelectEventHandler);
+         if(t.rows().count()==0){
+            t.clear();
+            t.rows.add(JSON.parse(e));
+            t.draw();
+            $( document ).on( 'click', '#tBodega tbody tr td:not(.buttons)', bodega.viewType==undefined || bodega.viewType==bodega.tUpdate ? bodega.UpdateEventHandler : bodega.SelectEventHandler);
+            $( document ).on( 'click', '.delete', bodega.DeleteEventHandler);
+            $( document ).on( 'click', '.openView', bodega.OpenEventHandler);
+         }else{
+            t.clear();
+            t.rows.add(JSON.parse(e));
+            t.draw();
+         }
     };
 
     ShowAllD(e) {
         b.clear();
         b.rows.add(JSON.parse(e));
         b.draw();
-        //$('.update').click(ipautorizada.UpdateEventHandler);
-        //$('.delete').click(ipautorizada.DeleteEventHandler);
     };
 
     AddBodegaEventHandler(){
@@ -339,6 +343,7 @@ class Bodega {
         $('#tBodega').DataTable({
             responsive: true,
             info: false,
+            pageLength: 10,
             columns: [
                 {
                     title: "id",
@@ -354,8 +359,10 @@ class Bodega {
                     orderable: false,
                     searchable:false,
                     visible: buttons,
+                    className: "buttons",
+                    width: '5%',
                     mRender: function () {
-                        return '<a class="update" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | <a class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a> | <a class="open"> <i class="glyphicon glyphicon-eye-open"> </i> Abrir </a>' 
+                        return '<a class="delete" style="cursor: pointer;"> <i class="glyphicon glyphicon-trash"> </i> </a> | <a class="openView" style="cursor: pointer;"> <i class="glyphicon glyphicon-eye-open"> </i>  </a>' 
                     }
                 }
             ]

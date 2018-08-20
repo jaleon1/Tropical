@@ -5,6 +5,7 @@ if(isset($_POST["action"])){
     // Classes
     require_once("Conexion.php");
     require_once("Usuario.php");
+    require_once("ProductosXDistribucion.php");
     // Session
     if (!isset($_SESSION))
         session_start();
@@ -39,6 +40,7 @@ class Distribucion{
     public $id=null;
     public $fecha='';
     public $idBodega=null;
+    public $bodega=null;
     public $orden='';
     public $idUsuario=null;
     public $porcentajeDescuento=0;
@@ -132,29 +134,12 @@ class Distribucion{
         }
     }
 
-    // function Read(){
-    //     try {
-    //         $sql='SELECT id, fecha, orden, idUsuario, idBodega, porcentajeDescuento, porcentajeIva 
-    //             FROM distribucion  
-    //             where id=:id';
-    //         $param= array(':id'=>$this->id);
-    //         $data= DATA::Ejecutar($sql,$param);
-    //         return $data;
-    //     }     
-    //     catch(Exception $e) {
-    //         header('HTTP/1.0 400 Bad error');
-    //         die(json_encode(array(
-    //             'code' => $e->getCode() ,
-    //             'msg' => 'Error al cargar el producto'))
-    //         );
-    //     }
-    // }
-
     function Read(){
         try {
-            $sql='SELECT id, fecha, orden, idUsuario, idBodega, porcentajeDescuento, porcentajeIva
-                FROM distribucion
-                where id=:id';
+            $sql='SELECT d.id, d.fecha, d.orden, d.idUsuario, d.idBodega, b.nombre as bodega, d.porcentajeDescuento, d.porcentajeIva
+                FROM distribucion d
+                INNER JOIN bodega b on b.id=d.idBodega
+                where d.id=:id';
             $param= array(':id'=>$this->id);
             $data= DATA::Ejecutar($sql,$param);     
             if(count($data)){
@@ -163,6 +148,7 @@ class Distribucion{
                 $this->orden = $data[0]['orden'];
                 $this->idUsuario = $data[0]['idUsuario'];
                 $this->idBodega = $data[0]['idBodega'];
+                $this->bodega = $data[0]['bodega'];
                 $this->porcentajeDescuento = $data[0]['porcentajeDescuento'];
                 $this->porcentajeIva = $data[0]['porcentajeIva'];
                 // productos x distribucion.
@@ -196,6 +182,15 @@ class Distribucion{
             {
                 //save array obj
                 if(ProductosXDistribucion::Create($this->lista)){
+                    // si es una bodega interna, acepta la distribución.
+                    $sql="SELECT t.nombre
+                        FROM tropical.bodega b
+                        INNER JOIN tipoBodega t on t.id = b.idTipoBodega
+                        WHERE b.id=:idBodega and t.nombre= 'Interna' ";
+                    $param= array(':idBodega'=>$this->idBodega);
+                    $data = DATA::Ejecutar($sql,$param);
+                    if(count($data))
+                        $this->Aceptar();
                     // retorna orden autogenerada.
                     return $this->Read();
                 }
@@ -231,7 +226,6 @@ class Distribucion{
                 $data = DATA::Ejecutar($sql,$param,false);
                 if(!$data)
                     $created= false;
-                
             }
             if($created)
                 return true;

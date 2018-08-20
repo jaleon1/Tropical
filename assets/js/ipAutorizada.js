@@ -117,8 +117,7 @@ class IpAutorizada {
         t.clear();
         t.rows.add(JSON.parse(e));
         t.draw();
-        //$('.update').click(ipautorizada.UpdateEventHandler);
-        $('.delete').click(ipautorizada.DeleteEventHandler);
+        $( document ).on( 'click', '.delete', ipautorizada.DeleteEventHandler);
     };
 
     UpdateEventHandler() {

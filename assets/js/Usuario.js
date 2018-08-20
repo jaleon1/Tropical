@@ -183,9 +183,10 @@ class Usuario {
         t.rows.add(JSON.parse(e));
         t.draw();
         // eventos
-        $('.update').click(usuario.UpdateEventHandler);
-        $('.delete').click(usuario.DeleteEventHandler);
-        $('#tUsuario tbody tr').click(usuario.viewType==undefined || usuario.viewType==usuario.tUpdate ? usuario.UpdateEventHandler : usuario.SelectEventHandler);
+        $( document ).on( 'click', '.delete', usuario.DeleteEventHandler);
+        $( document ).on( 'click', '#tUsuario tbody tr td:not(.buttons)', 
+            usuario.viewType==undefined || usuario.viewType==usuario.tUpdate ? usuario.UpdateEventHandler : usuario.SelectEventHandler
+        );
     };
 
     UpdateEventHandler() {
@@ -353,8 +354,10 @@ class Usuario {
                     orderable: false,
                     searchable:false,
                     visible: buttons,
+                    className: "buttons",
+                    width:'5%',
                     mRender: function () {
-                        return '<a class="update" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | <a class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>'                            
+                        return '<a class="delete" style="cursor: pointer;" > <i class="glyphicon glyphicon-trash"> </i> </a>'                            
                     }
                 }
             ]

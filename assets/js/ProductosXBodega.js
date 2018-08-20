@@ -372,6 +372,7 @@ class ProductoBodega {
                     orderable: false,
                     searchable:false,
                     visible: buttons,
+                    className: "buttons",
                     mRender: function () {
                         return '<a class="update" > <i class="glyphicon glyphicon-edit" > </i> Editar </a> | <a class="delete"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>'                            
                     }
