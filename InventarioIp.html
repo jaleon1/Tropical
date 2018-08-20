@@ -296,21 +296,34 @@
         t = $('#dsItems').DataTable({
             responsive: true,
             ordering: false,
+
             info: false, //Quita el pie de página
             pageLength: 50, // lineas por página
             language: {
                 infoEmpty: "No hay ip agregadas",
                 emptyTable: "No hay ip agregadas",
-                search: "Buscar IP" //Cambia el texto de Search
+                search: "Buscar IP",
+                "order": [[ 0, "asc" ]],
+                "infoEmpty": "Sin Usuarios Registrados",
+                "emptyTable": "Sin Usuarios Registrados",
+                "search": "Buscar",
+                "zeroRecords":    "No hay resultados",
+                "lengthMenu":     "Mostar _MENU_ registros",
+                "paginate": {
+                    "first":      "Primera",
+                    "last":       "Ultima",
+                    "next":       "Siguiente",
+                    "previous":   "Anterior"
+                }
             },
             columns: [
                 { 
                     title: "ip",
                     className: "itemIdvisible",
                 },
-                { title: "Created" },
+                { title: "Creada" },
                 {
-                    title: "Action",
+                    title: "Eliminar",
                     className: 'buttons',
                     width:'5%',
                     mRender: function () {

@@ -147,7 +147,20 @@ function ShowAll(data) {
         bLengthChange: false,
         distroy: true,
         info:false,
-        data : data.bodegas,
+        data : data.bodegas,              
+        "language": {
+            "infoEmpty": "Sin Productos Ingresados",
+            "emptyTable": "Sin Productos Ingresados",
+            "search": "Buscar",
+            "zeroRecords":    "No hay resultados",
+            "lengthMenu":     "Mostar _MENU_ registros",
+            "paginate": {
+                "first":      "Primera",
+                "last":       "Ultima",
+                "next":       "Siguiente",
+                "previous":   "Anterior"
+            }
+        },  
         columns : [
             { "data" : "idBodega" },
             { "data" : "nombre" }
