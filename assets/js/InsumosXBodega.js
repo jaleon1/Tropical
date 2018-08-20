@@ -186,6 +186,20 @@ class InsumoBodega {
         $('#tInsumo').DataTable({
             responsive: true,
             info: false,
+            "order": [[ 1, "asc" ]],
+            "language": {
+                "infoEmpty": "Sin insumos Registrados",
+                "emptyTable": "Sin Insumos Registrados",
+                "search": "Buscar",
+                "zeroRecords":    "No hay resultados",
+                "lengthMenu":     "Mostar _MENU_ registros",
+                "paginate": {
+                    "first":      "Primera",
+                    "last":       "Ultima",
+                    "next":       "Siguiente",
+                    "previous":   "Anterior"
+                }
+            },
             columnDefs: [{className: "text-right", "targets": [4,5,6]}],
             columns: [
                 {

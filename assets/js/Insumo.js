@@ -161,7 +161,20 @@ class Insumo {
                     responsive: true,
                     destroy: true,
                     data: data,
-                    order: [[ 1, "asc" ]],
+                    order: [[ 1, "asc" ]],        
+                    "language": {
+                        "infoEmpty": "Sin Productos Ingresados",
+                        "emptyTable": "Sin Productos Ingresados",
+                        "search": "Buscar",
+                        "zeroRecords":    "No hay resultados",
+                        "lengthMenu":     "Mostar _MENU_ registros",
+                        "paginate": {
+                            "first":      "Primera",
+                            "last":       "Ultima",
+                            "next":       "Siguiente",
+                            "previous":   "Anterior"
+                        }
+                    },  
                     columnDefs: [{className: "text-right", "targets": [4]}],
                     columns: [
                         {
@@ -214,7 +227,20 @@ class Insumo {
                     responsive: true,
                     destroy: true,
                     data: data,
-                    order: [[ 1, "asc" ]],
+                    order: [[ 1, "asc" ]],        
+                    "language": {
+                        "infoEmpty": "Sin Productos Ingresados",
+                        "emptyTable": "Sin Productos Ingresados",
+                        "search": "Buscar",
+                        "zeroRecords":    "No hay resultados",
+                        "lengthMenu":     "Mostar _MENU_ registros",
+                        "paginate": {
+                            "first":      "Primera",
+                            "last":       "Ultima",
+                            "next":       "Siguiente",
+                            "previous":   "Anterior"
+                        }
+                    },  
                     columnDefs: [{className: "text-right", "targets": [4,5,6]}],
                     columns: [
                         {
