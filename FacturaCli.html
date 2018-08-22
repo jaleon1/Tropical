@@ -34,6 +34,7 @@
     <link href="assets/css/facturacion.css" rel="stylesheet">
     <!-- Custom TablePRD -->
     <link href="assets/css/datatables.net-bs/css/dataTables.bootstrap.min.css" rel="stylesheet">
+    <link href="assets/css/datatables.net-bs/css/responsive.dataTables.min.css" rel="stylesheet">
     <!-- SweetAlert -->
     <link rel="stylesheet" href="assets/css/sweetalert2.min.css">
     <!-- SweetAlert -->
@@ -41,7 +42,7 @@
 
 </head>
 
-<body>
+<body  id="body">
     <div class="container body">
         <div class="main_container">
 
@@ -264,4 +265,11 @@
             $(".procesarFac").prop('disabled', true);
         }
     });
+
+    var elem = document.getElementById("body");
+
+    elem.onclick = function() {
+        req = elem.requestFullScreen || elem.webkitRequestFullScreen || elem.mozRequestFullScreen;
+        req.call(elem);
+    }
 </script>

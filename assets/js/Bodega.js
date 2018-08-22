@@ -344,6 +344,20 @@ class Bodega {
             responsive: true,
             info: false,
             pageLength: 10,
+            "order": [[ 1, "asc" ]],
+            "language": {
+                "infoEmpty": "Sin Usuarios Registrados",
+                "emptyTable": "Sin Usuarios Registrados",
+                "search": "Buscar",
+                "zeroRecords":    "No hay resultados",
+                "lengthMenu":     "Mostar _MENU_ registros",
+                "paginate": {
+                    "first":      "Primera",
+                    "last":       "Ultima",
+                    "next":       "Siguiente",
+                    "previous":   "Anterior"
+                }
+            },
             columns: [
                 {
                     title: "id",
@@ -355,7 +369,7 @@ class Bodega {
                 { title: "Descripción", data: "descripcion" },
                 { title: "Tipo", data: "tipo" },
                 {
-                    title: "Action",
+                    title: "Acción",
                     orderable: false,
                     searchable:false,
                     visible: buttons,
