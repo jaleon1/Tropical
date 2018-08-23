@@ -456,7 +456,7 @@ class ClienteFE{
 
     function Update(){
         try {
-            error_log('iniciando',0);
+            error_log('iniciando');
             $sql="UPDATE clienteFE 
                 SET nombre=:nombre, codigoSeguridad=:codigoSeguridad, idCodigoPais=:idCodigoPais, idTipoIdentificacion=:idTipoIdentificacion, 
                     identificacion=:identificacion, nombreComercial=:nombreComercial, idProvincia=:idProvincia, idCanton=:idCanton, idDistrito=:idDistrito, 
