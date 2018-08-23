@@ -490,9 +490,9 @@ class ClienteFE{
                 error_log('fin');
                 if (curl_error($ch)) {
                     $error_msg = curl_error($ch);
+                    error_log('error: '. $error_msg);
                 }     
-                curl_close($ch);
-                
+                curl_close($ch);                
                 return true;
             }   
             else throw new Exception('Error al guardar.', 123);
