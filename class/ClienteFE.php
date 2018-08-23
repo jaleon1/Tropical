@@ -480,7 +480,7 @@ class ClienteFE{
                 curl_setopt($ch,CURLOPT_VERBOSE, 1);
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
                 curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-                error_log('enviando');
+                error_log('enviando: '. $url);
                 $server_output = curl_exec($ch);
                 $information = curl_getinfo($ch);
                 $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
