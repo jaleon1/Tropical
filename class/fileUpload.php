@@ -8,11 +8,9 @@ $uploaddir= '../../CU/'.$_SESSION['userSession']->idBodega.'/';
 if (!file_exists($uploaddir)) 
     mkdir($uploaddir, 0700, true);
 $cfile= encdes::cifrar($_FILES['file']['name']);
-error_log('cif');
 $uploadfile = $uploaddir . explode('::', $cfile)[0];
 if (!empty($_FILES)) {
-    if (move_uploaded_file($_FILES['file']['tmp_name'], $uploadfile)) {
-        error_log('mv');
+    if (move_uploaded_file($_FILES['file']['tmp_name'], $uploadfile)) {        
         $sql="UPDATE clienteFE 
                 SET cpath=:cpath, nkey=:nkey
                 WHERE idBodega=:idBodega";
@@ -25,12 +23,12 @@ if (!empty($_FILES)) {
             return true;
         }
         else {
-            error_log('no se almacena la data');
+            error_log('no se almacena la data del path de certificado.');
             echo "upload err!";
             return false;
         }
     } else {
-        error_log('mvf');
+        error_log('mv failed');
         echo "upload attack!";
         return false;
     }
