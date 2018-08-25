@@ -301,9 +301,6 @@ class ClienteFE {
             });
             return false;
         }                    
-        // Sube el certificado y crea/actualiza cliente.
-        if(dz!=undefined)
-            dz.processQueue();
         $('#btnSubmit').attr("disabled", "disabled");
         $.ajax({
             type: "POST",
@@ -314,7 +311,10 @@ class ClienteFE {
             }
         })
             .done(function(){
-                if(dz==undefined) // No hay cola para subir.
+                // Sube el certificado y crea/actualiza cliente.
+                if(dz!=undefined)
+                    dz.processQueue();
+                else // No hay cola para subir.
                     clientefe.showInfo();
             })
             .fail(function (e) {
