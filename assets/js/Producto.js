@@ -275,147 +275,173 @@ class Producto {
     };
 
     ShowAll(e) {
-        var data = JSON.parse(e);
-
-        $.each(data, function (i, item) {
-            if (item.esVenta=="0") 
-                item.esVenta="ARTICULO";
-            if (item.esVenta=="1") 
-                item.esVenta="SABOR";
-            if (item.esVenta=="2") 
-                item.esVenta="TOPPING";
-            item.saldoCosto = "¢"+(parseFloat(item.saldoCosto).toFixed(2)).toString();
-            item.costoPromedio = "¢"+(parseFloat(item.costoPromedio).toFixed(2)).toString();
-            item.precioVenta = "¢"+(parseFloat(item.precioVenta).toFixed(2)).toString();
-        });
-
-        if (document.URL.indexOf("ElaborarProducto.html")!=-1){
-            this.tablaproducto = $('#dsProducto').DataTable( {
-                responsive: true,
-                destroy: true,
-                data: data,
-                order: [[ 1, "asc" ]],
-                columnDefs: [{className: "text-right", "targets": [5]}],
-                columns: [
-                    {
-                        title:"ID",
-                        data:"id",
-                        className:"itemId",                    
-                        width:"auto"},
-                    {
-                        title:"CODIGO",
-                        data:"codigo",
-                        width:"auto"},
-                    {
-                        title:"NOMBRE",
-                        data:"nombre",
-                        width:"auto"},
-                    {
-                        title:"ABREVIATURA",
-                        data:"nombreAbreviado",
-                        width:"auto"},
-                    {
-                        title:"DESCRIPCION",
-                        data:"descripcion",
-                        width:"auto"},
-                    {
-                        title:"SALDO CANTIDAD",
-                        data:"saldoCantidad",
-                        width:"auto"},
-                    {
-                        title:"SALDO COSTO",
-                        data:"saldoCosto",
-                        visible:false},
-                    {
-                        title:"COSTO PROMEDIO",
-                        data:"costoPromedio",
-                        visible:false},
-                    {
-                        title:"P VENTA",
-                        data:"precioVenta",
-                        visible:false},
-                    {
-                        title:"TIPO",
-                        data:"esVenta",
-                        width:"auto"},
-                    {
-                        title:"ACCIÓN",
-                        orderable: false,
-                        searchable:false,
-                        width: '5%',
-                        mRender: function () {
-                            return '<a class="update" style="cursor: pointer;"> <i class="glyphicon glyphicon-edit" > </i> Editar </a> | '+
-                                    '<a class="delete" style="cursor: pointer;"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>' 
-                        },
-                        visible:false}
-                ]
-            });
-            $( document ).on( 'click', '#dsProducto tbody tr', producto.AddProducto);
-        }
-        if (document.URL.indexOf("InventarioProducto.html")!=-1){
-            this.tablaproducto = $('#dsProducto').DataTable( {
-                responsive: true,
-                destroy: true,
-                data: data,
-                order: [[ 1, "asc" ]],
-                columnDefs: [{className: "text-right", "targets": [5,6,7,8]}],
-                columns: [
-                    {
-                        title:"ID",
-                        data:"id",
-                        className:"itemId",                    
-                        width:"auto"},
-                    {
-                        title:"CODIGO",
-                        data:"codigo",
-                        width:"auto"},
-                    {
-                        title:"NOMBRE",
-                        data:"nombre",
-                        width:"auto"},
-                    {
-                        title:"ABREVIATURA",
-                        data:"nombreAbreviado",
-                        width:"auto"},
-                    {
-                        title:"DESCRIPCION",
-                        data:"descripcion",
-                        width:"auto"},
-                    {
-                        title:"SALDO CANTIDAD",
-                        data:"saldoCantidad",
-                        width:"auto"},
-                    {
-                        title:"SALDO COSTO",
-                        data:"saldoCosto",
-                        width:"auto"},
-                    {
-                        title:"COSTO PROMEDIO",
-                        data:"costoPromedio",
-                        width:"auto"},
-                    {
-                        title:"P VENTA",
-                        data:"precioVenta",
-                        width:"auto"},
-                    {
-                        title:"TIPO",
-                        data:"esVenta",
-                        width:"auto"},
-                    {
-                        title:"ACCIÓN",
-                        orderable: false,
-                        searchable:false,
-                        className: 'buttons',
-                        mRender: function () {
-                            return '<a class="delete" style="cursor: pointer;"> <i class="glyphicon glyphicon-trash"> </i> </a>' 
-                        },
-                        width:"5%"}
-                ]
-            });
-            $( document ).on( 'click', '.delete', producto.DeleteEventHandler);
-            $( document ).on( 'click', '#dsProducto tbody tr td:not(.buttons)', producto.UpdateEventHandler);
+        //Crea los eventos según sea el url
+        var t= $('#dsProducto').DataTable();
+        if(t.rows().count()==0){
+           t.clear();
+           t.rows.add(JSON.parse(e));
+           t.draw();
+           $( document ).on( 'click', '#dsProducto tbody tr', document.URL.indexOf("ElaborarProducto.html")!=-1?producto.AddProducto:producto.UpdateEventHandler);
+           $( document ).on( 'click', '.delete',producto.DeleteEventHandler);
+        }else{
+           t.clear();
+           t.rows.add(JSON.parse(e));
+           t.draw();
         }
     };
+
+    setTableInventarioProducto(){
+        this.tablaproducto = $('#dsProducto').DataTable( {
+            responsive: true,
+            destroy: true,
+            // data: data,
+            order: [[ 1, "asc" ]],
+            columnDefs: [{className: "text-right", "targets": [5,6,7,8]}],
+            columns: [
+                {
+                    title:"Id",
+                    data:"id",
+                    className:"itemId",                    
+                    width:"auto"},
+                {
+                    title:"Codigo",
+                    data:"codigo",
+                    width:"auto"},
+                {
+                    title:"Nombre",
+                    data:"nombre",
+                    width:"auto"},
+                {
+                    title:"Abreviatura",
+                    data:"nombreAbreviado",
+                    width:"auto"},
+                {
+                    title:"Descripción",
+                    data:"descripcion",
+                    width:"auto"},
+                {
+                    title:"Saldo Cantidad",
+                    data:"saldoCantidad",
+                    width:"auto"},
+                {
+                    title:"Saldo Costo",
+                    data:"saldoCosto",
+                    width:"auto",
+                    mRender: function ( e ) {
+                        return '¢'+ e.replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+                    }
+                    },
+                {
+                    title:"Costo Promedio",
+                    data:"costoPromedio",
+                    width:"auto",
+                    mRender: function ( e ) {
+                        return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+                    }},
+                {
+                    title:"Precio Venta",
+                    data:"precioVenta",
+                    width:"auto",
+                    mRender: function ( e ) {
+                        return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+                    }},
+                {
+                    title:"Tipo",
+                    data:"esVenta",
+                    width:"auto",
+                    mRender: function ( e ) {
+                        var tipo="1";
+                        if (e=="0") 
+                            tipo="ARTICULO";
+                        if (e=="1") 
+                            tipo="SABOR";
+                        if (e=="2") 
+                            tipo="TOPPING";
+                        return tipo
+                    }},
+                {
+                    title:"Acción",
+                    orderable: false,
+                    searchable:false,
+                    className: 'buttons',
+                    mRender: function () {
+                        return '<a class="delete" style="cursor: pointer;"> <i class="glyphicon glyphicon-trash"> </i> </a>' 
+                    },
+                    width:"auto"}
+            ]
+        });
+    };
+
+    setTableElaboraProducto(){
+        this.tablaproducto = $('#dsProducto').DataTable( {
+            responsive: true,
+            destroy: true,
+            order: [[ 1, "asc" ]],
+            columnDefs: [{className: "text-right", "targets": [5]}],
+            columns: [
+                {
+                    title:"Id",
+                    data:"id",
+                    className:"itemId",                    
+                    width:"auto"},
+                {
+                    title:"Codigo",
+                    data:"codigo",
+                    width:"auto"},
+                {
+                    title:"Nombre",
+                    data:"nombre",
+                    width:"auto"},
+                {
+                    title:"Abreviatura",
+                    data:"nombreAbreviado",
+                    width:"auto"},
+                {
+                    title:"Descripción",
+                    data:"descripcion",
+                    width:"auto"},
+                {
+                    title:"Saldo Cantidad",
+                    data:"saldoCantidad",
+                    width:"auto"},
+                {
+                    title:"Saldo Costo",
+                    data:"saldoCosto",
+                    visible:false},
+                {
+                    title:"Costo Promedio",
+                    data:"costoPromedio",
+                    visible:false},
+                {
+                    title:"Precio Venta",
+                    data:"precioVenta",
+                    visible:false,},
+                {
+                    title:"Tipo",
+                    data:"esVenta",
+                    width:"auto",
+                    mRender: function ( e ) {
+                        var tipo="1";
+                        if (e=="0") 
+                            tipo="ARTICULO";
+                        if (e=="1") 
+                            tipo="SABOR";
+                        if (e=="2") 
+                            tipo="TOPPING";
+                        return tipo
+                    }},
+                {
+                    title:"Acción",
+                    orderable: false,
+                    searchable:false,
+                    mRender: function () {
+                        return '<a class="update" style="cursor: pointer;"> <i class="glyphicon glyphicon-edit" > </i> Editar </a> | '+
+                                '<a class="delete" style="cursor: pointer;"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>' 
+                    },
+                    visible:false}
+            ]
+        });
+    }
 
     AddProducto(){
         var id=$(this).find("td:eq(0)").html();
@@ -435,7 +461,7 @@ class Producto {
     }; 
 
     UpdateEventHandler() {
-        producto.id = $(this).parents("tr").find(".itemId").text();  //Class itemId = ID del objeto.
+        producto.id = $(this).find(".itemId").text();  //Class itemId = ID del objeto.
         producto.Read;
     };
 
@@ -457,7 +483,7 @@ class Producto {
         $("#nombreAbreviado").val(data.nombreAbreviado);
         $("#descripcion").val(data.descripcion);
         $("#saldoCantidad").val(data.saldoCantidad);
-        $("#saldoCosto").val(parseFloat(data.saldoCantidad).toFixed(2));
+        $("#saldoCosto").val(parseFloat(data.saldoCosto).toFixed(2));
         $("#costoPromedio").val(parseFloat(data.costoPromedio).toFixed(2));
         $("#precioVenta").val(parseFloat(data.precioVenta).toFixed(2));
         $('#tipoProducto option[value=' + data.esVenta + ']').prop("selected", true); // esVenta = tipoProducto.

@@ -308,9 +308,8 @@ class Factura{
             $param= array(':idTopping'=>$value->idTopping);
             $data = DATA::Ejecutar($sql,$param, false);
         };
-
+        
     }
-
 
     function TicketPrint($data){
         try {
