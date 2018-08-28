@@ -226,11 +226,13 @@ class InsumoBodega {
                 },
                 { 
                     title: "Costo", 
-                    data: "saldoCosto"       
+                    data: "saldoCosto",
+                    visible: false       
                 },
                 { 
                     title: "Costo Promedio", 
-                    data: "costoPromedio"       
+                    data: "costoPromedio",
+                    visible: false       
                 },
                 {
                     title: "Action",

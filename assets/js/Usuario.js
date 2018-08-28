@@ -338,6 +338,7 @@ class Usuario {
         $('#tUsuario').DataTable({
             responsive: true,
             info: false,
+            destroy: true,
             "order": [[ 1, "asc" ]],
             "language": {
                 "infoEmpty": "Sin Usuarios Registrados",
@@ -352,7 +353,6 @@ class Usuario {
                     "previous":   "Anterior"
                 }
             },
-            
             columns: [
                 {
                     title: "id",
