@@ -456,6 +456,7 @@ class ClienteFE{
 
     function Update(){
         try {
+            error_log('iniciando');
             $sql="UPDATE clienteFE 
                 SET nombre=:nombre, codigoSeguridad=:codigoSeguridad, idCodigoPais=:idCodigoPais, idTipoIdentificacion=:idTipoIdentificacion, 
                     identificacion=:identificacion, nombreComercial=:nombreComercial, idProvincia=:idProvincia, idCanton=:idCanton, idDistrito=:idDistrito, 
@@ -470,25 +471,28 @@ class ClienteFE{
             );
             $data = DATA::Ejecutar($sql,$param,false);
             if($data){
-                $url= 'http://localhost/api.php?w=users&r=users_register&fullName=444444444&userName='.$this->username.'&email='.$this->correoElectronico.'&about=otro%20Usuario&country=CR&pwd='.$this->password;
-                //$url= 'http://localhost/api.php?w=users&r=users_register&fullName=Carlos%20Chacon&userName=eeeeeee123&email=carlos@e11@gmail.com&about=Tsno&country=CR&pwd=123';
+                //$url= 'http://104.131.5.198/api.php';
+                $url= 'http://104.131.5.198/api.php?w=users&r=users_register&fullName='.$this->nombre.'&userName='.$this->username.'&email='.$this->correoElectronico.'&about=otro%20Usuario&country=CR&pwd='.$this->password;
+                // $url= 'http://localhost/api.php?w=users&r=users_register&fullName=Carlos%20Chacon&userName=eeeeeee123&email=carlos@e11@gmail.com&about=Tsno&country=CR&pwd=123';
                 $ch = curl_init();
-                curl_setopt($ch, CURLOPT_URL,$url);
+                curl_setopt($ch, CURLOPT_URL, $url);
                 curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
                 curl_setopt($ch,CURLOPT_VERBOSE, 1);
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-                
+                curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+                error_log('enviando: '. $url);
                 $server_output = curl_exec($ch);
                 $information = curl_getinfo($ch);
                 $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
                 $header = substr($server_output, 0, $header_size);
                 $body = substr($server_output, $header_size);
                 $error_msg = "";
+                error_log('fin');
                 if (curl_error($ch)) {
                     $error_msg = curl_error($ch);
+                    error_log('error: '. $error_msg);
                 }     
-                curl_close($ch);
-                
+                curl_close($ch);                
                 return true;
             }   
             else throw new Exception('Error al guardar.', 123);

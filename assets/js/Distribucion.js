@@ -474,6 +474,19 @@ class Distribucion {
             info: false,
             iDisplayLength: nPaging,
             paging: false,
+            "language": {
+                "infoEmpty": "Sin Productos Ingresados",
+                "emptyTable": "Sin Productos Ingresados",
+                "search": "Buscar",
+                "zeroRecords":    "No hay resultados",
+                "lengthMenu":     "Mostar _MENU_ registros",
+                "paginate": {
+                    "first":      "Primera",
+                    "last":       "Ultima",
+                    "next":       "Siguiente",
+                    "previous":   "Anterior"
+                }
+            },
             columns: [
                 {
                     title: "id",
@@ -519,7 +532,20 @@ class Distribucion {
         $('#tDistribucion').DataTable({
             responsive: true,
             info: false,
-            iDisplayLength: 10,            
+            iDisplayLength: 10,          
+            "language": {
+                "infoEmpty": "Sin Productos Ingresados",
+                "emptyTable": "Sin Productos Ingresados",
+                "search": "Buscar",
+                "zeroRecords":    "No hay resultados",
+                "lengthMenu":     "Mostar _MENU_ registros",
+                "paginate": {
+                    "first":      "Primera",
+                    "last":       "Ultima",
+                    "next":       "Siguiente",
+                    "previous":   "Anterior"
+                }
+            },  
             columns: [
                 {
                     title: "id",

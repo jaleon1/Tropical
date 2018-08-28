@@ -339,6 +339,20 @@ class Usuario {
             responsive: true,
             info: false,
             destroy: true,
+            "order": [[ 1, "asc" ]],
+            "language": {
+                "infoEmpty": "Sin Usuarios Registrados",
+                "emptyTable": "Sin Usuarios Registrados",
+                "search": "Buscar",
+                "zeroRecords":    "No hay resultados",
+                "lengthMenu":     "Mostar _MENU_ registros",
+                "paginate": {
+                    "first":      "Primera",
+                    "last":       "Ultima",
+                    "next":       "Siguiente",
+                    "previous":   "Anterior"
+                }
+            },
             columns: [
                 {
                     title: "id",
@@ -347,11 +361,11 @@ class Usuario {
                     searchable: false
                 }, 
                 { title: "Nombre", data: "nombre" },
-                { title: "username", data: "username" },
-                { title: "email", data: "email" },
+                { title: "Usuario", data: "username" },
+                { title: "Correo", data: "email" },
                 { title: "Activo", data: "activo" },
                 {
-                    title: "Action",
+                    title: "Eliminar",
                     orderable: false,
                     searchable:false,
                     visible: buttons,

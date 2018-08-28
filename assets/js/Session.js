@@ -141,16 +141,18 @@ var Session=  {
     
             $.each(dataMenu.eventos, function (i, item) {
                 if ($('#' + item.menuPadre).length) {
+                    if(!$('#' + item.id).length){
                     var link =
-                        ` <li><a href="${item.url}">${item.nombre}</a></li>`
+                        ` <li id="${item.id}"><a href="${item.url}">${item.nombre}</a></li>`;
                     $("#list_" + item.menuPadre).append(link);
+                    }
                 } else {
                     var menu =
                         `<li id="${item.menuPadre}" ><a><i class="${item.icono}"></i> ${item.menuPadre} <span class="fa fa-chevron-down"></span></a>
                             <ul id="list_${item.menuPadre}" class="nav child_menu">
-                                <li><a href="${item.url}">${item.nombre}</a></li>
+                                <li id="${item.id}"><a href="${item.url}">${item.nombre}</a></li>
                             </ul>
-                        </li>`
+                        </li>`;
                     $("#menu").append(menu);
                 }
             });  

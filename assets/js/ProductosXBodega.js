@@ -341,7 +341,20 @@ class ProductoBodega {
     setTable(buttons=true){
         $('#tDeterminacion').DataTable({
             responsive: true,
-            info: false,
+            info: false,                    
+            "language": {
+                "infoEmpty": "Sin Productos Ingresados",
+                "emptyTable": "Sin Productos Ingresados",
+                "search": "Buscar",
+                "zeroRecords":    "No hay resultados",
+                "lengthMenu":     "Mostar _MENU_ registros",
+                "paginate": {
+                    "first":      "Primera",
+                    "last":       "Ultima",
+                    "next":       "Siguiente",
+                    "previous":   "Anterior"
+                }
+            },  
             columns: [
                 {
                     title: "id",

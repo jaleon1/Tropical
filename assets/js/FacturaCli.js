@@ -56,6 +56,7 @@ $(document).ready(function () {
     t = $('#prd').DataTable({
         "paging": false,
         "ordering": false,
+        "responsive": true,
         "info": false,
         "searching": false,
         "scrollX": false,
@@ -68,38 +69,46 @@ $(document).ready(function () {
         },
         "columnDefs": [
             {
+                "title": "idTamaño",
                 "visible": false,
                 "targets": 0,
                 "searchable": false
             },
             {
+                "title": "Tamaño",
                 "targets": 1,
                 "width": "auto"
             },
             {
+                "title": "idSabor01",
                 "visible": false,
                 "targets": 2,
                 "searchable": false
             },
             {
+                "title": "Sabor",
                 "width": "auto",
                 "targets": 3
             },
             {
+                "title": "idSabor02",
                 "visible": false,
                 "targets": 4,
                 "searchable": false
             },
             {
+                "title": "Sabor",
                 "width": "auto",
                 "targets": 5,
             },
             {
+                "title": "idTopping",
                 "visible": false,
                 "targets": 6,
                 "searchable": false
             },
             {
+                "title": "Topping",
                 "width": "auto",
                 "targets": 7
             }
@@ -367,7 +376,7 @@ $("#btn_agrega_prd").click(function () {
 function codigoTamano() {
     switch (sel_tamano) {
         case 0:
-            return "8oz";
+            return "08oz";
             break;
         case 1:
             return "12oz";
@@ -457,7 +466,7 @@ function btnFacturar() {
 function btnAgregaPRD() {
     //Se valida que exista un sabor seleccionado para que no falle al buscar la cantidad
     if ($("#prdXbdg").find(".selected").length > 0) {
-        if (($("#prdXbdg").find(".selected").length >= 2 || $("#prdXbdg").find(".selected")["0"].children["0"].childNodes[3].textContent == "2")) {
+        if (($("#prdXbdg").find(".selected").length >= 2 || $("#prdXbdg").find(".selected")["0"].children["0"].childNodes[5].textContent == "2")) {
 
             if ($("#toppings").find(".selected").length >= 1) {
                 $('#btn_agrega_prd').removeAttr('disabled');
