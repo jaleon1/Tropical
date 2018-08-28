@@ -187,8 +187,8 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
         localStorage.setItem("lsUsuarioRecibe",$("#nombre").val());
         localStorage.setItem("lsListaInsumo",JSON.stringify(this.listaInsumo));
 
-        // location.href ="/TicketOrdenSalida.html";
-        location.href ="/Tropical/TicketOrdenSalida.html";
+        location.href ="/TicketOrdenSalida.html";
+        // location.href ="/Tropical/TicketOrdenSalida.html";
     }
 
     // Muestra errores en ventana
