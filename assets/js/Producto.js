@@ -302,7 +302,8 @@ class Producto {
                     title:"Id",
                     data:"id",
                     className:"itemId",                    
-                    width:"auto"},
+                    width:"auto",
+                    searchable: false},
                 {
                     title:"Codigo",
                     data:"codigo",
@@ -382,7 +383,8 @@ class Producto {
                 {
                     title:"Id",
                     data:"id",
-                    className:"itemId",                    
+                    className:"itemId",
+                    searchable: false,                    
                     width:"auto"},
                 {
                     title:"Codigo",

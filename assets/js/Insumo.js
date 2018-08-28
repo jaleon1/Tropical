@@ -174,24 +174,20 @@ class Insumo {
                 {
                     title:"ID",
                     data:"id",
-                    className:"itemId",                    
-                    width:"auto"},
+                    className:"itemId",
+                    searchable: false},
                 {
                     title:"CODIGO",
-                    data:"codigo",
-                    width:"auto"},
+                    data:"codigo"},
                 {
                     title:"NOMBRE",
-                    data:"nombre",
-                    width:"auto"},
+                    data:"nombre"},
                 {
                     title:"DESCRIPCION",
-                    data:"descripcion",
-                    width:"auto"},
+                    data:"descripcion"},
                 {
                     title:"SALDO CANTIDAD",
-                    data:"saldoCantidad",
-                    width:"auto"},
+                    data:"saldoCantidad"},
                 {
                     title:"SALDO COSTO",
                     data:"saldoCosto",
@@ -226,7 +222,8 @@ class Insumo {
                     title:"ID",
                     data:"id",
                     className:"itemId",                    
-                    width:"auto"},
+                    width:"auto",
+                    searchable: false},
                 {
                     title:"CODIGO",
                     data:"codigo",
@@ -268,6 +265,53 @@ class Insumo {
             ]
         });
     };
+
+    setTableInventarioOrdenSalida(){
+        this.tablainsumo = $('#dsInsumo').DataTable( {
+            responsive: true,
+            destroy: true,
+            order: [[ 1, "asc" ]],
+            columnDefs: [{className: "text-right", "targets": [4]}],
+            columns: [
+                {
+                    title:"ID",
+                    data:"id",
+                    className:"itemId",
+                    searchable: false},
+                {
+                    title:"CODIGO",
+                    data:"codigo"},
+                {
+                    title:"NOMBRE",
+                    data:"nombre"},
+                {
+                    title:"DESCRIPCION",
+                    data:"descripcion"},
+                {
+                    title:"SALDO CANTIDAD",
+                    data:"saldoCantidad"},
+                {
+                    title:"SALDO COSTO",
+                    data:"saldoCosto",
+                    className:"oculto_saldoCosto", 
+                    visible:false},
+                {
+                    title:"COSTO PROMEDIO",
+                    data:"costoPromedio",
+                    className:"oculto_costoPromedio", 
+                    visible:false},
+                {
+                    title:"ACCIÓN",
+                    orderable: false,
+                    searchable:false,
+                    mRender: function () {
+                        return '<a class="update"> <i class="glyphicon glyphicon-edit" > </i> Editar </a> | '+
+                                '<a class="delete"> <i class="glyphicon glyphicon-trash"> </i> </a>' 
+                    },
+                    visible:false}
+            ]
+        });
+    }
 
     AddInsumo(){
         var id=$(this).find("td:eq(0)").html();

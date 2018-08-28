@@ -387,7 +387,7 @@
                                                                 <div class="col-sm-12">
                                                                     <table id="dsInsumo" class="table table-striped jambo_table bulk_action" role="grid" aria-describedby="datatable_info">
                                                                         <thead>
-                                                                            <tr role="row" class="headings">
+                                                                            <!-- <tr role="row" class="headings">
                                                                                 <th>
                                                                                     <input type='checkbox' id='check-all' class='iCheck-helper'>
                                                                                 </th>
@@ -399,7 +399,7 @@
                                                                                 <th class='oculto'>Saldo Costo</th>
                                                                                 <th class='oculto'>Costo Promedio</th>
                                                                                 <th class='oculto'>Acción</th>
-                                                                            </tr>
+                                                                            </tr> -->
                                                                         </thead>
 
                                                                         <tbody id="tableBody-Insumo">
@@ -581,6 +581,7 @@
     });
     $(document).on('click', '#btnAddInsumo', function (event) {
         insumo.id = null;
+        insumo.setTableOrdenSalida();
         insumo.Read;
         insumo.Init();
     });
