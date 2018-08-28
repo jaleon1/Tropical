@@ -181,14 +181,14 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
     };
 
     ticketPrint(e){
-        var data = JSON.parse(e);
-        localStorage.setItem("lsNumeroOrden",data[0][0]);
+        // var data = JSON.parse(e);
+        localStorage.setItem("lsNumeroOrden",e);
         localStorage.setItem("lsFechaOrdensalida",ordenSalida.fecha);
         localStorage.setItem("lsUsuarioRecibe",$("#nombre").val());
         localStorage.setItem("lsListaInsumo",JSON.stringify(this.listaInsumo));
 
-        location.href ="/TicketOrdenSalida.html";
-        // location.href ="/Tropical/TicketOrdenSalida.html";
+        // location.href ="/TicketOrdenSalida.html";
+        location.href ="/Tropical/TicketOrdenSalida.html";
     }
 
     // Muestra errores en ventana
@@ -212,18 +212,88 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
     };
 
     ShowAll(e) {
-        var data = JSON.parse(e);
+        var t= $('#dsOrdenSalida').DataTable();
+        if(t.rows().count()==0){
+           t.clear();
+           t.rows.add(JSON.parse(e));
+           t.draw();
+           
+           $( document ).on( 'click', '#dsOrdenSalida tbody tr',ordenSalida.UpdateEventHandler);
+           $( document ).on( 'click', '.deleteOrdenSalida',ordenSalida.DeleteEventHandler);
+        }else{
+           t.clear();
+           t.rows.add(JSON.parse(e));
+           t.draw();
+        }
 
-        $.each(data, function (i, item) {
-            if (item.idEstado=="0") 
-                item.idEstado="EN PROCESO";
-            else
-                item.idEstado="LIQUIDADO";
-        });
+        // $.each(data, function (i, item) {
+        //     if (item.idEstado=="0") 
+        //         item.idEstado="EN PROCESO";
+        //     else
+        //         item.idEstado="LIQUIDADO";
+        // });
 
+        // this.tabla = $('#dsOrdenSalida').DataTable( {
+        //     responsive: true,
+        //     data: data,
+        //     destroy: true,
+        //     order: [[ 0, "desc" ]],
+        //     columns: [
+        //         {
+        //             title:"Orden",
+        //             data:"numeroOrden",
+        //             "width":"auto"},
+        //         {
+        //             title:"ID",
+        //             data:"id",
+        //             className:"itemId",                    
+        //             width:"auto"},
+        //         {
+        //             title:"ID USUARIO ENTREGA",
+        //             data:"idUsuarioEntrega",
+        //             visible:false},
+        //         {
+        //             title:"ID USUARIO RECIBE",
+        //             data:"idUsuarioRecibe",
+        //             visible:false},
+        //         {
+        //             title:"FECHA",
+        //             data:"fecha",
+        //             width:"auto"},
+        //         {
+        //             title:"ENTREGA",
+        //             data:"usuarioEntrega",
+        //             width:"auto"},
+        //         {
+        //             title:"RECIBE",
+        //             data:"usuarioRecibe",
+        //             width:"auto"},
+        //         {
+        //             title:"FECHA LIQUIDA",
+        //             data:"fechaLiquida",
+        //             width:"auto"},
+        //         {
+        //             title:"ESTADO",
+        //             data:"idEstado",
+        //             width:"auto"},
+        //         {
+        //             title:"ACCIÓN",
+        //             orderable: false,
+        //             searchable:false,
+        //             className: 'buttons',
+        //             mRender: function () {
+        //                 return '<a class="deleteOrdenSalida" style="cursor: pointer;" > <i class="glyphicon glyphicon-trash"> </i> </a>' 
+        //             },
+        //             "width":"5%"}
+        //     ]
+        // });
+        // $('.updateOrdenSalida').click(ordenSalida.UpdateEventHandler);
+        // $('.deleteOrdenSalida').click(ordenSalida.DeleteEventHandler);
+    };
+
+    setTableOrdenSalida(){
         this.tabla = $('#dsOrdenSalida').DataTable( {
             responsive: true,
-            data: data,
             destroy: true,
             order: [[ 0, "desc" ]],
             columns: [
@@ -263,7 +333,15 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
                 {
                     title:"ESTADO",
                     data:"idEstado",
-                    width:"auto"},
+                    width:"auto",
+                    mRender: function ( e ) {
+                        var estado="1";
+                        if (e=="0") 
+                            estado="EN PROCESO";
+                        if (e=="1") 
+                            estado="LIQUIDADO";
+                        return estado
+                    }},
                 {
                     title:"ACCIÓN",
                     orderable: false,
@@ -274,11 +352,7 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
                     },
                     "width":"5%"}
             ]
-        });
-        // $('.updateOrdenSalida').click(ordenSalida.UpdateEventHandler);
-        // $('.deleteOrdenSalida').click(ordenSalida.DeleteEventHandler);
-        $( document ).on( 'click', '#dsOrdenSalida tbody tr td:not(.buttons)', ordenSalida.UpdateEventHandler);
-            $( document ).on( 'click', '.deleteOrdenSalida', ordenSalida.DeleteEventHandler);
+        });        
     };
 
     AddTableInsumo(id,codigo,nombre,descripcion,saldoCantidad,saldoCosto,costoPromedio) {
@@ -329,7 +403,7 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
     DeleteInsumo(btn) {
         var row = btn.parentNode.parentNode;
         row.parentNode.removeChild(row);
-    }
+    };
 
     UpdateEventHandler() {
         $('#btnOrdenSalida').attr("disabled", false);
@@ -510,7 +584,7 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
         ordenSalida.idUsuarioRecibe = $(this).parents("tr").find("td:eq(1)").html();
         $('#modal-usuarioRecibe').modal('toggle');
         $("#estado").focus();
-    }
+    };
 
     AddInsumoEventHandler(id,codigo,nombre,descripcion,saldoCantidad,saldoCosto,costoPromedio){
         var ids_insumos = [];
@@ -526,7 +600,7 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
             else
                 ordenSalida.AddTableInsumo(id,codigo,nombre,descripcion,saldoCantidad,saldoCosto,costoPromedio);
         }
-    }
+    };
 
     Init() {
         // validator.js

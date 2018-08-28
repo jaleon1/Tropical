@@ -338,6 +338,7 @@ class Usuario {
         $('#tUsuario').DataTable({
             responsive: true,
             info: false,
+            destroy: true,
             columns: [
                 {
                     title: "id",

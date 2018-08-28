@@ -5,6 +5,7 @@ class InsumosxOrdenSalida{
     public $idInsumo;
     public $cantidad;
     public $costoPromedio;
+    public $saldoCantidad=0.00;
 
     function Read($idOrdenSalida){
         try {
@@ -70,17 +71,19 @@ class InsumosxOrdenSalida{
                 $cantidadinsumo = DATA::Ejecutar($sql_insumo,$param_insumo);
                 
                 //Selecciona la cantidad de Insumos
-                $sql_insumo="SELECT cantidad FROM insumosXOrdenSalida WHERE idOrdenSalida=:idOrdenSalida AND idInsumo=:idInsumo";
-                $param_orden= array(':idOrdenSalida'=>$ins_orden->idOrdenSalida,':idInsumo'=>$ins_orden->idInsumo);
-                $cantidadorden = DATA::Ejecutar($sql_insumo,$param_orden);
+                $sql_insumo1="SELECT cantidad FROM insumosXOrdenSalida WHERE idOrdenSalida=:idOrdenSalida AND idInsumo=:idInsumo";
                 
-                $saldoCantidad = $cantidadinsumo[0][0] + $cantidadorden[0][0];
-
+                $param_orden1= array(':idOrdenSalida'=>$ins_orden->idOrdenSalida,':idInsumo'=>$ins_orden->idInsumo);
+                $cantidadorden= DATA::Ejecutar($sql_insumo1,$param_orden1);
+                
+                $saldoCantidad = (float)$cantidadinsumo[0]["saldoCantidad"] + (float)$cantidadorden[0]["cantidad"];
+                // $saldoCantidad = (real)$cantidadorden[0]['cantidad'];
+                
                 //Actualiza la cantidad de Insumos
                 $sql_insumo="UPDATE insumo SET saldoCantidad=:saldoCantidad WHERE id=:idInsumo";
                 $param= array(':saldoCantidad'=>$saldoCantidad, ':idInsumo'=>$ins_orden->idInsumo);
                 $data_insumo = DATA::Ejecutar($sql_insumo,$param,false);
-            
+                
                 if(!$data_insumo)
                 $created= false;
             }
