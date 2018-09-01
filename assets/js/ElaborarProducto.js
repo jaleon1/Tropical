@@ -2,6 +2,7 @@ class ElaborarProducto {
     // Constructor
 constructor(numeroOrden, p) {
         this.numeroOrden = numeroOrden || '';
+        this.fechaLiquida = this.fechaLiquida || '';
         this.listaProducto = p || [];
     }
 
@@ -26,6 +27,7 @@ constructor(numeroOrden, p) {
         $('#btnAddProductoGenerado').attr("disabled", "disabled");
         var miAccion = this.id == null ? 'Create' : 'Update';
         elaborarProducto.numeroOrden = $("#orden").val();
+        elaborarProducto.fechaLiquida = moment().format("YYYY-MM-DD HH:mm:ss");
         // lista de insumos
         elaborarProducto.listaProducto = [];
         var costoTotalInsumo=0;

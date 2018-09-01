@@ -14,6 +14,8 @@ class Insumo {
     //Getter
     get Read() {
         var miAccion = this.id == null ? 'ReadAll' : 'Read';
+        if(document.URL.indexOf("OrdenSalida.html")!=-1)
+            miAccion='ReadSaldoPositivo';
         if(miAccion=='ReadAll' && $('#tableBody-Insumo').length==0 )
             return;
         $.ajax({

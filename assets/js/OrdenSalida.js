@@ -187,8 +187,8 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
         localStorage.setItem("lsUsuarioRecibe",$("#nombre").val());
         localStorage.setItem("lsListaInsumo",JSON.stringify(this.listaInsumo));
 
-        location.href ="/TicketOrdenSalida.html";
-        // location.href ="/Tropical/TicketOrdenSalida.html";
+        //location.href ="/TicketOrdenSalida.html";
+        location.href ="/Tropical/TicketOrdenSalida.html";
     }
 
     // Muestra errores en ventana
@@ -225,70 +225,6 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
            t.rows.add(JSON.parse(e));
            t.draw();
         }
-
-        // $.each(data, function (i, item) {
-        //     if (item.idEstado=="0") 
-        //         item.idEstado="EN PROCESO";
-        //     else
-        //         item.idEstado="LIQUIDADO";
-        // });
-
-        // this.tabla = $('#dsOrdenSalida').DataTable( {
-        //     responsive: true,
-        //     data: data,
-        //     destroy: true,
-        //     order: [[ 0, "desc" ]],
-        //     columns: [
-        //         {
-        //             title:"Orden",
-        //             data:"numeroOrden",
-        //             "width":"auto"},
-        //         {
-        //             title:"ID",
-        //             data:"id",
-        //             className:"itemId",                    
-        //             width:"auto"},
-        //         {
-        //             title:"ID USUARIO ENTREGA",
-        //             data:"idUsuarioEntrega",
-        //             visible:false},
-        //         {
-        //             title:"ID USUARIO RECIBE",
-        //             data:"idUsuarioRecibe",
-        //             visible:false},
-        //         {
-        //             title:"FECHA",
-        //             data:"fecha",
-        //             width:"auto"},
-        //         {
-        //             title:"ENTREGA",
-        //             data:"usuarioEntrega",
-        //             width:"auto"},
-        //         {
-        //             title:"RECIBE",
-        //             data:"usuarioRecibe",
-        //             width:"auto"},
-        //         {
-        //             title:"FECHA LIQUIDA",
-        //             data:"fechaLiquida",
-        //             width:"auto"},
-        //         {
-        //             title:"ESTADO",
-        //             data:"idEstado",
-        //             width:"auto"},
-        //         {
-        //             title:"ACCIÓN",
-        //             orderable: false,
-        //             searchable:false,
-        //             className: 'buttons',
-        //             mRender: function () {
-        //                 return '<a class="deleteOrdenSalida" style="cursor: pointer;" > <i class="glyphicon glyphicon-trash"> </i> </a>' 
-        //             },
-        //             "width":"5%"}
-        //     ]
-        // });
-        // $('.updateOrdenSalida').click(ordenSalida.UpdateEventHandler);
-        // $('.deleteOrdenSalida').click(ordenSalida.DeleteEventHandler);
     };
 
     setTableOrdenSalida(){
@@ -368,7 +304,13 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
         });        
     };
 
+    CompruebaCantidadInsumo(id){
+        var cantidad = $("#cantidadInsumo"+id).find('td:eq(7) input').val();
+        alert(cantidad);
+    }
+
     AddTableInsumo(id,codigo,nombre,descripcion,saldoCantidad,saldoCosto,costoPromedio) {
+        var cant = '1';
         $('#tableBody-InsumosOrdenSalida').append(`
             <tr id="row"${id}> 
                 <td class="itemId" >${id}</td>
@@ -379,10 +321,10 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
                 <td class=oculto>${saldoCosto}</td>
                 <td class=oculto>${costoPromedio}</td>
                 <td>
-                    <input id="cantidadInsumo" class="form-control col-3" name="cantidadInsumo" type="text" placeholder="Cantidad de paquetes" autofocus="" value="1">
+                    <input id="cantidadInsumo${id}" class="form-control cantidadInsumo" name="cantidadInsumo" type="number" placeholder="Cantidad de paquetes" autofocus="" value=${cant}>
                 </td>
                 <td class=" last">
-                    <a id ="delete_row${id}" onclick="ordenSalida.DeleteInsumo(this)" > <i class="glyphicon glyphicon-trash" onclick="DeleteInsumo(this)"> </i> Eliminar </a>
+                    <a id="delete_row${id}" class="btnDeleteItem" onclick="ordenSalida.DeleteInsumo(this)" > <i class="glyphicon glyphicon-trash" onclick="DeleteInsumo(this)"> </i> Eliminar </a>
                 </td>
             </tr>
         `);
@@ -404,13 +346,71 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
                     { "width":"0px"},
                     { "width":"35%"},
                     { "width":"30%"}
-                ],          
+                ],         
+                "scrollY": "300px", 
                 "paging": false,
                 "ordering": false,
                 "info": false,
                 "searching": false,
                 "scrollCollapse": true
             } );
+            $("#cantidadInsumo"+id).keyup(function (e) {
+                var cantidad = $(this).val();
+                $.ajax({
+                    type: "POST",
+                    url: "class/Insumo.php",
+                    data: {
+                        action: "saldoCorrecto",
+                        id:id,
+                        cantidad: cantidad
+                    }
+                })
+                    .done(function (e) {
+                        var cantidad = parseFloat(e);
+                        if(e!="true")
+                            swal({
+                                type: 'error',
+                                title: 'El insumo no posee saldo suficiente...',
+                                text: 'La cantidad de insumos disponibles es '+ parseFloat(cantidad)                        
+                            }).then($("#cantidadInsumo"+id).val(cantidad))
+                    })
+                    .fail(function (e) {
+                        // distr.showError(e);
+                    })
+                    .always(function () {
+                        // setTimeout('$("#orden").removeAttr("disabled")', 1000);
+                    });
+                
+            });
+            $("#cantidadInsumo"+id).change(function (e) {
+                var cantidad = $(this).val();
+                $.ajax({
+                    type: "POST",
+                    url: "class/Insumo.php",
+                    data: {
+                        action: "saldoCorrecto",
+                        id:id,
+                        cantidad: cantidad
+                    }
+                })
+                    .done(function (e) {
+                        var cantidad = parseFloat(e);
+                        if(e!="true")
+                            swal({
+                                type: 'error',
+                                title: 'El insumo no posee saldo suficiente...',
+                                text: 'La cantidad de insumos disponibles es '+ parseFloat(cantidad)                        
+                            }).then($("#cantidadInsumo"+id).val(cantidad))
+                    })
+                    .fail(function (e) {
+                        // distr.showError(e);
+                    })
+                    .always(function () {
+                        // setTimeout('$("#orden").removeAttr("disabled")', 1000);
+                    });
+                
+            });
+
     };
 
     DeleteInsumo(btn) {
@@ -425,7 +425,7 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
         ordenSalida.id = $(this).parents("tr").find(".itemId").text() || $(this).find(".itemId").text();
         ordenSalida.Read;     
         
-        if($(this).parents("tr").find("td:eq(6)").html()=="LIQUIDADO"){              
+        if($(this).find("td:eq(6)").html()=="LIQUIDADO"){              
             swal ({ 
                 type: 'info',
                 title: 'La orden ya ha sido liquidada, No se puede modificar...'                     
@@ -433,6 +433,7 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
                     $('#btnOrdenSalida').attr("disabled", true);
                     $('#btnAddUsuarioRecibe').attr("disabled", true);
                     $('#btnAddInsumo').attr("disabled", true);
+                    $('.btnDeleteItem').attr("disabled", true);
                 });
         }
     };
@@ -463,7 +464,7 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
                             <td class=oculto>${item.saldoCosto}</td>
                             <td class=oculto>${item.costoPromedio}</td>
                             <td>
-                                <input id="cantidadInsumo" class="form-control col-3" name="cantidadInsumo" type="text" placeholder="Cantidad de paquetes" autofocus="" value="${item.cantidad}"readonly>
+                                <input id="cantidadInsumo${item.id}" class="form-control col-3" name="cantidadInsumo" type="number" placeholder="Cantidad de paquetes" autofocus="" value="${item.cantidad}"readonly>
                             </td>
                         </tr>
                     `);
@@ -516,13 +517,46 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
                             <td class=oculto>${item.saldoCosto}</td>
                             <td class=oculto>${item.costoPromedio}</td>
                             <td>
-                                <input id="cantidadInsumo" class="form-control col-3" name="cantidadInsumo" type="text" placeholder="Cantidad de paquetes" autofocus="" value="${item.cantidad}">
+                                <input id="cantidadInsumo2${item.id}" class="form-control col-3" name="cantidadInsumo" type="text" placeholder="Cantidad de paquetes" autofocus="" value="${item.cantidad}">
                             </td>
                             <td class=" last">
-                                <a id ="delete_row${item.id}" onclick="ordenSalida.DeleteInsumo(this)" > <i class="glyphicon glyphicon-trash" onclick="DeleteInsumo(this)"> </i> Eliminar </a>
+                                <a id="delete_row${item.id}" class="btnDeleteItem" onclick="ordenSalida.DeleteInsumo(this)" > <i class="glyphicon glyphicon-trash" onclick="DeleteInsumo(this)"> </i> Eliminar </a>
                             </td>
                         </tr>
                     `);
+                    $("#cantidadInsumo2"+item.id).change(function (e) {
+                        $('#btnOrdenSalida').attr("disabled", true);
+                        var cantidad = $(this).val();
+                        var cantidadtemporal = parseFloat(item.cantidad);
+                        $.ajax({
+                            type: "POST",
+                            url: "class/Insumo.php",
+                            data: {
+                                action: "saldoCorrectoMod",
+                                id: item.idInsumo,
+                                cantidad: cantidad,
+                                scant: item.cantidad
+                            }
+                        })
+                            .done(function (e) {
+                                var cantidad = parseFloat(e);
+                                if(e!="true")
+                                    swal({
+                                        type: 'error',
+                                        title: 'El insumo no posee saldo suficiente...',
+                                        text: 'La cantidad maxima de insumos disponibles es '+ parseFloat(cantidad+cantidadtemporal)                        
+                                    }).then($("#cantidadInsumo2"+item.id).val(cantidad+cantidadtemporal))
+                                cantidadtemporal=0;
+                                $('#btnOrdenSalida').attr("disabled", false);
+                            })
+                            .fail(function (e) {
+                                // distr.showError(e);
+                            })
+                            .always(function () {
+                                // setTimeout('$("#orden").removeAttr("disabled")', 1000);
+                            });
+                        
+                    });
                     //datatable         
                     if ( $.fn.dataTable.isDataTable( '#dsInsumosOrdenSalida' ) ) {
                         var table = $('#dsInsumosOrdenSalida').DataTable();
