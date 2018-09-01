@@ -161,13 +161,10 @@ var Session=  {
                 init_sidebar();
             else {
                 setTimeout(function(){
-                    sideBarDraw(dataMenu);               
-                 }, 500);
-                
+                    Session.sideBarDraw(dataMenu);               
+                 }, 500);                
             }
-        }    
-
-           
+        }
     }
 
 
