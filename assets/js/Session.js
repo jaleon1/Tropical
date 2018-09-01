@@ -161,8 +161,8 @@ var Session=  {
                 init_sidebar();
             else {
                 setTimeout(function(){
-                    init_sidebar()                     
-                 }, 1000);
+                    sideBarDraw(dataMenu);               
+                 }, 500);
                 
             }
         }    
