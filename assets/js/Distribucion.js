@@ -479,7 +479,7 @@ class Distribucion {
                 "emptyTable": "Sin Productos Ingresados",
                 "search": "Buscar",
                 "zeroRecords":    "No hay resultados",
-                "lengthMenu":     "Mostar _MENU_ registros",
+                "lengthMenu":     "Mostrar _MENU_ registros",
                 "paginate": {
                     "first":      "Primera",
                     "last":       "Ultima",
@@ -538,7 +538,7 @@ class Distribucion {
                 "emptyTable": "Sin Productos Ingresados",
                 "search": "Buscar",
                 "zeroRecords":    "No hay resultados",
-                "lengthMenu":     "Mostar _MENU_ registros",
+                "lengthMenu":     "Mostrar _MENU_ registros",
                 "paginate": {
                     "first":      "Primera",
                     "last":       "Ultima",

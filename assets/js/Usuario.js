@@ -345,7 +345,7 @@ class Usuario {
                 "emptyTable": "Sin Usuarios Registrados",
                 "search": "Buscar",
                 "zeroRecords":    "No hay resultados",
-                "lengthMenu":     "Mostar _MENU_ registros",
+                "lengthMenu":     "Mostrar _MENU_ registros",
                 "paginate": {
                     "first":      "Primera",
                     "last":       "Ultima",
