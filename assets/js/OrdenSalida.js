@@ -354,35 +354,36 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
                 "searching": false,
                 "scrollCollapse": true
             } );
-            $("#cantidadInsumo"+id).keyup(function (e) {
-                var cantidad = $(this).val();
-                $.ajax({
-                    type: "POST",
-                    url: "class/Insumo.php",
-                    data: {
-                        action: "saldoCorrecto",
-                        id:id,
-                        cantidad: cantidad
-                    }
-                })
-                    .done(function (e) {
-                        var cantidad = parseFloat(e);
-                        if(e!="true")
-                            swal({
-                                type: 'error',
-                                title: 'El insumo no posee saldo suficiente...',
-                                text: 'La cantidad de insumos disponibles es '+ parseFloat(cantidad)                        
-                            }).then($("#cantidadInsumo"+id).val(cantidad))
-                    })
-                    .fail(function (e) {
-                        // distr.showError(e);
-                    })
-                    .always(function () {
-                        // setTimeout('$("#orden").removeAttr("disabled")', 1000);
-                    });
+            // $("#cantidadInsumo"+id).keyup(function (e) {
+            //     var cantidad = $(this).val();
+            //     $.ajax({
+            //         type: "POST",
+            //         url: "class/Insumo.php",
+            //         data: {
+            //             action: "saldoCorrecto",
+            //             id:id,
+            //             cantidad: cantidad
+            //         }
+            //     })
+            //         .done(function (e) {
+            //             var cantidad = parseFloat(e);
+            //             if(e!="true")
+            //                 swal({
+            //                     type: 'error',
+            //                     title: 'El insumo no posee saldo suficiente...',
+            //                     text: 'La cantidad de insumos disponibles es '+ parseFloat(cantidad)                        
+            //                 }).then($("#cantidadInsumo"+id).val(cantidad))
+            //         })
+            //         .fail(function (e) {
+            //             // distr.showError(e);
+            //         })
+            //         .always(function () {
+            //             // setTimeout('$("#orden").removeAttr("disabled")', 1000);
+            //         });
                 
-            });
+            // });
             $("#cantidadInsumo"+id).change(function (e) {
+                $('#btnOrdenSalida').attr("disabled", true);
                 var cantidad = $(this).val();
                 $.ajax({
                     type: "POST",
@@ -401,6 +402,7 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
                                 title: 'El insumo no posee saldo suficiente...',
                                 text: 'La cantidad de insumos disponibles es '+ parseFloat(cantidad)                        
                             }).then($("#cantidadInsumo"+id).val(cantidad))
+                            $('#btnOrdenSalida').attr("disabled", false);
                     })
                     .fail(function (e) {
                         // distr.showError(e);
