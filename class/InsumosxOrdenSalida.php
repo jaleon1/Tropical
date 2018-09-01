@@ -76,7 +76,7 @@ class InsumosxOrdenSalida{
                 $param_orden1= array(':idOrdenSalida'=>$ins_orden->idOrdenSalida,':idInsumo'=>$ins_orden->idInsumo);
                 $cantidadorden= DATA::Ejecutar($sql_insumo1,$param_orden1);
                 
-                $saldoCantidad = (float)$cantidadinsumo[0]["saldoCantidad"] + (float)$cantidadorden[0]["cantidad"];
+                $saldoCantidad = floatval($cantidadinsumo[0]["saldoCantidad"]) + floatval($cantidadorden[0]["cantidad"]);
                 // $saldoCantidad = (real)$cantidadorden[0]['cantidad'];
                 
                 //Actualiza la cantidad de Insumos
@@ -142,7 +142,11 @@ class InsumosxOrdenSalida{
             return $updated;
         }     
         catch(Exception $e) {
-            return false;
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al actualizar producto'))
+            );
         }
     }
 

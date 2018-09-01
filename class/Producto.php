@@ -133,7 +133,6 @@ class Producto{
             );
         }
     }
-  
     // Si hago el filtro por tipo en el javascript ya no necesito esta funcion
     function ReadAllPrdVenta(){
         try {
@@ -393,7 +392,5 @@ class Producto{
         }
     } 
 }
-
-
 
 ?>
