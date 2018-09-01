@@ -206,7 +206,7 @@ class Producto {
                     { title: "Código Rapido" },
                     { title: "Cantidad" },
                     { title: "Precio" },
-                    { title: "Action" }
+                    { title: "Accion" }
                 ],
                 paging: true,
                 search: true
