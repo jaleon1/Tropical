@@ -233,7 +233,7 @@ class InsumoBodega {
                     data: "costoPromedio"       
                 },
                 {
-                    title: "Action",
+                    title: "Acción",
                     orderable: false,
                     searchable:false,
                     visible: buttons,

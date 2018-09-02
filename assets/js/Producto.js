@@ -344,7 +344,7 @@ class Producto {
                         data:"costoPromedio",
                         visible:false},
                     {
-                        title:"P VENTA",
+                        title:"Precio VENTA",
                         data:"precioVenta",
                         visible:false},
                     {
@@ -420,7 +420,7 @@ class Producto {
                         data:"costoPromedio",
                         width:"auto"},
                     {
-                        title:"P VENTA",
+                        title:"Precio VENTA",
                         data:"precioVenta",
                         width:"auto"},
                     {

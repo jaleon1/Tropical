@@ -611,7 +611,7 @@ function btnFormaPago() {
         `<div class="col-md-2"></div>
     <div class="col-md-3" onclick="facCard()">
         <img id="fac-ccard" src="images/credit-cards.png" class="modal-img-pago">
-        <p class="text-center">Tarjeta</p>
+        <p class="text-center">Tarjeta Crédito/Debito</p>
     </div>
     <div class="col-md-2"></div>
     <div class="col-md-3" onclick="facCash()">
