@@ -474,28 +474,28 @@
     <!-- iCheck -->
     <!-- <script src="assets/js/iCheck/icheck.min.js"></script> -->
     <!-- Moment -->
-    <!-- <script src="assets/js/moment.min.js"></script>
-        <script src="assets/js/moment-timezone.js"></script> -->
-        <!-- bootstrap-datetimepicker -->
-        <!-- <script src="assets/js/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js"></script> -->
-        <!-- Validator -->
-        <script src="assets/js/validator.js"></script>
-        <!-- Input mask -->
-        <script src="assets/js/jquery.inputmask/jquery.inputmask.bundle.min.js"></script>
-   
-        <!-- JS Scripts -->
-        <script src="assets/js/OrdenSalida.js"></script>
-        <script src="assets/js/ElaborarProducto.js"></script>
-        <script src="assets/js/Insumo.js"></script>
-        <script src="assets/js/Producto.js"></script>
-        <script src="assets/js/Usuario.js"></script>
-        <!-- Sweet Alert -->
-        <script src="assets/js/sweetalert2.min.js"></script>
+    <script src="assets/js/moment.min.js"></script>
+    <script src="assets/js/moment-timezone.js"></script>
+    <!-- bootstrap-datetimepicker -->
+    <!-- <script src="assets/js/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js"></script> -->
+    <!-- Validator -->
+    <script src="assets/js/validator.js"></script>
+    <!-- Input mask -->
+    <script src="assets/js/jquery.inputmask/jquery.inputmask.bundle.min.js"></script>
 
-        <!-- Datatables -->
-        <script src="../vendors/datatables.net/js/jquery.dataTables.min.js"></script>
-        <!-- Custom Theme Scripts -->
-        <script src="assets/js/custom.js"></script>   
+    <!-- JS Scripts -->
+    <script src="assets/js/OrdenSalida.js"></script>
+    <script src="assets/js/ElaborarProducto.js"></script>
+    <script src="assets/js/Insumo.js"></script>
+    <script src="assets/js/Producto.js"></script>
+    <script src="assets/js/Usuario.js"></script>
+    <!-- Sweet Alert -->
+    <script src="assets/js/sweetalert2.min.js"></script>
+
+    <!-- Datatables -->
+    <script src="../vendors/datatables.net/js/jquery.dataTables.min.js"></script>
+    <!-- Custom Theme Scripts -->
+    <script src="assets/js/custom.js"></script>   
 
 </body>
 
@@ -515,6 +515,7 @@
     });
     $(document).on('click', '#btnAddProductoGenerado', function (event) {
         producto.id = null;
+        producto.setTableElaboraProducto();
         producto.ReadAllPrdVenta;
         producto.Init();
     });

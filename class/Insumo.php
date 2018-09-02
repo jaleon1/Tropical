@@ -1,4 +1,5 @@
 <?php
+error_reporting(0);
 if(isset($_POST["action"])){
     $opt= $_POST["action"];
     unset($_POST['action']);
@@ -16,8 +17,17 @@ if(isset($_POST["action"])){
         case "Read":
             echo json_encode($insumo->Read());
             break;
+        case "ReadSaldoPositivo":
+            echo json_encode($insumo->ReadSaldoPositivo());
+            break;
         case "Create":
             $insumo->Create();
+            break;
+        case "saldoCorrecto":
+            echo json_encode($insumo->saldoCorrecto($_POST["cantidad"],$_POST["id"]));
+            break;
+        case "saldoCorrectoMod":
+            echo json_encode($insumo->saldoCorrectoMod($_POST["cantidad"],$_POST["id"],$_POST["scant"]));
             break;
         case "Update":
             $insumo->Update();
@@ -60,10 +70,65 @@ class Insumo{
     function ReadAll(){
         try {
             $sql='SELECT id, codigo, nombre, descripcion, saldoCantidad, saldoCosto, costoPromedio
-                FROM     insumo       
+                FROM  insumo       
                 ORDER BY nombre asc';
             $data= DATA::Ejecutar($sql);
             return $data;
+        }     
+        catch(Exception $e) {
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar la lista'))
+            );
+        }
+    }
+
+    function ReadSaldoPositivo(){
+        try {
+            $sql='SELECT id, codigo, nombre, descripcion, saldoCantidad, saldoCosto, costoPromedio
+                FROM insumo WHERE saldoCantidad>0;       
+                ORDER BY nombre asc';
+            $data= DATA::Ejecutar($sql);
+            return $data;
+        }     
+        catch(Exception $e) {
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar la lista'))
+            );
+        }
+    }
+
+    function saldoCorrecto($cantidad,$id){
+        try {
+            $sql='SELECT saldoCantidad FROM insumo WHERE id=:id';
+            $param= array(':id'=>$id);
+            $data= DATA::Ejecutar($sql,$param);
+            if ($data[0][0]>=$cantidad) 
+                return true;
+            else
+                return floatval($data[0][0]);
+        }     
+        catch(Exception $e) {
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar la lista'))
+            );
+        }
+    }
+
+    function saldoCorrectoMod($cantidad,$id,$scant){
+        try {
+            $sql='SELECT saldoCantidad FROM insumo WHERE id=:id';
+            $param= array(':id'=>$id);
+            $data= DATA::Ejecutar($sql,$param);
+            if ($data[0][0] + $scant >=$cantidad) 
+                return true;
+            else
+                return floatval($data[0][0]);
         }     
         catch(Exception $e) {
             header('HTTP/1.0 400 Bad error');

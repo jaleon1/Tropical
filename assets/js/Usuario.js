@@ -338,13 +338,14 @@ class Usuario {
         $('#tUsuario').DataTable({
             responsive: true,
             info: false,
+            destroy: true,
             "order": [[ 1, "asc" ]],
             "language": {
                 "infoEmpty": "Sin Usuarios Registrados",
                 "emptyTable": "Sin Usuarios Registrados",
                 "search": "Buscar",
                 "zeroRecords":    "No hay resultados",
-                "lengthMenu":     "Mostar _MENU_ registros",
+                "lengthMenu":     "Mostrar _MENU_ registros",
                 "paginate": {
                     "first":      "Primera",
                     "last":       "Ultima",
@@ -352,7 +353,6 @@ class Usuario {
                     "previous":   "Anterior"
                 }
             },
-            
             columns: [
                 {
                     title: "id",

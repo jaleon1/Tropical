@@ -6,9 +6,12 @@
     line-height: 48px;
     width: 48px;
     font-size: 18px;
-    background-color: rgb(154, 108, 224);
+    background-color: rgb(0, 0, 0);
+    color: rgb(255, 255, 255);
     text-align: center;
   }
+
+  
   
   .avatar-left {
     float: left;
@@ -26,18 +29,20 @@
 
 .container {
     border: 2px solid #dedede;
-    background-color: #f1f1f1;
+    background-color: #ffffff;
+    color: black;
     border-radius: 5px;
     padding: 10px;
     margin: 10px 0;
 }
 
 .containerPar {
-    border: 2px solid #dedede;
-    background-color: #e7d7eb;
+    border: 2px solid #000000;
+    background-color: #000000;
     border-radius: 5px;
     padding: 10px;
     margin: 10px 0;
+    color: white;
 }
 
 /* Darker chat container */
@@ -90,6 +95,11 @@
 }
 
 .topping{
-    color: rgb(154, 105, 224);
+    color: rgb(0, 0, 0);
+    /* font-weight: bold; */
+}
+
+.topping-black{
+    color: rgb(255, 255, 255);
 }
 

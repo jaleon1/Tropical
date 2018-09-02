@@ -424,8 +424,6 @@ class ClienteFE{
                 ':idCodigoPaisTel'=>$this->idCodigoPaisTel,
                 ':numTelefono'=>$this->numTelefono,
                 ':correoElectronico'=>$this->correoElectronico,
-                // ':password'=>password_hash($this->password, PASSWORD_DEFAULT),
-                // ':certificado'=>password_hash($this->certificado, PASSWORD_DEFAULT),
                 ':username'=>encdes::cifrar($this->username),
                 ':password'=>encdes::cifrar($this->password),
                 ':certificado'=>encdes::cifrar($this->certificado), 
@@ -435,13 +433,43 @@ class ClienteFE{
             if($data)
             {
                 //guarda api_base.users
-                $url= 'http://localhost/api.php?w=users&r=users_register&fullName='.$this->nombre.'&userName='.$this->username.'&email='.$this->correoElectronico.'&about=otro%20Usuario&country=CR&pwd='.$this->password;
+                $url= 'http://104.131.5.198/api.php';                                
                 $ch = curl_init();
-                curl_setopt($ch, CURLOPT_URL,$url);
-                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
-                $server_output = curl_exec ($ch);
-
-                
+                $post = [
+                    'w' => 'users',
+                    'r' => 'users_register',
+                    'fullName'   => $this->nombre,
+                    'userName'   => $this->username,
+                    'email'   => $this->correoElectronico,
+                    'about'   => 'StoryLabsUser',
+                    'country'   => 'CR',
+                    'pwd'   => $this->password
+                ];  
+                curl_setopt_array($ch, array(
+                    CURLOPT_URL => $url,
+                    CURLOPT_RETURNTRANSFER => true,   
+                    CURLOPT_VERBOSE => true,      
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_MAXREDIRS => 10,
+                    CURLOPT_TIMEOUT => 30,
+                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                    CURLOPT_CUSTOMREQUEST => "POST",
+                    CURLOPT_POSTFIELDS => $post
+                ));
+                $server_output = curl_exec($ch);
+                $information = curl_getinfo($ch);
+                $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+                $header = substr($server_output, 0, $header_size);
+                $body = substr($server_output, $header_size);
+                $error_msg = "";
+                if (curl_error($ch)) {
+                    $error_msg = curl_error($ch);
+                    error_log("error: ". $error_msg);
+                }     
+                curl_close($ch);     
+                // session de usuario ATV
+                $_SESSION['userSession']->ATVuserName= $this->username;                       
+                return true;               
             }
             else throw new Exception('Error al guardar.', 02);
         }     
@@ -456,6 +484,7 @@ class ClienteFE{
 
     function Update(){
         try {
+            error_log('iniciando');
             $sql="UPDATE clienteFE 
                 SET nombre=:nombre, codigoSeguridad=:codigoSeguridad, idCodigoPais=:idCodigoPais, idTipoIdentificacion=:idTipoIdentificacion, 
                     identificacion=:identificacion, nombreComercial=:nombreComercial, idProvincia=:idProvincia, idCanton=:idCanton, idDistrito=:idDistrito, 
@@ -470,14 +499,65 @@ class ClienteFE{
             );
             $data = DATA::Ejecutar($sql,$param,false);
             if($data){
-                $url= 'http://localhost/api.php?w=users&r=users_register&fullName=444444444&userName='.$this->username.'&email='.$this->correoElectronico.'&about=otro%20Usuario&country=CR&pwd='.$this->password;
-                //$url= 'http://localhost/api.php?w=users&r=users_register&fullName=Carlos%20Chacon&userName=eeeeeee123&email=carlos@e11@gmail.com&about=Tsno&country=CR&pwd=123';
+                // actualiza info del cliente FE.
+                //guarda api_base.users
+                // $url= 'http://localhost/api.php';
+                // $url= 'http://104.131.5.198/api.php';                           
+                // $ch = curl_init();
+                // $post = [
+                //     'w' => 'users',
+                //     'r' => 'users_register',
+                //     'fullName'   => $this->nombre,
+                //     'userName'   => $this->username,
+                //     'email'   => $this->correoElectronico,
+                //     'about'   => 'StoryLabsUser',
+                //     'country'   => 'CR',
+                //     'pwd'   => $this->password
+                // ];  
+                // curl_setopt_array($ch, array(
+                //     CURLOPT_URL => $url,
+                //     CURLOPT_RETURNTRANSFER => true,   
+                //     CURLOPT_VERBOSE => true,      
+                //     CURLOPT_RETURNTRANSFER => true,
+                //     CURLOPT_MAXREDIRS => 10,
+                //     CURLOPT_TIMEOUT => 30,
+                //     CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                //     CURLOPT_CUSTOMREQUEST => "POST",
+                //     CURLOPT_POSTFIELDS => $post
+                // ));
+                // $server_output = curl_exec($ch);
+                // $information = curl_getinfo($ch);
+                // $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+                // $header = substr($server_output, 0, $header_size);
+                // $body = substr($server_output, $header_size);
+                // $error_msg = "";
+                // if (curl_error($ch)) {
+                //     $error_msg = curl_error($ch);
+                //     error_log("error: ". $error_msg);
+                // }     
+                // curl_close($ch);
+
+                // login api
+                $url= 'http://104.131.5.198/api.php';
+                //$url= 'http://localhost/api.php';                                
                 $ch = curl_init();
-                curl_setopt($ch, CURLOPT_URL,$url);
-                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
-                curl_setopt($ch,CURLOPT_VERBOSE, 1);
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-                
+                $post = [
+                    'w' => 'users',
+                    'r' => 'users_log_me_in',
+                    'userName'   => $this->username,
+                    'pwd'   => $this->password
+                ];  
+                curl_setopt_array($ch, array(
+                    CURLOPT_URL => $url,
+                    CURLOPT_RETURNTRANSFER => true,   
+                    CURLOPT_VERBOSE => true,      
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_MAXREDIRS => 10,
+                    CURLOPT_TIMEOUT => 120,
+                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                    CURLOPT_CUSTOMREQUEST => "POST",
+                    CURLOPT_POSTFIELDS => $post
+                ));
                 $server_output = curl_exec($ch);
                 $information = curl_getinfo($ch);
                 $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
@@ -486,9 +566,51 @@ class ClienteFE{
                 $error_msg = "";
                 if (curl_error($ch)) {
                     $error_msg = curl_error($ch);
+                    error_log("error: ". $error_msg);
                 }     
+                curl_close($ch);  
+                // session de usuario ATV
+                $_SESSION['userSession']->ATVuserName= $this->username;  
+                $sArray=json_decode($header);
+                $_SESSION['userSession']->sessionKey= $sArray->resp->sessionKey;
+
+                // sube cert
+
+                //$url= 'http://104.131.5.198/api.php';
+                $url= 'http://localhost/api.php';
+                $ch = curl_init();
+                $uploadfile= '../CU/72a5afa7-dcba-4539-8257-ed1e18b1ce94/Y+VEzCo5Oskq5TvVbpxb';
+                $post = [
+                    'w' => 'fileUploader',
+                    'r' => 'subir_certif',
+                    'sessionKey'   => $_SESSION['userSession']->sessionKey,
+                    'fileToUpload'   => $uploadfile,
+                    'iam'   => $_SESSION['userSession']->ATVuserName
+                ];  
+                curl_setopt_array($ch, array(
+                    CURLOPT_URL => $url,
+                    CURLOPT_RETURNTRANSFER => true,   
+                    CURLOPT_VERBOSE => true,                      
+                    CURLOPT_MAXREDIRS => 10,
+                    CURLOPT_TIMEOUT => 30,
+                    //CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                    CURLOPT_CUSTOMREQUEST => "POST",
+                    CURLOPT_POSTFIELDS => $post
+                ));
+                $server_output = curl_exec($ch);
+                $information = curl_getinfo($ch);
+                $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+                $header = substr($server_output, 0, $header_size);
+                $body = substr($server_output, $header_size);
+                $error_msg = "";
+                if (curl_error($ch)) {
+                    $error_msg = curl_error($ch);
+                    error_log("error: ". $error_msg);
+                }
                 curl_close($ch);
-                
+
+
+                // ...              
                 return true;
             }   
             else throw new Exception('Error al guardar.', 123);

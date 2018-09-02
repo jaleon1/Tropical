@@ -510,6 +510,7 @@
 
     $(document).on('click', '#btnAddInsumo', function (event) {
         insumo.id = null;
+        insumo.setTableOrdenSalida();
         insumo.Read;
         insumo.Init();
     });
@@ -534,6 +535,10 @@
     // Recarga la página para limpiar todo
     $('#reload').click(function () {
 		location.reload();
-	});
+    });
+
+    $(".cantidadInsumo").on("keydown",function search(e) {
+        alert("prueba");
+    });
 
 </script>

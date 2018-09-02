@@ -1,4 +1,5 @@
 <?php
+error_reporting(0);
 if(isset($_POST["action"])){
     $opt= $_POST["action"];
     unset($_POST['action']);
@@ -26,7 +27,7 @@ if(isset($_POST["action"])){
             echo json_encode($ordenSalida->ReadbyOrden());
             break;
         case "Update":
-        echo json_encode($ordenSalida->Update());
+            echo json_encode($ordenSalida->Update());
             break;
         case "Delete":
             echo json_encode($ordenSalida->Delete());
@@ -167,7 +168,7 @@ class OrdenSalida{
                 
                 //save array obj
                 if(InsumosxOrdenSalida::Create($this->listaInsumo))
-                    return $maxid;
+                    return $maxid[0][0];
                 else throw new Exception('Error al guardar los insumos.', 03);
             }
             else throw new Exception('Error al guardar.', 02);
@@ -184,18 +185,18 @@ class OrdenSalida{
 
     function Update(){
         try {
-            $sql="UPDATE tropical.ordenSalida SET idUsuarioRecibe=:idUsuarioRecibe WHERE id=:id";
+            $sql="UPDATE ordenSalida SET idUsuarioRecibe=:idUsuarioRecibe WHERE id=:id";
             $param= array(':id'=>$this->id,':idUsuarioRecibe'=>$this->idUsuarioRecibe);
             $data = DATA::Ejecutar($sql,$param,false);
             if($data){
-                $sql="SELECT numeroOrden FROM tropical.ordenSalida WHERE id=:id;";
+                $sql="SELECT numeroOrden FROM ordenSalida WHERE id=:id;";
                 $param= array(':id'=>$this->id);
                 $numeroOrden=DATA::Ejecutar($sql,$param);
 
                 //update array obj
                 if($this->listaInsumo!=null)
                     if(InsumosxOrdenSalida::Update($this->listaInsumo))
-                        return $numeroOrden;            
+                        return $numeroOrden[0][0];            
                     else throw new Exception('Error al guardar la orden de salida.', 03);
                 else {
                     // no tiene roles

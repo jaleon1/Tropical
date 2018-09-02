@@ -21,6 +21,7 @@ if(isset($_POST["action"])){
 class ElaborarProducto{
     public $numeroOrden;
     public $listaProducto=[];
+    public $fechaliquida;
 
     function __construct(){
         // identificador único
@@ -30,6 +31,7 @@ class ElaborarProducto{
         if(isset($_POST["obj"])){
             $obj= json_decode($_POST["obj"],true);
             $this->numeroOrden= $obj["numeroOrden"] ?? '';
+            $this->fechaLiquida= $obj["fechaLiquida"] ?? '';
             //Productos
             if (isset($obj["listaProducto"] )) {
                 require_once("Producto.php");    
@@ -48,11 +50,12 @@ class ElaborarProducto{
     function Create(){
         try {
             $created = true;
-            $now = date_create('now')->format('Y-m-d H:i:s');
+            // $now = date_create('now')->format('Y-m-d H:i:s');
+            $now = date("Y-m-d H:i:s", localtime());
             $sql="UPDATE ordenSalida 
                 SET idEstado=1, fechaLiquida=:fechaLiquida
                 WHERE numeroOrden=:numeroOrden";
-            $param= array(':numeroOrden'=>$this->numeroOrden,':fechaLiquida'=>$now);
+            $param= array(':numeroOrden'=>$this->numeroOrden,':fechaLiquida'=>$this->fechaLiquida);
             $data = DATA::Ejecutar($sql,$param,false);
 
             //averiguar cuantos productos de venta llevo para dividir el costo.

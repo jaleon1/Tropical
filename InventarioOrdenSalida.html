@@ -16,12 +16,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Tropical | Orden Salida</title>
+    <title>Tropical | Orden de Producción</title>
 
     <!-- Bootstrap -->
     <link href="assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
-    <link href="assets/css/font-awesome/css/font-awesome.min.css" rel="stylesheet">RF
+    <link href="assets/css/font-awesome/css/font-awesome.min.css" rel="stylesheet">
     <!-- NProgress -->
     <link href="assets/css/nprogress/nprogress.css" rel="stylesheet">
     <!-- bootstrap-datetimepicker -->
@@ -240,9 +240,12 @@
                                                                                                 <th>Nombre</th>
                                                                                                 <th>Cantidad</th>
                                                                                                 <th class='oculto'>Descripción</th>
-                                                                                                <th class='oculto'>Saldo Cantidad</th>
-                                                                                                <th class='oculto'>Saldo Costo</th>
-                                                                                                <th class='oculto'>Costo Promedio</th>
+                                                                                                <th class='oculto'>Saldo
+                                                                                                    Cantidad</th>
+                                                                                                <th class='oculto'>Saldo
+                                                                                                    Costo</th>
+                                                                                                <th class='oculto'>Costo
+                                                                                                    Promedio</th>
                                                                                                 <th>Acción</th>
                                                                                             </tr>
                                                                                         </thead>
@@ -387,7 +390,7 @@
                                                                 <div class="col-sm-12">
                                                                     <table id="dsInsumo" class="table table-striped jambo_table bulk_action" role="grid" aria-describedby="datatable_info">
                                                                         <thead>
-                                                                            <tr role="row" class="headings">
+                                                                            <!-- <tr role="row" class="headings">
                                                                                 <th>
                                                                                     <input type='checkbox' id='check-all' class='iCheck-helper'>
                                                                                 </th>
@@ -399,7 +402,7 @@
                                                                                 <th class='oculto'>Saldo Costo</th>
                                                                                 <th class='oculto'>Costo Promedio</th>
                                                                                 <th class='oculto'>Acción</th>
-                                                                            </tr>
+                                                                            </tr> -->
                                                                         </thead>
 
                                                                         <tbody id="tableBody-Insumo">
@@ -486,7 +489,8 @@
                                                     <button type="button" class="close" data-dismiss="modal">
                                                         <span aria-hidden="true">×</span>
                                                     </button>
-                                                    <h4 class="modal-title" id="myModalLabel">Seleccione el Usuario que recibe los insumos</h4>
+                                                    <h4 class="modal-title" id="myModalLabel">Seleccione el Usuario que recibe
+                                                        los insumos</h4>
                                                 </div>
 
                                                 <div class="modal-body">
@@ -552,14 +556,14 @@
     <!-- JS Scripts -->
     <script src="assets/js/OrdenSalida.js"></script>
     <script src="assets/js/ElaborarProducto.js"></script>
-    <script src="assets/js/ProductosxBodega.js"></script>
     <script src="assets/js/Producto.js"></script>
+    <script src="assets/js/ProductosXBodega.js"></script>
     <script src="assets/js/Insumo.js"></script>
     <script src="assets/js/Usuario.js"></script>
     <!-- Sweet Alert -->
     <script src="assets/js/sweetalert2.min.js"></script>
     <!-- Datatables -->
-    <script src="../vendors/datatables.net/js/jquery.dataTables.min.js"></script>    
+    <script src="../vendors/datatables.net/js/jquery.dataTables.min.js"></script>
     <!-- FastClick -->
     <script src="../vendors/fastclick/lib/fastclick.js"></script>
     <!-- NProgress -->
@@ -576,11 +580,13 @@
 <script>
     $(document).ready(function () {
         ordenSalida.id = null;
+        ordenSalida.setTableOrdenSalida();
         ordenSalida.Read;
         ordenSalida.Init();
     });
     $(document).on('click', '#btnAddInsumo', function (event) {
         insumo.id = null;
+        insumo.setTableOrdenSalida();
         insumo.Read;
         insumo.Init();
     });
@@ -592,13 +598,13 @@
         usuario.Init();
     });
     $(document).on('change', '.chk-addinsumo', function (event) {
-        var id=$(this).parents("tr").find("td:eq(1)").html();
-        var codigo=$(this).parents("tr").find("td:eq(2)").html(); 
-        var nombre=$(this).parents("tr").find("td:eq(3)").html();
-        var descripcion=$(this).parents("tr").find("td:eq(4)").html();
-        var saldoCantidad=$(this).parents("tr").find("td:eq(5)").html();
-        var saldoCosto=$(this).parents("tr").find("td:eq(6)").html();
-        var costoPromedio=$(this).parents("tr").find("td:eq(7)").html();
-        ordenSalida.AddInsumoEventHandler(id,codigo,nombre,descripcion,saldoCantidad,saldoCosto,costoPromedio);
+        var id = $(this).parents("tr").find("td:eq(1)").html();
+        var codigo = $(this).parents("tr").find("td:eq(2)").html();
+        var nombre = $(this).parents("tr").find("td:eq(3)").html();
+        var descripcion = $(this).parents("tr").find("td:eq(4)").html();
+        var saldoCantidad = $(this).parents("tr").find("td:eq(5)").html();
+        var saldoCosto = $(this).parents("tr").find("td:eq(6)").html();
+        var costoPromedio = $(this).parents("tr").find("td:eq(7)").html();
+        ordenSalida.AddInsumoEventHandler(id, codigo, nombre, descripcion, saldoCantidad, saldoCosto, costoPromedio);
     });
 </script>
