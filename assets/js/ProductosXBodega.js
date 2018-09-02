@@ -381,7 +381,7 @@ class ProductoBodega {
                     data: "precioVenta"
                 },
                 {
-                    title: "Accion",
+                    title: "Acción",
                     orderable: false,
                     searchable:false,
                     visible: buttons,

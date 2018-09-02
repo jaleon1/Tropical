@@ -235,7 +235,7 @@ class InsumoBodega {
                     visible: false       
                 },
                 {
-                    title: "Accion",
+                    title: "Acción",
                     orderable: false,
                     searchable:false,
                     visible: buttons,

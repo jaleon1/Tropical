@@ -261,7 +261,7 @@ class Rol {
                 { title: "Nombre", data: "nombre" },
                 { title: "Descripción", data: "descripcion" },
                 {
-                    title: "Accion",
+                    title: "Acción",
                     orderable: false,
                     searchable:false,
                     visible: buttons,
