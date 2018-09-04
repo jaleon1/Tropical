@@ -183,7 +183,7 @@ function getStatusCashRegister(){
     });
 };
 
-function estadoCaja(e){  
+function estadoCaja(e){
     estado = JSON.parse(e);  
     switch(estado) {
         case "cajaCerrada": //false quiere decir que no hay cajas abiertas para el usuario logeado
