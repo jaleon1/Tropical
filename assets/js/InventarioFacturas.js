@@ -24,18 +24,18 @@ class InventarioFacturas {
         this.tb_facturas = $('#tb_facturas').DataTable({
             data: facturas,                               
             "language": {
-                "infoEmpty": "Sin Productos Ingresados",
+                "infoEmpty":  "Sin Productos Ingresados",
                 "emptyTable": "Sin Productos Ingresados",
-                "search": "Buscar",
-                "zeroRecords":    "No hay resultados",
-                "lengthMenu":     "Mostrar _MENU_ registros",
+                "search":     "Buscar",
+                "zeroRecords": "No hay resultados",
+                "lengthMenu":  "Mostar _MENU_ registros",
                 "paginate": {
-                    "first":      "Primera",
-                    "last":       "Ultima",
-                    "next":       "Siguiente",
-                    "previous":   "Anterior"
+                    "first":   "Primera",
+                    "last":    "Ultima",
+                    "next":    "Siguiente",
+                    "previous":"Anterior"
                 }
-            },  
+            },
             "order": [[1, "desc"]],
             columns: [
                 {
@@ -61,14 +61,16 @@ class InventarioFacturas {
                 },
                 {
                     title: "Total",
-                    data: "totalVenta"
+                    data: "totalVenta",
+                    mRender: function ( e ) {
+                        return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+                    }
                 },
             ]
         });
     };
 
     ReadbyID(id) {
-
         $("#detalleFac").empty();
         var detalleFac =
             `<button type="button" class="close" data-dismiss="modal">

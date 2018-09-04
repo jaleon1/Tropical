@@ -514,7 +514,7 @@ class Distribucion {
                     data: null
                 },
                 {
-                    title: "Accion",
+                    title: "Acción",
                     orderable: false,
                     searchable:false,
                     visible: buttons,
@@ -571,7 +571,7 @@ class Distribucion {
                     data: "estado"
                 },
                 {
-                    title: "Accion",
+                    title: "Acción",
                     orderable: false,
                     searchable:false,
                     visible: buttons,
