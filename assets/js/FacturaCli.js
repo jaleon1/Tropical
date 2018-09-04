@@ -38,7 +38,9 @@ precioMediano.precio = 0
 $(document).ready(function () {
 
     // NProgress.set(0.4)
-    
+    getStatusCashRegister();
+    //Muestra el modal de sesion de caja
+       
     $('#open_modal_fac').attr("disabled", true);
 
     btnFormaPago();
@@ -145,6 +147,118 @@ $("#btnmediano").click(function () {
     sel_tamano = 0;
 });
 
+
+$("#cerrarCaja").click(function () {
+    $.ajax({
+        type: "POST",
+        url: "class/CajaXBodega.php",
+        data: {
+            action: "cerrarCaja"
+        }
+    })
+    .done(function (e) {
+        swal({
+            text:'Validación lista.',
+            title: 'Caja Cerrada!',
+            type: 'success',
+            showConfirmButton: false,
+            timer: 1500
+        });
+    })
+});
+
+function getStatusCashRegister(){
+    $.ajax({
+        type: "POST",
+        url: "class/CajaXBodega.php",
+        data: {
+            action: "ValidarEstado"
+        }
+    })
+    .done(function (e) {
+        estadoCaja(e);
+    })
+    .fail(function (e) {
+        errorArbrirCaja("Usuario no valido", "Solo un administrador puede abrir caja!" );
+    });
+};
+
+function estadoCaja(e){  
+    estado = JSON.parse(e);  
+    switch(estado) {
+        case "cajaCerrada": //false quiere decir que no hay cajas abiertas para el usuario logeado
+            openModalAbrirCaja();
+            break;
+        case "aperturaCreada":
+            swal({
+                text:'Validación lista.',
+                title: 'Caja habilitada!',
+                type: 'success',
+                showConfirmButton: false,
+                timer: 1500
+            });
+            $("#main_containerFacturaCli").removeAttr("style");
+            $('.valida-caja-modal-lg').modal('hide');
+            break;
+        case "cajaAbierta":
+            $("#main_containerFacturaCli").removeAttr("style");
+            $('.valida-caja-modal-lg').modal('hide');
+            break;
+        default:
+            errorArbrirCaja("Imposible abrir caja", "Los datos no son correctos");
+    }
+};
+
+function openModalAbrirCaja(){
+    
+    $('.valida-caja-modal-lg').modal('show');
+
+
+    $("#abrirCaja").click(function(){
+        (async function getFormValues () {
+            const {value: formValues} = await swal({
+              title: 'Usuario y Contraseña del Administrador:',
+              html:
+                '<input id="swal-input1" placeholder="Usuario" class="swal2-input">' +
+                '<input id="swal-input2" placeholder="Contraseña" class="swal2-input">',
+              focusConfirm: false,
+              preConfirm: () => {
+                return [
+                  document.getElementById('swal-input1').value,
+                  document.getElementById('swal-input2').value
+                ]
+              }
+            })
+            
+            if (formValues) {
+                credenciales = JSON.stringify(formValues);            
+                $.ajax({
+                    type: "POST",
+                    url: "class/CajaXBodega.php",
+                    data: {
+                        action: "Create"
+                    }
+                })
+                .done(function (e) {
+                    estadoCaja(e);
+                })
+                .fail(function (e) {
+                    errorArbrirCaja("Usuario no valido", "Solo un administrador puede abrir caja!" );
+                });
+            }
+            
+            })()
+    });
+};
+function errorArbrirCaja(titulo, texto){
+    swal({
+        type: 'error',
+        title: titulo,
+        text: texto,
+        showConfirmButton: false,
+        timer: 3000
+      })
+};
 
 function LoadAllPrdVenta() {
     $.ajax({
