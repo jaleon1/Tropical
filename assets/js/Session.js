@@ -22,7 +22,7 @@ var Session=  {
                     Session.setMenu(data.eventos);  
                     Session.state=true;
                     Session.sideBarDraw(data);
-                    $("#main_container").removeAttr("style");
+                    $(".main_container").removeAttr("style");
                     break;
                 case 'nocredencial':
                     $('.right_col').hide();

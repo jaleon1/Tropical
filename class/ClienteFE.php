@@ -538,8 +538,8 @@ class ClienteFE{
                 // curl_close($ch);
 
                 // login api
-                $url= 'http://104.131.5.198/api.php';
-                //$url= 'http://localhost/api.php';                                
+                //$url= 'http://104.131.5.198/api.php';
+                $url= 'http://localhost/api.php';                                
                 $ch = curl_init();
                 $post = [
                     'w' => 'users',
