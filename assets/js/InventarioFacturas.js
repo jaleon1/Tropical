@@ -61,7 +61,10 @@ class InventarioFacturas {
                 },
                 {
                     title: "Total",
-                    data: "totalVenta"
+                    data: "totalVenta",
+                    mRender: function ( e ) {
+                        return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+                    }
                 },
             ]
         });

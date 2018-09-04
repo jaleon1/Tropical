@@ -42,9 +42,10 @@
 
 </head>
 
-<body  id="body">
+<!-- <body id="body"> -->
+    <body id="body">
     <div class="container body">
-        <div class="main_container">
+        <div id="main_containerFacturaCli" class="main_container" style="visibility:hidden">
 
             <!-- page content -->
             <div class="right_col" role="main">
@@ -52,12 +53,13 @@
 
                     <div class="clearfix"></div>
 
-                    <div class="row">
+                    <div class="row rowFac">
                         <!-- COLUMNA CON TOTALES + LISTA PRD -->
                         <div class="col-md-3 col-xs-12">
                             <div class="x_content">
                                 <div class="x_title">
                                     <h3 class='call_Bodega'></h3>
+
                                 </div>
                                 <div class="table-responsive">
                                     <table class="table table-striped jambo_table bulk_action">
@@ -84,71 +86,89 @@
                             </div>
                         </div>
                         <div class="col-md-9 col-xs-12">
-                            <div class="row">
-                                <div class="x_panel">
-                                    <!--  CONTENIDO DE LA PAGINA -->
-                                    <div class="x_content">
-                                        <div class="row">
-                                            <div class="col-lg-2 col-md-2">
-                                                <h3 class="titleSize">TAMAÑO:</h3>
-                                            </div>
-                                            <div id="tamano" class="col-lg-10 col-md-10">
-                                                <button type="button" id="btngrande" class="btn btn-lg btnSize btn_tamano btn_venta selected">12oz</button>
-                                                <button type="button" id="btnmediano" class="btn btn-lg btnSize btn_tamano btn_venta">8oz</button>
-                                            </div>
-
+                            <div class="x_panel">
+                                <!--  CONTENIDO DE LA PAGINA -->
+                                <div class="x_content">
+                                    <div class="row">
+                                        <div class="col-lg-2 col-md-2">
+                                            <h3 class="titleSize">TAMAÑO:</h3>
                                         </div>
+                                        <div id="tamano" class="col-lg-9 col-md-9">
+                                            <button type="button" id="btngrande" class="btn btn-lg btnSize btn_tamano btn_venta selected">12oz</button>
+                                            <button type="button" id="btnmediano" class="btn btn-lg btnSize btn_tamano btn_venta">8oz</button>
+                                        </div>
+                                        <div class="col-lg-1 col-md-1">
+                                            <div class="dropdown">
+                                                <i class='fa fa-bars fa-2x trigger_button dropdown-toggle' data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                                </i>
+                                                <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="dropdownMenu1">
+                                                    <li role="presentation">
+                                                        <a role="menuitem" tabindex="-1" href="Dashboard.html">Volver al Dashboard</a>
+                                                    </li>
+                                                    <li role="presentation">
+                                                        <a id="exitFullScreem" role="menuitem" tabindex="-1" href="">Salir de Pantalla Completa</a>
+                                                    </li>
+                                                    <li role="separator" class="divider"></li>
+                                                    <li role="presentation">
+                                                        <a id="cerrarCaja" role="menuitem" tabindex="-1" href="Dashboard.html">Cerrar Caja</a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+
                                     </div>
                                 </div>
-                                <div class="x_panel">
-                                    <!--  CONTENIDO DE LA PAGINA -->
-                                    <div class="x_content">
+                            </div>
+                            <div class="x_panel">
+                                <!--  CONTENIDO DE LA PAGINA -->
+                                <div class="x_content">
+                                    <div class="row">
+                                        <div class="col-lg-2 col-md-2">
+                                            <h3>SABORES:</h3>
+                                        </div>
+                                        <div id="sabores_elegidos" class="col-lg-10 col-md-10">
+                                        </div>
                                         <div class="row">
-                                            <div class="col-lg-2 col-md-2">
-                                                <h3>SABORES:</h3>
-                                            </div>
-                                            <div id="sabores_elegidos" class="col-lg-10 col-md-10">
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-lg-12">
-                                                    <div id="prdXbdg">
-                                                    </div>
+                                            <div class="col-lg-12">
+                                                <div id="prdXbdg">
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="x_panel">
-                                    <!--  CONTENIDO DE LA PAGINA -->
-                                    <div class="x_content">
-                                        <div class="row">
-                                            <div class="col-lg-2 col-md-2">
-                                                <h3>TOPPINGS:</h3>
-                                            </div>
-                                            <div class="col-lg-10 col-md-10">
-                                                <div id="toppings_elegidos" class="col-lg-10">
+                            </div>
+                            <div class="x_panel">
+                                <!--  CONTENIDO DE LA PAGINA -->
+                                <div class="x_content">
+                                    <div class="row">
+                                        <div class="col-lg-2 col-md-2">
+                                            <h3>TOPPINGS:</h3>
+                                        </div>
+                                        <div class="col-lg-10 col-md-10">
+                                            <div id="toppings_elegidos" class="col-lg-10">
 
-                                                </div>
                                             </div>
                                         </div>
+                                    </div>
+                                    <div class="row">
+
                                         <div class="row">
-
-                                            <div class="row">
-                                                <div class="col-lg-12">
-                                                    <div id="toppings">
+                                            <div class="col-lg-12">
+                                                <div id="toppings">
 
 
-                                                        <button id="null" style="background-color:#ff3535;" class="btn_topping btn_venta" onclick="agrega_toppings('null', 'Sin Topping')">
-                                                            <div style="color:whitesmoke;">
-                                                
-                                                                <h5><b>Sin Topping</b></h5>
-                                                                <p id="cant_topping_sin_topping">&nbsp;</p>
-                                                            </div>
-                                                        </button>
+                                                    <button id="null" style="background-color:#ff3535;" class="btn_topping btn_venta" onclick="agrega_toppings('null', 'Sin Topping')">
+                                                        <div style="color:whitesmoke;">
+
+                                                            <h5>
+                                                                <b>Sin Topping</b>
+                                                            </h5>
+                                                            <p id="cant_topping_sin_topping">&nbsp;</p>
+                                                        </div>
+                                                    </button>
 
 
-                                                        
-                                                    </div>
+
                                                 </div>
                                             </div>
                                         </div>
@@ -186,7 +206,7 @@
         </div>
 
         <!-- modals -->
-        <!-- Large modal -->
+        <!-- Large modal facturar -->
         <div class="modal fade factura-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content modal-factura">
@@ -214,6 +234,8 @@
         </div>
         <!-- modals -->
         <!-- Large modal -->
+
+       
 
         <!-- jQuery -->
         <script src="assets/js/jquery.min.js"></script>
@@ -249,6 +271,66 @@
 
 </body>
 
+ <!-- Large modal Validar Sesion Caja -->
+ <div class="modal fade valida-caja-modal-lg" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <h4 class="modal-title" id="exampleModalLabel">Caja Cerrada</h4>
+                        </div>
+                        <div class="col-md-6">
+                            <center>
+                                <h2 style="font-size: 30px" class="modal-title" id="exampleModalLabel">Tropical Nom sucursal</h2> 
+                            </center>
+                        </div>
+                        <div class="col-md-3">
+                            <h4 class="modal-title" id="exampleModalLabel">Saldo Caja: ¢15.000</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+
+                        <form class="form-inline">
+                            <div class="col-md-3 col-md-offset-6">
+                                <label>Saldo contabilizado:</label>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="text" class="form-control" id="saldoContabilizado">
+                            </div>
+                            
+                        </form>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <form class="form-inline">
+                            <div class="col-md-3 col-md-offset-6">
+                                <label>Descuadre:</label>
+                            </div>
+                            <div class="col-md-3">
+                                <label id="saldoContabilizado" readonly> ¢0.00</label>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="row">
+                        <div class="form-group">
+                            <label for="comment">Observaciones:</label>
+                            <textarea style="resize:none;" class="form-control" rows="5" id="comment"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                        <a href="Dashboard.html">
+                            <button id="openDash" type="button" class="btn btn-info">Regresar al Dashboard</button>
+                        </a>
+                    <button id="abrirCaja" type="button" class="btn btn-success">Abrir Caja</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </html>
 
 <script>
@@ -266,10 +348,23 @@
         }
     });
 
-    var elem = document.getElementById("body");
+    //Abre en pantalla completa el modulo de facturacion al precionar el body
+    // var elem = document.getElementById("body");
+    // elem.onclick = function () {
+    //     req = elem.requestFullScreen || elem.webkitRequestFullScreen || elem.mozRequestFullScreen;
+    //     req.call(elem);
+    // }
+    //Sale de pantalla completa del modulo de facturacion
+    $("#exitFullScreem").click(function exitFullScreen(elem) {
+        var requestMethod = elem.exitFullscreen ||
+            elem.mozCancelFullScreen ||
+            elem.webkitExitFullscreen ||
+            elem.msExitFullscreen;
+        if (requestMethod) {
+            requestMethod.call(elem);
+        } else {
+            console.log("Oops. Request method false.");
+        }
+    });
 
-    elem.onclick = function() {
-        req = elem.requestFullScreen || elem.webkitRequestFullScreen || elem.mozRequestFullScreen;
-        req.call(elem);
-    }
 </script>
