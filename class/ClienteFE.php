@@ -54,7 +54,7 @@ if(isset($_POST["action"])){
         case "DeleteCertificado":
             $clientefe->certificado = $_POST['certificado'];
             $clientefe->DeleteCertificado();
-            break;      
+            break;               
     }
 }
 
@@ -457,7 +457,6 @@ class ClienteFE{
                     CURLOPT_POSTFIELDS => $post
                 ));
                 $server_output = curl_exec($ch);
-                $information = curl_getinfo($ch);
                 $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
                 $header = substr($server_output, 0, $header_size);
                 $body = substr($server_output, $header_size);
@@ -475,6 +474,7 @@ class ClienteFE{
             else throw new Exception('Error al guardar.', 02);
         }     
         catch(Exception $e) {
+            error_log("error: ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
@@ -485,7 +485,6 @@ class ClienteFE{
 
     function Update(){
         try {
-            error_log('iniciando');
             $sql="UPDATE clienteFE 
                 SET nombre=:nombre, codigoSeguridad=:codigoSeguridad, idCodigoPais=:idCodigoPais, idTipoIdentificacion=:idTipoIdentificacion, 
                     identificacion=:identificacion, nombreComercial=:nombreComercial, idProvincia=:idProvincia, idCanton=:idCanton, idDistrito=:idDistrito, 
@@ -507,12 +506,63 @@ class ClienteFE{
             else throw new Exception('Error al guardar.', 123);
         }     
         catch(Exception $e) {
+            error_log("error: ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
                 'msg' => $e->getMessage()))
             );
         }
+    }
+
+    public function APILogin(){
+        try{
+            //$url= 'http://104.131.5.198/api.php';
+            $url= 'http://localhost/api.php';                                
+            $ch = curl_init();
+            $post = [
+                'w' => 'users',
+                'r' => 'users_log_me_in',
+                'userName'   => $this->username,
+                'pwd'   => $this->password
+            ];  
+            curl_setopt_array($ch, array(
+                CURLOPT_URL => $url,
+                CURLOPT_RETURNTRANSFER => true,   
+                CURLOPT_VERBOSE => true,      
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 30,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => "POST",
+                CURLOPT_POSTFIELDS => $post
+            ));
+            $server_output = curl_exec($ch);
+            $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+            $header = substr($server_output, 0, $header_size);
+            $body = substr($server_output, $header_size);
+            $error_msg = "";
+            if (curl_error($ch)) {
+                $error_msg = curl_error($ch);
+                error_log("error: ". $error_msg);
+                throw new Exception('Error al guardar. '. $error_msg , 02);
+            }     
+            curl_close($ch);
+            // session de usuario ATV
+            $_SESSION['userSession']->ATVuserName= $this->username;  
+            $sArray=json_decode($header);
+            $_SESSION['userSession']->sessionKey= $sArray->resp->sessionKey;
+            error_log("key: ". $sArray->resp->sessionKey);
+        } 
+        catch(Exception $e) {
+            error_log("error: ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }
+
     }
 
     private function CheckRelatedItems(){
