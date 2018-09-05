@@ -2,6 +2,7 @@
 require_once("Conexion.php");
 require_once("Usuario.php");
 require_once("encdes.php");
+require_once("ClienteFE.php");
 if (!isset($_SESSION))
     session_start();
 $uploaddir= '../../CU/'.$_SESSION['userSession']->idBodega.'/';
@@ -18,17 +19,21 @@ if (!empty($_FILES)) {
             ':cpath'=>explode('::', $cfile)[0], 
             ':nkey'=>explode('::', $cfile)[1]);
         $data = DATA::Ejecutar($sql,$param,false);
-        if($data){
-            echo "UPLOADED";
+        if($data){            
             // nombre de usuario.
-            // $sql="SELECT userName
-            //     FROM api_base.users
-            //     WHERE id";
-            // $param= array(':idBodega'=>$_SESSION['userSession']->idBodega, 
-            //     ':cpath'=>explode('::', $cfile)[0], 
-            //     ':nkey'=>explode('::', $cfile)[1]);
-            // $data = DATA::Ejecutar($sql,$param,false);
+            $sql="SELECT username, password FROM tropical.clientefe
+                WHERE idBodega= :idbodega";
+            $param= array(':idBodega'=>$_SESSION['userSession']->idBodega);
+            $data = DATA::Ejecutar($sql,$param,false);
+            // sesion del usuario
+            $cliente= new ClienteFE();
+            $cliente->idBodega= $_SESSION['userSession']->idBodega;
+            $cliente->ReadProfile();
+            error_log("pw: ". $cliente->username);
+            error_log("pw: ". $cliente->password);
+            $cliente->APILogin();
             // Pasa el certificado al api.
+            echo "UPLOADED";
             return true;
         }
         else {
