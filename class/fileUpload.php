@@ -19,23 +19,26 @@ if (!empty($_FILES)) {
             ':nkey'=>explode('::', $cfile)[1]);
         $data = DATA::Ejecutar($sql,$param,false);
         if($data){
+            echo "UPLOADED";
+            // nombre de usuario.
+            // $sql="SELECT userName
+            //     FROM api_base.users
+            //     WHERE id";
+            // $param= array(':idBodega'=>$_SESSION['userSession']->idBodega, 
+            //     ':cpath'=>explode('::', $cfile)[0], 
+            //     ':nkey'=>explode('::', $cfile)[1]);
+            // $data = DATA::Ejecutar($sql,$param,false);
             // Pasa el certificado al api.
-            if (file_exists($uploadfile)){
-                // busca el contribuyente relacionado con el archivo subido.
-                
-                return true;
-            }
-            else {
-                error_log('no se almacena la data del path de certificado.');
-                return false;
-            }
+            return true;
         }
         else {
             error_log('no se almacena la data del path de certificado.');
+            echo "upload err!";
             return false;
         }
     } else {
         error_log('mv failed');
+        echo "upload attack!";
         return false;
     }
 }
