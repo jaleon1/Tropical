@@ -502,7 +502,7 @@ class ClienteFE{
                 // actualiza info del cliente FE.
                 //guarda api_base.users
                 // $url= 'http://localhost/api.php';
-                // $url= 'http://104.131.5.198/api.php';                           
+                // // $url= 'http://104.131.5.198/api.php';                           
                 // $ch = curl_init();
                 // $post = [
                 //     'w' => 'users',
@@ -520,7 +520,7 @@ class ClienteFE{
                 //     CURLOPT_VERBOSE => true,      
                 //     CURLOPT_RETURNTRANSFER => true,
                 //     CURLOPT_MAXREDIRS => 10,
-                //     CURLOPT_TIMEOUT => 30,
+                //     CURLOPT_TIMEOUT => 300,
                 //     CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
                 //     CURLOPT_CUSTOMREQUEST => "POST",
                 //     CURLOPT_POSTFIELDS => $post
@@ -553,7 +553,7 @@ class ClienteFE{
                     CURLOPT_VERBOSE => true,      
                     CURLOPT_RETURNTRANSFER => true,
                     CURLOPT_MAXREDIRS => 10,
-                    CURLOPT_TIMEOUT => 120,
+                    CURLOPT_TIMEOUT => 1200,
                     CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
                     CURLOPT_CUSTOMREQUEST => "POST",
                     CURLOPT_POSTFIELDS => $post
@@ -575,25 +575,29 @@ class ClienteFE{
                 $_SESSION['userSession']->sessionKey= $sArray->resp->sessionKey;
 
                 // sube cert
-
                 //$url= 'http://104.131.5.198/api.php';
                 $url= 'http://localhost/api.php';
                 $ch = curl_init();
-                $uploadfile= '../CU/72a5afa7-dcba-4539-8257-ed1e18b1ce94/Y+VEzCo5Oskq5TvVbpxb';
+                $uploadfile= realpath('C:\xampp\htdocs\Tropical\ATV\llavePruebas\TropicalSno.p12');
                 $post = [
                     'w' => 'fileUploader',
                     'r' => 'subir_certif',
-                    'sessionKey'   => $_SESSION['userSession']->sessionKey,
-                    'fileToUpload'   => $uploadfile,
-                    'iam'   => $_SESSION['userSession']->ATVuserName
+                    'sessionKey'=>$_SESSION['userSession']->sessionKey,
+                    'fileToUpload' => new CurlFile($uploadfile, 'application/x-pkcs12'),
+                    'iam'=>$_SESSION['userSession']->ATVuserName
                 ];  
                 curl_setopt_array($ch, array(
                     CURLOPT_URL => $url,
                     CURLOPT_RETURNTRANSFER => true,   
                     CURLOPT_VERBOSE => true,                      
                     CURLOPT_MAXREDIRS => 10,
-                    CURLOPT_TIMEOUT => 30,
-                    //CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                    CURLOPT_TIMEOUT => 300,
+                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                    // CURLOPT_HTTPHEADER => array(
+                    //     "Cache-Control: no-cache",
+                    //     "Content-Type: application/x-www-form-urlencoded",
+                    //     "content-type: multipart/form-data;"
+                    //   ),
                     CURLOPT_CUSTOMREQUEST => "POST",
                     CURLOPT_POSTFIELDS => $post
                 ));
