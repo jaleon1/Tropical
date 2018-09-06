@@ -518,7 +518,6 @@ class ClienteFE{
     public function APILogin(){
         try{
             error_log("API LOGIN ... ");
-            error_log("usr : " .  $this->username );
             //$url= 'http://104.131.5.198/api.php';
             $url= 'localhost/api.php';                        
             $ch = curl_init();
@@ -549,14 +548,59 @@ class ClienteFE{
                 error_log("error: ". $error_msg);
                 throw new Exception('Error al guardar. '. $error_msg , 02);
             }
-            error_log("output ***************************** : ". $server_output);
             curl_close($ch);
-            error_log("cierre ****************************");
             // session de usuario ATV
             $_SESSION['userSession']->ATVuserName= $this->username;  
             $sArray=json_decode($header);
             $_SESSION['userSession']->sessionKey= $sArray->resp->sessionKey;
-            error_log("key: ". $sArray->resp->sessionKey);
+            error_log("sessionKey: ". $sArray->resp->sessionKey);
+        } 
+        catch(Exception $e) {
+            error_log("error: ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }
+
+    }
+
+    public function APIUploadCert(){
+        try{
+            error_log("API UPLOAD CERT ... ");
+            //$url= 'http://104.131.5.198/api.php';
+            $url= 'localhost/api.php';
+            $ch = curl_init();
+            $uploadfile= realpath('C:\xampp\htdocs\Tropical\ATV\llavePruebas\TropicalSno.p12');
+            $post = [
+                'w' => 'fileUploader',
+                'r' => 'subir_certif',
+                'sessionKey'=>$_SESSION['userSession']->sessionKey,
+                'fileToUpload' => new CurlFile($uploadfile, 'application/x-pkcs12'),
+                'iam'=>$_SESSION['userSession']->ATVuserName
+            ];  
+            curl_setopt_array($ch, array(
+                CURLOPT_URL => $url,
+                CURLOPT_RETURNTRANSFER => true,   
+                CURLOPT_VERBOSE => true,                      
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 300,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => "POST",
+                CURLOPT_POSTFIELDS => $post
+            ));
+            $server_output = curl_exec($ch);
+            $information = curl_getinfo($ch);
+            $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+            $header = substr($server_output, 0, $header_size);
+            $body = substr($server_output, $header_size);
+            $error_msg = "";
+            if (curl_error($ch)) {
+                $error_msg = curl_error($ch);
+                error_log("error: ". $error_msg);
+            }
+            curl_close($ch);
         } 
         catch(Exception $e) {
             error_log("error: ". $e->getMessage());
