@@ -1,4 +1,7 @@
 <?php 
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+error_log("INICIANDO: ");
 require_once("Conexion.php");
 require_once("Usuario.php");
 require_once("encdes.php");
@@ -32,8 +35,9 @@ if (!empty($_FILES)) {
             $cliente->idBodega= $_SESSION['userSession']->idBodega;
             $cliente->ReadProfile();
             // Pasa el certificado al api.
-            $cliente->APILogin();            
-            $cliente->certificado= realpath($uploaddir . $_FILES['file']['name']);
+            $cliente->APILogin();
+            error_log("DIR ". $uploaddir);
+            $cliente->certificado= basename($uploaddir . $_FILES['file']['name']);
             error_log("cliente certificado: ". $cliente->certificado);
             // crea copia temporal sin cifrar para mover al API.
             copy($uploadfile, $cliente->certificado);
