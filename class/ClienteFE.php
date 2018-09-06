@@ -572,7 +572,11 @@ class ClienteFE{
             //$url= 'http://104.131.5.198/api.php';
             $url= 'localhost/api.php';
             $ch = curl_init();
-            $uploadfile= $_FILES['file']['tmp_name'];
+            $uploaddir= '../../CU/'.$_SESSION['userSession']->idBodega.'/';
+            $uploadfile= $uploaddir . $_FILES['file']['name'];
+            // if (move_uploaded_file($_FILES['file']['tmp_name'], $uploadfile)) {
+
+            // }
             error_log(" CERT: ". $uploadfile);
             $post = [
                 'w' => 'fileUploader',
