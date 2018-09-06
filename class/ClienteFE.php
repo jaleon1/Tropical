@@ -547,8 +547,10 @@ class ClienteFE{
                 $error_msg = curl_error($ch);
                 error_log("error: ". $error_msg);
                 throw new Exception('Error al guardar. '. $error_msg , 02);
-            }     
+            }
+            error_log("output ***************************** : ". $server_output);
             curl_close($ch);
+            error_log("cierre ****************************");
             // session de usuario ATV
             $_SESSION['userSession']->ATVuserName= $this->username;  
             $sArray=json_decode($header);
