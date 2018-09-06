@@ -572,25 +572,11 @@ class ClienteFE{
             //$url= 'http://104.131.5.198/api.php';
             $url= 'localhost/api.php';
             $ch = curl_init();
-            $uploaddir= '../../CU/'.$_SESSION['userSession']->idBodega.'/';
-            $uploadfile= $uploaddir . $_FILES['file']['name'];
-            if (!move_uploaded_file($_FILES['file']['tmp_name'], $uploadfile)) {
-                throw new Exception('Error al guardar el certificado. '. $error_msg , 011);
-                //error_log(" FILE OK!!  ");
-                // $sql="UPDATE clienteFE 
-                //         SET cpath=:cpath, nkey=:nkey
-                //         WHERE idBodega=:idBodega";
-                // $param= array(':idBodega'=>$_SESSION['userSession']->idBodega, 
-                //     ':cpath'=>explode('::', $cfile)[0], 
-                //     ':nkey'=>explode('::', $cfile)[1]);
-                // $data = DATA::Ejecutar($sql,$param,false);
-            }
-            error_log(" CERT: ". $uploadfile);
             $post = [
                 'w' => 'fileUploader',
                 'r' => 'subir_certif',
                 'sessionKey'=>$_SESSION['userSession']->sessionKey,
-                'fileToUpload' => new CurlFile($uploadfile, 'application/x-pkcs12'),
+                'fileToUpload' => new CurlFile( $this->certificado, 'application/x-pkcs12'),
                 'iam'=>$_SESSION['userSession']->ATVuserName
             ];  
             error_log(" sessionKey : ". $_SESSION['userSession']->sessionKey);
