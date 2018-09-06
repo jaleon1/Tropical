@@ -451,7 +451,7 @@ class ClienteFE{
                     CURLOPT_RETURNTRANSFER => true,   
                     CURLOPT_VERBOSE => true,      
                     CURLOPT_MAXREDIRS => 10,
-                    CURLOPT_TIMEOUT => 30,
+                    CURLOPT_TIMEOUT => 300,
                     CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
                     CURLOPT_CUSTOMREQUEST => "POST",
                     CURLOPT_POSTFIELDS => $post
@@ -533,7 +533,7 @@ class ClienteFE{
                 CURLOPT_VERBOSE => true,      
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_MAXREDIRS => 10,
-                CURLOPT_TIMEOUT => 30,
+                CURLOPT_TIMEOUT => 300,
                 CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
                 CURLOPT_CUSTOMREQUEST => "POST",
                 CURLOPT_POSTFIELDS => $post
@@ -589,7 +589,7 @@ class ClienteFE{
                 CURLOPT_RETURNTRANSFER => true,   
                 CURLOPT_VERBOSE => true,                      
                 CURLOPT_MAXREDIRS => 10,
-                CURLOPT_TIMEOUT => 30,
+                CURLOPT_TIMEOUT => 3000,
                 CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
                 CURLOPT_CUSTOMREQUEST => "POST",
                 CURLOPT_POSTFIELDS => $post
@@ -606,6 +606,7 @@ class ClienteFE{
             }
             error_log(" resp : ". $server_output);
             curl_close($ch);
+            return true;
         } 
         catch(Exception $e) {
             error_log("****** Error: ". $e->getMessage());
