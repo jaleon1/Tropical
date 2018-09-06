@@ -1,7 +1,6 @@
 <?php 
 error_reporting('E_ALL');
-ini_set('display_errors', 1);
-error_log("************************************ INICIANDO ****************************************");
+ini_set('display_errors', 0);
 require_once("Conexion.php");
 require_once("Usuario.php");
 require_once("encdes.php");

@@ -568,11 +568,13 @@ class ClienteFE{
 
     public function APIUploadCert(){
         try{
-            error_log("API UPLOAD CERT ... ");
-            if (!file_exists($this->certificado))
-                throw new Exception('Error al guardar el certificado. El certificado no existe'. $error_msg , 002256);
+            error_log("************************************ INICIANDO API SUBIR CERTIF ****************************************");
+            if (!file_exists($this->certificado)){
+                error_log("************************************ ERROR NO SE ENCUENTRA EL CERT P12  ****************************************");
+                throw new Exception('Error al guardar el certificado. El certificado no existe' , 002256);
+            }
             //$url= 'http://104.131.5.198/api.php';
-            $url= 'localhost/api.php';
+            $url= 'localhost/api.php';  
             $ch = curl_init();
             $post = [
                 'w' => 'fileUploader',
@@ -606,7 +608,7 @@ class ClienteFE{
             curl_close($ch);
         } 
         catch(Exception $e) {
-            error_log("error: ". $e->getMessage());
+            error_log("****** Error: ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
