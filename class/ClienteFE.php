@@ -569,10 +569,10 @@ class ClienteFE{
     public function APIUploadCert(){
         try{
             error_log("************************************ INICIANDO API SUBIR CERTIF ****************************************");
-            if (!file_exists($this->certificado)){
-                error_log("************************************ ERROR NO SE ENCUENTRA EL CERT P12  ****************************************");
-                throw new Exception('Error al guardar el certificado. El certificado no existe' , 002256);
-            }
+            // if (!file_exists($this->certificado)){
+            //     error_log("************************************ ERROR NO SE ENCUENTRA EL CERT P12  ****************************************");
+            //     throw new Exception('Error al guardar el certificado. El certificado no existe' , 002256);
+            // }
             //$url= 'http://104.131.5.198/api.php';
             $url= 'localhost/api.php';  
             $ch = curl_init();
