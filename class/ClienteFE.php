@@ -54,7 +54,7 @@ if(isset($_POST["action"])){
         case "DeleteCertificado":
             $clientefe->certificado = $_POST['certificado'];
             $clientefe->DeleteCertificado();
-            break;      
+            break;               
     }
 }
 
@@ -433,13 +433,14 @@ class ClienteFE{
             if($data)
             {
                 //guarda api_base.users
-                $url= 'http://104.131.5.198/api.php';                                
+                //$url= 'http://104.131.5.198/api.php';
+                $url= 'localhost/api.php';
                 $ch = curl_init();
                 $post = [
                     'w' => 'users',
                     'r' => 'users_register',
                     'fullName'   => $this->nombre,
-                    'userName'   => $this->username,
+                    'userName'   => $this->correoElectronico, // username dentro del API es el correo electronico del contribuyente.
                     'email'   => $this->correoElectronico,
                     'about'   => 'StoryLabsUser',
                     'country'   => 'CR',
@@ -449,7 +450,6 @@ class ClienteFE{
                     CURLOPT_URL => $url,
                     CURLOPT_RETURNTRANSFER => true,   
                     CURLOPT_VERBOSE => true,      
-                    CURLOPT_RETURNTRANSFER => true,
                     CURLOPT_MAXREDIRS => 10,
                     CURLOPT_TIMEOUT => 30,
                     CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
@@ -457,7 +457,6 @@ class ClienteFE{
                     CURLOPT_POSTFIELDS => $post
                 ));
                 $server_output = curl_exec($ch);
-                $information = curl_getinfo($ch);
                 $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
                 $header = substr($server_output, 0, $header_size);
                 $body = substr($server_output, $header_size);
@@ -465,6 +464,7 @@ class ClienteFE{
                 if (curl_error($ch)) {
                     $error_msg = curl_error($ch);
                     error_log("error: ". $error_msg);
+                    throw new Exception('Error al crear usuario API MH. Comunicarse con Soporte Técnico', 055);
                 }     
                 curl_close($ch);     
                 // session de usuario ATV
@@ -474,6 +474,7 @@ class ClienteFE{
             else throw new Exception('Error al guardar.', 02);
         }     
         catch(Exception $e) {
+            error_log("error: ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
@@ -484,7 +485,6 @@ class ClienteFE{
 
     function Update(){
         try {
-            error_log('iniciando');
             $sql="UPDATE clienteFE 
                 SET nombre=:nombre, codigoSeguridad=:codigoSeguridad, idCodigoPais=:idCodigoPais, idTipoIdentificacion=:idTipoIdentificacion, 
                     identificacion=:identificacion, nombreComercial=:nombreComercial, idProvincia=:idProvincia, idCanton=:idCanton, idDistrito=:idDistrito, 
@@ -499,130 +499,75 @@ class ClienteFE{
             );
             $data = DATA::Ejecutar($sql,$param,false);
             if($data){
-                // actualiza info del cliente FE.
-                //guarda api_base.users
-                // $url= 'http://localhost/api.php';
-                // $url= 'http://104.131.5.198/api.php';                           
-                // $ch = curl_init();
-                // $post = [
-                //     'w' => 'users',
-                //     'r' => 'users_register',
-                //     'fullName'   => $this->nombre,
-                //     'userName'   => $this->username,
-                //     'email'   => $this->correoElectronico,
-                //     'about'   => 'StoryLabsUser',
-                //     'country'   => 'CR',
-                //     'pwd'   => $this->password
-                // ];  
-                // curl_setopt_array($ch, array(
-                //     CURLOPT_URL => $url,
-                //     CURLOPT_RETURNTRANSFER => true,   
-                //     CURLOPT_VERBOSE => true,      
-                //     CURLOPT_RETURNTRANSFER => true,
-                //     CURLOPT_MAXREDIRS => 10,
-                //     CURLOPT_TIMEOUT => 30,
-                //     CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                //     CURLOPT_CUSTOMREQUEST => "POST",
-                //     CURLOPT_POSTFIELDS => $post
-                // ));
-                // $server_output = curl_exec($ch);
-                // $information = curl_getinfo($ch);
-                // $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-                // $header = substr($server_output, 0, $header_size);
-                // $body = substr($server_output, $header_size);
-                // $error_msg = "";
-                // if (curl_error($ch)) {
-                //     $error_msg = curl_error($ch);
-                //     error_log("error: ". $error_msg);
-                // }     
-                // curl_close($ch);
-
-                // login api
-                $url= 'http://104.131.5.198/api.php';
-                //$url= 'http://localhost/api.php';                                
-                $ch = curl_init();
-                $post = [
-                    'w' => 'users',
-                    'r' => 'users_log_me_in',
-                    'userName'   => $this->username,
-                    'pwd'   => $this->password
-                ];  
-                curl_setopt_array($ch, array(
-                    CURLOPT_URL => $url,
-                    CURLOPT_RETURNTRANSFER => true,   
-                    CURLOPT_VERBOSE => true,      
-                    CURLOPT_RETURNTRANSFER => true,
-                    CURLOPT_MAXREDIRS => 10,
-                    CURLOPT_TIMEOUT => 120,
-                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                    CURLOPT_CUSTOMREQUEST => "POST",
-                    CURLOPT_POSTFIELDS => $post
-                ));
-                $server_output = curl_exec($ch);
-                $information = curl_getinfo($ch);
-                $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-                $header = substr($server_output, 0, $header_size);
-                $body = substr($server_output, $header_size);
-                $error_msg = "";
-                if (curl_error($ch)) {
-                    $error_msg = curl_error($ch);
-                    error_log("error: ". $error_msg);
-                }     
-                curl_close($ch);  
-                // session de usuario ATV
-                $_SESSION['userSession']->ATVuserName= $this->username;  
-                $sArray=json_decode($header);
-                $_SESSION['userSession']->sessionKey= $sArray->resp->sessionKey;
-
-                // sube cert
-
-                //$url= 'http://104.131.5.198/api.php';
-                $url= 'http://localhost/api.php';
-                $ch = curl_init();
-                $uploadfile= '../CU/72a5afa7-dcba-4539-8257-ed1e18b1ce94/Y+VEzCo5Oskq5TvVbpxb';
-                $post = [
-                    'w' => 'fileUploader',
-                    'r' => 'subir_certif',
-                    'sessionKey'   => $_SESSION['userSession']->sessionKey,
-                    'fileToUpload'   => $uploadfile,
-                    'iam'   => $_SESSION['userSession']->ATVuserName
-                ];  
-                curl_setopt_array($ch, array(
-                    CURLOPT_URL => $url,
-                    CURLOPT_RETURNTRANSFER => true,   
-                    CURLOPT_VERBOSE => true,                      
-                    CURLOPT_MAXREDIRS => 10,
-                    CURLOPT_TIMEOUT => 30,
-                    //CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                    CURLOPT_CUSTOMREQUEST => "POST",
-                    CURLOPT_POSTFIELDS => $post
-                ));
-                $server_output = curl_exec($ch);
-                $information = curl_getinfo($ch);
-                $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-                $header = substr($server_output, 0, $header_size);
-                $body = substr($server_output, $header_size);
-                $error_msg = "";
-                if (curl_error($ch)) {
-                    $error_msg = curl_error($ch);
-                    error_log("error: ". $error_msg);
-                }
-                curl_close($ch);
-
-
-                // ...              
+                // ... modifica datos del cliente en el api ...//
+                // ... sube el nuevo certificado ...//
                 return true;
             }   
             else throw new Exception('Error al guardar.', 123);
         }     
         catch(Exception $e) {
+            error_log("error: ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
                 'msg' => $e->getMessage()))
             );
         }
-    }   
+    }
+
+    public function APILogin(){
+        try{
+            error_log("API LOGIN ... ");
+            error_log("usr : " .  $this->username );
+            //$url= 'http://104.131.5.198/api.php';
+            $url= 'localhost/api.php';                        
+            $ch = curl_init();
+            $post = [
+                'w' => 'users',
+                'r' => 'users_log_me_in',
+                'userName'   => $this->correoElectronico, // al API loguea con email
+                'pwd'   => $this->password
+            ];  
+            curl_setopt_array($ch, array(
+                CURLOPT_URL => $url,
+                CURLOPT_RETURNTRANSFER => true,   
+                CURLOPT_VERBOSE => true,      
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 30,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => "POST",
+                CURLOPT_POSTFIELDS => $post
+            ));
+            $server_output = curl_exec($ch);
+            $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+            $header = substr($server_output, 0, $header_size);
+            $body = substr($server_output, $header_size);
+            $error_msg = "";
+            if (curl_error($ch)) {
+                $error_msg = curl_error($ch);
+                error_log("error: ". $error_msg);
+                throw new Exception('Error al guardar. '. $error_msg , 02);
+            }
+            error_log("output ***************************** : ". $server_output);
+            curl_close($ch);
+            error_log("cierre ****************************");
+            // session de usuario ATV
+            $_SESSION['userSession']->ATVuserName= $this->username;  
+            $sArray=json_decode($header);
+            $_SESSION['userSession']->sessionKey= $sArray->resp->sessionKey;
+            error_log("key: ". $sArray->resp->sessionKey);
+        } 
+        catch(Exception $e) {
+            error_log("error: ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }
+
+    }
 
     private function CheckRelatedItems(){
         try{

@@ -191,6 +191,7 @@ $("#btnmediano").click(function () {
 //     }
 // };
 
+
 // function openModalAbrirCaja(){
     
 //     $('.valida-caja-modal-lg').modal('show');
