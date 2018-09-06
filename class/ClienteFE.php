@@ -580,7 +580,7 @@ class ClienteFE{
                 'w' => 'fileUploader',
                 'r' => 'subir_certif',
                 'sessionKey'=> 'eWRRQlV0cXNwOCtFMHVxNDFYaEFoZz09OjokxNdmVNGOUln9mwjOKozz',
-                'fileToUpload' => new CurlFile( '/var/www/vhost/CU/715da8ec-e431-43e3-9dfc-f77e5c64c296/011187076308.p12', 'application/x-pkcs12'),
+                'fileToUpload' => new CurlFile( realpath('/var/www/vhost/CU/715da8ec-e431-43e3-9dfc-f77e5c64c296/011187076308.p12'), 'application/x-pkcs12'),
                 'iam'=>'carlos.echc11@gmail.com'
             ];  
             //error_log(" sessionKey : ". $_SESSION['userSession']->sessionKey);
