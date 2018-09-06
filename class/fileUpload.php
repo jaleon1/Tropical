@@ -5,6 +5,12 @@ require_once("encdes.php");
 require_once("ClienteFE.php");
 if (!isset($_SESSION))
     session_start();
+    /************************************* */
+    $cliente= new ClienteFE();
+    $cliente->idBodega= $_SESSION['userSession']->idBodega;
+    $cliente->APIUploadCert();
+    exit;
+    /*********** */
 $uploaddir= '../../CU/'.$_SESSION['userSession']->idBodega.'/';
 if (!file_exists($uploaddir)) 
     mkdir($uploaddir, 0700, true);
