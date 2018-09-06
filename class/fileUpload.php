@@ -44,6 +44,7 @@ if (!empty($_FILES)) {
             $cliente->certificado= realpath($uploaddir) .DIRECTORY_SEPARATOR. $_FILES['file']['name'];            
             // crea copia temporal sin cifrar para mover al API.
             copy($uploadfile, $cliente->certificado);
+            chmod($cliente->certificado, 0777); 
             if($cliente->APIUploadCert()){
                 //unlink($cliente->certificado);
                 echo "UPLOADED";
