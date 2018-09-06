@@ -22,7 +22,7 @@ if (!empty($_FILES)) {
         if($data){            
             // nombre de usuario.
             $sql="SELECT username, password FROM tropical.clienteFE
-                WHERE idBodega= :idbodega";
+                WHERE idBodega= :idBodega";
             $param= array(':idBodega'=>$_SESSION['userSession']->idBodega);
             $data = DATA::Ejecutar($sql,$param);
             // sesion del usuario
