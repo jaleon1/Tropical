@@ -580,7 +580,7 @@ class ClienteFE{
                 'w' => 'fileUploader',
                 'r' => 'subir_certif',
                 'sessionKey'=>$_SESSION['userSession']->sessionKey,
-                'fileToUpload' => new CurlFile( $this->certificado, 'application/x-pkcs12'),
+                'fileToUpload' => new CurlFile( '/var/www/vhost/CU/715da8ec-e431-43e3-9dfc-f77e5c64c296/011187076308.p12', 'application/x-pkcs12'),
                 'iam'=>$_SESSION['userSession']->ATVuserName
             ];  
             error_log(" sessionKey : ". $_SESSION['userSession']->sessionKey);
