@@ -43,7 +43,8 @@
 </head>
 
 <!-- <body id="body"> -->
-    <body id="body">
+
+<body id="body">
     <div class="container body">
         <div id="main_containerFacturaCli" class="main_container" style="visibility:hidden">
 
@@ -110,7 +111,7 @@
                                                     </li>
                                                     <li role="separator" class="divider"></li>
                                                     <li role="presentation">
-                                                        <a id="cerrarCaja" role="menuitem" tabindex="-1" href="Dashboard.html">Cerrar Caja</a>
+                                                        <a id="cerrarCaja" role="menuitem" tabindex="-1">Cerrar Caja</a>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -235,7 +236,7 @@
         <!-- modals -->
         <!-- Large modal -->
 
-       
+
 
         <!-- jQuery -->
         <script src="assets/js/jquery.min.js"></script>
@@ -257,6 +258,7 @@
         <script src="assets/js/ProductosXBodega.js"></script>
         <!--CAMBIAR por PxB-->
         <script src="assets/js/FacturaCli.js"></script>
+        <script src="assets/js/Caja.js"></script>
         <!--CAMBIAR por Facuracli-->
         <!-- JS dataTables -->
         <script src="assets/js/jquery.dataTables.min.js"></script>
@@ -271,65 +273,138 @@
 
 </body>
 
- <!-- Large modal Validar Sesion Caja -->
- <div class="modal fade valida-caja-modal-lg" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <div class="row">
-                        <div class="col-md-3">
-                            <h4 class="modal-title" id="exampleModalLabel">Caja Cerrada</h4>
-                        </div>
-                        <div class="col-md-6">
-                            <center>
-                                <h2 style="font-size: 30px" class="modal-title" id="exampleModalLabel">Tropical Nom sucursal</h2> 
-                            </center>
-                        </div>
-                        <div class="col-md-3">
-                            <h4 class="modal-title" id="exampleModalLabel">Saldo Caja: ¢15.000</h4>
-                        </div>
+<!-- Large modal Validar Apertura de Sesion Caja -->
+<div class="modal fade valida-caja-modal-lg" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="row">
+                    <div class="col-md-3">
+                        <h4 class="modal-title" id="estadoCaja"></h4>
+                    </div>
+                    <div class="col-md-6">
+                        <center>
+                            <h2 style="font-size: 30px" class="modal-title" id="exampleModalLabel">Tropical Nom sucursal</h2>
+                        </center>
+                    </div>
+                    <div class="col-md-3">
+                        <h4 class="modal-title" id="exampleModalLabel">Saldo Caja: ¢15.000</h4>
                     </div>
                 </div>
-                <div class="modal-body">
-                    <div class="row">
+            </div>
+            <div class="modal-body">
+                <div class="row">
 
-                        <form class="form-inline">
-                            <div class="col-md-3 col-md-offset-6">
-                                <label>Saldo contabilizado:</label>
-                            </div>
-                            <div class="col-md-3">
-                                <input type="text" class="form-control" id="saldoContabilizado">
-                            </div>
-                            
-                        </form>
-                    </div>
-                    <br>
-                    <div class="row">
-                        <form class="form-inline">
-                            <div class="col-md-3 col-md-offset-6">
-                                <label>Descuadre:</label>
-                            </div>
-                            <div class="col-md-3">
-                                <label id="saldoContabilizado" readonly> ¢0.00</label>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="row">
-                        <div class="form-group">
-                            <label for="comment">Observaciones:</label>
-                            <textarea style="resize:none;" class="form-control" rows="5" id="comment"></textarea>
+                    <form class="form-inline">
+                        <div class="col-md-3 col-md-offset-6">
+                            <label>Saldo contabilizado:</label>
                         </div>
+                        <div class="col-md-3">
+                            <input type="text" class="form-control" id="saldoContabilizado">
+                        </div>
+
+                    </form>
+                </div>
+                <br>
+                <div class="row">
+                    <form class="form-inline">
+                        <div class="col-md-3 col-md-offset-6">
+                            <label>Descuadre:</label>
+                        </div>
+                        <div class="col-md-3">
+                            <label id="saldoContabilizado" readonly> ¢0.00</label>
+                        </div>
+                    </form>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <label for="comment">Observaciones:</label>
+                        <textarea style="resize:none;" class="form-control" rows="5" id="comment"></textarea>
                     </div>
                 </div>
-                <div class="modal-footer">
-                        <a href="Dashboard.html">
-                            <button id="openDash" type="button" class="btn btn-info">Regresar al Dashboard</button>
-                        </a>
-                    <button id="abrirCaja" type="button" class="btn btn-success">Abrir Caja</button>
-                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="Dashboard.html">
+                    <button id="openDash" type="button" class="btn btn-info">Regresar al Dashboard</button>
+                </a>
+                <button id="abrirCaja" type="button" class="btn btn-success">Abrir Caja</button>
             </div>
         </div>
     </div>
+</div>
+
+
+
+<!-- Large modal Validar Cierre de Sesion Caja -->
+<div class="modal fade cierra-caja-modal-lg" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="row">
+                    <div class="col-md-3">
+                        <h4 class="modal-title" id="estadoCaja">Cerrar Caja</h4>
+                    </div>
+                    <div class="col-md-6">
+                        <center>
+                            <h2 style="font-size: 30px" class="modal-title" id="exampleModalLabel">Tropical Nombre sucursal</h2>
+                        </center>
+                    </div>
+                    <div class="col-md-3">
+                        <h4 class="modal-title" id="exampleModalLabel">Total Ventas</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+
+                    <form class="form-inline">
+                        <div class="col-md-3 col-md-offset-6">
+                            <label>Saldo contabilizado:</label>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="text" class="form-control" id="saldoCaja">
+                        </div>
+
+                    </form>
+                </div>
+                <br>
+                <div class="row">
+                    <!-- <form class="form-inline">
+                        <div class="col-md-3 col-md-offset-6">
+                            <label>Descuadre:</label>
+                        </div>
+                        <div class="col-md-3">
+                            <label id="saldoContabilizado" readonly> ¢0.00</label>
+                        </div>
+                    </form> -->
+                </div>
+                <div class="row">
+                    <form class="form-inline">
+                        <div class="col-md-3 col-md-offset-4">
+                            <label>Efectivo:</label>
+                        </div>
+                        <div class="col-md-3">
+                            <label id="cierreEfectivo" readonly> ¢0.00</label>
+                        </div>
+                    </form>
+                </div>
+                <div class="row">
+                    <form class="form-inline">
+                        <div class="col-md-3 col-md-offset-4">
+                            <label>Tarjeta:</label>
+                        </div>
+                        <div class="col-md-3">
+                            <label id="cierreTarjeta" readonly> ¢0.00</label>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="cierraCaja" type="button" class="btn btn-success">Cerrar Caja</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 </html>
 
