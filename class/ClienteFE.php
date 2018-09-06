@@ -525,7 +525,7 @@ class ClienteFE{
             $post = [
                 'w' => 'users',
                 'r' => 'users_log_me_in',
-                'userName'   => $this->email, // al API loguea con email
+                'userName'   => $this->correoElectronico, // al API loguea con email
                 'pwd'   => $this->password
             ];  
             curl_setopt_array($ch, array(
