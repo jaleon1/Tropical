@@ -584,7 +584,7 @@ class ClienteFE{
                 'iam'=>'carlos.echc11@gmail.com'
             ];  
             //error_log(" sessionKey : ". $_SESSION['userSession']->sessionKey);
-            error_log(" cert : ". $this->certificado);
+            //error_log(" cert : ". $this->certificado);
             curl_setopt_array($ch, array(
                 CURLOPT_URL => $url,
                 CURLOPT_RETURNTRANSFER => true,   

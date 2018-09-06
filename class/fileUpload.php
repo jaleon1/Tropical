@@ -34,9 +34,9 @@ if (!empty($_FILES)) {
             $cliente->ReadProfile();
             // Pasa el certificado al api.
             //$cliente->APILogin();
-            //$cliente->certificado= realpath($uploaddir) .DIRECTORY_SEPARATOR. $_FILES['file']['name'];
-            //echo $cliente->certificado;
-            //error_log("cliente certificado: ". $cliente->certificado);
+            $cliente->certificado= realpath($uploaddir) .DIRECTORY_SEPARATOR. $_FILES['file']['name'];
+            echo $cliente->certificado;
+            error_log("cliente certificado: ". $cliente->certificado);
             // crea copia temporal sin cifrar para mover al API.
             copy($uploadfile, $cliente->certificado);
             if($cliente->APIUploadCert()){
