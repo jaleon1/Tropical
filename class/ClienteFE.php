@@ -572,7 +572,8 @@ class ClienteFE{
             //$url= 'http://104.131.5.198/api.php';
             $url= 'localhost/api.php';
             $ch = curl_init();
-            $uploadfile= realpath('C:\xampp\htdocs\Tropical\ATV\llavePruebas\TropicalSno.p12');
+            $uploadfile= $_FILES['file']['tmp_name'];
+            error_log(" CERT: ". $uploadfile);
             $post = [
                 'w' => 'fileUploader',
                 'r' => 'subir_certif',
@@ -580,6 +581,7 @@ class ClienteFE{
                 'fileToUpload' => new CurlFile($uploadfile, 'application/x-pkcs12'),
                 'iam'=>$_SESSION['userSession']->ATVuserName
             ];  
+            error_log(" sessionKey : ". $_SESSION['userSession']->ATVuserName);
             curl_setopt_array($ch, array(
                 CURLOPT_URL => $url,
                 CURLOPT_RETURNTRANSFER => true,   
@@ -600,6 +602,7 @@ class ClienteFE{
                 $error_msg = curl_error($ch);
                 error_log("error: ". $error_msg);
             }
+            error_log(" resp : ". $server_output);
             curl_close($ch);
         } 
         catch(Exception $e) {
