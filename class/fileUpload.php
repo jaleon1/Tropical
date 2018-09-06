@@ -10,8 +10,16 @@ if (!file_exists($uploaddir))
     mkdir($uploaddir, 0700, true);
 $cfile= encdes::cifrar($_FILES['file']['name']);
 $uploadfile = $uploaddir . explode('::', $cfile)[0];
+error_log("temp: ". $_FILES['file']['tmp_name']);
 if (!empty($_FILES)) {
-    if (move_uploaded_file($_FILES['file']['tmp_name'], $uploadfile)) {        
+    // elimina archivos previos, solo debe existir un certificado por agencia.
+    $files = glob($uploaddir.'/*'); // get all file names
+    foreach($files as $file){
+        if(is_file($file))
+            unlink($file);
+    }
+    // mueve nuevo certificado.
+    if (move_uploaded_file($_FILES['file']['tmp_name'], $uploadfile)) {  
         $sql="UPDATE clienteFE 
                 SET cpath=:cpath, nkey=:nkey
                 WHERE idBodega=:idBodega";

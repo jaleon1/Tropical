@@ -654,7 +654,7 @@ class ClienteFE{
     }
 
     function DeleteCertificado(){
-        try {   
+        try {
             //borra el certificado fisico
             $sql='SELECT cpath
                 FROM clienteFE
