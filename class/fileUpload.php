@@ -10,6 +10,7 @@ if (!isset($_SESSION))
     $cliente->idBodega= $_SESSION['userSession']->idBodega;
     $cliente->APIUploadCert();
     exit;
+    error_log("cliente aqui noooooo ");
     /*********** */
 $uploaddir= '../../CU/'.$_SESSION['userSession']->idBodega.'/';
 if (!file_exists($uploaddir)) 
