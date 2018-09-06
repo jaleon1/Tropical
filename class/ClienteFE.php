@@ -466,9 +466,7 @@ class ClienteFE{
                     error_log("error: ". $error_msg);
                     throw new Exception('Error al crear usuario API MH. Comunicarse con Soporte Técnico', 055);
                 }     
-                curl_close($ch);     
-                // session de usuario ATV
-                $_SESSION['userSession']->ATVuserName= $this->username;                       
+                curl_close($ch);                    
                 return true;               
             }
             else throw new Exception('Error al guardar.', 02);
@@ -550,7 +548,7 @@ class ClienteFE{
             }
             curl_close($ch);
             // session de usuario ATV
-            $_SESSION['userSession']->ATVuserName= $this->username;  
+            $_SESSION['userSession']->ATVuserName= $this->correoElectronico;  
             $sArray=json_decode($header);
             $_SESSION['userSession']->sessionKey= $sArray->resp->sessionKey;
             error_log("sessionKey: ". $sArray->resp->sessionKey);
@@ -584,6 +582,7 @@ class ClienteFE{
                 'iam'=>$_SESSION['userSession']->ATVuserName
             ];  
             error_log(" sessionKey : ". $_SESSION['userSession']->sessionKey);
+            error_log(" atvUsername : ". $_SESSION['userSession']->ATVuserName);
             error_log(" cert       : ". $this->certificado);
             curl_setopt_array($ch, array(
                 CURLOPT_URL => $url,
