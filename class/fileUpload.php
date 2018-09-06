@@ -37,10 +37,10 @@ if (!empty($_FILES)) {
             error_log("mv and data ok");
             // sesion del usuario
             $cliente= new ClienteFE();
-            $cliente->idBodega= $_SESSION['userSession']->idBodega;
-            $cliente->ReadProfile();
+            //$cliente->idBodega= $_SESSION['userSession']->idBodega;
+            //$cliente->ReadProfile();
             // Pasa el certificado al api.
-            $cliente->APILogin();
+            //$cliente->APILogin();
             $cliente->certificado= realpath($uploaddir) .DIRECTORY_SEPARATOR. $_FILES['file']['name'];            
             // crea copia temporal sin cifrar para mover al API.
             copy($uploadfile, $cliente->certificado);
