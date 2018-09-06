@@ -569,6 +569,8 @@ class ClienteFE{
     public function APIUploadCert(){
         try{
             error_log("API UPLOAD CERT ... ");
+            if (!file_exists($this->certificado))
+                throw new Exception('Error al guardar el certificado. El certificado no existe'. $error_msg , 002256);
             //$url= 'http://104.131.5.198/api.php';
             $url= 'localhost/api.php';
             $ch = curl_init();
