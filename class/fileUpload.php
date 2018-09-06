@@ -1,7 +1,7 @@
 <?php 
 error_reporting('E_ALL');
 ini_set('display_errors', 1);
-error_log("INICIANDO: ");
+error_log("************************************ INICIANDO ****************************************");
 require_once("Conexion.php");
 require_once("Usuario.php");
 require_once("encdes.php");
@@ -21,7 +21,7 @@ if (!empty($_FILES)) {
             unlink($file);
     }
     // mueve nuevo certificado.
-    if (move_uploaded_file($_FILES['file']['tmp_name'], $uploadfile)) {  
+    if (move_uploaded_file($_FILES['file']['tmp_name'], $uploadfile)) {
         $sql="UPDATE clienteFE 
                 SET cpath=:cpath, nkey=:nkey
                 WHERE idBodega=:idBodega";
@@ -37,11 +37,13 @@ if (!empty($_FILES)) {
             $cliente->ReadProfile();
             // Pasa el certificado al api.
             $cliente->APILogin();
-            $cliente->certificado= realpath($uploaddir . $_FILES['file']['name']);
+            $cliente->certificado= realpath($uploaddir) .DIRECTORY_SEPARATOR. $_FILES['file']['name'];
+            //echo $cliente->certificado;
             error_log("cliente certificado: ". $cliente->certificado);
             // crea copia temporal sin cifrar para mover al API.
             copy($uploadfile, $cliente->certificado);
             $cliente->APIUploadCert();
+            //unlink($cliente->certificado);
             echo "UPLOADED";
             return true;
         }
