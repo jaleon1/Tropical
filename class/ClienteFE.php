@@ -579,11 +579,11 @@ class ClienteFE{
             $post = [
                 'w' => 'fileUploader',
                 'r' => 'subir_certif',
-                'sessionKey'=>$_SESSION['userSession']->sessionKey,
+                'sessionKey'=> 'eWRRQlV0cXNwOCtFMHVxNDFYaEFoZz09OjokxNdmVNGOUln9mwjOKozz',
                 'fileToUpload' => new CurlFile( '/var/www/vhost/CU/715da8ec-e431-43e3-9dfc-f77e5c64c296/011187076308.p12', 'application/x-pkcs12'),
-                'iam'=>$_SESSION['userSession']->ATVuserName
+                'iam'=>'carlos.echc11@gmail.com'
             ];  
-            error_log(" sessionKey : ". $_SESSION['userSession']->sessionKey);
+            //error_log(" sessionKey : ". $_SESSION['userSession']->sessionKey);
             error_log(" cert : ". $this->certificado);
             curl_setopt_array($ch, array(
                 CURLOPT_URL => $url,
