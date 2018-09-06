@@ -1,5 +1,5 @@
 <?php 
-error_reporting(E_ALL);
+error_reporting('E_ALL');
 ini_set('display_errors', 1);
 error_log("INICIANDO: ");
 require_once("Conexion.php");
@@ -30,13 +30,14 @@ if (!empty($_FILES)) {
             ':nkey'=>explode('::', $cfile)[1]);
         $data = DATA::Ejecutar($sql,$param,false);
         if($data){
+            error_log("mv and data ok");
             // sesion del usuario
             $cliente= new ClienteFE();
             $cliente->idBodega= $_SESSION['userSession']->idBodega;
             $cliente->ReadProfile();
             // Pasa el certificado al api.
             $cliente->APILogin();
-            $cliente->certificado= dirname($uploaddir . $_FILES['file']['name']);
+            $cliente->certificado= realpath($uploaddir . $_FILES['file']['name']);
             error_log("cliente certificado: ". $cliente->certificado);
             // crea copia temporal sin cifrar para mover al API.
             copy($uploadfile, $cliente->certificado);
