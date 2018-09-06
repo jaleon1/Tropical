@@ -10,7 +10,6 @@ if (!file_exists($uploaddir))
     mkdir($uploaddir, 0700, true);
 $cfile= encdes::cifrar($_FILES['file']['name']);
 $uploadfile = $uploaddir . explode('::', $cfile)[0];
-error_log("temp: ". $_FILES['file']['tmp_name']);
 if (!empty($_FILES)) {
     // elimina archivos previos, solo debe existir un certificado por agencia.
     $files = glob($uploaddir.'/*'); // get all file names
@@ -34,7 +33,7 @@ if (!empty($_FILES)) {
             $cliente->ReadProfile();
             // Pasa el certificado al api.
             $cliente->APILogin();            
-            $cliente->certificado= $uploaddir . $_FILES['file']['name'];
+            $cliente->certificado= realpath($uploaddir . $_FILES['file']['name']);
             error_log("cliente certificado: ". $cliente->certificado);
             // crea copia temporal sin cifrar para mover al API.
             copy($uploadfile, $cliente->certificado);
