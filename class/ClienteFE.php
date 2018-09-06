@@ -466,6 +466,7 @@ class ClienteFE{
                     error_log("error: ". $error_msg);
                     throw new Exception('Error al crear usuario API MH. Comunicarse con Soporte Técnico', 055);
                 }     
+                error_log("error: ". $server_output);
                 curl_close($ch);                    
                 return true;               
             }
