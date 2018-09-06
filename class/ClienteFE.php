@@ -584,6 +584,7 @@ class ClienteFE{
                 'iam'=>$_SESSION['userSession']->ATVuserName
             ];  
             error_log(" sessionKey : ". $_SESSION['userSession']->sessionKey);
+            error_log(" cert : ". $this->certificado);
             curl_setopt_array($ch, array(
                 CURLOPT_URL => $url,
                 CURLOPT_RETURNTRANSFER => true,   
