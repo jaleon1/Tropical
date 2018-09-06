@@ -21,10 +21,10 @@ if (!empty($_FILES)) {
         $data = DATA::Ejecutar($sql,$param,false);
         if($data){            
             // nombre de usuario.
-            $sql="SELECT username, password FROM tropical.clientefe
+            $sql="SELECT username, password FROM tropical.clienteFE
                 WHERE idBodega= :idbodega";
             $param= array(':idBodega'=>$_SESSION['userSession']->idBodega);
-            $data = DATA::Ejecutar($sql,$param,false);
+            $data = DATA::Ejecutar($sql,$param);
             // sesion del usuario
             $cliente= new ClienteFE();
             $cliente->idBodega= $_SESSION['userSession']->idBodega;
