@@ -546,7 +546,7 @@ class ClienteFE{
             if (curl_error($ch)) {
                 $error_msg = curl_error($ch);
                 error_log("error: ". $error_msg);
-                throw new Exception('Error al guardar. '. $error_msg , 02);
+                throw new Exception('Error al iniciar login API. '. $error_msg , 02);
             }
             curl_close($ch);
             // session de usuario ATV
@@ -581,19 +581,18 @@ class ClienteFE{
                 'fileToUpload' => new CurlFile($uploadfile, 'application/x-pkcs12'),
                 'iam'=>$_SESSION['userSession']->ATVuserName
             ];  
-            error_log(" sessionKey : ". $_SESSION['userSession']->ATVuserName);
+            error_log(" sessionKey : ". $_SESSION['userSession']->sessionKey);
             curl_setopt_array($ch, array(
                 CURLOPT_URL => $url,
                 CURLOPT_RETURNTRANSFER => true,   
                 CURLOPT_VERBOSE => true,                      
                 CURLOPT_MAXREDIRS => 10,
-                CURLOPT_TIMEOUT => 300,
+                CURLOPT_TIMEOUT => 30,
                 CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
                 CURLOPT_CUSTOMREQUEST => "POST",
                 CURLOPT_POSTFIELDS => $post
             ));
             $server_output = curl_exec($ch);
-            $information = curl_getinfo($ch);
             $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
             $header = substr($server_output, 0, $header_size);
             $body = substr($server_output, $header_size);
@@ -601,6 +600,7 @@ class ClienteFE{
             if (curl_error($ch)) {
                 $error_msg = curl_error($ch);
                 error_log("error: ". $error_msg);
+                throw new Exception('Error al guardar el certificado. '. $error_msg , 033);
             }
             error_log(" resp : ". $server_output);
             curl_close($ch);
@@ -613,7 +613,6 @@ class ClienteFE{
                 'msg' => $e->getMessage()))
             );
         }
-
     }
 
     private function CheckRelatedItems(){
