@@ -569,22 +569,22 @@ class ClienteFE{
     public function APIUploadCert(){
         try{
             error_log("************************************ INICIANDO API SUBIR CERTIF ****************************************");
-            // if (!file_exists($this->certificado)){
-            //     error_log("************************************ ERROR NO SE ENCUENTRA EL CERT P12  ****************************************");
-            //     throw new Exception('Error al guardar el certificado. El certificado no existe' , 002256);
-            // }
+            if (!file_exists($this->certificado)){
+                error_log("************************************ ERROR NO SE ENCUENTRA EL CERT P12  ****************************************");
+                throw new Exception('Error al guardar el certificado. El certificado no existe' , 002256);
+            } else error_log("Certificado encontrado !!!!");
             //$url= 'http://104.131.5.198/api.php';
             $url= 'localhost/api.php';  
             $ch = curl_init();
             $post = [
                 'w' => 'fileUploader',
                 'r' => 'subir_certif',
-                'sessionKey'=> 'eWRRQlV0cXNwOCtFMHVxNDFYaEFoZz09OjokxNdmVNGOUln9mwjOKozz',
-                'fileToUpload' => new CurlFile( realpath('/var/www/vhost/CU/715da8ec-e431-43e3-9dfc-f77e5c64c296/011187076308.p12'), 'application/x-pkcs12'),
-                'iam'=>'carlos.echc11@gmail.com'
+                'sessionKey'=>$_SESSION['userSession']->sessionKey,
+                'fileToUpload' => new CurlFile( $this->certificado, 'application/x-pkcs12'),
+                'iam'=>$_SESSION['userSession']->ATVuserName
             ];  
-            //error_log(" sessionKey : ". $_SESSION['userSession']->sessionKey);
-            //error_log(" cert : ". $this->certificado);
+            error_log(" sessionKey : ". $_SESSION['userSession']->sessionKey);
+            error_log(" cert       : ". $this->certificado);
             curl_setopt_array($ch, array(
                 CURLOPT_URL => $url,
                 CURLOPT_RETURNTRANSFER => true,   

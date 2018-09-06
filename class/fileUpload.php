@@ -5,13 +5,13 @@ require_once("encdes.php");
 require_once("ClienteFE.php");
 if (!isset($_SESSION))
     session_start();
-    /************************************* */
-    $cliente= new ClienteFE();
-    $cliente->idBodega= $_SESSION['userSession']->idBodega;
-    $cliente->APIUploadCert();
-    exit;
-    error_log("cliente aqui noooooo ");
-    /*********** */
+    // /************************************* */
+    // $cliente= new ClienteFE();
+    // $cliente->idBodega= $_SESSION['userSession']->idBodega;
+    // $cliente->APIUploadCert();
+    // exit;
+    // error_log("cliente aqui noooooo ");
+    // /*********** */
 $uploaddir= '../../CU/'.$_SESSION['userSession']->idBodega.'/';
 if (!file_exists($uploaddir)) 
     mkdir($uploaddir, 0700, true);
@@ -19,11 +19,11 @@ $cfile= encdes::cifrar($_FILES['file']['name']);
 $uploadfile = $uploaddir . explode('::', $cfile)[0];
 if (!empty($_FILES)) {
     // elimina archivos previos, solo debe existir un certificado por agencia.
-    // $files = glob($uploaddir.'*'); // get all file names
-    // foreach($files as $file){
-    //     if(is_file($file))
-    //         unlink($file);
-    // }
+    $files = glob($uploaddir.'*'); // get all file names
+    foreach($files as $file){
+        if(is_file($file))
+            unlink($file);
+    }
     // mueve nuevo certificado.
     if (move_uploaded_file($_FILES['file']['tmp_name'], $uploadfile)) {
         $sql="UPDATE clienteFE 
@@ -40,10 +40,8 @@ if (!empty($_FILES)) {
             $cliente->idBodega= $_SESSION['userSession']->idBodega;
             $cliente->ReadProfile();
             // Pasa el certificado al api.
-            //$cliente->APILogin();
-            $cliente->certificado= realpath($uploaddir) .DIRECTORY_SEPARATOR. $_FILES['file']['name'];
-            echo $cliente->certificado;
-            error_log("cliente certificado: ". $cliente->certificado);
+            $cliente->APILogin();
+            $cliente->certificado= realpath($uploaddir) .DIRECTORY_SEPARATOR. $_FILES['file']['name'];            
             // crea copia temporal sin cifrar para mover al API.
             copy($uploadfile, $cliente->certificado);
             if($cliente->APIUploadCert()){
@@ -51,7 +49,10 @@ if (!empty($_FILES)) {
                 echo "UPLOADED";
                 return true;
             }
-            else echo "APIFAILED";
+            else {
+                error_log('no se almacena el certificado en el api.');
+                echo "APIFAILED";
+            }
         }
         else {
             error_log('no se almacena la data del path de certificado.');
