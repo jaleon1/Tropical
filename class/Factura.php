@@ -65,7 +65,6 @@ class Factura{
     public $consecutivo= [];
     public $usuario="";
     public $bodega="";
-
     function __construct(){
         // identificador único
         if(isset($_POST["id"])){
@@ -85,7 +84,7 @@ class Factura{
             $this->idCondicionVenta= $obj["idCondicionVenta"] ?? 1;          
             $this->idSituacionComprobante= $obj["idSituacionComprobante"] ?? 1;
             $this->idEstadoComprobante= $obj["idEstadoComprobante"] ?? '1';
-            $this->idMedioPago= $obj["idMedioPago"] ?? 1;
+            $this->idMedioPago= $obj["idMedioPago"] ?? 99;
             $this->fechaEmision= $obj["fechaEmision"] ?? '';
             $this->totalDescuentos= $obj["totalDescuentos"] ?? 0;
             $this->totalVentaneta= $obj["totalVentaneta"] ?? 0;
@@ -222,7 +221,7 @@ class Factura{
     
     function ReadbyID(){
         try {
-            $sql='SELECT f.consecutivo, f.fechaCreacion, f.local, f.terminal, f.totalVenta
+            $sql='SELECT f.consecutivo, f.fechaCreacion, f.local, f.terminal, f.totalComprobante
                 FROM factura f
                 WHERE f.id=:id';
             $param= array(':id'=>$this->id);
@@ -233,7 +232,7 @@ class Factura{
                 $this->fechaEmision = $data[0]['fechaCreacion'];
                 $this->bodega = $_SESSION["userSession"]->bodega;
                 $this->usuario = $_SESSION["userSession"]->username;
-                $this->totalComprobante = $data[0]['totalVenta'];
+                $this->totalComprobante = $data[0]['totalComprobante'];
                 $this->lista= ProductoXFactura::Read($this->id);
                 // retorna orden autogenerada.
             }            

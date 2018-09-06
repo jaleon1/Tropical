@@ -23,8 +23,11 @@ if(isset($_POST["action"])){
         case "Create":
             echo json_encode($cajaXBodega->Create());
             break;
+        case "ValidarCierreCaja":
+            echo json_encode($cajaXBodega->ValidarCierreCaja());
+            break;
         case "cerrarCaja":
-            $cajaXBodega->cerrarCaja();
+            echo json_encode($cajaXBodega->cerrarCaja());
             break;
         case "Delete":
             echo json_encode($cajaXBodega->Delete());
@@ -40,7 +43,7 @@ class CajaXBodega{
     //Factura
     public $id="";
     public $idBodega="";
-    public $idUsuarioAdmin="";
+    public $idUsuarioSupervisor="";
     public $idUsuarioCajero="";
     public $estado="";
     public $montoApertura=null;
@@ -60,21 +63,33 @@ class CajaXBodega{
             require_once("UUID.php");
             $this->id= $obj["id"] ?? UUID::v4();
             $this->idBodega= $obj["idBodega"] ?? 0;
-            $this->idUsuarioAdmin= $obj["idUsuarioAdmin"] ?? '';
-            $this->idUsuarioCajero= $obj["idUsuarioCajero"] ?? '';
+            $this->idUsuarioSupervisor= $obj["idUsuarioSupervisor"] ?? '';
+            $this->idUsuarioCajero= $obj["idUsuarioCajero"] ?? $_SESSION["userSession"]->id;
             $this->estado= $obj["estado"] ?? '';
             $this->montoApertura= $obj["montoApertura"] ?? 0;          
             $this->montoCierre= $obj["montoCierre"] ?? 0;
             $this->totalVentasEfectivo= $obj["totalVentasEfectivo"] ?? 0;
             $this->totalVentasTarjeta= $obj["totalVentasTarjeta"] ?? 0;
+
         }
     }
 
     function ReadAll(){
         try {
-            // $sql='';
-            // $data= DATA::Ejecutar($sql);
-            // return $data;
+            // $sql='SELECT id, idBodega, idUsuarioSupervisor, idUsuarioCajero, estado, montoApertura, 
+            // montoCierre,totalVentasEfectivo, totalVentasTarjeta, fechaApertura, fechaCierre
+            // FROM tropical.cajasXBodega
+            // ORDER BY fechaApertura DESC;';
+
+            $sql='SELECT ca.id, ca.idBodega, bo.nombre as nombreBodega, ca.idUsuarioSupervisor, us2.nombre as supervisor, ca.idUsuarioCajero, us.nombre as cajero, ca.estado, ca.montoApertura, 
+            ca.montoCierre,ca.totalVentasEfectivo, ca.totalVentasTarjeta, ca.fechaApertura, ca.fechaCierre
+            FROM tropical.cajasXBodega ca
+            INNER JOIN bodega bo on ca.idBodega = bo.id
+            INNER JOIN usuario us on ca.idUsuarioCajero = us.id
+            INNER JOIN usuario us2 on ca.idUsuarioSupervisor = us2.id
+            ORDER BY fechaApertura DESC;';
+            $data= DATA::Ejecutar($sql);     
+            return $data;
         }     
         catch(Exception $e) {
             header('HTTP/1.0 400 Bad error');
@@ -134,10 +149,10 @@ class CajaXBodega{
         try {
             $this->idUsuarioAdmin = "1ed3a48c-3e44-11e8-9ddb-54ee75873a60";
             $this->montoApertura = 0;
-            $sql="INSERT INTO cajasXBodega  (id, idBodega, idUsuarioAdmin, idusuarioCajero, estado, montoApertura, fechaApertura)
-            VALUES (UUID(), :idBodega, :idUsuarioAdmin, :idusuarioCajero, '1', :montoApertura, CURRENT_TIMESTAMP());"; 
+            $sql="INSERT INTO cajasXBodega  (id, idBodega, idUsuarioSupervisor, idusuarioCajero, estado, montoApertura, fechaApertura)
+            VALUES (UUID(), :idBodega, :idUsuarioSupervisor, :idusuarioCajero, '1', :montoApertura, CURRENT_TIMESTAMP());"; 
        
-            $param= array(':idBodega'=>$_SESSION["userSession"]->idBodega, ':idUsuarioAdmin'=>$this->idUsuarioAdmin, 
+            $param= array(':idBodega'=>$_SESSION["userSession"]->idBodega, ':idUsuarioSupervisor'=>$this->idUsuarioSupervisor, 
                             ':idusuarioCajero'=>$_SESSION["userSession"]->id, ':montoApertura'=>$this->montoApertura);
             $data = DATA::Ejecutar($sql,$param, false);
             if($data)
@@ -153,13 +168,87 @@ class CajaXBodega{
         }
     }
 
+    function ValidarCierreCaja(){
+        try{
+            $sql = "SELECT ca.id, ca.idUsuarioSupervisor, ca.idusuarioCajero, ca.estado, bo.nombre
+            FROM cajasXBodega ca
+            INNER JOIN bodega bo on ca.idBodega = bo.id 
+            WHERE idusuarioCajero = :idusuarioCajero and
+            estado = 1;";            
+            $param= array(':idusuarioCajero'=>$_SESSION["userSession"]->id);
+            $data= DATA::Ejecutar($sql, $param);
+            if($data){
+                $sql = "Select sum(totalComprobante) as efectivo
+                FROM factura
+                where idMedioPago = 1 and
+                fechaCreacion Between 	(
+                                        SELECT ca.fechaApertura
+                                        FROM cajasXBodega ca
+                                        WHERE idusuarioCajero = :idusuarioCajero and
+                                        estado = 1
+                                        )
+                and CURRENT_TIMESTAMP();";            
+                $param= array(':idusuarioCajero'=>$_SESSION["userSession"]->id);
+                $this->totalVentasEfectivo= DATA::Ejecutar($sql, $param);
+                if($this->totalVentasEfectivo){
+                    $sql = "Select sum(totalComprobante) as tarjeta
+                    FROM factura
+                    where idMedioPago = 2 and
+                    fechaCreacion Between 	(
+                                            SELECT ca.fechaApertura
+                                            FROM cajasXBodega ca
+                                            WHERE idusuarioCajero = :idusuarioCajero and
+                                            estado = 1
+                                            )
+                    and CURRENT_TIMESTAMP()";            
+                    $param= array(':idusuarioCajero'=>$_SESSION["userSession"]->id);
+                    $this->totalVentasTarjeta= DATA::Ejecutar($sql, $param);
+                    if($this->totalVentasEfectivo){
+                        return $this;
+                    }
+                }
+            }
+            else return "cajaAbierta"; //false cuando existe el usuario con caja abierta
+        }
+        catch(Exception $e){
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }
+    }
+
     function cerrarCaja(){
         try {
-            $sql="UPDATE cajasXBodega
-            SET fechaCierre= CURRENT_TIMESTAMP(), estado='0'
-            WHERE idusuarioCajero=:idusuarioCajero and
+            $sql="UPDATE tropical.cajasXBodega as ca,
+            (	SELECT ca.fechaApertura
+                FROM cajasXBodega ca
+                WHERE idusuarioCajero = :idusuarioCajero and
+                estado = 1
+            ) as apertura
+            
+             
+            SET fechaCierre= CURRENT_TIMESTAMP(), 
+                estado='0',
+                montoCierre = :montoCierre,
+                totalVentasEfectivo = 	( 	Select sum(totalComprobante)
+                                            FROM factura
+                                            where idMedioPago = 1 and
+                                            fechaCreacion Between apertura.fechaApertura 
+                                            and CURRENT_TIMESTAMP()
+                                        ),
+                totalVentasTarjeta = 	(
+                                            Select sum(totalComprobante)
+                                            FROM factura
+                                            where idMedioPago = 2 and
+                                            fechaCreacion Between apertura.fechaApertura 
+                                            and CURRENT_TIMESTAMP()
+                                        )
+            WHERE idusuarioCajero = :idusuarioCajero and
             estado ='1';";
-            $param= array(':idusuarioCajero'=>$_SESSION["userSession"]->id);
+
+            $param= array(':idusuarioCajero'=>$_SESSION["userSession"]->id, 'montoCierre'=>$this->montoCierre);
             $data = DATA::Ejecutar($sql,$param,false);
             if($data){
                 return true;
@@ -178,7 +267,7 @@ class CajaXBodega{
         try{
             $this->idusuarioCajero="1ed3a48c-3e44-11e8-9ddb-54ee75873a60";
 
-            $sql = "SELECT ca.id, ca.idUsuarioAdmin, ca.idusuarioCajero, ca.estado, bo.nombre
+            $sql = "SELECT ca.id, ca.idUsuarioSupervisor, ca.idusuarioCajero, ca.estado, bo.nombre
             FROM cajasXBodega ca
             INNER JOIN bodega bo on ca.idBodega = bo.id 
             WHERE idusuarioCajero = :idusuarioCajero and
