@@ -518,6 +518,7 @@ class ClienteFE{
     public function APILogin(){
         try{
             error_log("API LOGIN ... ");
+            error_log("usr : " .  $this->username );
             //$url= 'http://104.131.5.198/api.php';
             $url= 'localhost/api.php';                        
             $ch = curl_init();

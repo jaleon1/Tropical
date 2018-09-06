@@ -29,8 +29,6 @@ if (!empty($_FILES)) {
             $cliente= new ClienteFE();
             $cliente->idBodega= $_SESSION['userSession']->idBodega;
             $cliente->ReadProfile();
-            error_log("usr: ". $cliente->username);
-            error_log("pw: ". $cliente->password);
             $cliente->APILogin();
             // Pasa el certificado al api.
             echo "UPLOADED";
