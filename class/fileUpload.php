@@ -20,11 +20,11 @@ if (!empty($_FILES)) {
             ':nkey'=>explode('::', $cfile)[1]);
         $data = DATA::Ejecutar($sql,$param,false);
         if($data){            
-            // nombre de usuario.
-            $sql="SELECT username, password FROM tropical.clienteFE
-                WHERE idBodega= :idBodega";
-            $param= array(':idBodega'=>$_SESSION['userSession']->idBodega);
-            $data = DATA::Ejecutar($sql,$param);
+            // nombre de usuario para api.
+            // $sql="SELECT email, password FROM tropical.clienteFE
+            //     WHERE idBodega= :idBodega";
+            // $param= array(':idBodega'=>$_SESSION['userSession']->idBodega);
+            // $data = DATA::Ejecutar($sql,$param);
             // sesion del usuario
             $cliente= new ClienteFE();
             $cliente->idBodega= $_SESSION['userSession']->idBodega;
