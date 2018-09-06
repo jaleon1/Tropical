@@ -517,8 +517,9 @@ class ClienteFE{
 
     public function APILogin(){
         try{
+            error_log("API LOGIN ... ");
             //$url= 'http://104.131.5.198/api.php';
-            $url= 'http://localhost/api.php';                                
+            $url= 'localhost/api.php';                        
             $ch = curl_init();
             $post = [
                 'w' => 'users',
