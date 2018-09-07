@@ -500,6 +500,9 @@ class ClienteFE{
             if($data){
                 // ... modifica datos del cliente en el api ...//
                 // ... sube el nuevo certificado ...//
+                
+                $this->APIgetToken();
+
                 return true;
             }   
             else throw new Exception('Error al guardar.', 123);
@@ -549,9 +552,11 @@ class ClienteFE{
             }
             curl_close($ch);
             // session de usuario ATV
-            $_SESSION['userSession']->ATVuserName= $this->correoElectronico;  
+            $_SESSION['userSession']->ATVusername= $this->username;
+            $_SESSION['userSession']->ATVpassword= $this->password;
             $sArray=json_decode($header);
-            $_SESSION['userSession']->sessionKey= $sArray->resp->sessionKey;
+            $_SESSION['userSession']->APIusername= $this->correoElectronico;
+            $_SESSION['userSession']->APIsessionKey= $sArray->resp->sessionKey;
             error_log("sessionKey: ". $sArray->resp->sessionKey);
         } 
         catch(Exception $e) {
@@ -567,24 +572,19 @@ class ClienteFE{
 
     public function APIUploadCert(){
         try{
-            error_log("************************************ INICIANDO API SUBIR CERTIF ****************************************");
             if (!file_exists($this->certificado)){
-                error_log("************************************ ERROR NO SE ENCUENTRA EL CERT P12  ****************************************");
                 throw new Exception('Error al guardar el certificado. El certificado no existe' , 002256);
-            } else error_log("Certificado encontrado !!!!");
-            $url= 'http://104.131.5.198/api.php';
-            //$url= 'http://localhost/api.php';  
+            } 
+            //$url= 'http://104.131.5.198/api.php';
+            $url= 'http://localhost/api.php';  
             $ch = curl_init();
             $post = [
                 'w' => 'fileUploader',
                 'r' => 'subir_certif',
-                'sessionKey'=>$_SESSION['userSession']->sessionKey,
+                'sessionKey'=>$_SESSION['userSession']->APIsessionKey,
                 'fileToUpload' => new CurlFile( $this->certificado, 'application/x-pkcs12'),
-                'iam'=>$_SESSION['userSession']->ATVuserName
-            ];  
-            error_log(" sessionKey : ". $_SESSION['userSession']->sessionKey);
-            error_log(" atvUsername : ". $_SESSION['userSession']->ATVuserName);
-            error_log(" cert       : ". $this->certificado);
+                'iam'=>$_SESSION['userSession']->APIusername
+            ];
             curl_setopt_array($ch, array(
                 CURLOPT_URL => $url,
                 CURLOPT_RETURNTRANSFER => true,   
@@ -602,7 +602,51 @@ class ClienteFE{
             $error_msg = "";
             if (curl_error($ch)) {
                 $error_msg = curl_error($ch);
-                error_log("error: ". $error_msg);
+                throw new Exception('Error al guardar el certificado. '. $error_msg , 033);
+            }
+            error_log(" resp : ". $server_output);
+            curl_close($ch);
+            return true;
+        } 
+        catch(Exception $e) {
+            error_log("****** Error: ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }
+    }
+
+    public function APIgetToken(){
+        try{
+            $url= 'http://localhost/api.php';  
+            $ch = curl_init();
+            $post = [
+                'w' => 'token',
+                'r' => 'gettoken',
+                'grant_type'=>'password', 
+                'client_id'=> 'api-stag', 
+                'username' => $_SESSION['userSession']->ATVusername,
+                'password'=>$_SESSION['userSession']->ATVpassword
+            ];
+            curl_setopt_array($ch, array(
+                CURLOPT_URL => $url,
+                CURLOPT_RETURNTRANSFER => true,   
+                CURLOPT_VERBOSE => true,                      
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 30,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => "POST",
+                CURLOPT_POSTFIELDS => $post
+            ));
+            $server_output = curl_exec($ch);
+            $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+            $header = substr($server_output, 0, $header_size);
+            $body = substr($server_output, $header_size);
+            $error_msg = "";
+            if (curl_error($ch)) {
+                $error_msg = curl_error($ch);
                 throw new Exception('Error al guardar el certificado. '. $error_msg , 033);
             }
             error_log(" resp : ". $server_output);
