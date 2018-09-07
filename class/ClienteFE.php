@@ -572,8 +572,8 @@ class ClienteFE{
                 error_log("************************************ ERROR NO SE ENCUENTRA EL CERT P12  ****************************************");
                 throw new Exception('Error al guardar el certificado. El certificado no existe' , 002256);
             } else error_log("Certificado encontrado !!!!");
-            //$url= 'http://104.131.5.198/api.php';
-            $url= 'localhost/api.php';  
+            $url= 'http://104.131.5.198/api.php';
+            //$url= 'http://localhost/api.php';  
             $ch = curl_init();
             $post = [
                 'w' => 'fileUploader',
