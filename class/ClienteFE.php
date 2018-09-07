@@ -195,6 +195,7 @@ class ClienteFE{
     public $filename= null;
     public $filetype= null;
     public $estadoCertificado= 1;
+    public $sessionKey;
     //
     public $ubicacion= [];
 
@@ -390,6 +391,7 @@ class ClienteFE{
                     $this->estadoCertificado=1;
                 else $this->estadoCertificado=0;      
                 $this->certificado= encdes::decifrar($data[0]['certificado']);
+                $_SESSION['API']= $this;
                 return $this;
             }
             return null;
@@ -500,7 +502,7 @@ class ClienteFE{
             if($data){
                 // ... modifica datos del cliente en el api ...//
                 // ... sube el nuevo certificado ...//
-                
+
                 $this->APIgetToken();
 
                 return true;
@@ -521,7 +523,7 @@ class ClienteFE{
         try{
             error_log("API LOGIN ... ");
             //$url= 'http://104.131.5.198/api.php';
-            $url= 'localhost/api.php';                        
+            $url= 'localhost/api.php';
             $ch = curl_init();
             $post = [
                 'w' => 'users',
@@ -552,11 +554,9 @@ class ClienteFE{
             }
             curl_close($ch);
             // session de usuario ATV
-            $_SESSION['userSession']->ATVusername= $this->username;
-            $_SESSION['userSession']->ATVpassword= $this->password;
             $sArray=json_decode($header);
-            $_SESSION['userSession']->APIusername= $this->correoElectronico;
-            $_SESSION['userSession']->APIsessionKey= $sArray->resp->sessionKey;
+            $this->sessionKey= $sArray->resp->sessionKey;
+            $_SESSION['API']= $this->sessionKey;
             error_log("sessionKey: ". $sArray->resp->sessionKey);
         } 
         catch(Exception $e) {
@@ -581,9 +581,9 @@ class ClienteFE{
             $post = [
                 'w' => 'fileUploader',
                 'r' => 'subir_certif',
-                'sessionKey'=>$_SESSION['userSession']->APIsessionKey,
+                'sessionKey'=>$_SESSION['API']->APIsessionKey,
                 'fileToUpload' => new CurlFile( $this->certificado, 'application/x-pkcs12'),
-                'iam'=>$_SESSION['userSession']->APIusername
+                'iam'=>$_SESSION['API']->APIusername
             ];
             curl_setopt_array($ch, array(
                 CURLOPT_URL => $url,
@@ -627,8 +627,53 @@ class ClienteFE{
                 'r' => 'gettoken',
                 'grant_type'=>'password', 
                 'client_id'=> 'api-stag', 
-                'username' => $_SESSION['userSession']->ATVusername,
-                'password'=>$_SESSION['userSession']->ATVpassword
+                'username' => $_SESSION['API']->correoElectronico,
+                'password'=>$_SESSION['API']->password
+            ];
+            curl_setopt_array($ch, array(
+                CURLOPT_URL => $url,
+                CURLOPT_RETURNTRANSFER => true,   
+                CURLOPT_VERBOSE => true,                      
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 30,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => "POST",
+                CURLOPT_POSTFIELDS => $post
+            ));
+            $server_output = curl_exec($ch);
+            $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+            $header = substr($server_output, 0, $header_size);
+            $body = substr($server_output, $header_size);
+            $error_msg = "";
+            if (curl_error($ch)) {
+                $error_msg = curl_error($ch);
+                throw new Exception('Error al guardar el certificado. '. $trgyfrterftgdert5gtrgfyftrgyftyhfrgtyh6yt6huyjuyujfhjuhkgjihlokjhokpigkjmnljok`hplikjhkjui7gklf9c87hby77njgm yjrm uty676u5hjik78oro9j87toil9o598po0;p0;0p09;09;p709;[70=[078[;'8]0= , 033);
+            }
+            error_log(" resp : ". $server_output);
+            curl_close($ch);
+            return true;
+        } 
+        catch(Exception $e) {
+            error_log("****** Error: ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }
+    }
+
+    public function APIcrearClave(){
+        try{
+            $url= 'http://localhost/api.php';  
+            $ch = curl_init();
+            $post = [
+                'w' => 'token',
+                'r' => 'gettoken',
+                'grant_type'=>'password', 
+                'client_id'=> 'api-stag', 
+                'username' => $_SESSION['API']->username,
+                'password'=>$_SESSION['API']->password
             ];
             curl_setopt_array($ch, array(
                 CURLOPT_URL => $url,
