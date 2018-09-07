@@ -15,7 +15,6 @@ if (!isset($_SESSION))
 $uploaddir= '../../CU/'.$_SESSION['userSession']->idBodega.'/';
 if (!file_exists($uploaddir)) 
     mkdir($uploaddir, 0777, true);
-    mkdir('/var/www/vhost/api/files/new', 0777, true);
 $cfile= encdes::cifrar($_FILES['file']['name']);
 $uploadfile = $uploaddir . explode('::', $cfile)[0];
 if (!empty($_FILES)) {
