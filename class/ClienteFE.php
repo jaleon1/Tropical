@@ -392,6 +392,7 @@ class ClienteFE{
                 else $this->estadoCertificado=0;      
                 $this->certificado= encdes::decifrar($data[0]['certificado']);
                 $_SESSION['API']= $this;
+                //$this->APILogin();
                 return $this;
             }
             return null;
@@ -503,8 +504,9 @@ class ClienteFE{
                 // ... modifica datos del cliente en el api ...//
                 // ... sube el nuevo certificado ...//
 
-                $this->APIgetToken();
-
+                //$this->APIGetToken();
+                $this->APICrearClave();
+                $this->APICrearXML();
                 return true;
             }   
             else throw new Exception('Error al guardar.', 123);
@@ -556,7 +558,7 @@ class ClienteFE{
             // session de usuario ATV
             $sArray=json_decode($header);
             $this->sessionKey= $sArray->resp->sessionKey;
-            $_SESSION['API']= $this->sessionKey;
+            $_SESSION['API']->sessionKey= $this->sessionKey;
             error_log("sessionKey: ". $sArray->resp->sessionKey);
         } 
         catch(Exception $e) {
@@ -581,16 +583,16 @@ class ClienteFE{
             $post = [
                 'w' => 'fileUploader',
                 'r' => 'subir_certif',
-                'sessionKey'=>$_SESSION['API']->APIsessionKey,
-                'fileToUpload' => new CurlFile( $this->certificado, 'application/x-pkcs12'),
-                'iam'=>$_SESSION['API']->APIusername
+                'sessionKey'=>$_SESSION['API']->sessionKey,
+                'fileToUpload' => new CurlFile($this->certificado, 'application/x-pkcs12'),
+                'iam'=>$_SESSION['API']->correoElectronico
             ];
             curl_setopt_array($ch, array(
                 CURLOPT_URL => $url,
                 CURLOPT_RETURNTRANSFER => true,   
                 CURLOPT_VERBOSE => true,                      
                 CURLOPT_MAXREDIRS => 10,
-                CURLOPT_TIMEOUT => 3000,
+                CURLOPT_TIMEOUT => 30,
                 CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
                 CURLOPT_CUSTOMREQUEST => "POST",
                 CURLOPT_POSTFIELDS => $post
@@ -618,7 +620,7 @@ class ClienteFE{
         }
     }
 
-    public function APIgetToken(){
+    public function APIGetToken(){
         try{
             $url= 'http://localhost/api.php';  
             $ch = curl_init();
@@ -627,7 +629,7 @@ class ClienteFE{
                 'r' => 'gettoken',
                 'grant_type'=>'password', 
                 'client_id'=> 'api-stag', 
-                'username' => $_SESSION['API']->correoElectronico,
+                'username' => $_SESSION['API']->username,
                 'password'=>$_SESSION['API']->password
             ];
             curl_setopt_array($ch, array(
@@ -647,8 +649,13 @@ class ClienteFE{
             $error_msg = "";
             if (curl_error($ch)) {
                 $error_msg = curl_error($ch);
-                throw new Exception('Error al guardar el certificado. '. $trgyfrterftgdert5gtrgfyftrgyftyhfrgtyh6yt6huyjuyujfhjuhkgjihlokjhokpigkjmnljok`hplikjhkjui7gklf9c87hby77njgm yjrm uty676u5hjik78oro9j87toil9o598po0;p0;0p09;09;p709;[70=[078[;'8]0= , 033);
+                throw new Exception('Error al guardar el certificado. '. $error_msg , 033);
             }
+            $sArray= json_decode($server_output);
+            $_SESSION['API']->accessToken=$sArray->resp->access_token;
+            $_SESSION['API']->expiresIn=$sArray->resp->expires_in;
+            $_SESSION['API']->refreshExpiresIn=$sArray->resp->refresh_expires_in;
+            $_SESSION['API']->refreshToken=$sArray->resp->refresh_token;
             error_log(" resp : ". $server_output);
             curl_close($ch);
             return true;
@@ -663,17 +670,22 @@ class ClienteFE{
         }
     }
 
-    public function APIcrearClave(){
+    public function APICrearClave(){
         try{
             $url= 'http://localhost/api.php';  
             $ch = curl_init();
             $post = [
-                'w' => 'token',
-                'r' => 'gettoken',
-                'grant_type'=>'password', 
-                'client_id'=> 'api-stag', 
-                'username' => $_SESSION['API']->username,
-                'password'=>$_SESSION['API']->password
+                'w' => 'clave',
+                'r' => 'clave',
+                'tipoCedula'=>'fisico', 
+                'cedula'=> $_SESSION['API']->identificacion,
+                'situacion' => 'normal',
+                'codigoPais'=> '506',
+                'consecutivo'=> '0000000001',
+                'codigoSeguridad'=> $_SESSION['API']->codigoSeguridad,
+                'tipoDocumento'=> 'FE',
+                'terminal'=> '00001',
+                'sucursal'=> '001'
             ];
             curl_setopt_array($ch, array(
                 CURLOPT_URL => $url,
@@ -681,6 +693,121 @@ class ClienteFE{
                 CURLOPT_VERBOSE => true,                      
                 CURLOPT_MAXREDIRS => 10,
                 CURLOPT_TIMEOUT => 30,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => "POST",
+                CURLOPT_POSTFIELDS => $post
+            ));
+            $server_output = curl_exec($ch);
+            $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+            $header = substr($server_output, 0, $header_size);
+            $body = substr($server_output, $header_size);
+            $error_msg = "";
+            if (curl_error($ch)) {
+                $error_msg = curl_error($ch);
+                throw new Exception('Error al guardar el certificado. '. $error_msg , 033);
+            }
+            $sArray= json_decode($server_output);
+            $_SESSION['API']->clave= $sArray->resp->clave;
+            $_SESSION['API']->consecutivo= $sArray->resp->consecutivo;
+            error_log(" resp : ". $server_output);
+            curl_close($ch);
+            return true;
+        } 
+        catch(Exception $e) {
+            error_log("****** Error: ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }
+    }
+
+    public function APICrearXML(){
+        try{
+            $url= 'http://localhost/api.php';  
+            $ch = curl_init();
+            // detalle de la factura
+            $detalles=[];
+            array_push($detalles, array('cantidad'=> '1',
+                    'unidadMedida'=> 'sp',
+                    'detalle'=> 'Impresora',
+                    'precioUnitario'=> '10000',
+                    'montoTotal'=> '1000',
+                    'subtotal'=> '9900',
+                    'montoTotalLinea'=> '12177',
+                    'montoDescuento'=> '100',
+                    'naturalezaDescuento'=> 'Pronto pago',
+                    'impuesto'=> array(array(
+                        'codigo'=> '01',
+                        'tarifa'=> '13',
+                        'monto'=> '1287'
+                        )
+                    )
+                )
+            );
+            //
+            $post = [
+                'w' => 'genXML',
+                'r' => 'gen_xml_fe',
+                'clave'=> $_SESSION['API']->clave,
+                'consecutivo'=> $_SESSION['API']->consecutivo,
+                'fecha_emision' => '2018-09-09T12:00:00-06:00',
+                /** Emisor **/
+                'emisor_nombre'=> $_SESSION['API']->nombre,
+                'emisor_tipo_indetif'=> $_SESSION['API']->idTipoIdentificacion,
+                'emisor_num_identif'=> $_SESSION['API']->identificacion,
+                'nombre_comercial'=> $_SESSION['API']->nombreComercial,
+                'emisor_provincia'=> $_SESSION['API']->idProvincia,
+                'emisor_canton'=> $_SESSION['API']->idCanton,
+                'emisor_distrito'=> $_SESSION['API']->idDistrito,
+                'emisor_barrio'=> $_SESSION['API']->idBarrio,
+                'emisor_otras_senas'=> $_SESSION['API']->otrasSenas,
+                'emisor_cod_pais_tel'=> '506',
+                'emisor_tel'=> $_SESSION['API']->numTelefono,
+                'emisor_cod_pais_fax'=> '506',
+                'emisor_fax'=> '00000000',
+                'emisor_email'=> 'walner.borbon@hotmail.com',
+                /** Receptor **/
+                'receptor_nombre'=> 'Walner Borbon',
+                'receptor_tipo_identif'=> '01',
+                'receptor_num_identif'=> '702320717',
+                'receptor_provincia'=> '6',
+                'receptor_canton'=> '02',
+                'receptor_distrito'=> '03',
+                'receptor_barrio'=> '01',
+                'receptor_cod_pais_tel'=> '506',
+                'receptor_tel'=> '84922891',
+                'receptor_cod_pais_fax'=> '506',
+                'receptor_fax'=> '00000000',
+                'receptor_email'=> 'walner.borbon@hotmail.com',
+                /** Datos de la venta **/
+                'condicion_venta'=> '01',
+                'plazo_credito'=> '0',
+                'medio_pago'=> '01',
+                'cod_moneda'=> 'CRC',
+                'tipo_cambio'=> '564.48',
+                'total_serv_gravados'=> '0',
+                'total_serv_exentos'=> '10000',
+                'total_merc_gravada'=> '10000',
+                'total_merc_exenta'=> '0',
+                'total_gravados'=> '10000',
+                'total_exentos'=> '10000',
+                'total_ventas'=> '20000',
+                'total_descuentos'=> '100',
+                'total_ventas_neta'=> '19900',
+                'total_impuestos'=> '1170',
+                'total_comprobante'=> '21070',
+                'otros'=> 'Muchas gracias',
+                /** Detalle **/
+                'detalles'=>  json_encode($detalles, JSON_FORCE_OBJECT)
+            ];
+            curl_setopt_array($ch, array(
+                CURLOPT_URL => $url,
+                CURLOPT_RETURNTRANSFER => true,   
+                CURLOPT_VERBOSE => true,                      
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 30000000,
                 CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
                 CURLOPT_CUSTOMREQUEST => "POST",
                 CURLOPT_POSTFIELDS => $post

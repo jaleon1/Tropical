@@ -476,11 +476,9 @@ class Usuario{
         $_SESSION["userSession"]->bodega= $_POST['nombre'];
         // Login API.
         $cliente= new ClienteFE();
-        // lee el perfil del contribuyente
+        // lee el perfil del contribuyente y loguea al API.
         $cliente->idBodega= $_SESSION['userSession']->idBodega;
         $cliente->ReadProfile();
-        // login.
-        $cliente->APILogin();
     }
 
 }
