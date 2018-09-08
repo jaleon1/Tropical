@@ -247,13 +247,13 @@ class Insumo {
                     data:"saldoCosto",
                     width:"auto",
                     mRender: function ( e ) {
-                        return '¢'+ e.replace(/\B(?=(\d{3})+(?!\d))/g, ".")}},
+                        return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ".")}},
                 {
                     title:"COSTO PROMEDIO",
                     data:"costoPromedio",
                     width:"auto",
                     mRender: function ( e ) {
-                        return '¢'+ e.replace(/\B(?=(\d{3})+(?!\d))/g, ".")}},
+                        return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ".")}},
                 {
                     title:"ACCIÓN",
                     orderable: false,

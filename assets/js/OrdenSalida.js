@@ -117,38 +117,87 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
     }
 
     get Delete() {
-        $.ajax({
-            type: "POST",
-            url: "class/OrdenSalida.php",
-            data: {
-                action: 'Delete',
-                id: this.id
-            }
-        })
-            .done(function (e) {
-                var data = JSON.parse(e);
-                if (data == 0)
+        if(liquidada==true)
+        {
+            $.ajax({
+                type: "POST",
+                url: "class/ElaborarProducto.php",
+                data: {
+                    action: 'RevierteOrdenSalida',
+                    idOrdenSalida: ordenSalida.id
+                }
+            })
+                .done(function (e) {
                     swal({
                         type: 'success',
-                        title: 'Eliminado!',
+                        title: 'Cancelado!',
                         showConfirmButton: false,
                         timer: 1000
                     });
-                else if (data.status == 1) {
-                    swal({
-                        type: 'error',
-                        title: 'No es posible eliminar...',
-                        text: 'El registro que intenta eliminar ya se ecnuentra liquidado'                        
-                    });
+                })
+                .fail(function (e) {
+                    // ordenSalida.showError(e);
+                })
+                .always(function () {
+                    ordenSalida = new OrdenSalida();
+                    ordenSalida.Read;
+                });    
+        }
+        else{
+            $.ajax({
+                type: "POST",
+                url: "class/OrdenSalida.php",
+                data: {
+                    action: 'Delete',
+                    id: this.id
                 }
-                else {
-                    swal({
-                        type: 'error',
-                        title: 'Ha ocurrido un error...',
-                        text: 'El registro no ha sido eliminado',
-                        footer: '<a href>Contacte a Soporte Técnico</a>',
-                    })
-                }
+            })
+                .done(function (e) {
+                    var data = JSON.parse(e);
+                    if (data == 0)
+                        swal({
+                            type: 'success',
+                            title: 'Eliminado!',
+                            showConfirmButton: false,
+                            timer: 1000
+                        });
+                    else if (data.status == 1) {
+                        swal({
+                            type: 'error',
+                            title: 'No es posible eliminar...',
+                            text: 'El registro que intenta eliminar ya se ecnuentra liquidado'                        
+                        });
+                    }
+                    else {
+                        swal({
+                            type: 'error',
+                            title: 'Ha ocurrido un error...',
+                            text: 'El registro no ha sido eliminado',
+                            footer: '<a href>Contacte a Soporte Técnico</a>',
+                        })
+                    }
+                })
+                .fail(function (e) {
+                    ordenSalida.showError(e);
+                })
+                .always(function () {
+                    ordenSalida = new OrdenSalida();
+                    ordenSalida.Read;
+                });
+        }
+    }
+
+    get RevertirOrdenSalida() {
+        $.ajax({
+            type: "POST",
+            url: "class/ElaborarProducto.php",
+            data: {
+                action: 'RevierteOrdenSalida',
+                idOrdenSalida: this.id
+            }
+        })
+            .done(function (e) {
+                alert("Prueba");
             })
             .fail(function (e) {
                 ordenSalida.showError(e);
@@ -160,6 +209,7 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
     }
 
     // Methods
+    
     UpdateCantidadProducto(){
         productobodega.idProducto = $(this).parents("tr").find("td:eq(1)").html();
         productobodega.cantidad = $(this).parents("tr").find("td:eq(5)").html();
@@ -188,7 +238,7 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
         localStorage.setItem("lsListaInsumo",JSON.stringify(this.listaInsumo));
 
         location.href ="/TicketOrdenSalida.html";
-        // location.href ="/Tropical/TicketOrdenSalida.html";
+        //location.href ="/Tropical/TicketOrdenSalida.html";
     }
 
     // Muestra errores en ventana
@@ -218,7 +268,7 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
            t.rows.add(JSON.parse(e));
            t.draw();
            
-           $( document ).on( 'click', '#dsOrdenSalida tbody tr',ordenSalida.UpdateEventHandler);
+           $( document ).on( 'click', '#dsOrdenSalida tbody tr td:not(.buttons)',ordenSalida.UpdateEventHandler);
            $( document ).on( 'click', '.deleteOrdenSalida',ordenSalida.DeleteEventHandler);
         }else{
            t.clear();
@@ -289,10 +339,13 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
                             estado="EN PROCESO";
                         if (e=="1") 
                             estado="LIQUIDADO";
+                        if (e=="2") 
+                            estado="CANCELADO";
                         return estado
                     }},
                 {
                     title:"ACCIÓN",
+                    class:"buttons",
                     orderable: false,
                     searchable:false,
                     className: 'buttons',
@@ -427,7 +480,7 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
         ordenSalida.id = $(this).parents("tr").find(".itemId").text() || $(this).find(".itemId").text();
         ordenSalida.Read;     
         
-        if($(this).find("td:eq(6)").html()=="LIQUIDADO"){              
+        if($(this).parents("tr").find("td:eq(6)").html()=="LIQUIDADO" || $(this).parents("tr").find("td:eq(6)").html()=="CANCELADO"){              
             swal ({ 
                 type: 'info',
                 title: 'La orden ya ha sido liquidada, No se puede modificar...'                     
@@ -609,23 +662,30 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
 
     DeleteEventHandler() {
         ordenSalida.id = $(this).parents("tr").find(".itemId").text();  //Class itemId = ID del objeto.
-        // Mensaje de borrado:
-        swal({
-            title: 'Eliminar?',
-            text: "Esta acción es irreversible!",
-            type: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Si, eliminar!',
-            cancelButtonText: 'No, cancelar!',
-            confirmButtonClass: 'btn btn-success',
-            cancelButtonClass: 'btn btn-danger'
-        }).then((result) => {
-            if (result.value) {
+        if($(this).parents("tr").find("td:eq(6)").html()=="CANCELADO")
+            swal({
+                type: 'info',
+                title: 'La orden ha sido cancelada y se encuentra inactiva!'                    
+            });  
+        else{
+            swal({
+                title: 'Eliminar?',
+                text: "Esta acción es irreversible!",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Si, eliminar!',
+                cancelButtonText: 'No, cancelar!',
+                confirmButtonClass: 'btn btn-success',
+                cancelButtonClass: 'btn btn-danger'
+            }).then((result) => {
+                liquidada = false;
+                if($(this).parents("tr").find("td:eq(6)").html()=="LIQUIDADO")
+                    liquidada = true;
                 ordenSalida.Delete;
-            }
-        })
+            })
+        }
     };
 
     AddUserEventHandler(){
@@ -684,5 +744,5 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
         }
     };
 }
-
+var liquidada = false;
 let ordenSalida = new OrdenSalida();
