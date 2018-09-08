@@ -13,28 +13,29 @@
     
     <table>
         <tbody>
-          <tr><td><label>----------------------------------------------------</label></td></tr>
-          <tr style="text-align: center;"><td>
+          <tr><td><label>--------------------------------------------------------</label></td></tr>
+                  
+          <tr style="line-height:10px;font-family:Bahnschrift Condensed; text-align: center;"><td>
             TROPICAL SNO. <label id="bodega"></label>
           </td></tr>
-          <tr><td><label>----------------------------------------------------</label></td></tr>
-          <tr style="text-align: center;"><td>ORDEN DE SALIDA # <label id=numeroOrden></label></label></td></tr>
-          <tr style="text-align: center;"><td>Fecha: <label id="fechaOrdenSalida"></label></td></tr>
-          <tr style="text-align: center;"><td>Usuario: <label id="usuarioRecibe"></label></td></tr>
+          <tr><td><label>--------------------------------------------------------</label></td></tr>
+          <tr style="line-height:10px;font-family:Bahnschrift Condensed; text-align: center;"><td>ORDEN DE SALIDA # <label id=numeroOrden></label></label></td></tr>
+          <tr style="line-height:10px;font-family:Bahnschrift Condensed; text-align: center;"><td>Fecha: <label id="fechaOrdenSalida"></label></td></tr>
+          <tr style="line-height:10px;font-family:Bahnschrift Condensed; text-align: center;"><td>Usuario: <label id="usuarioRecibe"></label></td></tr>
         </tbody>
       </table>
 
     <table>
       <tbody id="tableBody-TicketOrdenSalida">
-          <tr><td colspan="2"><label>----------------------------------------------------</label></td></tr>
+          <tr><td colspan="2"><label>--------------------------------------------------------</label></td></tr>
           <tr>
-              <td style="width:20%; text-align:left;">CN</td>
-              <td style="width:80%; text-align:left;">Detalle</td>
+              <td style="line-height:10px;font-family:Bahnschrift Condensed; width:10%; text-align:left;">CN</td>
+              <td style="line-height:10px;font-family:Bahnschrift Condensed; width:90%; text-align:right;">Detalle</td>
             </tr>
-          <tr><td colspan="2"><label>----------------------------------------------------</label></td></tr>
+          <tr><td colspan="2"><label>--------------------------------------------------------</label></td></tr>
       </tbody>
     </table>
-    <label>----------------------------------------------------</label>
+    <label>--------------------------------------------------------</label>
     <p class="centrado">Orden Iniciada...</p>
   </div>
   <script src="assets/js/OrdenSalida.js"></script>
@@ -52,14 +53,14 @@
       $.each(listaInsumo, function (i, item) {
           $('#tableBody-TicketOrdenSalida').append(`
                 <tr> 
-                    <td style="width:20%; text-align:left;">&nbsp;&nbsp;${item.cantidad}</td>
-                    <td style="width:80%; text-align:left;">${item.nombreInsumo}</td>
+                    <td style="line-height:10px;font-family:Bahnschrift Condensed; width:10%; text-align:left;">&nbsp;&nbsp;${item.cantidad}</td>
+                    <td style="line-height:10px;font-family:Bahnschrift Condensed; width:90%; text-align:right;">${item.nombreInsumo}</td>
                 </tr>
             `);
         }) 
       window.print();
       localStorage.setItem("lsPrintOK","OK");
       location.href ="/OrdenSalida.html";
-      // location.href ="/Tropical/OrdenSalida.html";
+      //location.href ="/Tropical/OrdenSalida.html";
   });  
 </script>
