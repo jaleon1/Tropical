@@ -266,7 +266,6 @@ function facturar (){
     facturaCli.totalVenta = 0;
     facturaCli.detalleFactura = [];
     facturaCli.detalleOrden = [];
-    
 
     $(t.rows().data()).each(function (i, item) {
 
@@ -305,6 +304,8 @@ function facturar (){
         facturaCli.detalleOrden.push(objetoDetalleOrden);
 
     }); 
+
+    facturaCli.totalComprobante = facturaCli.totalVenta;
 
     $.ajax({
         type: "POST",

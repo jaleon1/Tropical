@@ -22,6 +22,7 @@ var Session=  {
                     Session.setMenu(data.eventos);  
                     Session.state=true;
                     Session.sideBarDraw(data);
+                    $(".main_container").removeAttr("style");
                     break;
                 case 'nocredencial':
                     $('.right_col').hide();
@@ -161,13 +162,10 @@ var Session=  {
                 init_sidebar();
             else {
                 setTimeout(function(){
-                    init_sidebar()                     
-                 }, 1000);
-                
+                    Session.sideBarDraw(dataMenu);               
+                 }, 500);                
             }
-        }    
-
-           
+        }
     }
 
 

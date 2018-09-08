@@ -54,7 +54,7 @@ if(isset($_POST["action"])){
         case "DeleteCertificado":
             $clientefe->certificado = $_POST['certificado'];
             $clientefe->DeleteCertificado();
-            break;      
+            break;               
     }
 }
 
@@ -424,8 +424,6 @@ class ClienteFE{
                 ':idCodigoPaisTel'=>$this->idCodigoPaisTel,
                 ':numTelefono'=>$this->numTelefono,
                 ':correoElectronico'=>$this->correoElectronico,
-                // ':password'=>password_hash($this->password, PASSWORD_DEFAULT),
-                // ':certificado'=>password_hash($this->certificado, PASSWORD_DEFAULT),
                 ':username'=>encdes::cifrar($this->username),
                 ':password'=>encdes::cifrar($this->password),
                 ':certificado'=>encdes::cifrar($this->certificado), 
@@ -435,17 +433,47 @@ class ClienteFE{
             if($data)
             {
                 //guarda api_base.users
-                $url= 'http://localhost/api.php?w=users&r=users_register&fullName='.$this->nombre.'&userName='.$this->username.'&email='.$this->correoElectronico.'&about=otro%20Usuario&country=CR&pwd='.$this->password;
+                //$url= 'http://104.131.5.198/api.php';
+                $url= 'localhost/api.php';
                 $ch = curl_init();
-                curl_setopt($ch, CURLOPT_URL,$url);
-                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
-                $server_output = curl_exec ($ch);
-
-                
+                $post = [
+                    'w' => 'users',
+                    'r' => 'users_register',
+                    'fullName'   => $this->nombre,
+                    'userName'   => $this->correoElectronico, // username dentro del API es el correo electronico del contribuyente.
+                    'email'   => $this->correoElectronico,
+                    'about'   => 'StoryLabsUser',
+                    'country'   => 'CR',
+                    'pwd'   => $this->password
+                ];  
+                curl_setopt_array($ch, array(
+                    CURLOPT_URL => $url,
+                    CURLOPT_RETURNTRANSFER => true,   
+                    CURLOPT_VERBOSE => true,      
+                    CURLOPT_MAXREDIRS => 10,
+                    CURLOPT_TIMEOUT => 300,
+                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                    CURLOPT_CUSTOMREQUEST => "POST",
+                    CURLOPT_POSTFIELDS => $post
+                ));
+                $server_output = curl_exec($ch);
+                $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+                $header = substr($server_output, 0, $header_size);
+                $body = substr($server_output, $header_size);
+                $error_msg = "";
+                if (curl_error($ch)) {
+                    $error_msg = curl_error($ch);
+                    error_log("error: ". $error_msg);
+                    throw new Exception('Error al crear usuario API MH. Comunicarse con Soporte Técnico', 055);
+                }     
+                error_log("error: ". $server_output);
+                curl_close($ch);                    
+                return true;               
             }
             else throw new Exception('Error al guardar.', 02);
         }     
         catch(Exception $e) {
+            error_log("error: ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
@@ -456,7 +484,6 @@ class ClienteFE{
 
     function Update(){
         try {
-            error_log('iniciando');
             $sql="UPDATE clienteFE 
                 SET nombre=:nombre, codigoSeguridad=:codigoSeguridad, idCodigoPais=:idCodigoPais, idTipoIdentificacion=:idTipoIdentificacion, 
                     identificacion=:identificacion, nombreComercial=:nombreComercial, idProvincia=:idProvincia, idCanton=:idCanton, idDistrito=:idDistrito, 
@@ -471,40 +498,170 @@ class ClienteFE{
             );
             $data = DATA::Ejecutar($sql,$param,false);
             if($data){
-                //$url= 'http://104.131.5.198/api.php';
-                $url= 'http://104.131.5.198/api.php?w=users&r=users_register&fullName='.$this->nombre.'&userName='.$this->username.'&email='.$this->correoElectronico.'&about=otro%20Usuario&country=CR&pwd='.$this->password;
-                // $url= 'http://localhost/api.php?w=users&r=users_register&fullName=Carlos%20Chacon&userName=eeeeeee123&email=carlos@e11@gmail.com&about=Tsno&country=CR&pwd=123';
-                $ch = curl_init();
-                curl_setopt($ch, CURLOPT_URL, $url);
-                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
-                curl_setopt($ch,CURLOPT_VERBOSE, 1);
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-                curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-                error_log('enviando: '. $url);
-                $server_output = curl_exec($ch);
-                $information = curl_getinfo($ch);
-                $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-                $header = substr($server_output, 0, $header_size);
-                $body = substr($server_output, $header_size);
-                $error_msg = "";
-                error_log('fin');
-                if (curl_error($ch)) {
-                    $error_msg = curl_error($ch);
-                    error_log('error: '. $error_msg);
-                }     
-                curl_close($ch);                
+                // ... modifica datos del cliente en el api ...//
+                // ... sube el nuevo certificado ...//
+                
+                $this->APIgetToken();
+
                 return true;
             }   
             else throw new Exception('Error al guardar.', 123);
         }     
         catch(Exception $e) {
+            error_log("error: ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
                 'msg' => $e->getMessage()))
             );
         }
-    }   
+    }
+
+    public function APILogin(){
+        try{
+            error_log("API LOGIN ... ");
+            //$url= 'http://104.131.5.198/api.php';
+            $url= 'localhost/api.php';                        
+            $ch = curl_init();
+            $post = [
+                'w' => 'users',
+                'r' => 'users_log_me_in',
+                'userName'   => $this->correoElectronico, // al API loguea con email
+                'pwd'   => $this->password
+            ];  
+            curl_setopt_array($ch, array(
+                CURLOPT_URL => $url,
+                CURLOPT_RETURNTRANSFER => true,   
+                CURLOPT_VERBOSE => true,      
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 300,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => "POST",
+                CURLOPT_POSTFIELDS => $post
+            ));
+            $server_output = curl_exec($ch);
+            $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+            $header = substr($server_output, 0, $header_size);
+            $body = substr($server_output, $header_size);
+            $error_msg = "";
+            if (curl_error($ch)) {
+                $error_msg = curl_error($ch);
+                error_log("error: ". $error_msg);
+                throw new Exception('Error al iniciar login API. '. $error_msg , 02);
+            }
+            curl_close($ch);
+            // session de usuario ATV
+            $_SESSION['userSession']->ATVusername= $this->username;
+            $_SESSION['userSession']->ATVpassword= $this->password;
+            $sArray=json_decode($header);
+            $_SESSION['userSession']->APIusername= $this->correoElectronico;
+            $_SESSION['userSession']->APIsessionKey= $sArray->resp->sessionKey;
+            error_log("sessionKey: ". $sArray->resp->sessionKey);
+        } 
+        catch(Exception $e) {
+            error_log("error: ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }
+
+    }
+
+    public function APIUploadCert(){
+        try{
+            if (!file_exists($this->certificado)){
+                throw new Exception('Error al guardar el certificado. El certificado no existe' , 002256);
+            } 
+            //$url= 'http://104.131.5.198/api.php';
+            $url= 'http://localhost/api.php';  
+            $ch = curl_init();
+            $post = [
+                'w' => 'fileUploader',
+                'r' => 'subir_certif',
+                'sessionKey'=>$_SESSION['userSession']->APIsessionKey,
+                'fileToUpload' => new CurlFile( $this->certificado, 'application/x-pkcs12'),
+                'iam'=>$_SESSION['userSession']->APIusername
+            ];
+            curl_setopt_array($ch, array(
+                CURLOPT_URL => $url,
+                CURLOPT_RETURNTRANSFER => true,   
+                CURLOPT_VERBOSE => true,                      
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 3000,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => "POST",
+                CURLOPT_POSTFIELDS => $post
+            ));
+            $server_output = curl_exec($ch);
+            $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+            $header = substr($server_output, 0, $header_size);
+            $body = substr($server_output, $header_size);
+            $error_msg = "";
+            if (curl_error($ch)) {
+                $error_msg = curl_error($ch);
+                throw new Exception('Error al guardar el certificado. '. $error_msg , 033);
+            }
+            error_log(" resp : ". $server_output);
+            curl_close($ch);
+            return true;
+        } 
+        catch(Exception $e) {
+            error_log("****** Error: ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }
+    }
+
+    public function APIgetToken(){
+        try{
+            $url= 'http://localhost/api.php';  
+            $ch = curl_init();
+            $post = [
+                'w' => 'token',
+                'r' => 'gettoken',
+                'grant_type'=>'password', 
+                'client_id'=> 'api-stag', 
+                'username' => $_SESSION['userSession']->ATVusername,
+                'password'=>$_SESSION['userSession']->ATVpassword
+            ];
+            curl_setopt_array($ch, array(
+                CURLOPT_URL => $url,
+                CURLOPT_RETURNTRANSFER => true,   
+                CURLOPT_VERBOSE => true,                      
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 30,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => "POST",
+                CURLOPT_POSTFIELDS => $post
+            ));
+            $server_output = curl_exec($ch);
+            $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+            $header = substr($server_output, 0, $header_size);
+            $body = substr($server_output, $header_size);
+            $error_msg = "";
+            if (curl_error($ch)) {
+                $error_msg = curl_error($ch);
+                throw new Exception('Error al guardar el certificado. '. $error_msg , 033);
+            }
+            error_log(" resp : ". $server_output);
+            curl_close($ch);
+            return true;
+        } 
+        catch(Exception $e) {
+            error_log("****** Error: ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }
+    }
 
     private function CheckRelatedItems(){
         try{
@@ -547,7 +704,7 @@ class ClienteFE{
     }
 
     function DeleteCertificado(){
-        try {   
+        try {
             //borra el certificado fisico
             $sql='SELECT cpath
                 FROM clienteFE

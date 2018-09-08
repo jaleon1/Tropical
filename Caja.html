@@ -16,7 +16,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Tropical Sno | Determinación de Precios Tropical SNO</title>
+    <title>Tropical Sno | Caja</title>
 
     <!-- Bootstrap -->
     <link href="assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -27,7 +27,7 @@
     <!-- iCheck -->
     <link href="assets/css/iCheck/skins/flat/green.css" rel="stylesheet">
     <!-- Custom Theme Style -->
-    <link href="assets/css/custom.css" rel="stylesheet">
+    <link href="assets/css/custom.min.css" rel="stylesheet">
     <!-- Custom Table Scroll -->
     <link href="assets/css/facturacion.css" rel="stylesheet">
     <!-- Custom TablePRD -->
@@ -35,15 +35,16 @@
     <!-- SweetAlert -->
     <link rel="stylesheet" href="assets/css/sweetalert2.min.css">
     <!-- css -->
-    <!-- <link rel="stylesheet" href="assets/css/facturaCli.css"> -->
+    <link rel="stylesheet" href="assets/css/facturaCli.css">
 
 </head>
 
 <body class="nav-md">
     <div class="container body">
-        <div class="main_container" style="visibility:hidden">
+        <div class="main_container">
             <div class="col-md-3 left_col">
                 <div class="left_col scroll-view">
+
                     <div class="navbar nav_title" style="border: 0;">
                         <a href="index.html" class="site_title">
                             <i class="fa fa-paw"></i>
@@ -51,10 +52,10 @@
                         </a>
                     </div>
 
-                    <div class="clearfix"></div>
+                    <!-- <div class="clearfix"></div> -->
 
                     <!-- menu profile quick info -->
-                    <div class="profile clearfix">
+                    <div class="profile">
                         <div class="profile_pic">
                             <img src="images/user.png" alt="..." class="img-circle profile_img">
                         </div>
@@ -62,21 +63,32 @@
                             <span>Bienvenido,</span>
                             <h2 id='call_name'></h2>
                         </div>
-                        <div class="clearfix"></div>
+                        <!-- <div class="clearfix"></div> -->
                     </div>
                     <!-- /menu profile quick info -->
 
                     <br />
-                    <!-- sidebar menu -->
+                    <!-- sidebar menu DINAMICO-->
                     <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+                        
+                    </div>
+                    <!-- /sidebar menu DINAMICO -->
+
+
+                    <!-- sidebar menu -->
+                    <!-- <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
                         <div class="menu_section active">
                             <h3 class='call_Bodega'>Menu</h3>
                             <ul id="menubox" class="nav side-menu">
 
                             </ul>
                         </div>
-                    </div>
+                    </div> -->
                     <!-- /sidebar menu -->
+
+
+
+
 
                     <!-- /menu footer buttons -->
                     <div class="sidebar-footer hidden-small">
@@ -113,9 +125,6 @@
                                 </a>
                                 <ul class="dropdown-menu dropdown-usermenu pull-right">
                                     <li>
-                                        <a href="javascript:;"> Profile</a>
-                                    </li>
-                                    <li>
                                         <a onclick="Session.End();">
                                             <i class="fa fa-sign-out pull-right"></i> Log Out</a>
                                     </li>
@@ -134,7 +143,7 @@
 
                     <div class="page-title">
                         <div class="title_left">
-                            <h3>DETERMINACIÓN DE PRECIOS</h3>                        
+                            <h3>Movimientos de Caja</h3>
                         </div>
                         <div class="title_right">
                             <h3 id="fecha" style="float:right"></h3>
@@ -146,47 +155,84 @@
                     <div class="row">
                         <div class="col-md-12 col-sm-12 col-xs-12">
                             <div class="x_panel">
-                                <div class="x_title">
-                                    <h3 class='call_Bodega'></h3>
-                                </div>
-                                <div class="title_right">
-                                </div>
-
                                 <!--  CONTENIDO DE LA PAGINA -->
-
                                 <div class="x_content">
-                                    <!-- TABLE -->
-                                    <div class="row">
-                                        <div class="col-md-12 col-sm-12 col-xs-12">
-                                            <table id="tDeterminacion" class="table display responsive table-striped jambo_table no-wrap" width="100%" role="grid" aria-describedby="datatable_info">
-                                                <tbody id="tbodytDeterminacion">
-                                                </tbody>
-                                            </table>
-                                        </div>
+                                    <div class="table-responsive">
+                                        <table id="tb_movimientosCaja" class="table table-striped jambo_table bulk_action">
+                                            <thead>
+                                              
+                                            </thead>
+                                            <tbody id="lista_movimientosCaja">
+
+                                            </tbody>
+                                        </table>
                                     </div>
-                                    <!-- /TABLE -->
                                 </div>
                             </div>
                         </div>
-
                     </div>
 
                     <div class="clearfix"></div>
 
                     <div class="ln_solid"></div>
-                    <div class="form-group">
-                        <div class="col-md-12 col-md-offset-9">
-                            <button type="submit" class="btn btn-primary" id="reload">Limpiar</button>
-                            <button type="button" class="btn btn-success" id="btnSubmit">Aceptar</button>
-                        </div>
-                    </div>
+                    
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- modals -->
+    <!-- Large modal -->
+    <div id="modalFac" class="modal fade factura-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content modal-factura">
+                <div id="detalleFac" class="modal-header">
+
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="clearfix"></div>
+
+                        <div class="row">
+                            <div class="col-md-12 col-sm-12 col-xs-12">
+                                <!-- <div class="x_panel"> -->
+                                    <!--  CONTENIDO DE LA PAGINA -->
+                                    <div class="x_content">
+                                        <div class="table-responsive">
+                                            <table id="tb_detalle_fact" style="width:100%" class="table table-striped jambo_table bulk_action">
+                                                <thead>
+                                                    
+                                                </thead>
+                                                <tbody id="detalle_prd">
+    
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                <!-- </div> -->
+                            </div>
+                        </div>
+    
+                        <div class="clearfix"></div>
+
+                    </div>
+                <div class="modal-footer">
+                    <div id="totalFact">
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- modals -->
+    <!-- Large modal -->
+
     <!-- jQuery -->
     <script src="assets/js/jquery.min.js"></script>
+    <!-- Require -->    
+    <!-- <script data-main="assets/main" src="assets/js/require.js"></script> -->
+    <!-- JS Scripts -->
+    <script src="assets/js/Caja.js"></script>
     <!-- Bootstrap -->
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
     <!-- FastClick -->
@@ -201,11 +247,6 @@
     <script src="assets/js/custom.js"></script>
     <!-- Input mask -->
     <script src="assets/js/jquery.inputmask/jquery.inputmask.bundle.min.js"></script>
-    <!-- JS Scripts -->
-    <script src="assets/js/Producto.js"></script>
-    <script src="assets/js/ProductosXBodega.js"></script>
-    <script src="assets/js/Bodega.js"></script>
-    <!--CAMBIAR por Facuracli-->
     <!-- JS dataTables -->
     <script src="assets/js/jquery.dataTables.min.js"></script>
     <script src="assets/js/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
@@ -218,19 +259,5 @@
 
 </html>
 
-<script>    
-    $(document).ready(function () {
-        //$('#nombrebodega').text($(this).parents("tr").find("td").eq(2).text());
-        productobodega.setTable(false);	
-        productobodega.Read;
-        //
-        $('#btnSubmit').click(function () {
-            productobodega.ActualizarPrecios();
-        });
-
-        // Recarga la página para limpiar todo
-        $('#reload').click(function () {
-            location.reload();
-        });
-    });        
+<script>
 </script>

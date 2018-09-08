@@ -42,7 +42,7 @@
 
 <body>
     <div class="container body">
-        <div class="main_container">
+        <div class="main_container" style="visibility:hidden">
 
             <!-- page content -->
             <div class="right_col" role="main">
@@ -51,6 +51,11 @@
                     <div class="clearfix"></div>
 
                     <div class="row">
+                        <button type="button" class="close back glyphicon glyphicon-remove" ></button>
+                        <button type="button" class="close full glyphicon glyphicon-upload" ></button>
+                    </div>
+
+                    <div class="row despacho">
                     </div>
                     
                 </div>
@@ -85,10 +90,31 @@
 </html>
 
 <script>
+    var elem = document.documentElement;
     $(document).ready(function () {
+        openFullscreen();
         waitForMsg();
         updateTime();
+        $('.back').click(function(){
+            document.webkitExitFullscreen();
+            location.href ="Dashboard.html";
+        });
+        $('.full').click(function(){
+            openFullscreen();
+        });
     });
+
+    function openFullscreen() {
+      if (elem.requestFullscreen) {
+        elem.requestFullscreen();
+      } else if (elem.mozRequestFullScreen) { /* Firefox */
+        elem.mozRequestFullScreen();
+      } else if (elem.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
+        elem.webkitRequestFullscreen();
+      } else if (elem.msRequestFullscreen) { /* IE/Edge */
+        elem.msRequestFullscreen();
+      }
+    }
 
     function updateTime(){
         $('.time-right').each(function(i, item){
@@ -102,13 +128,11 @@
             var render= $(".container").find("#" + item.id);
             //
             if(render.length==0){
-                $(".row").append(`                                 
+                $(".despacho").append(`                                 
                     <div id="${item.id}" class="${item.consecutivo%2?`container`:`containerPar`}">   
-                        <div class="avatar avatar-left"> 
-                            <div class="avatar-letter" style="background-color: rgb(154, 108, 224)" title="${item.tamano}">${item.tamano}<span class='onz'>onz</span></div> 
-                        </div>
+                        
                         <p>Orden Número: <span class='cod'>${item.consecutivo}</span></p>
-                        <h3><p>${item.sabor1} | ${item.sabor2} | <span class='topping'>${item.topping}</span></p></h3>
+                        <h3><p>${item.tamano}onz | ${item.sabor1} | ${item.sabor2} | <span class='topping'>${item.topping}</span></p></h3>
                         
                         <span class="time-right cod">${moment(item.fechaCreacion).fromNow()}
                             <span class="idBox cod">${item.fechaCreacion}</span>

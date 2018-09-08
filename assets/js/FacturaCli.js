@@ -1,12 +1,12 @@
 class FacturaCli {
     // Constructor
-    constructor(id, totalVenta, detalleOrden, detalleFactura) {
+    constructor(id, totalVenta, detalleOrden, detalleFactura, medioPago, totalComprobante, estadoCaja) {
         this.id = id || null;
         this.totalVenta = totalVenta || '';
         this.detalleFactura = detalleFactura || new Array();
         this.detalleOrden = detalleOrden || new Array();
-        // this.descuento = descuento || 0;
-        // this.producto = producto || new Array(new Array());
+        this.medioPago = medioPago || 0;
+        this.totalComprobante = totalComprobante || 0;
         // this.total = total || '';
         // this.fechaCreacion = fechaCreacion || null;
         // this.importe = importe || 0;
@@ -38,7 +38,9 @@ precioMediano.precio = 0
 $(document).ready(function () {
 
     // NProgress.set(0.4)
-    
+    movimientosCaja.getStatusCashRegister();
+    //Muestra el modal de sesion de caja
+       
     $('#open_modal_fac').attr("disabled", true);
 
     btnFormaPago();
@@ -145,6 +147,102 @@ $("#btnmediano").click(function () {
     sel_tamano = 0;
 });
 
+
+
+// function getStatusCashRegister(){
+//     $.ajax({
+//         type: "POST",
+//         url: "class/CajaXBodega.php",
+//         data: {
+//             action: "ValidarEstado"
+//         }
+//     })
+//     .done(function (e) {
+//         validarEstadoCaja(e);
+//     })
+//     .fail(function (e) {
+//         errorArbrirCaja("Usuario no valido", "Solo un administrador puede abrir caja!" );
+//     });
+// };
+
+// function validarEstadoCaja(e){  
+//     estado = JSON.parse(e);  
+//     switch(estado) {
+//         case "cajaCerrada": //false quiere decir que no hay cajas abiertas para el usuario logeado
+//             openModalAbrirCaja();
+//             break;
+//         case "aperturaCreada":
+//             swal({
+//                 text:'Validación lista.',
+//                 title: 'Caja habilitada!',
+//                 type: 'success',
+//                 showConfirmButton: false,
+//                 timer: 1500
+//             });
+//             $("#main_containerFacturaCli").removeAttr("style");
+//             $('.valida-caja-modal-lg').modal('hide');
+//             break;
+//         case "cajaAbierta":
+//             $("#main_containerFacturaCli").removeAttr("style");
+//             $('.valida-caja-modal-lg').modal('hide');
+//             break;
+//         default:
+//             errorArbrirCaja("Imposible abrir caja", "Los datos no son correctos");
+//     }
+// };
+
+
+// function openModalAbrirCaja(){
+    
+//     $('.valida-caja-modal-lg').modal('show');
+
+
+//     $("#abrirCaja").click(function(){
+//         (async function getFormValues () {
+//             const {value: formValues} = await swal({
+//               title: 'Usuario y Contraseña del Administrador:',
+//               html:
+//                 '<input id="swal-input1" placeholder="Usuario" class="swal2-input">' +
+//                 '<input id="swal-input2" placeholder="Contraseña" class="swal2-input">',
+//               focusConfirm: false,
+//               preConfirm: () => {
+//                 return [
+//                   document.getElementById('swal-input1').value,
+//                   document.getElementById('swal-input2').value
+//                 ]
+//               }
+//             })
+            
+//             if (formValues) {
+//                 credenciales = JSON.stringify(formValues);            
+//                 $.ajax({
+//                     type: "POST",
+//                     url: "class/CajaXBodega.php",
+//                     data: {
+//                         action: "Create"
+//                     }
+//                 })
+//                 .done(function (e) {
+//                     validarEstadoCaja(e);
+//                 })
+//                 .fail(function (e) {
+//                     errorArbrirCaja("Usuario no valido", "Solo un administrador puede abrir caja!" );
+//                 });
+//             }
+            
+//             })()
+//     });
+// };
+
+// function errorArbrirCaja(titulo, texto){
+//     swal({
+//         type: 'error',
+//         title: titulo,
+//         text: texto,
+//         showConfirmButton: false,
+//         timer: 3000
+//       })
+// };
 
 function LoadAllPrdVenta() {
     $.ajax({
@@ -490,6 +588,7 @@ function btnAgregaPRD() {
 // });
 
 function facCash() {
+    facturaCli.idMedioPago = 1;
     $("#formapago").empty();
     pagar = $("#total")[0].textContent;
     var DivCash =
@@ -549,6 +648,7 @@ function facCash() {
 };
 
 function facCard() {
+    facturaCli.idMedioPago = 2;
     $("#formapago").empty();
     pagar = $("#total")[0].textContent;
     var DivCard =
@@ -611,7 +711,7 @@ function btnFormaPago() {
         `<div class="col-md-2"></div>
     <div class="col-md-3" onclick="facCard()">
         <img id="fac-ccard" src="images/credit-cards.png" class="modal-img-pago">
-        <p class="text-center">Tarjeta</p>
+        <p class="text-center">Tarjeta Crédito/Debito</p>
     </div>
     <div class="col-md-2"></div>
     <div class="col-md-3" onclick="facCash()">

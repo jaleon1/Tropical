@@ -243,7 +243,7 @@ class Rol {
                 "emptyTable": "Sin Usuarios Registrados",
                 "search": "Buscar",
                 "zeroRecords":    "No hay resultados",
-                "lengthMenu":     "Mostar _MENU_ registros",
+                "lengthMenu":     "Mostrar _MENU_ registros",
                 "paginate": {
                     "first":      "Primera",
                     "last":       "Ultima",
@@ -261,7 +261,7 @@ class Rol {
                 { title: "Nombre", data: "nombre" },
                 { title: "Descripción", data: "descripcion" },
                 {
-                    title: "Action",
+                    title: "Acción",
                     orderable: false,
                     searchable:false,
                     visible: buttons,
