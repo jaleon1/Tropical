@@ -190,6 +190,7 @@ class ClienteFE{
     public $idCodigoPaisFax=null;
     public $numTelefonoFax=null;
     public $correoElectronico=null;
+    public $pinp12=null;
     public $idBodega=null;
     public $filesize= null;
     public $filename= null;
@@ -230,7 +231,7 @@ class ClienteFE{
             $this->username= $obj["username"] ?? null;
             $this->password= $obj["password"] ?? null;
             $this->certificado= $obj["certificado"] ?? null;
-            
+            $this->pinp12= $obj["pinp12"] ?? null;            
         }
     }
 
@@ -337,7 +338,7 @@ class ClienteFE{
     function Read(){
         try {
             $sql='SELECT id, codigoSeguridad, idCodigoPais, nombre, idTipoIdentificacion, identificacion, nombreComercial, idProvincia,idCanton, idDistrito, idBarrio, otrasSenas, 
-            idCodigoPaisTel, numTelefono, correoElectronico, username, password, certificado, idBodega
+            idCodigoPaisTel, numTelefono, correoElectronico, username, password, certificado, idBodega, pinp12
                 FROM clienteFE  
                 where id=:id';
             $param= array(':id'=>$this->id);
@@ -356,7 +357,7 @@ class ClienteFE{
     function ReadProfile(){
         try {
             $sql='SELECT id, codigoSeguridad, idCodigoPais, nombre, idTipoIdentificacion, identificacion, nombreComercial, idProvincia, idCanton, idDistrito, idBarrio, otrasSenas, 
-                numTelefono, correoElectronico, username, password
+                numTelefono, correoElectronico, username, password, pinp12
                 FROM clienteFE  
                 where idBodega=:idBodega';
             $param= array(':idBodega'=>$this->idBodega);
@@ -378,6 +379,7 @@ class ClienteFE{
                 $this->correoElectronico= $data[0]['correoElectronico'];
                 $this->username= encdes::decifrar($data[0]['username']);
                 $this->password= encdes::decifrar($data[0]['password']);
+                $this->pinp12= encdes::decifrar($data[0]['pinp12']);
                 // certificado
                 $sql='SELECT certificado, cpath
                     FROM clienteFE  
@@ -392,7 +394,7 @@ class ClienteFE{
                 else $this->estadoCertificado=0;      
                 $this->certificado= encdes::decifrar($data[0]['certificado']);
                 $_SESSION['API']= $this;
-                //$this->APILogin();
+                $this->APILogin();
                 return $this;
             }
             return null;
@@ -409,10 +411,10 @@ class ClienteFE{
     function Create(){
         try {
             $sql="INSERT INTO clienteFE  (id, codigoSeguridad, idCodigoPais, nombre, idTipoIdentificacion, identificacion, nombreComercial, idProvincia,idCanton, idDistrito, idBarrio, otrasSenas, 
-                idCodigoPaisTel, numTelefono, correoElectronico, username, password, certificado, idBodega)
+                idCodigoPaisTel, numTelefono, correoElectronico, username, password, certificado, idBodega, pinp12)
                 VALUES (:id, :codigoSeguridad, :idCodigoPais, :nombre, :idTipoIdentificacion, :identificacion, :nombreComercial, :idProvincia, :idCanton, :idDistrito, :idBarrio, :otrasSenas, 
-                    :idCodigoPaisTel, :numTelefono, :correoElectronico, :username, :password, :certificado, :idBodega);";
-            $param= array(':id'=>$this->id ,
+                    :idCodigoPaisTel, :numTelefono, :correoElectronico, :username, :password, :certificado, :idBodega, :pinp12);";
+            $param= array(':id'=>$this->id,
                 ':codigoSeguridad'=>$this->codigoSeguridad, 
                 ':idCodigoPais'=>$this->idCodigoPais, 
                 ':nombre'=>$this->nombre,
@@ -429,8 +431,9 @@ class ClienteFE{
                 ':correoElectronico'=>$this->correoElectronico,
                 ':username'=>encdes::cifrar($this->username),
                 ':password'=>encdes::cifrar($this->password),
-                ':certificado'=>encdes::cifrar($this->certificado), 
-                ':idBodega'=>$this->idBodega
+                ':certificado'=>encdes::cifrar($this->certificado),
+                ':idBodega'=>$this->idBodega,
+                ':pinp12'=>encdes::cifrar($this->pinp12),
             );
             $data = DATA::Ejecutar($sql,$param,false);
             if($data)
@@ -491,22 +494,26 @@ class ClienteFE{
                 SET nombre=:nombre, codigoSeguridad=:codigoSeguridad, idCodigoPais=:idCodigoPais, idTipoIdentificacion=:idTipoIdentificacion, 
                     identificacion=:identificacion, nombreComercial=:nombreComercial, idProvincia=:idProvincia, idCanton=:idCanton, idDistrito=:idDistrito, 
                     idBarrio=:idBarrio, otrasSenas=:otrasSenas, numTelefono=:numTelefono, correoElectronico=:correoElectronico, username=:username, password=:password, 
-                    certificado=:certificado, idBodega=:idBodega
+                    certificado=:certificado, idBodega=:idBodega, pinp12= :pinp12
                 WHERE id=:id";
             $param= array(':id'=>$this->id, ':nombre'=>$this->nombre, ':codigoSeguridad'=>$this->codigoSeguridad, ':idCodigoPais'=>$this->idCodigoPais, ':idTipoIdentificacion'=>$this->idTipoIdentificacion,
                 ':identificacion'=>$this->identificacion, ':nombreComercial'=>$this->nombreComercial, ':idProvincia'=>$this->idProvincia,
                 ':idCanton'=>$this->idCanton, ':idDistrito'=>$this->idDistrito, ':idBarrio'=>$this->idBarrio,
                 ':otrasSenas'=>$this->otrasSenas, ':numTelefono'=>$this->numTelefono, ':correoElectronico'=>$this->correoElectronico,
-                ':username'=>encdes::cifrar($this->username), ':password'=>encdes::cifrar($this->password), ':certificado'=>encdes::cifrar($this->certificado), ':idBodega'=>$this->idBodega
+                ':username'=>encdes::cifrar($this->username), ':password'=>encdes::cifrar($this->password), ':certificado'=>encdes::cifrar($this->certificado), ':idBodega'=>$this->idBodega, 
+                ':pinp12'=>encdes::cifrar($this->pinp12)
             );
             $data = DATA::Ejecutar($sql,$param,false);
             if($data){
                 // ... modifica datos del cliente en el api ...//
                 // ... sube el nuevo certificado ...//
 
-                //$this->APIGetToken();
+                //$this->APILogin();
                 $this->APICrearClave();
                 $this->APICrearXML();
+                $this->APICifrarXml();
+                $this->APIEnviar();
+                $this->APIConsultaComprobante();
                 return true;
             }   
             else throw new Exception('Error al guardar.', 123);
@@ -569,11 +576,11 @@ class ClienteFE{
                 'msg' => $e->getMessage()))
             );
         }
-
     }
 
     public function APIUploadCert(){
         try{
+            error_log(" subiendo certificado : ". $this->certificado);
             if (!file_exists($this->certificado)){
                 throw new Exception('Error al guardar el certificado. El certificado no existe' , 002256);
             } 
@@ -681,7 +688,7 @@ class ClienteFE{
                 'cedula'=> $_SESSION['API']->identificacion,
                 'situacion' => 'normal',
                 'codigoPais'=> '506',
-                'consecutivo'=> '0000000001',
+                'consecutivo'=> '0000000012',
                 'codigoSeguridad'=> $_SESSION['API']->codigoSeguridad,
                 'tipoDocumento'=> 'FE',
                 'terminal'=> '00001',
@@ -730,18 +737,16 @@ class ClienteFE{
             // detalle de la factura
             $detalles=[];
             array_push($detalles, array('cantidad'=> '1',
-                    'unidadMedida'=> 'sp',
+                    'unidadMedida'=> 'Sp',
                     'detalle'=> 'Impresora',
-                    'precioUnitario'=> '10000',
-                    'montoTotal'=> '1000',
-                    'subtotal'=> '9900',
-                    'montoTotalLinea'=> '12177',
-                    'montoDescuento'=> '100',
-                    'naturalezaDescuento'=> 'Pronto pago',
+                    'precioUnitario'=> '100',
+                    'montoTotal'=> '113',
+                    'subtotal'=> '100',
+                    'montoTotalLinea'=> '100',
                     'impuesto'=> array(array(
                         'codigo'=> '01',
                         'tarifa'=> '13',
-                        'monto'=> '1287'
+                        'monto'=> '13'
                         )
                     )
                 )
@@ -752,16 +757,16 @@ class ClienteFE{
                 'r' => 'gen_xml_fe',
                 'clave'=> $_SESSION['API']->clave,
                 'consecutivo'=> $_SESSION['API']->consecutivo,
-                'fecha_emision' => '2018-09-09T12:00:00-06:00',
+                'fecha_emision' => '2018-09-09T13:41:00-06:00',
                 /** Emisor **/
                 'emisor_nombre'=> $_SESSION['API']->nombre,
-                'emisor_tipo_indetif'=> $_SESSION['API']->idTipoIdentificacion,
+                'emisor_tipo_indetif'=> '01', //$_SESSION['API']->idTipoIdentificacion,
                 'emisor_num_identif'=> $_SESSION['API']->identificacion,
                 'nombre_comercial'=> $_SESSION['API']->nombreComercial,
                 'emisor_provincia'=> $_SESSION['API']->idProvincia,
                 'emisor_canton'=> $_SESSION['API']->idCanton,
                 'emisor_distrito'=> $_SESSION['API']->idDistrito,
-                'emisor_barrio'=> $_SESSION['API']->idBarrio,
+                'emisor_barrio'=> '01',
                 'emisor_otras_senas'=> $_SESSION['API']->otrasSenas,
                 'emisor_cod_pais_tel'=> '506',
                 'emisor_tel'=> $_SESSION['API']->numTelefono,
@@ -821,12 +826,165 @@ class ClienteFE{
                 $error_msg = curl_error($ch);
                 throw new Exception('Error al guardar el certificado. '. $error_msg , 033);
             }
+            $sArray= json_decode($server_output);
+            $_SESSION['API']->xml= $sArray->resp->xml;
             error_log(" resp : ". $server_output);
             curl_close($ch);
             return true;
         } 
         catch(Exception $e) {
             error_log("****** Error: ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }
+    }
+
+    public function APICifrarXml(){
+        try{
+            $url= 'http://localhost/api.php';  
+            $ch = curl_init();
+            $post = [
+                'w' => 'signXML',
+                'r' => 'signFE',
+                'p12Url'=>'53254beb5dc75af044e73b0dcfc80617', 
+                'inXml'=> $_SESSION['API']->xml,
+                'pinP12' => '0011',
+                'tipodoc'=> 'FE'
+            ];
+            curl_setopt_array($ch, array(
+                CURLOPT_URL => $url,
+                CURLOPT_RETURNTRANSFER => true,   
+                CURLOPT_VERBOSE => true,                      
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 30,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => "POST",
+                CURLOPT_POSTFIELDS => $post
+            ));
+            $server_output = curl_exec($ch);
+            $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+            $header = substr($server_output, 0, $header_size);
+            $body = substr($server_output, $header_size);
+            $error_msg = "";
+            if (curl_error($ch)) {
+                $error_msg = curl_error($ch);
+                throw new Exception('Error al guardar el certificado. '. $error_msg , 033);
+            }
+            $sArray= json_decode($server_output);
+            $_SESSION['API']->xmlFirmado= $sArray->resp->xmlFirmado;
+            error_log(" resp : ". $server_output);
+            curl_close($ch);
+            return true;
+        } 
+        catch(Exception $e) {
+            error_log("****** Error: ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }
+    }
+
+    public function APIEnviar(){
+        try{
+            $this->APIGetToken();
+            $url= 'http://localhost/api.php';  
+            $ch = curl_init();
+            $post = [
+                'w' => 'send',
+                'r' => 'json',
+                'token'=>$_SESSION['API']->accessToken,
+                'clave'=> $_SESSION['API']->clave,
+                'fecha' => '2018-09-09T13:41:00-06:00', // misma del xml.
+                'emi_tipoIdentificacion'=> $_SESSION['API']->idTipoIdentificacion,
+                'emi_numeroIdentificacion'=> $_SESSION['API']->identificacion,
+                'recp_tipoIdentificacion'=> '01',
+                'recp_numeroIdentificacion'=> '000000000',
+                'comprobanteXml'=>	$_SESSION['API']->xmlFirmado,
+                'client_id'=> 'api-stag' // api-prod
+            ];
+            curl_setopt_array($ch, array(
+                CURLOPT_URL => $url,
+                CURLOPT_RETURNTRANSFER => true,   
+                CURLOPT_VERBOSE => true,                      
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 30,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => "POST",
+                CURLOPT_POSTFIELDS => $post
+            ));
+            $server_output = curl_exec($ch);
+            $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+            $header = substr($server_output, 0, $header_size);
+            $body = substr($server_output, $header_size);
+            $error_msg = "";
+            if (curl_error($ch)) {
+                $error_msg = curl_error($ch);
+                throw new Exception('Error al guardar el certificado. '. $error_msg , 033);
+            }
+            $sArray= json_decode($server_output);
+            $_SESSION['API']->xmlFirmado= $sArray->resp->xmlFirmado;
+            error_log(" resp : ". $server_output);
+            curl_close($ch);
+            return true;
+        } 
+        catch(Exception $e) {
+            error_log("****** Error: ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }
+    }
+
+    public function APIConsultaComprobante(){
+        try{
+            error_log("API LOGIN ... ");
+            //$url= 'http://104.131.5.198/api.php';
+            $url= 'localhost/api.php';
+            $ch = curl_init();
+            $post = [
+                'w' => 'consultar',
+                'r' => 'consultarCom',
+                'token'=>$_SESSION['API']->accessToken,
+                'clave'=> $_SESSION['API']->clave,
+                'client_id'=> 'api-stag' // api-prod
+            ];  
+            curl_setopt_array($ch, array(
+                CURLOPT_URL => $url,
+                CURLOPT_RETURNTRANSFER => true,   
+                CURLOPT_VERBOSE => true,      
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 300,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => "POST",
+                CURLOPT_POSTFIELDS => $post
+            ));
+            $server_output = curl_exec($ch);
+            $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+            $header = substr($server_output, 0, $header_size);
+            $body = substr($server_output, $header_size);
+            $error_msg = "";
+            if (curl_error($ch)) {
+                $error_msg = curl_error($ch);
+                error_log("error: ". $error_msg);
+                throw new Exception('Error al iniciar login API. '. $error_msg , 02);
+            }
+            curl_close($ch);
+            // session de usuario ATV
+            $sArray=json_decode($server_output);
+                $this->indEstado= $sArray->resp->sessionKey;
+            $_SESSION['API']->sessionKey= $this->sessionKey;
+            error_log("sessionKey: ". $sArray->resp->sessionKey);
+        } 
+        catch(Exception $e) {
+            error_log("error: ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,

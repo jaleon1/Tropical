@@ -3,16 +3,13 @@ Generar contraseñapara comprobanteselectronicos:
 
 
 
-Su identificación de ingreso es: 
- 	cpf-01-1187-0763@stag.comprobanteselectronicos.go.cr
+Datos de Usuario
+Su usuario de ingreso es: 
+ 	cpf-01-1187-0763@stag.comprobanteselectronicos.go.cr 
 
 Su contraseña de ingreso es: 
- 	84vv>YH(-Hw!v!+:N!;-
+ 	9zgr)L#szb^Z=%*+;%c|
 
-
- 
- 
- 
 == STAGING / SANDBOX (PRUEBAS)==
 
 URL API RECEPCION = https://api.comprobanteselectronicos.go.cr/recepcion-sandbox/v1/
@@ -26,22 +23,5 @@ CLIENT SECRET = [VACIO]
 SCOPE = [VACIO]
 
 
+PINP12 0011
 
-
-50626061800011187076300100001010000000001199999999
-
-
-
-{
-  "clave": "50626061800011187076300100001010000000001199999999",
-  "fecha": "2016-01-01T00:00:00-0600",
-  "emisor": {
-    "tipoIdentificacion": "01",
-    "numeroIdentificacion": "111870763"
-  },
-  "receptor": {
-    "tipoIdentificacion": "01",
-    "numeroIdentificacion": "111870763"
-  },
-  "comprobanteXml": "PD94bWwgdmVyc2lvbj0iMS4wIiA/Pg0KDQo8ZG9tYWluIHhtbG5zPSJ1cm46amJvc3M6ZG9tYWluOjQuMCI+DQogICAgPGV4dGVuc2lvbnM+DQogICAgICAgIDxleHRlbnNpb24gbW9kdWxlPSJvcmcuamJvc3MuYXMuY2x1c3RlcmluZy5pbmZpbmlzcGFuIi8+DQogICAgICAgIDxleHRlbnNpb24gbW9kdWxlPSJvcmcuamJvc3MuYXMuY2x1c3RlcmluZy5qZ3JvdXBzIi8+DQogICAgICAgIDxleHRlbnNpb24gbW9kdWxlPSJvcmcuamJvc3MuYXMuY29ubmVjdG9yIi8+DQogICAgICAgIDxleHRlbnNpb24gbW..."
-}

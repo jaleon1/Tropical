@@ -1,7 +1,7 @@
 class ClienteFE {
     // Constructor
     constructor(id, nombre, codigoSeguridad, idCodigoPais, idTipoIdentificacion, identificacion, nombreComercial, idProvincia, idCanton, idDistrito, idBarrio, otrasSenas, 
-        idCodigoPaisTel, numTelefono, idCodigoPaisFax, numTelefonoFax, correoElectronico, username, password, certificado, idBodega, filename, filesize, filetype, estadoCertificado) {
+        idCodigoPaisTel, numTelefono, idCodigoPaisFax, numTelefonoFax, correoElectronico, username, password, certificado, idBodega, filename, filesize, filetype, estadoCertificado, pinp12) {
         this.id = id || null;
         this.nombre = nombre || '';
         this.codigoSeguridad = codigoSeguridad || '';
@@ -27,6 +27,7 @@ class ClienteFE {
         this.filesize = filesize || null;
         this.filetype = filetype || null;
         this.estadoCertificado= estadoCertificado || 0;
+        this.pinp12= pinp12 || null;
     }
 
     get tUpdate()  {
@@ -292,6 +293,7 @@ class ClienteFE {
         this.correoElectronico = $("#correoElectronico").val();
         this.username = $("#username").val();
         this.password = $("#password").val();
+        this.pinp12 = $("#pinp12").val();
         //        
         if(this.certificado == null){
             swal({
@@ -519,6 +521,7 @@ class ClienteFE {
         $("#correoElectronico").val('');
         $("#username").val('');
         $("#password").val('');
+        $("#pinp12").val('');
         $("#filelist").html('');
         if(dz!=undefined)
             dz.removeAllFiles();
@@ -543,7 +546,7 @@ class ClienteFE {
             var data = JSON.parse(e);
             clientefe= new ClienteFE(data.id, data.nombre, data.codigoSeguridad, data.idCodigoPais, data.idTipoIdentificacion, data.identificacion, data.nombreComercial, data.idProvincia, data.idCanton, data.idDistrito, data.idBarrio, data.otrasSenas, data.
                 idCodigoPaisTel, data.numTelefono, data.idCodigoPaisFax, data.numTelefonoFax, data.correoElectronico, data.username, data.password, data.certificado, data.idBodega,
-                data.filename, data.filesize, data.filetype, data.estadoCertificado
+                data.filename, data.filesize, data.filetype, data.estadoCertificado, data.pinp12
             );
             // Asigna objeto a controles        
             $("#id").val(clientefe.id);
@@ -564,6 +567,7 @@ class ClienteFE {
             $("#correoElectronico").val(clientefe.correoElectronico);
             $("#username").val(clientefe.username);
             $("#password").val(clientefe.password);
+            $("#pinp12").val(clientefe.pinp12);
             //            
             $('#filelist').append(`
                 <div class="btn-group">
