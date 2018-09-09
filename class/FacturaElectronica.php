@@ -10,7 +10,12 @@ define('ERROR_IMPUESTO_NO_VALID', '-507');
 define('ERROR_MEDIOPAGO_NO_VALID', '-508');
 define('ERROR_CERTIFICADOURL_NO_VALID', '-509');
 define('ERROR_UBICACION_NO_VALID', '-510');
-
+define('ERROR_SITUACION_COMPROBANTE_NO_VALID', '-511');
+define('ERROR_TIPO_IDENTIFICACION_NO_VALID', '-512');
+define('ERROR_UNIDAD_MEDIDA_NO_VALID', '-513');
+define('ERROR_CONDICIONVENTA_NO_VALID', '-514');
+define('ERROR_MONEDA_NO_VALID', '-515');
+define('ERROR_ESTADO_COMPROBANTE_NO_VALID', '-516');
 
 class FacturaElectronica{
     static $transaccion;
@@ -27,6 +32,219 @@ class FacturaElectronica{
             self::APIEnviar();
             self::APIConsultaComprobante();
         } 
+        catch(Exception $e) {
+            error_log("****** Error: ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }
+    }
+
+    private static function getIdentificacionCod($id){
+        try{
+            $sql='SELECT codigo
+            FROM tipoIdentificacion
+            WHERE id=:id';
+            $param= array(':id'=>$id);
+            $data= DATA::Ejecutar($sql,$param);     
+            if($data)
+                return $data[0]['codigo'];
+            else throw new Exception('Error al consultar el codigo de tipod de identificacion' , ERROR_TIPO_IDENTIFICACION_NO_VALID);
+        }
+        catch(Exception $e) {
+            error_log("****** Error: ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }
+    }
+
+    private static function getSituacionComprobanteCod($id){
+        try{
+            $sql='SELECT codigo
+            FROM situacionComprobante
+            WHERE id=:id';
+            $param= array(':id'=>$id);
+            $data= DATA::Ejecutar($sql,$param);     
+            if($data)
+                return $data[0]['codigo'];
+            else throw new Exception('Error al consultar el codigo de situacion comprobante' , ERROR_SITUACION_COMPROBANTE_NO_VALID);
+        }
+        catch(Exception $e) {
+            error_log("****** Error: ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }
+    }
+
+    private static function getImpuestoCod($id){
+        try{
+            $sql='SELECT codigo
+            FROM impuesto
+            WHERE id=:id';
+            $param= array(':id'=>$id);
+            $data= DATA::Ejecutar($sql,$param);     
+            if($data)
+                return $data[0]['codigo'];
+            else throw new Exception('Error al consultar el codigo del impuesto' , ERROR_IMPUESTO_NO_VALID);
+        }
+        catch(Exception $e) {
+            error_log("****** Error: ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }
+    }
+
+    private static function getUnidadMedidaCod($id){
+        try{
+            $sql='SELECT simbolo
+            FROM unidadMedida
+            WHERE id=:id';
+            $param= array(':id'=>$id);
+            $data= DATA::Ejecutar($sql,$param);     
+            if($data)
+                return $data[0]['codigo'];
+            else throw new Exception('Error al consultar el codigo de unidad medida' , ERROR_UNIDAD_MEDIDA_NO_VALID);
+        }
+        catch(Exception $e) {
+            error_log("****** Error: ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }
+    }
+
+    private static function getUbicacionCod(){
+        try{
+            $sql='SELECT p.codigo as provincia, c.codigo as canton, d.codigo as distrito, b.codigo as barrio
+                FROM provincia p, canton c , distrito d, barrio b        
+                where p.id=:provincia and c.id=:canton and d.id=:distrito and b.id=:barrio';
+            $param= array(':provincia'=>$_SESSION['API']->idProvincia, 
+                ':canton'=>$_SESSION['API']->idCanton,
+                ':distrito'=>$_SESSION['API']->idDistrito,
+                ':barrio'=>$_SESSION['API']->idBarrio,
+            );
+            $data= DATA::Ejecutar($sql,$param);
+            $ubicacion= [];
+            if($data){
+                $item= new UbicacionCod();
+                $item->provincia= $data[0]['provincia'];
+                $item->canton= $data[0]['canton'];
+                $item->distrito= $data[0]['distrito'];
+                $item->barrio= $data[0]['barrio'];
+                array_push($ubicacion, $item);
+            }
+            else throw new Exception('Error al consultar el codigo de la ubicacion' , ERROR_UBICACION_NO_VALID);
+            return $ubicacion;            
+        } 
+        catch(Exception $e) {
+            error_log("****** Error: ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }
+    }
+
+    private static function getMedioPagoCod($id){
+        try{
+            $sql='SELECT codigo
+            FROM medioPago
+            WHERE id=:id';
+            $param= array(':id'=>$id);
+            $data= DATA::Ejecutar($sql,$param);     
+            if($data)
+                return $data[0]['codigo'];
+            else throw new Exception('Error al consultar el codigo del medio de pago' , ERROR_MEDIOPAGO_NO_VALID);
+        } 
+        catch(Exception $e) {
+            error_log("****** Error: ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }
+    }
+
+    private static function getCodigoMonedaCod($id){
+        try{
+            $sql='SELECT codigo
+            FROM moneda
+            WHERE id=:id';
+            $param= array(':id'=>$id);
+            $data= DATA::Ejecutar($sql,$param);     
+            if($data)
+                return $data[0]['codigo'];
+            else throw new Exception('Error al consultar el codigo de moneda' , ERROR_MONEDA_NO_VALID);
+        } 
+        catch(Exception $e) {
+            error_log("****** Error: ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }
+    }
+
+    private static function getEstadoComprobanteCod($id){
+        try{
+            $sql='SELECT codigo
+            FROM estadoComprobante
+            WHERE id=:id';
+            $param= array(':id'=>$id);
+            $data= DATA::Ejecutar($sql,$param);     
+            if($data)
+                return $data[0]['codigo'];
+            else throw new Exception('Error al consultar el codigo de estado del comprobante' , ERROR_ESTADO_COMPROBANTE_NO_VALID);
+        } 
+        catch(Exception $e) {
+            error_log("****** Error: ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }
+    }
+
+    private static function getCondicionVentaCod($id){
+        try{
+            $sql='SELECT codigo
+            FROM impuesto
+            WHERE id=:id';
+            $param= array(':id'=>$id);
+            $data= DATA::Ejecutar($sql,$param);     
+            if($data)
+                return $data[0]['codigo'];
+            else throw new Exception('Error al consultar el codigo de Condicion venta' , ERROR_CONDICIONVENTA_NO_VALID);
+        } 
+        catch(Exception $e) {
+            error_log("****** Error: ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }
+    }
+
+    private static function getCertificadoCod(){
+        try{} 
         catch(Exception $e) {
             error_log("****** Error: ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
@@ -99,13 +317,13 @@ class FacturaElectronica{
             $post = [
                 'w' => 'clave',
                 'r' => 'clave',
-                'tipoCedula'=>'fisico', 
+                'tipoCedula'=> getIdentificacionCod($_SESSION['API']->idTipoIdentificacion),
                 'cedula'=> $_SESSION['API']->identificacion,
-                'situacion' => 'normal',
+                'situacion' => getSituacionComprobanteCod(self::$transaccion->idSituacionComprobante),
                 'codigoPais'=> '506',
                 'consecutivo'=> self::$transaccion->consecutivo,
                 'codigoSeguridad'=> $_SESSION['API']->codigoSeguridad,
-                'tipoDocumento'=> 'FE',
+                'tipoDocumento'=> self::$transaccion->tipoDocumento,
                 'terminal'=> self::$transaccion->terminal,
                 'sucursal'=> self::$transaccion->local
             ];
@@ -150,84 +368,6 @@ class FacturaElectronica{
         }
     }
 
-    private static function getImpuestoCod($id){
-        try{
-            $sql='SELECT codigo
-            FROM impuesto
-            WHERE id=:id';
-            $param= array(':id'=>$id);
-            $data= DATA::Ejecutar($sql,$param);     
-            if($data)
-                return $data[0]['codigo'];
-            else throw new Exception('Error al consultar el codigo del impuesto'. $error_msg , ERROR_IMPUESTO_NO_VALID);
-        }
-        catch(Exception $e) {
-            error_log("****** Error: ". $e->getMessage());
-            header('HTTP/1.0 400 Bad error');
-            die(json_encode(array(
-                'code' => $e->getCode() ,
-                'msg' => $e->getMessage()))
-            );
-        }
-    }
-
-    private static function getUbicacionCod(){
-        try{
-            $sql='SELECT p.codigo as provincia, c.codigo as canton, d.codigo as distrito, b.codigo as barrio
-                FROM provincia p, canton c , distrito d, barrio b        
-                where p.id=:provincia and c.id=:canton and d.id=:distrito and b.id=:barrio';
-            $param= array(':provincia'=>$_SESSION['API']->idProvincia, 
-                ':canton'=>$_SESSION['API']->idCanton,
-                ':distrito'=>$_SESSION['API']->idDistrito,
-                ':barrio'=>$_SESSION['API']->idBarrio,
-            );
-            $data= DATA::Ejecutar($sql,$param);
-            $ubicacion= [];
-            if($data){
-                $item= new UbicacionCod();
-                $item->provincia= $data[0]['provincia'];
-                $item->canton= $data[0]['canton'];
-                $item->distrito= $data[0]['distrito'];
-                $item->barrio= $data[0]['barrio'];
-                array_push($ubicacion, $item);
-            }
-            else throw new Exception('Error al consultar el codigo del impuesto'. $error_msg , ERROR_UBICACION_NO_VALID);
-            return $ubicacion;            
-        } 
-        catch(Exception $e) {
-            error_log("****** Error: ". $e->getMessage());
-            header('HTTP/1.0 400 Bad error');
-            die(json_encode(array(
-                'code' => $e->getCode() ,
-                'msg' => $e->getMessage()))
-            );
-        }
-    }
-
-    private static function getFormaPagoCod(){
-        try{} 
-        catch(Exception $e) {
-            error_log("****** Error: ". $e->getMessage());
-            header('HTTP/1.0 400 Bad error');
-            die(json_encode(array(
-                'code' => $e->getCode() ,
-                'msg' => $e->getMessage()))
-            );
-        }
-    }
-
-    private static function getCertificadoCod(){
-        try{} 
-        catch(Exception $e) {
-            error_log("****** Error: ". $e->getMessage());
-            header('HTTP/1.0 400 Bad error');
-            die(json_encode(array(
-                'code' => $e->getCode() ,
-                'msg' => $e->getMessage()))
-            );
-        }
-    }
-
     public static function APICrearXML(){
         try{
             $url= 'http://localhost/api.php';  
@@ -236,7 +376,7 @@ class FacturaElectronica{
             $detalles=[];
             foreach(self::$transaccion->detalleFactura as $d){
                 array_push($detalles, array('cantidad'=> $d->cantidad,
-                    'unidadMedida'=> 'Unid',
+                    'unidadMedida'=> self::getUnidadMedidaCod($d->idUnidadMedida),
                     'detalle'=> $d->detalle,
                     'precioUnitario'=> $d->precioUnitario,
                     'montoTotal'=> $d->montoTotal,
@@ -262,7 +402,7 @@ class FacturaElectronica{
                 'fecha_emision' => self::$fechaEmision->format("c"), // ej: '2018-09-09T13:41:00-06:00',
                 /** Emisor **/
                 'emisor_nombre'=> $_SESSION['API']->nombre,
-                'emisor_tipo_indetif'=> '01', //$_SESSION['API']->idTipoIdentificacion,
+                'emisor_tipo_indetif'=> self::getIdentificacionCod($_SESSION['API']->idTipoIdentificacion),
                 'emisor_num_identif'=> $_SESSION['API']->identificacion,
                 'nombre_comercial'=> $_SESSION['API']->nombreComercial,
                 'emisor_provincia'=> $ubicacionCod[0]->provincia,
@@ -275,9 +415,9 @@ class FacturaElectronica{
                 'emisor_cod_pais_fax'=> '506',
                 'emisor_fax'=> '00000000',
                 'emisor_email'=> $_SESSION['API']->correoElectronico,
-                /** Receptor **/
+                /** Receptor **/  // deben ser los datos reales del receptor o un receptor genérico.
                 'receptor_nombre'=> $_SESSION['API']->nombre,
-                'receptor_tipo_identif'=> '01',
+                'receptor_tipo_identif'=> self::getIdentificacionCod($_SESSION['API']->idTipoIdentificacion),
                 'receptor_num_identif'=> $_SESSION['API']->identificacion,
                 'receptor_provincia'=> $ubicacionCod[0]->provincia,
                 'receptor_canton'=> $ubicacionCod[0]->canton,
@@ -289,10 +429,10 @@ class FacturaElectronica{
                 'receptor_fax'=> '00000000',
                 'receptor_email'=> $_SESSION['API']->correoElectronico,
                 /** Datos de la venta **/
-                'condicion_venta'=> '01', /*** debe ser dinamico***/
-                // 'plazo_credito'=> '0',
-                'medio_pago'=> self::$transaccion->idMedioPago,
-                'cod_moneda'=> self::$transaccion->idCodigoMoneda,
+                'condicion_venta'=> self::getCondicionVentaCod(elf::$transaccion->idCondicionVenta),
+                'plazo_credito'=> self::$transaccion->plazoCredito, 
+                'medio_pago'=> self::getMedioPagoCod(self::$transaccion->idMedioPago),
+                'cod_moneda'=> self::getCodigoMonedaCod(self::$transaccion->idCodigoMoneda),
                 'tipo_cambio'=> self::$transaccion->tipoCambio,
                 'total_serv_gravados'=> self::$transaccion->totalServGravados,
                 'total_serv_exentos'=> self::$transaccion->totalServExcentos,

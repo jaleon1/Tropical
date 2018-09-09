@@ -52,7 +52,7 @@ class Factura{
     public $terminal="";
     public $idCondicionVenta=null;
     public $idSituacionComprobante=null;
-    public $idEstadoComprobante="";
+    public $idEstadoComprobante= null;
     public $idMedioPago=null;
     public $fechaEmision="";
     public $totalVenta=null; //Precio del producto
@@ -67,6 +67,16 @@ class Factura{
     public $consecutivo= [];
     public $usuario="";
     public $bodega="";
+    public $tipoDocumento=""; // FE - TE - ND - NC ...  documento para envio MH
+    public $total_serv_gravados= null;
+    public $total_serv_exentos= null;
+    public $total_merc_gravada= null;
+    public $total_merc_exenta= null;
+    public $total_gravados= null;
+    public $total_exentos=  null;
+    public $plazoCredito= null;
+    public $idCodigoMoneda= null;
+    //
     function __construct(){
         // identificador único
         if(isset($_POST["id"])){
@@ -79,30 +89,39 @@ class Factura{
             require_once("UUID.php");
             $this->id= $obj["id"] ?? UUID::v4();
             $this->totalVenta= $obj["totalVenta"] ?? 0;
-
             $this->fechaCreacion= $obj["fechaCreacion"] ?? '';
             $this->local= $obj["local"] ?? '001';
             $this->terminal= $obj["terminal"] ?? '00001';
-            $this->idCondicionVenta= $obj["idCondicionVenta"] ?? 1;          
+            $this->idCondicionVenta= $obj["idCondicionVenta"] ?? 1;
             $this->idSituacionComprobante= $obj["idSituacionComprobante"] ?? 1;
-            $this->idEstadoComprobante= $obj["idEstadoComprobante"] ?? '1';
-            $this->idMedioPago= $obj["idMedioPago"] ?? 99;
+            $this->idEstadoComprobante= $obj["idEstadoComprobante"] ?? 1;
+            $this->idMedioPago= $obj["idMedioPago"] ?? 1;
             $this->fechaEmision= $obj["fechaEmision"] ?? '';
             $this->totalDescuentos= $obj["totalDescuentos"] ?? 0;
             $this->totalVentaneta= $obj["totalVentaneta"] ?? 0;
             $this->totalImpuesto= $obj["totalImpuesto"] ?? 0;
             $this->totalComprobante= $obj["totalComprobante"] ?? 0;
+            $this->plazoCredito= $obj["plazoCredito"] ?? 0;
+            $this->idCodigoMoneda= $obj["idCodigoMoneda"] ?? 55; // CRC
+            //
+            $this->total_serv_gravados= $obj['totalServGravados'] ?? 0;
+            $this->total_serv_exentos= $obj['totalServExcentos'] ?? 0;
+            $this->total_merc_gravada= $obj['totalMercanciasGravadas'] ?? 0;
+            $this->total_merc_exenta= $obj['totalMercanciasExcentas'] ?? 0;
+            $this->total_gravados= $obj['totalGravado'] ?? 0;
+            $this->total_exentos= $obj['totalExcento'] ?? 0;
+            //
             $this->idEmisor= $_SESSION['API']->id;
-            
+            $this->tipoDocumento = $obj["tipoDocumento"] ?? "FE";
             $this->consecutivo = $obj["consecutivo"] ?? "";
-
+            //
             if(isset($obj["detalleFactura"] )){
                 foreach ($obj["detalleFactura"] as $itemDetalle) {
                     $item= new ProductoXFactura();
                     $item->precioUnitario= $itemDetalle['precioUnitario'];
                     $item->detalle= $itemDetalle['detalle'];
                     $item->numeroLinea= $itemDetalle['numeroLinea'];
-                    $item->codigoImpuesto= $itemDetalle['codigoImpuesto'] ?? 1;
+                    $item->codigoImpuesto= $itemDetalle['codigoImpuesto'] ?? 1; // impuesto ventas
                     $item->tarifaImpuesto= $itemDetalle['tarifaImpuesto'] ?? 13;
                     $item->montoImpuesto= $itemDetalle['montoImpuesto']   ?? $itemDetalle['precioUnitario']*0.13;
                     $item->idPrecio= $itemDetalle['idPrecio'];
