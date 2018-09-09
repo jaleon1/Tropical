@@ -117,14 +117,28 @@ class Factura{
             //
             if(isset($obj["detalleFactura"] )){
                 foreach ($obj["detalleFactura"] as $itemDetalle) {
-                    $item= new ProductoXFactura();
-                    $item->precioUnitario= $itemDetalle['precioUnitario'];
+                    /***************************************************************************/
+                    /***************************************************************************/
+                    /********************** AQUI DEBE CAPTURAR EL DETALLE **********************/
+                    /********************  los calculos debe hacerse aqui  *********************/
+                    /***************************************************************************/
+                    /***************************************************************************/
+                    $item= new ProductoXFactura();                    
                     $item->detalle= $itemDetalle['detalle'];
-                    $item->numeroLinea= $itemDetalle['numeroLinea'];
+                    $item->numeroLinea= $itemDetalle['numeroLinea'];                    
+                    $item->idPrecio= $itemDetalle['idPrecio'];
+                    $item->idUnidadMedida= $itemDetalle['idUnidadMedida'] ?? 78;
+                    $item->cantidad= $itemDetalle['cantidad'] ?? 1;
+                    $item->precioUnitario= $itemDetalle['precioUnitario'];
                     $item->codigoImpuesto= $itemDetalle['codigoImpuesto'] ?? 1; // impuesto ventas
                     $item->tarifaImpuesto= $itemDetalle['tarifaImpuesto'] ?? 13;
-                    $item->montoImpuesto= $itemDetalle['montoImpuesto']   ?? $itemDetalle['precioUnitario']*0.13;
-                    $item->idPrecio= $itemDetalle['idPrecio'];
+                    $item->montoImpuesto= $itemDetalle['montoImpuesto']   ?? $item->precioUnitario * 0.13;
+                    // en tropical se define el precio unitario incluyendo el impuesto, se debe recalcular.
+                    $item->precioUnitario= $item->precioUnitario - $item->montoImpuesto;
+                    $item->montoTotal= $itemDetalle['montoTotal'] ?? ($item->precioUnitario * $item->cantidad); // cantidad * precio unitario. SIN IMPUESTO
+                    $item->MontoDescuento= 0; // en tropical no se manejan descuentos.
+                    $item->subTotal= $itemDetalle['subTotal'] ?? $item->montoTotal -  $item->MontoDescuento;// montoTotal - descuento.
+                    $item->montoTotalLinea= $itemDetalle['montoTotalLinea'] ?? ($item->subTotal + $item->montoImpuesto); // subtotal + impuesto.
                     array_push ($this->detalleFactura, $item);
                 }
             }
@@ -310,6 +324,23 @@ class Factura{
                 'code' => $e->getCode() ,
                 'msg' => $e->getMessage()))
             );
+        }
+    }
+
+    public static function updateEstado($idFactura, $idEstadoComprobante){
+        try {
+            $sql="UPDATE factura
+                SET idEstadoComprobante=:idEstadoComprobante
+                WHERE id=:idFactura";
+            $param= array(':idFactura'=>$idFactura, ':idEstadoComprobante'=>$idEstadoComprobante);
+            $data = DATA::Ejecutar($sql,$param, false);
+            if($data)
+                return true;
+            else throw new Exception('Error al guardar el histórico.', 03);            
+        }     
+        catch(Exception $e) {
+            error_log("error: ". $e->getMessage());
+            // debe notificar que no se esta actualizando el historico de comprobantes.
         }
     }
 

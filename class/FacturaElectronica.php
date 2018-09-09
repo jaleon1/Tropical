@@ -1,4 +1,6 @@
 <?php
+include_once('historico.php');
+
 define('ERROR_USERS_NO_VALID', '-500');
 define('ERROR_TOKEN_NO_VALID', '-501');
 define('ERROR_CLAVE_NO_VALID', '-502');
@@ -24,7 +26,7 @@ class FacturaElectronica{
         try{
             self::$transaccion= $t;
             if(!isset($_SESSION['API']))
-                throw new Exception('Error al guardar el certificado. '. $error_msg , ERROR_USERS_NO_VALID);            
+                throw new Exception('Error al leer informacion del contribuyente. '. $error_msg , ERROR_USERS_NO_VALID);            
             self::$fechaEmision= date_create(self::$transaccion->fechaEmision);
             self::APICrearClave();
             self::APICrearXML();
@@ -33,12 +35,12 @@ class FacturaElectronica{
             self::APIConsultaComprobante();
         } 
         catch(Exception $e) {
-            error_log("****** Error: ". $e->getMessage());
-            header('HTTP/1.0 400 Bad error');
-            die(json_encode(array(
-                'code' => $e->getCode() ,
-                'msg' => $e->getMessage()))
-            );
+            error_log("****** Error (".$e->getCode()."): ". $e->getMessage());
+            // header('HTTP/1.0 400 Bad error');
+            // die(json_encode(array(
+            //     'code' => $e->getCode() ,
+            //     'msg' => $e->getMessage()))
+            // );
         }
     }
 
@@ -54,12 +56,13 @@ class FacturaElectronica{
             else throw new Exception('Error al consultar el codigo de tipod de identificacion' , ERROR_TIPO_IDENTIFICACION_NO_VALID);
         }
         catch(Exception $e) {
-            error_log("****** Error: ". $e->getMessage());
-            header('HTTP/1.0 400 Bad error');
-            die(json_encode(array(
-                'code' => $e->getCode() ,
-                'msg' => $e->getMessage()))
-            );
+            error_log("****** Error (".$e->getCode()."): ". $e->getMessage());
+            historico::create(self::$transaccion->id, 1, 'ERROR_TIPO_IDENTIFICACION_NO_VALID: '. $e->getMessage());
+            // header('HTTP/1.0 400 Bad error');
+            // die(json_encode(array(
+            //     'code' => $e->getCode() ,
+            //     'msg' => $e->getMessage()))
+            // );
         }
     }
 
@@ -71,16 +74,30 @@ class FacturaElectronica{
             $param= array(':id'=>$id);
             $data= DATA::Ejecutar($sql,$param);     
             if($data)
-                return $data[0]['codigo'];
+            {
+                switch($data[0]['codigo']){
+                    case '1':
+                        return 'normal';
+                    break;
+                        case '2':
+                        return 'contingencia';
+                    break;
+                        case '3':
+                        return 'sinInternet';
+                    break;
+                    
+                }
+            }
             else throw new Exception('Error al consultar el codigo de situacion comprobante' , ERROR_SITUACION_COMPROBANTE_NO_VALID);
         }
         catch(Exception $e) {
-            error_log("****** Error: ". $e->getMessage());
-            header('HTTP/1.0 400 Bad error');
-            die(json_encode(array(
-                'code' => $e->getCode() ,
-                'msg' => $e->getMessage()))
-            );
+            error_log("****** Error (".$e->getCode()."): ". $e->getMessage());
+            historico::create(self::$transaccion->id, 1, 'ERROR_SITUACION_COMPROBANTE_NO_VALID: '. $e->getMessage());
+            // header('HTTP/1.0 400 Bad error');
+            // die(json_encode(array(
+            //     'code' => $e->getCode() ,
+            //     'msg' => $e->getMessage()))
+            // );
         }
     }
 
@@ -96,33 +113,35 @@ class FacturaElectronica{
             else throw new Exception('Error al consultar el codigo del impuesto' , ERROR_IMPUESTO_NO_VALID);
         }
         catch(Exception $e) {
-            error_log("****** Error: ". $e->getMessage());
-            header('HTTP/1.0 400 Bad error');
-            die(json_encode(array(
-                'code' => $e->getCode() ,
-                'msg' => $e->getMessage()))
-            );
+            error_log("****** Error (".$e->getCode()."): ". $e->getMessage());
+            historico::create(self::$transaccion->id, 1, 'ERROR_IMPUESTO_NO_VALID: '. $e->getMessage());
+            // header('HTTP/1.0 400 Bad error');
+            // die(json_encode(array(
+            //     'code' => $e->getCode() ,
+            //     'msg' => $e->getMessage()))
+            // );
         }
     }
 
     private static function getUnidadMedidaCod($id){
         try{
             $sql='SELECT simbolo
-            FROM unidadMedida
-            WHERE id=:id';
+                FROM unidadMedida
+                WHERE id=:id';
             $param= array(':id'=>$id);
             $data= DATA::Ejecutar($sql,$param);     
             if($data)
-                return $data[0]['codigo'];
+                return $data[0]['simbolo'];
             else throw new Exception('Error al consultar el codigo de unidad medida' , ERROR_UNIDAD_MEDIDA_NO_VALID);
         }
         catch(Exception $e) {
-            error_log("****** Error: ". $e->getMessage());
-            header('HTTP/1.0 400 Bad error');
-            die(json_encode(array(
-                'code' => $e->getCode() ,
-                'msg' => $e->getMessage()))
-            );
+            error_log("****** Error (".$e->getCode()."): ". $e->getMessage());
+            historico::create(self::$transaccion->id, 1, 'ERROR_UNIDAD_MEDIDA_NO_VALID '. $e->getMessage());
+            // header('HTTP/1.0 400 Bad error');
+            // die(json_encode(array(
+            //     'code' => $e->getCode() ,
+            //     'msg' => $e->getMessage()))
+            // );
         }
     }
 
@@ -150,12 +169,13 @@ class FacturaElectronica{
             return $ubicacion;            
         } 
         catch(Exception $e) {
-            error_log("****** Error: ". $e->getMessage());
-            header('HTTP/1.0 400 Bad error');
-            die(json_encode(array(
-                'code' => $e->getCode() ,
-                'msg' => $e->getMessage()))
-            );
+            error_log("****** Error (".$e->getCode()."): ". $e->getMessage());
+            historico::create(self::$transaccion->id, 1, 'ERROR_UBICACION_NO_VALID: '. $e->getMessage());
+            // header('HTTP/1.0 400 Bad error');
+            // die(json_encode(array(
+            //     'code' => $e->getCode() ,
+            //     'msg' => $e->getMessage()))
+            // );
         }
     }
 
@@ -171,12 +191,13 @@ class FacturaElectronica{
             else throw new Exception('Error al consultar el codigo del medio de pago' , ERROR_MEDIOPAGO_NO_VALID);
         } 
         catch(Exception $e) {
-            error_log("****** Error: ". $e->getMessage());
-            header('HTTP/1.0 400 Bad error');
-            die(json_encode(array(
-                'code' => $e->getCode() ,
-                'msg' => $e->getMessage()))
-            );
+            error_log("****** Error (".$e->getCode()."): ". $e->getMessage());
+            historico::create(self::$transaccion->id, 1, 'ERROR_MEDIOPAGO_NO_VALID: '. $e->getMessage());
+            // header('HTTP/1.0 400 Bad error');
+            // die(json_encode(array(
+            //     'code' => $e->getCode() ,
+            //     'msg' => $e->getMessage()))
+            // );
         }
     }
 
@@ -192,12 +213,13 @@ class FacturaElectronica{
             else throw new Exception('Error al consultar el codigo de moneda' , ERROR_MONEDA_NO_VALID);
         } 
         catch(Exception $e) {
-            error_log("****** Error: ". $e->getMessage());
-            header('HTTP/1.0 400 Bad error');
-            die(json_encode(array(
-                'code' => $e->getCode() ,
-                'msg' => $e->getMessage()))
-            );
+            error_log("****** Error (".$e->getCode()."): ". $e->getMessage());
+            historico::create(self::$transaccion->id, 1, 'ERROR_MONEDA_NO_VALID: '. $e->getMessage());
+            // header('HTTP/1.0 400 Bad error');
+            // die(json_encode(array(
+            //     'code' => $e->getCode() ,
+            //     'msg' => $e->getMessage()))
+            // );
         }
     }
 
@@ -213,12 +235,13 @@ class FacturaElectronica{
             else throw new Exception('Error al consultar el codigo de estado del comprobante' , ERROR_ESTADO_COMPROBANTE_NO_VALID);
         } 
         catch(Exception $e) {
-            error_log("****** Error: ". $e->getMessage());
-            header('HTTP/1.0 400 Bad error');
-            die(json_encode(array(
-                'code' => $e->getCode() ,
-                'msg' => $e->getMessage()))
-            );
+            error_log("****** Error (".$e->getCode()."): ". $e->getMessage());
+            historico::create(self::$transaccion->id, 1, 'ERROR_ESTADO_COMPROBANTE_NO_VALID: '. $e->getMessage());
+            // header('HTTP/1.0 400 Bad error');
+            // die(json_encode(array(
+            //     'code' => $e->getCode() ,
+            //     'msg' => $e->getMessage()))
+            // );
         }
     }
 
@@ -234,24 +257,13 @@ class FacturaElectronica{
             else throw new Exception('Error al consultar el codigo de Condicion venta' , ERROR_CONDICIONVENTA_NO_VALID);
         } 
         catch(Exception $e) {
-            error_log("****** Error: ". $e->getMessage());
-            header('HTTP/1.0 400 Bad error');
-            die(json_encode(array(
-                'code' => $e->getCode() ,
-                'msg' => $e->getMessage()))
-            );
-        }
-    }
-
-    private static function getCertificadoCod(){
-        try{} 
-        catch(Exception $e) {
-            error_log("****** Error: ". $e->getMessage());
-            header('HTTP/1.0 400 Bad error');
-            die(json_encode(array(
-                'code' => $e->getCode() ,
-                'msg' => $e->getMessage()))
-            );
+            error_log("****** Error (".$e->getCode()."): ". $e->getMessage());
+            historico::create(self::$transaccion->id, 1, 'ERROR_CONDICIONVENTA_NO_VALID: '. $e->getMessage());
+            // header('HTTP/1.0 400 Bad error');
+            // die(json_encode(array(
+            //     'code' => $e->getCode() ,
+            //     'msg' => $e->getMessage()))
+            // );
         }
     }
 
@@ -284,13 +296,13 @@ class FacturaElectronica{
             $error_msg = "";
             if (curl_error($ch)) {
                 $error_msg = curl_error($ch);
-                throw new Exception('Error al guardar el certificado. '. $error_msg , 033);
+                throw new Exception('Error al adquirir token. '. $error_msg , ERROR_TOKEN_NO_VALID);
             }
             $sArray= json_decode($server_output);
             if(!isset($sArray->resp->access_token)){
                 // ERROR CRÍTICO:
                 // debe notificar al contibuyente. 
-                throw new Exception('Error crítico al Solicitar token MH. DEBE COMUNICARSE CON SOPORTE TECNICO'. $error_msg , ERROR_TOKEN_NO_VALID);
+                throw new Exception('Error crítico al Solicitar token MH. DEBE COMUNICARSE CON SOPORTE TECNICO: '. $server_output , ERROR_TOKEN_NO_VALID);
             }
             $_SESSION['API']->accessToken=$sArray->resp->access_token;
             $_SESSION['API']->expiresIn=$sArray->resp->expires_in;
@@ -301,12 +313,13 @@ class FacturaElectronica{
             return true;
         } 
         catch(Exception $e) {
-            error_log("****** Error: ". $e->getMessage());
-            header('HTTP/1.0 400 Bad error');
-            die(json_encode(array(
-                'code' => $e->getCode() ,
-                'msg' => $e->getMessage()))
-            );
+            error_log("****** Error (".$e->getCode()."): ". $e->getMessage());
+            historico::create(self::$transaccion->id, 1, 'ERROR_TOKEN_NO_VALID: '. $e->getMessage());
+            // header('HTTP/1.0 400 Bad error');
+            // die(json_encode(array(
+            //     'code' => $e->getCode() ,
+            //     'msg' => $e->getMessage()))
+            // );
         }
     }
 
@@ -317,9 +330,9 @@ class FacturaElectronica{
             $post = [
                 'w' => 'clave',
                 'r' => 'clave',
-                'tipoCedula'=> getIdentificacionCod($_SESSION['API']->idTipoIdentificacion),
+                'tipoCedula'=> self::getIdentificacionCod($_SESSION['API']->idTipoIdentificacion) == '01'?'fisico':'juridico',
                 'cedula'=> $_SESSION['API']->identificacion,
-                'situacion' => getSituacionComprobanteCod(self::$transaccion->idSituacionComprobante),
+                'situacion' => self::getSituacionComprobanteCod(self::$transaccion->idSituacionComprobante),
                 'codigoPais'=> '506',
                 'consecutivo'=> self::$transaccion->consecutivo,
                 'codigoSeguridad'=> $_SESSION['API']->codigoSeguridad,
@@ -344,13 +357,13 @@ class FacturaElectronica{
             $error_msg = "";
             if (curl_error($ch)) {
                 $error_msg = curl_error($ch);
-                throw new Exception('Error al guardar el certificado. '. $error_msg , 033);
+                throw new Exception('Error al crear clave. '. $error_msg , ERROR_CLAVE_NO_VALID);
             }
             $sArray= json_decode($server_output);
             if(!isset($sArray->resp->clave)){
                 // ERROR CRÍTICO:
                 // debe notificar al contibuyente. 
-                throw new Exception('Error crítico al crear clave MH. DEBE COMUNICARSE CON SOPORTE TECNICO'. $error_msg , ERROR_CLAVE_NO_VALID);
+                throw new Exception('Error crítico al crear clave MH. DEBE COMUNICARSE CON SOPORTE TECNICO: '.$server_output, ERROR_CLAVE_NO_VALID);
             }
             $_SESSION['API']->clave= $sArray->resp->clave;
             $_SESSION['API']->consecutivo= $sArray->resp->consecutivo;
@@ -359,15 +372,16 @@ class FacturaElectronica{
             return true;
         } 
         catch(Exception $e) {
-            error_log("****** Error: ". $e->getMessage());
-            header('HTTP/1.0 400 Bad error');
-            die(json_encode(array(
-                'code' => $e->getCode() ,
-                'msg' => $e->getMessage()))
-            );
+            error_log("****** Error (".$e->getCode()."): ". $e->getMessage());
+            historico::create(self::$transaccion->id, 1, 'ERROR_CLAVE_NO_VALID: '.$e->getMessage());
+            // header('HTTP/1.0 400 Bad error');
+            // die(json_encode(array(
+            //     'code' => $e->getCode() ,
+            //     'msg' => $e->getMessage()))
+            // );
         }
     }
-
+    
     public static function APICrearXML(){
         try{
             $url= 'http://localhost/api.php';  
@@ -429,7 +443,7 @@ class FacturaElectronica{
                 'receptor_fax'=> '00000000',
                 'receptor_email'=> $_SESSION['API']->correoElectronico,
                 /** Datos de la venta **/
-                'condicion_venta'=> self::getCondicionVentaCod(elf::$transaccion->idCondicionVenta),
+                'condicion_venta'=> self::getCondicionVentaCod(self::$transaccion->idCondicionVenta),
                 'plazo_credito'=> self::$transaccion->plazoCredito, 
                 'medio_pago'=> self::getMedioPagoCod(self::$transaccion->idMedioPago),
                 'cod_moneda'=> self::getCodigoMonedaCod(self::$transaccion->idCodigoMoneda),
@@ -466,13 +480,13 @@ class FacturaElectronica{
             $error_msg = "";
             if (curl_error($ch)) {
                 $error_msg = curl_error($ch);
-                throw new Exception('Error al guardar el certificado. '. $error_msg , 033);
+                throw new Exception('Error al crear xml. '. $error_msg , ERROR_XML_NO_VALID);
             }
             $sArray= json_decode($server_output);
             if(!isset($sArray->resp->xml)){
                 // ERROR CRÍTICO:
                 // debe notificar al contibuyente. 
-                throw new Exception('Error crítico al crear xml de comprobante. DEBE COMUNICARSE CON SOPORTE TECNICO'. $error_msg , ERROR_XML_NO_VALID);
+                throw new Exception('Error crítico al crear xml de comprobante. DEBE COMUNICARSE CON SOPORTE TECNICO: '. $server_output, ERROR_XML_NO_VALID);
             }
             $_SESSION['API']->xml= $sArray->resp->xml;
             error_log(" Resp Crea xml : ". $server_output);
@@ -480,12 +494,13 @@ class FacturaElectronica{
             return true;
         } 
         catch(Exception $e) {
-            error_log("****** Error: ". $e->getMessage());
-            header('HTTP/1.0 400 Bad error');
-            die(json_encode(array(
-                'code' => $e->getCode() ,
-                'msg' => $e->getMessage()))
-            );
+            error_log("****** Error (".$e->getCode()."): ". $e->getMessage());
+            historico::create(self::$transaccion->id, 1, 'ERROR_XML_NO_VALID: '. $e->getMessage());
+            // header('HTTP/1.0 400 Bad error');
+            // die(json_encode(array(
+            //     'code' => $e->getCode() ,
+            //     'msg' => $e->getMessage()))
+            // );
         }
     }
 
@@ -496,10 +511,10 @@ class FacturaElectronica{
             $post = [
                 'w' => 'signXML',
                 'r' => 'signFE',
-                'p12Url'=>'24081a92226d94fffee558aaa6acb563',  /** DEBE SER DINAMICO **/
+                'p12Url'=> $_SESSION['API']->downloadCode,
                 'inXml'=> $_SESSION['API']->xml,
                 'pinP12' => $_SESSION['API']->pinp12,
-                'tipodoc'=> 'FE'
+                'tipodoc'=> self::$transaccion->tipoDocumento
             ];
             curl_setopt_array($ch, array(
                 CURLOPT_URL => $url,
@@ -518,13 +533,13 @@ class FacturaElectronica{
             $error_msg = "";
             if (curl_error($ch)) {
                 $error_msg = curl_error($ch);
-                throw new Exception('Error al guardar el certificado. '. $error_msg , 033);
+                throw new Exception('Error al cifrar xml. '. $error_msg , ERROR_CIFRAR_NO_VALID);
             }
             $sArray= json_decode($server_output);            
             if(!isset($sArray->resp->xmlFirmado)){
                 // ERROR CRÍTICO:
                 // debe notificar al contibuyente. 
-                throw new Exception('Error crítico al Cifrar xml de comprobante. DEBE COMUNICARSE CON SOPORTE TECNICO'. $error_msg , ERROR_CIFRAR_NO_VALID);
+                throw new Exception('Error crítico al Cifrar xml de comprobante. DEBE COMUNICARSE CON SOPORTE TECNICO: '.$server_output, ERROR_CIFRAR_NO_VALID);
             }
             $_SESSION['API']->xmlFirmado= $sArray->resp->xmlFirmado;
             error_log(" Resp cifrado xml : ". $server_output);
@@ -532,12 +547,13 @@ class FacturaElectronica{
             return true;
         } 
         catch(Exception $e) {
-            error_log("****** Error: ". $e->getMessage());
-            header('HTTP/1.0 400 Bad error');
-            die(json_encode(array(
-                'code' => $e->getCode() ,
-                'msg' => $e->getMessage()))
-            );
+            error_log("****** Error (".$e->getCode()."): ". $e->getMessage());
+            historico::create(self::$transaccion->id, 1, 'ERROR_CIFRAR_NO_VALID:'. $e->getMessage());
+            // header('HTTP/1.0 400 Bad error');
+            // die(json_encode(array(
+            //     'code' => $e->getCode() ,
+            //     'msg' => $e->getMessage()))
+            // );
         }
     }
 
@@ -576,35 +592,58 @@ class FacturaElectronica{
             $error_msg = "";
             if (curl_error($ch)) {
                 $error_msg = curl_error($ch);
-                throw new Exception('Error al guardar el certificado. '. $error_msg , 033);
-            }
-            $sArray= json_decode($server_output);            
-            if(!isset($sArray->resp->Status)){
-                // ERROR CRÍTICO:
+                historico::create(self::$transaccion->id, 5, 'ERROR_ENVIO_NO_VALID'. $error_msg);
+                Factura::updateEstado(self::$transaccion->id, 5);
+                error_log("****** Error: ". $error_msg);
                 // debe notificar al contibuyente. 
-                throw new Exception('Error crítico al enviar el comprobante. DEBE COMUNICARSE CON SOPORTE TECNICO'. $error_msg , ERROR_ENVIO_NO_VALID);
+                //
+                curl_close($ch);
+                return false;
             }
-            else if($sArray->resp->Status!=202)
-                throw new Exception('Error crítico al enviar el comprobante. DEBE COMUNICARSE CON SOPORTE TECNICO'. $error_msg , ERROR_ENVIOERR_NO_VALID);
-            // VALIDAR otros estados del envio
+            $sArray= json_decode($server_output);       
+            if(!isset($sArray->resp->Status)){
+                // ERROR CRÍTICO: almacena estado= 5 (otros) - error al enviar comprobante.
+                historico::create(self::$transaccion->id, 5, 'ERROR_ENVIO_NO_VALID'. $server_output);
+                Factura::updateEstado(self::$transaccion->id, 5);
+                error_log("****** Error: ". $error_msg);
+                // debe notificar al contibuyente. 
+                //
+                curl_close($ch);
+                return false;
+            }
+            //
+            if($sArray->resp->Status!=202){
+                historico::create(self::$transaccion->id, 5, 'Comprobante ENVIADO con error, STATUS('.$sArray->resp->Status.'): '. $server_output);
+                Factura::updateEstado(self::$transaccion->id, 5);
+                error_log("****** Error: ". $server_output);
+                // debe notificar al contibuyente. 
+                //
+                curl_close($ch);
+                return false;
+            }
+            else {
+                // almacena estado: enviado (202).
+                historico::create(self::$transaccion->id, 2, 'Comprobante ENVIADO, STATUS('.$sArray->resp->Status.')');
+                Factura::updateEstado(self::$transaccion->id, 2);
+            }
             //
             error_log(" Resp Envío: ". $server_output);
             curl_close($ch);
             return true;
         } 
         catch(Exception $e) {
-            error_log("****** Error: ". $e->getMessage());
-            header('HTTP/1.0 400 Bad error');
-            die(json_encode(array(
-                'code' => $e->getCode() ,
-                'msg' => $e->getMessage()))
-            );
+            error_log("****** Error (".$e->getCode()."): ". $e->getMessage());
+            historico::create(self::$transaccion->id, 1, 'ERROR_ENVIO_NO_VALID: '. $e->getMessage());
+            // header('HTTP/1.0 400 Bad error');
+            // die(json_encode(array(
+            //     'code' => $e->getCode() ,
+            //     'msg' => $e->getMessage()))
+            // );
         }
     }
 
     public static function APIConsultaComprobante(){
         try{
-            error_log("API LOGIN ... ");
             //$url= 'http://104.131.5.198/api.php';
             $url= 'localhost/api.php';
             $ch = curl_init();
@@ -633,16 +672,12 @@ class FacturaElectronica{
             $error_msg = "";
             if (curl_error($ch)) {
                 $error_msg = curl_error($ch);
-                error_log("error: ". $error_msg);
-                throw new Exception('Error al iniciar login API. '. $error_msg , 02);
-            }
-            curl_close($ch);
+                throw new Exception('Error al consultar API MH: '. $error_msg , ERROR_CONSULTA_NO_VALID);
+            }            
             // session de usuario ATV
-            $sArray=json_decode($server_output);                
+            $sArray=json_decode($server_output);
             if(!isset($sArray->resp->clave)){
-                // ERROR CRÍTICO:
-                // debe notificar al contibuyente. 
-                throw new Exception('Error crítico al crear xml de comprobante. DEBE COMUNICARSE CON SOPORTE TECNICO'. $error_msg , ERROR_CONSULTA_NO_VALID);
+                throw new Exception('Error crítico al consultar el comprobante. DEBE COMUNICARSE CON SOPORTE TECNICO: '.$server_output, ERROR_CONSULTA_NO_VALID);
             }
             $respuestaXml='';
             foreach($sArray->resp as $key=> $r){
@@ -650,25 +685,35 @@ class FacturaElectronica{
                     self::$transaccion->estado= $r;
                 if($key=='respuesta-xml')
                     $respuestaXml= $r;
-            }
-            //$_SESSION['API']->xmlFirmado= $sArray->resp->xmlFirmado;
-            error_log("Estado de la transacción: ". self::$transaccion->estado);
+            }           
             // si el estado es procesando debe consultar de nuevo.
-            if(self::$transaccion->estado=='procesando')
+            if(self::$transaccion->estado=='procesando'){
+                historico::create(self::$transaccion->id, 2, self::$transaccion->estado );
                 self::APIConsultaComprobante();
+            }
+            else if(self::$transaccion->estado=='aceptado'){
+                $xml= base64_decode($respuestaXml);
+                historico::create(self::$transaccion->id, 3, self::$transaccion->estado, $xml);
+                Factura::updateEstado(self::$transaccion->id, 3);
+                error_log("Errores: ". $errores);
+            }
             else if(self::$transaccion->estado=='rechazado'){
                 // genera informe con los datos del rechazo. y pone estado de la transaccion pendiente para ser enviada cuando sea corregida.
                 $errores= base64_decode($respuestaXml);
+                historico::create(self::$transaccion->id, 4, self::$transaccion->estado, $errores);
+                Factura::updateEstado(self::$transaccion->id, 4);
                 error_log("Errores: ". $errores);
-            }
+            }            
+            error_log("Estado de la transacción(".self::$transaccion->id."): ". self::$transaccion->estado);
+            curl_close($ch);
         } 
         catch(Exception $e) {
-            error_log("error: ". $e->getMessage());
-            header('HTTP/1.0 400 Bad error');
-            die(json_encode(array(
-                'code' => $e->getCode() ,
-                'msg' => $e->getMessage()))
-            );
+            error_log("****** Error (".$e->getCode()."): ". $e->getMessage());
+            // header('HTTP/1.0 400 Bad error');
+            // die(json_encode(array(
+            //     'code' => $e->getCode() ,
+            //     'msg' => $e->getMessage()))
+            // );
         }
     }
 }
