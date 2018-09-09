@@ -207,6 +207,7 @@ class ClienteFE{
     public $filetype= null;
     public $estadoCertificado= 1;
     public $sessionKey;
+    public $downloadCode; // codigo de descarga del certificado para cifrar xml.
     //
     public $ubicacion= [];
 
@@ -366,8 +367,8 @@ class ClienteFE{
 
     function ReadProfile(){
         try {
-            $sql='SELECT id, codigoSeguridad, idCodigoPais, nombre, idTipoIdentificacion, identificacion, nombreComercial, idProvincia, idCanton, idDistrito, idBarrio, otrasSenas, 
-                numTelefono, correoElectronico, username, password, pinp12
+            $sql='SELECT id, codigoSeguridad, idCodigoPais, nombre, idTipoIdentificacion, identificacion, nombreComercial, idProvincia, idCanton, idDistrito, 
+                idBarrio, otrasSenas, numTelefono, correoElectronico, username, password, pinp12, downloadCode
                 FROM clienteFE  
                 where idBodega=:idBodega';
             $param= array(':idBodega'=>$this->idBodega);
@@ -390,6 +391,7 @@ class ClienteFE{
                 $this->username= encdes::decifrar($data[0]['username']);
                 $this->password= encdes::decifrar($data[0]['password']);
                 $this->pinp12= encdes::decifrar($data[0]['pinp12']);
+                $this->downloadCode= $data[0]['downloadCode'];
                 // certificado
                 $sql='SELECT certificado, cpath
                     FROM clienteFE  
@@ -590,12 +592,12 @@ class ClienteFE{
 
     public function APIUploadCert(){
         try{
-            error_log(" subiendo certificado : ". $this->certificado);
+            error_log(" subiendo certificado API CRL: ". $this->certificado);
             if (!file_exists($this->certificado)){
                 throw new Exception('Error al guardar el certificado. El certificado no existe' , 002256);
             } 
             //$url= 'http://104.131.5.198/api.php';
-            $url= 'http://localhost/api.php';  
+            $url= 'localhost/api.php';  
             $ch = curl_init();
             $post = [
                 'w' => 'fileUploader',
@@ -623,7 +625,23 @@ class ClienteFE{
                 $error_msg = curl_error($ch);
                 throw new Exception('Error al guardar el certificado. '. $error_msg , 033);
             }
-            error_log(" resp : ". $server_output);
+            error_log("****** buscar : ". $server_output);
+            $sArray= json_decode($server_output);
+            if(!isset($sArray->resp->downloadCode)){
+                // ERROR CRÍTICO:
+                // debe notificar al contibuyente. 
+                throw new Exception('Error crítico al leer downloadCode: '.$server_output, 0344);
+            }
+            // almacena dowloadCode en clienteFE
+            $sql="UPDATE clienteFE
+                SET downloadCode=:downloadCode
+                WHERE idBodega=:idBodega";
+            $param= array(':idBodega'=>$_SESSION['userSession']->idBodega, ':downloadCode'=>$sArray->resp->downloadCode);
+            $data = DATA::Ejecutar($sql,$param, false);
+            if($data)
+                return true;
+            else throw new Exception('Error al guardar el downloadCode.', 0345);
+            //
             curl_close($ch);
             return true;
         } 

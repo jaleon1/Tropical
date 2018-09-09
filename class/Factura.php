@@ -52,7 +52,7 @@ class Factura{
     public $terminal="";
     public $idCondicionVenta=null;
     public $idSituacionComprobante=null;
-    public $idEstadoComprobante="";
+    public $idEstadoComprobante= null;
     public $idMedioPago=null;
     public $fechaEmision="";
     public $totalVenta=null; //Precio del producto
@@ -67,6 +67,16 @@ class Factura{
     public $consecutivo= [];
     public $usuario="";
     public $bodega="";
+    public $tipoDocumento=""; // FE - TE - ND - NC ...  documento para envio MH
+    public $total_serv_gravados= null;
+    public $total_serv_exentos= null;
+    public $total_merc_gravada= null;
+    public $total_merc_exenta= null;
+    public $total_gravados= null;
+    public $total_exentos=  null;
+    public $plazoCredito= null;
+    public $idCodigoMoneda= null;
+    //
     function __construct(){
         // identificador único
         if(isset($_POST["id"])){
@@ -79,33 +89,56 @@ class Factura{
             require_once("UUID.php");
             $this->id= $obj["id"] ?? UUID::v4();
             $this->totalVenta= $obj["totalVenta"] ?? 0;
-
             $this->fechaCreacion= $obj["fechaCreacion"] ?? '';
             $this->local= $obj["local"] ?? '001';
             $this->terminal= $obj["terminal"] ?? '00001';
-            $this->idCondicionVenta= $obj["idCondicionVenta"] ?? 1;          
+            $this->idCondicionVenta= $obj["idCondicionVenta"] ?? 1;
             $this->idSituacionComprobante= $obj["idSituacionComprobante"] ?? 1;
-            $this->idEstadoComprobante= $obj["idEstadoComprobante"] ?? '1';
-            $this->idMedioPago= $obj["idMedioPago"] ?? 99;
+            $this->idEstadoComprobante= $obj["idEstadoComprobante"] ?? 1;
+            $this->idMedioPago= $obj["idMedioPago"] ?? 1;
             $this->fechaEmision= $obj["fechaEmision"] ?? '';
             $this->totalDescuentos= $obj["totalDescuentos"] ?? 0;
             $this->totalVentaneta= $obj["totalVentaneta"] ?? 0;
             $this->totalImpuesto= $obj["totalImpuesto"] ?? 0;
             $this->totalComprobante= $obj["totalComprobante"] ?? 0;
+            $this->plazoCredito= $obj["plazoCredito"] ?? 0;
+            $this->idCodigoMoneda= $obj["idCodigoMoneda"] ?? 55; // CRC
+            //
+            $this->total_serv_gravados= $obj['totalServGravados'] ?? 0;
+            $this->total_serv_exentos= $obj['totalServExcentos'] ?? 0;
+            $this->total_merc_gravada= $obj['totalMercanciasGravadas'] ?? 0;
+            $this->total_merc_exenta= $obj['totalMercanciasExcentas'] ?? 0;
+            $this->total_gravados= $obj['totalGravado'] ?? 0;
+            $this->total_exentos= $obj['totalExcento'] ?? 0;
+            //
             $this->idEmisor= $_SESSION['API']->id;
-            
+            $this->tipoDocumento = $obj["tipoDocumento"] ?? "FE";
             $this->consecutivo = $obj["consecutivo"] ?? "";
-
+            //
             if(isset($obj["detalleFactura"] )){
                 foreach ($obj["detalleFactura"] as $itemDetalle) {
-                    $item= new ProductoXFactura();
-                    $item->precioUnitario= $itemDetalle['precioUnitario'];
+                    /***************************************************************************/
+                    /***************************************************************************/
+                    /********************** AQUI DEBE CAPTURAR EL DETALLE **********************/
+                    /********************  los calculos debe hacerse aqui  *********************/
+                    /***************************************************************************/
+                    /***************************************************************************/
+                    $item= new ProductoXFactura();                    
                     $item->detalle= $itemDetalle['detalle'];
-                    $item->numeroLinea= $itemDetalle['numeroLinea'];
-                    $item->codigoImpuesto= $itemDetalle['codigoImpuesto'] ?? 1;
-                    $item->tarifaImpuesto= $itemDetalle['tarifaImpuesto'] ?? 13;
-                    $item->montoImpuesto= $itemDetalle['montoImpuesto']   ?? $itemDetalle['precioUnitario']*0.13;
+                    $item->numeroLinea= $itemDetalle['numeroLinea'];                    
                     $item->idPrecio= $itemDetalle['idPrecio'];
+                    $item->idUnidadMedida= $itemDetalle['idUnidadMedida'] ?? 78;
+                    $item->cantidad= $itemDetalle['cantidad'] ?? 1;
+                    $item->precioUnitario= $itemDetalle['precioUnitario'];
+                    $item->codigoImpuesto= $itemDetalle['codigoImpuesto'] ?? 1; // impuesto ventas
+                    $item->tarifaImpuesto= $itemDetalle['tarifaImpuesto'] ?? 13;
+                    $item->montoImpuesto= $itemDetalle['montoImpuesto']   ?? $item->precioUnitario * 0.13;
+                    // en tropical se define el precio unitario incluyendo el impuesto, se debe recalcular.
+                    $item->precioUnitario= $item->precioUnitario - $item->montoImpuesto;
+                    $item->montoTotal= $itemDetalle['montoTotal'] ?? ($item->precioUnitario * $item->cantidad); // cantidad * precio unitario. SIN IMPUESTO
+                    $item->MontoDescuento= 0; // en tropical no se manejan descuentos.
+                    $item->subTotal= $itemDetalle['subTotal'] ?? $item->montoTotal -  $item->MontoDescuento;// montoTotal - descuento.
+                    $item->montoTotalLinea= $itemDetalle['montoTotalLinea'] ?? ($item->subTotal + $item->montoImpuesto); // subtotal + impuesto.
                     array_push ($this->detalleFactura, $item);
                 }
             }
@@ -291,6 +324,23 @@ class Factura{
                 'code' => $e->getCode() ,
                 'msg' => $e->getMessage()))
             );
+        }
+    }
+
+    public static function updateEstado($idFactura, $idEstadoComprobante){
+        try {
+            $sql="UPDATE factura
+                SET idEstadoComprobante=:idEstadoComprobante
+                WHERE id=:idFactura";
+            $param= array(':idFactura'=>$idFactura, ':idEstadoComprobante'=>$idEstadoComprobante);
+            $data = DATA::Ejecutar($sql,$param, false);
+            if($data)
+                return true;
+            else throw new Exception('Error al guardar el histórico.', 03);            
+        }     
+        catch(Exception $e) {
+            error_log("error: ". $e->getMessage());
+            // debe notificar que no se esta actualizando el historico de comprobantes.
         }
     }
 
