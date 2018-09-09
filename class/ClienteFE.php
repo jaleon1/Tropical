@@ -175,6 +175,13 @@ class Barrio{
     }
 }
 
+class UbicacionCod{
+    public $provincia;
+    public $canton;
+    public $distrito;
+    public $barrio;
+}
+
 class ClienteFE{
     public $id=null;
     public $codigoSeguridad='';

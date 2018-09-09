@@ -102,6 +102,9 @@ class Factura{
                     $item->precioUnitario= $itemDetalle['precioUnitario'];
                     $item->detalle= $itemDetalle['detalle'];
                     $item->numeroLinea= $itemDetalle['numeroLinea'];
+                    $item->codigoImpuesto= $itemDetalle['codigoImpuesto'] ?? 1;
+                    $item->tarifaImpuesto= $itemDetalle['tarifaImpuesto'] ?? 13;
+                    $item->montoImpuesto= $itemDetalle['montoImpuesto']   ?? $itemDetalle['precioUnitario']*0.13;
                     $item->idPrecio= $itemDetalle['idPrecio'];
                     array_push ($this->detalleFactura, $item);
                 }
