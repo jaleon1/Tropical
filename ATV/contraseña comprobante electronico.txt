@@ -5,7 +5,7 @@ Generar contraseñapara comprobanteselectronicos:
 
 Datos de Usuario
 Su usuario de ingreso es: 
- 	cpf-01-1187-0763@stag.comprobanteselectronicos.go.cr 
+ 	cpf-01-1187-0763@stag.comprobanteselectronicos.go.cr
 
 Su contraseña de ingreso es: 
  	9zgr)L#szb^Z=%*+;%c|
@@ -24,4 +24,11 @@ SCOPE = [VACIO]
 
 
 PINP12 0011
+
+
+        // Login API.
+        $cliente= new ClienteFE();
+        // lee el perfil del contribuyente y loguea al API.
+        $cliente->idBodega= $_SESSION['userSession']->idBodega;
+        $cliente->ReadProfile();
 

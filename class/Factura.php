@@ -13,6 +13,8 @@ if(isset($_POST["action"])){
     // Classes
     require_once("Conexion.php");
     require_once("Usuario.php");
+    require_once("ClienteFE.php");
+    require_once("FacturaElectronica.php");
     // Session
     if (!isset($_SESSION))
         session_start();
@@ -90,7 +92,7 @@ class Factura{
             $this->totalVentaneta= $obj["totalVentaneta"] ?? 0;
             $this->totalImpuesto= $obj["totalImpuesto"] ?? 0;
             $this->totalComprobante= $obj["totalComprobante"] ?? 0;
-            $this->idEmisor= "1f85f425-1c4b-4212-9d97-72e413cffb3c";
+            $this->idEmisor= $_SESSION['API']->id;
             
             $this->consecutivo = $obj["consecutivo"] ?? "";
 
@@ -234,7 +236,6 @@ class Factura{
                 $this->usuario = $_SESSION["userSession"]->username;
                 $this->totalComprobante = $data[0]['totalComprobante'];
                 $this->lista= ProductoXFactura::Read($this->id);
-                // retorna orden autogenerada.
             }            
             return $this;
         }     
@@ -271,14 +272,17 @@ class Factura{
                     $this->restartInsumo($this->detalleOrden);
                     // retorna orden autogenerada.
                     OrdenXFactura::$id=$this->id;
-                    OrdenXFactura::Create($this->detalleOrden);
-                    return $this->ReadbyID();
+                    OrdenXFactura::Create($this->detalleOrden);                    
+                    $this->ReadbyID();
+                    FacturaElectronica::Iniciar($this);
+                    return $this;
                 }
                 else throw new Exception('Error al guardar los productos.', 03);
             }
             else throw new Exception('Error al guardar.', 02);
         }     
         catch(Exception $e) {
+            error_log("error: ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,

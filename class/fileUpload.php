@@ -5,13 +5,7 @@ require_once("encdes.php");
 require_once("ClienteFE.php");
 if (!isset($_SESSION))
     session_start();
-    // /************************************* */
-    // $cliente= new ClienteFE();
-    // $cliente->idBodega= $_SESSION['userSession']->idBodega;
-    // $cliente->APIUploadCert();
-    // exit;
-    // error_log("cliente aqui noooooo ");
-    // /*********** */
+error_log("*** INICIO: subir certificado ***");
 $uploaddir= '../../CU/'.$_SESSION['userSession']->idBodega.'/';
 if (!file_exists($uploaddir)) 
     mkdir($uploaddir, 0777, true);
@@ -20,12 +14,13 @@ $uploadfile = $uploaddir . explode('::', $cfile)[0];
 if (!empty($_FILES)) {
     // elimina archivos previos, solo debe existir un certificado por agencia.
     $files = glob($uploaddir.'*'); // get all file names
+    error_log("Eliminando archivos existentes ");
     foreach($files as $file){
         if(is_file($file))
             unlink($file);
     }
     // mueve nuevo certificado.
-    if (move_uploaded_file($_FILES['file']['tmp_name'], $uploadfile)) {
+    if (move_uploaded_file($_FILES['file']['tmp_name'], $uploadfile)) {        
         $sql="UPDATE clienteFE 
                 SET cpath=:cpath, nkey=:nkey
                 WHERE idBodega=:idBodega";
@@ -37,16 +32,13 @@ if (!empty($_FILES)) {
             error_log("mv and data ok");
             // sesion del usuario
             $cliente= new ClienteFE();
-            //$cliente->idBodega= $_SESSION['userSession']->idBodega;
-            //$cliente->ReadProfile();
-            // Pasa el certificado al api.
-            //$cliente->APILogin();
             $cliente->certificado= realpath($uploaddir) .DIRECTORY_SEPARATOR. $_FILES['file']['name'];            
             // crea copia temporal sin cifrar para mover al API.
             copy($uploadfile, $cliente->certificado);
             chmod($cliente->certificado, 0777); 
             if($cliente->APIUploadCert()){
                 //unlink($cliente->certificado);
+                error_log("Certificado OK");
                 echo "UPLOADED";
                 return true;
             }
