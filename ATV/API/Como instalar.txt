@@ -1,0 +1,3 @@
+1. correr api.sql (local), en CER ya está todo listo. Verificar que en la base de tropical existan las tablas de ubicacion (provincia, canton, distrito, barrio)
+2. copiar la carpeta api en xampp/
+3. copiar los archivos que están dentro de config en en xampp/htdocs/
