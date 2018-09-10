@@ -426,8 +426,8 @@ class FacturaElectronica{
                 'emisor_otras_senas'=> $_SESSION['API']->otrasSenas,
                 'emisor_cod_pais_tel'=> '506',
                 'emisor_tel'=> $_SESSION['API']->numTelefono,
-                'emisor_cod_pais_fax'=> '506',
-                'emisor_fax'=> '00000000',
+                // 'emisor_cod_pais_fax'=> '506',
+                // 'emisor_fax'=> '00000000',
                 'emisor_email'=> $_SESSION['API']->correoElectronico,
                 /** Receptor **/  // deben ser los datos reales del receptor o un receptor genérico.
                 'receptor_nombre'=> $_SESSION['API']->nombre,
@@ -439,12 +439,12 @@ class FacturaElectronica{
                 'receptor_barrio'=> $ubicacionCod[0]->barrio,
                 'receptor_cod_pais_tel'=> '506',
                 'receptor_tel'=> '84922891',
-                'receptor_cod_pais_fax'=> '506',
-                'receptor_fax'=> '00000000',
+                // 'receptor_cod_pais_fax'=> '506',
+                // 'receptor_fax'=> '00000000',
                 'receptor_email'=> $_SESSION['API']->correoElectronico,
                 /** Datos de la venta **/
                 'condicion_venta'=> self::getCondicionVentaCod(self::$transaccion->idCondicionVenta),
-                'plazo_credito'=> self::$transaccion->plazoCredito, 
+                // 'plazo_credito'=> self::$transaccion->plazoCredito, 
                 'medio_pago'=> self::getMedioPagoCod(self::$transaccion->idMedioPago),
                 'cod_moneda'=> self::getCodigoMonedaCod(self::$transaccion->idCodigoMoneda),
                 'tipo_cambio'=> self::$transaccion->tipoCambio,
@@ -490,6 +490,7 @@ class FacturaElectronica{
             }
             $_SESSION['API']->xml= $sArray->resp->xml;
             error_log(" Resp Crea xml : ". $server_output);
+            historico::create(self::$transaccion->id, 1, 'xml a enviar', base64_decode($sArray->resp->xml));
             curl_close($ch);
             return true;
         } 

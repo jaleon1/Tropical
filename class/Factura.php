@@ -76,6 +76,7 @@ class Factura{
     public $total_exentos=  null;
     public $plazoCredito= null;
     public $idCodigoMoneda= null;
+    public $tipoCambio= null;
     //
     function __construct(){
         // identificador único
@@ -87,8 +88,7 @@ class Factura{
             $obj= json_decode($_POST["obj"],true);
             //Necesarias para la factura (Segun M Hacienda)
             require_once("UUID.php");
-            $this->id= $obj["id"] ?? UUID::v4();
-            $this->totalVenta= $obj["totalVenta"] ?? 0;
+            $this->id= $obj["id"] ?? UUID::v4();            
             $this->fechaCreacion= $obj["fechaCreacion"] ?? '';
             $this->local= $obj["local"] ?? '001';
             $this->terminal= $obj["terminal"] ?? '00001';
@@ -97,19 +97,22 @@ class Factura{
             $this->idEstadoComprobante= $obj["idEstadoComprobante"] ?? 1;
             $this->idMedioPago= $obj["idMedioPago"] ?? 1;
             $this->fechaEmision= $obj["fechaEmision"] ?? '';
-            $this->totalDescuentos= $obj["totalDescuentos"] ?? 0;
-            $this->totalVentaneta= $obj["totalVentaneta"] ?? 0;
-            $this->totalImpuesto= $obj["totalImpuesto"] ?? 0;
-            $this->totalComprobante= $obj["totalComprobante"] ?? 0;
             $this->plazoCredito= $obj["plazoCredito"] ?? 0;
             $this->idCodigoMoneda= $obj["idCodigoMoneda"] ?? 55; // CRC
-            //
-            $this->total_serv_gravados= $obj['totalServGravados'] ?? 0;
-            $this->total_serv_exentos= $obj['totalServExcentos'] ?? 0;
-            $this->total_merc_gravada= $obj['totalMercanciasGravadas'] ?? 0;
-            $this->total_merc_exenta= $obj['totalMercanciasExcentas'] ?? 0;
-            $this->total_gravados= $obj['totalGravado'] ?? 0;
-            $this->total_exentos= $obj['totalExcento'] ?? 0;
+            $this->tipoCambio= $obj['tipoCambio'] ?? 582.83;
+            //totales
+            $this->totalVenta= $obj["totalVenta"] ?? 0;
+            $this->totalDescuentos= $obj["totalDescuentos"] ?? 0;
+            $this->totalVentaneta= $obj["totalVentaneta"] ?? $this->totalVenta - $this->totalDescuentos;
+            $this->totalImpuesto= $obj["totalImpuesto"] ?? $this->totalVentaneta*0.13;
+            $this->totalComprobante= $obj["totalComprobante"] ?? 0;            
+            // definir si es servicio o mercancia (producto). En caso Tropical, siempre es mercancia
+            $this->totalServGravados= $obj['totalServGravados'] ?? 0;
+            $this->totalServExcentos= $obj['totalServExcentos'] ?? $this->totalComprobante;
+            $this->totalMercanciasGravadas= $obj['totalMercanciasGravadas'] ?? $this->totalComprobante;
+            $this->totalMercanciasExcentas= $obj['totalMercanciasExcentas'] ?? 0;
+            $this->totalGravado= $obj['totalGravado'] ?? $this->totalServGravados + $this->totalMercanciasGravadas;
+            $this->totalExcento= $obj['totalExcento'] ??  $this->totalServExcentos + $this->totalMercanciasExcentas;
             //
             $this->idEmisor= $_SESSION['API']->id;
             $this->tipoDocumento = $obj["tipoDocumento"] ?? "FE";
@@ -131,8 +134,8 @@ class Factura{
                     $item->cantidad= $itemDetalle['cantidad'] ?? 1;
                     $item->precioUnitario= $itemDetalle['precioUnitario'];
                     $item->codigoImpuesto= $itemDetalle['codigoImpuesto'] ?? 1; // impuesto ventas
-                    $item->tarifaImpuesto= $itemDetalle['tarifaImpuesto'] ?? 13;
-                    $item->montoImpuesto= $itemDetalle['montoImpuesto']   ?? $item->precioUnitario * 0.13;
+                    $item->tarifaImpuesto= $itemDetalle['tarifaImpuesto'] ?? '13.0';
+                    $item->montoImpuesto= $itemDetalle['montoImpuesto']   ?? $item->precioUnitario * ($item->tarifaImpuesto/100);
                     // en tropical se define el precio unitario incluyendo el impuesto, se debe recalcular.
                     $item->precioUnitario= $item->precioUnitario - $item->montoImpuesto;
                     $item->montoTotal= $itemDetalle['montoTotal'] ?? ($item->precioUnitario * $item->cantidad); // cantidad * precio unitario. SIN IMPUESTO
