@@ -300,9 +300,9 @@ class FacturaElectronica{
             }
             $sArray= json_decode($server_output);
             if(!isset($sArray->resp->access_token)){
-                // ERROR CRÍTICO:
+                // ERROR CRITICO:
                 // debe notificar al contibuyente. 
-                throw new Exception('Error crítico al Solicitar token MH. DEBE COMUNICARSE CON SOPORTE TECNICO: '. $server_output , ERROR_TOKEN_NO_VALID);
+                throw new Exception('Error CRITICO al Solicitar token MH. DEBE COMUNICARSE CON SOPORTE TECNICO: '. $server_output , ERROR_TOKEN_NO_VALID);
             }
             $_SESSION['API']->accessToken=$sArray->resp->access_token;
             $_SESSION['API']->expiresIn=$sArray->resp->expires_in;
@@ -361,9 +361,9 @@ class FacturaElectronica{
             }
             $sArray= json_decode($server_output);
             if(!isset($sArray->resp->clave)){
-                // ERROR CRÍTICO:
+                // ERROR CRITICO:
                 // debe notificar al contibuyente. 
-                throw new Exception('Error crítico al crear clave MH. DEBE COMUNICARSE CON SOPORTE TECNICO: '.$server_output, ERROR_CLAVE_NO_VALID);
+                throw new Exception('Error CRITICO al crear clave MH. DEBE COMUNICARSE CON SOPORTE TECNICO: '.$server_output, ERROR_CLAVE_NO_VALID);
             }
             $_SESSION['API']->clave= $sArray->resp->clave;
             $_SESSION['API']->consecutivo= $sArray->resp->consecutivo;
@@ -484,9 +484,9 @@ class FacturaElectronica{
             }
             $sArray= json_decode($server_output);
             if(!isset($sArray->resp->xml)){
-                // ERROR CRÍTICO:
+                // ERROR CRITICO:
                 // debe notificar al contibuyente. 
-                throw new Exception('Error crítico al crear xml de comprobante. DEBE COMUNICARSE CON SOPORTE TECNICO: '. $server_output, ERROR_XML_NO_VALID);
+                throw new Exception('Error CRITICO al crear xml de comprobante. DEBE COMUNICARSE CON SOPORTE TECNICO: '. $server_output, ERROR_XML_NO_VALID);
             }
             $_SESSION['API']->xml= $sArray->resp->xml;
             error_log(" Resp Crea xml : ". $server_output);
@@ -538,9 +538,9 @@ class FacturaElectronica{
             }
             $sArray= json_decode($server_output);            
             if(!isset($sArray->resp->xmlFirmado)){
-                // ERROR CRÍTICO:
+                // ERROR CRITICO:
                 // debe notificar al contibuyente. 
-                throw new Exception('Error crítico al Cifrar xml de comprobante. DEBE COMUNICARSE CON SOPORTE TECNICO: '.$server_output, ERROR_CIFRAR_NO_VALID);
+                throw new Exception('Error CRITICO al Cifrar xml de comprobante. DEBE COMUNICARSE CON SOPORTE TECNICO: '.$server_output, ERROR_CIFRAR_NO_VALID);
             }
             $_SESSION['API']->xmlFirmado= $sArray->resp->xmlFirmado;
             error_log(" Resp cifrado xml : ". $server_output);
@@ -603,7 +603,7 @@ class FacturaElectronica{
             }
             $sArray= json_decode($server_output);       
             if(!isset($sArray->resp->Status)){
-                // ERROR CRÍTICO: almacena estado= 5 (otros) - error al enviar comprobante.
+                // ERROR CRITICO: almacena estado= 5 (otros) - error al enviar comprobante.
                 historico::create(self::$transaccion->id, 5, 'ERROR_ENVIO_NO_VALID'. $server_output);
                 Factura::updateEstado(self::$transaccion->id, 5);
                 error_log("****** Error: ". $error_msg);
@@ -678,7 +678,7 @@ class FacturaElectronica{
             // session de usuario ATV
             $sArray=json_decode($server_output);
             if(!isset($sArray->resp->clave)){
-                throw new Exception('Error crítico al consultar el comprobante. DEBE COMUNICARSE CON SOPORTE TECNICO: '.$server_output, ERROR_CONSULTA_NO_VALID);
+                throw new Exception('Error CRITICO al consultar el comprobante. DEBE COMUNICARSE CON SOPORTE TECNICO: '.$server_output, ERROR_CONSULTA_NO_VALID);
             }
             $respuestaXml='';
             foreach($sArray->resp as $key=> $r){

@@ -572,9 +572,9 @@ class ClienteFE{
             // session de usuario ATV
             $sArray=json_decode($header);
             if(!isset($sArray->resp->sessionKey)){
-                // ERROR CRÍTICO:
+                // ERROR CRITICO:
                 // debe notificar al contibuyente. 
-                throw new Exception('Error crítico al inciar sesión del API. DEBE COMUNICARSE CON SOPORTE TECNICO'. $error_msg , '66612');
+                throw new Exception('Error CRITICO al inciar sesión del API. DEBE COMUNICARSE CON SOPORTE TECNICO'. $error_msg , '66612');
             }
             $this->sessionKey= $sArray->resp->sessionKey;
             $_SESSION['API']->sessionKey= $this->sessionKey;
@@ -628,9 +628,9 @@ class ClienteFE{
             error_log("****** buscar : ". $server_output);
             $sArray= json_decode($server_output);
             if(!isset($sArray->resp->downloadCode)){
-                // ERROR CRÍTICO:
+                // ERROR CRITICO:
                 // debe notificar al contibuyente. 
-                throw new Exception('Error crítico al leer downloadCode: '.$server_output, 0344);
+                throw new Exception('Error CRITICO al leer downloadCode: '.$server_output, 0344);
             }
             // almacena dowloadCode en clienteFE
             $sql="UPDATE clienteFE
