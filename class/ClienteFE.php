@@ -574,7 +574,7 @@ class ClienteFE{
             if(!isset($sArray->resp->sessionKey)){
                 // ERROR CRITICO:
                 // debe notificar al contibuyente. 
-                throw new Exception('Error CRITICO al inciar sesión del API. DEBE COMUNICARSE CON SOPORTE TECNICO'. $error_msg , '66612');
+                throw new Exception('Error CRITICO al inciar sesion del API. DEBE COMUNICARSE CON SOPORTE TECNICO'. $error_msg , '66612');
             }
             $this->sessionKey= $sArray->resp->sessionKey;
             $_SESSION['API']->sessionKey= $this->sessionKey;
