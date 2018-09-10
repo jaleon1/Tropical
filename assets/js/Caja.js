@@ -131,7 +131,7 @@ class MovimientosCaja {
             movimientosCaja.validarEstadoCaja(e);
         })
         .fail(function (e) {
-            movimientosCaja.errorAbrirCaja("Usuario no valido", "Solo un administrador puede abrir caja!" );
+            movimientosCaja.errorAbrirCaja("Usuario no valido", "No se puede obtener el estado de la caja!" );
         });
     };
 
@@ -253,7 +253,7 @@ class MovimientosCaja {
                         window.location.href = 'Dashboard.html';
                     })
                     .fail(function (e) {
-                        movimientosCaja.errorAbrirCaja("Usuario no valido", "Solo un administrador puede abrir caja!" );
+                        movimientosCaja.errorAbrirCaja("Usuario no valido", "Solo un administrador puede cerrar caja!" );
                     });
                 }
                 
