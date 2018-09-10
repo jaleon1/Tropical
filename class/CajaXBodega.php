@@ -158,8 +158,8 @@ class CajaXBodega{
             $data = DATA::Ejecutar($sql,$param, false);
             if($data){
                 // Inicia sesión de API.
-                //$cliente= new ClienteFE();
-                //$cliente->ReadProfile();
+                $cliente= new ClienteFE();
+                $cliente->ReadProfile();
                 //
                 return "aperturaCreada";
             }
