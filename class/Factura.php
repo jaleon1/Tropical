@@ -21,6 +21,11 @@ if(isset($_POST["action"])){
         
     require_once("OrdenXFactura.php");
     require_once("ProductoXFactura.php");
+    // Inicia sesión de API.
+    if(!isset($_SESSION['API'])){
+        $cliente= new ClienteFE();
+        $cliente->ReadProfile();
+    }
     // Instance
     $factura= new Factura();
     switch($opt){
@@ -42,8 +47,7 @@ if(isset($_POST["action"])){
         case "LoadPreciosTamanos":
             echo json_encode($factura->LoadPreciosTamanos());
             break; 
-    }
-    
+    }    
 }
 
 class Factura{
