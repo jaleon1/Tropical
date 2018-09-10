@@ -1,4 +1,5 @@
 <?php
+define('APIURL', 'localhost/api.php');
 if(isset($_POST["action"])){
     $opt= $_POST["action"];
     unset($_POST['action']);
@@ -452,7 +453,7 @@ class ClienteFE{
             {
                 //guarda api_base.users
                 //$url= 'http://104.131.5.198/api.php';
-                $url= 'localhost/api.php';
+                $url= APIURL;
                 $ch = curl_init();
                 $post = [
                     'w' => 'users',
@@ -538,8 +539,7 @@ class ClienteFE{
     public function APILogin(){
         try{
             error_log("API LOGIN ... ");
-            //$url= 'http://104.131.5.198/api.php';
-            $url= 'localhost/api.php';
+            $url= APIURL;
             $ch = curl_init();
             $post = [
                 'w' => 'users',
@@ -597,7 +597,7 @@ class ClienteFE{
                 throw new Exception('Error al guardar el certificado. El certificado no existe' , 002256);
             } 
             //$url= 'http://104.131.5.198/api.php';
-            $url= 'localhost/api.php';  
+            $url= APIURL; 
             $ch = curl_init();
             $post = [
                 'w' => 'fileUploader',

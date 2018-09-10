@@ -1,6 +1,6 @@
 <?php
 include_once('historico.php');
-
+define('APIURL', 'localhost:8080/api.php');
 define('ERROR_USERS_NO_VALID', '-500');
 define('ERROR_TOKEN_NO_VALID', '-501');
 define('ERROR_CLAVE_NO_VALID', '-502');
@@ -269,7 +269,7 @@ class FacturaElectronica{
 
     public static function APIGetToken(){
         try{
-            $url= 'http://localhost/api.php';  
+            $url= APIURL;  
             $ch = curl_init();
             $post = [
                 'w' => 'token',
@@ -325,7 +325,7 @@ class FacturaElectronica{
 
     public static function APICrearClave(){
         try{
-            $url= 'http://localhost/api.php';  
+            $url= APIURL;  
             $ch = curl_init();
             $post = [
                 'w' => 'clave',
@@ -384,7 +384,7 @@ class FacturaElectronica{
     
     public static function APICrearXML(){
         try{
-            $url= 'http://localhost/api.php';  
+            $url= APIURL;  
             $ch = curl_init();
             // detalle de la factura
             $detalles=[];
@@ -507,7 +507,7 @@ class FacturaElectronica{
 
     public static function APICifrarXml(){
         try{
-            $url= 'http://localhost/api.php';  
+            $url= APIURL;  
             $ch = curl_init();
             $post = [
                 'w' => 'signXML',
@@ -561,7 +561,7 @@ class FacturaElectronica{
     public static function APIEnviar(){
         try{
             self::APIGetToken();
-            $url= 'http://localhost/api.php';  
+            $url= APIURL;  
             $ch = curl_init();
             $post = [
                 'w' => 'send',
