@@ -157,10 +157,6 @@ class CajaXBodega{
                             ':idusuarioCajero'=>$_SESSION["userSession"]->id, ':montoApertura'=>$this->montoApertura);
             $data = DATA::Ejecutar($sql,$param, false);
             if($data){
-                // Inicia sesión de API.
-                $cliente= new ClienteFE();
-                $cliente->ReadProfile();
-                //
                 return "aperturaCreada";
             }
             else return false;
@@ -271,8 +267,11 @@ class CajaXBodega{
 
     function ValidarEstado(){
         try{
+            // Inicia sesión de API.
+            $cliente= new ClienteFE();
+            $cliente->ReadProfile();
+            //
             $this->idusuarioCajero="1ed3a48c-3e44-11e8-9ddb-54ee75873a60";
-
             $sql = "SELECT ca.id, ca.idUsuarioSupervisor, ca.idusuarioCajero, ca.estado, bo.nombre
             FROM cajasXBodega ca
             INNER JOIN bodega bo on ca.idBodega = bo.id 
