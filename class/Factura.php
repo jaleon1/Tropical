@@ -25,7 +25,16 @@ if(isset($_POST["action"])){
     // Inicia sesión de API.
     if(!isset($_SESSION['API'])){
         $cliente= new ClienteFE();
-        $cliente->ReadProfile();
+        if($cliente->Check())
+            $cliente->ReadProfile();
+        else {
+            // retorna warning de facturacion sin contribuyente.
+            echo json_encode(array(
+                'code' => 000 ,
+                'msg' => 'NOCONTRIB')
+            );
+            exit;
+        }
     }
     // Instance
     $factura= new Factura();

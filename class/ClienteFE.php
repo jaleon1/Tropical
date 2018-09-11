@@ -372,7 +372,7 @@ class ClienteFE{
                 idBarrio, otrasSenas, numTelefono, correoElectronico, username, password, pinp12, downloadCode
                 FROM clienteFE  
                 where idBodega=:idBodega';
-            $param= array(':idBodega'=>$this->idBodega);
+            $param= array(':idBodega'=>$_SESSION['userSession']->idBodega);
             $data= DATA::Ejecutar($sql,$param);
             if($data){
                 $this->id= $data[0]['id'];
@@ -418,6 +418,24 @@ class ClienteFE{
                 'code' => $e->getCode() ,
                 'msg' => 'Error al cargar el producto'))
             );
+        }
+    }
+
+    function Check(){
+        try {
+            $sql='SELECT id
+                FROM clienteFE  
+                where idBodega=:idBodega';
+            $param= array(':idBodega'=>$_SESSION['userSession']->idBodega);
+            $data= DATA::Ejecutar($sql,$param);
+            if($data){
+                return true;
+            }
+            return false;
+        }     
+        catch(Exception $e) {
+            error_log("error: ". $e->getMessage());
+            return false;
         }
     }
 

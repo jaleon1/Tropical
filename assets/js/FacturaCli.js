@@ -173,7 +173,19 @@ function LoadPreciosTamanos() {
         }
     })
         .done(function (e) {
-            setPrecios(e);
+            var data = JSON.parse(e);
+            if(data.msg=="NOCONTRIB"){
+                swal({
+                    type: 'warning',
+                    title: 'Información de Contribuyente...',
+                    text: 'No es posible facturar sin un contribuyente asignado a la Agencia', 
+                    footer: '<a href="clienteFE.html">Agregar Contribuyente</a>',
+                  })
+                //
+                //location.href='Dashboard.html';
+            }                
+            else
+                setPrecios(e);
         })
         .fail(function (e) {
             showError(e);
