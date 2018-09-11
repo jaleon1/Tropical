@@ -28,20 +28,20 @@ class FacturaElectronica{
             if(!isset($_SESSION['API']))
                 throw new Exception('Error al leer informacion del contribuyente. '. $error_msg , ERROR_USERS_NO_VALID);            
             self::$fechaEmision= date_create(self::$transaccion->fechaEmision);
-            self::getApiUrl();
-            self::APICrearClave();
-            self::APICrearXML();
-            self::APICifrarXml();
-            self::APIEnviar();
-            self::APIConsultaComprobante();
-        } 
+            if(self::getApiUrl()){
+                if(self::APICrearClave()){
+                    if(self::APICrearXML()){
+                        if(self::APICifrarXml()){
+                            if(self::APIEnviar()){
+                                self::APIConsultaComprobante();
+                            }
+                        }
+                    }
+                }
+            }
+        }
         catch(Exception $e) {
             error_log("****** Error (".$e->getCode()."): ". $e->getMessage());
-            // header('HTTP/1.0 400 Bad error');
-            // die(json_encode(array(
-            //     'code' => $e->getCode() ,
-            //     'msg' => $e->getMessage()))
-            // );
         }
     }
 
@@ -50,8 +50,11 @@ class FacturaElectronica{
         if (file_exists('../../../ini/config.ini')) {
             $set = parse_ini_file('../../../ini/config.ini',true); 
             self::$apiUrl= $set[Globals::app]['apiurl'];
+            return true;
         }         
-        else throw new Exception('Acceso denegado al Archivo de configuración.',-1);
+        else {
+            throw new Exception('Acceso denegado al Archivo de configuración.',-1);            
+        }
     }
 
     private static function getIdentificacionCod($id){
@@ -324,6 +327,7 @@ class FacturaElectronica{
         catch(Exception $e) {
             error_log("****** Error (".$e->getCode()."): ". $e->getMessage());
             historico::create(self::$transaccion->id, 1, 'ERROR_TOKEN_NO_VALID: '. $e->getMessage());
+            return false;
             // header('HTTP/1.0 400 Bad error');
             // die(json_encode(array(
             //     'code' => $e->getCode() ,
@@ -382,6 +386,7 @@ class FacturaElectronica{
         catch(Exception $e) {
             error_log("****** Error (".$e->getCode()."): ". $e->getMessage());
             historico::create(self::$transaccion->id, 1, 'ERROR_CLAVE_NO_VALID: '.$e->getMessage());
+            return false;
             // header('HTTP/1.0 400 Bad error');
             // die(json_encode(array(
             //     'code' => $e->getCode() ,
@@ -504,6 +509,7 @@ class FacturaElectronica{
         catch(Exception $e) {
             error_log("****** Error (".$e->getCode()."): ". $e->getMessage());
             historico::create(self::$transaccion->id, 1, 'ERROR_XML_NO_VALID: '. $e->getMessage());
+            return false;
             // header('HTTP/1.0 400 Bad error');
             // die(json_encode(array(
             //     'code' => $e->getCode() ,
@@ -556,6 +562,7 @@ class FacturaElectronica{
         catch(Exception $e) {
             error_log("****** Error (".$e->getCode()."): ". $e->getMessage());
             historico::create(self::$transaccion->id, 1, 'ERROR_CIFRAR_NO_VALID:'. $e->getMessage());
+            return false;
             // header('HTTP/1.0 400 Bad error');
             // die(json_encode(array(
             //     'code' => $e->getCode() ,
@@ -640,6 +647,7 @@ class FacturaElectronica{
         catch(Exception $e) {
             error_log("****** Error (".$e->getCode()."): ". $e->getMessage());
             historico::create(self::$transaccion->id, 1, 'ERROR_ENVIO_NO_VALID: '. $e->getMessage());
+            return false;
             // header('HTTP/1.0 400 Bad error');
             // die(json_encode(array(
             //     'code' => $e->getCode() ,
@@ -713,6 +721,7 @@ class FacturaElectronica{
         } 
         catch(Exception $e) {
             error_log("****** Error (".$e->getCode()."): ". $e->getMessage());
+            return false;
             // header('HTTP/1.0 400 Bad error');
             // die(json_encode(array(
             //     'code' => $e->getCode() ,

@@ -327,7 +327,10 @@ class Factura{
                     OrdenXFactura::$id=$this->id;
                     OrdenXFactura::Create($this->detalleOrden);                    
                     $this->ReadbyID();
-                    FacturaElectronica::Iniciar($this);
+                    try {
+                        FacturaElectronica::Iniciar($this);
+                    }
+                    catch(Exception $e){}
                     return $this;
                 }
                 else throw new Exception('Error al guardar los productos.', 03);
