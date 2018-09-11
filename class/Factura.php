@@ -138,7 +138,7 @@ class Factura{
                     $item->cantidad= $itemDetalle['cantidad'] ?? 1;
                     $item->precioUnitario= $itemDetalle['precioUnitario'];
                     $item->codigoImpuesto= $itemDetalle['codigoImpuesto'] ?? 1; // impuesto ventas
-                    $item->tarifaImpuesto= $itemDetalle['tarifaImpuesto'] ?? '13.0';
+                    $item->tarifaImpuesto= $itemDetalle['tarifaImpuesto'] ?? '11.7';
                     $item->montoImpuesto= $itemDetalle['montoImpuesto']   ?? $item->precioUnitario * ($item->tarifaImpuesto/100);
                     // en tropical se define el precio unitario incluyendo el impuesto, se debe recalcular.
                     $item->precioUnitario= $item->precioUnitario - $item->montoImpuesto;
