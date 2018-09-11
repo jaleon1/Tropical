@@ -1,6 +1,5 @@
 <?php
 require_once("Conexion.php");
-require_once("productosXBodega.php");
 //
 if (!isset($_SESSION))
     session_start();
@@ -169,6 +168,7 @@ class Bodega{
             $data = DATA::Ejecutar($sql,$param, false);
             if($data)
             {
+                require_once("ProductosXBodega.php");
                 $pb = new ProductosXBodega();
                 $pb->idBodega= $this->id;
                 $pb->create();
