@@ -23,18 +23,16 @@ if(isset($_POST["action"])){
     require_once("OrdenXFactura.php");
     require_once("ProductoXFactura.php");
     // Inicia sesión de API.
-    if(!isset($_SESSION['API'])){
-        $cliente= new ClienteFE();
-        if($cliente->Check())
-            $cliente->ReadProfile();
-        else {
-            // retorna warning de facturacion sin contribuyente.
-            echo json_encode(array(
-                'code' => 000 ,
-                'msg' => 'NOCONTRIB')
-            );
-            exit;
-        }
+    $cliente= new ClienteFE();
+    if($cliente->Check())
+        $cliente->ReadProfile();
+    else {
+        // retorna warning de facturacion sin contribuyente.
+        echo json_encode(array(
+            'code' => 000 ,
+            'msg' => 'NOCONTRIB')
+        );
+        exit;
     }
     // Instance
     $factura= new Factura();
