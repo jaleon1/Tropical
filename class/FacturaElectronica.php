@@ -1,6 +1,5 @@
 <?php
 include_once('historico.php');
-define('APIURL', 'localhost:8080/api.php');
 define('ERROR_USERS_NO_VALID', '-500');
 define('ERROR_TOKEN_NO_VALID', '-501');
 define('ERROR_CLAVE_NO_VALID', '-502');
@@ -22,12 +21,14 @@ define('ERROR_ESTADO_COMPROBANTE_NO_VALID', '-516');
 class FacturaElectronica{
     static $transaccion;
     static $fechaEmision;
+    static $apiUrl;
     public static function iniciar($t){
         try{
             self::$transaccion= $t;
             if(!isset($_SESSION['API']))
                 throw new Exception('Error al leer informacion del contribuyente. '. $error_msg , ERROR_USERS_NO_VALID);            
             self::$fechaEmision= date_create(self::$transaccion->fechaEmision);
+            self::getApiUrl();
             self::APICrearClave();
             self::APICrearXML();
             self::APICifrarXml();
@@ -42,6 +43,15 @@ class FacturaElectronica{
             //     'msg' => $e->getMessage()))
             // );
         }
+    }
+
+    private static function getApiUrl(){
+        require_once('Globals.php');
+        if (file_exists('../../../ini/config.ini')) {
+            $set = parse_ini_file('../../../ini/config.ini',true); 
+            self::$apiUrl= $set[Globals::app]['apiurl'];
+        }         
+        else throw new Exception('Acceso denegado al Archivo de configuración.',-1);
     }
 
     private static function getIdentificacionCod($id){
@@ -269,7 +279,6 @@ class FacturaElectronica{
 
     public static function APIGetToken(){
         try{
-            $url= APIURL;  
             $ch = curl_init();
             $post = [
                 'w' => 'token',
@@ -280,7 +289,7 @@ class FacturaElectronica{
                 'password'=>  $_SESSION['API']->password
             ];
             curl_setopt_array($ch, array(
-                CURLOPT_URL => $url,
+                CURLOPT_URL => self::$apiUrl,
                 CURLOPT_RETURNTRANSFER => true,   
                 CURLOPT_VERBOSE => true,                      
                 CURLOPT_MAXREDIRS => 10,
@@ -325,7 +334,6 @@ class FacturaElectronica{
 
     public static function APICrearClave(){
         try{
-            $url= APIURL;  
             $ch = curl_init();
             $post = [
                 'w' => 'clave',
@@ -341,7 +349,7 @@ class FacturaElectronica{
                 'sucursal'=> self::$transaccion->local
             ];
             curl_setopt_array($ch, array(
-                CURLOPT_URL => $url,
+                CURLOPT_URL => self::$apiUrl,
                 CURLOPT_RETURNTRANSFER => true,   
                 CURLOPT_VERBOSE => true,                      
                 CURLOPT_MAXREDIRS => 10,
@@ -384,7 +392,6 @@ class FacturaElectronica{
     
     public static function APICrearXML(){
         try{
-            $url= APIURL;  
             $ch = curl_init();
             // detalle de la factura
             $detalles=[];
@@ -429,7 +436,7 @@ class FacturaElectronica{
                 // 'emisor_cod_pais_fax'=> '506',
                 // 'emisor_fax'=> '00000000',
                 'emisor_email'=> $_SESSION['API']->correoElectronico,
-                /** Receptor **/  // deben ser los datos reales del receptor o un receptor genérico.
+                /** Receptor **/  // deben ser los datos reales del receptor o un receptor generico.
                 'receptor_nombre'=> $_SESSION['API']->nombre,
                 'receptor_tipo_identif'=> self::getIdentificacionCod($_SESSION['API']->idTipoIdentificacion),
                 'receptor_num_identif'=> $_SESSION['API']->identificacion,
@@ -464,7 +471,7 @@ class FacturaElectronica{
                 'detalles'=>  json_encode($detalles, JSON_FORCE_OBJECT)
             ];
             curl_setopt_array($ch, array(
-                CURLOPT_URL => $url,
+                CURLOPT_URL => self::$apiUrl,
                 CURLOPT_RETURNTRANSFER => true,   
                 CURLOPT_VERBOSE => true,                      
                 CURLOPT_MAXREDIRS => 10,
@@ -507,7 +514,6 @@ class FacturaElectronica{
 
     public static function APICifrarXml(){
         try{
-            $url= APIURL;  
             $ch = curl_init();
             $post = [
                 'w' => 'signXML',
@@ -518,7 +524,7 @@ class FacturaElectronica{
                 'tipodoc'=> self::$transaccion->tipoDocumento
             ];
             curl_setopt_array($ch, array(
-                CURLOPT_URL => $url,
+                CURLOPT_URL => self::$apiUrl,
                 CURLOPT_RETURNTRANSFER => true,   
                 CURLOPT_VERBOSE => true,                      
                 CURLOPT_MAXREDIRS => 10,
@@ -561,7 +567,6 @@ class FacturaElectronica{
     public static function APIEnviar(){
         try{
             self::APIGetToken();
-            $url= APIURL;  
             $ch = curl_init();
             $post = [
                 'w' => 'send',
@@ -577,7 +582,7 @@ class FacturaElectronica{
                 'client_id'=> 'api-stag' // api-prod
             ];
             curl_setopt_array($ch, array(
-                CURLOPT_URL => $url,
+                CURLOPT_URL => self::$apiUrl,
                 CURLOPT_RETURNTRANSFER => true,   
                 CURLOPT_VERBOSE => true,                      
                 CURLOPT_MAXREDIRS => 10,
@@ -628,7 +633,7 @@ class FacturaElectronica{
                 Factura::updateEstado(self::$transaccion->id, 2);
             }
             //
-            error_log(" Resp Envío: ". $server_output);
+            error_log(" Resp Envio: ". $server_output);
             curl_close($ch);
             return true;
         } 
@@ -645,8 +650,6 @@ class FacturaElectronica{
 
     public static function APIConsultaComprobante(){
         try{
-            //$url= 'http://104.131.5.198/api.php';
-            $url= 'localhost/api.php';
             $ch = curl_init();
             $post = [
                 'w' => 'consultar',
@@ -656,7 +659,7 @@ class FacturaElectronica{
                 'client_id'=> 'api-stag' // api-prod
             ];  
             curl_setopt_array($ch, array(
-                CURLOPT_URL => $url,
+                CURLOPT_URL => self::$apiUrl,
                 CURLOPT_RETURNTRANSFER => true,   
                 CURLOPT_VERBOSE => true,      
                 CURLOPT_RETURNTRANSFER => true,
@@ -705,7 +708,7 @@ class FacturaElectronica{
                 Factura::updateEstado(self::$transaccion->id, 4);
                 error_log("Errores: ". $errores);
             }            
-            error_log("Estado de la transacción(".self::$transaccion->id."): ". self::$transaccion->estado);
+            error_log("Estado de la transaccion(".self::$transaccion->id."): ". self::$transaccion->estado);
             curl_close($ch);
         } 
         catch(Exception $e) {

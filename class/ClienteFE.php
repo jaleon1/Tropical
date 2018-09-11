@@ -1,5 +1,4 @@
 <?php
-define('APIURL', 'localhost/api.php');
 if(isset($_POST["action"])){
     $opt= $_POST["action"];
     unset($_POST['action']);
@@ -209,6 +208,7 @@ class ClienteFE{
     public $estadoCertificado= 1;
     public $sessionKey;
     public $downloadCode; // codigo de descarga del certificado para cifrar xml.
+    public $apiUrl;
     //
     public $ubicacion= [];
 
@@ -452,8 +452,7 @@ class ClienteFE{
             if($data)
             {
                 //guarda api_base.users
-                //$url= 'http://104.131.5.198/api.php';
-                $url= APIURL;
+                $this->getApiUrl();
                 $ch = curl_init();
                 $post = [
                     'w' => 'users',
@@ -466,7 +465,7 @@ class ClienteFE{
                     'pwd'   => $this->password
                 ];  
                 curl_setopt_array($ch, array(
-                    CURLOPT_URL => $url,
+                    CURLOPT_URL => $this->apiUrl,
                     CURLOPT_RETURNTRANSFER => true,   
                     CURLOPT_VERBOSE => true,      
                     CURLOPT_MAXREDIRS => 10,
@@ -536,10 +535,20 @@ class ClienteFE{
         }
     }
 
+    private function getApiUrl(){
+        require_once('Globals.php');
+        if (file_exists('../../../ini/config.ini')) {
+            $set = parse_ini_file('../../../ini/config.ini',true); 
+            $this->apiUrl = $set[Globals::app]['apiurl'];
+        }         
+        else throw new Exception('Acceso denegado al Archivo de configuración.',-1);
+    }
+
     public function APILogin(){
         try{
-            error_log("API LOGIN ... ");
-            $url= APIURL;
+            error_log("... API LOGIN ... ");
+            //
+            $this->getApiUrl();
             $ch = curl_init();
             $post = [
                 'w' => 'users',
@@ -548,7 +557,7 @@ class ClienteFE{
                 'pwd'   => $this->password
             ];  
             curl_setopt_array($ch, array(
-                CURLOPT_URL => $url,
+                CURLOPT_URL => $this->apiUrl,
                 CURLOPT_RETURNTRANSFER => true,   
                 CURLOPT_VERBOSE => true,      
                 CURLOPT_RETURNTRANSFER => true,
@@ -595,9 +604,8 @@ class ClienteFE{
             error_log(" subiendo certificado API CRL: ". $this->certificado);
             if (!file_exists($this->certificado)){
                 throw new Exception('Error al guardar el certificado. El certificado no existe' , 002256);
-            } 
-            //$url= 'http://104.131.5.198/api.php';
-            $url= APIURL; 
+            }
+            $this->getApiUrl();
             $ch = curl_init();
             $post = [
                 'w' => 'fileUploader',
@@ -607,7 +615,7 @@ class ClienteFE{
                 'iam'=>$_SESSION['API']->correoElectronico
             ];
             curl_setopt_array($ch, array(
-                CURLOPT_URL => $url,
+                CURLOPT_URL => $this->apiUrl,
                 CURLOPT_RETURNTRANSFER => true,   
                 CURLOPT_VERBOSE => true,                      
                 CURLOPT_MAXREDIRS => 10,
