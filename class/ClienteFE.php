@@ -220,11 +220,11 @@ class ClienteFE{
         if(isset($_POST["idBodega"]))
             $this->idBodega= $obj["idBodega"];
         else $this->idBodega= $_SESSION['userSession']->idBodega;
-        if(isset($_POST["obj"])){
+        if(isset($_POST["objC"])){
             $obj= json_decode($_POST["obj"],true);
             require_once("UUID.php");
             $this->id= $obj["id"] ?? UUID::v4();         
-            $this->codigoSeguridad= $obj["codigoSeguridad"];            
+            $this->codigoSeguridad= $obj["codigoSeguridad"];
             $this->nombre= $obj["nombre"] ?? '';   
             $this->idCodigoPais= $obj["idCodigoPais"] ?? null;                  
             $this->idTipoIdentificacion= $obj["idTipoIdentificacion"] ?? null;
