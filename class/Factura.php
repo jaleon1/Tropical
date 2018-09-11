@@ -15,6 +15,7 @@ if(isset($_POST["action"])){
     require_once("Usuario.php");
     require_once("ClienteFE.php");
     require_once("FacturaElectronica.php");
+    require_once("encdes.php");
     // Session
     if (!isset($_SESSION))
         session_start();
