@@ -104,6 +104,11 @@ class Distribucion {
     };
 
     ticketPrint(e){
+        if (bodega.tipo == "Interna") 
+            localStorage.setItem("lsTipoBodega","interna");    
+        else
+            localStorage.setItem("lsTipoBodega","externa");    
+        
         var data = JSON.parse(e);
         localStorage.setItem("lsOrden",data.orden);
         localStorage.setItem("lsBodega",$("#nombre").val());
@@ -115,7 +120,7 @@ class Distribucion {
         localStorage.setItem("lsPorcentajeIva",$("#iv_val").text());
         localStorage.setItem("lsListaProducto",JSON.stringify(data.lista));
         localStorage.setItem("lsUsuarioDistribucion",$("#call_username").text());
-        //location.href ="/Tropical/TicketDistribucion.html";
+        // location.href ="/Tropical/TicketDistribucion.html";
         location.href ="/TicketDistribucion.html";
     }
 
