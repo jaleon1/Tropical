@@ -377,15 +377,25 @@ class Distribucion {
             var tableRow = $("#tDistribucion tbody tr td").filter(function() {
                 return $(this).text() == producto.id;
              }).length;
-            if (tableRow==0)
-                distr.AgregaProducto();
-            else
+            if (producto.saldoCantidad<=0) {
                 swal({
-                type: 'warning',
-                title: 'El producto '+ producto.codigo +' ya está en la lista.',
-                showConfirmButton: false,
-                timer: 3000
-            });    
+                    type: 'warning',
+                    title: 'Determinación de Producto',
+                    text: 'El producto No tiene Saldo.',
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+            }else{
+                if (tableRow==0)
+                    distr.AgregaProducto();
+                else
+                    swal({
+                    type: 'warning',
+                    title: 'El producto '+ producto.codigo +' ya está en la lista.',
+                    showConfirmButton: false,
+                    timer: 3000
+                }); 
+            }    
         }
         else{
             swal({
@@ -406,6 +416,16 @@ class Distribucion {
         //
         $('td:eq(4) input', rowNode).attr({id: ("cantidad"+producto.id), value: (producto.cantidad || 1)}).change(function(){
              distr.CalcImporte($(this).parents('tr').find('td:eq(0)').html());
+             if(producto.saldoCantidad<$(this).val()){
+                swal({
+                    type: 'warning',
+                    title: 'Saldo Insuficiente',
+                    text: 'El producto contiene unicamente '+ producto.saldoCantidad +' unidades',
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+                $(this).val(producto.saldoCantidad);
+             }
         }); 
         // Precio Venta
         // $('td:eq(4) input.valor', rowNode).attr({id: ("precioventa_v"+producto.codigo), style: "display:none", value: producto.precioVenta });

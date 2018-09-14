@@ -310,7 +310,7 @@ class Producto{
 
     function ReadByCode(){
         try{     
-            $sql="SELECT id, nombre, codigo, descripcion, saldoCosto, costoPromedio, precioVenta, esVenta
+            $sql="SELECT id, nombre, codigo, descripcion, saldoCosto, costoPromedio, precioVenta, esVenta, saldoCantidad
                 FROM producto 
                 WHERE codigo= :codigo";
             $param= array(':codigo'=>$this->codigo);
