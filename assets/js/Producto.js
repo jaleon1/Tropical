@@ -290,7 +290,20 @@ class Producto {
         }
     };
 
-    setTableInventarioProducto(){
+    setTableInventarioProducto(){        
+        jQuery.extend( jQuery.fn.dataTableExt.oSort, {
+            "formatted-num-pre": function ( a ) {
+                a = (a === "-" || a === "") ? 0 : a.replace( /[^\d\-\.]/g, "" );
+                return parseFloat( a );
+            }, 
+            "formatted-num-asc": function ( a, b ) {
+                return a - b;
+            },
+            "formatted-num-desc": function ( a, b ) {
+                return b - a;
+            }
+        } );
+        
         this.tablaproducto = $('#dsProducto').DataTable( {
             responsive: true,
             destroy: true,
@@ -341,6 +354,7 @@ class Producto {
                     title:"Saldo Costo",
                     data:"saldoCosto",
                     width:"auto",
+                    type: 'formatted-num',
                     mRender: function ( e ) {
                         return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                     }
@@ -349,6 +363,7 @@ class Producto {
                     title:"Costo Promedio",
                     data:"costoPromedio",
                     width:"auto",
+                    type: 'formatted-num',
                     mRender: function ( e ) {
                         return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                     }},
@@ -356,6 +371,7 @@ class Producto {
                     title:"Precio Venta",
                     data:"precioVenta",
                     width:"auto",
+                    type: 'formatted-num',
                     mRender: function ( e ) {
                         return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                     }},
