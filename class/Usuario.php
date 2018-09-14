@@ -480,7 +480,7 @@ class Usuario{
         $cliente->idBodega= $_SESSION['userSession']->idBodega;
         $cliente->ReadProfile();
         // login.
-        $cliente->APILogin();
+        //$cliente->APILogin();
     }
 
 }

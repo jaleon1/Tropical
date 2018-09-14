@@ -342,7 +342,7 @@ class Producto {
                     data:"saldoCosto",
                     width:"auto",
                     mRender: function ( e ) {
-                        return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+                        return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                     }
                     },
                 {
@@ -350,14 +350,14 @@ class Producto {
                     data:"costoPromedio",
                     width:"auto",
                     mRender: function ( e ) {
-                        return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+                        return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                     }},
                 {
                     title:"Precio Venta",
                     data:"precioVenta",
                     width:"auto",
                     mRender: function ( e ) {
-                        return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+                        return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                     }},
                 {
                     title:"Tipo",
