@@ -474,13 +474,6 @@ class Usuario{
     function setBodega(){
         $_SESSION["userSession"]->idBodega= $_POST['idBodega'];
         $_SESSION["userSession"]->bodega= $_POST['nombre'];
-        // Login API.
-        $cliente= new ClienteFE();
-        // lee el perfil del contribuyente
-        $cliente->idBodega= $_SESSION['userSession']->idBodega;
-        $cliente->ReadProfile();
-        // login.
-        //$cliente->APILogin();
     }
 
 }

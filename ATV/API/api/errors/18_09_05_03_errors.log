@@ -1,0 +1,359 @@
+[d] 18-09-05 03:09:45 @ Booting up V:0.1
+[d] 18-09-05 03:09:48 @ Loading all core modules
+[d] 18-09-05 03:09:48 @ Loading module: >>(cala)<<
+[d] 18-09-05 03:09:48 @ Loading in path: ../api/modules/cala/module.php
+[d] 18-09-05 03:09:48 @ Including file: ../api/modules/cala/module.php
+[d] 18-09-05 03:09:48 @ Module was booted too
+[i] 18-09-05 03:09:48 @ Cala was booted...
+[d] 18-09-05 03:09:48 @ Loading module: >>(db)<<
+[d] 18-09-05 03:09:48 @ Loading in path: ../api/modules/db/module.php
+[d] 18-09-05 03:09:48 @ Including file: ../api/modules/db/module.php
+[d] 18-09-05 03:09:48 @ Module was booted too
+[d] 18-09-05 03:09:49 @ Connected to Db
+[d] 18-09-05 03:09:49 @ Loading module: >>(users)<<
+[d] 18-09-05 03:09:49 @ Loading in path: ../api/modules/users/module.php
+[d] 18-09-05 03:09:49 @ Including file: ../api/modules/users/module.php
+[d] 18-09-05 03:09:49 @ Module was booted too
+[d] 18-09-05 03:09:49 @ Loading user
+[d] 18-09-05 03:09:49 @ SELECT *
+    FROM users
+     WHERE userName = '' AND `status` > 0 
+[d] 18-09-05 03:09:49 @ Unable to locate user
+[d] 18-09-05 03:09:49 @ Loading module: >>(crypto)<<
+[d] 18-09-05 03:09:49 @ Loading in path: ../api/modules/crypto/module.php
+[d] 18-09-05 03:09:49 @ Including file: ../api/modules/crypto/module.php
+[d] 18-09-05 03:09:49 @ Module was booted too
+[d] 18-09-05 03:09:16 @ Loading in path: ../api/modules/users/module.php
+[d] 18-09-05 03:09:16 @ Including file: ../api/modules/users/module.php
+[d] 18-09-05 03:09:16 @ Module was booted too
+[d] 18-09-05 03:09:16 @ Loading user
+[d] 18-09-05 03:09:16 @ SELECT *
+    FROM users
+     WHERE userName = '' AND `status` > 0 
+[d] 18-09-05 03:09:16 @ Unable to locate user
+[d] 18-09-05 03:09:28 @ Function found
+[d] 18-09-05 03:09:50 @ Looking for path: users_register
+[d] 18-09-05 03:09:52 @ Found path: users_register
+[d] 18-09-05 03:09:56 @ Missing param: email
+[d] 18-09-05 03:09:56 @ Finished! Memory used: Mb0.687864<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+[d] 18-09-05 03:09:13 @ Booting up V:0.1
+[d] 18-09-05 03:09:13 @ Loading all core modules
+[d] 18-09-05 03:09:13 @ Loading module: >>(cala)<<
+[d] 18-09-05 03:09:13 @ Loading in path: ../api/modules/cala/module.php
+[d] 18-09-05 03:09:13 @ Including file: ../api/modules/cala/module.php
+[d] 18-09-05 03:09:13 @ Module was booted too
+[i] 18-09-05 03:09:13 @ Cala was booted...
+[d] 18-09-05 03:09:13 @ Loading module: >>(db)<<
+[d] 18-09-05 03:09:13 @ Loading in path: ../api/modules/db/module.php
+[d] 18-09-05 03:09:13 @ Including file: ../api/modules/db/module.php
+[d] 18-09-05 03:09:13 @ Module was booted too
+[d] 18-09-05 03:09:13 @ Connected to Db
+[d] 18-09-05 03:09:13 @ Loading module: >>(users)<<
+[d] 18-09-05 03:09:13 @ Loading in path: ../api/modules/users/module.php
+[d] 18-09-05 03:09:13 @ Including file: ../api/modules/users/module.php
+[d] 18-09-05 03:09:13 @ Module was booted too
+[d] 18-09-05 03:09:13 @ Loading user
+[d] 18-09-05 03:09:13 @ SELECT *
+    FROM users
+     WHERE userName = '' AND `status` > 0 
+[d] 18-09-05 03:09:13 @ Unable to locate user
+[d] 18-09-05 03:09:13 @ Loading module: >>(crypto)<<
+[d] 18-09-05 03:09:13 @ Loading in path: ../api/modules/crypto/module.php
+[d] 18-09-05 03:09:13 @ Including file: ../api/modules/crypto/module.php
+[d] 18-09-05 03:09:13 @ Module was booted too
+[d] 18-09-05 03:09:13 @ Loading in path: ../api/modules/users/module.php
+[d] 18-09-05 03:09:13 @ Including file: ../api/modules/users/module.php
+[d] 18-09-05 03:09:13 @ Module was booted too
+[d] 18-09-05 03:09:13 @ Loading user
+[d] 18-09-05 03:09:13 @ SELECT *
+    FROM users
+     WHERE userName = '' AND `status` > 0 
+[d] 18-09-05 03:09:13 @ Unable to locate user
+[d] 18-09-05 03:09:13 @ Function found
+[d] 18-09-05 03:09:23 @ Looking for path: users_register
+[d] 18-09-05 03:09:23 @ Found path: users_register
+[d] 18-09-05 03:09:36 @ Missing param: email
+[d] 18-09-05 03:09:41 @ Finished! Memory used: Mb0.687864<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+[d] 18-09-05 03:09:13 @ Booting up V:0.1
+[d] 18-09-05 03:09:13 @ Loading all core modules
+[d] 18-09-05 03:09:13 @ Loading module: >>(cala)<<
+[d] 18-09-05 03:09:13 @ Loading in path: ../api/modules/cala/module.php
+[d] 18-09-05 03:09:13 @ Including file: ../api/modules/cala/module.php
+[d] 18-09-05 03:09:13 @ Module was booted too
+[i] 18-09-05 03:09:13 @ Cala was booted...
+[d] 18-09-05 03:09:13 @ Loading module: >>(db)<<
+[d] 18-09-05 03:09:13 @ Loading in path: ../api/modules/db/module.php
+[d] 18-09-05 03:09:13 @ Including file: ../api/modules/db/module.php
+[d] 18-09-05 03:09:13 @ Module was booted too
+[d] 18-09-05 03:09:14 @ Connected to Db
+[d] 18-09-05 03:09:14 @ Loading module: >>(users)<<
+[d] 18-09-05 03:09:14 @ Loading in path: ../api/modules/users/module.php
+[d] 18-09-05 03:09:14 @ Including file: ../api/modules/users/module.php
+[d] 18-09-05 03:09:14 @ Module was booted too
+[d] 18-09-05 03:09:14 @ Loading user
+[d] 18-09-05 03:09:14 @ SELECT *
+    FROM users
+     WHERE userName = '' AND `status` > 0 
+[d] 18-09-05 03:09:14 @ Unable to locate user
+[d] 18-09-05 03:09:14 @ Loading module: >>(crypto)<<
+[d] 18-09-05 03:09:14 @ Loading in path: ../api/modules/crypto/module.php
+[d] 18-09-05 03:09:14 @ Including file: ../api/modules/crypto/module.php
+[d] 18-09-05 03:09:14 @ Module was booted too
+[d] 18-09-05 03:09:14 @ Loading in path: ../api/modules/users/module.php
+[d] 18-09-05 03:09:14 @ Including file: ../api/modules/users/module.php
+[d] 18-09-05 03:09:14 @ Module was booted too
+[d] 18-09-05 03:09:14 @ Loading user
+[d] 18-09-05 03:09:14 @ SELECT *
+    FROM users
+     WHERE userName = '' AND `status` > 0 
+[d] 18-09-05 03:09:14 @ Unable to locate user
+[d] 18-09-05 03:09:14 @ Function found
+[d] 18-09-05 03:09:16 @ Looking for path: users_register
+[d] 18-09-05 03:09:16 @ Found path: users_register
+[d] 18-09-05 03:09:34 @ Missing param: email
+[d] 18-09-05 03:09:47 @ Finished! Memory used: Mb0.687864<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+[d] 18-09-05 03:09:56 @ Booting up V:0.1
+[d] 18-09-05 03:09:56 @ Loading all core modules
+[d] 18-09-05 03:09:56 @ Loading module: >>(cala)<<
+[d] 18-09-05 03:09:56 @ Loading in path: ../api/modules/cala/module.php
+[d] 18-09-05 03:09:56 @ Including file: ../api/modules/cala/module.php
+[d] 18-09-05 03:09:56 @ Module was booted too
+[i] 18-09-05 03:09:56 @ Cala was booted...
+[d] 18-09-05 03:09:56 @ Loading module: >>(db)<<
+[d] 18-09-05 03:09:56 @ Loading in path: ../api/modules/db/module.php
+[d] 18-09-05 03:09:56 @ Including file: ../api/modules/db/module.php
+[d] 18-09-05 03:09:56 @ Module was booted too
+[d] 18-09-05 03:09:56 @ Connected to Db
+[d] 18-09-05 03:09:56 @ Loading module: >>(users)<<
+[d] 18-09-05 03:09:56 @ Loading in path: ../api/modules/users/module.php
+[d] 18-09-05 03:09:56 @ Including file: ../api/modules/users/module.php
+[d] 18-09-05 03:09:56 @ Module was booted too
+[d] 18-09-05 03:09:56 @ Loading user
+[d] 18-09-05 03:09:56 @ SELECT *
+    FROM users
+     WHERE userName = '' AND `status` > 0 
+[d] 18-09-05 03:09:56 @ Unable to locate user
+[d] 18-09-05 03:09:56 @ Loading module: >>(crypto)<<
+[d] 18-09-05 03:09:56 @ Loading in path: ../api/modules/crypto/module.php
+[d] 18-09-05 03:09:56 @ Including file: ../api/modules/crypto/module.php
+[d] 18-09-05 03:09:56 @ Module was booted too
+[d] 18-09-05 03:09:56 @ Loading in path: ../api/modules/users/module.php
+[d] 18-09-05 03:09:56 @ Including file: ../api/modules/users/module.php
+[d] 18-09-05 03:09:56 @ Module was booted too
+[d] 18-09-05 03:09:56 @ Loading user
+[d] 18-09-05 03:09:56 @ SELECT *
+    FROM users
+     WHERE userName = '' AND `status` > 0 
+[d] 18-09-05 03:09:56 @ Unable to locate user
+[d] 18-09-05 03:09:56 @ Function found
+[d] 18-09-05 03:09:33 @ Looking for path: users_register
+[d] 18-09-05 03:09:33 @ Found path: users_register
+[d] 18-09-05 03:09:42 @ Missing param: email
+[d] 18-09-05 03:09:44 @ Finished! Memory used: Mb0.687864<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+[d] 18-09-05 03:09:26 @ Booting up V:0.1
+[d] 18-09-05 03:09:26 @ Loading all core modules
+[d] 18-09-05 03:09:26 @ Loading module: >>(cala)<<
+[d] 18-09-05 03:09:26 @ Loading in path: ../api/modules/cala/module.php
+[d] 18-09-05 03:09:26 @ Including file: ../api/modules/cala/module.php
+[d] 18-09-05 03:09:26 @ Module was booted too
+[i] 18-09-05 03:09:26 @ Cala was booted...
+[d] 18-09-05 03:09:26 @ Loading module: >>(db)<<
+[d] 18-09-05 03:09:26 @ Loading in path: ../api/modules/db/module.php
+[d] 18-09-05 03:09:26 @ Including file: ../api/modules/db/module.php
+[d] 18-09-05 03:09:26 @ Module was booted too
+[d] 18-09-05 03:09:26 @ Connected to Db
+[d] 18-09-05 03:09:26 @ Loading module: >>(users)<<
+[d] 18-09-05 03:09:26 @ Loading in path: ../api/modules/users/module.php
+[d] 18-09-05 03:09:26 @ Including file: ../api/modules/users/module.php
+[d] 18-09-05 03:09:26 @ Module was booted too
+[d] 18-09-05 03:09:26 @ Loading user
+[d] 18-09-05 03:09:26 @ SELECT *
+    FROM users
+     WHERE userName = '' AND `status` > 0 
+[d] 18-09-05 03:09:27 @ Unable to locate user
+[d] 18-09-05 03:09:27 @ Loading module: >>(crypto)<<
+[d] 18-09-05 03:09:27 @ Loading in path: ../api/modules/crypto/module.php
+[d] 18-09-05 03:09:27 @ Including file: ../api/modules/crypto/module.php
+[d] 18-09-05 03:09:27 @ Module was booted too
+[d] 18-09-05 03:09:27 @ Loading in path: ../api/modules/users/module.php
+[d] 18-09-05 03:09:27 @ Including file: ../api/modules/users/module.php
+[d] 18-09-05 03:09:27 @ Module was booted too
+[d] 18-09-05 03:09:27 @ Loading user
+[d] 18-09-05 03:09:27 @ SELECT *
+    FROM users
+     WHERE userName = '' AND `status` > 0 
+[d] 18-09-05 03:09:27 @ Unable to locate user
+[d] 18-09-05 03:09:27 @ Function found
+[d] 18-09-05 03:09:29 @ Looking for path: users_register
+[d] 18-09-05 03:09:29 @ Found path: users_register
+[d] 18-09-05 03:09:46 @ Loading in path: ../api/modules/users/register.php
+[d] 18-09-05 03:09:46 @ File does not exist
+[d] 18-09-05 03:09:46 @ Found function: users_registerNew
+[d] 18-09-05 03:09:28 @ Register a user
+[d] 18-09-05 03:09:30 @ Loading user
+[d] 18-09-05 03:09:30 @ SELECT *
+    FROM users
+     WHERE userName = 'cachac6@icetel.ice' AND `status` > 0 
+[d] 18-09-05 03:09:30 @ Unable to locate user
+[d] 18-09-05 03:09:31 @ Loading user
+[d] 18-09-05 03:09:31 @ SELECT *
+    FROM users
+     WHERE email = 'carlos.echc11@gmail.com' AND `status` > 0 
+[d] 18-09-05 03:09:31 @ Unable to locate user
+[d] 18-09-05 03:09:47 @ New user does not exist
+[d] 18-09-05 03:09:47 @ Loading in path: ../api/modules/crypto/crypto.php
+[d] 18-09-05 03:09:47 @ Including file: ../api/modules/crypto/crypto.php
+[d] 18-09-05 03:09:47 @ Module was booted too
+[d] 18-09-05 03:09:48 @ INSERT INTO users (fullName, userName, email, about, country, status, timestamp, lastAccess, pwd, avatar)
+        VALUES('Carlos Chacon Calvo','cachac6@icetel.ice','carlos.echc11@gmail.com','StoryLabsUser','CR','1','1536111407','1536111407','V1dkR1RtVldOSEpUWmpCQlJsTkZNM2g1ZFVGa2NHeHBZMWh2SzJjellsTXhZVlEyUTBnMGFXWk1TWEY1VWtZemVWWkdXSFZ3VVVka2VUSnJTQ3RtVG05R2QyRnBOM1phT0VSNGRqTmFaVTAxTkd0T2FYYzlQVG82WExnNHFxTmk5QkJvRlAwMEt3R29QZz09','0')
+[d] 18-09-05 03:09:05 @ Loading user: cachac6@icetel.ice
+[d] 18-09-05 03:09:05 @ SELECT * FROM users WHERE userName = 'cachac6@icetel.ice'
+[d] 18-09-05 03:09:32 @ Log in this person
+[d] 18-09-05 03:09:36 @ email based login
+[d] 18-09-05 03:09:37 @ Loading user
+[d] 18-09-05 03:09:37 @ SELECT *
+    FROM users
+     WHERE email = 'cachac6@icetel.ice' AND `status` > 0 
+[d] 18-09-05 03:09:37 @ Unable to locate user
+[d] 18-09-05 03:09:20 @ Loading in path: ../api/modules/crypto/crypto.php
+[d] 18-09-05 03:09:20 @ Including file: ../api/modules/crypto/crypto.php
+[d] 18-09-05 03:09:20 @ Module was booted too
+[d] 18-09-05 03:09:20 @ Loading in path: ../api/modules/crypto/crypto.php
+[d] 18-09-05 03:09:20 @ Including file: ../api/modules/crypto/crypto.php
+[d] 18-09-05 03:09:20 @ Module was booted too
+[d] 18-09-05 03:09:20 @ Not able to login Wincyre13 | 
+[d] 18-09-05 03:09:20 @ Finished! Memory used: Mb0.68792<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+[d] 18-09-05 03:09:19 @ Booting up V:0.1
+[d] 18-09-05 03:09:19 @ Loading all core modules
+[d] 18-09-05 03:09:19 @ Loading module: >>(cala)<<
+[d] 18-09-05 03:09:19 @ Loading in path: ../api/modules/cala/module.php
+[d] 18-09-05 03:09:19 @ Including file: ../api/modules/cala/module.php
+[d] 18-09-05 03:09:19 @ Module was booted too
+[i] 18-09-05 03:09:19 @ Cala was booted...
+[d] 18-09-05 03:09:19 @ Loading module: >>(db)<<
+[d] 18-09-05 03:09:19 @ Loading in path: ../api/modules/db/module.php
+[d] 18-09-05 03:09:19 @ Including file: ../api/modules/db/module.php
+[d] 18-09-05 03:09:19 @ Module was booted too
+[d] 18-09-05 03:09:20 @ Connected to Db
+[d] 18-09-05 03:09:20 @ Loading module: >>(users)<<
+[d] 18-09-05 03:09:20 @ Loading in path: ../api/modules/users/module.php
+[d] 18-09-05 03:09:20 @ Including file: ../api/modules/users/module.php
+[d] 18-09-05 03:09:20 @ Module was booted too
+[d] 18-09-05 03:09:24 @ Loading user
+[d] 18-09-05 03:09:24 @ SELECT *
+    FROM users
+     WHERE userName = '' AND `status` > 0 
+[d] 18-09-05 03:09:24 @ Unable to locate user
+[d] 18-09-05 03:09:25 @ Loading module: >>(crypto)<<
+[d] 18-09-05 03:09:25 @ Loading in path: ../api/modules/crypto/module.php
+[d] 18-09-05 03:09:25 @ Including file: ../api/modules/crypto/module.php
+[d] 18-09-05 03:09:25 @ Module was booted too
+[d] 18-09-05 03:09:25 @ Loading in path: ../api/modules/users/module.php
+[d] 18-09-05 03:09:25 @ Including file: ../api/modules/users/module.php
+[d] 18-09-05 03:09:25 @ Module was booted too
+[d] 18-09-05 03:09:25 @ Loading user
+[d] 18-09-05 03:09:25 @ SELECT *
+    FROM users
+     WHERE userName = '' AND `status` > 0 
+[d] 18-09-05 03:09:25 @ Unable to locate user
+[d] 18-09-05 03:09:25 @ Function found
+[d] 18-09-05 03:09:29 @ Looking for path: users_register
+[d] 18-09-05 03:09:29 @ Found path: users_register
+[d] 18-09-05 03:09:42 @ Loading in path: ../api/modules/users/register.php
+[d] 18-09-05 03:09:42 @ File does not exist
+[d] 18-09-05 03:09:42 @ Found function: users_registerNew
+[d] 18-09-05 03:09:49 @ Register a user
+[d] 18-09-05 03:09:56 @ Loading user
+[d] 18-09-05 03:09:56 @ SELECT *
+    FROM users
+     WHERE userName = 'cachac6@icetel.ice' AND `status` > 0 
+[d] 18-09-05 03:09:56 @ Unable to locate user
+[d] 18-09-05 03:09:58 @ Loading user
+[d] 18-09-05 03:09:58 @ SELECT *
+    FROM users
+     WHERE email = 'cachac6@icetel.ice' AND `status` > 0 
+[d] 18-09-05 03:09:58 @ Unable to locate user
+[d] 18-09-05 03:09:11 @ New user does not exist
+[d] 18-09-05 03:09:20 @ Loading in path: ../api/modules/crypto/crypto.php
+[d] 18-09-05 03:09:20 @ Including file: ../api/modules/crypto/crypto.php
+[d] 18-09-05 03:09:20 @ Module was booted too
+[d] 18-09-05 03:09:20 @ INSERT INTO users (fullName, userName, email, about, country, status, timestamp, lastAccess, pwd, avatar)
+        VALUES('Carlos Chacon Calvo','cachac6@icetel.ice','cachac6@icetel.ice','StoryLabsUser','CR','1','1536111680','1536111680','YkU1VVFsazJZbUphVEZWWE5XVktVazgyZUhad2JHeEZlV2cxVkVkSk1rbzJhU3MxTURKSFZpdDNlVnBCTkZaWFlsazBOVTFTTWxsRlppczRlbEZSUVd4T05IVmFZV0pRWkhsVllWaEpja1ZRVVRFemJuYzlQVG82aVlXeTI1QXVhdDkyeTFzSEhlK2Fmdz09','0')
+[d] 18-09-05 03:09:24 @ Loading user: cachac6@icetel.ice
+[d] 18-09-05 03:09:24 @ SELECT * FROM users WHERE userName = 'cachac6@icetel.ice'
+[d] 18-09-05 03:09:37 @ Log in this person
+[d] 18-09-05 03:09:50 @ email based login
+[d] 18-09-05 03:09:51 @ Loading user
+[d] 18-09-05 03:09:51 @ SELECT *
+    FROM users
+     WHERE email = 'cachac6@icetel.ice' AND `status` > 0 
+[d] 18-09-05 03:09:57 @ Loading in path: ../api/modules/crypto/crypto.php
+[d] 18-09-05 03:09:57 @ Including file: ../api/modules/crypto/crypto.php
+[d] 18-09-05 03:09:57 @ Module was booted too
+[d] 18-09-05 03:09:00 @ Able to login
+[d] 18-09-05 03:09:06 @ delete from sessions where idUser='28' and ip='::1'
+[d] 18-09-05 03:09:06 @ Loading in path: ../api/modules/crypto/crypto.php
+[d] 18-09-05 03:09:06 @ Including file: ../api/modules/crypto/crypto.php
+[d] 18-09-05 03:09:06 @ Module was booted too
+[d] 18-09-05 03:09:06 @ INSERT INTO sessions (idUser, sessionKey, ip, lastAccess) VALUES('28', 'Y3dsWHlGcEVKbjNlV3BhNzlIeEV1Zz09OjpQuxGontsmeEfdtThGbNfH', '::1', '1536111726')
+[d] 18-09-05 03:09:00 @ Booting up V:0.1
+[d] 18-09-05 03:09:00 @ Loading all core modules
+[d] 18-09-05 03:09:00 @ Loading module: >>(cala)<<
+[d] 18-09-05 03:09:00 @ Loading in path: ../api/modules/cala/module.php
+[d] 18-09-05 03:09:00 @ Including file: ../api/modules/cala/module.php
+[d] 18-09-05 03:09:00 @ Module was booted too
+[i] 18-09-05 03:09:00 @ Cala was booted...
+[d] 18-09-05 03:09:00 @ Loading module: >>(db)<<
+[d] 18-09-05 03:09:00 @ Loading in path: ../api/modules/db/module.php
+[d] 18-09-05 03:09:00 @ Including file: ../api/modules/db/module.php
+[d] 18-09-05 03:09:00 @ Module was booted too
+[d] 18-09-05 03:09:00 @ Connected to Db
+[d] 18-09-05 03:09:00 @ Loading module: >>(users)<<
+[d] 18-09-05 03:09:00 @ Loading in path: ../api/modules/users/module.php
+[d] 18-09-05 03:09:00 @ Including file: ../api/modules/users/module.php
+[d] 18-09-05 03:09:00 @ Module was booted too
+[d] 18-09-05 03:09:00 @ Loading user
+[d] 18-09-05 03:09:00 @ SELECT *
+    FROM users
+     WHERE userName = '' AND `status` > 0 
+[d] 18-09-05 03:09:00 @ Unable to locate user
+[d] 18-09-05 03:09:00 @ Loading module: >>(crypto)<<
+[d] 18-09-05 03:09:00 @ Loading in path: ../api/modules/crypto/module.php
+[d] 18-09-05 03:09:00 @ Including file: ../api/modules/crypto/module.php
+[d] 18-09-05 03:09:00 @ Module was booted too
+[d] 18-09-05 03:09:00 @ Loading in path: ../api/modules/users/module.php
+[d] 18-09-05 03:09:00 @ Including file: ../api/modules/users/module.php
+[d] 18-09-05 03:09:00 @ Module was booted too
+[d] 18-09-05 03:09:00 @ Loading user
+[d] 18-09-05 03:09:00 @ SELECT *
+    FROM users
+     WHERE userName = '' AND `status` > 0 
+[d] 18-09-05 03:09:01 @ Unable to locate user
+[d] 18-09-05 03:09:01 @ Function found
+[d] 18-09-05 03:09:01 @ Looking for path: users_log_me_in
+[d] 18-09-05 03:09:01 @ Found path: users_log_me_in
+[d] 18-09-05 03:09:01 @ Loading in path: ../api/modules/users/login.php
+[d] 18-09-05 03:09:01 @ Including file: ../api/modules/users/login.php
+[d] 18-09-05 03:09:01 @ Module was booted too
+[d] 18-09-05 03:09:01 @ Loading user
+[d] 18-09-05 03:09:01 @ SELECT *
+    FROM users
+     WHERE userName = '' AND `status` > 0 
+[d] 18-09-05 03:09:01 @ Unable to locate user
+[d] 18-09-05 03:09:01 @ Found function: users_logMeIn
+[d] 18-09-05 03:09:08 @ Log in this person
+[d] 18-09-05 03:09:09 @ email based login
+[d] 18-09-05 03:09:10 @ Loading user
+[d] 18-09-05 03:09:10 @ SELECT *
+    FROM users
+     WHERE email = 'cachac6@icetel.ice' AND `status` > 0 
+[d] 18-09-05 03:09:16 @ Loading in path: ../api/modules/crypto/crypto.php
+[d] 18-09-05 03:09:16 @ Including file: ../api/modules/crypto/crypto.php
+[d] 18-09-05 03:09:16 @ Module was booted too
+[d] 18-09-05 03:09:17 @ Able to login
+[d] 18-09-05 03:09:22 @ delete from sessions where idUser='28' and ip='::1'
+[d] 18-09-05 03:09:22 @ Loading in path: ../api/modules/crypto/crypto.php
+[d] 18-09-05 03:09:22 @ Including file: ../api/modules/crypto/crypto.php
+[d] 18-09-05 03:09:22 @ Module was booted too
+[d] 18-09-05 03:09:22 @ INSERT INTO sessions (idUser, sessionKey, ip, lastAccess) VALUES('28', 'L0M1MmtYNGp1RTV0emU4ZkpQNGZodz09OjpPALxRpF5ZDAOR53w/42/R', '::1', '1536111862')
+[d] 18-09-05 03:09:30 @ Finished! Memory used: Mb0.687624<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

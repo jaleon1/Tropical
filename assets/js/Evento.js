@@ -120,6 +120,10 @@ class Evento {
                 <option value=${item.id}>${item.nombre}</option>
             `);
         })
+        //check dashboard por defecto.
+        $('#evento option:contains(Dashboard)').prop("selected", true);
+        $('#evento option:contains(Dashboard)').attr('disabled',true);
+        $("#evento").selectpicker("refresh");
     };
 
     // ShowItemData(e) {

@@ -1,234 +1,733 @@
 <?php
-require_once("FacturaTemp.php");
-require_once("Emisor.php");
-require_once("Receptor.php");
-require_once("Normativa.php");
+include_once('historico.php');
+define('ERROR_USERS_NO_VALID', '-500');
+define('ERROR_TOKEN_NO_VALID', '-501');
+define('ERROR_CLAVE_NO_VALID', '-502');
+define('ERROR_XML_NO_VALID', '-503');
+define('ERROR_ENVIO_NO_VALID', '-504');
+define('ERROR_ENVIOERR_NO_VALID', '-505');
+define('ERROR_CONSULTA_NO_VALID', '-506');
+define('ERROR_IMPUESTO_NO_VALID', '-507');
+define('ERROR_MEDIOPAGO_NO_VALID', '-508');
+define('ERROR_CERTIFICADOURL_NO_VALID', '-509');
+define('ERROR_UBICACION_NO_VALID', '-510');
+define('ERROR_SITUACION_COMPROBANTE_NO_VALID', '-511');
+define('ERROR_TIPO_IDENTIFICACION_NO_VALID', '-512');
+define('ERROR_UNIDAD_MEDIDA_NO_VALID', '-513');
+define('ERROR_CONDICIONVENTA_NO_VALID', '-514');
+define('ERROR_MONEDA_NO_VALID', '-515');
+define('ERROR_ESTADO_COMPROBANTE_NO_VALID', '-516');
 
 class FacturaElectronica{
-    private $id=null; // UUID de la transacción a enviar a hacienda. 
-    public $idTransaccion;
-    private $tipoComprobante= '01'; // 01: FE.
-    // datos del JSON.
-    private $clave;
-    private $numConsecutivo; // compuesto por valor unicos de factura.
-    private $dia;
-    private $mes;
-    private $ann;  
-    private $FacturaElectronica; // documento xml con los valores de la factura.   
-    private $factura; 
-    private $detalle;
-    private $emisor;
-    private $token; // token de conexión.
-    //
-    // Métodos
-    //
-    function Send(){ 
-        // Carga valores de las tablas.
-        $this->CargaValores();
-        // crea #clave
-        $this->CreaClave();
-        // crea xml     
-        $this->CreaXml();
-        // llave criptografica - base64
-        // crea JSON
-        // crea access_token-refresh_token
-        // enviar
-        // consultar
-    }
-
-    private function CargaValores(){
-        // info de la factura.
-        $this->factura= new Factura();
-        if($this->factura->Datos($this->idTransaccion)==null){
-            // debe notificar el error para un envío tipo 2: Contingencia
-            $this->setContingencia();
-            return false;
-        }
-        // detalle de la factura.
-        $this->detalle= new ProductoXFactura();
-        if($this->detalle->Datos($this->idTransaccion)==null){
-            // debe notificar el error para un envío tipo 2: Contingencia
-            $this->setContingencia();
-            return false;
-        }
-        // info del emisor (cliente FE).      
-        $this->emisor= new Emisor();
-        if($this->emisor->Datos($this->factura->idEmisor)==null){
-            // debe notificar el error para un envío tipo 2: Contingencia
-            $this->setContingencia();
-            return false;
-        }
-    }
-
-    private function CreaClave(){
-        $dia = date('d');
-        $mes = date('m');
-        $ano = date('y');
-        //
-        $this->numConsecutivo= $this->factura->local . $this->factura->terminal . $this->tipoComprobante . $this->factura->consecutivo;
-        $this->clave= $this->emisor->idCodigoPais . $this->dia . $this->mes . $this->ann . $this->emisor->identificacion . $this->factura->local . $this->factura->terminal . $this->tipoComprobante . $this->factura->consecutivo . $this->factura->idSituacionComprobante . $this->emisor->codigoSeguridad;
-    }
-
-    public function CreaXml(){
-        // encabezado de factura
-        // $header='<FacturaElectronica 
-        //      xmlns="https://tribunet.hacienda.go.cr/docs/esquemas/2017/v4.2/facturaElectronica" 
-        //      xmlns:ds="http://www.w3.org/2000/09/xmldsig#" 
-        //      xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" 
-        //      xmlns:xs="http://www.w3.org/2001/XMLSchema">';
-        // root.
-        $FacturaElectronica = new SimpleXMLElement('<?xml version="1.0" encoding="utf-8"?><FacturaElectronica></FacturaElectronica>');
-        // namespace.
-        $FacturaElectronica->addAttribute('xmlns', 'https://tribunet.hacienda.go.cr/docs/esquemas/2017/v4.2/facturaElectronica');
-        $FacturaElectronica->addAttribute('xmlns:ds', 'http://www.w3.org/2000/09/xmldsig#');
-        $FacturaElectronica->addAttribute('xmlns:vc', 'http://www.w3.org/2007/XMLSchema-versioning');
-        $FacturaElectronica->addAttribute('xmlns:xs', 'http://www.w3.org/2001/XMLSchema');
-        //$FacturaElectronica->registerXPathNamespace('xmlns','https://tribunet.hacienda.go.cr/docs/esquemas/2017/v4.2/facturaElectronica');
-        // info general.
-        $FacturaElectronica->addChild('Clave', $this->clave);
-        $FacturaElectronica->addChild('NumeroConsecutivo', $this->numConsecutivo);
-        $FacturaElectronica->addChild('FechaEmision', $this->factura->fechaEmision);
-        // Emisor.
-        $Emisor = $FacturaElectronica->addChild('Emisor');
-            $Emisor->addChild('Nombre',$this->emisor->nombre);
-            $Identificacion = $Emisor->addChild('Identificacion');
-                $Identificacion->addChild('Tipo', $this->emisor->tipoIdentificacion);
-                $Identificacion->addChild('Numero', $this->emisor->identificacion);
-            if($this->emisor->nombreComercial!=null)
-                $Emisor->addChild('NombreComercial',$this->emisor->nombreComercial);
-            $Ubicacion= $Emisor->addChild('Ubicacion');
-                $Ubicacion->addChild('Provincia', $this->emisor->idProvincia);
-                $Ubicacion->addChild('Canton', $this->emisor->idCanton);
-                $Ubicacion->addChild('Distrito', $this->emisor->idDistrito);
-                if($this->emisor->idBarrio!=null)
-                    $Ubicacion->addChild('Barrio', $this->emisor->idBarrio);                
-                $Ubicacion->addChild('OtrasSenas', $this->emisor->otrasSenas);
-            if($this->emisor->numTelefono!=null){
-                $Telefono= $Emisor->addChild('Telefono');
-                    $Telefono->addChild('CodigoPais', $this->emisor->idcodigopaisTel);
-                    $Telefono->addChild('NumTelefono', $this->emisor->numTelefono);
-            }
-            if($this->emisor->numTelefonoFax!=null){
-                $Telefono= $Emisor->addChild('Telefono');
-                    $Telefono->addChild('CodigoPais', $this->emisor->codigoPaisFax);
-                    $Telefono->addChild('NumTelefono', $this->emisor->numTelefonoFax);
-            }
-            $Emisor->addChild('CorreoElectronico', $this->emisor->correoElectronico);
-        // Receptor.
-        $receptor= new Receptor();
-        $receptor->Datos($this->factura->idReceptor);
-        if($receptor!=null){
-            $Receptor = $FacturaElectronica->addChild('Receptor');                
-                $Receptor->addChild('Nombre',$receptor->nombre);
-                if($receptor->identificacion!=null){
-                    $Identificacion = $Receptor->addChild('Identificacion');
-                        $Identificacion->addChild('Tipo', $receptor->tipoIdentificacion);
-                        $Identificacion->addChild('Numero', $receptor->identificacion);
-                }
-                if($receptor->ubicacion!=null && $receptor->ubicacion!='0'){
-                $Ubicacion= $Receptor->addChild('Ubicacion');
-                    $Ubicacion->addChild('Provincia', $receptor->provincia);
-                    $Ubicacion->addChild('Canton', $receptor->canton);
-                    $Ubicacion->addChild('Distrito', $receptor->distrito);
-                    $Ubicacion->addChild('Barrio', $receptor->barrio);
-                    $Ubicacion->addChild('OtrasSenas', $receptor->otrasSenas);
-                }
-                if($receptor->numTelefono!=null){
-                    $Telefono= $Receptor->addChild('Telefono');
-                        $Telefono->addChild('CodigoPais', $receptor->idCodigoPaisTel);
-                        $Telefono->addChild('NumTelefono', $receptor->numTelefono);            
-                }
-                if($receptor->numTelefonoFax!=null){
-                    $Telefono= $Receptor->addChild('Telefono');
-                        $Telefono->addChild('CodigoPais', $receptor->codigoPaisFax);
-                        $Telefono->addChild('NumTelefono', $receptor->numTelefonoFax);            
-                }
-                if($receptor->correoElectronico!=null)
-                    $Receptor->addChild('CorreoElectronico', $receptor->correoElectronico);
-        }
-        // CondicionVenta.
-        $FacturaElectronica->addChild('CondicionVenta', $this->factura->idCondicionVenta);
-        if($this->factura->plazoCredito!=null)
-            $FacturaElectronica->addChild('PlazoCredito', $this->factura->plazoCredito); //opt
-        $FacturaElectronica->addChild('MedioPago', $this->factura->idMedioPago);
-        // Detalle.
-        $DetalleServicio= $FacturaElectronica->addChild('DetalleServicio');
-            $LineaDetalle= $DetalleServicio->addChild('LineaDetalle');
-                $LineaDetalle->addChild('NumeroLinea', $this->detalle->numeroLinea);
-                if($this->detalle->codigo!=null){
-                    $Codigo= $LineaDetalle->addChild('Codigo'); //opt
-                        $Codigo->addChild('Tipo', $this->detalle->tipoCodigo);
-                        $Codigo->addChild('Codigo', $this->detalle->codigo);
-                }
-                $LineaDetalle->addChild('Cantidad', $this->detalle->cantidad);
-                $LineaDetalle->addChild('UnidadMedida', $this->detalle->unidadMedida);
-                if($this->detalle->unidadMedidaComercial!=null)
-                    $LineaDetalle->addChild('UnidadMedidaComercial', $this->detalle->unidadMedidaComercial); //opt
-                $LineaDetalle->addChild('Detalle', $this->detalle->detalle);
-                $LineaDetalle->addChild('PrecioUnitario', $this->detalle->precioUnitario);
-                $LineaDetalle->addChild('MontoTotal', $this->detalle->montoTotal);
-                if($this->detalle->montoDescuento!=null){
-                    $LineaDetalle->addChild('MontoDescuento', $this->detalle->montoDescuento); // opt
-                    $LineaDetalle->addChild('NaturalezaDescuento', $this->detalle->naturalezaDescuento); // opt
-                }
-                $LineaDetalle->addChild('SubTotal', $this->detalle->subTotal);
-                if($this->detalle->codigoImpuesto!=null){
-                    $Impuesto=$LineaDetalle->addChild('Impuesto'); // opt
-                        $Impuesto->addChild('Codigo', $this->detalle->codigoImpuesto);
-                        $Impuesto->addChild('Tarifa', $this->detalle->tarifaImpuesto);
-                        $Impuesto->addChild('Monto', $this->detalle->montoImpuesto);
-                    if($this->detalle->exoneracionImpuesto!=null){ 
-                        $Exoneracion= $Impuesto->addChild('Exoneracion'); // opt
-                            $Exoneracion->addChild('TipoDocumento', $this->detalle->tipoDocumento); 
-                            $Exoneracion->addChild('NumeroDocumento', $this->detalle->numeroDocumento); 
-                            $Exoneracion->addChild('NombreInstitucion', $this->detalle->nombreInstitucion);
-                            $Exoneracion->addChild('FechaEmision', $this->detalle->fechaEmision);
-                            $Exoneracion->addChild('MontoImpuesto', $this->detalle->montoImpuesto);
-                            $Exoneracion->addChild('PorcentajeCompra', $this->detalle->porcentajeCompra);
+    static $transaccion;
+    static $fechaEmision;
+    static $apiUrl;
+    public static function iniciar($t){
+        try{
+            self::$transaccion= $t;
+            if(!isset($_SESSION['API']))
+                throw new Exception('Error al leer informacion del contribuyente. '. $error_msg , ERROR_USERS_NO_VALID);            
+            self::$fechaEmision= date_create(self::$transaccion->fechaEmision);
+            if(self::getApiUrl()){
+                if(self::APICrearClave()){
+                    if(self::APICrearXML()){
+                        if(self::APICifrarXml()){
+                            if(self::APIEnviar()){
+                                self::APIConsultaComprobante();
+                            }
+                        }
                     }
                 }
-                $LineaDetalle->addChild('MontoTotalLinea', $this->detalle->montoTotalLinea);
-        // ResumenFactura.
-        if($this->factura->resumenFactura!=null && $this->factura->resumenFactura!='0'){
-        $ResumenFactura= $FacturaElectronica->addChild('ResumenFactura'); // opt
-            $ResumenFactura->addChild('CodigoMoneda');
-            $ResumenFactura->addChild('TipoCambio');
-            $ResumenFactura->addChild('TotalServGravados');
-            $ResumenFactura->addChild('TotalServExentos');
-            $ResumenFactura->addChild('TotalMercanciasGravadas');
-            $ResumenFactura->addChild('TotalMercanciasExentas');
-            $ResumenFactura->addChild('TotalGravado');
-            $ResumenFactura->addChild('TotalExento');
-            $ResumenFactura->addChild('TotalVenta');
-            $ResumenFactura->addChild('TotalDescuentos');
-            $ResumenFactura->addChild('TotalVentaNeta');
-            $ResumenFactura->addChild('TotalImpuesto');
-            $ResumenFactura->addChild('TotalComprobante');
+            }
         }
-        // InformacionReferencia 
-        if($this->factura->codigoReferencia!=null){
-            $InformacionReferencia= $FacturaElectronica->addChild('ResumenFactura'); // opt
-                $InformacionReferencia->addChild('TipoDoc'); //Tipo. en la tabla documento de referencia
-                $InformacionReferencia->addChild('Numero'); // Número de documento de referencia. maxLength value="50"
-                $InformacionReferencia->addChild('FechaEmision'); //Fecha y hora de emisión del documento de referencia
-                $InformacionReferencia->addChild('Codigo'); // Código de la tabla  referencia.
-                $InformacionReferencia->addChild('Razon'); // >Razón de referencia. :maxLength value="180"
+        catch(Exception $e) {
+            error_log("****** Error (".$e->getCode()."): ". $e->getMessage());
         }
-        // Normativa.
-        $normativa= new Normativa();
-        $normativa->Datos();
-        $Normativa= $FacturaElectronica->addChild('Normativa');
-            $Normativa->addChild('NumeroResolucion', $normativa->numeroResolucion);
-            $Normativa->addChild('FechaResolucion', $normativa->fechaResolucion);
-        // Otros.
-        //
-        //
-        echo $FacturaElectronica->asXML();
     }
 
-    private function setContingencia(){
-        // cambia el valor de situacion comprobante de la factura en: 2
+    private static function getApiUrl(){
+        require_once('Globals.php');
+        if (file_exists('../../../ini/config.ini')) {
+            $set = parse_ini_file('../../../ini/config.ini',true); 
+            self::$apiUrl= $set[Globals::app]['apiurl'];
+            return true;
+        }         
+        else {
+            throw new Exception('Acceso denegado al Archivo de configuración.',-1);            
+        }
+    }
+
+    private static function getIdentificacionCod($id){
+        try{
+            $sql='SELECT codigo
+            FROM tipoIdentificacion
+            WHERE id=:id';
+            $param= array(':id'=>$id);
+            $data= DATA::Ejecutar($sql,$param);     
+            if($data)
+                return $data[0]['codigo'];
+            else throw new Exception('Error al consultar el codigo de tipod de identificacion' , ERROR_TIPO_IDENTIFICACION_NO_VALID);
+        }
+        catch(Exception $e) {
+            error_log("****** Error (".$e->getCode()."): ". $e->getMessage());
+            historico::create(self::$transaccion->id, 1, 'ERROR_TIPO_IDENTIFICACION_NO_VALID: '. $e->getMessage());
+            // header('HTTP/1.0 400 Bad error');
+            // die(json_encode(array(
+            //     'code' => $e->getCode() ,
+            //     'msg' => $e->getMessage()))
+            // );
+        }
+    }
+
+    private static function getSituacionComprobanteCod($id){
+        try{
+            $sql='SELECT codigo
+            FROM situacionComprobante
+            WHERE id=:id';
+            $param= array(':id'=>$id);
+            $data= DATA::Ejecutar($sql,$param);     
+            if($data)
+            {
+                switch($data[0]['codigo']){
+                    case '1':
+                        return 'normal';
+                    break;
+                        case '2':
+                        return 'contingencia';
+                    break;
+                        case '3':
+                        return 'sinInternet';
+                    break;
+                    
+                }
+            }
+            else throw new Exception('Error al consultar el codigo de situacion comprobante' , ERROR_SITUACION_COMPROBANTE_NO_VALID);
+        }
+        catch(Exception $e) {
+            error_log("****** Error (".$e->getCode()."): ". $e->getMessage());
+            historico::create(self::$transaccion->id, 1, 'ERROR_SITUACION_COMPROBANTE_NO_VALID: '. $e->getMessage());
+            // header('HTTP/1.0 400 Bad error');
+            // die(json_encode(array(
+            //     'code' => $e->getCode() ,
+            //     'msg' => $e->getMessage()))
+            // );
+        }
+    }
+
+    private static function getImpuestoCod($id){
+        try{
+            $sql='SELECT codigo
+            FROM impuesto
+            WHERE id=:id';
+            $param= array(':id'=>$id);
+            $data= DATA::Ejecutar($sql,$param);     
+            if($data)
+                return $data[0]['codigo'];
+            else throw new Exception('Error al consultar el codigo del impuesto' , ERROR_IMPUESTO_NO_VALID);
+        }
+        catch(Exception $e) {
+            error_log("****** Error (".$e->getCode()."): ". $e->getMessage());
+            historico::create(self::$transaccion->id, 1, 'ERROR_IMPUESTO_NO_VALID: '. $e->getMessage());
+            // header('HTTP/1.0 400 Bad error');
+            // die(json_encode(array(
+            //     'code' => $e->getCode() ,
+            //     'msg' => $e->getMessage()))
+            // );
+        }
+    }
+
+    private static function getUnidadMedidaCod($id){
+        try{
+            $sql='SELECT simbolo
+                FROM unidadMedida
+                WHERE id=:id';
+            $param= array(':id'=>$id);
+            $data= DATA::Ejecutar($sql,$param);     
+            if($data)
+                return $data[0]['simbolo'];
+            else throw new Exception('Error al consultar el codigo de unidad medida' , ERROR_UNIDAD_MEDIDA_NO_VALID);
+        }
+        catch(Exception $e) {
+            error_log("****** Error (".$e->getCode()."): ". $e->getMessage());
+            historico::create(self::$transaccion->id, 1, 'ERROR_UNIDAD_MEDIDA_NO_VALID '. $e->getMessage());
+            // header('HTTP/1.0 400 Bad error');
+            // die(json_encode(array(
+            //     'code' => $e->getCode() ,
+            //     'msg' => $e->getMessage()))
+            // );
+        }
+    }
+
+    private static function getUbicacionCod(){
+        try{
+            $sql='SELECT p.codigo as provincia, c.codigo as canton, d.codigo as distrito, b.codigo as barrio
+                FROM provincia p, canton c , distrito d, barrio b        
+                where p.id=:provincia and c.id=:canton and d.id=:distrito and b.id=:barrio';
+            $param= array(':provincia'=>$_SESSION['API']->idProvincia, 
+                ':canton'=>$_SESSION['API']->idCanton,
+                ':distrito'=>$_SESSION['API']->idDistrito,
+                ':barrio'=>$_SESSION['API']->idBarrio,
+            );
+            $data= DATA::Ejecutar($sql,$param);
+            $ubicacion= [];
+            if($data){
+                $item= new UbicacionCod();
+                $item->provincia= $data[0]['provincia'];
+                $item->canton= $data[0]['canton'];
+                $item->distrito= $data[0]['distrito'];
+                $item->barrio= $data[0]['barrio'];
+                array_push($ubicacion, $item);
+            }
+            else throw new Exception('Error al consultar el codigo de la ubicacion' , ERROR_UBICACION_NO_VALID);
+            return $ubicacion;            
+        } 
+        catch(Exception $e) {
+            error_log("****** Error (".$e->getCode()."): ". $e->getMessage());
+            historico::create(self::$transaccion->id, 1, 'ERROR_UBICACION_NO_VALID: '. $e->getMessage());
+            // header('HTTP/1.0 400 Bad error');
+            // die(json_encode(array(
+            //     'code' => $e->getCode() ,
+            //     'msg' => $e->getMessage()))
+            // );
+        }
+    }
+
+    private static function getMedioPagoCod($id){
+        try{
+            $sql='SELECT codigo
+            FROM medioPago
+            WHERE id=:id';
+            $param= array(':id'=>$id);
+            $data= DATA::Ejecutar($sql,$param);     
+            if($data)
+                return $data[0]['codigo'];
+            else throw new Exception('Error al consultar el codigo del medio de pago' , ERROR_MEDIOPAGO_NO_VALID);
+        } 
+        catch(Exception $e) {
+            error_log("****** Error (".$e->getCode()."): ". $e->getMessage());
+            historico::create(self::$transaccion->id, 1, 'ERROR_MEDIOPAGO_NO_VALID: '. $e->getMessage());
+            // header('HTTP/1.0 400 Bad error');
+            // die(json_encode(array(
+            //     'code' => $e->getCode() ,
+            //     'msg' => $e->getMessage()))
+            // );
+        }
+    }
+
+    private static function getCodigoMonedaCod($id){
+        try{
+            $sql='SELECT codigo
+            FROM moneda
+            WHERE id=:id';
+            $param= array(':id'=>$id);
+            $data= DATA::Ejecutar($sql,$param);     
+            if($data)
+                return $data[0]['codigo'];
+            else throw new Exception('Error al consultar el codigo de moneda' , ERROR_MONEDA_NO_VALID);
+        } 
+        catch(Exception $e) {
+            error_log("****** Error (".$e->getCode()."): ". $e->getMessage());
+            historico::create(self::$transaccion->id, 1, 'ERROR_MONEDA_NO_VALID: '. $e->getMessage());
+            // header('HTTP/1.0 400 Bad error');
+            // die(json_encode(array(
+            //     'code' => $e->getCode() ,
+            //     'msg' => $e->getMessage()))
+            // );
+        }
+    }
+
+    private static function getEstadoComprobanteCod($id){
+        try{
+            $sql='SELECT codigo
+            FROM estadoComprobante
+            WHERE id=:id';
+            $param= array(':id'=>$id);
+            $data= DATA::Ejecutar($sql,$param);     
+            if($data)
+                return $data[0]['codigo'];
+            else throw new Exception('Error al consultar el codigo de estado del comprobante' , ERROR_ESTADO_COMPROBANTE_NO_VALID);
+        } 
+        catch(Exception $e) {
+            error_log("****** Error (".$e->getCode()."): ". $e->getMessage());
+            historico::create(self::$transaccion->id, 1, 'ERROR_ESTADO_COMPROBANTE_NO_VALID: '. $e->getMessage());
+            // header('HTTP/1.0 400 Bad error');
+            // die(json_encode(array(
+            //     'code' => $e->getCode() ,
+            //     'msg' => $e->getMessage()))
+            // );
+        }
+    }
+
+    private static function getCondicionVentaCod($id){
+        try{
+            $sql='SELECT codigo
+            FROM impuesto
+            WHERE id=:id';
+            $param= array(':id'=>$id);
+            $data= DATA::Ejecutar($sql,$param);     
+            if($data)
+                return $data[0]['codigo'];
+            else throw new Exception('Error al consultar el codigo de Condicion venta' , ERROR_CONDICIONVENTA_NO_VALID);
+        } 
+        catch(Exception $e) {
+            error_log("****** Error (".$e->getCode()."): ". $e->getMessage());
+            historico::create(self::$transaccion->id, 1, 'ERROR_CONDICIONVENTA_NO_VALID: '. $e->getMessage());
+            // header('HTTP/1.0 400 Bad error');
+            // die(json_encode(array(
+            //     'code' => $e->getCode() ,
+            //     'msg' => $e->getMessage()))
+            // );
+        }
+    }
+
+    public static function APIGetToken(){
+        try{
+            $ch = curl_init();
+            $post = [
+                'w' => 'token',
+                'r' => 'gettoken',
+                'grant_type'=>'password', 
+                'client_id'=> 'api-stag', 
+                'username' => $_SESSION['API']->username,
+                'password'=>  $_SESSION['API']->password
+            ];
+            curl_setopt_array($ch, array(
+                CURLOPT_URL => self::$apiUrl,
+                CURLOPT_RETURNTRANSFER => true,   
+                CURLOPT_VERBOSE => true,                      
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 30,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => "POST",
+                CURLOPT_POSTFIELDS => $post
+            ));
+            $server_output = curl_exec($ch);
+            $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+            $header = substr($server_output, 0, $header_size);
+            $body = substr($server_output, $header_size);
+            $error_msg = "";
+            if (curl_error($ch)) {
+                $error_msg = curl_error($ch);
+                throw new Exception('Error al adquirir token. '. $error_msg , ERROR_TOKEN_NO_VALID);
+            }
+            $sArray= json_decode($server_output);
+            if(!isset($sArray->resp->access_token)){
+                // ERROR CRITICO:
+                // debe notificar al contibuyente. 
+                throw new Exception('Error CRITICO al Solicitar token MH. DEBE COMUNICARSE CON SOPORTE TECNICO: '. $server_output , ERROR_TOKEN_NO_VALID);
+            }
+            $_SESSION['API']->accessToken=$sArray->resp->access_token;
+            $_SESSION['API']->expiresIn=$sArray->resp->expires_in;
+            $_SESSION['API']->refreshExpiresIn=$sArray->resp->refresh_expires_in;
+            $_SESSION['API']->refreshToken=$sArray->resp->refresh_token;
+            error_log(" Resp Token: ". $server_output);
+            curl_close($ch);
+            return true;
+        } 
+        catch(Exception $e) {
+            error_log("****** Error (".$e->getCode()."): ". $e->getMessage());
+            historico::create(self::$transaccion->id, 1, 'ERROR_TOKEN_NO_VALID: '. $e->getMessage());
+            return false;
+            // header('HTTP/1.0 400 Bad error');
+            // die(json_encode(array(
+            //     'code' => $e->getCode() ,
+            //     'msg' => $e->getMessage()))
+            // );
+        }
+    }
+
+    public static function APICrearClave(){
+        try{
+            $ch = curl_init();
+            $post = [
+                'w' => 'clave',
+                'r' => 'clave',
+                'tipoCedula'=> self::getIdentificacionCod($_SESSION['API']->idTipoIdentificacion) == '01'?'fisico':'juridico',
+                'cedula'=> $_SESSION['API']->identificacion,
+                'situacion' => self::getSituacionComprobanteCod(self::$transaccion->idSituacionComprobante),
+                'codigoPais'=> '506',
+                'consecutivo'=> self::$transaccion->consecutivo,
+                'codigoSeguridad'=> $_SESSION['API']->codigoSeguridad,
+                'tipoDocumento'=> self::$transaccion->tipoDocumento,
+                'terminal'=> self::$transaccion->terminal,
+                'sucursal'=> self::$transaccion->local
+            ];
+            curl_setopt_array($ch, array(
+                CURLOPT_URL => self::$apiUrl,
+                CURLOPT_RETURNTRANSFER => true,   
+                CURLOPT_VERBOSE => true,                      
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 30,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => "POST",
+                CURLOPT_POSTFIELDS => $post
+            ));
+            $server_output = curl_exec($ch);
+            $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+            $header = substr($server_output, 0, $header_size);
+            $body = substr($server_output, $header_size);
+            $error_msg = "";
+            if (curl_error($ch)) {
+                $error_msg = curl_error($ch);
+                throw new Exception('Error al crear clave. '. $error_msg , ERROR_CLAVE_NO_VALID);
+            }
+            $sArray= json_decode($server_output);
+            if(!isset($sArray->resp->clave)){
+                // ERROR CRITICO:
+                // debe notificar al contibuyente. 
+                throw new Exception('Error CRITICO al crear clave MH. DEBE COMUNICARSE CON SOPORTE TECNICO: '.$server_output, ERROR_CLAVE_NO_VALID);
+            }
+            $_SESSION['API']->clave= $sArray->resp->clave;
+            $_SESSION['API']->consecutivo= $sArray->resp->consecutivo;
+            error_log(" Resp Clave: ". $server_output);
+            curl_close($ch);
+            return true;
+        } 
+        catch(Exception $e) {
+            error_log("****** Error (".$e->getCode()."): ". $e->getMessage());
+            historico::create(self::$transaccion->id, 1, 'ERROR_CLAVE_NO_VALID: '.$e->getMessage());
+            return false;
+            // header('HTTP/1.0 400 Bad error');
+            // die(json_encode(array(
+            //     'code' => $e->getCode() ,
+            //     'msg' => $e->getMessage()))
+            // );
+        }
+    }
+    
+    public static function APICrearXML(){
+        try{
+            $ch = curl_init();
+            // detalle de la factura
+            $detalles=[];
+            foreach(self::$transaccion->detalleFactura as $d){
+                array_push($detalles, array('cantidad'=> $d->cantidad,
+                    'unidadMedida'=> self::getUnidadMedidaCod($d->idUnidadMedida),
+                    'detalle'=> $d->detalle,
+                    'precioUnitario'=> $d->precioUnitario,
+                    'montoTotal'=> $d->montoTotal,
+                    'subtotal'=> $d->subTotal,
+                    'montoTotalLinea'=> $d->montoTotalLinea,
+                    'impuesto'=> array(array(
+                        'codigo'=> self::getImpuestoCod($d->codigoImpuesto),
+                        'tarifa'=> $d->tarifaImpuesto,
+                        'monto'=> $d->montoImpuesto
+                        )
+                    )
+                    )
+                );
+            }
+            // codigo ubicacion
+            $ubicacionCod= self::getUbicacionCod();
+            //
+            $post = [
+                'w' => 'genXML',
+                'r' => 'gen_xml_fe',
+                'clave'=> $_SESSION['API']->clave,
+                'consecutivo'=> $_SESSION['API']->consecutivo,
+                'fecha_emision' => self::$fechaEmision->format("c"), // ej: '2018-09-09T13:41:00-06:00',
+                /** Emisor **/
+                'emisor_nombre'=> $_SESSION['API']->nombre,
+                'emisor_tipo_indetif'=> self::getIdentificacionCod($_SESSION['API']->idTipoIdentificacion),
+                'emisor_num_identif'=> $_SESSION['API']->identificacion,
+                'nombre_comercial'=> $_SESSION['API']->nombreComercial,
+                'emisor_provincia'=> $ubicacionCod[0]->provincia,
+                'emisor_canton'=> $ubicacionCod[0]->canton,
+                'emisor_distrito'=> $ubicacionCod[0]->distrito,
+                'emisor_barrio'=> $ubicacionCod[0]->barrio,
+                'emisor_otras_senas'=> $_SESSION['API']->otrasSenas,
+                'emisor_cod_pais_tel'=> '506',
+                'emisor_tel'=> $_SESSION['API']->numTelefono,
+                // 'emisor_cod_pais_fax'=> '506',
+                // 'emisor_fax'=> '00000000',
+                'emisor_email'=> $_SESSION['API']->correoElectronico,
+                /** Receptor **/  // deben ser los datos reales del receptor o un receptor generico.
+                'receptor_nombre'=> $_SESSION['API']->nombre,
+                'receptor_tipo_identif'=> self::getIdentificacionCod($_SESSION['API']->idTipoIdentificacion),
+                'receptor_num_identif'=> $_SESSION['API']->identificacion,
+                'receptor_provincia'=> $ubicacionCod[0]->provincia,
+                'receptor_canton'=> $ubicacionCod[0]->canton,
+                'receptor_distrito'=> $ubicacionCod[0]->distrito,
+                'receptor_barrio'=> $ubicacionCod[0]->barrio,
+                'receptor_cod_pais_tel'=> '506',
+                'receptor_tel'=> '84922891',
+                // 'receptor_cod_pais_fax'=> '506',
+                // 'receptor_fax'=> '00000000',
+                'receptor_email'=> $_SESSION['API']->correoElectronico,
+                /** Datos de la venta **/
+                'condicion_venta'=> self::getCondicionVentaCod(self::$transaccion->idCondicionVenta),
+                // 'plazo_credito'=> self::$transaccion->plazoCredito, 
+                'medio_pago'=> self::getMedioPagoCod(self::$transaccion->idMedioPago),
+                'cod_moneda'=> self::getCodigoMonedaCod(self::$transaccion->idCodigoMoneda),
+                'tipo_cambio'=> self::$transaccion->tipoCambio,
+                'total_serv_gravados'=> self::$transaccion->totalServGravados,
+                'total_serv_exentos'=> self::$transaccion->totalServExcentos,
+                'total_merc_gravada'=> self::$transaccion->totalMercanciasGravadas,
+                'total_merc_exenta'=> self::$transaccion->totalMercanciasExcentas,
+                'total_gravados'=> self::$transaccion->totalGravado,
+                'total_exentos'=> self::$transaccion->totalExcento,
+                'total_ventas'=> self::$transaccion->totalVenta,
+                'total_descuentos'=>  self::$transaccion->totalDescuentos,
+                'total_ventas_neta'=>  self::$transaccion->totalVentaneta,
+                'total_impuestos'=>  self::$transaccion->totalImpuesto,
+                'total_comprobante'=>  self::$transaccion->totalComprobante,
+                'otros'=> 'Tropical SNO',
+                /** Detalle **/
+                'detalles'=>  json_encode($detalles, JSON_FORCE_OBJECT)
+            ];
+            curl_setopt_array($ch, array(
+                CURLOPT_URL => self::$apiUrl,
+                CURLOPT_RETURNTRANSFER => true,   
+                CURLOPT_VERBOSE => true,                      
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 30000000,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => "POST",
+                CURLOPT_POSTFIELDS => $post
+            ));
+            $server_output = curl_exec($ch);
+            $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+            $header = substr($server_output, 0, $header_size);
+            $body = substr($server_output, $header_size);
+            $error_msg = "";
+            if (curl_error($ch)) {
+                $error_msg = curl_error($ch);
+                throw new Exception('Error al crear xml. '. $error_msg , ERROR_XML_NO_VALID);
+            }
+            $sArray= json_decode($server_output);
+            if(!isset($sArray->resp->xml)){
+                // ERROR CRITICO:
+                // debe notificar al contibuyente. 
+                throw new Exception('Error CRITICO al crear xml de comprobante. DEBE COMUNICARSE CON SOPORTE TECNICO: '. $server_output, ERROR_XML_NO_VALID);
+            }
+            $_SESSION['API']->xml= $sArray->resp->xml;
+            error_log(" Resp Crea xml : ". $server_output);
+            historico::create(self::$transaccion->id, 1, 'xml a enviar', base64_decode($sArray->resp->xml));
+            curl_close($ch);
+            return true;
+        } 
+        catch(Exception $e) {
+            error_log("****** Error (".$e->getCode()."): ". $e->getMessage());
+            historico::create(self::$transaccion->id, 1, 'ERROR_XML_NO_VALID: '. $e->getMessage());
+            return false;
+            // header('HTTP/1.0 400 Bad error');
+            // die(json_encode(array(
+            //     'code' => $e->getCode() ,
+            //     'msg' => $e->getMessage()))
+            // );
+        }
+    }
+
+    public static function APICifrarXml(){
+        try{
+            $ch = curl_init();
+            $post = [
+                'w' => 'signXML',
+                'r' => 'signFE',
+                'p12Url'=> $_SESSION['API']->downloadCode,
+                'inXml'=> $_SESSION['API']->xml,
+                'pinP12' => $_SESSION['API']->pinp12,
+                'tipodoc'=> self::$transaccion->tipoDocumento
+            ];
+            curl_setopt_array($ch, array(
+                CURLOPT_URL => self::$apiUrl,
+                CURLOPT_RETURNTRANSFER => true,   
+                CURLOPT_VERBOSE => true,                      
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 30,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => "POST",
+                CURLOPT_POSTFIELDS => $post
+            ));
+            $server_output = curl_exec($ch);
+            $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+            $header = substr($server_output, 0, $header_size);
+            $body = substr($server_output, $header_size);
+            $error_msg = "";
+            if (curl_error($ch)) {
+                $error_msg = curl_error($ch);
+                throw new Exception('Error al cifrar xml. '. $error_msg , ERROR_CIFRAR_NO_VALID);
+            }
+            $sArray= json_decode($server_output);            
+            if(!isset($sArray->resp->xmlFirmado)){
+                // ERROR CRITICO:
+                // debe notificar al contibuyente. 
+                throw new Exception('Error CRITICO al Cifrar xml de comprobante. DEBE COMUNICARSE CON SOPORTE TECNICO: '.$server_output, ERROR_CIFRAR_NO_VALID);
+            }
+            $_SESSION['API']->xmlFirmado= $sArray->resp->xmlFirmado;
+            error_log(" Resp cifrado xml : ". $server_output);
+            curl_close($ch);
+            return true;
+        } 
+        catch(Exception $e) {
+            error_log("****** Error (".$e->getCode()."): ". $e->getMessage());
+            historico::create(self::$transaccion->id, 1, 'ERROR_CIFRAR_NO_VALID:'. $e->getMessage());
+            return false;
+            // header('HTTP/1.0 400 Bad error');
+            // die(json_encode(array(
+            //     'code' => $e->getCode() ,
+            //     'msg' => $e->getMessage()))
+            // );
+        }
+    }
+
+    public static function APIEnviar(){
+        try{
+            self::APIGetToken();
+            $ch = curl_init();
+            $post = [
+                'w' => 'send',
+                'r' => 'json',
+                'token'=>$_SESSION['API']->accessToken,
+                'clave'=> $_SESSION['API']->clave,
+                'fecha' => self::$fechaEmision->format("c"),
+                'emi_tipoIdentificacion'=> $_SESSION['API']->idTipoIdentificacion,
+                'emi_numeroIdentificacion'=> $_SESSION['API']->identificacion,
+                'recp_tipoIdentificacion'=> '01',
+                'recp_numeroIdentificacion'=> '000000000',
+                'comprobanteXml'=>	$_SESSION['API']->xmlFirmado,
+                'client_id'=> 'api-stag' // api-prod
+            ];
+            curl_setopt_array($ch, array(
+                CURLOPT_URL => self::$apiUrl,
+                CURLOPT_RETURNTRANSFER => true,   
+                CURLOPT_VERBOSE => true,                      
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 30,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => "POST",
+                CURLOPT_POSTFIELDS => $post
+            ));
+            $server_output = curl_exec($ch);
+            $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+            $header = substr($server_output, 0, $header_size);
+            $body = substr($server_output, $header_size);
+            $error_msg = "";
+            if (curl_error($ch)) {
+                $error_msg = curl_error($ch);
+                historico::create(self::$transaccion->id, 5, 'ERROR_ENVIO_NO_VALID'. $error_msg);
+                Factura::updateEstado(self::$transaccion->id, 5);
+                error_log("****** Error: ". $error_msg);
+                // debe notificar al contibuyente. 
+                //
+                curl_close($ch);
+                return false;
+            }
+            $sArray= json_decode($server_output);       
+            if(!isset($sArray->resp->Status)){
+                // ERROR CRITICO: almacena estado= 5 (otros) - error al enviar comprobante.
+                historico::create(self::$transaccion->id, 5, 'ERROR_ENVIO_NO_VALID'. $server_output);
+                Factura::updateEstado(self::$transaccion->id, 5);
+                error_log("****** Error: ". $error_msg);
+                // debe notificar al contibuyente. 
+                //
+                curl_close($ch);
+                return false;
+            }
+            //
+            if($sArray->resp->Status!=202){
+                historico::create(self::$transaccion->id, 5, 'Comprobante ENVIADO con error, STATUS('.$sArray->resp->Status.'): '. $server_output);
+                Factura::updateEstado(self::$transaccion->id, 5);
+                error_log("****** Error: ". $server_output);
+                // debe notificar al contibuyente. 
+                //
+                curl_close($ch);
+                return false;
+            }
+            else {
+                // almacena estado: enviado (202).
+                historico::create(self::$transaccion->id, 2, 'Comprobante ENVIADO, STATUS('.$sArray->resp->Status.')');
+                Factura::updateEstado(self::$transaccion->id, 2);
+            }
+            //
+            error_log(" Resp Envio: ". $server_output);
+            curl_close($ch);
+            return true;
+        } 
+        catch(Exception $e) {
+            error_log("****** Error (".$e->getCode()."): ". $e->getMessage());
+            historico::create(self::$transaccion->id, 1, 'ERROR_ENVIO_NO_VALID: '. $e->getMessage());
+            return false;
+            // header('HTTP/1.0 400 Bad error');
+            // die(json_encode(array(
+            //     'code' => $e->getCode() ,
+            //     'msg' => $e->getMessage()))
+            // );
+        }
+    }
+
+    public static function APIConsultaComprobante(){
+        try{
+            $ch = curl_init();
+            $post = [
+                'w' => 'consultar',
+                'r' => 'consultarCom',
+                'token'=>$_SESSION['API']->accessToken,
+                'clave'=> $_SESSION['API']->clave,
+                'client_id'=> 'api-stag' // api-prod
+            ];  
+            curl_setopt_array($ch, array(
+                CURLOPT_URL => self::$apiUrl,
+                CURLOPT_RETURNTRANSFER => true,   
+                CURLOPT_VERBOSE => true,      
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 300,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => "POST",
+                CURLOPT_POSTFIELDS => $post
+            ));
+            $server_output = curl_exec($ch);
+            $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+            $header = substr($server_output, 0, $header_size);
+            $body = substr($server_output, $header_size);
+            $error_msg = "";
+            if (curl_error($ch)) {
+                $error_msg = curl_error($ch);
+                throw new Exception('Error al consultar API MH: '. $error_msg , ERROR_CONSULTA_NO_VALID);
+            }            
+            // session de usuario ATV
+            $sArray=json_decode($server_output);
+            if(!isset($sArray->resp->clave)){
+                throw new Exception('Error CRITICO al consultar el comprobante. DEBE COMUNICARSE CON SOPORTE TECNICO: '.$server_output, ERROR_CONSULTA_NO_VALID);
+            }
+            $respuestaXml='';
+            foreach($sArray->resp as $key=> $r){
+                if($key=='ind-estado')
+                    self::$transaccion->estado= $r;
+                if($key=='respuesta-xml')
+                    $respuestaXml= $r;
+            }           
+            // si el estado es procesando debe consultar de nuevo.
+            if(self::$transaccion->estado=='procesando'){
+                historico::create(self::$transaccion->id, 2, self::$transaccion->estado );
+                self::APIConsultaComprobante();
+            }
+            else if(self::$transaccion->estado=='aceptado'){
+                $xml= base64_decode($respuestaXml);
+                historico::create(self::$transaccion->id, 3, self::$transaccion->estado, $xml);
+                Factura::updateEstado(self::$transaccion->id, 3);
+                error_log("Errores: ". $errores);
+            }
+            else if(self::$transaccion->estado=='rechazado'){
+                // genera informe con los datos del rechazo. y pone estado de la transaccion pendiente para ser enviada cuando sea corregida.
+                $errores= base64_decode($respuestaXml);
+                historico::create(self::$transaccion->id, 4, self::$transaccion->estado, $errores);
+                Factura::updateEstado(self::$transaccion->id, 4);
+                error_log("Errores: ". $errores);
+            }            
+            error_log("Estado de la transaccion(".self::$transaccion->id."): ". self::$transaccion->estado);
+            curl_close($ch);
+        } 
+        catch(Exception $e) {
+            error_log("****** Error (".$e->getCode()."): ". $e->getMessage());
+            return false;
+            // header('HTTP/1.0 400 Bad error');
+            // die(json_encode(array(
+            //     'code' => $e->getCode() ,
+            //     'msg' => $e->getMessage()))
+            // );
+        }
     }
 }
-
 ?>

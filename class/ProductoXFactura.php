@@ -78,11 +78,10 @@ class ProductoXFactura{
         try {
             $created = true;
             $cantidad = 1;
-            $idUnidadMedida = 33;
             $montoTotal = 0;
             $subTotal = 0;
             $montoTotalLinea = 0;
-
+            $idUnidadMedida= 78;  // Unid.
 
             foreach ($obj as $item) {       
                 
@@ -103,6 +102,4 @@ class ProductoXFactura{
         }
     }
 }
-?>    
-   
-
+?> 

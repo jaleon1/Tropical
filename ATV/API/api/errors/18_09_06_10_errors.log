@@ -1,0 +1,480 @@
+[d] 18-09-06 10:09:35 @ Booting up V:0.1
+[d] 18-09-06 10:09:35 @ Loading all core modules
+[d] 18-09-06 10:09:35 @ Loading module: >>(cala)<<
+[d] 18-09-06 10:09:35 @ Loading in path: ../api/modules/cala/module.php
+[d] 18-09-06 10:09:35 @ Including file: ../api/modules/cala/module.php
+[d] 18-09-06 10:09:35 @ Module was booted too
+[i] 18-09-06 10:09:35 @ Cala was booted...
+[d] 18-09-06 10:09:35 @ Loading module: >>(db)<<
+[d] 18-09-06 10:09:35 @ Loading in path: ../api/modules/db/module.php
+[d] 18-09-06 10:09:35 @ Including file: ../api/modules/db/module.php
+[d] 18-09-06 10:09:35 @ Module was booted too
+[d] 18-09-06 10:09:35 @ Connected to Db
+[d] 18-09-06 10:09:35 @ Loading module: >>(users)<<
+[d] 18-09-06 10:09:35 @ Loading in path: ../api/modules/users/module.php
+[d] 18-09-06 10:09:35 @ Including file: ../api/modules/users/module.php
+[d] 18-09-06 10:09:35 @ Module was booted too
+[d] 18-09-06 10:09:35 @ Loading user
+[d] 18-09-06 10:09:35 @ SELECT *
+    FROM users
+     WHERE userName = 'carlos.echc11@gmail.com' AND `status` > 0 
+[d] 18-09-06 10:09:35 @ Loading module: >>(crypto)<<
+[d] 18-09-06 10:09:35 @ Loading in path: ../api/modules/crypto/module.php
+[d] 18-09-06 10:09:35 @ Including file: ../api/modules/crypto/module.php
+[d] 18-09-06 10:09:35 @ Module was booted too
+[d] 18-09-06 10:09:35 @ Loading in path: ../api/contrib/fileUploader/module.php
+[d] 18-09-06 10:09:35 @ Including file: ../api/contrib/fileUploader/module.php
+[d] 18-09-06 10:09:35 @ Module was booted too
+[d] 18-09-06 10:09:35 @ Function found
+[d] 18-09-06 10:09:35 @ Looking for path: subir_certif
+[d] 18-09-06 10:09:35 @ Found path: subir_certif
+[d] 18-09-06 10:09:35 @ Confirm that the user is logged in
+[d] 18-09-06 10:09:35 @ Confirm the session for this user
+[d] 18-09-06 10:09:35 @ SELECT *
+        FROM sessions
+        WHERE sessionKey = 'eWRRQlV0cXNwOCtFMHVxNDFYaEFoZz09OjokxNdmVNGOUln9mwjOKozz'
+        AND ip = '::1'
+        AND idUser = '27'
+[d] 18-09-06 10:09:35 @ No results found
+[d] 18-09-06 10:09:35 @ UPDATE sessions SET lastAccess = '1536264335' WHERE sessionKey = 'eWRRQlV0cXNwOCtFMHVxNDFYaEFoZz09OjokxNdmVNGOUln9mwjOKozz'
+[d] 18-09-06 10:09:35 @ UPDATE users SET lastAccess = '1536264335' WHERE idUser = '27'
+[d] 18-09-06 10:09:35 @ Finished! Memory used: Mb0.68928<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+[d] 18-09-06 10:09:39 @ Booting up V:0.1
+[d] 18-09-06 10:09:39 @ Loading all core modules
+[d] 18-09-06 10:09:39 @ Loading module: >>(cala)<<
+[d] 18-09-06 10:09:39 @ Loading in path: ../api/modules/cala/module.php
+[d] 18-09-06 10:09:39 @ Including file: ../api/modules/cala/module.php
+[d] 18-09-06 10:09:39 @ Module was booted too
+[i] 18-09-06 10:09:39 @ Cala was booted...
+[d] 18-09-06 10:09:39 @ Loading module: >>(db)<<
+[d] 18-09-06 10:09:39 @ Loading in path: ../api/modules/db/module.php
+[d] 18-09-06 10:09:39 @ Including file: ../api/modules/db/module.php
+[d] 18-09-06 10:09:39 @ Module was booted too
+[d] 18-09-06 10:09:39 @ Connected to Db
+[d] 18-09-06 10:09:39 @ Loading module: >>(users)<<
+[d] 18-09-06 10:09:39 @ Loading in path: ../api/modules/users/module.php
+[d] 18-09-06 10:09:39 @ Including file: ../api/modules/users/module.php
+[d] 18-09-06 10:09:39 @ Module was booted too
+[d] 18-09-06 10:09:39 @ Loading user
+[d] 18-09-06 10:09:39 @ SELECT *
+    FROM users
+     WHERE userName = 'carlos.echc11@gmail.com' AND `status` > 0 
+[d] 18-09-06 10:09:39 @ Loading module: >>(crypto)<<
+[d] 18-09-06 10:09:39 @ Loading in path: ../api/modules/crypto/module.php
+[d] 18-09-06 10:09:39 @ Including file: ../api/modules/crypto/module.php
+[d] 18-09-06 10:09:39 @ Module was booted too
+[d] 18-09-06 10:09:39 @ Loading in path: ../api/contrib/fileUploader/module.php
+[d] 18-09-06 10:09:39 @ Including file: ../api/contrib/fileUploader/module.php
+[d] 18-09-06 10:09:39 @ Module was booted too
+[d] 18-09-06 10:09:39 @ Function found
+[d] 18-09-06 10:09:39 @ Looking for path: subir_certif
+[d] 18-09-06 10:09:39 @ Found path: subir_certif
+[d] 18-09-06 10:09:39 @ Confirm that the user is logged in
+[d] 18-09-06 10:09:39 @ Confirm the session for this user
+[d] 18-09-06 10:09:40 @ SELECT *
+        FROM sessions
+        WHERE sessionKey = 'OHE1MVc5azZGY2VRQmhOUVZrOFJZdz09OjrqBEF8iftHvamy6nWkc0m2'
+        AND ip = '::1'
+        AND idUser = '27'
+[d] 18-09-06 10:09:40 @ The user still here :)
+[d] 18-09-06 10:09:40 @ Loading in path: ../api/contrib/fileUploader/uploader.php
+[d] 18-09-06 10:09:40 @ Including file: ../api/contrib/fileUploader/uploader.php
+[d] 18-09-06 10:09:40 @ Module was booted too
+[d] 18-09-06 10:09:40 @ Found function: uploadCert
+[d] 18-09-06 10:09:40 @ Loading in path: ../api/modules/files/module.php
+[d] 18-09-06 10:09:40 @ Including file: ../api/modules/files/module.php
+[d] 18-09-06 10:09:40 @ Module was booted too
+[d] 18-09-06 10:09:40 @ Loading tool: ../api/tools/ImageResize.php
+[d] 18-09-06 10:09:40 @ Uploading a file
+[d] 18-09-06 10:09:40 @ Using default max upload size
+[d] 18-09-06 10:09:40 @ Saving file to: ../api/files/27/hacienda/
+[d] 18-09-06 10:09:40 @ Uploading file to: ../api/files/27/hacienda/011187076308.p12
+[d] 18-09-06 10:09:40 @ Some extention restrictions apply
+[d] 18-09-06 10:09:40 @ INSERT INTO files (md5, name, timestamp, size, idUser, downloadCode, fileType, type)
+        VALUES('37040daf17c4502c10ce093226fba50b', '011187076308.p12', '1536264400', '6712', '27', 'e60e8950c4c95724485c7f24878d1cf4', '', 'hacienda')
+[d] 18-09-06 10:09:40 @ SELECT idFile FROM files WHERE downloadCode = 'e60e8950c4c95724485c7f24878d1cf4'
+[d] 18-09-06 10:09:40 @ UPDATE sessions SET lastAccess = '1536264400' WHERE sessionKey = 'OHE1MVc5azZGY2VRQmhOUVZrOFJZdz09OjrqBEF8iftHvamy6nWkc0m2'
+[d] 18-09-06 10:09:40 @ UPDATE users SET lastAccess = '1536264400' WHERE idUser = '27'
+[d] 18-09-06 10:09:40 @ Finished! Memory used: Mb0.751336<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+[d] 18-09-06 10:09:48 @ Booting up V:0.1
+[d] 18-09-06 10:09:48 @ Loading all core modules
+[d] 18-09-06 10:09:48 @ Loading module: >>(cala)<<
+[d] 18-09-06 10:09:48 @ Loading in path: ../api/modules/cala/module.php
+[d] 18-09-06 10:09:48 @ Including file: ../api/modules/cala/module.php
+[d] 18-09-06 10:09:48 @ Module was booted too
+[i] 18-09-06 10:09:48 @ Cala was booted...
+[d] 18-09-06 10:09:48 @ Loading module: >>(db)<<
+[d] 18-09-06 10:09:48 @ Loading in path: ../api/modules/db/module.php
+[d] 18-09-06 10:09:48 @ Including file: ../api/modules/db/module.php
+[d] 18-09-06 10:09:48 @ Module was booted too
+[d] 18-09-06 10:09:48 @ Connected to Db
+[d] 18-09-06 10:09:48 @ Loading module: >>(users)<<
+[d] 18-09-06 10:09:48 @ Loading in path: ../api/modules/users/module.php
+[d] 18-09-06 10:09:48 @ Including file: ../api/modules/users/module.php
+[d] 18-09-06 10:09:48 @ Module was booted too
+[d] 18-09-06 10:09:48 @ Loading user
+[d] 18-09-06 10:09:48 @ SELECT *
+    FROM users
+     WHERE userName = '' AND `status` > 0 
+[d] 18-09-06 10:09:48 @ Unable to locate user
+[d] 18-09-06 10:09:48 @ Loading module: >>(crypto)<<
+[d] 18-09-06 10:09:48 @ Loading in path: ../api/modules/crypto/module.php
+[d] 18-09-06 10:09:48 @ Including file: ../api/modules/crypto/module.php
+[d] 18-09-06 10:09:48 @ Module was booted too
+[d] 18-09-06 10:09:48 @ Loading in path: ../api/modules/users/module.php
+[d] 18-09-06 10:09:48 @ Including file: ../api/modules/users/module.php
+[d] 18-09-06 10:09:48 @ Module was booted too
+[d] 18-09-06 10:09:48 @ Loading user
+[d] 18-09-06 10:09:48 @ SELECT *
+    FROM users
+     WHERE userName = '' AND `status` > 0 
+[d] 18-09-06 10:09:48 @ Unable to locate user
+[d] 18-09-06 10:09:48 @ Function found
+[d] 18-09-06 10:09:48 @ Looking for path: users_log_me_in
+[d] 18-09-06 10:09:48 @ Found path: users_log_me_in
+[d] 18-09-06 10:09:48 @ Loading in path: ../api/modules/users/login.php
+[d] 18-09-06 10:09:48 @ Including file: ../api/modules/users/login.php
+[d] 18-09-06 10:09:48 @ Module was booted too
+[d] 18-09-06 10:09:48 @ Loading user
+[d] 18-09-06 10:09:48 @ SELECT *
+    FROM users
+     WHERE userName = '' AND `status` > 0 
+[d] 18-09-06 10:09:48 @ Unable to locate user
+[d] 18-09-06 10:09:48 @ Found function: users_logMeIn
+[d] 18-09-06 10:09:48 @ Log in this person
+[d] 18-09-06 10:09:48 @ email based login
+[d] 18-09-06 10:09:48 @ Loading user
+[d] 18-09-06 10:09:48 @ SELECT *
+    FROM users
+     WHERE email = 'carlos.echc11@gmail.com' AND `status` > 0 
+[d] 18-09-06 10:09:48 @ Loading in path: ../api/modules/crypto/crypto.php
+[d] 18-09-06 10:09:48 @ Including file: ../api/modules/crypto/crypto.php
+[d] 18-09-06 10:09:48 @ Module was booted too
+[d] 18-09-06 10:09:48 @ Able to login
+[d] 18-09-06 10:09:48 @ delete from sessions where idUser='27' and ip='::1'
+[d] 18-09-06 10:09:48 @ Loading in path: ../api/modules/crypto/crypto.php
+[d] 18-09-06 10:09:48 @ Including file: ../api/modules/crypto/crypto.php
+[d] 18-09-06 10:09:48 @ Module was booted too
+[d] 18-09-06 10:09:48 @ INSERT INTO sessions (idUser, sessionKey, ip, lastAccess) VALUES('27', 'ZnJNQ1dpK0NtVmRPTkRHa0taQzV6Zz09OjoTdUhwKUskfXZ8TkHoHIaw', '::1', '1536265728')
+[d] 18-09-06 10:09:48 @ Finished! Memory used: Mb0.6874<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+[d] 18-09-06 10:09:48 @ Booting up V:0.1
+[d] 18-09-06 10:09:49 @ Loading all core modules
+[d] 18-09-06 10:09:49 @ Loading module: >>(cala)<<
+[d] 18-09-06 10:09:49 @ Loading in path: ../api/modules/cala/module.php
+[d] 18-09-06 10:09:49 @ Including file: ../api/modules/cala/module.php
+[d] 18-09-06 10:09:49 @ Module was booted too
+[i] 18-09-06 10:09:49 @ Cala was booted...
+[d] 18-09-06 10:09:49 @ Loading module: >>(db)<<
+[d] 18-09-06 10:09:49 @ Loading in path: ../api/modules/db/module.php
+[d] 18-09-06 10:09:49 @ Including file: ../api/modules/db/module.php
+[d] 18-09-06 10:09:49 @ Module was booted too
+[d] 18-09-06 10:09:49 @ Connected to Db
+[d] 18-09-06 10:09:49 @ Loading module: >>(users)<<
+[d] 18-09-06 10:09:49 @ Loading in path: ../api/modules/users/module.php
+[d] 18-09-06 10:09:49 @ Including file: ../api/modules/users/module.php
+[d] 18-09-06 10:09:49 @ Module was booted too
+[d] 18-09-06 10:09:49 @ Loading user
+[d] 18-09-06 10:09:49 @ SELECT *
+    FROM users
+     WHERE userName = 'carlos.echc11@gmail.com' AND `status` > 0 
+[d] 18-09-06 10:09:49 @ Loading module: >>(crypto)<<
+[d] 18-09-06 10:09:49 @ Loading in path: ../api/modules/crypto/module.php
+[d] 18-09-06 10:09:49 @ Including file: ../api/modules/crypto/module.php
+[d] 18-09-06 10:09:49 @ Module was booted too
+[d] 18-09-06 10:09:49 @ Loading in path: ../api/contrib/fileUploader/module.php
+[d] 18-09-06 10:09:49 @ Including file: ../api/contrib/fileUploader/module.php
+[d] 18-09-06 10:09:49 @ Module was booted too
+[d] 18-09-06 10:09:49 @ Function found
+[d] 18-09-06 10:09:49 @ Looking for path: subir_certif
+[d] 18-09-06 10:09:49 @ Found path: subir_certif
+[d] 18-09-06 10:09:49 @ Confirm that the user is logged in
+[d] 18-09-06 10:09:49 @ Confirm the session for this user
+[d] 18-09-06 10:09:49 @ SELECT *
+        FROM sessions
+        WHERE sessionKey = ''
+        AND ip = '::1'
+        AND idUser = '27'
+[d] 18-09-06 10:09:49 @ No results found
+[d] 18-09-06 10:09:49 @ Finished! Memory used: Mb0.688488<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+[d] 18-09-06 10:09:37 @ Booting up V:0.1
+[d] 18-09-06 10:09:37 @ Loading all core modules
+[d] 18-09-06 10:09:37 @ Loading module: >>(cala)<<
+[d] 18-09-06 10:09:37 @ Loading in path: ../api/modules/cala/module.php
+[d] 18-09-06 10:09:37 @ Including file: ../api/modules/cala/module.php
+[d] 18-09-06 10:09:37 @ Module was booted too
+[i] 18-09-06 10:09:37 @ Cala was booted...
+[d] 18-09-06 10:09:37 @ Loading module: >>(db)<<
+[d] 18-09-06 10:09:37 @ Loading in path: ../api/modules/db/module.php
+[d] 18-09-06 10:09:37 @ Including file: ../api/modules/db/module.php
+[d] 18-09-06 10:09:37 @ Module was booted too
+[d] 18-09-06 10:09:37 @ Connected to Db
+[d] 18-09-06 10:09:37 @ Loading module: >>(users)<<
+[d] 18-09-06 10:09:37 @ Loading in path: ../api/modules/users/module.php
+[d] 18-09-06 10:09:37 @ Including file: ../api/modules/users/module.php
+[d] 18-09-06 10:09:37 @ Module was booted too
+[d] 18-09-06 10:09:37 @ Loading user
+[d] 18-09-06 10:09:37 @ SELECT *
+    FROM users
+     WHERE userName = 'carlos.echc11@gmail.com' AND `status` > 0 
+[d] 18-09-06 10:09:37 @ Loading module: >>(crypto)<<
+[d] 18-09-06 10:09:37 @ Loading in path: ../api/modules/crypto/module.php
+[d] 18-09-06 10:09:37 @ Including file: ../api/modules/crypto/module.php
+[d] 18-09-06 10:09:37 @ Module was booted too
+[d] 18-09-06 10:09:37 @ Loading in path: ../api/contrib/fileUploader/module.php
+[d] 18-09-06 10:09:37 @ Including file: ../api/contrib/fileUploader/module.php
+[d] 18-09-06 10:09:37 @ Module was booted too
+[d] 18-09-06 10:09:37 @ Function found
+[d] 18-09-06 10:09:37 @ Looking for path: subir_certif
+[d] 18-09-06 10:09:37 @ Found path: subir_certif
+[d] 18-09-06 10:09:37 @ Confirm that the user is logged in
+[d] 18-09-06 10:09:37 @ Confirm the session for this user
+[d] 18-09-06 10:09:37 @ SELECT *
+        FROM sessions
+        WHERE sessionKey = 'OHE1MVc5azZGY2VRQmhOUVZrOFJZdz09OjrqBEF8iftHvamy6nWkc0m2'
+        AND ip = '::1'
+        AND idUser = '27'
+[d] 18-09-06 10:09:37 @ No results found
+[d] 18-09-06 10:09:37 @ UPDATE sessions SET lastAccess = '1536265837' WHERE sessionKey = 'OHE1MVc5azZGY2VRQmhOUVZrOFJZdz09OjrqBEF8iftHvamy6nWkc0m2'
+[d] 18-09-06 10:09:37 @ UPDATE users SET lastAccess = '1536265837' WHERE idUser = '27'
+[d] 18-09-06 10:09:38 @ Finished! Memory used: Mb0.68828<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+[d] 18-09-06 10:09:44 @ Booting up V:0.1
+[d] 18-09-06 10:09:44 @ Loading all core modules
+[d] 18-09-06 10:09:44 @ Loading module: >>(cala)<<
+[d] 18-09-06 10:09:44 @ Loading in path: ../api/modules/cala/module.php
+[d] 18-09-06 10:09:44 @ Including file: ../api/modules/cala/module.php
+[d] 18-09-06 10:09:44 @ Module was booted too
+[i] 18-09-06 10:09:44 @ Cala was booted...
+[d] 18-09-06 10:09:44 @ Loading module: >>(db)<<
+[d] 18-09-06 10:09:44 @ Loading in path: ../api/modules/db/module.php
+[d] 18-09-06 10:09:44 @ Including file: ../api/modules/db/module.php
+[d] 18-09-06 10:09:44 @ Module was booted too
+[d] 18-09-06 10:09:44 @ Connected to Db
+[d] 18-09-06 10:09:44 @ Loading module: >>(users)<<
+[d] 18-09-06 10:09:44 @ Loading in path: ../api/modules/users/module.php
+[d] 18-09-06 10:09:44 @ Including file: ../api/modules/users/module.php
+[d] 18-09-06 10:09:44 @ Module was booted too
+[d] 18-09-06 10:09:44 @ Loading user
+[d] 18-09-06 10:09:44 @ SELECT *
+    FROM users
+     WHERE userName = 'carlos.echc11@gmail.com' AND `status` > 0 
+[d] 18-09-06 10:09:44 @ Loading module: >>(crypto)<<
+[d] 18-09-06 10:09:44 @ Loading in path: ../api/modules/crypto/module.php
+[d] 18-09-06 10:09:44 @ Including file: ../api/modules/crypto/module.php
+[d] 18-09-06 10:09:44 @ Module was booted too
+[d] 18-09-06 10:09:44 @ Loading in path: ../api/contrib/fileUploader/module.php
+[d] 18-09-06 10:09:44 @ Including file: ../api/contrib/fileUploader/module.php
+[d] 18-09-06 10:09:44 @ Module was booted too
+[d] 18-09-06 10:09:44 @ Function found
+[d] 18-09-06 10:09:44 @ Looking for path: subir_certif
+[d] 18-09-06 10:09:44 @ Found path: subir_certif
+[d] 18-09-06 10:09:44 @ Confirm that the user is logged in
+[d] 18-09-06 10:09:44 @ Confirm the session for this user
+[d] 18-09-06 10:09:44 @ SELECT *
+        FROM sessions
+        WHERE sessionKey = 'OHE1MVc5azZGY2VRQmhOUVZrOFJZdz09OjrqBEF8iftHvamy6nWkc0m2'
+        AND ip = '::1'
+        AND idUser = '27'
+[d] 18-09-06 10:09:44 @ No results found
+[d] 18-09-06 10:09:44 @ UPDATE sessions SET lastAccess = '1536265844' WHERE sessionKey = 'OHE1MVc5azZGY2VRQmhOUVZrOFJZdz09OjrqBEF8iftHvamy6nWkc0m2'
+[d] 18-09-06 10:09:44 @ UPDATE users SET lastAccess = '1536265844' WHERE idUser = '27'
+[d] 18-09-06 10:09:44 @ Finished! Memory used: Mb0.68928<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+[d] 18-09-06 10:09:13 @ Booting up V:0.1
+[d] 18-09-06 10:09:13 @ Loading all core modules
+[d] 18-09-06 10:09:13 @ Loading module: >>(cala)<<
+[d] 18-09-06 10:09:13 @ Loading in path: ../api/modules/cala/module.php
+[d] 18-09-06 10:09:13 @ Including file: ../api/modules/cala/module.php
+[d] 18-09-06 10:09:13 @ Module was booted too
+[i] 18-09-06 10:09:13 @ Cala was booted...
+[d] 18-09-06 10:09:13 @ Loading module: >>(db)<<
+[d] 18-09-06 10:09:13 @ Loading in path: ../api/modules/db/module.php
+[d] 18-09-06 10:09:13 @ Including file: ../api/modules/db/module.php
+[d] 18-09-06 10:09:13 @ Module was booted too
+[d] 18-09-06 10:09:13 @ Connected to Db
+[d] 18-09-06 10:09:13 @ Loading module: >>(users)<<
+[d] 18-09-06 10:09:13 @ Loading in path: ../api/modules/users/module.php
+[d] 18-09-06 10:09:13 @ Including file: ../api/modules/users/module.php
+[d] 18-09-06 10:09:13 @ Module was booted too
+[d] 18-09-06 10:09:13 @ Loading user
+[d] 18-09-06 10:09:13 @ SELECT *
+    FROM users
+     WHERE userName = '' AND `status` > 0 
+[d] 18-09-06 10:09:13 @ Unable to locate user
+[d] 18-09-06 10:09:13 @ Loading module: >>(crypto)<<
+[d] 18-09-06 10:09:13 @ Loading in path: ../api/modules/crypto/module.php
+[d] 18-09-06 10:09:13 @ Including file: ../api/modules/crypto/module.php
+[d] 18-09-06 10:09:13 @ Module was booted too
+[d] 18-09-06 10:09:13 @ Loading in path: ../api/modules/users/module.php
+[d] 18-09-06 10:09:13 @ Including file: ../api/modules/users/module.php
+[d] 18-09-06 10:09:13 @ Module was booted too
+[d] 18-09-06 10:09:13 @ Loading user
+[d] 18-09-06 10:09:13 @ SELECT *
+    FROM users
+     WHERE userName = '' AND `status` > 0 
+[d] 18-09-06 10:09:13 @ Unable to locate user
+[d] 18-09-06 10:09:13 @ Function found
+[d] 18-09-06 10:09:13 @ Looking for path: users_log_me_in
+[d] 18-09-06 10:09:13 @ Found path: users_log_me_in
+[d] 18-09-06 10:09:13 @ Loading in path: ../api/modules/users/login.php
+[d] 18-09-06 10:09:13 @ Including file: ../api/modules/users/login.php
+[d] 18-09-06 10:09:13 @ Module was booted too
+[d] 18-09-06 10:09:13 @ Loading user
+[d] 18-09-06 10:09:13 @ SELECT *
+    FROM users
+     WHERE userName = '' AND `status` > 0 
+[d] 18-09-06 10:09:13 @ Unable to locate user
+[d] 18-09-06 10:09:13 @ Found function: users_logMeIn
+[d] 18-09-06 10:09:13 @ Log in this person
+[d] 18-09-06 10:09:13 @ email based login
+[d] 18-09-06 10:09:13 @ Loading user
+[d] 18-09-06 10:09:13 @ SELECT *
+    FROM users
+     WHERE email = 'carlos.echc11@gmail.com' AND `status` > 0 
+[d] 18-09-06 10:09:13 @ Loading in path: ../api/modules/crypto/crypto.php
+[d] 18-09-06 10:09:13 @ Including file: ../api/modules/crypto/crypto.php
+[d] 18-09-06 10:09:13 @ Module was booted too
+[d] 18-09-06 10:09:13 @ Able to login
+[d] 18-09-06 10:09:13 @ delete from sessions where idUser='27' and ip='::1'
+[d] 18-09-06 10:09:13 @ Loading in path: ../api/modules/crypto/crypto.php
+[d] 18-09-06 10:09:13 @ Including file: ../api/modules/crypto/crypto.php
+[d] 18-09-06 10:09:13 @ Module was booted too
+[d] 18-09-06 10:09:13 @ INSERT INTO sessions (idUser, sessionKey, ip, lastAccess) VALUES('27', 'WERyZkkwTVQ1R3dtMDd5K1p3Vk9tUT09OjoEMuqasPFlfPVxndSktySD', '::1', '1536267493')
+[d] 18-09-06 10:09:13 @ Finished! Memory used: Mb0.6874<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+[d] 18-09-06 10:09:14 @ Booting up V:0.1
+[d] 18-09-06 10:09:14 @ Loading all core modules
+[d] 18-09-06 10:09:14 @ Loading module: >>(cala)<<
+[d] 18-09-06 10:09:14 @ Loading in path: ../api/modules/cala/module.php
+[d] 18-09-06 10:09:14 @ Including file: ../api/modules/cala/module.php
+[d] 18-09-06 10:09:14 @ Module was booted too
+[i] 18-09-06 10:09:14 @ Cala was booted...
+[d] 18-09-06 10:09:14 @ Loading module: >>(db)<<
+[d] 18-09-06 10:09:14 @ Loading in path: ../api/modules/db/module.php
+[d] 18-09-06 10:09:14 @ Including file: ../api/modules/db/module.php
+[d] 18-09-06 10:09:14 @ Module was booted too
+[d] 18-09-06 10:09:14 @ Connected to Db
+[d] 18-09-06 10:09:14 @ Loading module: >>(users)<<
+[d] 18-09-06 10:09:14 @ Loading in path: ../api/modules/users/module.php
+[d] 18-09-06 10:09:14 @ Including file: ../api/modules/users/module.php
+[d] 18-09-06 10:09:14 @ Module was booted too
+[d] 18-09-06 10:09:14 @ Loading user
+[d] 18-09-06 10:09:14 @ SELECT *
+    FROM users
+     WHERE userName = 'carlos.echc11@gmail.com' AND `status` > 0 
+[d] 18-09-06 10:09:14 @ Loading module: >>(crypto)<<
+[d] 18-09-06 10:09:14 @ Loading in path: ../api/modules/crypto/module.php
+[d] 18-09-06 10:09:14 @ Including file: ../api/modules/crypto/module.php
+[d] 18-09-06 10:09:14 @ Module was booted too
+[d] 18-09-06 10:09:14 @ Loading in path: ../api/contrib/fileUploader/module.php
+[d] 18-09-06 10:09:14 @ Including file: ../api/contrib/fileUploader/module.php
+[d] 18-09-06 10:09:14 @ Module was booted too
+[d] 18-09-06 10:09:14 @ Function found
+[d] 18-09-06 10:09:14 @ Looking for path: subir_certif
+[d] 18-09-06 10:09:14 @ Found path: subir_certif
+[d] 18-09-06 10:09:14 @ Confirm that the user is logged in
+[d] 18-09-06 10:09:14 @ Confirm the session for this user
+[d] 18-09-06 10:09:14 @ SELECT *
+        FROM sessions
+        WHERE sessionKey = ''
+        AND ip = '::1'
+        AND idUser = '27'
+[d] 18-09-06 10:09:14 @ No results found
+[d] 18-09-06 10:09:14 @ Finished! Memory used: Mb0.688536<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+[d] 18-09-06 10:09:41 @ Booting up V:0.1
+[d] 18-09-06 10:09:41 @ Loading all core modules
+[d] 18-09-06 10:09:41 @ Loading module: >>(cala)<<
+[d] 18-09-06 10:09:41 @ Loading in path: ../api/modules/cala/module.php
+[d] 18-09-06 10:09:41 @ Including file: ../api/modules/cala/module.php
+[d] 18-09-06 10:09:41 @ Module was booted too
+[i] 18-09-06 10:09:41 @ Cala was booted...
+[d] 18-09-06 10:09:41 @ Loading module: >>(db)<<
+[d] 18-09-06 10:09:41 @ Loading in path: ../api/modules/db/module.php
+[d] 18-09-06 10:09:41 @ Including file: ../api/modules/db/module.php
+[d] 18-09-06 10:09:41 @ Module was booted too
+[d] 18-09-06 10:09:41 @ Connected to Db
+[d] 18-09-06 10:09:41 @ Loading module: >>(users)<<
+[d] 18-09-06 10:09:41 @ Loading in path: ../api/modules/users/module.php
+[d] 18-09-06 10:09:41 @ Including file: ../api/modules/users/module.php
+[d] 18-09-06 10:09:41 @ Module was booted too
+[d] 18-09-06 10:09:41 @ Loading user
+[d] 18-09-06 10:09:41 @ SELECT *
+    FROM users
+     WHERE userName = '' AND `status` > 0 
+[d] 18-09-06 10:09:41 @ Unable to locate user
+[d] 18-09-06 10:09:41 @ Loading module: >>(crypto)<<
+[d] 18-09-06 10:09:41 @ Loading in path: ../api/modules/crypto/module.php
+[d] 18-09-06 10:09:41 @ Including file: ../api/modules/crypto/module.php
+[d] 18-09-06 10:09:41 @ Module was booted too
+[d] 18-09-06 10:09:41 @ Loading in path: ../api/modules/users/module.php
+[d] 18-09-06 10:09:41 @ Including file: ../api/modules/users/module.php
+[d] 18-09-06 10:09:41 @ Module was booted too
+[d] 18-09-06 10:09:41 @ Loading user
+[d] 18-09-06 10:09:41 @ SELECT *
+    FROM users
+     WHERE userName = '' AND `status` > 0 
+[d] 18-09-06 10:09:41 @ Unable to locate user
+[d] 18-09-06 10:09:41 @ Function found
+[d] 18-09-06 10:09:41 @ Looking for path: users_log_me_in
+[d] 18-09-06 10:09:41 @ Found path: users_log_me_in
+[d] 18-09-06 10:09:41 @ Loading in path: ../api/modules/users/login.php
+[d] 18-09-06 10:09:41 @ Including file: ../api/modules/users/login.php
+[d] 18-09-06 10:09:41 @ Module was booted too
+[d] 18-09-06 10:09:41 @ Loading user
+[d] 18-09-06 10:09:41 @ SELECT *
+    FROM users
+     WHERE userName = '' AND `status` > 0 
+[d] 18-09-06 10:09:41 @ Unable to locate user
+[d] 18-09-06 10:09:41 @ Found function: users_logMeIn
+[d] 18-09-06 10:09:41 @ Log in this person
+[d] 18-09-06 10:09:41 @ email based login
+[d] 18-09-06 10:09:41 @ Loading user
+[d] 18-09-06 10:09:41 @ SELECT *
+    FROM users
+     WHERE email = 'carlos.echc11@gmail.com' AND `status` > 0 
+[d] 18-09-06 10:09:41 @ Loading in path: ../api/modules/crypto/crypto.php
+[d] 18-09-06 10:09:41 @ Including file: ../api/modules/crypto/crypto.php
+[d] 18-09-06 10:09:41 @ Module was booted too
+[d] 18-09-06 10:09:41 @ Able to login
+[d] 18-09-06 10:09:41 @ delete from sessions where idUser='27' and ip='::1'
+[d] 18-09-06 10:09:41 @ Loading in path: ../api/modules/crypto/crypto.php
+[d] 18-09-06 10:09:41 @ Including file: ../api/modules/crypto/crypto.php
+[d] 18-09-06 10:09:41 @ Module was booted too
+[d] 18-09-06 10:09:41 @ INSERT INTO sessions (idUser, sessionKey, ip, lastAccess) VALUES('27', 'Sm9lc0ZkUVJDSEo4YzY2dWp5UUN3Zz09OjrwjO/xPyalCeaAzc/lRzRS', '::1', '1536267521')
+[d] 18-09-06 10:09:41 @ Finished! Memory used: Mb0.6874<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+[d] 18-09-06 10:09:42 @ Booting up V:0.1
+[d] 18-09-06 10:09:42 @ Loading all core modules
+[d] 18-09-06 10:09:42 @ Loading module: >>(cala)<<
+[d] 18-09-06 10:09:42 @ Loading in path: ../api/modules/cala/module.php
+[d] 18-09-06 10:09:42 @ Including file: ../api/modules/cala/module.php
+[d] 18-09-06 10:09:42 @ Module was booted too
+[i] 18-09-06 10:09:42 @ Cala was booted...
+[d] 18-09-06 10:09:42 @ Loading module: >>(db)<<
+[d] 18-09-06 10:09:42 @ Loading in path: ../api/modules/db/module.php
+[d] 18-09-06 10:09:42 @ Including file: ../api/modules/db/module.php
+[d] 18-09-06 10:09:42 @ Module was booted too
+[d] 18-09-06 10:09:42 @ Connected to Db
+[d] 18-09-06 10:09:42 @ Loading module: >>(users)<<
+[d] 18-09-06 10:09:42 @ Loading in path: ../api/modules/users/module.php
+[d] 18-09-06 10:09:42 @ Including file: ../api/modules/users/module.php
+[d] 18-09-06 10:09:42 @ Module was booted too
+[d] 18-09-06 10:09:42 @ Loading user
+[d] 18-09-06 10:09:42 @ SELECT *
+    FROM users
+     WHERE userName = 'carlos.echc11@gmail.com' AND `status` > 0 
+[d] 18-09-06 10:09:42 @ Loading module: >>(crypto)<<
+[d] 18-09-06 10:09:42 @ Loading in path: ../api/modules/crypto/module.php
+[d] 18-09-06 10:09:42 @ Including file: ../api/modules/crypto/module.php
+[d] 18-09-06 10:09:42 @ Module was booted too
+[d] 18-09-06 10:09:42 @ Loading in path: ../api/contrib/fileUploader/module.php
+[d] 18-09-06 10:09:42 @ Including file: ../api/contrib/fileUploader/module.php
+[d] 18-09-06 10:09:42 @ Module was booted too
+[d] 18-09-06 10:09:42 @ Function found
+[d] 18-09-06 10:09:42 @ Looking for path: subir_certif
+[d] 18-09-06 10:09:42 @ Found path: subir_certif
+[d] 18-09-06 10:09:42 @ Confirm that the user is logged in
+[d] 18-09-06 10:09:42 @ Confirm the session for this user
+[d] 18-09-06 10:09:42 @ SELECT *
+        FROM sessions
+        WHERE sessionKey = ''
+        AND ip = '::1'
+        AND idUser = '27'
+[d] 18-09-06 10:09:42 @ No results found
+[d] 18-09-06 10:09:42 @ Finished! Memory used: Mb0.688536<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

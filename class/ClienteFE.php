@@ -48,6 +48,9 @@ if(isset($_POST["action"])){
         case "Update":
             $clientefe->Update();
             break;
+        case "APILogin":
+            $clientefe->ReadProfile(); // lee el perfil del contribuyente y loguea al API.
+            break;
         case "Delete":
             $clientefe->Delete();
             break;
@@ -172,6 +175,13 @@ class Barrio{
     }
 }
 
+class UbicacionCod{
+    public $provincia;
+    public $canton;
+    public $distrito;
+    public $barrio;
+}
+
 class ClienteFE{
     public $id=null;
     public $codigoSeguridad='';
@@ -190,11 +200,15 @@ class ClienteFE{
     public $idCodigoPaisFax=null;
     public $numTelefonoFax=null;
     public $correoElectronico=null;
+    public $pinp12=null;
     public $idBodega=null;
     public $filesize= null;
     public $filename= null;
     public $filetype= null;
     public $estadoCertificado= 1;
+    public $sessionKey;
+    public $downloadCode; // codigo de descarga del certificado para cifrar xml.
+    public $apiUrl;
     //
     public $ubicacion= [];
 
@@ -206,11 +220,11 @@ class ClienteFE{
         if(isset($_POST["idBodega"]))
             $this->idBodega= $obj["idBodega"];
         else $this->idBodega= $_SESSION['userSession']->idBodega;
-        if(isset($_POST["obj"])){
+        if(isset($_POST["objC"])){
             $obj= json_decode($_POST["obj"],true);
             require_once("UUID.php");
             $this->id= $obj["id"] ?? UUID::v4();         
-            $this->codigoSeguridad= $obj["codigoSeguridad"];            
+            $this->codigoSeguridad= $obj["codigoSeguridad"];
             $this->nombre= $obj["nombre"] ?? '';   
             $this->idCodigoPais= $obj["idCodigoPais"] ?? null;                  
             $this->idTipoIdentificacion= $obj["idTipoIdentificacion"] ?? null;
@@ -229,7 +243,7 @@ class ClienteFE{
             $this->username= $obj["username"] ?? null;
             $this->password= $obj["password"] ?? null;
             $this->certificado= $obj["certificado"] ?? null;
-            
+            $this->pinp12= $obj["pinp12"] ?? null;            
         }
     }
 
@@ -336,7 +350,7 @@ class ClienteFE{
     function Read(){
         try {
             $sql='SELECT id, codigoSeguridad, idCodigoPais, nombre, idTipoIdentificacion, identificacion, nombreComercial, idProvincia,idCanton, idDistrito, idBarrio, otrasSenas, 
-            idCodigoPaisTel, numTelefono, correoElectronico, username, password, certificado, idBodega
+            idCodigoPaisTel, numTelefono, correoElectronico, username, password, certificado, idBodega, pinp12
                 FROM clienteFE  
                 where id=:id';
             $param= array(':id'=>$this->id);
@@ -354,11 +368,11 @@ class ClienteFE{
 
     function ReadProfile(){
         try {
-            $sql='SELECT id, codigoSeguridad, idCodigoPais, nombre, idTipoIdentificacion, identificacion, nombreComercial, idProvincia, idCanton, idDistrito, idBarrio, otrasSenas, 
-                numTelefono, correoElectronico, username, password
+            $sql='SELECT id, codigoSeguridad, idCodigoPais, nombre, idTipoIdentificacion, identificacion, nombreComercial, idProvincia, idCanton, idDistrito, 
+                idBarrio, otrasSenas, numTelefono, correoElectronico, username, password, pinp12, downloadCode
                 FROM clienteFE  
                 where idBodega=:idBodega';
-            $param= array(':idBodega'=>$this->idBodega);
+            $param= array(':idBodega'=>$_SESSION['userSession']->idBodega);
             $data= DATA::Ejecutar($sql,$param);
             if($data){
                 $this->id= $data[0]['id'];
@@ -377,6 +391,8 @@ class ClienteFE{
                 $this->correoElectronico= $data[0]['correoElectronico'];
                 $this->username= encdes::decifrar($data[0]['username']);
                 $this->password= encdes::decifrar($data[0]['password']);
+                $this->pinp12= encdes::decifrar($data[0]['pinp12']);
+                $this->downloadCode= $data[0]['downloadCode'];
                 // certificado
                 $sql='SELECT certificado, cpath
                     FROM clienteFE  
@@ -390,6 +406,8 @@ class ClienteFE{
                     $this->estadoCertificado=1;
                 else $this->estadoCertificado=0;      
                 $this->certificado= encdes::decifrar($data[0]['certificado']);
+                $_SESSION['API']= $this;
+                $this->APILogin();
                 return $this;
             }
             return null;
@@ -403,13 +421,31 @@ class ClienteFE{
         }
     }
 
+    function Check(){
+        try {
+            $sql='SELECT id
+                FROM clienteFE  
+                where idBodega=:idBodega';
+            $param= array(':idBodega'=>$_SESSION['userSession']->idBodega);
+            $data= DATA::Ejecutar($sql,$param);
+            if($data){
+                return true;
+            }
+            return false;
+        }     
+        catch(Exception $e) {
+            error_log("error: ". $e->getMessage());
+            return false;
+        }
+    }
+
     function Create(){
         try {
             $sql="INSERT INTO clienteFE  (id, codigoSeguridad, idCodigoPais, nombre, idTipoIdentificacion, identificacion, nombreComercial, idProvincia,idCanton, idDistrito, idBarrio, otrasSenas, 
-                idCodigoPaisTel, numTelefono, correoElectronico, username, password, certificado, idBodega)
+                idCodigoPaisTel, numTelefono, correoElectronico, username, password, certificado, idBodega, pinp12)
                 VALUES (:id, :codigoSeguridad, :idCodigoPais, :nombre, :idTipoIdentificacion, :identificacion, :nombreComercial, :idProvincia, :idCanton, :idDistrito, :idBarrio, :otrasSenas, 
-                    :idCodigoPaisTel, :numTelefono, :correoElectronico, :username, :password, :certificado, :idBodega);";
-            $param= array(':id'=>$this->id ,
+                    :idCodigoPaisTel, :numTelefono, :correoElectronico, :username, :password, :certificado, :idBodega, :pinp12);";
+            $param= array(':id'=>$this->id,
                 ':codigoSeguridad'=>$this->codigoSeguridad, 
                 ':idCodigoPais'=>$this->idCodigoPais, 
                 ':nombre'=>$this->nombre,
@@ -426,15 +462,15 @@ class ClienteFE{
                 ':correoElectronico'=>$this->correoElectronico,
                 ':username'=>encdes::cifrar($this->username),
                 ':password'=>encdes::cifrar($this->password),
-                ':certificado'=>encdes::cifrar($this->certificado), 
-                ':idBodega'=>$this->idBodega
+                ':certificado'=>encdes::cifrar($this->certificado),
+                ':idBodega'=>$this->idBodega,
+                ':pinp12'=>encdes::cifrar($this->pinp12),
             );
             $data = DATA::Ejecutar($sql,$param,false);
             if($data)
             {
                 //guarda api_base.users
-                //$url= 'http://104.131.5.198/api.php';
-                $url= 'localhost/api.php';
+                $this->getApiUrl();
                 $ch = curl_init();
                 $post = [
                     'w' => 'users',
@@ -447,7 +483,7 @@ class ClienteFE{
                     'pwd'   => $this->password
                 ];  
                 curl_setopt_array($ch, array(
-                    CURLOPT_URL => $url,
+                    CURLOPT_URL => $this->apiUrl,
                     CURLOPT_RETURNTRANSFER => true,   
                     CURLOPT_VERBOSE => true,      
                     CURLOPT_MAXREDIRS => 10,
@@ -467,7 +503,8 @@ class ClienteFE{
                     throw new Exception('Error al crear usuario API MH. Comunicarse con Soporte Técnico', 055);
                 }     
                 error_log("error: ". $server_output);
-                curl_close($ch);                    
+                curl_close($ch);
+                $this->APILogin();                
                 return true;               
             }
             else throw new Exception('Error al guardar.', 02);
@@ -488,21 +525,20 @@ class ClienteFE{
                 SET nombre=:nombre, codigoSeguridad=:codigoSeguridad, idCodigoPais=:idCodigoPais, idTipoIdentificacion=:idTipoIdentificacion, 
                     identificacion=:identificacion, nombreComercial=:nombreComercial, idProvincia=:idProvincia, idCanton=:idCanton, idDistrito=:idDistrito, 
                     idBarrio=:idBarrio, otrasSenas=:otrasSenas, numTelefono=:numTelefono, correoElectronico=:correoElectronico, username=:username, password=:password, 
-                    certificado=:certificado, idBodega=:idBodega
+                    certificado=:certificado, idBodega=:idBodega, pinp12= :pinp12
                 WHERE id=:id";
             $param= array(':id'=>$this->id, ':nombre'=>$this->nombre, ':codigoSeguridad'=>$this->codigoSeguridad, ':idCodigoPais'=>$this->idCodigoPais, ':idTipoIdentificacion'=>$this->idTipoIdentificacion,
                 ':identificacion'=>$this->identificacion, ':nombreComercial'=>$this->nombreComercial, ':idProvincia'=>$this->idProvincia,
                 ':idCanton'=>$this->idCanton, ':idDistrito'=>$this->idDistrito, ':idBarrio'=>$this->idBarrio,
                 ':otrasSenas'=>$this->otrasSenas, ':numTelefono'=>$this->numTelefono, ':correoElectronico'=>$this->correoElectronico,
-                ':username'=>encdes::cifrar($this->username), ':password'=>encdes::cifrar($this->password), ':certificado'=>encdes::cifrar($this->certificado), ':idBodega'=>$this->idBodega
+                ':username'=>encdes::cifrar($this->username), ':password'=>encdes::cifrar($this->password), ':certificado'=>encdes::cifrar($this->certificado), ':idBodega'=>$this->idBodega, 
+                ':pinp12'=>encdes::cifrar($this->pinp12)
             );
             $data = DATA::Ejecutar($sql,$param,false);
             if($data){
                 // ... modifica datos del cliente en el api ...//
                 // ... sube el nuevo certificado ...//
-                
-                $this->APIgetToken();
-
+                $this->APILogin();
                 return true;
             }   
             else throw new Exception('Error al guardar.', 123);
@@ -517,11 +553,20 @@ class ClienteFE{
         }
     }
 
+    private function getApiUrl(){
+        require_once('Globals.php');
+        if (file_exists('../../../ini/config.ini')) {
+            $set = parse_ini_file('../../../ini/config.ini',true); 
+            $this->apiUrl = $set[Globals::app]['apiurl'];
+        }         
+        else throw new Exception('Acceso denegado al Archivo de configuración.',-1);
+    }
+
     public function APILogin(){
         try{
-            error_log("API LOGIN ... ");
-            //$url= 'http://104.131.5.198/api.php';
-            $url= 'localhost/api.php';                        
+            error_log("... API LOGIN ... ");
+            //
+            $this->getApiUrl();
             $ch = curl_init();
             $post = [
                 'w' => 'users',
@@ -530,7 +575,7 @@ class ClienteFE{
                 'pwd'   => $this->password
             ];  
             curl_setopt_array($ch, array(
-                CURLOPT_URL => $url,
+                CURLOPT_URL => $this->apiUrl,
                 CURLOPT_RETURNTRANSFER => true,   
                 CURLOPT_VERBOSE => true,      
                 CURLOPT_RETURNTRANSFER => true,
@@ -552,11 +597,14 @@ class ClienteFE{
             }
             curl_close($ch);
             // session de usuario ATV
-            $_SESSION['userSession']->ATVusername= $this->username;
-            $_SESSION['userSession']->ATVpassword= $this->password;
             $sArray=json_decode($header);
-            $_SESSION['userSession']->APIusername= $this->correoElectronico;
-            $_SESSION['userSession']->APIsessionKey= $sArray->resp->sessionKey;
+            if(!isset($sArray->resp->sessionKey)){
+                // ERROR CRITICO:
+                // debe notificar al contibuyente. 
+                throw new Exception('Error CRITICO al inciar sesion del API. DEBE COMUNICARSE CON SOPORTE TECNICO'. $error_msg , '66612');
+            }
+            $this->sessionKey= $sArray->resp->sessionKey;
+            $_SESSION['API']->sessionKey= $this->sessionKey;
             error_log("sessionKey: ". $sArray->resp->sessionKey);
         } 
         catch(Exception $e) {
@@ -567,71 +615,25 @@ class ClienteFE{
                 'msg' => $e->getMessage()))
             );
         }
-
     }
 
     public function APIUploadCert(){
         try{
+            error_log(" subiendo certificado API CRL: ". $this->certificado);
             if (!file_exists($this->certificado)){
                 throw new Exception('Error al guardar el certificado. El certificado no existe' , 002256);
-            } 
-            //$url= 'http://104.131.5.198/api.php';
-            $url= 'http://localhost/api.php';  
+            }
+            $this->getApiUrl();
             $ch = curl_init();
             $post = [
                 'w' => 'fileUploader',
                 'r' => 'subir_certif',
-                'sessionKey'=>$_SESSION['userSession']->APIsessionKey,
-                'fileToUpload' => new CurlFile( $this->certificado, 'application/x-pkcs12'),
-                'iam'=>$_SESSION['userSession']->APIusername
+                'sessionKey'=>$_SESSION['API']->sessionKey,
+                'fileToUpload' => new CurlFile($this->certificado, 'application/x-pkcs12'),
+                'iam'=>$_SESSION['API']->correoElectronico
             ];
             curl_setopt_array($ch, array(
-                CURLOPT_URL => $url,
-                CURLOPT_RETURNTRANSFER => true,   
-                CURLOPT_VERBOSE => true,                      
-                CURLOPT_MAXREDIRS => 10,
-                CURLOPT_TIMEOUT => 3000,
-                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                CURLOPT_CUSTOMREQUEST => "POST",
-                CURLOPT_POSTFIELDS => $post
-            ));
-            $server_output = curl_exec($ch);
-            $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-            $header = substr($server_output, 0, $header_size);
-            $body = substr($server_output, $header_size);
-            $error_msg = "";
-            if (curl_error($ch)) {
-                $error_msg = curl_error($ch);
-                throw new Exception('Error al guardar el certificado. '. $error_msg , 033);
-            }
-            error_log(" resp : ". $server_output);
-            curl_close($ch);
-            return true;
-        } 
-        catch(Exception $e) {
-            error_log("****** Error: ". $e->getMessage());
-            header('HTTP/1.0 400 Bad error');
-            die(json_encode(array(
-                'code' => $e->getCode() ,
-                'msg' => $e->getMessage()))
-            );
-        }
-    }
-
-    public function APIgetToken(){
-        try{
-            $url= 'http://localhost/api.php';  
-            $ch = curl_init();
-            $post = [
-                'w' => 'token',
-                'r' => 'gettoken',
-                'grant_type'=>'password', 
-                'client_id'=> 'api-stag', 
-                'username' => $_SESSION['userSession']->ATVusername,
-                'password'=>$_SESSION['userSession']->ATVpassword
-            ];
-            curl_setopt_array($ch, array(
-                CURLOPT_URL => $url,
+                CURLOPT_URL => $this->apiUrl,
                 CURLOPT_RETURNTRANSFER => true,   
                 CURLOPT_VERBOSE => true,                      
                 CURLOPT_MAXREDIRS => 10,
@@ -649,7 +651,23 @@ class ClienteFE{
                 $error_msg = curl_error($ch);
                 throw new Exception('Error al guardar el certificado. '. $error_msg , 033);
             }
-            error_log(" resp : ". $server_output);
+            error_log("****** buscar : ". $server_output);
+            $sArray= json_decode($server_output);
+            if(!isset($sArray->resp->downloadCode)){
+                // ERROR CRITICO:
+                // debe notificar al contibuyente. 
+                throw new Exception('Error CRITICO al leer downloadCode: '.$server_output, 0344);
+            }
+            // almacena dowloadCode en clienteFE
+            $sql="UPDATE clienteFE
+                SET downloadCode=:downloadCode
+                WHERE idBodega=:idBodega";
+            $param= array(':idBodega'=>$_SESSION['userSession']->idBodega, ':downloadCode'=>$sArray->resp->downloadCode);
+            $data = DATA::Ejecutar($sql,$param, false);
+            if($data)
+                return true;
+            else throw new Exception('Error al guardar el downloadCode.', 0345);
+            //
             curl_close($ch);
             return true;
         } 

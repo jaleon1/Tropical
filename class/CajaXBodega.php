@@ -7,10 +7,11 @@ if(isset($_POST["action"])){
     // Classes
     require_once("Conexion.php");
     require_once("Usuario.php");
+    require_once("ClienteFE.php");
+    require_once("encdes.php");
     // Session
     if (!isset($_SESSION))
         session_start();
-
     // Instance
     $cajaXBodega= new CajaXBodega();
     switch($opt){
@@ -147,7 +148,7 @@ class CajaXBodega{
 
     function Create(){
         try {
-            $this->idUsuarioAdmin = "1ed3a48c-3e44-11e8-9ddb-54ee75873a60";
+            $this->idUsuarioAdmin = "1ed3a48c-3e44-11e8-9ddb-54ee75873a60"; /*** Debería ser un rol ***/
             $this->montoApertura = 0;
             $sql="INSERT INTO cajasXBodega  (id, idBodega, idUsuarioSupervisor, idusuarioCajero, estado, montoApertura, fechaApertura)
             VALUES (UUID(), :idBodega, :idUsuarioSupervisor, :idusuarioCajero, '1', :montoApertura, CURRENT_TIMESTAMP());"; 
@@ -155,8 +156,9 @@ class CajaXBodega{
             $param= array(':idBodega'=>$_SESSION["userSession"]->idBodega, ':idUsuarioSupervisor'=>$this->idUsuarioSupervisor, 
                             ':idusuarioCajero'=>$_SESSION["userSession"]->id, ':montoApertura'=>$this->montoApertura);
             $data = DATA::Ejecutar($sql,$param, false);
-            if($data)
+            if($data){
                 return "aperturaCreada";
+            }
             else return false;
         }     
         catch(Exception $e) {
@@ -266,7 +268,6 @@ class CajaXBodega{
     function ValidarEstado(){
         try{
             $this->idusuarioCajero="1ed3a48c-3e44-11e8-9ddb-54ee75873a60";
-
             $sql = "SELECT ca.id, ca.idUsuarioSupervisor, ca.idusuarioCajero, ca.estado, bo.nombre
             FROM cajasXBodega ca
             INNER JOIN bodega bo on ca.idBodega = bo.id 
