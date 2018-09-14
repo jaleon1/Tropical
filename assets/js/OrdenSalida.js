@@ -74,7 +74,7 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
                 ordenSalida.showError(e);
             })
             .always(function () {
-                setTimeout('$("#btnOrdenSalida").removeAttr("disabled")', 1000);
+                $("#btnOrdenSalida").removeAttr("disabled");
                 ordenSalida = new OrdenSalida();
                 ordenSalida.ClearCtls();
                 ordenSalida.Read;

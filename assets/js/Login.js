@@ -6,8 +6,7 @@ var mouseY;
 $(document).ready(function () {
     //keyboard
     $(function () {
-        "use strict";
-    
+        "use strict";    
         jqKeyboard.init();
     });
         
@@ -40,6 +39,7 @@ $(document).ready(function () {
         var data = t.row(this).data();
         $.ajax({
             type: "POST",
+            destroy: true,
             url: "class/Usuario.php",
             data: {
                 action: 'setBodega',               
@@ -59,6 +59,7 @@ $(document).ready(function () {
 });
 
 function Login(){
+    $('#btnLogin').attr("disabled", "disabled");
     $.ajax({
         type: "POST",
         url: "class/Usuario.php",
@@ -112,8 +113,8 @@ function Login(){
                 timer: 3000
             });
         else
-            $("#error").fadeIn(500, function(){      
-                $("#error").html(`                    
+            $("#error").fadeIn(500, function(){
+                $("#error").html(`
                     <div class="alert alert-danger alert-dismissible fade in" role="alert">
                         <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
                         Usuario / Contraseña <strong>Inválidos</strong>.
@@ -123,6 +124,9 @@ function Login(){
     })    
     .fail(function( e ) {
         showError(e);
+    })
+    .always(function () {
+        $("#btnOrdenSalida").removeAttr("disabled");
     });
 };
 
@@ -142,6 +146,7 @@ function ShowAll(data) {
     t= $('#dsItemsBodega').DataTable ({
         responsive: true,      
         pagging: false,
+        destroy: true,
         searching: false,
         bPaginate: false,
         bLengthChange: false,
