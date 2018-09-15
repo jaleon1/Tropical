@@ -469,7 +469,68 @@ class Producto {
                     visible:false}
             ]
         });
-    }
+    };
+
+    setTableMerma(){
+        tp = $('#tProducto').DataTable( {
+            responsive: true,
+            destroy: true,
+            order: [[ 1, "asc" ]],
+            language: {
+                "infoEmpty": "Sin Registros",
+                "emptyTable": "Sin Registros",
+                "search": "Buscar",
+                "zeroRecords":    "No hay resultados",
+                "lengthMenu":     "Mostrar _MENU_ registros",
+                "paginate": {
+                    "first":      "Primera",
+                    "last":       "Ultima",
+                    "next":       "Siguiente",
+                    "previous":   "Anterior"
+                }
+            },
+            columnDefs: [{className: "text-right", "targets": [5]}],
+            columns: [
+                {
+                    title:"Id",
+                    data:"id",
+                    className:"itemId",
+                    searchable: false,                    
+                    width:"auto"
+                },
+                {
+                    title:"Codigo",
+                    data:"codigo",
+                    width:"auto"
+                },
+                {
+                    title:"Nombre",
+                    data:"nombre",
+                    width:"auto"
+                },
+                {
+                    title:"Descripción",
+                    data:"descripcion",
+                    width:"auto"
+                },
+                {//cant.
+                    title:"Cantidad",
+                    "width": "15%", 
+                    "data": null,
+                    "defaultContent": '<input class="cantidad form-control" type="number" value=1>'
+                },
+                {
+                    title:"Acción",
+                    orderable: false,
+                    searchable:false,
+                    mRender: function () {
+                        return '<a class="delete" style="cursor: pointer;"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>' 
+                    },
+                    visible:true
+                }
+            ]
+        });
+    };
 
     AddProducto(){
         var id=$(this).find("td:eq(0)").html();
@@ -615,6 +676,100 @@ class Producto {
         }
     };
 
+    ReadbyCode(cod) {
+        if (cod != ""){
+            producto.codigo = cod;  //Columna 0 de la fila seleccionda= ID.
+            //
+            $.ajax({
+                type: "POST",
+                url: "class/Producto.php",
+                data: {
+                    action: "ReadByCode",
+                    obj: JSON.stringify(producto)
+                }
+            })
+            .done(function (e) {
+                producto.ValidatePrdMerma(e);
+            })
+            .fail(function (e) {
+                producto.showError(e);
+            });
+        }
+    };
+
+    ValidatePrdMerma(e){
+        //compara si el articulo ya existe
+        // carga lista con datos.
+        if(e == "[]"){
+            swal({
+                type: 'warning',
+                title: 'Orden de Compra',
+                text: 'El item ' + producto.codigo + ' No existe.',
+                showConfirmButton: false,
+                timer: 3000
+            });
+            return;
+        }
+        if(e != "false" && e != ''){
+            var data = JSON.parse(e)[0];
+            producto.id= data.id; 
+            producto.codigo= data.codigo; 
+            producto.nombre= data.nombre; 
+            producto.descripcion= data.descripcion;
+            var repetido = false;
+            //
+            if(document.getElementById("tProducto").rows.length != 0 && producto != null){
+                $(document.getElementById("tProducto").rows).each(function(i,item){
+                    if(item.childNodes[0].innerText==producto.id){
+                        repetido=true;
+                        swal({
+                            type: 'warning',
+                            title: 'Orden de Compra',
+                            text: 'El item ' + producto.codigo + ' ya se encuentra en la lista',
+                            showConfirmButton: false,
+                            timer: 3000
+                        });
+                    }     
+                });
+            }    
+            if (repetido==false){
+                producto.agregarItem();
+                $("#p_searhProducto").val('');
+            }
+        }
+    };
+
+    agregarItem(){
+        tp.row.add(producto)
+            .draw() //dibuja la tabla con el nuevo insumo
+            .node();     
+        //
+        // $('td:eq(2) input', rowNode).attr({id: ("prec_"+insumo.codigo), max:  "9999999999", min: "0", step:"1", value:"1" }).change(function(){
+        //     ordenCompra.CalcImporte($(this).parents('tr').find('td:eq(0)').html());
+        // });
+        // //
+        // $('td:eq(3) input', rowNode).attr({id: ("cantBueno_"+insumo.codigo), max:  "9999999999", min: "1", step:"1", value:"1"}).change(function(){
+        //      ordenCompra.CalcImporte($(this).parents('tr').find('td:eq(0)').html());
+        // });
+
+        // //$('td:eq(4)', rowNode).attr({id: ("cantMalo_"+insumo.codigo)});
+        // $('td:eq(4) input', rowNode).attr({id: ("cantMalo_"+insumo.codigo), max:  "9999999999", min: "0", step:"1", value:"0"}).change(function(){
+        //      ordenCompra.CalcImporte($(this).parents('tr').find('td:eq(0)').html());
+        // });
+        //
+        // $('td:eq(5) input.valor', rowNode).attr({id: ("valorBueno_v"+insumo.codigo), style: "display:none"});
+        // $('td:eq(5) input.display', rowNode).attr({id: ("valorBueno_d"+insumo.codigo)});    
+        // $('td:eq(6) input.valor', rowNode).attr({id: ("valorMalo_v"+insumo.codigo), style: "display:none"});
+        // $('td:eq(6) input.display', rowNode).attr({id: ("valorMalo_d"+insumo.codigo)});
+        // $('td:eq(7) input.valor', rowNode).attr({id: ("subtotal_v"+insumo.codigo), style: "display:none"});
+        // $('td:eq(7) input.display', rowNode).attr({id: ("subtotal_d"+insumo.codigo)});   
+        //t.order([0, 'desc']).draw();
+        //t.columns.adjust().draw();
+        //ordenCompra.CalcImporte(insumo.codigo);
+        //calcTotal();
+        //$('#open_modal_fac').attr("disabled", false);
+    };
+
     ValidateProductoFac(e){
         //compara si el articulo ya existe
         // carga lista con datos.
@@ -730,3 +885,4 @@ class Producto {
 
 //Class Instance
 let producto = new Producto();
+var tp;

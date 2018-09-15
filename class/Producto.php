@@ -309,11 +309,11 @@ class Producto{
     }
 
     function ReadByCode(){
-        try{     
+        try{
             $sql="SELECT id, nombre, codigo, descripcion, saldoCosto, costoPromedio, precioVenta, esVenta
                 FROM producto 
-                WHERE codigo= :codigo";
-            $param= array(':codigo'=>$this->codigo);
+                WHERE codigo like :codigo";
+            $param= array(':codigo'=>'%'.$this->codigo.'%');
 
             $data= DATA::Ejecutar($sql,$param);
             

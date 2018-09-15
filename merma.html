@@ -75,7 +75,7 @@
                         <div class="menu_section">
                             <h3 class='call_Bodega'>Menu</h3>
                             <ul id="menubox" class="nav side-menu">
-                                
+
                             </ul>
                         </div>
                     </div>
@@ -112,7 +112,8 @@
 
                         <ul class="nav navbar-nav navbar-right">
                             <li class="">
-                                <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false" id='call_username'>
+                                <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown"
+                                    aria-expanded="false" id='call_username'>
                                 </a>
                                 <ul class="dropdown-menu dropdown-usermenu pull-right">
                                     <li>
@@ -136,7 +137,7 @@
                 <div class="">
                     <div class="page-title">
                         <div>
-                            <h3>ELABORAR PRODUCTO TERMINADO</h3>
+                            <h3>MERMA</h3>
                         </div>
 
                         <div class="title_right">
@@ -158,77 +159,45 @@
                         <div class="col-md-6 col-sm-6 col-xs-12">
                             <div class="x_panel">
                                 <div class="x_title">
-                                    <h2>Orden de Salida</h2>
+                                    <h2>Materia Prima</h2>
                                     <div class="clearfix"></div>
                                 </div>
                                 <!--  CONTENIDO DE LA PAGINA -->
                                 <div class="x_content">
-                                        <span class="section">Datos Generales e Insumos Añadidos</span>
-                                    <!-- TABLE -->
+                                    <!-- MATERIA PRIMA -->
                                     <div class="col-md-12 col-sm-12 col-xs-9">
                                         <div class="x_panel">
                                             <div class="title_right">
-                                                <div class="col-md-6 col-sm-12 col-xs-12 form-group top_search">
-                                                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="esVenta">Orden</label>
-                                                    <div class="input-group">
-                                                        <input type="text" class="form-control" id="orden" readonly placeholder="Número de Orden ">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6 col-sm-12 col-xs-12 form-group top_search">
-                                                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="esVenta">Fecha</label>
-                                                    <div class="input-group">
-                                                        <input type="text" class="form-control" id="fecha" readonly placeholder="Fecha Ingreso ">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6 col-sm-12 col-xs-12 form-group top_search">
-                                                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="esVenta">Entrega</label>
-                                                    <div class="input-group">
-                                                        <input type="text" class="form-control" id="usuarioEntrega" readonly placeholder="Usuario Entrega ">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6 col-sm-12 col-xs-12 form-group top_search">
-                                                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="esVenta">Recibe</label>
-                                                    <div class="input-group">
-                                                        <input type="text" class="form-control" id="usuarioRecibe" readonly placeholder="Usuario Recibe ">
-                                                    </div>
-                                                </div>
                                                 <div class="col-md-12 col-sm-12 col-xs-12 form-group pull-right top_search">
                                                     <div class="input-group">
-                                                        <input autofocus type="text" class="form-control" id="p_searh" placeholder="Ingresar Número de Orden.">
+                                                        <input autofocus type="text" class="form-control" id="p_searhInsumo"
+                                                            placeholder="Ingresar código de materia prima.">
                                                         <span class="input-group-btn">
                                                             <button class="btn btn-default" type="button">Buscar</button>
                                                         </span>
                                                     </div>
                                                 </div>
                                             </div>
-                                            
+
                                             <div class="x_content">
-                                                <div class="table-responsive">
-                                                    <table id="dsInsumosOrdenSalida" class="table table-striped jambo_table bulk_action" role="grid" aria-describedby="datatable_info">
-                                                        <thead>
-                                                            <tr role="row" class="headings">
-                                                                    <th class='itemId'>ID</th>
-                                                                    <th class='oculto'>Coigo</th>
-                                                                    <th>Nombre</th>
-                                                                    <th>Cantidad</th>
-                                                                    <th class='oculto'>Descripción</th>
-                                                                    <th class='oculto'>Saldo Cantidad</th>
-                                                                    <th class='oculto'>Saldo Costo</th>
-                                                                    <th class='oculto'>Costo Promedio</th>
-                                                            </tr>
-                                                        </thead>
-    
-                                                        <tbody id="tableBody-InsumosOrdenSalida">
-    
-                                                        </tbody>
-    
-                                                    </table>
+                                                <!-- TABLE -->
+                                                <div class="row">
+                                                    <div class="col-md-12 col-sm-12 col-xs-12">
+                                                        <table id="tInsumo" class="table display responsive table-striped jambo_table no-wrap"
+                                                            width="100%" role="grid" aria-describedby="datatable_info">
+                                                            <tbody id="tbodyInsumo">
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
                                                 </div>
+                                                <!-- /TABLE -->
                                             </div>
                                         </div>
                                     </div>
-                                    <!-- /TABLE -->
+                                    <!-- /MATERIA PRIMA -->
                                 </div>
+
+
                                 <!--  /CONTENIDO DE LA PAGINA -->
                             </div>
                         </div>
@@ -241,214 +210,53 @@
                                 </div>
                                 <!--  CONTENIDO DE LA PAGINA -->
                                 <div class="x_content">
-                                    <form class="form-horizontal form-label-left" id="frmProductoTemporal" method="POST" novalidate>
-                                        <span class="section">Inserte los Productos Generados</span>
-
-                                        <div class="row">
-                                            <div class="col-sm-11">
-                                                <table id="dsProductoGenerado" class="table table-striped jambo_table bulk_action" role="grid" aria-describedby="datatable_info">
-                                                    <thead>
-                                                        <tr role="row" class="headings">
-                                                            <th class='itemId'>Id</th>
-                                                            <th class='oculto'>Codigo</th>
-                                                            <th>Nombre</th>
-                                                            <th class='oculto'>Nombreabreviado</th>
-                                                            <th class='oculto'>Descripcion</th>
-                                                            <th class='oculto'>Saldocantidad</th>
-                                                            <th class='oculto'>Saldocosto</th>
-                                                            <th class='oculto'>Costopromedio</th>
-                                                            <th class='oculto'>Precioventa</th>
-                                                            <th class='oculto'>Esventa</th>
-                                                            <th>Cantidad</th>
-                                                            <th>Acción</th>
-                                                        </tr>
-                                                    </thead>
-
-                                                    <tbody id="tableBody-ProductoGenerado">
-
-                                                    </tbody>
-
-                                                </table>
-                                            </div>
-                                            <div class="col-sm-1">
-                                                <button id="btnAddProductoGenerado" data-toggle="modal" data-target=".bs-example-modal-lg-productogenerado" type="button" class="btn btn-info btn-lg">+</button>
-                                            </div>
-                                        </div>
-
-                                        <div class="ln_solid"></div>
-
-                                        <div class="form-group">
-                                            <div class="col-md-12 ">
-                                                <button type="reset" class="btn btn-primary" id="reload">Limpiar</button>
-                                                <button id="btnSaveProductoGenerado" type="submit" class="btn btn-success">Aceptar</button>
-                                            </div>
-                                        </div>
-                                        
-                                    </form>
-                                </div>
-                                
-                                <!--  /CONTENIDO DE LA PAGINA -->
-                            </div>
-                            
-                        </div>
-
-
-                    </div>
-
-                    <!-- MODAL -->
-                    <div class="modal fade bs-example-modal-lg-productogenerado" tabindex="-1" role="dialog" aria-hidden="true">
-                        <div class="modal-dialog modal-lg">
-                            <div class="modal-content">
-
-                                <div class="modal-header">
-                                    <button type="button" class="close" data-dismiss="modal">
-                                        <span aria-hidden="true">×</span>
-                                    </button>
-                                    <h4 class="modal-title" id="myModalLabel">Seleccionar Producto</h4>
-                                </div>
-
-                                <div class="modal-body">
-                                    <form class="form-horizontal form-label-left" id="frmProducto" novalidate>
-
-                                        <span class="section">Productos</span>
-                                        <div id="datatable_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
-                                            <div class="row">
-                                                <div class="col-sm-12">
-                                                    <table id="dsProducto" class="table table-striped jambo_table bulk_action" role="grid" aria-describedby="datatable_info">
-                                                        <!-- <thead>
-                                                            <tr role="row" class="headings">
-                                                                <th>
-                                                                    <input type='checkbox' id='check-all' class='iCheck-helper'>
-                                                                </th>
-                                                                <th class='itemId'>ID</th>
-                                                                <th>Codigo</th>
-                                                                <th>Nombre</th>
-                                                                <th>Nombre Abreviado</th>
-                                                                <th>Descripción</th>
-                                                                <th class='oculto'>Saldo Cantidad</th>
-                                                                <th class='oculto'>Saldo Costo</th>
-                                                                <th class='oculto'>Costo Promedio</th>
-                                                                <th class='oculto'>Precio Venta</th>
-                                                                <th class='oculto'>Es Venta</th>
-                                                            </tr>
-                                                        </thead> -->
-
-                                                        <tbody id="tableBody-Producto">
-
-                                                        </tbody>
-
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="ln_solid"></div>
-
-                                        <div class="form-group">
-                                            <div class="col-md-6 col-md-offset-3">
-                                                <!-- <button id="btnSalirModalInsumo" type="reset" class="btn btn-primary">Salir</button>-->
-                                                <button type="button" class="btn btn-default" data-dismiss="modal" id="btnSalirModalInsumo">Cerrar</button>
-                                            </div>
-                                        </div>
-
-                                    </form>
-                                </div>
-
-                                <div class="modal-footer">
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                    <div id="modal-producto" class="modal fade bs-example-modal-lg-producto" tabindex="-1" role="dialog" aria-hidden="true">
-                        <div class="modal-dialog modal-lg">
-                            <div class="modal-content">
-
-                                <div class="modal-header">
-                                    <button type="button" class="close" data-dismiss="modal">
-                                        <span aria-hidden="true">×</span>
-                                    </button>
-                                    <h4 class="modal-title" id="myModalLabel">Seleccionar Producto</h4>
-                                </div>
-
-                                <div class="modal-body">
-                                    <form class="form-horizontal form-label-left" id="frmProducto" novalidate>
-
-                                        <span class="section">Productos</span>
-                                        <div id="datatable_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
-                                            <div class="row">
-                                                <div class="col-sm-12">
-                                                    <table id="dsProducto" class="table table-striped jambo_table bulk_action" role="grid" aria-describedby="datatable_info">
-                                                        <thead>
-                                                            <tr role="row" class="headings">
-                                                                <th>
-                                                                    <input type='checkbox' id='check-all' class='iCheck-helper'>
-                                                                </th>
-                                                                <th class='itemId'>ID</th>
-                                                                <th>Nombre</th>
-                                                                <th>Código</th>
-                                                                <th>Acción</th>
-                                                            </tr>
-                                                        </thead>
-
-                                                        <tbody id="tableBody-Producto">
-
-                                                        </tbody>
-
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="ln_solid"></div>
-                                    </form>
-                                </div>
-
-                                <div class="modal-footer">
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                    <div id="modal-usuarioRecibe" class="modal fade bs-example-modal-lg-usuarioRecibe" tabindex="-1" role="dialog" aria-hidden="true">
-                        <div class="modal-dialog modal-lg">
-                            <div class="modal-content">
-
-                                <div class="modal-header">
-                                    <button type="button" class="close" data-dismiss="modal">
-                                        <span aria-hidden="true">×</span>
-                                    </button>
-                                    <h4 class="modal-title" id="myModalLabel">Seleccione el Usuario que recibe los insumos</h4>
-                                </div>
-
-                                <div class="modal-body">
-                                    <form class="form-horizontal form-label-left" id="frmUsuarioRecibe" novalidate>
-                                        <span class="section">Usuarios</span>
-                                            <div id="datatable_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
-                                                <div class="row">
-                                                    <div class="col-sm-12">
-                                                        <table id="dsUsuario" class="table table-striped table-bordered dataTable no-footer jambo_table " role="grid" aria-describedby="datatable_info">
-                                                            <thead>
-                                                                <tr role="row" class="headings">
-                                                                </tr>
-                                                            </thead>
-        
-                                                            <tbody id="tableBody-Usuario">
-                                                            </tbody>
-        
-                                                        </table>
+                                    <!-- MATERIA PRIMA -->
+                                    <div class="col-md-12 col-sm-12 col-xs-9">
+                                        <div class="x_panel">
+                                            <div class="title_right">
+                                                <div class="col-md-12 col-sm-12 col-xs-12 form-group pull-right top_search">
+                                                    <div class="input-group">
+                                                        <input autofocus type="text" class="form-control" id="p_searhProducto"
+                                                            placeholder="Ingresar código de producto.">
+                                                        <span class="input-group-btn">
+                                                            <button class="btn btn-default" type="button">Buscar</button>
+                                                        </span>
                                                     </div>
                                                 </div>
                                             </div>
-                                        <div class="ln_solid"></div>
-                                    </form>
+
+                                            <div class="x_content">
+                                                <!-- TABLE -->
+                                                <div class="row">
+                                                    <div class="col-md-12 col-sm-12 col-xs-12">
+                                                        <table id="tProducto" class="table display responsive table-striped jambo_table no-wrap"
+                                                            width="100%" role="grid" aria-describedby="datatable_info">
+                                                            <tbody id="tbodyProducto">
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                                <!-- /TABLE -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- /MATERIA PRIMA -->
+                                    
                                 </div>
 
-                                <div class="modal-footer">
-                                </div>
+                                <!--  /CONTENIDO DE LA PAGINA -->
+                            </div>
 
+                        </div>                      
+
+                        <div class="form-group">
+                            <div class="col-xs-12 col-xs-offset-6 col-md-12 col-md-offset-6 col-lg-12 col-lg-offset-6">
+                                <button type="reset" class="btn btn-primary" id="reload">Limpiar</button>
+                                <button id="btnMerma" type="submit" class="btn btn-success">Aceptar</button>
                             </div>
                         </div>
+
                     </div>
-                    <!-- /modal -->
                 </div>
             </div>
             <!-- /page content -->
@@ -484,18 +292,15 @@
     <script src="assets/js/jquery.inputmask/jquery.inputmask.bundle.min.js"></script>
 
     <!-- JS Scripts -->
-    <script src="assets/js/OrdenSalida.js"></script>
-    <script src="assets/js/ElaborarProducto.js"></script>
     <script src="assets/js/Insumo.js"></script>
     <script src="assets/js/Producto.js"></script>
-    <script src="assets/js/Usuario.js"></script>
     <!-- Sweet Alert -->
     <script src="assets/js/sweetalert2.min.js"></script>
 
     <!-- Datatables -->
     <script src="../vendors/datatables.net/js/jquery.dataTables.min.js"></script>
     <!-- Custom Theme Scripts -->
-    <script src="assets/js/custom.js"></script>   
+    <script src="assets/js/custom.js"></script>
 
 </body>
 
@@ -503,51 +308,25 @@
 
 <script>
     $(document).ready(function () {
-        elaborarProducto.Init();
-        ordenSalida.id = null;
-        ordenSalida.Read;
+        producto.setTableMerma();
+        insumo.setTableMerma();        
     });
-
-    $(document).on('click', '#btnAddInsumo', function (event) {
-        insumo.id = null;
-        insumo.Read;
-        insumo.Init();
-    });
-    $(document).on('click', '#btnAddProductoGenerado', function (event) {
-        producto.id = null;
-        producto.setTableElaboraProducto();
-        producto.ReadAllPrdVenta;
-        producto.Init();
-    });
-    $(document).on('click', '#btnSaveProductoGenerado', function (event) {
-        producto.id = null;
-        producto.Read;
-        producto.Init();
-    });
-    $(document).on('click', '#btnAddUsuarioRecibe', function (event) {    
-        usuario.id = null;
-        usuario.Read;
-        usuario.Init();
-    });
-    $(document).on('change', '.chk-addproducto', function (event) {
-        var id=$(this).parents("tr").find("td:eq(1)").html();
-        var codigo=$(this).parents("tr").find("td:eq(2)").html();
-        var nombre=$(this).parents("tr").find("td:eq(3)").html();
-        var nombreAbreviado=$(this).parents("tr").find("td:eq(4)").html();
-        var descripcion=$(this).parents("tr").find("td:eq(5)").html();
-        var saldoCantidad=$(this).parents("tr").find("td:eq(6)").html();
-        var saldoCosto=$(this).parents("tr").find("td:eq(7)").html();
-        var costoPromedio=$(this).parents("tr").find("td:eq(8)").html();
-        var precioVenta=$(this).parents("tr").find("td:eq(9)").html();
-        var esVenta=$(this).parents("tr").find("td:eq(10)").html();
-        elaborarProducto.AddProductoEventHandler(id,codigo,nombre,nombreAbreviado,descripcion,saldoCantidad,saldoCosto,costoPromedio,precioVenta,esVenta);
-    });
-    $("#p_searh").keyup(function (e) {
+    $("#p_searhInsumo").keyup(function (e) {
         if (e.which == 13)
-            ordenSalida.ReadbyOrden;
+            insumo.ReadbyCode($('#p_searhInsumo').val());
+    });
+    $("#p_searhProducto").keyup(function (e) {
+        if (e.which == 13)
+            producto.ReadbyCode($('#p_searhProducto').val());
+    });
+    $('#btnMerma').click(function () {
+        producto.Merma();
+        insumo.Merma();
     });
     // Recarga la página para limpiar todo
     $('#reload').click(function () {
         location.reload();
     });
+    //
+    //
 </script>
