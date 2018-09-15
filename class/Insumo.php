@@ -249,8 +249,8 @@ class Insumo{
         try{
             $sql="SELECT id, nombre, codigo, descripcion
                 FROM insumo
-                WHERE codigo= :codigo";
-            $param= array(':codigo'=>$this->codigo);
+                WHERE codigo like :codigo ";
+            $param= array(':codigo'=>'%'.$this->codigo.'%');
             $data= DATA::Ejecutar($sql,$param);
             
             if(count($data))

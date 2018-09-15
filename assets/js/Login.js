@@ -126,7 +126,7 @@ function Login(){
         showError(e);
     })
     .always(function () {
-        $("#btnOrdenSalida").removeAttr("disabled");
+        $("#btnLogin").removeAttr("disabled");
     });
 };
 
