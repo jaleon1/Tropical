@@ -62,9 +62,11 @@ class Merma{
 
     function ReadAll(){
         try {
-            $sql='SELECT id, /*item(prodcuto/insumo) data*/ cantidad, descripcion, fecha
-                FROM     merma
-                ORDER BY fecha desc';
+            $sql='SELECT m.id, i.codigo, i.nombre, i.descripcion, m.cantidad, m.descripcion, m.fecha
+                FROM mermaInsumo m inner join insumo i on i.id = m.idInsumo
+                UNION
+                SELECT m.id, p.codigo, p.nombre, p.descripcion, m.cantidad, m.descripcion, m.fecha
+                FROM mermaProducto m inner join producto p on p.id = m.idProducto';
             $data= DATA::Ejecutar($sql);
             return $data;
         }     
