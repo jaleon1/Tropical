@@ -309,13 +309,8 @@ class Producto{
     }
 
     function ReadByCode(){
-<<<<<<< HEAD
-        try{
-            $sql="SELECT id, nombre, codigo, descripcion, saldoCantidad, saldoCosto, costoPromedio, precioVenta, esVenta
-=======
         try{     
             $sql="SELECT id, nombre, codigo, descripcion, saldoCosto, costoPromedio, precioVenta, esVenta, saldoCantidad
->>>>>>> refs/remotes/origin/master
                 FROM producto 
                 WHERE codigo like :codigo";
             $param= array(':codigo'=>'%'.$this->codigo.'%');
