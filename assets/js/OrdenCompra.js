@@ -287,8 +287,10 @@ class OrdenCompra {
     };
 
     DeleteInsumoOrdenCompra(e){
-        var row = e.parentNode.parentNode;
-        row.parentNode.removeChild(row);
+        //var t = $('#dsitems').DataTable();
+        t.row( $(e).parents('tr') )
+        .remove()
+        .draw();  
     }
 
     Init() {

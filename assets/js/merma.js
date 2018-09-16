@@ -9,6 +9,16 @@ class Merma {
         this.fecha = fecha || null;
     }
 
+    showInfo() {
+        //$(".modal").css({ display: "none" });   
+        swal({
+            type: 'success',
+            title: 'Good!',
+            showConfirmButton: false,
+            timer: 1000
+        });
+    };
+
     crear() {
         var miAccion = "Create";
         //
@@ -18,7 +28,7 @@ class Merma {
             var objlista = new Object();
             objlista.idInsumo = $(item).find('td:eq(0)')[0].textContent;
             objlista.cantidad = $(item).find('td:eq(4) input').val();
-            if ($(item).find('td:eq(5) input').val() == undefined || $(item).find('td:eq(5) input').val() == '') {
+            if ($(item).find('td:eq(5) input').val() != undefined && $(item).find('td:eq(5) input').val() == '') {
                 swal({
                     type: 'warning',
                     title: 'Descripción...',
@@ -34,7 +44,7 @@ class Merma {
             var objlista = new Object();
             objlista.idProducto = $(item).find('td:eq(0)')[0].textContent;
             objlista.cantidad = $(item).find('td:eq(4) input').val();
-            if ($(item).find('td:eq(5) input').val() == undefined || $(item).find('td:eq(5) input').val() == '') {
+            if ($(item).find('td:eq(5) input').val() != undefined && $(item).find('td:eq(5) input').val() == '') {
                 swal({
                     type: 'warning',
                     title: 'Descripción...',
@@ -72,7 +82,7 @@ class Merma {
             }
         })
             .done(function () {
-                insumo.showInfo;
+                merma.showInfo();
                 // tablas.
                 ti.rows().remove().draw();
                 tp.rows().remove().draw();

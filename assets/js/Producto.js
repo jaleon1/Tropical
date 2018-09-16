@@ -259,8 +259,9 @@ class Producto {
     };
 
     DeleteproductoMerma(e){
-        var row = e.parentNode.parentNode;
-        row.parentNode.removeChild(row);
+        tp.row( $(e).parents('tr') )
+        .remove()
+        .draw();  
     }
 
     ClearCtls() {
@@ -727,6 +728,7 @@ class Producto {
             producto.codigo= data.codigo; 
             producto.nombre= data.nombre; 
             producto.descripcion= data.descripcion;
+            producto.saldoCantidad= data.saldoCantidad;
             var repetido = false;
             //
             if(document.getElementById("tProducto").rows.length != 0 && producto != null){
@@ -751,12 +753,33 @@ class Producto {
     };
 
     agregarItem(){
-        tp.row.add(producto)
-            .draw() //dibuja la tabla con el nuevo insumo
+        if(producto.saldoCantidad<=0){
+            swal({
+                type: 'warning',
+                title: 'Merma',
+                text: 'El item ' + producto.codigo + ' no tiene cantidad disponible.',
+                showConfirmButton: false,
+                timer: 3000
+            });
+            return false;
+        }
+        var rowNode= tp.row.add(producto)
+            .draw() //dibuja la tabla con el nuevo producto
             .node();     
         //
-        // $('td:eq(2) input', rowNode).attr({id: ("prec_"+insumo.codigo), max:  "9999999999", min: "0", step:"1", value:"1" }).change(function(){
-        //     ordenCompra.CalcImporte($(this).parents('tr').find('td:eq(0)').html());
+        $('td:eq(4) input', rowNode).attr({id: (producto.codigo), max:  producto.saldoCantidad, min: "1", step:"1", value:"1" }).change(function(){
+            //producto.checkCantidadMerma($(this).parents('tr').find('td:eq(4)').html());
+            if(parseFloat(this.value)>parseFloat(this.max)){
+                swal({
+                    type: 'warning',
+                    title: 'Merma',
+                    text: 'La Cantidad a RESTAR del item ' + this.id + ' no puede ser superior cantidad disponible en Inventario.',
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+                this.value= this.max;
+            }                
+        });
         // });
         // //
         // $('td:eq(3) input', rowNode).attr({id: ("cantBueno_"+insumo.codigo), max:  "9999999999", min: "1", step:"1", value:"1"}).change(function(){

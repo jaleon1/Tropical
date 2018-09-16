@@ -246,7 +246,7 @@ class Insumo{
 
     function ReadByCode(){
         try{
-            $sql="SELECT id, nombre, codigo, descripcion
+            $sql="SELECT id, nombre, codigo, descripcion, saldoCantidad
                 FROM insumo
                 WHERE codigo like :codigo ";
             $param= array(':codigo'=>'%'.$this->codigo.'%');
@@ -298,7 +298,7 @@ class Insumo{
             foreach ($data as $key => $value){
                 $saldoCantidad = $value['saldoCantidad'] - $ncantidad;
                 $saldoCosto = $value['costoPromedio'] * $saldoCantidad;
-            }            
+            }
             //Actualiza la cantidad de Insumos
             $sql="UPDATE insumo 
                 SET saldoCantidad=:saldoCantidad, saldoCosto=:saldoCosto 

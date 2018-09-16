@@ -310,7 +310,7 @@ class Producto{
 
     function ReadByCode(){
         try{
-            $sql="SELECT id, nombre, codigo, descripcion, saldoCosto, costoPromedio, precioVenta, esVenta
+            $sql="SELECT id, nombre, codigo, descripcion, saldoCantidad, saldoCosto, costoPromedio, precioVenta, esVenta
                 FROM producto 
                 WHERE codigo like :codigo";
             $param= array(':codigo'=>'%'.$this->codigo.'%');
@@ -364,7 +364,7 @@ class Producto{
             if($data)
                 return true;
             else throw new Exception('Error al calcular SALDOS Y PROMEDIOS, debe realizar el cálculo manualmente.', 666);
-        }     
+        }
         catch(Exception $e) {
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(

@@ -16,7 +16,7 @@ if(isset($_POST["action"])){
             echo json_encode($merma->ReadAll());
             break;
         case "Create":
-            $merma->Create();
+            echo json_encode($merma->Create());
             break;
     }
 }
@@ -40,8 +40,8 @@ class Merma{
             if(isset($obj["listaInsumo"] )){
                 $this->listaInsumo= [];
                 foreach ($obj["listaInsumo"] as $itemlist) {
-                    $item= new Producto();
-                    $item->id = $itemlist['id'];
+                    $item= new Insumo();
+                    $item->id = $itemlist['idInsumo'];
                     $item->cantidad = $itemlist['cantidad'];
                     $item->descripcion= $itemlist['descripcion'];
                     array_push ($this->listaInsumo, $item);
@@ -51,7 +51,7 @@ class Merma{
                 $this->listaProducto= [];
                 foreach ($obj["listaProducto"] as $itemlist) {
                     $item= new Producto();
-                    $item->id = $itemlist['id'];
+                    $item->id = $itemlist['idProducto'];
                     $item->cantidad = $itemlist['cantidad'];
                     $item->descripcion= $itemlist['descripcion'];
                     array_push ($this->listaProducto, $item);
@@ -85,24 +85,24 @@ class Merma{
                 // historico merma
                 $sql="INSERT INTO mermaInsumo (id, idInsumo, cantidad, descripcion)
                     VALUES (uuid(), :idInsumo, :cantidad, :descripcion)";
-                $param= array(':idInsumo'=> $item['idInsumo'], ':cantidad'=> $item['cantidad'], ':descripcion'=> $item['descripcion']);
+                $param= array(':idInsumo'=> $item->id, ':cantidad'=> $item->cantidad, ':descripcion'=> $item->descripcion);
                 $data = DATA::Ejecutar($sql,$param,false);
                 if(!$data)
                     $created= false;
                 // actualiza item
-                Insumo::UpdateSaldoPromedioSalida($item->idProducto, $item->cantidad);
+                Insumo::UpdateSaldoPromedioSalida($item->id, $item->cantidad);
             }
             // productos
             foreach ($this->listaProducto as $item) {                
                 // historico merma
                 $sql="INSERT INTO mermaProducto (id, idProducto, cantidad, descripcion)
                     VALUES (uuid(), :idProducto, :cantidad, :descripcion)";
-                $param= array(':idProducto'=> $item['idProducto'], ':cantidad'=> $item['cantidad'], ':descripcion'=> $item['descripcion']);
+                $param= array(':idProducto'=> $item->id, ':cantidad'=> $item->cantidad, ':descripcion'=> $item->descripcion);
                 $data = DATA::Ejecutar($sql,$param,false);
                 if(!$data)
                     $created= false;
                 // actualiza item
-                Producto::UpdateSaldoPromedioSalida($item->idProducto, $item->cantidad);
+                Producto::UpdateSaldoPromedioSalida($item->id, $item->cantidad);
             }
             //
             if($created)
