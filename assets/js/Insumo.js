@@ -333,8 +333,26 @@ class Insumo {
         });
     };
 
+<<<<<<< HEAD
     setTableInventarioInsumo() {
         this.tablainsumo = $('#dsInsumo').DataTable({
+=======
+    setTableInventarioInsumo(){
+        jQuery.extend( jQuery.fn.dataTableExt.oSort, {
+            "formatted-num-pre": function ( a ) {
+                a = (a === "-" || a === "") ? 0 : a.replace( /[^\d\-\.]/g, "" );
+                return parseFloat( a );
+            }, 
+            "formatted-num-asc": function ( a, b ) {
+                return a - b;
+            },
+            "formatted-num-desc": function ( a, b ) {
+                return b - a;
+            }
+        } );
+        
+        this.tablainsumo = $('#dsInsumo').DataTable( {
+>>>>>>> refs/remotes/origin/master
             responsive: true,
             destroy: true,
             order: [[1, "asc"]],
@@ -381,6 +399,7 @@ class Insumo {
                     width: "auto"
                 },
                 {
+<<<<<<< HEAD
                     title: "SALDO COSTO",
                     data: "saldoCosto",
                     width: "auto",
@@ -396,6 +415,21 @@ class Insumo {
                         return '¢' + parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                     }
                 },
+=======
+                    title:"SALDO COSTO",
+                    data:"saldoCosto",
+                    width:"auto",
+                    type: 'formatted-num',
+                    mRender: function ( e ) {
+                        return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}},
+                {
+                    title:"COSTO PROMEDIO",
+                    data:"costoPromedio",
+                    width:"auto",
+                    type: 'formatted-num',
+                    mRender: function ( e ) {
+                        return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}},
+>>>>>>> refs/remotes/origin/master
                 {
                     title: "ACCIÓN",
                     orderable: false,
