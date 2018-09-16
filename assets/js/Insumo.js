@@ -1,6 +1,6 @@
 class Insumo {
     // Constructor
-    constructor(id, codigo,nombre, descripcion, saldoCantidad, saldoCosto, costoPromedio, tablainsumo) {
+    constructor(id, codigo, nombre, descripcion, saldoCantidad, saldoCosto, costoPromedio, tablainsumo) {
         this.id = id || null;
         this.codigo = codigo || '';
         this.nombre = nombre || '';
@@ -14,9 +14,9 @@ class Insumo {
     //Getter
     get Read() {
         var miAccion = this.id == null ? 'ReadAll' : 'Read';
-        if(document.URL.indexOf("OrdenSalida.html")!=-1)
-            miAccion='ReadSaldoPositivo';
-        if(miAccion=='ReadAll' && $('#tableBody-Insumo').length==0 )
+        if (document.URL.indexOf("OrdenSalida.html") != -1)
+            miAccion = 'ReadSaldoPositivo';
+        if (miAccion == 'ReadAll' && $('#tableBody-Insumo').length == 0)
             return;
         $.ajax({
             type: "POST",
@@ -87,7 +87,7 @@ class Insumo {
                     swal({
                         type: 'error',
                         title: 'No es posible eliminar...',
-                        text: 'El registro que intenta eliminar ya se ecnuentra liquidado'                        
+                        text: 'El registro que intenta eliminar ya se ecnuentra liquidado'
                     });
                 }
                 else {
@@ -107,7 +107,7 @@ class Insumo {
                 insumo.Read;
             });
     }
-    
+
     // Methods    
     Reload(e) {
         if (this.id == null)
@@ -120,7 +120,7 @@ class Insumo {
         //$(".modal").css({ display: "none" });   
         $(".close").click();
         swal({
-            
+
             type: 'success',
             title: 'Good!',
             showConfirmButton: false,
@@ -152,22 +152,22 @@ class Insumo {
 
     ShowAll(e) {
         //Crea los eventos según sea el url
-        var t= $('#dsInsumo').DataTable();
-        if(t.rows().count()==0){
-           t.clear();
-           t.rows.add(JSON.parse(e));
-           t.draw();
-           $( document ).on( 'click', '#dsInsumo tbody tr', document.URL.indexOf("OrdenSalida.html")!=-1? insumo.AddInsumo:insumo.UpdateEventHandler);
-           $( document ).on( 'click', '.delete',insumo.DeleteEventHandler);
-        }else{
-           t.clear();
-           t.rows.add(JSON.parse(e));
-           t.draw();
+        var t = $('#dsInsumo').DataTable();
+        if (t.rows().count() == 0) {
+            t.clear();
+            t.rows.add(JSON.parse(e));
+            t.draw();
+            $(document).on('click', '#dsInsumo tbody tr', document.URL.indexOf("OrdenSalida.html") != -1 ? insumo.AddInsumo : insumo.UpdateEventHandler);
+            $(document).on('click', '.delete', insumo.DeleteEventHandler);
+        } else {
+            t.clear();
+            t.rows.add(JSON.parse(e));
+            t.draw();
         }
     };
 
     ReadbyCode(cod) {
-        if (cod != ""){
+        if (cod != "") {
             insumo.codigo = cod;  //Columna 0 de la fila seleccionda= ID.
             //
             $.ajax({
@@ -178,19 +178,19 @@ class Insumo {
                     obj: JSON.stringify(insumo)
                 }
             })
-            .done(function (e) {
-                insumo.ValidateInsumoFac(e);
-            })
-            .fail(function (e) {
-                insumo.showError(e);
-            });
+                .done(function (e) {
+                    insumo.ValidateInsumoFac(e);
+                })
+                .fail(function (e) {
+                    insumo.showError(e);
+                });
         }
     };
 
-    ValidateInsumoFac(e){
+    ValidateInsumoFac(e) {
         //compara si el articulo ya existe
         // carga lista con datos.
-        if(e == "[]"){
+        if (e == "[]") {
             swal({
                 type: 'warning',
                 title: 'Orden de Compra',
@@ -200,18 +200,18 @@ class Insumo {
             });
             return;
         }
-        if(e != "false" && e != ''){
+        if (e != "false" && e != '') {
             var data = JSON.parse(e)[0];
-            insumo.id= data.id; 
-            insumo.codigo= data.codigo; 
-            insumo.nombre= data.nombre; 
-            insumo.descripcion= data.descripcion;
+            insumo.id = data.id;
+            insumo.codigo = data.codigo;
+            insumo.nombre = data.nombre;
+            insumo.descripcion = data.descripcion;
             var repetido = false;
             //
-            if(document.getElementById("tInsumo").rows.length != 0 && insumo != null){
-                $(document.getElementById("tInsumo").rows).each(function(i,item){
-                    if(item.childNodes[0].innerText==insumo.id){
-                        repetido=true;
+            if (document.getElementById("tInsumo").rows.length != 0 && insumo != null) {
+                $(document.getElementById("tInsumo").rows).each(function (i, item) {
+                    if (item.childNodes[0].innerText == insumo.id) {
+                        repetido = true;
                         swal({
                             type: 'warning',
                             title: 'Orden de Compra',
@@ -221,8 +221,8 @@ class Insumo {
                         });
                     }
                 });
-            }    
-            if (repetido==false){
+            }
+            if (repetido == false) {
                 // showDataProducto(e);
                 insumo.agregarItem();
                 //insumo.ResetSearch();
@@ -231,10 +231,10 @@ class Insumo {
         }
     };
 
-    agregarItem(){
+    agregarItem() {
         ti.row.add(insumo)
             .draw() //dibuja la tabla con el nuevo insumo
-            .node();     
+            .node();
         //
         // $('td:eq(2) input', rowNode).attr({id: ("prec_"+insumo.codigo), max:  "9999999999", min: "0", step:"1", value:"1" }).change(function(){
         //     ordenCompra.CalcImporte($(this).parents('tr').find('td:eq(0)').html());
@@ -262,284 +262,289 @@ class Insumo {
         //$('#open_modal_fac').attr("disabled", false);
     };
 
-    Merma(){
-        $('#btnMerma').attr("disabled", "disabled");
-        var miAccion = "Merma";
-        insumo.lista = [];
-        $('#tInsumo tbody tr').each(function(i, item) {
-            var objlista = new Object();
-            objlista.id= $(item).find('td:eq(0)')[0].textContent;
-            objlista.cantidad= $(item).find('td:eq(4) input').val();
-            insumo.lista.push(objlista);
-        });
-        $.ajax({
-            type: "POST",
-            url: "class/Insumo.php",
-            data: {
-                action: miAccion,
-                obj: JSON.stringify(this)
-            }
-        })
-            .done(insumo.showInfo)
-            .fail(function (e) {
-                insumo.showError(e);
-            })
-            .always(function () {
-                $("#btnMerma").removeAttr("disabled");
-                insumo = new Insumo();
-                insumo.CleanCtls();
-                $("#p_searh").focus();
-            });
-
+    DeleteInsumoMerma(e){
+        var row = e.parentNode.parentNode;
+        row.parentNode.removeChild(row);
     }
 
-    setTableOrdenSalida(){
-        this.tablainsumo = $('#dsInsumo').DataTable( {
+    setTableOrdenSalida() {
+        this.tablainsumo = $('#dsInsumo').DataTable({
             responsive: true,
             destroy: true,
-            order: [[ 1, "asc" ]],
-            columnDefs: [{className: "text-right", "targets": [4]}],
+            order: [[1, "asc"]],
+            columnDefs: [{ className: "text-right", "targets": [4] }],
             columns: [
                 {
-                    title:"ID",
-                    data:"id",
-                    className:"itemId",
-                    searchable: false},
+                    title: "ID",
+                    data: "id",
+                    className: "itemId",
+                    searchable: false
+                },
                 {
-                    title:"CODIGO",
-                    data:"codigo"},
+                    title: "CODIGO",
+                    data: "codigo"
+                },
                 {
-                    title:"NOMBRE",
-                    data:"nombre"},
+                    title: "NOMBRE",
+                    data: "nombre"
+                },
                 {
-                    title:"DESCRIPCION",
-                    data:"descripcion"},
+                    title: "DESCRIPCION",
+                    data: "descripcion"
+                },
                 {
-                    title:"SALDO CANTIDAD",
-                    data:"saldoCantidad"},
+                    title: "SALDO CANTIDAD",
+                    data: "saldoCantidad"
+                },
                 {
-                    title:"SALDO COSTO",
-                    data:"saldoCosto",
-                    className:"oculto_saldoCosto", 
-                    visible:false},
+                    title: "SALDO COSTO",
+                    data: "saldoCosto",
+                    className: "oculto_saldoCosto",
+                    visible: false
+                },
                 {
-                    title:"COSTO PROMEDIO",
-                    data:"costoPromedio",
-                    className:"oculto_costoPromedio", 
-                    visible:false},
+                    title: "COSTO PROMEDIO",
+                    data: "costoPromedio",
+                    className: "oculto_costoPromedio",
+                    visible: false
+                },
                 {
-                    title:"ACCIÓN",
+                    title: "ACCIÓN",
                     orderable: false,
-                    searchable:false,
+                    searchable: false,
                     mRender: function () {
-                        return '<a class="update"> <i class="glyphicon glyphicon-edit" > </i> Editar </a> | '+
-                                '<a class="delete"> <i class="glyphicon glyphicon-trash"> </i> </a>' 
+                        return '<a class="update"> <i class="glyphicon glyphicon-edit" > </i> Editar </a> | ' +
+                            '<a class="delete"> <i class="glyphicon glyphicon-trash"> </i> </a>'
                     },
-                    visible:false}
+                    visible: false
+                }
             ]
         });
     };
 
-    setTableInventarioInsumo(){
-        this.tablainsumo = $('#dsInsumo').DataTable( {
+    setTableInventarioInsumo() {
+        this.tablainsumo = $('#dsInsumo').DataTable({
             responsive: true,
             destroy: true,
-            order: [[ 1, "asc" ]],
+            order: [[1, "asc"]],
             language: {
                 "infoEmpty": "Sin Usuarios Registrados",
                 "emptyTable": "Sin Usuarios Registrados",
                 "search": "Buscar",
-                "zeroRecords":    "No hay resultados",
-                "lengthMenu":     "Mostrar _MENU_ registros",
+                "zeroRecords": "No hay resultados",
+                "lengthMenu": "Mostrar _MENU_ registros",
                 "paginate": {
-                    "first":      "Primera",
-                    "last":       "Ultima",
-                    "next":       "Siguiente",
-                    "previous":   "Anterior"
+                    "first": "Primera",
+                    "last": "Ultima",
+                    "next": "Siguiente",
+                    "previous": "Anterior"
                 }
             },
-            columnDefs: [{className: "text-right", "targets": [4,5,6]}],
+            columnDefs: [{ className: "text-right", "targets": [4, 5, 6] }],
             columns: [
                 {
-                    title:"ID",
-                    data:"id",
-                    className:"itemId",                    
-                    width:"auto",
-                    searchable: false},
+                    title: "ID",
+                    data: "id",
+                    className: "itemId",
+                    width: "auto",
+                    searchable: false
+                },
                 {
-                    title:"CODIGO",
-                    data:"codigo",
-                    width:"auto"},
+                    title: "CODIGO",
+                    data: "codigo",
+                    width: "auto"
+                },
                 {
-                    title:"NOMBRE",
-                    data:"nombre",
-                    width:"auto"},
+                    title: "NOMBRE",
+                    data: "nombre",
+                    width: "auto"
+                },
                 {
-                    title:"DESCRIPCION",
-                    data:"descripcion",
-                    width:"auto"},
+                    title: "DESCRIPCION",
+                    data: "descripcion",
+                    width: "auto"
+                },
                 {
-                    title:"SALDO CANTIDAD",
-                    data:"saldoCantidad",
-                    width:"auto"},
+                    title: "SALDO CANTIDAD",
+                    data: "saldoCantidad",
+                    width: "auto"
+                },
                 {
-                    title:"SALDO COSTO",
-                    data:"saldoCosto",
-                    width:"auto",
-                    mRender: function ( e ) {
-                        return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}},
+                    title: "SALDO COSTO",
+                    data: "saldoCosto",
+                    width: "auto",
+                    mRender: function (e) {
+                        return '¢' + parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                    }
+                },
                 {
-                    title:"COSTO PROMEDIO",
-                    data:"costoPromedio",
-                    width:"auto",
-                    mRender: function ( e ) {
-                        return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}},
+                    title: "COSTO PROMEDIO",
+                    data: "costoPromedio",
+                    width: "auto",
+                    mRender: function (e) {
+                        return '¢' + parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                    }
+                },
                 {
-                    title:"ACCIÓN",
+                    title: "ACCIÓN",
                     orderable: false,
-                    searchable:false,
+                    searchable: false,
                     className: "buttons",
                     width: "auto",
                     mRender: function () {
-                        return '<a class="delete" style="cursor: pointer;"> <i class="glyphicon glyphicon-trash"> </i> </a>' 
+                        return '<a class="delete" style="cursor: pointer;"> <i class="glyphicon glyphicon-trash"> </i> </a>'
                     },
                 }
             ]
         });
     };
 
-    setTableInventarioOrdenSalida(){
-        this.tablainsumo = $('#dsInsumo').DataTable( {
+    setTableInventarioOrdenSalida() {
+        this.tablainsumo = $('#dsInsumo').DataTable({
             responsive: true,
             destroy: true,
-            order: [[ 1, "asc" ]],
+            order: [[1, "asc"]],
             language: {
                 "infoEmpty": "Sin Usuarios Registrados",
                 "emptyTable": "Sin Usuarios Registrados",
                 "search": "Buscar",
-                "zeroRecords":    "No hay resultados",
-                "lengthMenu":     "Mostrar _MENU_ registros",
+                "zeroRecords": "No hay resultados",
+                "lengthMenu": "Mostrar _MENU_ registros",
                 "paginate": {
-                    "first":      "Primera",
-                    "last":       "Ultima",
-                    "next":       "Siguiente",
-                    "previous":   "Anterior"
+                    "first": "Primera",
+                    "last": "Ultima",
+                    "next": "Siguiente",
+                    "previous": "Anterior"
                 }
             },
-            columnDefs: [{className: "text-right", "targets": [4]}],
+            columnDefs: [{ className: "text-right", "targets": [4] }],
             columns: [
                 {
-                    title:"ID",
-                    data:"id",
-                    className:"itemId",
-                    searchable: false},
+                    title: "ID",
+                    data: "id",
+                    className: "itemId",
+                    searchable: false
+                },
                 {
-                    title:"CODIGO",
-                    data:"codigo"},
+                    title: "CODIGO",
+                    data: "codigo"
+                },
                 {
-                    title:"NOMBRE",
-                    data:"nombre"},
+                    title: "NOMBRE",
+                    data: "nombre"
+                },
                 {
-                    title:"DESCRIPCION",
-                    data:"descripcion"},
+                    title: "DESCRIPCION",
+                    data: "descripcion"
+                },
                 {
-                    title:"SALDO CANTIDAD",
-                    data:"saldoCantidad"},
+                    title: "SALDO CANTIDAD",
+                    data: "saldoCantidad"
+                },
                 {
-                    title:"SALDO COSTO",
-                    data:"saldoCosto",
-                    className:"oculto_saldoCosto", 
-                    visible:false},
+                    title: "SALDO COSTO",
+                    data: "saldoCosto",
+                    className: "oculto_saldoCosto",
+                    visible: false
+                },
                 {
-                    title:"COSTO PROMEDIO",
-                    data:"costoPromedio",
-                    className:"oculto_costoPromedio", 
-                    visible:false},
+                    title: "COSTO PROMEDIO",
+                    data: "costoPromedio",
+                    className: "oculto_costoPromedio",
+                    visible: false
+                },
                 {
-                    title:"ACCIÓN",
+                    title: "ACCIÓN",
                     orderable: false,
-                    searchable:false,
+                    searchable: false,
                     mRender: function () {
-                        return '<a class="update"> <i class="glyphicon glyphicon-edit" > </i> Editar </a> | '+
-                                '<a class="delete"> <i class="glyphicon glyphicon-trash"> </i> </a>' 
+                        return '<a class="update"> <i class="glyphicon glyphicon-edit" > </i> Editar </a> | ' +
+                            '<a class="delete"> <i class="glyphicon glyphicon-trash"> </i> </a>'
                     },
-                    visible:false}
+                    visible: false
+                }
             ]
         });
     }
 
-    setTableMerma(){
-        ti = $('#tInsumo').DataTable( {
+    setTableMerma() {
+        ti = $('#tInsumo').DataTable({
             responsive: true,
             destroy: true,
-            order: [[ 1, "asc" ]],
+            order: [[1, "asc"]],
             language: {
                 "infoEmpty": "Sin Registros",
                 "emptyTable": "Sin Registros",
                 "search": "Buscar",
-                "zeroRecords":    "No hay resultados",
-                "lengthMenu":     "Mostrar _MENU_ registros",
+                "zeroRecords": "No hay resultados",
+                "lengthMenu": "Mostrar _MENU_ registros",
                 "paginate": {
-                    "first":      "Primera",
-                    "last":       "Ultima",
-                    "next":       "Siguiente",
-                    "previous":   "Anterior"
+                    "first": "Primera",
+                    "last": "Ultima",
+                    "next": "Siguiente",
+                    "previous": "Anterior"
                 }
             },
-            columnDefs: [{className: "text-right", "targets": [5]}],
+            columnDefs: [{ className: "text-right", "targets": [5] }],
             columns: [
                 {
-                    title:"Id",
-                    data:"id",
-                    className:"itemId",
-                    searchable: false,                    
-                    width:"auto"
+                    title: "Id",
+                    data: "id",
+                    className: "itemId",
+                    searchable: false,
+                    width: "auto"
                 },
                 {
-                    title:"Codigo",
-                    data:"codigo",
-                    width:"auto"
+                    title: "Codigo",
+                    data: "codigo",
+                    width: "auto"
                 },
                 {
-                    title:"Nombre",
-                    data:"nombre",
-                    width:"auto"
+                    title: "Nombre",
+                    data: "nombre",
+                    width: "auto"
                 },
                 {
-                    title:"Descripción",
-                    data:"descripcion",
-                    width:"auto"
+                    title: "Descripción",
+                    data: "descripcion",
+                    width: "auto"
                 },
                 {//cant.
-                    title:"Cantidad",
-                    "width": "15%", 
+                    title: "Cantidad",
+                    "width": "15%",
                     "data": null,
-                    "defaultContent": '<input class="cantidad form-control" type="number" value=1>'
+                    "defaultContent": '<input class="cantidad form-control" min="1" max="9999999999" step="1" style="text-align:right;"  type="number" value=1>'
+                },
+                {//descr.
+                    title:"Descripcion",
+                    "width": "30%", 
+                    "data": null,
+                    "defaultContent": '<input class="cantidad form-control" type="text">'
                 },
                 {
-                    title:"Acción",
+                    title: "Acción",
                     orderable: false,
-                    searchable:false,
+                    searchable: false,
                     mRender: function () {
-                        return '<a class="delete" style="cursor: pointer;"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>' 
+                        return '<a class="delete" style="cursor: pointer;" onclick="producto.DeleteInsumoMerma(this)" > <i class="glyphicon glyphicon-trash"> </i></a>'
                     },
-                    visible:true
+                    visible: true
                 }
             ]
         });
     };
 
-    AddInsumo(){
-        var id=$(this).find("td:eq(0)").html();
-        var codigo=$(this).find("td:eq(1)").html(); 
-        var nombre=$(this).find("td:eq(2)").html();
-        var descripcion=$(this).find("td:eq(3)").html();
-        var saldoCantidad=$(this).find("td:eq(4)").html();
+    AddInsumo() {
+        var id = $(this).find("td:eq(0)").html();
+        var codigo = $(this).find("td:eq(1)").html();
+        var nombre = $(this).find("td:eq(2)").html();
+        var descripcion = $(this).find("td:eq(3)").html();
+        var saldoCantidad = $(this).find("td:eq(4)").html();
         //Para campos ocultos
         var saldoCosto = insumo.tablainsumo.row(this).data()[5];
         var costoPromedio = insumo.tablainsumo.row(this).data()[6];
-        ordenSalida.AddInsumoEventHandler(id,codigo,nombre,descripcion,saldoCantidad,saldoCosto,costoPromedio);
-    }; 
+        ordenSalida.AddInsumoEventHandler(id, codigo, nombre, descripcion, saldoCantidad, saldoCosto, costoPromedio);
+    };
 
     UpdateEventHandler() {
         insumo.id = $(this).find(".itemId").text();  //Class itemId = ID del objeto.
@@ -582,7 +587,7 @@ class Insumo {
         })
     };
 
-    ValorDefault(){
+    ValorDefault() {
         $("#saldoCantidad").val('0');
         $("#saldoCosto").val('0.00');
         $("#costoPromedio").val('0.00');
@@ -603,7 +608,7 @@ class Insumo {
         document.forms[0].onreset = function (e) {
             validator.reset();
         }
-        
+
         // datepicker.js
         // $('#dpfechaExpiracion').datetimepicker({
         //     format: 'DD/MM/YYYY'

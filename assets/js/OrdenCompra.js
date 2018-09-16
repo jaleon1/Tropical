@@ -286,6 +286,11 @@ class OrdenCompra {
         $(`#subtotal_d${prd}`).val("¢"+insumo.subTotal.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
     };
 
+    DeleteInsumoOrdenCompra(e){
+        var row = e.parentNode.parentNode;
+        row.parentNode.removeChild(row);
+    }
+
     Init() {
         // validator.js
         // var validator = new FormValidator({ "events": ['blur', 'input', 'change'] }, document.forms["frmProducto"]);

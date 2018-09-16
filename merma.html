@@ -294,6 +294,7 @@
     <!-- JS Scripts -->
     <script src="assets/js/Insumo.js"></script>
     <script src="assets/js/Producto.js"></script>
+    <script src="assets/js/merma.js"></script>
     <!-- Sweet Alert -->
     <script src="assets/js/sweetalert2.min.js"></script>
 
@@ -320,8 +321,7 @@
             producto.ReadbyCode($('#p_searhProducto').val());
     });
     $('#btnMerma').click(function () {
-        producto.Merma();
-        insumo.Merma();
+        merma.crear();
     });
     // Recarga la página para limpiar todo
     $('#reload').click(function () {

@@ -365,6 +365,15 @@
                 { "title": "ValorBueno" },
                 { "title": "ValorMalo" },
                 { "title": "Subtotal" },
+                {
+                    title:"Acción",
+                    orderable: false,
+                    searchable:false,
+                    mRender: function () {
+                        return '<a class="delete" style="cursor: pointer;" onclick="ordenCompra.DeleteInsumoOrdenCompra(this)" > <i class="glyphicon glyphicon-trash"> </i></a>' 
+                    },
+                    visible:true
+                }
             ], // crea las columnas
             "scrollY": "190px",
             // "searching": false,
@@ -406,6 +415,7 @@
                     "data": null,
                     "defaultContent": '<input readonly class="valor"><input readonly class="display">'
                 }
+                
             ]
         });
         t.columns.adjust().draw();

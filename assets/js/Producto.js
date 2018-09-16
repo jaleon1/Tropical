@@ -258,6 +258,11 @@ class Producto {
         $('#tableBody-ArticuloBodega').html("");
     };
 
+    DeleteproductoMerma(e){
+        var row = e.parentNode.parentNode;
+        row.parentNode.removeChild(row);
+    }
+
     ClearCtls() {
         $("#id").val('');
         $("#codigo").val('');
@@ -517,14 +522,20 @@ class Producto {
                     title:"Cantidad",
                     "width": "15%", 
                     "data": null,
-                    "defaultContent": '<input class="cantidad form-control" type="number" value=1>'
+                    "defaultContent": '<input class="cantidad form-control" type="number" min="1" max="9999999999" step="1" style="text-align:right;" value=1 >'
+                },
+                {//descr.
+                    title:"Descripcion",
+                    "width": "30%", 
+                    "data": null,
+                    "defaultContent": '<input class="cantidad form-control" required type="text">'
                 },
                 {
                     title:"Acción",
                     orderable: false,
                     searchable:false,
                     mRender: function () {
-                        return '<a class="delete" style="cursor: pointer;"> <i class="glyphicon glyphicon-trash"> </i> Eliminar </a>' 
+                        return '<a class="delete" style="cursor: pointer;" onclick="producto.DeleteproductoMerma(this)" > <i class="glyphicon glyphicon-trash"> </i></a>' 
                     },
                     visible:true
                 }
