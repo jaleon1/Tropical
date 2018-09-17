@@ -647,7 +647,19 @@ function CreateFact() {
         }
     })
     .done(function(e){
-        ticketPrint(e)
+        /*******************************************/
+        //*************** ENVIO FE *****************/
+        /*******************************************/
+        $.ajax({
+            type: "POST",
+            url: "class/Factura.php",
+            data: {
+                action: 'EnviarFE',
+                obj: JSON.stringify(factura)
+            }
+        })
+        //
+        ticketPrint(e);        
     })
     .fail(function (e) {
         producto.showError(e);
@@ -789,8 +801,6 @@ function BorraRow(prd) {
     t.row('.selected').remove().draw(false);
 }
 
-
-
 function valPago(val) {
 
     xPagar = parseFloat(($("#total")[0].textContent).replace("¢", ""));
@@ -813,7 +823,6 @@ function valPago(val) {
     }
 
 };
-
 
 //informa de cantidad de producto
 function alertSwal(cant) {
@@ -850,7 +859,7 @@ function ticketPrint(e){
     localStorage.setItem("lsTotal",data.totalComprobante);
     localStorage.setItem("lsListaProducto",JSON.stringify(data.detalleFactura));
 
-    //location.href ="/Tropical/TicketFacturacion.html";
+    // location.href ="/Tropical/TicketFacturacion.html";
     location.href ="/TicketFacturacion.html";
 }
 

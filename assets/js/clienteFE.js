@@ -309,7 +309,7 @@ class ClienteFE {
             url: "class/ClienteFE.php",
             data: {
                 action: miAccion,
-                obj: JSON.stringify(this)
+                objC: JSON.stringify(this)
             }
         })
             .done(function(){

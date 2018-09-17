@@ -208,6 +208,7 @@ class ClienteFE{
     public $estadoCertificado= 1;
     public $sessionKey;
     public $downloadCode; // codigo de descarga del certificado para cifrar xml.
+    public $apiUrl;
     //
     public $ubicacion= [];
 
@@ -219,11 +220,11 @@ class ClienteFE{
         if(isset($_POST["idBodega"]))
             $this->idBodega= $obj["idBodega"];
         else $this->idBodega= $_SESSION['userSession']->idBodega;
-        if(isset($_POST["obj"])){
+        if(isset($_POST["objC"])){
             $obj= json_decode($_POST["obj"],true);
             require_once("UUID.php");
             $this->id= $obj["id"] ?? UUID::v4();         
-            $this->codigoSeguridad= $obj["codigoSeguridad"];            
+            $this->codigoSeguridad= $obj["codigoSeguridad"];
             $this->nombre= $obj["nombre"] ?? '';   
             $this->idCodigoPais= $obj["idCodigoPais"] ?? null;                  
             $this->idTipoIdentificacion= $obj["idTipoIdentificacion"] ?? null;
@@ -371,7 +372,7 @@ class ClienteFE{
                 idBarrio, otrasSenas, numTelefono, correoElectronico, username, password, pinp12, downloadCode
                 FROM clienteFE  
                 where idBodega=:idBodega';
-            $param= array(':idBodega'=>$this->idBodega);
+            $param= array(':idBodega'=>$_SESSION['userSession']->idBodega);
             $data= DATA::Ejecutar($sql,$param);
             if($data){
                 $this->id= $data[0]['id'];
@@ -420,6 +421,24 @@ class ClienteFE{
         }
     }
 
+    function Check(){
+        try {
+            $sql='SELECT id
+                FROM clienteFE  
+                where idBodega=:idBodega';
+            $param= array(':idBodega'=>$_SESSION['userSession']->idBodega);
+            $data= DATA::Ejecutar($sql,$param);
+            if($data){
+                return true;
+            }
+            return false;
+        }     
+        catch(Exception $e) {
+            error_log("error: ". $e->getMessage());
+            return false;
+        }
+    }
+
     function Create(){
         try {
             $sql="INSERT INTO clienteFE  (id, codigoSeguridad, idCodigoPais, nombre, idTipoIdentificacion, identificacion, nombreComercial, idProvincia,idCanton, idDistrito, idBarrio, otrasSenas, 
@@ -451,8 +470,7 @@ class ClienteFE{
             if($data)
             {
                 //guarda api_base.users
-                //$url= 'http://104.131.5.198/api.php';
-                $url= 'localhost/api.php';
+                $this->getApiUrl();
                 $ch = curl_init();
                 $post = [
                     'w' => 'users',
@@ -465,7 +483,7 @@ class ClienteFE{
                     'pwd'   => $this->password
                 ];  
                 curl_setopt_array($ch, array(
-                    CURLOPT_URL => $url,
+                    CURLOPT_URL => $this->apiUrl,
                     CURLOPT_RETURNTRANSFER => true,   
                     CURLOPT_VERBOSE => true,      
                     CURLOPT_MAXREDIRS => 10,
@@ -535,11 +553,20 @@ class ClienteFE{
         }
     }
 
+    private function getApiUrl(){
+        require_once('Globals.php');
+        if (file_exists('../../../ini/config.ini')) {
+            $set = parse_ini_file('../../../ini/config.ini',true); 
+            $this->apiUrl = $set[Globals::app]['apiurl'];
+        }         
+        else throw new Exception('Acceso denegado al Archivo de configuración.',-1);
+    }
+
     public function APILogin(){
         try{
-            error_log("API LOGIN ... ");
-            //$url= 'http://104.131.5.198/api.php';
-            $url= 'localhost/api.php';
+            error_log("... API LOGIN ... ");
+            //
+            $this->getApiUrl();
             $ch = curl_init();
             $post = [
                 'w' => 'users',
@@ -548,7 +575,7 @@ class ClienteFE{
                 'pwd'   => $this->password
             ];  
             curl_setopt_array($ch, array(
-                CURLOPT_URL => $url,
+                CURLOPT_URL => $this->apiUrl,
                 CURLOPT_RETURNTRANSFER => true,   
                 CURLOPT_VERBOSE => true,      
                 CURLOPT_RETURNTRANSFER => true,
@@ -572,9 +599,9 @@ class ClienteFE{
             // session de usuario ATV
             $sArray=json_decode($header);
             if(!isset($sArray->resp->sessionKey)){
-                // ERROR CRÍTICO:
+                // ERROR CRITICO:
                 // debe notificar al contibuyente. 
-                throw new Exception('Error crítico al inciar sesión del API. DEBE COMUNICARSE CON SOPORTE TECNICO'. $error_msg , '66612');
+                throw new Exception('Error CRITICO al inciar sesion del API. DEBE COMUNICARSE CON SOPORTE TECNICO'. $error_msg , '66612');
             }
             $this->sessionKey= $sArray->resp->sessionKey;
             $_SESSION['API']->sessionKey= $this->sessionKey;
@@ -595,9 +622,8 @@ class ClienteFE{
             error_log(" subiendo certificado API CRL: ". $this->certificado);
             if (!file_exists($this->certificado)){
                 throw new Exception('Error al guardar el certificado. El certificado no existe' , 002256);
-            } 
-            //$url= 'http://104.131.5.198/api.php';
-            $url= 'localhost/api.php';  
+            }
+            $this->getApiUrl();
             $ch = curl_init();
             $post = [
                 'w' => 'fileUploader',
@@ -607,7 +633,7 @@ class ClienteFE{
                 'iam'=>$_SESSION['API']->correoElectronico
             ];
             curl_setopt_array($ch, array(
-                CURLOPT_URL => $url,
+                CURLOPT_URL => $this->apiUrl,
                 CURLOPT_RETURNTRANSFER => true,   
                 CURLOPT_VERBOSE => true,                      
                 CURLOPT_MAXREDIRS => 10,
@@ -628,9 +654,9 @@ class ClienteFE{
             error_log("****** buscar : ". $server_output);
             $sArray= json_decode($server_output);
             if(!isset($sArray->resp->downloadCode)){
-                // ERROR CRÍTICO:
+                // ERROR CRITICO:
                 // debe notificar al contibuyente. 
-                throw new Exception('Error crítico al leer downloadCode: '.$server_output, 0344);
+                throw new Exception('Error CRITICO al leer downloadCode: '.$server_output, 0344);
             }
             // almacena dowloadCode en clienteFE
             $sql="UPDATE clienteFE

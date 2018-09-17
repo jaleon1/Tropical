@@ -330,7 +330,11 @@ class Usuario {
         // Check username
         $('#username').focusout(function () {
             usuario.CheckUsername();
-        });        
+        });      
+        // elimina espacios en blanco del username
+        $("#username").on("keyup", function(event) {
+            this.value = this.value.replace(/\s+/g, '').toLowerCase();
+        });
     };
 
 

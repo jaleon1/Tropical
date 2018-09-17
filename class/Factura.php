@@ -15,17 +15,13 @@ if(isset($_POST["action"])){
     require_once("Usuario.php");
     require_once("ClienteFE.php");
     require_once("FacturaElectronica.php");
+    require_once("encdes.php");
     // Session
     if (!isset($_SESSION))
         session_start();
         
     require_once("OrdenXFactura.php");
-    require_once("ProductoXFactura.php");
-    // Inicia sesión de API.
-    if(!isset($_SESSION['API'])){
-        $cliente= new ClienteFE();
-        $cliente->ReadProfile();
-    }
+    require_once("ProductoXFactura.php");    
     // Instance
     $factura= new Factura();
     switch($opt){
@@ -36,7 +32,22 @@ if(isset($_POST["action"])){
             echo json_encode($factura->Read());
             break;
         case "Create":
-        echo json_encode($factura->Create());
+            echo json_encode($factura->Create());
+            break;
+        case "EnviarFE":
+            // Inicia sesión de API.
+            $cliente= new ClienteFE();
+            if($cliente->Check())
+                $cliente->ReadProfile();
+            else {
+                // retorna warning de facturacion sin contribuyente.
+                echo json_encode(array(
+                    'code' => 000 ,
+                    'msg' => 'NOCONTRIB')
+                );
+                exit;
+            }
+            $factura->EnviarFE();
             break;
         case "Update":
             $factura->Update();
@@ -83,11 +94,23 @@ class Factura{
     public $tipoCambio= null;
     //
     function __construct(){
+        //
+        // Inicia sesión de API.
+        $cliente= new ClienteFE();
+        if($cliente->Check())
+            $cliente->ReadProfile();
+        else {
+            // retorna warning de facturacion sin contribuyente.
+            echo json_encode(array(
+                'code' => 000 ,
+                'msg' => 'NOCONTRIB')
+            );
+            exit;
+        }
         // identificador único
         if(isset($_POST["id"])){
             $this->id= $_POST["id"];
         }
-
         if(isset($_POST["obj"])){
             $obj= json_decode($_POST["obj"],true);
             //Necesarias para la factura (Segun M Hacienda)
@@ -138,7 +161,7 @@ class Factura{
                     $item->cantidad= $itemDetalle['cantidad'] ?? 1;
                     $item->precioUnitario= $itemDetalle['precioUnitario'];
                     $item->codigoImpuesto= $itemDetalle['codigoImpuesto'] ?? 1; // impuesto ventas
-                    $item->tarifaImpuesto= $itemDetalle['tarifaImpuesto'] ?? '13.0';
+                    $item->tarifaImpuesto= $itemDetalle['tarifaImpuesto'] ?? '11.7';
                     $item->montoImpuesto= $itemDetalle['montoImpuesto']   ?? $item->precioUnitario * ($item->tarifaImpuesto/100);
                     // en tropical se define el precio unitario incluyendo el impuesto, se debe recalcular.
                     $item->precioUnitario= $item->precioUnitario - $item->montoImpuesto;
@@ -291,6 +314,13 @@ class Factura{
         }
     }
 
+    function EnviarFE(){
+        try {
+            FacturaElectronica::Iniciar($this);
+        }
+        catch(Exception $e){}
+    }
+
 
     function Create(){
         try {
@@ -316,8 +346,7 @@ class Factura{
                     // retorna orden autogenerada.
                     OrdenXFactura::$id=$this->id;
                     OrdenXFactura::Create($this->detalleOrden);                    
-                    $this->ReadbyID();
-                    // FacturaElectronica::Iniciar($this);
+                    $this->ReadbyID();                    
                     return $this;
                 }
                 else throw new Exception('Error al guardar los productos.', 03);
