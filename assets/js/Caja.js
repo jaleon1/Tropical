@@ -56,16 +56,6 @@ class MovimientosCaja {
                     data: "nombreBodega"
                 },
                 {
-                    title: "IDSupervisor",
-                    data: "idUsuarioSupervisor",
-                    "visible": false,
-                    "searchable": false
-                },
-                {
-                    title: "Supervisor",
-                    data: "supervisor"
-                },
-                {
                     title: "IDCajero",
                     data: "idUsuarioCajero",
                     "visible": false,
@@ -218,7 +208,13 @@ class MovimientosCaja {
         
         $('#cierreEfectivo').text('¢'+ parseFloat(data.totalVentasEfectivo[0].efectivo).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, "."));
         $('#cierreTarjeta').text('¢'+ parseFloat(data.totalVentasTarjeta[0].tarjeta).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, "."));
-        $('.cierra-caja-modal-lg').modal('show');
+        $('.cierra-caja-modal-lg').modal(
+            {
+                backdrop: 'static',
+                keyboard: true, 
+                show: true
+        }
+        );
 
 
         ////////////////////////////////
@@ -260,82 +256,6 @@ class MovimientosCaja {
                 })()
         });
     };
-    // ReadbyID(id) {
-    //     $("#detalleFac").empty();
-    //     var detalleFac =
-    //         `<button type="button" class="close" data-dismiss="modal">
-    //             <span aria-hidden="true">X</span>
-    //         </button>
-    //         <h4 class="modal-title" id="myModalLabel">Factura #${id.consecutivo}.</h4>
-    //         <div class="row">
-                
-    //             <div class="col-md-6 col-sm-6 col-xs-6">
-    //                 <p>Fecha: ${id.fechaCreacion}</p>
-    //             </div>
-    //         </div>
-    //         <div class="row">
-    //             <div class="col-md-6 col-sm-6 col-xs-6">
-    //                 <p>Cajero: ${id.userName}</p>
-    //             </div>
-    //             <div class="col-md-6 col-sm-6 col-xs-6">
-    //                 <p>Bodega: ${id.nombre}</p>
-    //             </div>
-    //         </div>`;
-    //     $("#detalleFac").append(detalleFac);
-
-
-    //     $("#totalFact").empty();
-
-        // var totalFact =
-        //     `<h4>Total: ¢${Math.round(id.totalVenta)}</h4>`;
-        // $("#totalFact").append(totalFact);
-
-
-    //     $.ajax({
-    //         type: "POST",
-    //         url: "class/ProductoXFactura.php",
-    //         data: {
-    //             action: "ReadbyID",
-    //             obj: JSON.stringify(id.id)
-    //         }
-    //     })
-    //         .done(function (e) {
-    //             inventarioFacturas.drawFactDetail(e);
-    //         });
-    // };
-
-    // drawFactDetail(e) {
-    //     var facturas = JSON.parse(e);
-
-    //     this.tb_prdXFact = $('#tb_detalle_fact').DataTable({
-    //         data: facturas,
-    //         destroy: true,
-    //         "searching": false,
-    //         "paging": false,
-    //         "info": false,
-    //         "ordering": false,
-    //         // "retrieve": true,
-    //         "order": [[0, "desc"]],
-    //         columns: [
-    //             {
-    //                 title: "Producto",
-    //                 data: "detalle"
-    //             },
-    //             {
-    //                 title: "Cantidad",
-    //                 data: "cantidad"
-    //             },
-    //             {
-    //                 title: "Precio",
-    //                 data: "montoTotalLinea"
-    //             }
-    //         ]
-    //     });
-
-    //     $('#modalFac').modal('toggle');
-
-    // };
-
 }
 //Class Instance
 let movimientosCaja = new MovimientosCaja();
