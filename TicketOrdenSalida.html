@@ -15,13 +15,13 @@
         <tbody>
           <tr><td><label>--------------------------------------------------------</label></td></tr>
                   
-          <tr style="line-height:10px;font-family:Bahnschrift Condensed; text-align: center;"><td>
-            TropicalSNO. <label id="bodega"></label>
+          <tr style="line-height:10px;font-family:Bahnschrift; text-align: center;"><td>
+            TROPICAL SNO. <label id="bodega"></label>
           </td></tr>
           <tr><td><label>--------------------------------------------------------</label></td></tr>
-          <tr style="line-height:10px;font-family:Bahnschrift Condensed; text-align: center;"><td>ORDEN DE SALIDA # <label id=numeroOrden></label></label></td></tr>
-          <tr style="line-height:10px;font-family:Bahnschrift Condensed; text-align: center;"><td>Fecha: <label id="fechaOrdenSalida"></label></td></tr>
-          <tr style="line-height:10px;font-family:Bahnschrift Condensed; text-align: center;"><td>Usuario: <label id="usuarioRecibe"></label></td></tr>
+          <tr style="line-height:10px;font-family:Bahnschrift; text-align: center;"><td>ORDEN DE SALIDA # <label id=numeroOrden></label></label></td></tr>
+          <tr style="line-height:10px;font-family:Bahnschrift; text-align: center;"><td>Fecha: <label id="fechaOrdenSalida"></label></td></tr>
+          <tr style="line-height:10px;font-family:Bahnschrift; text-align: center;"><td>Usuario: <label id="usuarioRecibe"></label></td></tr>
         </tbody>
       </table>
 
@@ -29,8 +29,8 @@
       <tbody id="tableBody-TicketOrdenSalida">
           <tr><td colspan="2"><label>--------------------------------------------------------</label></td></tr>
           <tr>
-              <td style="line-height:10px;font-family:Bahnschrift Condensed; width:10%; text-align:left;">CN</td>
-              <td style="line-height:10px;font-family:Bahnschrift Condensed; width:90%; text-align:right;">Detalle</td>
+              <td style="line-height:10px;font-family:Bahnschrift; width:10%; text-align:left;">CN</td>
+              <td style="line-height:10px;font-family:Bahnschrift; width:90%; text-align:right;">Detalle</td>
             </tr>
           <tr><td colspan="2"><label>--------------------------------------------------------</label></td></tr>
       </tbody>
@@ -53,8 +53,8 @@
       $.each(listaInsumo, function (i, item) {
           $('#tableBody-TicketOrdenSalida').append(`
                 <tr> 
-                    <td style="line-height:10px;font-family:Bahnschrift Condensed; width:10%; text-align:left;">&nbsp;&nbsp;${item.cantidad}</td>
-                    <td style="line-height:10px;font-family:Bahnschrift Condensed; width:90%; text-align:right;">${item.nombreInsumo}</td>
+                    <td style="line-height:10px;font-family:Bahnschrift; width:10%; text-align:left;">&nbsp;&nbsp;${item.cantidad}</td>
+                    <td style="line-height:10px;font-family:Bahnschrift; width:90%; text-align:right;">${item.nombreInsumo}</td>
                 </tr>
             `);
         }) 

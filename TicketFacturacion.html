@@ -18,42 +18,43 @@
     <table>
       <tbody>
         <tr><td><label>-------------------------------------------------------</label></td></tr>
-        <tr style="line-height:10px;font-family:Bahnschrift Condensed; text-align: center;"><td>
-          TropicalSNO. <label id="bodega"></label>
+
+        <tr style="line-height:10px;font-family:Bahnschrift; text-align: center;"><td>
+          TROPICAL SNO. <label id="bodega"></label>
         </td></tr>
         <tr><td><label>-------------------------------------------------------</label></td></tr>
-        <tr style="line-height:10px;font-family:Bahnschrift Condensed; text-align: center;"><td>3-102-655700,  S.R.L.</td></tr>
-        <tr style="line-height:10px;font-family:Bahnschrift Condensed; text-align: center;"><td>Tel.2241-0515, Fax: 2297-0998</td></tr>
-        <tr style="line-height:10px;font-family:Bahnschrift Condensed; text-align: center;"><td>FACTURA # <label id=factura></label></td></tr>
-        <tr style="line-height:10px;font-family:Bahnschrift Condensed; text-align: center;"><td>Fecha: <label id="fecha"></label></td></tr>
-        <tr style="line-height:10px;font-family:Bahnschrift Condensed; text-align: center;"><td>Usuario: <label id="usuario"></label></td></tr>
+        <tr style="line-height:10px;font-family:Bahnschrift; text-align: center;"><td>3-102-655700,  S.R.L.</td></tr>
+        <tr style="line-height:10px;font-family:Bahnschrift; text-align: center;"><td>Tel.2241-0515, Fax: 2297-0998</td></tr>
+        <tr style="line-height:10px;font-family:Bahnschrift; text-align: center;"><td>FACTURA # <label id=factura></label></td></tr>
+        <tr style="line-height:10px;font-family:Bahnschrift; text-align: center;"><td>Fecha: <label id="fecha"></label></td></tr>
+        <tr style="line-height:10px;font-family:Bahnschrift; text-align: center;"><td>Usuario: <label id="usuario"></label></td></tr>
       </tbody>
     </table>
     <table>
       <tbody id="tableBody-TicketFactura">
         <tr><td colspan="4"><label>-------------------------------------------------------</label></td></tr>
         <tr>
-            <td style="line-height:10px;font-family:Bahnschrift Condensed; width:10%; text-align:left;">CN</td>
-            <td style="line-height:10px;font-family:Bahnschrift Condensed; width:60%; text-align:left;">Detalle</td>
-            <td style="line-height:10px;font-family:Bahnschrift Condensed; width:30%; text-align:right;">Precio</td>
+            <td style="line-height:10px;font-family:Bahnschrift; width:10%; text-align:left;">CN</td>
+            <td style="line-height:10px;font-family:Bahnschrift; width:60%; text-align:left;">Detalle</td>
+            <td style="line-height:10px;font-family:Bahnschrift; width:30%; text-align:right;">Precio</td>
         </tr>
         <tr><td colspan="4"><label>-------------------------------------------------------</label></td></tr>
       </tbody>
     </table>
-    <table style="line-height:10px;font-family:Bahnschrift Condensed; width:100%;">
+    <table style="line-height:10px;font-family:Bahnschrift; width:100%;">
       <tbody id="tableBody-TicketTotal">
       </tbody>
     </table>
     <label>--------------------------------------------------------</label>
     <table>
       <tbody>
-          <tr style="line-height:10px;font-family:Bahnschrift Condensed; text-align: center;"><td>Gracias por su Compra!</td></tr>
-          <tr style="line-height:10px;font-family:Bahnschrift Condensed; text-align: left;"><td>Una vez facturado no se aceptan cambios o</td></tr>
-          <tr style="line-height:10px;font-family:Bahnschrift Condensed; text-align: left;"><td>devoluciones.</td></tr>
-          <tr style="line-height:10px;font-family:Bahnschrift Condensed; text-align: left;"><td>Autorizado para impresión mediante</td></tr>
-          <tr style="line-height:10px;font-family:Bahnschrift Condensed; text-align: left;"><td>Resolución 48-2016 de DGTD</td></tr>
-          <tr style="line-height:10px;font-family:Bahnschrift Condensed; text-align: left;"><td>Visitenos en Facebook: como TSCR</td></tr>
-          <tr style="line-height:10px;font-family:Bahnschrift Condensed; text-align: left;"><td>y déjenos sus comentarios.</td></tr>
+          <tr style="line-height:10px;font-family:Bahnschrift; text-align: center;"><td>Gracias por su Compra!</td></tr>
+          <tr style="line-height:10px;font-family:Bahnschrift; text-align: left;"><td>Una vez facturado no se aceptan cambios o</td></tr>
+          <tr style="line-height:10px;font-family:Bahnschrift; text-align: left;"><td>devoluciones.</td></tr>
+          <tr style="line-height:10px;font-family:Bahnschrift; text-align: left;"><td>Autorizado para impresión mediante</td></tr>
+          <tr style="line-height:10px;font-family:Bahnschrift; text-align: left;"><td>Resolución 48-2016 de DGTD</td></tr>
+          <tr style="line-height:10px;font-family:Bahnschrift; text-align: left;"><td>Visitenos en Facebook: como TSCR</td></tr>
+          <tr style="line-height:10px;font-family:Bahnschrift; text-align: left;"><td>y déjenos sus comentarios.</td></tr>
       </tbody>
     </table>
     <label>--------------------------------------------------------</label>
@@ -83,20 +84,20 @@
       $.each(listaProducto, function (i, item) {
         $('#tableBody-TicketFactura').append(`
               <tr> 
-                  <td style="line-height:10px;font-family:Bahnschrift Condensed; width:10%; text-align:left;">1</td>
-                  <td style="line-height:10px;font-family:Bahnschrift Condensed; width:60%; text-align:left;">${item.detalle}</td>
-                  <td style="line-height:10px;font-family:Bahnschrift Condensed; width:30%; text-align:right;">¢${item.precioUnitario.toFixed(2)}</td>
+                  <td style="line-height:10px;font-family:Bahnschrift; width:10%; text-align:left;">1</td>
+                  <td style="line-height:10px;font-family:Bahnschrift; width:60%; text-align:left;">${item.detalle}</td>
+                  <td style="line-height:10px;font-family:Bahnschrift; width:30%; text-align:right;">¢${item.precioUnitario.toFixed(2)}</td>
               </tr>
           `);
       }) 
       $('#tableBody-TicketTotal').append(`
         <tr><td colspan="4"><label>-------------------------------------------------------</label></td></tr>
-        <tr><td><label style="line-height:10px;font-family:Bahnschrift Condensed; width:65%; text-align:left;">Total I.V.I.</label></td><td style="line-height:10px;font-family:Bahnschrift Condensed; width:35%; text-align:right;">¢${parseFloat(localStorage.getItem("lsTotal")).toFixed(2)}</td></tr>
-        <tr><td><label style="line-height:10px;font-family:Bahnschrift Condensed; width:65%; text-align:left;">Tipo de Pago:</labe></td><td style="line-height:10px;font-family:Bahnschrift Condensed; width:35%; text-align:right;">----------</td></tr>
-        <tr><td><label style="line-height:10px;font-family:Bahnschrift Condensed; width:65%; text-align:left;">Efectivo:</label></td><td id="efectivo" style="line-height:10px;font-family:Bahnschrift Condensed; width:35%; text-align:right;">¢${parseFloat(localStorage.getItem("lsEfectivo")).toFixed(2)}</td></tr>
-        <tr><td><label style="line-height:10px;font-family:Bahnschrift Condensed; width:65%; text-align:left;">Vuelto:</label></td><td id="vuelto" style="line-height:10px;font-family:Bahnschrift Condensed; width:35%; text-align:right;">¢${parseFloat(localStorage.getItem("lsVuelto")).toFixed(2)}</td></tr>
-        <tr><td><label style="line-height:10px;font-family:Bahnschrift Condensed; width:65%; text-align:left;">Dif:</label></td><td id="dif" style="line-height:10px;font-family:Bahnschrift Condensed; width:35%; text-align:right;">¢${parseFloat(localStorage.getItem("lsDif")).toFixed(2)}</td></tr>
-        <tr><td><label style="line-height:10px;font-family:Bahnschrift Condensed; width:65%; text-align:left;">Tarjeta Crédito:</label></td><td id="tarjetaCredito" style="line-height:10px;font-family:Bahnschrift Condensed; width:35%; text-align:right;">¢${parseFloat(localStorage.getItem("lsTarjetaCredito")).toFixed(2)}</td></tr>
+        <tr><td><label style="line-height:10px;font-family:Bahnschrift; width:65%; text-align:left;">Total I.V.I.</label></td><td style="line-height:10px;font-family:Bahnschrift; width:35%; text-align:right;">¢${parseFloat(localStorage.getItem("lsTotal")).toFixed(2)}</td></tr>
+        <tr><td><label style="line-height:10px;font-family:Bahnschrift; width:65%; text-align:left;">Tipo de Pago:</labe></td><td style="line-height:10px;font-family:Bahnschrift; width:35%; text-align:right;">----------</td></tr>
+        <tr><td><label style="line-height:10px;font-family:Bahnschrift; width:65%; text-align:left;">Efectivo:</label></td><td id="efectivo" style="line-height:10px;font-family:Bahnschrift; width:35%; text-align:right;">¢${parseFloat(localStorage.getItem("lsEfectivo")).toFixed(2)}</td></tr>
+        <tr><td><label style="line-height:10px;font-family:Bahnschrift; width:65%; text-align:left;">Vuelto:</label></td><td id="vuelto" style="line-height:10px;font-family:Bahnschrift; width:35%; text-align:right;">¢${parseFloat(localStorage.getItem("lsVuelto")).toFixed(2)}</td></tr>
+        <tr><td><label style="line-height:10px;font-family:Bahnschrift; width:65%; text-align:left;">Dif:</label></td><td id="dif" style="line-height:10px;font-family:Bahnschrift; width:35%; text-align:right;">¢${parseFloat(localStorage.getItem("lsDif")).toFixed(2)}</td></tr>
+        <tr><td><label style="line-height:10px;font-family:Bahnschrift; width:65%; text-align:left;">Tarjeta Crédito:</label></td><td id="tarjetaCredito" style="line-height:10px;font-family:Bahnschrift; width:35%; text-align:right;">¢${parseFloat(localStorage.getItem("lsTarjetaCredito")).toFixed(2)}</td></tr>
       `);
       window.print();
       localStorage.setItem("lsPrintOK","OK");
