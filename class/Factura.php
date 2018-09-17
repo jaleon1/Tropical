@@ -21,19 +21,7 @@ if(isset($_POST["action"])){
         session_start();
         
     require_once("OrdenXFactura.php");
-    require_once("ProductoXFactura.php");
-    // Inicia sesión de API.
-    $cliente= new ClienteFE();
-    if($cliente->Check())
-        $cliente->ReadProfile();
-    else {
-        // retorna warning de facturacion sin contribuyente.
-        echo json_encode(array(
-            'code' => 000 ,
-            'msg' => 'NOCONTRIB')
-        );
-        exit;
-    }
+    require_once("ProductoXFactura.php");    
     // Instance
     $factura= new Factura();
     switch($opt){
@@ -44,7 +32,22 @@ if(isset($_POST["action"])){
             echo json_encode($factura->Read());
             break;
         case "Create":
-        echo json_encode($factura->Create());
+            echo json_encode($factura->Create());
+            break;
+        case "EnviarFE":
+            // Inicia sesión de API.
+            $cliente= new ClienteFE();
+            if($cliente->Check())
+                $cliente->ReadProfile();
+            else {
+                // retorna warning de facturacion sin contribuyente.
+                echo json_encode(array(
+                    'code' => 000 ,
+                    'msg' => 'NOCONTRIB')
+                );
+                exit;
+            }
+            $factura->EnviarFE();
             break;
         case "Update":
             $factura->Update();
@@ -299,6 +302,13 @@ class Factura{
         }
     }
 
+    function EnviarFE(){
+        try {
+            FacturaElectronica::Iniciar($this);
+        }
+        catch(Exception $e){}
+    }
+
 
     function Create(){
         try {
@@ -324,11 +334,7 @@ class Factura{
                     // retorna orden autogenerada.
                     OrdenXFactura::$id=$this->id;
                     OrdenXFactura::Create($this->detalleOrden);                    
-                    $this->ReadbyID();
-                    try {
-                        FacturaElectronica::Iniciar($this);
-                    }
-                    catch(Exception $e){}
+                    $this->ReadbyID();                    
                     return $this;
                 }
                 else throw new Exception('Error al guardar los productos.', 03);
