@@ -801,8 +801,6 @@ function BorraRow(prd) {
     t.row('.selected').remove().draw(false);
 }
 
-
-
 function valPago(val) {
 
     xPagar = parseFloat(($("#total")[0].textContent).replace("¢", ""));
@@ -825,7 +823,6 @@ function valPago(val) {
     }
 
 };
-
 
 //informa de cantidad de producto
 function alertSwal(cant) {

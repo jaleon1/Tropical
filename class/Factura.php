@@ -94,11 +94,23 @@ class Factura{
     public $tipoCambio= null;
     //
     function __construct(){
+        //
+        // Inicia sesión de API.
+        $cliente= new ClienteFE();
+        if($cliente->Check())
+            $cliente->ReadProfile();
+        else {
+            // retorna warning de facturacion sin contribuyente.
+            echo json_encode(array(
+                'code' => 000 ,
+                'msg' => 'NOCONTRIB')
+            );
+            exit;
+        }
         // identificador único
         if(isset($_POST["id"])){
             $this->id= $_POST["id"];
         }
-
         if(isset($_POST["obj"])){
             $obj= json_decode($_POST["obj"],true);
             //Necesarias para la factura (Segun M Hacienda)
