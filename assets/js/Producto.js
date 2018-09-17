@@ -526,15 +526,15 @@ class Producto {
                     width:"auto"
                 },
                 {
-                    title:"Nombre",
+                    title:"Producto",
                     data:"nombre",
                     width:"auto"
                 },
-                {
-                    title:"Descripción",
-                    data:"descripcion",
-                    width:"auto"
-                },
+                // {
+                //     title:"Descripción",
+                //     data:"descripcion",
+                //     width:"auto"
+                // },
                 {//cant.
                     title:"Cantidad",
                     "width": "15%", 
@@ -542,7 +542,7 @@ class Producto {
                     "defaultContent": '<input class="cantidad form-control" type="number" min="1" max="9999999999" step="1" style="text-align:right;" value=1 >'
                 },
                 {//descr.
-                    title:"Descripcion",
+                    title:"Observaciones",
                     "width": "30%", 
                     "data": null,
                     "defaultContent": '<input class="cantidad form-control" required type="text">'

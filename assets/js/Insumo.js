@@ -522,15 +522,10 @@ class Insumo {
                     width: "auto"
                 },
                 {
-                    title: "Nombre",
+                    title: "Producto",
                     data: "nombre",
                     width: "auto"
-                },
-                {
-                    title: "Descripción",
-                    data: "descripcion",
-                    width: "auto"
-                },
+                },                
                 {//cant.
                     title: "Cantidad",
                     "width": "15%",
@@ -538,7 +533,7 @@ class Insumo {
                     "defaultContent": '<input class="cantidad form-control" min="1" max="9999999999" step="1" style="text-align:right;"  type="number" value=1>'
                 },
                 {//descr.
-                    title:"Descripcion",
+                    title:"Observaciones",
                     "width": "30%", 
                     "data": null,
                     "defaultContent": '<input class="cantidad form-control" type="text">'

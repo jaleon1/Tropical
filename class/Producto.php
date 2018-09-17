@@ -192,8 +192,8 @@ class Producto{
         try {
             $sql='SELECT id, nombre, codigo, descripcion, saldoCosto, costoPromedio, precioVenta, esVenta
                 FROM producto  
-                where codigo=:codigo and esVenta=0';
-            $param= array(':codigo'=>$this->codigo);
+                where codigo like :codigo and esVenta=0';
+            $param= array(':codigo'=>'%'.$this->codigo.'%');
             $data= DATA::Ejecutar($sql,$param);
             return $data;
         }     
