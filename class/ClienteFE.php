@@ -366,7 +366,7 @@ class ClienteFE{
         }
     }
 
-    function ReadProfile(){
+    function ReadProfile($apilogin=true){
         try {
             $sql='SELECT id, codigoSeguridad, idCodigoPais, nombre, idTipoIdentificacion, identificacion, nombreComercial, idProvincia, idCanton, idDistrito, 
                 idBarrio, otrasSenas, numTelefono, correoElectronico, username, password, pinp12, downloadCode
@@ -407,7 +407,8 @@ class ClienteFE{
                 else $this->estadoCertificado=0;      
                 $this->certificado= encdes::decifrar($data[0]['certificado']);
                 $_SESSION['API']= $this;
-                $this->APILogin();
+                if($apilogin)
+                    $this->APILogin();
                 return $this;
             }
             return null;
