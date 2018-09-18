@@ -29,7 +29,7 @@ class Merma {
                 merma.showError(e);
             })
             .always(NProgress.done()); 
-    }
+    };
 
     setTable(buttons=true, nPaging=10){
         $('#tMerma').DataTable({
@@ -74,6 +74,68 @@ class Merma {
                 }                
             ]
         });
+    };
+
+    setTableConsumible(){
+        tp = $('#tProducto').DataTable( {
+            responsive: true,
+            destroy: true,
+            order: [[ 1, "asc" ]],
+            language: {
+                "infoEmpty": "Sin Registros",
+                "emptyTable": "Sin Registros",
+                "search": "Buscar",
+                "zeroRecords":    "No hay resultados",
+                "lengthMenu":     "Mostrar _MENU_ registros",
+                "paginate": {
+                    "first":      "Primera",
+                    "last":       "Ultima",
+                    "next":       "Siguiente",
+                    "previous":   "Anterior"
+                }
+            },
+            columnDefs: [{className: "text-right", "targets": [5]}],
+            columns: [
+                {
+                    title:"Id",
+                    data:"id",
+                    className:"itemId",
+                    searchable: false,                    
+                    width:"auto"
+                },
+                {
+                    title:"Codigo",
+                    data:"codigo",
+                    width:"auto"
+                },
+                {
+                    title:"Producto",
+                    data:"nombre",
+                    width:"auto"
+                },
+                {//cant.
+                    title:"Cantidad",
+                    "width": "15%", 
+                    "data": null,
+                    "defaultContent": '<input class="cantidad form-control" type="number" min="1" max="9999999999" step="1" style="text-align:right;" value=1 >'
+                },
+                {
+                    title:"Acción",
+                    orderable: false,
+                    searchable:false,
+                    mRender: function () {
+                        return '<a class="delete" style="cursor: pointer;" onclick="merma.DeleteproductoConsumible(this)" > <i class="glyphicon glyphicon-trash"> </i></a>' 
+                    },
+                    visible:true
+                }
+            ]
+        });
+    };
+
+    DeleteproductoConsumible(e){
+        tp.row( $(e).parents('tr') )
+        .remove()
+        .draw();  
     };
 
     Reload(e) {

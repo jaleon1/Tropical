@@ -199,11 +199,11 @@ class Factura{
                 $this->idCondicionVenta = $value['idCondicionVenta'];
                 $this->idSituacionComprobante = $value['idSituacionComprobante'];
                 $this->idEstadoComprobante = $value['idEstadoComprobante'];
-                $this->plazoCredito = $value['plazoCredito'];
+                $this->plazoCredito = $value['plazoCredito'] ?? 0;
                 $this->idMedioPago = $value['idMedioPago'];
                 $this->resumenFactura = $value['resumenFactura'];
-                $this->idCodigoMoneda = $value['idCodigoMoneda'];
-                $this->tipoCambio = $value['tipoCambio'];
+                $this->idCodigoMoneda = $value['idCodigoMoneda'] ?? 55; // CRC
+                $this->tipoCambio = $value['tipoCambio'] ?? 570; // CRC
                 $this->totalServGravados = $value['totalServGravados'];
                 $this->totalServExentos = $value['totalServExentos'];
                 $this->totalMercanciasGravadas = $value['totalMercanciasGravadas'];
@@ -280,7 +280,7 @@ class Factura{
         try {
             // consulta datos de factura en bd.
             $this->Read();
-            $this->iniciarSesionAPI();
+            $this->perfildeContribuyente();
             // envía la factura
             FacturaElectronica::Iniciar($this);
         }
