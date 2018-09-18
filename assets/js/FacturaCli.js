@@ -860,6 +860,23 @@ function ticketPrint(e){
     localStorage.setItem("lsUsuario",data.usuario);
     localStorage.setItem("lsSubTotal",data.totalComprobante);
     localStorage.setItem("lsTotal",data.totalComprobante);
+
+    var groupedProducts = JSON.parse(data.detalleFactura).reduce((curr, next) => {
+        if (curr[next.name]) {
+        curr[next.name] += +next.value 
+        } else {
+        curr[next.name] = +next.value
+        }
+        return curr 
+        }, {})
+    
+    var results = Object.keys(groupedProducts).map(key => ({
+        name: key,
+        value: groupedProducts[key].toString()
+        }))
+    
+    alert(results);
+
     localStorage.setItem("lsListaProducto",JSON.stringify(data.detalleFactura));
 
     // location.href ="/Tropical/TicketFacturacion.html";
