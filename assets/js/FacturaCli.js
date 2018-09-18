@@ -848,17 +848,17 @@ function ticketPrint(e) {
     localStorage.setItem("lsTotal",data.totalComprobante);
 
     var groupedProducts = data.detalleFactura.reduce((curr, next) => {
-        if (curr[next.name]) {
-        curr[next.name] += +next.value 
+        if (curr[next.detalle]) {
+        curr[next.detalle] += +next.precioUnitario 
         } else {
-        curr[next.name] = +next.value
+        curr[next.detalle] = +next.precioUnitario
         }
         return curr 
         }, {})
     
     var results = Object.keys(groupedProducts).map(key => ({
-        name: key,
-        value: groupedProducts[key].toString()
+        detalle: key,
+        precioUnitario: groupedProducts[key].toString()
         }))
     
     alert(results);
