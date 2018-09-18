@@ -861,7 +861,7 @@ function ticketPrint(e){
     localStorage.setItem("lsSubTotal",data.totalComprobante);
     localStorage.setItem("lsTotal",data.totalComprobante);
 
-    var groupedProducts = JSON.parse(data.detalleFactura).reduce((curr, next) => {
+    var groupedProducts = data.detalleFactura.reduce((curr, next) => {
         if (curr[next.name]) {
         curr[next.name] += +next.value 
         } else {
