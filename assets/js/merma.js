@@ -67,7 +67,7 @@ class Merma {
 //                         return '<input class="cantidad form-control" type="number" min="1" max="9999999999" step="1" style="text-align:right;" >'
 //                     }
                 },
-                { title: "Descripción", data: "descripcion" },
+                { title: "Observaciones", data: "descripcion" },
                 { 
                     title: "Fecha", 
                     data: "fecha"

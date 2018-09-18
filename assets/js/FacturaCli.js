@@ -40,7 +40,7 @@ $(document).ready(function () {
     // NProgress.set(0.4)
     movimientosCaja.getStatusCashRegister();
     //Muestra el modal de sesion de caja
-       
+
     $('#open_modal_fac').attr("disabled", true);
 
     btnFormaPago();
@@ -180,14 +180,14 @@ function LoadPreciosTamanos() {
         });
 };
 
-function setPrecios(e){
+function setPrecios(e) {
     precios = JSON.parse(e);
 
     $.each(precios, function (i, item) {
-        if (item.tamano == 1){
+        if (item.tamano == 1) {
             precioGrande.precio = item.precioVenta;
             precioGrande.id = item.id;
-        }else if (item.tamano == 0){
+        } else if (item.tamano == 0) {
             precioMediano.precio = item.precioVenta;
             precioMediano.id = item.id;
         }
@@ -419,12 +419,12 @@ function calcTotal() {
 
     if (t.columns().data()[1].length != 0) {
         $(t.columns().data()[0]).each(function (i, item) {
-            if (item == 1){
+            if (item == 1) {
                 total = total + parseFloat(precioGrande.precio);
-            }else if (item == 0){
+            } else if (item == 0) {
                 total = total + parseFloat(precioMediano.precio);
-            }     
-            $("#total").html("¢" + total);  
+            }
+            $("#total").html("¢" + total);
 
         });
         $("#total").html("¢" + total);
@@ -432,11 +432,11 @@ function calcTotal() {
     else {
         $("#total")[0].textContent = "¢0";
     };
-    
+
 };
 
 // function CheckPriceItems(idTamano){
-    
+
 //     var prdVenta = new Object();
 //     prdVenta.idTamano = idTamano;
 //     $.ajax({
@@ -646,31 +646,19 @@ function CreateFact() {
             obj: JSON.stringify(factura)
         }
     })
-    .done(function(e){
-        /*******************************************/
-        //*************** ENVIO FE *****************/
-        /*******************************************/
-        $.ajax({
-            type: "POST",
-            url: "class/Factura.php",
-            data: {
-                action: 'EnviarFE',
-                obj: JSON.stringify(factura)
-            }
+        .done(function (e) {
+            ticketPrint(e);
         })
-        //
-        ticketPrint(e);        
-    })
-    .fail(function (e) {
-        producto.showError(e);
-    })
-    .always(function () {
-        setTimeout('$("#btnProducto").removeAttr("disabled")', 1000);
-        producto = new Producto();
-        producto.ClearCtls();
-        producto.Read;
-        $("#nombre").focus();
-    });
+        .fail(function (e) {
+            producto.showError(e);
+        })
+        .always(function () {
+            setTimeout('$("#btnProducto").removeAttr("disabled")', 1000);
+            producto = new Producto();
+            producto.ClearCtls();
+            producto.Read;
+            $("#nombre").focus();
+        });
 }
 
 //VALIDAR SI SE NECESITA
@@ -801,8 +789,6 @@ function BorraRow(prd) {
     t.row('.selected').remove().draw(false);
 }
 
-
-
 function valPago(val) {
 
     xPagar = parseFloat(($("#total")[0].textContent).replace("¢", ""));
@@ -825,7 +811,6 @@ function valPago(val) {
     }
 
 };
-
 
 //informa de cantidad de producto
 function alertSwal(cant) {
@@ -852,8 +837,9 @@ function alertFact() {
     setTimeout(function () { location.reload(); }, 2000);
 }
 
-function ticketPrint(e){
+function ticketPrint(e) {
     var data = JSON.parse(e);
+
     localStorage.setItem("lsFactura",data.consecutivo);
     localStorage.setItem("lsFecha",data.fechaCreacion);
     localStorage.setItem("lsBodega",data.bodega);
@@ -880,7 +866,18 @@ function ticketPrint(e){
     localStorage.setItem("lsListaProducto",JSON.stringify(data.detalleFactura));
 
     // location.href ="/Tropical/TicketFacturacion.html";
-    location.href ="/TicketFacturacion.html";
+    location.href = "/TicketFacturacion.html";
+    /*******************************************/
+    //*************** ENVIO FE *****************/
+    /*******************************************/
+    $.ajax({
+        type: "POST",
+        url: "class/Factura.php",
+        data: {
+            action: 'EnviarFE',
+            id: data.id
+        }
+    })
 }
 
 function calcVuelto(pago, xPagar) {
