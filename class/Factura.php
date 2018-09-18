@@ -34,19 +34,7 @@ if(isset($_POST["action"])){
         case "Create":
             echo json_encode($factura->Create());
             break;
-        case "EnviarFE":
-            // Inicia sesión de API.
-            $cliente= new ClienteFE();
-            if($cliente->Check())
-                $cliente->ReadProfile();
-            else {
-                // retorna warning de facturacion sin contribuyente.
-                echo json_encode(array(
-                    'code' => 000 ,
-                    'msg' => 'NOCONTRIB')
-                );
-                exit;
-            }
+        case "EnviarFE":            
             $factura->EnviarFE();
             break;
         case "Update":
@@ -95,18 +83,8 @@ class Factura{
     //
     function __construct(){
         //
-        // Inicia sesión de API.
-        $cliente= new ClienteFE();
-        if($cliente->Check())
-            $cliente->ReadProfile();
-        else {
-            // retorna warning de facturacion sin contribuyente.
-            echo json_encode(array(
-                'code' => 000 ,
-                'msg' => 'NOCONTRIB')
-            );
-            exit;
-        }
+        // Inicia sesion de cliente FE sin login al api (false).
+        $this->perfildeContribuyente(false);
         // identificador único
         if(isset($_POST["id"])){
             $this->id= $_POST["id"];
@@ -172,8 +150,7 @@ class Factura{
                     array_push ($this->detalleFactura, $item);
                 }
             }
-
-
+            //
             if(isset($obj["detalleOrden"] )){
                 foreach ($obj["detalleOrden"] as $itemOrden) {
                     $item= new OrdenXFactura();
@@ -183,25 +160,7 @@ class Factura{
                     $item->idTopping= $itemOrden['idTopping'];
                     array_push ($this->detalleOrden, $item);
                 }
-            }
-            
-
-            // $this->subTotal= $obj["subTotal"] ?? ''; 
-            // $this->iva= $obj["iva"] ?? 0;            
-            // $this->porcentajeIva= $obj["porcentajeIva"] ?? 0;
-            // $this->porcentajeDescuento= $obj["porcentajeDescuento"] ?? 0;            
-            // $this->total= $obj["total"] ?? null;
-            // Categorias del factura.
-            // if(isset($obj["listaProducto"] )){
-            //     require_once("ProductosXFactura.php");
-            //     //
-            //     foreach ($obj["listaProducto"] as $idprod) {
-            //         $prodfact= new ProductosXFactura();
-            //         $prodfact->idcategoria= $idprod;
-            //         $prodfact->idproducto= $this->id;
-            //         array_push ($this->listaProducto, $prodfact);
-            //     }
-            // }
+            }            
         }
     }
 
@@ -224,56 +183,45 @@ class Factura{
         }
     }
 
-    // function loadColumns(){
-    //     try {
-    //         $sql='SELECT f.consecutivo, f.fechaCreacion, f.totalVenta
-    //             FROM factura f      
-    //             ORDER BY f.consecutivo desc';
-    //         $data= DATA::Ejecutar($sql);
-    //         return $data;
-    //     }     
-    //     catch(Exception $e) {
-    //         header('HTTP/1.0 400 Bad error');
-    //         die(json_encode(array(
-    //             'code' => $e->getCode() ,
-    //             'msg' => 'Error al cargar la lista'))
-    //         );
-    //     }
-    // }
-    //Chacon lo usa???
     function Read(){
-        try {
-            $sql='SELECT p.id, p.idUsuario, p.fecha, p.subTotal, iva, porcentajeIva, descuento, porcentajeDescuento, total, c.id as idcategoria,c.idUsuario as nombrecategoria
-                FROM factura  p LEFT JOIN categoriasXProducto cp on cp.idProducto = p.id
-                    LEFT join categoria c on c.id = cp.idcategoria
-                where p.id=:id';
+        try { 
+            $sql='SELECT id, idBodega, fechaCreacion, consecutivo, local, terminal, idCondicionVenta, idSituacionComprobante, idEstadoComprobante, plazoCredito, idMedioPago, resumenFactura, idCodigoMoneda, tipoCambio, totalServGravados, totalServExentos, totalMercanciasGravadas, totalMercanciaSexentas, totalGravado, totalExento, fechaEmision, codigoReferencia, totalVenta, totalDescuentos, totalVentaneta, totalImpuesto, totalComprobante, idReceptor, idEmisor, idUsuario
+                from factura
+                where id=:id';
             $param= array(':id'=>$this->id);
             $data= DATA::Ejecutar($sql,$param);     
             foreach ($data as $key => $value){
-                require_once("Categoria.php");
-                $cat= new Categoria(); // categorias del factura
-                if($key==0){
-                    $this->id = $value['id'];
-                    $this->idUsuario = $value['idUsuario'];
-                    $this->fecha = $value['fecha'];
-                    $this->subTotal = $value['subTotal'];
-                    $this->iva = $value['iva'];
-                    $this->porcentajeIva = $value['porcentajeIva'];
-                    $this->descuento = $value['descuento'];
-                    $this->porcentajeDescuento = $value['porcentajeDescuento'];
-                    $this->total = $value['total'];
-                    //categoria
-                    if($value['idcategoria']!=null){
-                        $cat->id = $value['idcategoria'];
-                        $cat->idusuario = $value['nombrecategoria'];
-                        array_push ($this->listaProducto, $cat);
-                    }
-                }
-                else {
-                    $cat->id = $value['idcategoria'];
-                    $cat->idusuario = $value['nombrecategoria'];
-                    array_push ($this->listaProducto, $cat);
-                }
+                $this->idBodega = $value['idBodega'];
+                $this->fechaCreacion = $value['fechaCreacion'];
+                $this->consecutivo = $value['consecutivo'];
+                $this->local = $value['local'];
+                $this->terminal = $value['terminal'];
+                $this->idCondicionVenta = $value['idCondicionVenta'];
+                $this->idSituacionComprobante = $value['idSituacionComprobante'];
+                $this->idEstadoComprobante = $value['idEstadoComprobante'];
+                $this->plazoCredito = $value['plazoCredito'];
+                $this->idMedioPago = $value['idMedioPago'];
+                $this->resumenFactura = $value['resumenFactura'];
+                $this->idCodigoMoneda = $value['idCodigoMoneda'];
+                $this->tipoCambio = $value['tipoCambio'];
+                $this->totalServGravados = $value['totalServGravados'];
+                $this->totalServExentos = $value['totalServExentos'];
+                $this->totalMercanciasGravadas = $value['totalMercanciasGravadas'];
+                $this->totalMercanciaSexentas = $value['totalMercanciaSexentas'];
+                $this->totalGravado = $value['totalGravado'];
+                $this->totalExento = $value['totalExento'];
+                //$this->fechaEmision = $value['fechaEmision'];
+                $this->codigoReferencia = $value['codigoReferencia'];
+                $this->totalVenta = $value['totalVenta'];
+                $this->totalDescuentos = $value['totalDescuentos'];
+                $this->totalVentaneta = $value['totalVentaneta'];
+                $this->totalImpuesto = $value['totalImpuesto'];
+                $this->totalComprobante = $value['totalComprobante'];
+                $this->idReceptor = $value['idReceptor'];
+                $this->idEmisor = $value['idEmisor'];
+                $this->idUsuario = $value['idUsuario'];
+                $this->tipoDocumento = $obj["tipoDocumento"] ?? "FE";
+                $this->detalleFactura= ProductoXFactura::Read($this->id);
             }
             return $this;
         }     
@@ -285,7 +233,6 @@ class Factura{
             );
         }
     }
-
     
     function ReadbyID(){
         try {
@@ -314,8 +261,27 @@ class Factura{
         }
     }
 
+    private function perfildeContribuyente($apiloging=true){
+        // Inicia sesión de API.
+        $cliente= new ClienteFE();
+        if($cliente->Check())
+            $cliente->ReadProfile($apiloging);
+        else {
+            // retorna warning de facturacion sin contribuyente.
+            echo json_encode(array(
+                'code' => 000 ,
+                'msg' => 'NOCONTRIB')
+            );
+            exit;
+        }
+    }
+
     function EnviarFE(){
         try {
+            // consulta datos de factura en bd.
+            $this->Read();
+            $this->iniciarSesionAPI();
+            // envía la factura
             FacturaElectronica::Iniciar($this);
         }
         catch(Exception $e){}
