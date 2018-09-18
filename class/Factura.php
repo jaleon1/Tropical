@@ -34,19 +34,7 @@ if(isset($_POST["action"])){
         case "Create":
             echo json_encode($factura->Create());
             break;
-        case "EnviarFE":
-            // Inicia sesión de API.
-            $cliente= new ClienteFE();
-            if($cliente->Check())
-                $cliente->ReadProfile();
-            else {
-                // retorna warning de facturacion sin contribuyente.
-                echo json_encode(array(
-                    'code' => 000 ,
-                    'msg' => 'NOCONTRIB')
-                );
-                exit;
-            }
+        case "EnviarFE":            
             $factura->EnviarFE();
             break;
         case "Update":
@@ -96,17 +84,7 @@ class Factura{
     function __construct(){
         //
         // Inicia sesión de API.
-        $cliente= new ClienteFE();
-        if($cliente->Check())
-            $cliente->ReadProfile();
-        else {
-            // retorna warning de facturacion sin contribuyente.
-            echo json_encode(array(
-                'code' => 000 ,
-                'msg' => 'NOCONTRIB')
-            );
-            exit;
-        }
+        $this->iniciarSesionAPI();
         // identificador único
         if(isset($_POST["id"])){
             $this->id= $_POST["id"];
@@ -314,8 +292,29 @@ class Factura{
         }
     }
 
+    private function iniciarSesionAPI(){
+        // Inicia sesión de API.
+        $cliente= new ClienteFE();
+        if($cliente->Check())
+            $cliente->ReadProfile();
+        else {
+            // retorna warning de facturacion sin contribuyente.
+            echo json_encode(array(
+                'code' => 000 ,
+                'msg' => 'NOCONTRIB')
+            );
+            exit;
+        }
+    }
+
+
+
     function EnviarFE(){
         try {
+            // consulta datos de factura en bd.
+            $this->Read();
+            $this->iniciarSesionAPI();
+            // envía la factura
             FacturaElectronica::Iniciar($this);
         }
         catch(Exception $e){}
