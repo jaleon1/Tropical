@@ -847,21 +847,21 @@ function ticketPrint(e) {
     localStorage.setItem("lsSubTotal",data.totalComprobante);
     localStorage.setItem("lsTotal",data.totalComprobante);
 
-    var groupedProducts = data.detalleFactura.reduce((curr, next) => {
-        if (curr[next.detalle]) {
-        curr[next.detalle] += +next.precioUnitario 
-        } else {
-        curr[next.detalle] = +next.precioUnitario
-        }
-        return curr 
-        }, {})
+    // var groupedProducts = data.detalleFactura.reduce((curr, next) => {
+    //     if (curr[next.detalle]) {
+    //     curr[next.detalle] += +next.precioUnitario 
+    //     } else {
+    //     curr[next.detalle] = +next.precioUnitario
+    //     }
+    //     return curr 
+    //     }, {})
     
-    var results = Object.keys(groupedProducts).map(key => ({
-        detalle: key,
-        precioUnitario: groupedProducts[key].toString()
-        }))
+    // var results = Object.keys(groupedProducts).map(key => ({
+    //     detalle: key,
+    //     precioUnitario: groupedProducts[key].toString()
+    //     }))
     
-    alert(jQuery.makeArray(results));
+    // alert(jQuery.makeArray(results));
 
     localStorage.setItem("lsListaProducto",JSON.stringify(data.detalleFactura));
 
