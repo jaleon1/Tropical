@@ -861,7 +861,7 @@ function ticketPrint(e) {
         precioUnitario: groupedProducts[key].toString()
         }))
     
-    alert(makeArray(results));
+    alert(jQuery.makeArray(results));
 
     localStorage.setItem("lsListaProducto",JSON.stringify(data.detalleFactura));
 
