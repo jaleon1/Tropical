@@ -70,9 +70,9 @@ class Consumible {
             producto.cantidad= 1; 
             var repetido = false;
             //
-            if(document.getElementById("tConsumible").rows.length != 0 && producto != null){
+            if(document.getElementById("tConsumible").rows.length != 0 && producto != null ){
                 $(document.getElementById("tConsumible").rows).each(function(i,item){
-                    if(item.childNodes[1].innerText==producto.idProducto){
+                    if( item.innerText != 'Sin Registros' && item.childNodes[1].innerText==producto.idProducto){
                         repetido=true;
                         swal({
                             type: 'warning',
