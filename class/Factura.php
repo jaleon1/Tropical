@@ -183,6 +183,25 @@ class Factura{
         }
     }
 
+    // function loadColumns(){
+    //     try {
+    //         $sql='SELECT f.consecutivo, f.fechaCreacion, f.totalVenta
+    //             FROM factura f      
+    //             ORDER BY f.consecutivo desc';
+    //         $data= DATA::Ejecutar($sql);
+    //         return $data;
+    //     }     
+    //     catch(Exception $e) {
+    //         header('HTTP/1.0 400 Bad error');
+    //         die(json_encode(array(
+    //             'code' => $e->getCode() ,
+    //             'msg' => 'Error al cargar la lista'))
+    //         );
+    //     }
+    // }
+    //Chacon lo usa???
+    //R:/SI
+
     function Read(){
         try { 
             $sql='SELECT id, idBodega, fechaCreacion, consecutivo, local, terminal, idCondicionVenta, idSituacionComprobante, idEstadoComprobante, plazoCredito, idMedioPago, resumenFactura, idCodigoMoneda, tipoCambio, totalServGravados, totalServExentos, totalMercanciasGravadas, totalMercanciaSexentas, totalGravado, totalExento, fechaEmision, codigoReferencia, totalVenta, totalDescuentos, totalVentaneta, totalImpuesto, totalComprobante, idReceptor, idEmisor, idUsuario
@@ -296,9 +315,9 @@ class Factura{
 
             $sql="INSERT INTO factura   (id, idBodega, fechaCreacion, local, terminal, idCondicionVenta,idSituacionComprobante,idEstadoComprobante, idMedioPago,fechaEmision, totalVenta, totalDescuentos, totalVentaneta, totalImpuesto, totalComprobante, idEmisor, idUsuario)
                                        
-            VALUES  (:uuid, :idBodega, :fechaCreacion, :local, :terminal, :idCondicionVenta, :idSituacionComprobante, :idEstadoComprobante, :idMedioPago, :fechaEmision, :totalVenta, :totalDescuentos, :totalVentaneta, :totalImpuesto, :totalComprobante, :idEmisor, :idUsuario)"; 
+            VALUES  (:uuid, :idBodega, CURRENT_TIMESTAMP(), :local, :terminal, :idCondicionVenta, :idSituacionComprobante, :idEstadoComprobante, :idMedioPago, :fechaEmision, :totalVenta, :totalDescuentos, :totalVentaneta, :totalImpuesto, :totalComprobante, :idEmisor, :idUsuario)"; 
        
-            $param= array(':uuid'=>$this->id, ':idBodega'=>$_SESSION["userSession"]->idBodega, ':fechaCreacion'=>$this->fechaCreacion, ':local'=>$this->local, ':terminal'=>$this->terminal, 
+            $param= array(':uuid'=>$this->id, ':idBodega'=>$_SESSION["userSession"]->idBodega, ':local'=>$this->local, ':terminal'=>$this->terminal, 
                     ':idCondicionVenta'=>$this->idCondicionVenta, ':idSituacionComprobante'=>$this->idSituacionComprobante, ':idEstadoComprobante'=>$this->idEstadoComprobante, 
                     ':idMedioPago'=>$this->idMedioPago, ':fechaEmision'=>$this->fechaEmision, ':totalVenta'=>$this->totalVenta, ':totalDescuentos'=>$this->totalDescuentos, 
                     ':totalVentaneta'=>$this->totalVentaneta, ':totalImpuesto'=>$this->totalImpuesto, ':totalComprobante'=>$this->totalComprobante, ':idEmisor'=>$this->idEmisor, ':idUsuario'=>$_SESSION["userSession"]->id);
