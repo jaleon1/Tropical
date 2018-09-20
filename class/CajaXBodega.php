@@ -21,6 +21,9 @@ if(isset($_POST["action"])){
         case "Read":
             echo json_encode($cajaXBodega->Read());
             break;
+        case "GetMontoDefaultApertura":
+            echo json_encode($cajaXBodega->GetMontoDefaultApertura());
+            break;
         case "Create":
             echo json_encode($cajaXBodega->Create());
             break;
@@ -32,6 +35,8 @@ if(isset($_POST["action"])){
             break;
         case "Delete":
             echo json_encode($cajaXBodega->Delete());
+        case "UpdateMontoApertura":
+            echo json_encode($cajaXBodega->UpdateMontoApertura());
             break;   
         case "ValidarEstado":
             echo json_encode($cajaXBodega->ValidarEstado());
@@ -44,9 +49,9 @@ class CajaXBodega{
     //Factura
     public $id="";
     public $idBodega="";
-    public $idUsuarioSupervisor="";
     public $idUsuarioCajero="";
     public $estado="";
+    public $montoAperturaDefault=null;
     public $montoApertura=null;
     public $montoCierre=null;
     public $totalVentasEfectivo=null; 
@@ -64,9 +69,9 @@ class CajaXBodega{
             require_once("UUID.php");
             $this->id= $obj["id"] ?? UUID::v4();
             $this->idBodega= $obj["idBodega"] ?? 0;
-            $this->idUsuarioSupervisor= $obj["idUsuarioSupervisor"] ?? '';
             $this->idUsuarioCajero= $obj["idUsuarioCajero"] ?? $_SESSION["userSession"]->id;
             $this->estado= $obj["estado"] ?? '';
+            $this->montoAperturaDefault= $obj["montoAperturaDefault"] ?? 0; 
             $this->montoApertura= $obj["montoApertura"] ?? 0;          
             $this->montoCierre= $obj["montoCierre"] ?? 0;
             $this->totalVentasEfectivo= $obj["totalVentasEfectivo"] ?? 0;
@@ -77,17 +82,16 @@ class CajaXBodega{
 
     function ReadAll(){
         try {
-            // $sql='SELECT id, idBodega, idUsuarioSupervisor, idUsuarioCajero, estado, montoApertura, 
+            // $sql='SELECT id, idBodega, idUsuarioCajero, estado, montoApertura, 
             // montoCierre,totalVentasEfectivo, totalVentasTarjeta, fechaApertura, fechaCierre
             // FROM tropical.cajasXBodega
             // ORDER BY fechaApertura DESC;';
 
-            $sql='SELECT ca.id, ca.idBodega, bo.nombre as nombreBodega, ca.idUsuarioSupervisor, us2.nombre as supervisor, ca.idUsuarioCajero, us.nombre as cajero, ca.estado, ca.montoApertura, 
+            $sql='SELECT ca.id, ca.idBodega, bo.nombre as nombreBodega, ca.idUsuarioCajero, us.nombre as cajero, ca.estado, ca.montoApertura, 
             ca.montoCierre,ca.totalVentasEfectivo, ca.totalVentasTarjeta, ca.fechaApertura, ca.fechaCierre
             FROM tropical.cajasXBodega ca
             INNER JOIN bodega bo on ca.idBodega = bo.id
             INNER JOIN usuario us on ca.idUsuarioCajero = us.id
-            INNER JOIN usuario us2 on ca.idUsuarioSupervisor = us2.id
             ORDER BY fechaApertura DESC;';
             $data= DATA::Ejecutar($sql);     
             return $data;
@@ -148,12 +152,10 @@ class CajaXBodega{
 
     function Create(){
         try {
-            $this->idUsuarioAdmin = "1ed3a48c-3e44-11e8-9ddb-54ee75873a60"; /*** Debería ser un rol ***/
-            $this->montoApertura = 0;
-            $sql="INSERT INTO cajasXBodega  (id, idBodega, idUsuarioSupervisor, idusuarioCajero, estado, montoApertura, fechaApertura)
-            VALUES (UUID(), :idBodega, :idUsuarioSupervisor, :idusuarioCajero, '1', :montoApertura, CURRENT_TIMESTAMP());"; 
+            $sql="INSERT INTO cajasXBodega  (id, idBodega, idusuarioCajero, estado, montoApertura)
+            VALUES (UUID(), :idBodega, :idusuarioCajero, '1', :montoApertura);"; 
        
-            $param= array(':idBodega'=>$_SESSION["userSession"]->idBodega, ':idUsuarioSupervisor'=>$this->idUsuarioSupervisor, 
+            $param= array(':idBodega'=>$_SESSION["userSession"]->idBodega, 
                             ':idusuarioCajero'=>$_SESSION["userSession"]->id, ':montoApertura'=>$this->montoApertura);
             $data = DATA::Ejecutar($sql,$param, false);
             if($data){
@@ -172,7 +174,7 @@ class CajaXBodega{
 
     function ValidarCierreCaja(){
         try{
-            $sql = "SELECT ca.id, ca.idUsuarioSupervisor, ca.idusuarioCajero, ca.estado, bo.nombre
+            $sql = "SELECT ca.id, ca.idusuarioCajero, ca.estado, bo.nombre
             FROM cajasXBodega ca
             INNER JOIN bodega bo on ca.idBodega = bo.id 
             WHERE idusuarioCajero = :idusuarioCajero and
@@ -181,15 +183,14 @@ class CajaXBodega{
             $data= DATA::Ejecutar($sql, $param);
             if($data){
                 $sql = "Select sum(totalComprobante) as efectivo
-                FROM factura
-                where idMedioPago = 1 and
-                fechaCreacion Between 	(
-                                        SELECT ca.fechaApertura
-                                        FROM cajasXBodega ca
-                                        WHERE idusuarioCajero = :idusuarioCajero and
-                                        estado = 1
-                                        )
-                and CURRENT_TIMESTAMP();";            
+                        FROM factura
+                        where idMedioPago = 1 and
+                        fechaCreacion Between 	(
+                            SELECT ca.fechaApertura
+                            FROM cajasXBodega ca
+                            WHERE idusuarioCajero = :idusuarioCajero and estado = 1
+                        )
+                        and CURRENT_TIMESTAMP();";            
                 $param= array(':idusuarioCajero'=>$_SESSION["userSession"]->id);
                 $this->totalVentasEfectivo= DATA::Ejecutar($sql, $param);
                 if($this->totalVentasEfectivo){
@@ -197,15 +198,17 @@ class CajaXBodega{
                     FROM factura
                     where idMedioPago = 2 and
                     fechaCreacion Between 	(
-                                            SELECT ca.fechaApertura
-                                            FROM cajasXBodega ca
-                                            WHERE idusuarioCajero = :idusuarioCajero and
-                                            estado = 1
-                                            )
+                        SELECT ca.fechaApertura
+                        FROM cajasXBodega ca
+                        WHERE idusuarioCajero = :idusuarioCajero and estado = 1
+                    )
                     and CURRENT_TIMESTAMP()";            
                     $param= array(':idusuarioCajero'=>$_SESSION["userSession"]->id);
                     $this->totalVentasTarjeta= DATA::Ejecutar($sql, $param);
                     if($this->totalVentasEfectivo){
+                        $sql="SELECT montoDefaultApertura FROM cajaDefault;"; 
+                        $this->montoAperturaDefault = DATA::Ejecutar($sql);    
+                        
                         return $this;
                     }
                 }
@@ -267,13 +270,12 @@ class CajaXBodega{
 
     function ValidarEstado(){
         try{
-            $this->idusuarioCajero="1ed3a48c-3e44-11e8-9ddb-54ee75873a60";
-            $sql = "SELECT ca.id, ca.idUsuarioSupervisor, ca.idusuarioCajero, ca.estado, bo.nombre
+            $sql = "SELECT ca.id, ca.idusuarioCajero, ca.estado, bo.nombre
             FROM cajasXBodega ca
             INNER JOIN bodega bo on ca.idBodega = bo.id 
             WHERE idusuarioCajero = :idusuarioCajero and
             estado = 1;";            
-            $param= array(':idusuarioCajero'=>$this->idusuarioCajero);
+            $param= array(':idusuarioCajero'=>$_SESSION["userSession"]->id);
             $data= DATA::Ejecutar($sql, $param);
             if(!$data){
                 // $this->Create();
@@ -308,6 +310,45 @@ class CajaXBodega{
             // }
             // else throw new Exception('Error al eliminar.', 978);
         }
+        catch(Exception $e) {
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }
+    }
+
+    function UpdateMontoApertura(){
+        try {
+            $sql="UPDATE cajaDefault
+            SET montoDefaultApertura = :montoDefaultApertura;"; 
+       
+            $param= array(':montoDefaultApertura'=>$this->montoAperturaDefault);
+            $data = DATA::Ejecutar($sql,$param, false);
+            if($data){
+                return "MontoAperturaActualizado";
+            }
+            else return false;
+        }     
+        catch(Exception $e) {
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }
+    }
+
+    function GetMontoDefaultApertura(){
+        try {
+            $sql="SELECT montoDefaultApertura FROM cajaDefault;"; 
+            $data = DATA::Ejecutar($sql);
+            if($data){
+                return $data[0];
+            }
+            else return false;
+        }     
         catch(Exception $e) {
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(

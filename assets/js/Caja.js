@@ -1,10 +1,13 @@
 class MovimientosCaja {
     // Constructor
-    constructor(estado, tb_movimientosCaja, montoApertura, montoCierre) {
+    constructor(estado, tb_movimientosCaja, montoAperturaDefault, montoApertura, montoCierre, cierreEfectivo, cierreTarjeta) {
         this.estado = estado || "";
         this.tb_movimientosCaja = tb_movimientosCaja || null;
+        this.montoAperturaDefault = montoAperturaDefault || 0;
         this.montoApertura = montoApertura || 0;
         this.montoCierre = montoCierre || 0;
+        this.cierreEfectivo = cierreEfectivo || 0;
+        this.cierreTarjeta = cierreTarjeta || 0;
     };
 
     CargaMovimientosCaja() {
@@ -24,6 +27,32 @@ class MovimientosCaja {
         var movimientos = JSON.parse(e);
 
         this.tb_movimientosCaja = $('#tb_movimientosCaja').DataTable({
+            dom: 'Blfrtip',
+                buttons: [
+            {
+                extend: 'pdf',
+                footer: true,
+                exportOptions: {
+                        columns: [2,4,5,6,7,8,9,10,11]
+                    }
+            },
+            {
+                extend: 'print',
+                footer: false,
+                exportOptions: {
+                        columns: [2,4,5,6,7,8,9,10,11]
+                    }
+                
+            },
+            {
+                extend: 'excel',
+                footer: false,
+                exportOptions: {
+                        columns: [2,4,5,6,7,8,9,10,11]
+                    }
+            }         
+            ],  
+            ///////////////// 
             data: movimientos,                               
             "language": {
                 "infoEmpty":  "Sin Movimientos Ingresados",
@@ -121,7 +150,7 @@ class MovimientosCaja {
             movimientosCaja.validarEstadoCaja(e);
         })
         .fail(function (e) {
-            movimientosCaja.errorAbrirCaja("Usuario no valido", "No se puede obtener el estado de la caja!" );
+            movimientosCaja.errorAbrirCaja("Usuario no valido", "No se puede Validar el estado de la caja!" );
         });
     };
 
@@ -152,44 +181,54 @@ class MovimientosCaja {
     };
 
     openModalAbrirCaja(){
-    
-        $('.valida-caja-modal-lg').modal('show');
-    
+        //Trae el monto de apertura de caja
+        $.ajax({
+            type: "POST",
+            url: "class/CajaXBodega.php",
+            data: {
+                action: "GetMontoDefaultApertura"
+            }
+        })
+        .done(function (e) {
+            movimientosCaja.montoAperturaDefault = parseFloat(JSON.parse(e).montoDefaultApertura); 
+            $(".txtMontoDefaultApertura").text((movimientosCaja.montoAperturaDefault).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, "."));
+            $('.valida-caja-modal-lg').modal('show');
+        })
+        .fail(function (e) {
+            movimientosCaja.errorAbrirCaja("Error", "No se pudo cargar el monto de apertura establecido!" );
+        });
+
+
+        //Desabilita el boton del modal de abrir caja hasta que el monto contalizado en la caja sea igual o superior
+        $("#abrirCaja").attr("disabled", "disabled");
+        $("#saldoContabilizado").on("change paste keyup", function() {
+            
+            $("#lblDescuadre").text( parseFloat($("#saldoContabilizado").val()) - movimientosCaja.montoAperturaDefault);
+
+            if($("#saldoContabilizado").val() >= movimientosCaja.montoAperturaDefault){
+                $("#abrirCaja").removeAttr("disabled"); 
+            }else{
+                $("#abrirCaja").attr("disabled", "disabled");
+            }
+        });
     
         $("#abrirCaja").click(function(){
-            (async function getFormValues () {
-                const {value: formValues} = await swal({
-                  title: 'Usuario y Contraseña del Administrador:',
-                  html:
-                    '<input id="swal-input1" placeholder="Usuario" class="swal2-input">' +
-                    '<input id="swal-input2" placeholder="Contraseña" class="swal2-input">',
-                  focusConfirm: false,
-                  preConfirm: () => {
-                    return [
-                      document.getElementById('swal-input1').value,
-                      document.getElementById('swal-input2').value
-                    ]
-                  }
-                })
-                
-                if (formValues) {
-                    var credenciales = JSON.stringify(formValues);            
-                    $.ajax({
-                        type: "POST",
-                        url: "class/CajaXBodega.php",
-                        data: {
-                            action: "Create"
-                        }
-                    })
-                    .done(function (e) {
-                        movimientosCaja.validarEstadoCaja(e);
-                    })
-                    .fail(function (e) {
-                        movimientosCaja.errorAbrirCaja("Usuario no valido", "Solo un administrador puede abrir Caja!" );
-                    });
+            movimientosCaja.montoApertura = $("#saldoContabilizado").val();
+            $.ajax({
+                type: "POST",
+                url: "class/CajaXBodega.php",
+                data: {
+                    action: "Create",
+                    obj: JSON.stringify(movimientosCaja)
                 }
-                
-                })()
+            })
+            .done(function (e) {
+                movimientosCaja.validarEstadoCaja(e);
+            })
+            .fail(function (e) {
+                movimientosCaja.errorAbrirCaja("Usuario no valido", "Solo un administrador puede abrir Caja!" );
+            });
+            
         });
     };
 
@@ -205,56 +244,62 @@ class MovimientosCaja {
 
     loadModalCierreCaja(e){
         var data = JSON.parse(e);  
+        if(Number(data.montoAperturaDefault[0].montoDefaultApertura) == 0)
+            data.montoAperturaDefault[0].montoDefaultApertura = 0;
+
+        if(Number(data.totalVentasEfectivo[0].efectivo) == 0)
+            data.totalVentasEfectivo[0].efectivo = 0;
+
+        if(Number(data.totalVentasTarjeta[0].tarjeta) == 0)        
+            data.totalVentasTarjeta[0].tarjeta = 0;
         
+        $(".txtMontoDefaultApertura").text('¢'+ parseFloat(data.montoAperturaDefault[0].montoDefaultApertura).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, "."));
         $('#cierreEfectivo').text('¢'+ parseFloat(data.totalVentasEfectivo[0].efectivo).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, "."));
         $('#cierreTarjeta').text('¢'+ parseFloat(data.totalVentasTarjeta[0].tarjeta).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, "."));
-        $('.cierra-caja-modal-lg').modal(
-            {
-                backdrop: 'static',
-                keyboard: true, 
-                show: true
-        }
-        );
+        
+        
+        $('#lblTotalVentas').text('¢'+ (parseFloat(data.totalVentasEfectivo[0].efectivo) + parseFloat(data.totalVentasTarjeta[0].tarjeta)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, "."));
+        var totalCierre = (parseFloat(data.montoAperturaDefault[0].montoDefaultApertura) + parseFloat(data.totalVentasEfectivo[0].efectivo) + parseFloat(data.totalVentasTarjeta[0].tarjeta)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        $('#cierreCajaTotal').text('¢'+ totalCierre.toString());
+       
+        //Desabilita el boton del modal de cerrar caja hasta que el monto contalizado en la caja sea igual o superior al monto de apertura
+        $("#cierraCaja").attr("disabled", "disabled");
+        $("#saldoCaja").on("change paste keyup", function() {
+            
+            $("#lblDescuadre").text( parseFloat($("#saldoCaja").val()) - data.montoAperturaDefault);
 
-
-        ////////////////////////////////
-        $("#cierraCaja").click(function(){
-            (async function getFormValues () {
-                const {value: formValues} = await swal({
-                  title: 'Usuario y Contraseña del Administrador:',
-                  html:
-                    '<input id="swal-input1" placeholder="Usuario" class="swal2-input">' +
-                    '<input id="swal-input2" placeholder="Contraseña" class="swal2-input">',
-                  focusConfirm: false,
-                  preConfirm: () => {
-                    return [
-                      document.getElementById('swal-input1').value,
-                      document.getElementById('swal-input2').value
-                    ]
-                  }
-                })
-                
-                if (formValues) {
-                    var credenciales = JSON.stringify(formValues); 
-                    movimientosCaja.montoCierre = $("#saldoCaja").val();           
-                    $.ajax({
-                        type: "POST",
-                        url: "class/CajaXBodega.php",
-                        data: {
-                            action: "cerrarCaja",
-                            obj: JSON.stringify(movimientosCaja)
-                        }
-                    })
-                    .done(function (e) {
-                        window.location.href = 'Dashboard.html';
-                    })
-                    .fail(function (e) {
-                        movimientosCaja.errorAbrirCaja("Usuario no valido", "Solo un administrador puede cerrar caja!" );
-                    });
-                }
-                
-                })()
+            if(parseFloat( $("#saldoCaja").val() ) >= parseFloat(data.montoAperturaDefault[0].montoDefaultApertura)){
+                $("#cierraCaja").removeAttr("disabled"); 
+            }else{
+                $("#cierraCaja").attr("disabled", "disabled");
+            }
         });
+
+
+        $('.cierra-caja-modal-lg').modal('show');
+
+        
+        $("#cierraCaja").click(function(){
+            movimientosCaja.montoCierre = data.montoAperturaDefault[0].montoDefaultApertura;           
+            $.ajax({
+                type: "POST",
+                url: "class/CajaXBodega.php",
+                data: {
+                    action: "cerrarCaja",
+                    obj: JSON.stringify(movimientosCaja)
+                }
+            })
+            .done(function (e) {
+                window.location.href = 'Dashboard.html';
+            })
+            .fail(function (e) {
+                movimientosCaja.errorAbrirCaja("Operación invalida", "Imposible cerrar caja!" );
+            });
+        });
+    };
+
+    ReadbyID (){
+        // alert("En construcción");
     };
 }
 //Class Instance
@@ -264,7 +309,11 @@ $(document).ready(function () {
     movimientosCaja.CargaMovimientosCaja();
 });
 
-// cierra-caja-modal-lg
+
+$("#modalCerrarCaja").click(function () {    
+    alert("entra");
+    $('.cierra-caja-modal-lg').modal('hide');
+});
 
 $("#cerrarCaja").click(function () {
     $.ajax({
@@ -283,6 +332,67 @@ $('#tb_movimientosCaja tbody').on('click', 'tr', function () {
     movimientosCaja.ReadbyID(movimientosCaja.tb_movimientosCaja.row(this).data());
 });
 
+$("#btnMontoCajas").click(function () {
+    movimientosCaja.montoAperturaDefault = $("#inpMontoAperturaDefault").val(); 
+    $.ajax({
+        type: "POST",
+        url: "class/CajaXBodega.php",
+        data: {
+            action: "UpdateMontoApertura",
+            obj: JSON.stringify(movimientosCaja)
+        }
+    })
+    .done(function (e) {
+        swal({
+            text:'Monto establecido correctamente.',
+            title: 'Monto Actualizado!',
+            type: 'success',
+            showConfirmButton: false,
+            timer: 1500
+        });
+    })
+});
 
 
+
+
+
+
+
+
+
+
+// (async function getFormValues () {
+            //     const {value: formValues} = await swal({
+            //       title: 'Usuario y Contraseña del Administrador:',
+            //       html:
+            //         '<input id="swal-input1" placeholder="Usuario" class="swal2-input">' +
+            //         '<input id="swal-input2" placeholder="Contraseña" class="swal2-input">',
+            //       focusConfirm: false,
+            //       preConfirm: () => {
+            //         return [
+            //           document.getElementById('swal-input1').value,
+            //           document.getElementById('swal-input2').value
+            //         ]
+            //       }
+            //     })
+                
+            //     if (formValues) {
+            //         var credenciales = JSON.stringify(formValues);            
+                //     $.ajax({
+                //         type: "POST",
+                //         url: "class/CajaXBodega.php",
+                //         data: {
+                //             action: "Create"
+                //         }
+                //     })
+                //     .done(function (e) {
+                //         movimientosCaja.validarEstadoCaja(e);
+                //     })
+                //     .fail(function (e) {
+                //         movimientosCaja.errorAbrirCaja("Usuario no valido", "Solo un administrador puede abrir Caja!" );
+                //     });
+                // }
+                
+                // })()
 

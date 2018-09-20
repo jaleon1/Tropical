@@ -29,6 +29,7 @@
     <!-- iCheck -->
     <link href="assets/css/iCheck/skins/flat/green.css" rel="stylesheet">
     <!-- Custom Theme Style -->
+    <link href="assets/css/caja.css" rel="stylesheet">
     <link href="assets/css/custom.min.css" rel="stylesheet">
     <!-- Custom Table Scroll -->
     <link href="assets/css/facturacion.css" rel="stylesheet">
@@ -284,11 +285,11 @@
                     </div>
                     <div class="col-md-6">
                         <center>
-                            <h2 style="font-size: 30px" class="modal-title call_Bodega" id="exampleModalLabel"></h2>
+                            <h2 style="font-size: 30px" class="modal-title call_Bodega"></h2>
                         </center>
                     </div>
                     <div class="col-md-3">
-                        <h4 class="modal-title" id="exampleModalLabel">Saldo Caja: ¢15.000</h4>
+                        <h4 class="modal-title">Saldo Caja: ¢ <spam class="txtMontoDefaultApertura"></spam></h4>
                     </div>
                 </div>
             </div>
@@ -300,7 +301,7 @@
                             <label>Saldo contabilizado:</label>
                         </div>
                         <div class="col-md-3">
-                            <input type="text" class="form-control" id="saldoContabilizado">
+                            <input type="number" class="form-control" id="saldoContabilizado" autocomplete="off">
                         </div>
 
                     </form>
@@ -312,7 +313,7 @@
                             <label>Descuadre:</label>
                         </div>
                         <div class="col-md-3">
-                            <label id="saldoContabilizado" readonly> ¢0.00</label>
+                            <label id="lblDescuadre" readonly> ¢0.00</label>
                         </div>
                     </form>
                 </div>
@@ -346,7 +347,7 @@
                     </div>
                     <div class="col-md-6">
                         <center>
-                            <h2 style="font-size: 30px" class="modal-title" id="exampleModalLabel">Tropical Nombre sucursal</h2>
+                            <h2 style="font-size: 30px" class="modal-title call_Bodega" id="exampleModalLabel"></h2>
                         </center>
                     </div>
                     <div class="col-md-3">
@@ -355,28 +356,19 @@
                 </div>
             </div>
             <div class="modal-body">
-                <div class="row">
-
-                    <form class="form-inline">
-                        <div class="col-md-3 col-md-offset-6">
-                            <label>Saldo contabilizado:</label>
-                        </div>
-                        <div class="col-md-3">
-                            <input type="text" class="form-control" id="saldoCaja">
-                        </div>
-
-                    </form>
-                </div>
+                
                 <br>
                 <div class="row">
-                    <!-- <form class="form-inline">
-                        <div class="col-md-3 col-md-offset-6">
-                            <label>Descuadre:</label>
+                </div>
+                <div class="row">
+                    <form class="form-inline">
+                        <div class="col-md-3 col-md-offset-4">
+                            <label>Apertura:</label>
                         </div>
                         <div class="col-md-3">
-                            <label id="saldoContabilizado" readonly> ¢0.00</label>
+                            <label class="txtMontoDefaultApertura" readonly> ¢0.00</label>
                         </div>
-                    </form> -->
+                    </form>
                 </div>
                 <div class="row">
                     <form class="form-inline">
@@ -397,9 +389,49 @@
                             <label id="cierreTarjeta" readonly> ¢0.00</label>
                         </div>
                     </form>
+                </div>     
+                <br>           
+                <div class="row">
                 </div>
+                <div class="row">
+                    <form class="form-inline">
+                        <div class="col-md-3 col-md-offset-4">
+                            <label>Total Ventas:</label>
+                        </div>
+                        <div class="col-md-3">
+                            <label id="lblTotalVentas" readonly> ¢0.00</label>
+                        </div>
+                    </form>
+                </div> 
+                <br>
+                <div class="row">
+                </div>
+                <div class="row">
+                    <form class="form-inline">
+                        <div class="col-md-3 col-md-offset-4">
+                            <label>Total Neto:</label>
+                        </div>
+                        <div class="col-md-3">
+                            <label id="cierreCajaTotal" readonly> ¢0.00</label>
+                        </div>
+                    </form>
+                </div> 
+                <br>
+                <div class="row">
+                </div>
+                <div class="row">
+                    <form class="form-inline">
+                        <div class="col-md-3 col-md-offset-4">
+                            <label>Saldo contabilizado:</label>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="number" class="form-control" id="saldoCaja">
+                        </div>
+                    </form>
+                </div>    
             </div>
             <div class="modal-footer">
+                <button id="modalCerrarCaja" type="button" class="btn btn-warning">Cancelar Cierre</button>
                 <button id="cierraCaja" type="button" class="btn btn-success">Cerrar Caja</button>
             </div>
         </div>
