@@ -334,6 +334,10 @@ $('#tb_movimientosCaja tbody').on('click', 'tr', function () {
 
 $("#btnMontoCajas").click(function () {
     movimientosCaja.montoAperturaDefault = $("#inpMontoAperturaDefault").val(); 
+    // No se puede enviar el objeto tabla xq provoca una recursividad 
+    // Entonces la tabla se guarda en z y luego se recupera cuando finaliza el ajax
+    var z =  movimientosCaja.tb_movimientosCaja;
+    movimientosCaja.tb_movimientosCaja = 0;
     $.ajax({
         type: "POST",
         url: "class/CajaXBodega.php",
@@ -343,6 +347,7 @@ $("#btnMontoCajas").click(function () {
         }
     })
     .done(function (e) {
+        movimientosCaja.tb_movimientosCaja = z;
         swal({
             text:'Monto establecido correctamente.',
             title: 'Monto Actualizado!',
