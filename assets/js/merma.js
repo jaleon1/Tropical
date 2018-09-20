@@ -2,7 +2,6 @@ class Merma {
     // Constructor
     constructor(id, idItem, cantidad, descripcion, fecha) {
         this.id = id || null;
-        this.idInsumo = idInsumo || null;
         this.idItem = idItem || null;
         this.cantidad = cantidad || 0;
         this.descripcion = descripcion || '';
