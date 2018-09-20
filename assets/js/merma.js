@@ -1,9 +1,9 @@
 class Merma {
     // Constructor
-    constructor(id, idInsumo, idProducto, cantidad, descripcion, fecha) {
+    constructor(id, idItem, cantidad, descripcion, fecha) {
         this.id = id || null;
         this.idInsumo = idInsumo || null;
-        this.idProducto = idProducto || null;
+        this.idItem = idItem || null;
         this.cantidad = cantidad || 0;
         this.descripcion = descripcion || '';
         this.fecha = fecha || null;
@@ -29,7 +29,28 @@ class Merma {
                 merma.showError(e);
             })
             .always(NProgress.done()); 
-    }
+    };
+
+    ReadbyCodeConsumible(cod) {
+        if (cod != ""){
+            merma.codigo = cod;  //Columna 0 de la fila seleccionda= ID.
+            //
+            $.ajax({
+                type: "POST",
+                url: "class/Producto.php",
+                data: {
+                    action: "ReadByCode",
+                    obj: JSON.stringif(merma)
+                }
+            })
+            .done(function (e) {
+                merma.ValidatePrdMerma(e);
+            })
+            .fail(function (e) {
+                merma.showError(e);
+            });
+        }
+    };
 
     setTable(buttons=true, nPaging=10){
         $('#tMerma').DataTable({

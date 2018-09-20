@@ -41,7 +41,7 @@ if(isset($_POST["action"])){
         case "Delete":
             echo json_encode($producto->Delete());
             break;   
-        case "ReadByCode":  
+        case "ReadByCode":
             echo json_encode($producto->ReadByCode());
             break;
         case "ActualizaPrecios":
@@ -296,7 +296,7 @@ class Producto{
             $param= array(':id'=>$this->id);
             $data= DATA::Ejecutar($sql, $param, false);
             if($data)
-                return $sessiondata['status']=0; 
+                return $sessiondata['status']=0;
             else throw new Exception('Error al eliminar.', 978);
         }
         catch(Exception $e) {
@@ -309,7 +309,7 @@ class Producto{
     }
 
     function ReadByCode(){
-        try{     
+        try{
             $sql="SELECT id, nombre, codigo, descripcion, saldoCosto, costoPromedio, precioVenta, esVenta, saldoCantidad
                 FROM producto 
                 WHERE codigo like :codigo";

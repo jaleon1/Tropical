@@ -296,7 +296,7 @@ class Producto {
         }
     };
 
-    setTableInventarioProducto(){        
+    setTableInventarioProducto(){
         jQuery.extend( jQuery.fn.dataTableExt.oSort, {
             "formatted-num-pre": function ( a ) {
                 a = (a === "-" || a === "") ? 0 : a.replace( /[^\d\-\.]/g, "" );
