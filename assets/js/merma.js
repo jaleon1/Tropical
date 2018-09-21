@@ -135,8 +135,8 @@ class Merma {
         $('#tInsumo tbody tr').each(function (i, item) {
             var objlista = new Object();
             objlista.idInsumo = $(item).find('td:eq(0)')[0].textContent;
-            objlista.cantidad = $(item).find('td:eq(4) input').val();
-            if ($(item).find('td:eq(5) input').val() != undefined && $(item).find('td:eq(5) input').val() == '') {
+            objlista.cantidad = $(item).find('td:eq(3) input').val();
+            if ($(item).find('td:eq(4) input').val() != undefined && $(item).find('td:eq(4) input').val() == '') {
                 swal({
                     type: 'warning',
                     title: 'Descripción...',
@@ -144,15 +144,15 @@ class Merma {
                 });
                 listaok = false;
             }
-            objlista.descripcion = $(item).find('td:eq(5) input').val();
+            objlista.descripcion = $(item).find('td:eq(4) input').val();
             merma.listaInsumo.push(objlista);
         });
         merma.listaProducto = [];
         $('#tProducto tbody tr').each(function (i, item) {
             var objlista = new Object();
             objlista.idProducto = $(item).find('td:eq(0)')[0].textContent;
-            objlista.cantidad = $(item).find('td:eq(4) input').val();
-            if ($(item).find('td:eq(5) input').val() != undefined && $(item).find('td:eq(5) input').val() == '') {
+            objlista.cantidad = $(item).find('td:eq(3) input').val();
+            if ($(item).find('td:eq(4) input').val() != undefined && $(item).find('td:eq(4) input').val() == '') {
                 swal({
                     type: 'warning',
                     title: 'Descripción...',
@@ -160,7 +160,7 @@ class Merma {
                 });
                 listaok = false;
             }
-            objlista.descripcion = $(item).find('td:eq(5) input').val();
+            objlista.descripcion = $(item).find('td:eq(4) input').val();
             merma.listaProducto.push(objlista);
         });
         if (!listaok)
