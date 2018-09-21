@@ -69,8 +69,8 @@ class Distribucion {
         $('#tDistribucion tbody tr').each(function(i, item) {
             var objlista = new Object();
             objlista.idProducto= $(item).find('td:eq(0)')[0].textContent; // id del item.
-            objlista.cantidad= $(item).find('td:eq(4) input').val();
-            objlista.valor= $(item).find('td:eq(5)').attr('value'); // valor: precio de venta para distribucióncion bodega externa. 
+            objlista.cantidad= $(item).find('td:eq(5) input').val();
+            objlista.valor= $(item).find('td:eq(6)').attr('value'); // valor: precio de venta para distribucióncion bodega externa. 
             distr.lista.push(objlista);
         });
         $.ajax({
@@ -165,8 +165,8 @@ class Distribucion {
         $('#tDistribucion tbody tr').each(function(i, item) {
             var objlista = new Object();
             objlista.idProducto= $(item).find('td:eq(0)')[0].textContent;
-            objlista.cantidad= $(item).find('td:eq(4) input').val();
-            objlista.costo= $(item).find('td:eq(5)').attr('value'); // costo: precio de venta para distrcion bodega externa. 
+            objlista.cantidad= $(item).find('td:eq(5) input').val();
+            objlista.costo= $(item).find('td:eq(6)').attr('value'); // costo: precio de venta para distrcion bodega externa. 
             objlista.valor= parseFloat(parseInt(objlista.cantidad) * parseFloat(objlista.costo)); // valor. costo*cantidad.
             distr.lista.push(objlista);
         });
@@ -201,7 +201,7 @@ class Distribucion {
         var t= $('#tDistribucion').DataTable();
         t.clear();
         t.rows.add(JSON.parse(e));
-        // $('td:eq(4)').attr({ align: "right" });   
+        // $('td:eq(5)').attr({ align: "right" });   
         t.order([1, 'desc']).draw();
         //$('.delete').click(distr.DeleteEventHandler);
         //$( "#tDistribucion tbody tr" ).live("click", distr.viewType==undefined || distr.viewType==distr.tUpdate ? distr.UpdateEventHandler : distr.SelectEventHandler);
@@ -414,9 +414,16 @@ class Distribucion {
             .draw()
             .node();     
         //
-        $('td:eq(4) input', rowNode).attr({id: ("cantidad"+producto.id), value: (producto.cantidad || 1)}).change(function(){
-             distr.CalcImporte($(this).parents('tr').find('td:eq(0)').html());
-             if(producto.saldoCantidad<$(this).val()){
+        $('td:eq(4)', rowNode).attr({id: ("saldoCantidad"+producto.id), value: producto.saldoCantidad, align: "right"})[0]
+            .textContent= (parseFloat(producto.saldoCantidad).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+        $('td:eq(5) input', rowNode).attr({id: ("cantidad"+producto.id), max:  producto.saldoCantidad, min: "1", step:"1", value: (producto.cantidad || 1)}).on('keyup keypress', function(e){
+            var keyCode = e.keyCode || e.which;
+            if(keyCode==109){
+                e.preventDefault();
+                return false;
+            }
+             distr.setProducto($(this).parents('tr').find('td:eq(0)').html());
+             if(producto.saldoCantidad < producto.cantidad){
                 swal({
                     type: 'warning',
                     title: 'Saldo Insuficiente',
@@ -425,20 +432,19 @@ class Distribucion {
                     timer: 3000
                 });
                 $(this).val(producto.saldoCantidad);
-             }
+                distr.setProducto($(this).parents('tr').find('td:eq(0)').html());
+            } 
+            distr.CalcImporte();
         }); 
         // Precio Venta
-        // $('td:eq(4) input.valor', rowNode).attr({id: ("precioventa_v"+producto.codigo), style: "display:none", value: producto.precioVenta });
-        // $('td:eq(4) input.display', rowNode).attr({id: ("precioventa_d"+producto.codigo), value: ("$"+parseFloat(producto.precioVenta).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")) });
-        $('td:eq(5)', rowNode).attr({id: ("precioVenta"+producto.id), value: producto.precioVenta, align: "right" })[0]
+        $('td:eq(6)', rowNode).attr({id: ("precioVenta"+producto.id), value: producto.precioVenta, align: "right" })[0]
             .textContent= ("¢"+parseFloat(producto.precioVenta).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
         // subtotal
-        // $('td:eq(5) input.valor', rowNode).attr({id: ("subtotal_v"+producto.codigo), style: "display:none"});
-        // $('td:eq(5) input.display', rowNode).attr({id: ("subtotal_d"+producto.codigo)});   
-        $('td:eq(6)', rowNode).attr({id: ("subtotal"+producto.id), value:0, align: "right" })[0].textContent=0;
+        $('td:eq(7)', rowNode).attr({id: ("subtotal"+producto.id), value:0, align: "right" })[0].textContent=0;
         t.columns.adjust().draw();
         //
-        distr.CalcImporte(producto.id);
+        distr.setProducto(producto.id);
+        distr.CalcImporte();
         //distr.calcTotal();
     };
 
@@ -454,13 +460,18 @@ class Distribucion {
         .draw();      
     }
 
-    CalcImporte(prd){
-        producto.cantidad =  $(`#cantidad${prd}`).val();
-        producto.precioVenta = $(`#precioVenta${prd}`).attr('value');
+    setProducto(idp){
+        producto.id = idp;
+        producto.saldoCantidad =  parseFloat($(`#saldoCantidad${idp}`).attr('value'));
+        producto.cantidad =  $(`#cantidad${idp}`).val();
+        producto.precioVenta = $(`#precioVenta${idp}`).attr('value');
         producto.subtotal= (producto.cantidad * producto.precioVenta).toFixed(10);
+    }
+
+    CalcImporte(){        
         // Subtotal de linea.
-        $(`#subtotal${prd}`).attr({value: producto.subtotal});
-        $(`#subtotal${prd}`)[0].textContent= ("¢"+parseFloat(producto.subtotal).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+        $(`#subtotal${producto.id}`).attr({value: producto.subtotal});
+        $(`#subtotal${producto.id}`)[0].textContent= ("¢"+parseFloat(producto.subtotal).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
         //
         distr.calcTotal();
     };
@@ -478,7 +489,7 @@ class Distribucion {
         $("#iv_val")[0].textContent = "¢0";
         $("#total")[0].textContent = "¢0";
         //
-        $('#tDistribucion tr').find('td:eq(6)').each(function(i, item) {
+        $('#tDistribucion tr').find('td:eq(7)').each(function(i, item) {
             subtotal +=   parseFloat($(item).attr('value'));
         });
         if(subtotal>0){
@@ -512,6 +523,7 @@ class Distribucion {
                     "previous":   "Anterior"
                 }
             },
+            columnDefs: [{className: "text-center", "targets": [4]}],
             columns: [
                 {
                     title: "id",
@@ -522,6 +534,7 @@ class Distribucion {
                 { title: "Codigo", data: "codigo" },
                 { title: "Nombre", data: "nombre" },
                 { title: "Descripción", data: "descripcion" },
+                { title: "Saldo Cantidad", data: "saldoCantidad" },
                 { 
                     title: "Cantidad", 
                     data: "cantidad",
