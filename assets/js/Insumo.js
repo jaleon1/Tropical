@@ -243,7 +243,7 @@ class Insumo {
             });
             return false;
         }
-        ti.row.add(insumo)
+        var rowNode= ti.row.add(insumo)
             .draw() //dibuja la tabla con el nuevo insumo
             .node();
         //
