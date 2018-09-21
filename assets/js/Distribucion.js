@@ -445,7 +445,6 @@ class Distribucion {
         //
         distr.setProducto(producto.id);
         distr.CalcImporte();
-        //distr.calcTotal();
     };
 
     UpdateEventHandler() {
@@ -457,7 +456,10 @@ class Distribucion {
         var t = $('#tDistribucion').DataTable();
         t.row( $(btn).parents('tr') )
         .remove()
-        .draw();      
+        .draw();
+        // recalcula
+        distr.setProducto($(btn).parents('tr').find('td:eq(0)').html());
+        distr.calcTotal();
     }
 
     setProducto(idp){
