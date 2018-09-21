@@ -10,30 +10,29 @@
 </head>
 
 <body>
-  <div class="ticket">
-    <table>
+  <div class="ticket" style="width:88mm;">
+    <table style="width:91%;">
         <tbody>
-          <tr><td><label>----------------------------------------------------------</label></td></tr>
-          
+          <tr style="line-height:10px;"><td><label>-------------------------------------------------------</label></td></tr>
+                  
           <tr style="line-height:10px;font-family:Uroob; text-align: center;"><td>
             TROPICAL SNO. <label id="bodega"></label>
           </td></tr>
-          <tr><td><label>----------------------------------------------------------</label></td></tr>
+          <tr style="line-height:10px;"><td><label>-------------------------------------------------------</label></td></tr>
           <tr style="line-height:10px;font-family:Uroob; text-align: center;"><td>DISTRIBUCION # <label id=orden></label></label></td></tr>
           <tr style="line-height:10px;font-family:Uroob; text-align: center;"><td>Fecha: <label id="fechaDistribucion"></label></td></tr>
           <tr style="line-height:10px;font-family:Uroob; text-align: center;"><td>Usuario: <label id="usuario"></label></td></tr>
         </tbody>
       </table>
-    <table>
+    <table style="width:91%;">
       <tbody id="tableBody-TicketDistribucion">
       </tbody>
     </table>
-    <table style="line-height:10px;font-family:Uroob; width:100%;">
+    <table style="line-height:10px;font-family:Uroob; width:91%;">
         <tbody id="tableBody-TicketTotal">
         </tbody>
     </table>
     <p style="line-height:10px;font-family:Uroob;" class="centrado">Orden Distribuida...</p>
-    </br>
     
   </div>
   <script src="assets/js/Distribucion.js"></script>
@@ -54,12 +53,12 @@
       
       if (tipoBodega=="interna") {
         $('#tableBody-TicketDistribucion').append(`  
-          <tr><td colspan="2"><label>----------------------------------------------------------</label></td></tr>
+          <tr style="line-height:10px;"><td colspan="2"><label>-------------------------------------------------------</label></td></tr>
           <tr>
             <td style="line-height:10px;font-family:Uroob; width:10%; text-align:left;">CN</td>
             <td style="line-height:10px;font-family:Uroob; width:90%; text-align:left;">Detalle</td>
           </tr>
-          <tr><td colspan="2"><label>----------------------------------------------------------</label></td></tr>
+          <tr style="line-height:10px;"><td colspan="2"><label>-------------------------------------------------------</label></td></tr>
         `);
         $.each(listaProducto, function (i, item) {
           $('#tableBody-TicketDistribucion').append(`
@@ -72,13 +71,13 @@
       }
       else{
         $('#tableBody-TicketDistribucion').append(`  
-          <tr><td colspan="3"><label>----------------------------------------------------------</label></td></tr>
+          <tr style="line-height:10px;"><td colspan="3"><label>-------------------------------------------------------</label></td></tr>
           <tr>
             <td style="line-height:10px;font-family:Uroob; width:10%; text-align:left;">CN</td>
             <td style="line-height:10px;font-family:Uroob; width:60%; text-align:left;">Detalle</td>
             <td style="line-height:10px;font-family:Uroob; width:30%; text-align:right;">Precio</td>
           </tr>
-          <tr><td colspan="3"><label>----------------------------------------------------------</label></td></tr>
+          <tr style="line-height:10px;"><td colspan="3"><label>-------------------------------------------------------</label></td></tr>
         `);
         $.each(listaProducto, function (i, item) {
           $('#tableBody-TicketDistribucion').append(`
@@ -91,7 +90,7 @@
           `);
         }); 
         $('#tableBody-TicketTotal').append(`
-        <tr><td colspan="2"><label>----------------------------------------------</label></td></tr>
+        <tr style="line-height:10px;"><td colspan="2"><label>-------------------------------------------------------</label></td></tr>
         <tr>
           <td><label style="line-height:10px;font-family:Uroob; width:65%; text-align:left;">Sub Total</label></td>
           <td style="line-height:10px;font-family:Uroob; width:35%; text-align:right;">
@@ -112,7 +111,7 @@
           <td id="vuelto" style="line-height:10px;font-family:Uroob; width:35%; text-align:right;">
           ${localStorage.getItem("lsTotal")}</td>
         </tr>
-        <tr><td colspan="2"><label>----------------------------------------------</label></td></tr>
+        <tr style="line-height:10px;"><td colspan="2"><label>-------------------------------------------------------</label></td></tr>
       `); 
       }
       window.print();
