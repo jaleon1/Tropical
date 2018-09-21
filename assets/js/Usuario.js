@@ -179,14 +179,20 @@ class Usuario {
 
     ShowAll(e) {
         var t= $('#tUsuario').DataTable();
-        t.clear();
-        t.rows.add(JSON.parse(e));
-        t.draw();
-        // eventos
-        $( document ).on( 'click', '.delete', usuario.DeleteEventHandler);
-        $( document ).on( 'click', '#tUsuario tbody tr td:not(.buttons)', 
-            usuario.viewType==undefined || usuario.viewType==usuario.tUpdate ? usuario.UpdateEventHandler : usuario.SelectEventHandler
-        );
+        if(t.rows().count()==0){
+            t.clear();
+            t.rows.add(JSON.parse(e));
+            t.draw();
+            // eventos
+            $( document ).on( 'click', '.delete', usuario.DeleteEventHandler);
+            $( document ).on( 'click', '#tUsuario tbody tr td:not(.buttons)', 
+                usuario.viewType==undefined || usuario.viewType==usuario.tUpdate ? usuario.UpdateEventHandler : usuario.SelectEventHandler
+            );
+        }else{
+            t.clear();
+            t.rows.add(JSON.parse(e));
+            t.draw();
+        }
     };
 
     UpdateEventHandler() {
