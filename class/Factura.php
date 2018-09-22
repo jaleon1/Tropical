@@ -93,18 +93,31 @@ class Factura{
             $obj= json_decode($_POST["obj"],true);
             //Necesarias para la factura (Segun M Hacienda)
             require_once("UUID.php");
-            $this->id= $obj["id"] ?? UUID::v4();            
+            $this->id= $obj["id"] ?? UUID::v4();           
+            
+            
+
+
             $this->fechaCreacion= $obj["fechaCreacion"] ?? '';
             $this->local= $obj["local"] ?? '001';
             $this->terminal= $obj["terminal"] ?? '00001';
+
+
+
             $this->idCondicionVenta= $obj["idCondicionVenta"] ?? 1;
             $this->idSituacionComprobante= $obj["idSituacionComprobante"] ?? 1;
             $this->idEstadoComprobante= $obj["idEstadoComprobante"] ?? 1;
+
+
+
             $this->idMedioPago= $obj["idMedioPago"] ?? 1;
             $this->fechaEmision= $obj["fechaEmision"] ?? '';
             $this->plazoCredito= $obj["plazoCredito"] ?? 0;
             $this->idCodigoMoneda= $obj["idCodigoMoneda"] ?? 55; // CRC
             $this->tipoCambio= $obj['tipoCambio'] ?? 582.83;
+
+
+
             //totales
             $this->totalVenta= $obj["totalVenta"] ?? 0;
             $this->totalDescuentos= $obj["totalDescuentos"] ?? 0;
@@ -132,26 +145,29 @@ class Factura{
                     /********************  los calculos debe hacerse aqui  *********************/
                     /***************************************************************************/
                     /***************************************************************************/
-                    $item= new ProductoXFactura();                    
-                    $item->detalle= $itemDetalle['detalle'];
-                    $item->numeroLinea= $itemDetalle['numeroLinea'];                    
+                    $item= new ProductoXFactura();
+                    $item->idFactura = $this->id;
                     $item->idPrecio= $itemDetalle['idPrecio'];
-                    $item->idUnidadMedida= $itemDetalle['idUnidadMedida'] ?? 78;
+                    $item->numeroLinea= $itemDetalle['numeroLinea'];
+                    $item->tipoCodigo= $itemDetalle['tipoCodigo']?? 1;
+                    $item->codigo= $itemDetalle['codigo'];
                     $item->cantidad= $itemDetalle['cantidad'] ?? 1;
-                    $item->precioUnitario= $itemDetalle['precioUnitario'];
-                    $item->codigoImpuesto= $itemDetalle['codigoImpuesto'] ?? 1; // impuesto ventas
+                    $item->idUnidadMedida= $itemDetalle['idUnidadMedida'] ?? 78;
+                    $item->detalle= $itemDetalle['detalle'];
+                    $item->precioUnitario= $itemDetalle['precioUnitario'];                    
+                    $item->montoTotal= $itemDetalle['montoTotal'] ?? ($item->precioUnitario * $item->cantidad); // cantidad * precio unitario. SIN IMPUESTO
+                    $item->montoDescuento= $itemDetalle['montoDescuento']??0; // en Tropical no se manejan descuentos
+                    $item->naturalezaDescuento= $itemDetalle['naturalezaDescuento']??''; // en Tropical no se manejan descuentos
+                    $item->subTotal= $itemDetalle['subTotal'] ?? $item->montoTotal -  $item->MontoDescuento;// montoTotal - descuento.
+                    $item->codigoImpuesto= $itemDetalle['codigoImpuesto'] ?? 1; // impuesto ventas = 1
                     $item->tarifaImpuesto= $itemDetalle['tarifaImpuesto'] ?? '11.7';
                     $item->montoImpuesto= $itemDetalle['montoImpuesto']   ?? $item->precioUnitario * ($item->tarifaImpuesto/100);
-                    // en tropical se define el precio unitario incluyendo el impuesto, se debe recalcular.
-                    $item->precioUnitario= $item->precioUnitario - $item->montoImpuesto;
-                    $item->montoTotal= $itemDetalle['montoTotal'] ?? ($item->precioUnitario * $item->cantidad); // cantidad * precio unitario. SIN IMPUESTO
-                    $item->MontoDescuento= 0; // en tropical no se manejan descuentos.
-                    $item->subTotal= $itemDetalle['subTotal'] ?? $item->montoTotal -  $item->MontoDescuento;// montoTotal - descuento.
+                    $item->idExoneracionImpuesto= $itemDetalle['idExoneracionImpuesto']; // null
                     $item->montoTotalLinea= $itemDetalle['montoTotalLinea'] ?? ($item->subTotal + $item->montoImpuesto); // subtotal + impuesto.
                     array_push ($this->detalleFactura, $item);
                 }
             }
-            //
+            // detalle de orden para presentar en pantalla de 
             if(isset($obj["detalleOrden"] )){
                 foreach ($obj["detalleOrden"] as $itemOrden) {
                     $item= new OrdenXFactura();
@@ -289,7 +305,6 @@ class Factura{
         catch(Exception $e){}
     }
 
-
     function Create(){
         try {
             $sql="INSERT INTO factura   (id, idBodega, local, terminal, idCondicionVenta, idSituacionComprobante, idEstadoComprobante, plazoCredito, 
@@ -298,24 +313,35 @@ class Factura{
             VALUES  (:uuid, :idBodega, :local, :terminal, :idCondicionVenta, :idSituacionComprobante, :idEstadoComprobante, :plazoCredito,
                 :idMedioPago, :idCodigoMoneda, :tipoCambio, :totalServGravados, :totalServExentos, :totalMercanciasGravadas, :totalMercanciasExentas, :totalGravado, :totalExento, :codigoReferencia, 
                 :totalVenta, :totalDescuentos, :totalVentaneta, :totalImpuesto, :totalComprobante, :idEmisor, :idUsuario, :tipoDocumento)"; 
-       
-            $param= array(':uuid'=>$this->id, ':idBodega'=>$_SESSION["userSession"]->idBodega, ':local'=>$this->local, ':terminal'=>$this->terminal, 
-                    ':idCondicionVenta'=>$this->idCondicionVenta, ':idSituacionComprobante'=>$this->idSituacionComprobante, ':idEstadoComprobante'=>$this->idEstadoComprobante, ':plazoCredito'=> $this->plazoCredito,
-                    ':idMedioPago'=>$this->idMedioPago, ':idCodigoMoneda'=>$this->idCodigoMoneda, ':tipoCambio'=>$this->tipoCambio, 
-                    ':totalServGravados'=> $this->totalServGravados,
-                    ':totalServExentos'=> $this->totalServExentos,
-                    ':totalMercanciasGravadas'=> $this->totalMercanciasGravadas,
-                    ':totalMercanciasExentas'=> $this->totalMercanciasExentas,
-                    ':totalGravado'=> $this->totalGravado,
-                    ':totalExento'=> $this->totalExento,
-                    ':codigoReferencia'=> $this->codigoReferencia,
-                    ':totalVenta'=>$this->totalVenta, ':totalDescuentos'=>$this->totalDescuentos, 
-                    ':totalVentaneta'=>$this->totalVentaneta, ':totalImpuesto'=>$this->totalImpuesto, ':totalComprobante'=>$this->totalComprobante, ':idEmisor'=>$this->idEmisor, 
-                    ':idUsuario'=>$_SESSION["userSession"]->id, ':tipoDocumento'=>$this->tipoDocumento);
+            $param= array(':uuid'=>$this->id,
+                ':idBodega'=>$_SESSION["userSession"]->idBodega,
+                ':local'=>$this->local,
+                ':terminal'=>$this->terminal,
+                ':idCondicionVenta'=>$this->idCondicionVenta,
+                ':idSituacionComprobante'=>$this->idSituacionComprobante,
+                ':idEstadoComprobante'=>$this->idEstadoComprobante,
+                ':plazoCredito'=> $this->plazoCredito,                    
+                ':idMedioPago'=>$this->idMedioPago,
+                ':idCodigoMoneda'=>$this->idCodigoMoneda,
+                ':tipoCambio'=>$this->tipoCambio,
+                ':totalServGravados'=> $this->totalServGravados,
+                ':totalServExentos'=> $this->totalServExentos,
+                ':totalMercanciasGravadas'=> $this->totalMercanciasGravadas,
+                ':totalMercanciasExentas'=> $this->totalMercanciasExentas,
+                ':totalGravado'=> $this->totalGravado,
+                ':totalExento'=> $this->totalExento,
+                ':codigoReferencia'=> $this->codigoReferencia,
+                ':totalVenta'=>$this->totalVenta, 
+                ':totalDescuentos'=>$this->totalDescuentos, 
+                ':totalVentaneta'=>$this->totalVentaneta, 
+                ':totalImpuesto'=>$this->totalImpuesto, 
+                ':totalComprobante'=>$this->totalComprobante, 
+                ':idEmisor'=>$this->idEmisor, 
+                ':idUsuario'=>$_SESSION["userSession"]->id, 
+                ':tipoDocumento'=>$this->tipoDocumento);
             $data = DATA::Ejecutar($sql,$param, false);
             if($data)
             {
-                ProductoXFactura::$idFactura = $this->id; // identificador de factura.
                  //save array obj
                  if(ProductoXFactura::Create($this->detalleFactura)){
                     $this->restartInsumo($this->detalleOrden);

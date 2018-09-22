@@ -119,14 +119,16 @@ class ProductoXFactura{
             $created = true;
             //$idUnidadMedida= 78;  // Unid.
             foreach ($obj as $item) {
-                $sql="INSERT INTO productosXFactura (id, idFactura, idPrecio, numeroLinea, cantidad, idUnidadMedida, detalle, precioUnitario, montoTotal, montoDescuento, naturalezaDescuento,
+                $sql="INSERT INTO productosXFactura (id, idFactura, idPrecio, numeroLinea, idTipoCodigo, codigo, cantidad, idUnidadMedida, detalle, precioUnitario, montoTotal, montoDescuento, naturalezaDescuento,
                     subTotal, codigoImpuesto, tarifaImpuesto, montoImpuesto, idExoneracionImpuesto, montoTotalLinea)
-                VALUES (uuid(), :idFactura, :idPrecio, :numeroLinea, :cantidad, :idUnidadMedida, :detalle, :precioUnitario, :montoTotal, :montoDescuento, :naturalezaDescuento,                
+                VALUES (uuid(), :idFactura, :idPrecio, :numeroLinea, :idTipoCodigo, :codigo, :cantidad, :idUnidadMedida, :detalle, :precioUnitario, :montoTotal, :montoDescuento, :naturalezaDescuento,                
                     :subTotal, :codigoImpuesto, :tarifaImpuesto, :montoImpuesto, :idExoneracionImpuesto, :montoTotalLinea)";              
                 $param= array(
-                    ':idFactura'=>self::$idFactura,
+                    ':idFactura'=>$item->idFactura,
                     ':idPrecio'=>$item->idPrecio,
                     ':numeroLinea'=>$item->numeroLinea,
+                    ':idTipoCodigo'=> $item->idTipoCodigo,
+                    ':codigo'=> $item->codigo,                    
                     ':cantidad'=>$item->cantidad,
                     ':idUnidadMedida'=>$idUnidadMedida,
                     ':detalle'=>$item->detalle,
@@ -139,7 +141,7 @@ class ProductoXFactura{
                     ':tarifaImpuesto'=>$item->tarifaImpuesto,
                     ':montoImpuesto'=>$item->montoImpuesto,
                     ':idExoneracionImpuesto'=>$item->idExoneracionImpuesto,
-                     ':montoTotalLinea'=>$montoTotalLinea);
+                    ':montoTotalLinea'=>$montoTotalLinea);
                 $data = DATA::Ejecutar($sql, $param, false);
             }
             return $created;
