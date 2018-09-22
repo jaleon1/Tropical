@@ -142,7 +142,7 @@ class Usuario{
             $_SESSION['userSession']->status= userSessionStatus::nocredencial;
             $_SESSION['userSession']->url = $_POST["url"];
             $urlarr = explode('/', $_SESSION['userSession']->url);
-            $myUrl = end($urlarr);
+            $myUrl = end($urlarr)==''?'index.html':end($urlarr);
             foreach ($_SESSION['userSession']->eventos as $evento) {
                 if(strtolower($myUrl) == strtolower($evento->url)){
                     $_SESSION['userSession']->status= userSessionStatus::login;
