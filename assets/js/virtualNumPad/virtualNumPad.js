@@ -317,6 +317,7 @@ function facturar (){
     })
     .done(function(e){
         ticketPrint(e);
+
     })
     .fail(function (e) {
         swal({

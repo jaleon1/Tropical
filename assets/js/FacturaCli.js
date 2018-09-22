@@ -851,6 +851,9 @@ function alertFact() {
 function ticketPrint(e) {
     var data = JSON.parse(e);
 
+/*****
+
+
     localStorage.setItem("lsFactura",data.consecutivo);
     localStorage.setItem("lsFecha",data.fechaCreacion);
     localStorage.setItem("lsBodega",data.bodega);
@@ -878,6 +881,9 @@ function ticketPrint(e) {
 
     // location.href ="/Tropical/TicketFacturacion.html";
     location.href = "/TicketFacturacion.html";
+
+    ***/
+   
     /*******************************************/
     //*************** ENVIO FE *****************/
     /*******************************************/

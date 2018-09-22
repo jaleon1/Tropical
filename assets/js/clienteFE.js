@@ -260,7 +260,7 @@ class ClienteFE {
             this.idProvincia = $('#idProvincia option:selected').val();
         else {
             swal({
-                type: 'warning',
+                type: 'warning',    
                 title: 'Ubicación...',
                 text: 'Debe seleccionar la Provincia'
             });

@@ -34,7 +34,7 @@ if(isset($_POST["action"])){
         case "Create":
             echo json_encode($factura->Create());
             break;
-        case "EnviarFE":            
+        case "EnviarFE":
             $factura->EnviarFE();
             break;
         case "Update":
@@ -120,7 +120,8 @@ class Factura{
             $this->totalExcento= $obj['totalExcento'] ??  $this->totalServExcentos + $this->totalMercanciasExcentas;
             //
             $this->idEmisor= $_SESSION['API']->id;
-            $this->tipoDocumento = $obj["tipoDocumento"] ?? "FE";
+            $this->tipoDocumento = $obj["tipoDocumento"] ?? "FE"; // documento de Referencia
+            $this->codigoReferencia = $obj["codigoReferencia"] ?? "01"; //codigo de documento deReferencia
             $this->consecutivo = $obj["consecutivo"] ?? "";
             //
             if(isset($obj["detalleFactura"] )){
@@ -183,28 +184,11 @@ class Factura{
         }
     }
 
-    // function loadColumns(){
-    //     try {
-    //         $sql='SELECT f.consecutivo, f.fechaCreacion, f.totalVenta
-    //             FROM factura f      
-    //             ORDER BY f.consecutivo desc';
-    //         $data= DATA::Ejecutar($sql);
-    //         return $data;
-    //     }     
-    //     catch(Exception $e) {
-    //         header('HTTP/1.0 400 Bad error');
-    //         die(json_encode(array(
-    //             'code' => $e->getCode() ,
-    //             'msg' => 'Error al cargar la lista'))
-    //         );
-    //     }
-    // }
-    //Chacon lo usa???
-    //R:/SI
-
     function Read(){
         try { 
-            $sql='SELECT id, idBodega, fechaCreacion, consecutivo, local, terminal, idCondicionVenta, idSituacionComprobante, idEstadoComprobante, plazoCredito, idMedioPago, resumenFactura, idCodigoMoneda, tipoCambio, totalServGravados, totalServExentos, totalMercanciasGravadas, totalMercanciaSexentas, totalGravado, totalExento, fechaEmision, codigoReferencia, totalVenta, totalDescuentos, totalVentaneta, totalImpuesto, totalComprobante, idReceptor, idEmisor, idUsuario
+            $sql='SELECT idBodega, fechaCreacion, consecutivo, local, terminal, idCondicionVenta, idSituacionComprobante, idEstadoComprobante, plazoCredito, 
+                idMedioPago, idCodigoMoneda, tipoCambio, totalServGravados, totalServExentos, totalMercanciasGravadas, totalMercanciasExentas, totalGravado, totalExento, codigoReferencia, 
+                totalVenta, totalDescuentos, totalVentaneta, totalImpuesto, totalComprobante, idEmisor, idUsuario, tipoDocumento
                 from factura
                 where id=:id';
             $param= array(':id'=>$this->id);
@@ -218,18 +202,17 @@ class Factura{
                 $this->idCondicionVenta = $value['idCondicionVenta'];
                 $this->idSituacionComprobante = $value['idSituacionComprobante'];
                 $this->idEstadoComprobante = $value['idEstadoComprobante'];
-                $this->plazoCredito = $value['plazoCredito'] ?? 0;
+                $this->plazoCredito = $value['plazoCredito'];
                 $this->idMedioPago = $value['idMedioPago'];
-                $this->resumenFactura = $value['resumenFactura'];
-                $this->idCodigoMoneda = $value['idCodigoMoneda'] ?? 55; // CRC
-                $this->tipoCambio = $value['tipoCambio'] ?? 570; // CRC
+                $this->idCodigoMoneda = $value['idCodigoMoneda'];
+                $this->tipoCambio = $value['tipoCambio'];
                 $this->totalServGravados = $value['totalServGravados'];
                 $this->totalServExentos = $value['totalServExentos'];
                 $this->totalMercanciasGravadas = $value['totalMercanciasGravadas'];
-                $this->totalMercanciaSexentas = $value['totalMercanciaSexentas'];
+                $this->totalMercanciasExentas = $value['totalMercanciasExentas'];
                 $this->totalGravado = $value['totalGravado'];
                 $this->totalExento = $value['totalExento'];
-                //$this->fechaEmision = $value['fechaEmision'];
+                $this->fechaEmision = $value['fechaEmision'];
                 $this->codigoReferencia = $value['codigoReferencia'];
                 $this->totalVenta = $value['totalVenta'];
                 $this->totalDescuentos = $value['totalDescuentos'];
@@ -239,8 +222,8 @@ class Factura{
                 $this->idReceptor = $value['idReceptor'];
                 $this->idEmisor = $value['idEmisor'];
                 $this->idUsuario = $value['idUsuario'];
-                $this->tipoDocumento = $obj["tipoDocumento"] ?? "FE";
-                $this->detalleFactura= ProductoXFactura::Read($this->id);
+                $this->tipoDocumento = $obj["tipoDocumento"];
+                $this->detalleFactura= ProductoXFactura::ReadAllById($this->id);
             }
             return $this;
         }     
@@ -309,22 +292,30 @@ class Factura{
 
     function Create(){
         try {
-
-            $this->fechaCreacion = date("Y-m-d H:i:s");
-            $this->fechaEmision = date("D \d\\e F Y");
-
-            $sql="INSERT INTO factura   (id, idBodega, fechaCreacion, local, terminal, idCondicionVenta,idSituacionComprobante,idEstadoComprobante, idMedioPago,fechaEmision, totalVenta, totalDescuentos, totalVentaneta, totalImpuesto, totalComprobante, idEmisor, idUsuario)
-                                       
-            VALUES  (:uuid, :idBodega, CURRENT_TIMESTAMP(), :local, :terminal, :idCondicionVenta, :idSituacionComprobante, :idEstadoComprobante, :idMedioPago, :fechaEmision, :totalVenta, :totalDescuentos, :totalVentaneta, :totalImpuesto, :totalComprobante, :idEmisor, :idUsuario)"; 
+            $sql="INSERT INTO factura   (id, idBodega, local, terminal, idCondicionVenta, idSituacionComprobante, idEstadoComprobante, plazoCredito, 
+                idMedioPago, idCodigoMoneda, tipoCambio, totalServGravados, totalServExentos, totalMercanciasGravadas, totalMercanciasExentas, totalGravado, totalExento, codigoReferencia, 
+                totalVenta, totalDescuentos, totalVentaneta, totalImpuesto, totalComprobante, idEmisor, idUsuario, tipoDocumento)
+            VALUES  (:uuid, :idBodega, :local, :terminal, :idCondicionVenta, :idSituacionComprobante, :idEstadoComprobante, :plazoCredito,
+                :idMedioPago, :idCodigoMoneda, :tipoCambio, :totalServGravados, :totalServExentos, :totalMercanciasGravadas, :totalMercanciasExentas, :totalGravado, :totalExento, :codigoReferencia, 
+                :totalVenta, :totalDescuentos, :totalVentaneta, :totalImpuesto, :totalComprobante, :idEmisor, :idUsuario, :tipoDocumento)"; 
        
             $param= array(':uuid'=>$this->id, ':idBodega'=>$_SESSION["userSession"]->idBodega, ':local'=>$this->local, ':terminal'=>$this->terminal, 
-                    ':idCondicionVenta'=>$this->idCondicionVenta, ':idSituacionComprobante'=>$this->idSituacionComprobante, ':idEstadoComprobante'=>$this->idEstadoComprobante, 
-                    ':idMedioPago'=>$this->idMedioPago, ':fechaEmision'=>$this->fechaEmision, ':totalVenta'=>$this->totalVenta, ':totalDescuentos'=>$this->totalDescuentos, 
-                    ':totalVentaneta'=>$this->totalVentaneta, ':totalImpuesto'=>$this->totalImpuesto, ':totalComprobante'=>$this->totalComprobante, ':idEmisor'=>$this->idEmisor, ':idUsuario'=>$_SESSION["userSession"]->id);
+                    ':idCondicionVenta'=>$this->idCondicionVenta, ':idSituacionComprobante'=>$this->idSituacionComprobante, ':idEstadoComprobante'=>$this->idEstadoComprobante, ':plazoCredito'=> $this->plazoCredito,
+                    ':idMedioPago'=>$this->idMedioPago, ':idCodigoMoneda'=>$this->idCodigoMoneda, ':tipoCambio'=>$this->tipoCambio, 
+                    ':totalServGravados'=> $this->totalServGravados,
+                    ':totalServExentos'=> $this->totalServExentos,
+                    ':totalMercanciasGravadas'=> $this->totalMercanciasGravadas,
+                    ':totalMercanciasExentas'=> $this->totalMercanciasExentas,
+                    ':totalGravado'=> $this->totalGravado,
+                    ':totalExento'=> $this->totalExento,
+                    ':codigoReferencia'=> $this->codigoReferencia,
+                    ':totalVenta'=>$this->totalVenta, ':totalDescuentos'=>$this->totalDescuentos, 
+                    ':totalVentaneta'=>$this->totalVentaneta, ':totalImpuesto'=>$this->totalImpuesto, ':totalComprobante'=>$this->totalComprobante, ':idEmisor'=>$this->idEmisor, 
+                    ':idUsuario'=>$_SESSION["userSession"]->id, ':tipoDocumento'=>$this->tipoDocumento);
             $data = DATA::Ejecutar($sql,$param, false);
             if($data)
             {
-                ProductoXFactura::$id=$this->id;
+                ProductoXFactura::$idFactura = $this->id; // identificador de factura.
                  //save array obj
                  if(ProductoXFactura::Create($this->detalleFactura)){
                     $this->restartInsumo($this->detalleOrden);
