@@ -170,7 +170,7 @@
                                             <div class="title_right">
                                                 <div class="col-md-12 col-sm-12 col-xs-12 form-group pull-right top_search">
                                                     <div class="input-group">
-                                                        <input autofocus type="text" class="form-control" id="p_searhProducto"
+                                                        <input autofocus type="text" class="form-control" id="p_searhProducto8"
                                                             placeholder="Ingresar código de producto.">
                                                         <span class="input-group-btn">
                                                             <button class="btn btn-default" type="button">Buscar</button>
@@ -210,7 +210,7 @@
                                             <div class="title_right">
                                                 <div class="col-md-12 col-sm-12 col-xs-12 form-group pull-right top_search">
                                                     <div class="input-group">
-                                                        <input autofocus type="text" class="form-control" id="p_searhProducto"
+                                                        <input autofocus type="text" class="form-control" id="p_searhProducto12"
                                                             placeholder="Ingresar código de producto.">
                                                         <span class="input-group-btn">
                                                             <button class="btn btn-default" type="button">Buscar</button>
@@ -305,9 +305,17 @@
         consumible.setTable();
         consumible.read();
     });
-    $("#p_searhProducto").keyup(function (e) {
-        if (e.which == 13)
-            consumible.ReadProdbyCode($('#p_searhProducto').val());
+    $("#p_searhProducto8").keyup(function (e) {
+        if (e.which == 13){
+            producto.tamano=0;
+            consumible.ReadProdbyCode($('#p_searhProducto8').val());
+        }
+    });
+    $("#p_searhProducto12").keyup(function (e) {
+        if (e.which == 13){
+            producto.tamano=1;
+            consumible.ReadProdbyCode($('#p_searhProducto12').val());
+        }
     });
     $('#btnConsumible').click(function () {
         consumible.crear();

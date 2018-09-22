@@ -1,9 +1,10 @@
 class Consumible {
     // Constructor
-    constructor(id, idProducto, cantidad) {
+    constructor(id, idProducto, cantidad, tamano) {
         this.id = id || null;
         this.idProducto = idProducto || null;
         this.cantidad = cantidad || 0;
+        this.tamano = tamano || 0;
     }
 
     read() {
@@ -70,8 +71,12 @@ class Consumible {
             producto.cantidad= 1; 
             var repetido = false;
             //
-            if(document.getElementById("tConsumible8").rows.length != 0 && producto != null ){
-                $(document.getElementById("tConsumible8").rows).each(function(i,item){
+            var tam=0;
+            if(producto.tamano==0)
+                tam=8;
+            else tam=12;
+            if(document.getElementById("tConsumible"+tam).rows.length != 0 && producto != null ){
+                $(document.getElementById("tConsumible"+tam).rows).each(function(i,item){
                     if( item.innerText != 'Sin Registros' && item.childNodes[1].innerText==producto.idProducto){
                         repetido=true;
                         swal({
@@ -86,13 +91,14 @@ class Consumible {
             }    
             if (repetido==false){
                 consumible.agregarItem();
-                $("#p_searhProducto").val('');
+                $("#p_searhProducto8").val('');
+                $("#p_searhProducto12").val('');
             }
         }
     };
 
     agregarItem(){
-        if(producto.tamano==8){
+        if(producto.tamano==0){
             var rowNode= t8.row.add(producto)
                 .draw() //dibuja la tabla con el nuevo producto
                 .node();     
@@ -155,6 +161,15 @@ class Consumible {
             objlista.id = $(item).find('td:eq(0)')[0].textContent;
             objlista.idProducto = $(item).find('td:eq(1)')[0].textContent;
             objlista.cantidad = $(item).find('td:eq(4) input').val();
+            objlista.tamano =0;
+            consumible.lista.push(objlista);
+        });
+        $('#tConsumible12 tbody tr').each(function (i, item) {
+            var objlista = new Object();
+            objlista.id = $(item).find('td:eq(0)')[0].textContent;
+            objlista.idProducto = $(item).find('td:eq(1)')[0].textContent;
+            objlista.cantidad = $(item).find('td:eq(4) input').val();
+            objlista.tamano =1;
             consumible.lista.push(objlista);
         });
         if (consumible.lista[0].idProducto == 'Sin Registros') {
@@ -184,12 +199,12 @@ class Consumible {
             })
             .always(function () {
                 $("#btnConsumible").removeAttr("disabled");
-                $("#p_searhProducto").focus();
+                $("#p_searhProducto8").focus();
             });
 
     };
 
-    Deleteproducto(e){
+    Deleteproducto8(e){
         // consumible.id = $(e).parents('tr').find('td:eq(0)').text();  //Class itemId = ID del objeto.
         // Mensaje de borrado:
         swal({
@@ -205,6 +220,27 @@ class Consumible {
             cancelButtonClass: 'btn btn-danger'
         }).then((result) => {
             t8.row( $(e).parents('tr') )
+                .remove()
+                .draw();
+        })
+    };
+
+    Deleteproducto12(e){
+        // consumible.id = $(e).parents('tr').find('td:eq(0)').text();  //Class itemId = ID del objeto.
+        // Mensaje de borrado:
+        swal({
+            title: 'Eliminar?',
+            text: "Esta acción es irreversible!",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Si, eliminar!',
+            cancelButtonText: 'No, cancelar!',
+            confirmButtonClass: 'btn btn-success',
+            cancelButtonClass: 'btn btn-danger'
+        }).then((result) => {
+            t12.row( $(e).parents('tr') )
                 .remove()
                 .draw();
         })
@@ -268,7 +304,7 @@ class Consumible {
                     orderable: false,
                     searchable:false,
                     mRender: function () {
-                        return '<a class="delete" style="cursor: pointer;" onclick="consumible.Deleteproducto(this)" > <i class="glyphicon glyphicon-trash"> </i></a>' 
+                        return '<a class="delete" style="cursor: pointer;" onclick="consumible.Deleteproducto8(this)" > <i class="glyphicon glyphicon-trash"> </i></a>' 
                     },
                     visible:true
                 }
@@ -331,7 +367,7 @@ class Consumible {
                     orderable: false,
                     searchable:false,
                     mRender: function () {
-                        return '<a class="delete" style="cursor: pointer;" onclick="consumible.Deleteproducto(this)" > <i class="glyphicon glyphicon-trash"> </i></a>' 
+                        return '<a class="delete" style="cursor: pointer;" onclick="consumible.Deleteproducto12(this)" > <i class="glyphicon glyphicon-trash"> </i></a>' 
                     },
                     visible:true
                 }
