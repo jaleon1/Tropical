@@ -31,6 +31,7 @@ class Consumible{
     public $idProducto=null;
     public $cantidad=0;
     public $codigo=0;
+    public $tamano=0;
 
     function __construct(){
         // identificador único
@@ -56,7 +57,7 @@ class Consumible{
 
     function ReadAll(){
         try {
-            $sql='SELECT c.id, c.idProducto, p.codigo, p.nombre, c.cantidad
+            $sql='SELECT c.id, c.idProducto, p.codigo, p.nombre, c.cantidad, c.tamano
                 FROM consumible c inner join producto p on p.id = c.idProducto';
             $data= DATA::Ejecutar($sql);
             return $data;
