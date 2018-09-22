@@ -31,6 +31,7 @@ class Consumible{
     public $idProducto=null;
     public $cantidad=0;
     public $codigo=0;
+    public $tamano=0;
 
     function __construct(){
         // identificador único
@@ -48,6 +49,7 @@ class Consumible{
                     $item->id = $itemlist['id'];
                     $item->idProducto = $itemlist['idProducto'];
                     $item->cantidad = $itemlist['cantidad'];
+                    $item->tamano = $itemlist['tamano'];
                     array_push ($this->lista, $item);
                 }
             }
@@ -56,7 +58,7 @@ class Consumible{
 
     function ReadAll(){
         try {
-            $sql='SELECT c.id, c.idProducto, p.codigo, p.nombre, c.cantidad
+            $sql='SELECT c.id, c.idProducto, p.codigo, p.nombre, c.cantidad, c.tamano
                 FROM consumible c inner join producto p on p.id = c.idProducto';
             $data= DATA::Ejecutar($sql);
             return $data;
@@ -101,9 +103,9 @@ class Consumible{
             // productos
             foreach ($this->lista as $item) {                
                 // historico consumible
-                $sql="INSERT INTO consumible (id, idProducto, cantidad)
-                    VALUES (:id, :idProducto, :cantidad)";
-                $param= array(':id'=> $item->id, ':idProducto'=> $item->idProducto, ':cantidad'=> $item->cantidad);
+                $sql="INSERT INTO consumible (id, idProducto, cantidad, tamano)
+                    VALUES (:id, :idProducto, :cantidad, :tamano)";
+                $param= array(':id'=> $item->id, ':idProducto'=> $item->idProducto, ':cantidad'=> $item->cantidad, ':tamano'=> $item->tamano);
                 $data = DATA::Ejecutar($sql,$param,false);
                 if(!$data)
                     $created= false;
