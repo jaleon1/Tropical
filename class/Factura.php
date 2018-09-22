@@ -149,7 +149,7 @@ class Factura{
                     $item->idFactura = $this->id;
                     $item->idPrecio= $itemDetalle['idPrecio'];
                     $item->numeroLinea= $itemDetalle['numeroLinea'];
-                    $item->tipoCodigo= $itemDetalle['tipoCodigo']?? 1;
+                    $item->tipoCodigo= $itemDetalle['tipoCodigo']?? '01';
                     $item->codigo= $itemDetalle['codigo'];
                     $item->cantidad= $itemDetalle['cantidad'] ?? 1;
                     $item->idUnidadMedida= $itemDetalle['idUnidadMedida'] ?? 78;
