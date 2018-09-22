@@ -173,7 +173,14 @@ function LoadPreciosTamanos() {
         }
     })
         .done(function (e) {
-            setPrecios(e);
+            if(JSON.parse(e).msg=='NOCONTRIB')
+               swal({
+                type: 'warning',
+                title: 'Contribuyente',
+                text: 'Contribuyente no registrado para Facturación Electrónica',
+                footer: '<a href="clienteFE.html">Agregar Contribuyente</a>',
+                })
+            else setPrecios(e);
         })
         .fail(function (e) {
             showError(e);
