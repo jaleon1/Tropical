@@ -13,6 +13,9 @@ if(isset($_POST["action"])){
         case "ReadAll":
             echo json_encode($insumo->ReadAll());
             break;
+        case "ReadAllInventario":
+            echo json_encode($insumo->ReadAllInventario());
+            break;
         case "Read":
             echo json_encode($insumo->Read());
             break;
@@ -81,6 +84,38 @@ class Insumo{
                 'msg' => 'Error al cargar la lista'))
             );
         }
+    }
+
+    function ReadAllInventario(){
+        try {
+            $sql='SELECT `inventarioInsumo`.`id`,
+            `inventarioInsumo`.`idOrdenCompra`,
+            (SELECT orden FROM ordenCompra WHERE id=inventarioInsumo.idOrdenCompra) AS ordenCompra,
+            `inventarioInsumo`.`idOrdenSalida`,
+            (SELECT numeroOrden FROM ordenSalida WHERE id=inventarioInsumo.idOrdenSalida) AS ordenSalida,
+            `inventarioInsumo`.`idInsumo`,
+            (SELECT codigo FROM insumo WHERE id=inventarioInsumo.idInsumo) AS insumo,
+            `inventarioInsumo`.`entrada`,
+            `inventarioInsumo`.`salida`,
+            `inventarioInsumo`.`saldo`,
+            `inventarioInsumo`.`costoAdquisicion`,
+            `inventarioInsumo`.`valorEntrada`,
+            `inventarioInsumo`.`valorSalida`,
+            `inventarioInsumo`.`valorSaldo`,
+            `inventarioInsumo`.`costoPromedio`,
+            `inventarioInsumo`.`fecha`
+                FROM  inventarioInsumo       
+                ORDER BY fecha desc';
+            $data= DATA::Ejecutar($sql);
+            return $data;
+        }     
+        catch(Exception $e) {
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar la lista'))
+            );
+        }    
     }
 
     function ReadSaldoPositivo(){

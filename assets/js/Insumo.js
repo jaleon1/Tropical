@@ -108,6 +108,27 @@ class Insumo {
             });
     }
 
+        //Getter
+        get ReadInventarioInsumo() {
+            var miAccion = this.id == null ? 'ReadAllInventario' : 'ReadbyInsumo';
+            if (miAccion == 'ReadAll' && $('#tableBody-InsumoReporte').length == 0)
+                return;
+            $.ajax({
+                type: "POST",
+                url: "class/Insumo.php",
+                data: {
+                    action: miAccion,
+                    id: this.id
+                }
+            })
+                .done(function (e) {
+                    insumo.ShowAllInventario(e);
+                })
+                .fail(function (e) {
+                    insumo.showError(e);
+                });
+        }
+
     // Methods    
     Reload(e) {
         if (this.id == null)
@@ -159,6 +180,20 @@ class Insumo {
             t.draw();
             $(document).on('click', '#dsInsumo tbody tr', document.URL.indexOf("OrdenSalida.html") != -1 ? insumo.AddInsumo : insumo.UpdateEventHandler);
             $(document).on('click', '.delete', insumo.DeleteEventHandler);
+        } else {
+            t.clear();
+            t.rows.add(JSON.parse(e));
+            t.draw();
+        }
+    };
+
+    ShowAllInventario(e) {
+        //Crea los eventos según sea el url
+        var t = $('#dsInsumoReporte').DataTable();
+        if (t.rows().count() == 0) {
+            t.clear();
+            t.rows.add(JSON.parse(e));
+            t.draw();
         } else {
             t.clear();
             t.rows.add(JSON.parse(e));
@@ -546,6 +581,181 @@ class Insumo {
                         return '<a class="delete" style="cursor: pointer;" onclick="insumo.DeleteInsumoMerma(this)" > <i class="glyphicon glyphicon-trash"> </i></a>'
                     },
                     visible: true
+                }
+            ]
+        });
+    };
+
+    setTableInventarioInsumoReporte(){
+        jQuery.extend( jQuery.fn.dataTableExt.oSort, {
+            "formatted-num-pre": function ( a ) {
+                a = (a === "-" || a === "") ? 0 : a.replace( /[^\d\-\.]/g, "" );
+                return parseFloat( a );
+            }, 
+            "formatted-num-asc": function ( a, b ) {
+                return a - b;
+            },
+            "formatted-num-desc": function ( a, b ) {
+                return b - a;
+            }
+        } );
+        
+        this.tablainsumo = $('#dsInsumoReporte').DataTable( {
+            responsive: true,
+            destroy: true,
+            order: [[2, "desc"]],
+            dom: 'Bfrtip',
+            buttons: [
+                {
+                    extend: 'excelHtml5',
+                    exportOptions: {
+                        columns: [ 1, 3, 5, 7, 8, 9, 10, 11, 12, 13, 14, 15 ]
+                    }
+                },
+                {
+                    extend: 'pdfHtml5',
+                    exportOptions: {
+                        columns: [ 1, 3, 5, 7, 8, 9, 10, 11, 12, 13, 14, 15 ]
+                    }
+                }
+                // 'copy', 'csv', 'excel', 'pdf', 'print'
+            ],
+            language: {
+                "infoEmpty": "Sin Usuarios Registrados",
+                "emptyTable": "Sin Usuarios Registrados",
+                "search": "Buscar",
+                "zeroRecords": "No hay resultados",
+                "lengthMenu": "Mostrar _MENU_ registros",
+                "paginate": {
+                    "first": "Primera",
+                    "last": "Ultima",
+                    "next": "Siguiente",
+                    "previous": "Anterior"
+                }
+            },
+            // columnDefs: [{ className: "text-right", "targets": [4, 5, 6] }],
+            columns: [
+                {
+                    title: "ID",
+                    data: "id",
+                    className: "itemId",
+                    width: "auto",
+                    searchable: false
+                },
+                {
+                    title: "FECHA",
+                    data: "fecha",
+                    width: "auto"
+                },
+                {
+                    title: "OERDEN COMPRA",
+                    data: "idOrdenCompra",
+                    visible: false
+                },
+                {
+                    title: "ORDEN COMPRA",
+                    data: "ordenCompra",
+                    width: "auto"
+                },
+                {
+                    title: "ORDEN SALIDA",
+                    data: "idOrdenSalida",
+                    visible: false
+                },
+                {
+                    title: "ORDEN SALIDA",
+                    data: "ordenSalida",
+                    width: "auto"
+                },
+                {
+                    title: "ID INSUMO",
+                    data: "idInsumo",
+                    visible: false
+                },
+                {
+                    title: "INSUMO",
+                    data: "insumo",
+                    width: "auto"
+                },
+                {
+                    title: "ENTRADA",
+                    data: "entrada",
+                    width: "auto",
+                    mRender: function ( e ) {
+                        if (e==null) 
+                            return '0'
+                        else
+                            return e}
+                },
+                {
+                    title: "SALIDA",
+                    data: "salida",
+                    width: "auto",
+                    mRender: function ( e ) {
+                        if (e==null) 
+                            return '0'
+                        else
+                            return e}
+                },
+                {
+                    title: "SALDO",
+                    data: "saldo",
+                    width: "auto"
+                },
+                {
+                    title: "COSTO ADQUISICION",
+                    data: "costoAdquisicion",
+                    width: "auto",
+                    type: 'formatted-num',
+                    mRender: function ( e ) {
+                        if (e==null) 
+                            return '¢0'
+                        else
+                            return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                },
+                {
+                    title:"VALOR ENTRADA",
+                    data:"valorEntrada",
+                    width:"auto",
+                    type: 'formatted-num',
+                    mRender: function ( e ) {
+                        if (e==null) 
+                            return '¢0'
+                        else
+                            return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                },
+                {
+                    title:"VALOR SALIDA",
+                    data:"valorSalida",
+                    width:"auto",
+                    type: 'formatted-num',
+                    mRender: function ( e ) {
+                        if (e==null) 
+                            return '¢0'
+                        else
+                        return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                },
+                {
+                    title:"VALOR SALDO",
+                    data:"valorSaldo",
+                    width:"auto",
+                    type: 'formatted-num',
+                    mRender: function ( e ) {
+                        if (e==null) 
+                            return '¢0'
+                        else
+                        return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                },
+                {
+                    title:"COSTO PROMEDIO",
+                    data:"costoPromedio",
+                    width:"auto",
+                    type: 'formatted-num',
+                    mRender: function ( e ) {
+                        if (e==null) 
+                            return '¢0'
+                        else
+                        return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                 }
             ]
         });

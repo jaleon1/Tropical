@@ -168,7 +168,8 @@ class OrdenSalida{
                 
                 //save array obj
                 if(InsumosxOrdenSalida::Create($this->listaInsumo))
-                    return $maxid[0][0];
+                    if($this->CreateInventarioInsumo($this->listaInsumo))
+                        return $maxid[0][0];
                 else throw new Exception('Error al guardar los insumos.', 03);
             }
             else throw new Exception('Error al guardar.', 02);
@@ -180,6 +181,42 @@ class OrdenSalida{
                 'code' => $e->getCode() ,
                 'msg' => $e->getMessage()))
             );
+        }
+    }
+
+    function CreateInventarioInsumo($obj){
+        try {
+            $created = true;
+            require_once("Insumo.php");
+            foreach ($obj as $item) {          
+                
+                $sql="SELECT saldoCantidad, saldoCosto, costoPromedio FROM insumo WHERE id=:idInsumo;";
+                $param= array(':idInsumo'=>$item->idInsumo);
+                $valor=DATA::Ejecutar($sql,$param);              
+                
+                $sql="SELECT fecha FROM ordenSalida WHERE id=:idOrdenSalida;";
+                $param= array(':idOrdenSalida'=>$item->idOrdenSalida);
+                $fecha=DATA::Ejecutar($sql,$param);
+
+                $costoAdquisicion = $item->cantidad*$item->costoPromedio;
+                $sql="INSERT INTO inventarioInsumo   (id, idOrdenSalida, idInsumo, salida, saldo, costoAdquisicion, valorSalida, valorSaldo, costoPromedio, fecha)
+                    VALUES (uuid(), :idOrdenSalida, :idInsumo, :salida, :saldo, :costoAdquisicion, :valorSalida, :valorSaldo, :costoPromedio, :fecha)";
+                $param= array(':idOrdenSalida'=>$item->idOrdenSalida, 
+                    ':idInsumo'=>$item->idInsumo,
+                    ':salida'=>$item->cantidad,
+                    ':saldo'=>$valor[0]['saldoCantidad'], 
+                    ':costoAdquisicion'=>$item->costoPromedio,
+                    ':valorSalida'=>(string)$costoAdquisicion,
+                    ':valorSaldo'=>$valor[0]['saldoCosto'],
+                    ':costoPromedio'=>$valor[0]['costoPromedio'],
+                    ':fecha'=>$fecha[0]['fecha']
+                );
+                DATA::Ejecutar($sql,$param,false);                
+            }
+            return $created;
+        }     
+        catch(Exception $e) {
+            return false;
         }
     }
 
