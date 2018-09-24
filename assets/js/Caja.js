@@ -192,7 +192,9 @@ class MovimientosCaja {
         .done(function (e) {
             movimientosCaja.montoAperturaDefault = parseFloat(JSON.parse(e).montoDefaultApertura); 
             $(".txtMontoDefaultApertura").text((movimientosCaja.montoAperturaDefault).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, "."));
+            $('.valida-caja-modal-lg').modal({backdrop: 'static', keyboard: false});
             $('.valida-caja-modal-lg').modal('show');
+            
         })
         .fail(function (e) {
             movimientosCaja.errorAbrirCaja("Error", "No se pudo cargar el monto de apertura establecido!" );
