@@ -21,22 +21,6 @@
     }
     
 class ProductoXFactura{
-   
-    public static $id=null;
-
-    function __construct(){
-        // identificador único
-        if(isset($_POST["id"])){
-            $this->id= $_POST["id"];
-        }
-        
-        
-        if(isset($_POST["obj"])){
-            $obj= json_decode($_POST["obj"],true);
-            self::$id= $obj ?? null;
-        }
-    }
-
 
     public static function Read(){
         try{
@@ -57,18 +41,18 @@ class ProductoXFactura{
         }
     }
 
-    public static function ReadAllById(){
+    public static function ReadByIdFactura($idFactura){
         try{
-            $sql="SELECT SELECT idFactura, idPrecio, numeroLinea, idTipoCodigo, codigo, cantidad, idUnidadMedida, unidadMedidaComercial, detalle, precioUnitario, montoTotal, montoDescuento, naturalezaDescuento, subTotal, codigoImpuesto, tarifaImpuesto, montoImpuesto, idExoneracionImpuesto, montoTotalLinea
+            $sql="SELECT id, idFactura, idPrecio, numeroLinea, idTipoCodigo, codigo, cantidad, idUnidadMedida, unidadMedidaComercial, detalle, precioUnitario, montoTotal, montoDescuento, naturalezaDescuento, subTotal, codigoImpuesto, tarifaImpuesto, montoImpuesto, idExoneracionImpuesto, montoTotalLinea
                 from productosXFactura
-                where id = :id";
-            $param= array(':id'=>self::$id);
+                where idFactura = :id";
+            $param= array(':id'=>$idFactura);
             $data = DATA::Ejecutar($sql,$param);            
             $lista = [];
             foreach ($data as $key => $value){
                 $producto = new ProductoXFactura();
-                $producto->detalle = $value['detalle']; //id del producto.  
-                $producto->idFactura = $value['idFactura'];
+                $producto->id = $value['id'];
+                $producto->idFactura = $value['idFactura'];                
                 $producto->idPrecio = $value['idPrecio'];
                 $producto->numeroLinea = $value['numeroLinea'];
                 $producto->idTipoCodigo = $value['idTipoCodigo'];
@@ -97,23 +81,6 @@ class ProductoXFactura{
         }
     }
 
-    function ReadbyID(){
-        try {
-            $sql='SELECT detalle, cantidad, montoTotalLinea from productosXFactura
-            where idFactura =:id';
-            $param= array(':id'=>self::$id);
-            $data= DATA::Ejecutar($sql,$param);   
-            return $data;
-        }     
-        catch(Exception $e) {
-            header('HTTP/1.0 400 Bad error');
-            die(json_encode(array(
-                'code' => $e->getCode() ,
-                'msg' => 'Error al cargar el factura'))
-            );
-        }
-    }
-
     public static function Create($obj){
         try {
             $created = true;
@@ -130,7 +97,7 @@ class ProductoXFactura{
                     ':idTipoCodigo'=> $item->idTipoCodigo,
                     ':codigo'=> $item->codigo,                    
                     ':cantidad'=>$item->cantidad,
-                    ':idUnidadMedida'=>$idUnidadMedida,
+                    ':idUnidadMedida'=>$item->idUnidadMedida,
                     ':detalle'=>$item->detalle,
                     ':precioUnitario'=>$item->precioUnitario,
                     ':montoTotal'=>$item->montoTotal,
@@ -141,7 +108,7 @@ class ProductoXFactura{
                     ':tarifaImpuesto'=>$item->tarifaImpuesto,
                     ':montoImpuesto'=>$item->montoImpuesto,
                     ':idExoneracionImpuesto'=>$item->idExoneracionImpuesto,
-                    ':montoTotalLinea'=>$montoTotalLinea);
+                    ':montoTotalLinea'=>$item->montoTotalLinea);
                 $data = DATA::Ejecutar($sql, $param, false);
             }
             return $created;

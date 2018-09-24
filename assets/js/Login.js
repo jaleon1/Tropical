@@ -44,7 +44,8 @@ $(document).ready(function () {
             data: {
                 action: 'setBodega',               
                 idBodega: data.idBodega,
-                nombre: data.nombre
+                nombre: data.nombre,
+                local: data.local
             }        
         })
         .done(function( e ) {       
@@ -150,9 +151,8 @@ function ShowAll(data) {
         searching: false,
         bPaginate: false,
         bLengthChange: false,
-        distroy: true,
         info:false,
-        data : data.bodegas,              
+        data : data.bodegas,             
         "language": {
             "infoEmpty": "Sin Productos Ingresados",
             "emptyTable": "Sin Productos Ingresados",
@@ -168,14 +168,15 @@ function ShowAll(data) {
         },  
         columns : [
             { "data" : "idBodega" },
-            { "data" : "nombre" }
+            { "data" : "nombre", title: 'Agencia' },
+            { "data" : "local", title: 'Local' }
         ],
         columnDefs: [
             {//id
-            targets: 0,
-            visible: false,
-            searchable: false,
-            className: "itemId"
+                targets: 0,
+                visible: false,
+                searchable: false,
+                className: "itemId"
             }
         ]
     });

@@ -446,25 +446,6 @@ function calcTotal() {
 
 };
 
-// function CheckPriceItems(idTamano){
-
-//     var prdVenta = new Object();
-//     prdVenta.idTamano = idTamano;
-//     $.ajax({
-//         type: "POST",
-//         url: "class/ProductoXFactura.php",
-//         data: {
-//             action: "CheckPriceItems",
-//             obj: JSON.stringify(prdVenta)
-//         }
-//     })
-//     .done(function(e){
-//         precioXTamano = precioXTamano + parseFloat(JSON.parse(e)["0"].precioVenta);
-//         $("#total").html("¢" + precioXTamano);
-//     })
-
-// }
-
 function btnFacturar() {
     if (t.row().count() > 0) {
         $('#btnFacturar').removeAttr('disabled');
@@ -850,10 +831,7 @@ function alertFact() {
 
 function ticketPrint(e) {
     var data = JSON.parse(e);
-
-/*****
-
-
+    /**
     localStorage.setItem("lsFactura",data.consecutivo);
     localStorage.setItem("lsFecha",data.fechaCreacion);
     localStorage.setItem("lsBodega",data.bodega);
@@ -882,7 +860,7 @@ function ticketPrint(e) {
     // location.href ="/Tropical/TicketFacturacion.html";
     location.href = "/TicketFacturacion.html";
 
-    ***/
+   
    
     /*******************************************/
     //*************** ENVIO FE *****************/
