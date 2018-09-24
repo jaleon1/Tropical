@@ -8,6 +8,7 @@ if(isset($_POST["action"])){
     require_once('Evento.php');
     require_once('Usuario.php');
     require_once("Producto.php");
+    require_once("InventarioProducto.php");
     // Session
     if (!isset($_SESSION))
         session_start();
@@ -72,13 +73,12 @@ class ElaborarProducto{
                 $param=array(':id'=>$id,':idOrdenSalida'=>$this->numeroOrden,':idProducto'=>$item->id,':cantidad'=>$item->cantidad,':costo'=>$costopromedio);
                 $data = DATA::Ejecutar($sql,$param,false);
             }
-            
+            //
             $sql="UPDATE ordenSalida 
                 SET idEstado=1, fechaLiquida=:fechaLiquida
                 WHERE numeroOrden=:numeroOrden";
             $param= array(':numeroOrden'=>$this->numeroOrden,':fechaLiquida'=>$this->fechaLiquida);
             $data = DATA::Ejecutar($sql,$param,false);
-
             //averiguar cuantos productos de venta llevo para dividir el costo.
             $cantidadproductos = 0;
             foreach ($this->listaProducto as $item) 
@@ -92,6 +92,8 @@ class ElaborarProducto{
                 $totalproducto = $costounitario * $item->cantidad;
                 // Actualiza los saldos y calcula promedio
                 Producto::UpdateSaldoProducto($item->id, $item->cantidad, $totalproducto);
+                // entrada a inventario.
+                InventarioProducto::entrada($item);
             }
             return $created;
         }     
