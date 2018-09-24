@@ -102,28 +102,28 @@ class MovimientosCaja {
                     title: "Monto Apertura",
                     data: "montoApertura",
                     mRender: function ( e ) {
-                        return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+                        return '¢'+ parseFloat(Number(e)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ".")
                     }
                 },
                 {
                     title: "Monto Cierre",
                     data: "montoCierre",
                     mRender: function ( e ) {
-                        return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+                        return '¢'+ parseFloat(Number(e)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ".")
                     }
                 },
                 {
                     title: "Total Ventas Efectivo",
                     data: "totalVentasEfectivo",
                     mRender: function ( e ) {
-                        return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+                        return '¢'+ parseFloat(Number(e)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ".")
                     }
                 },
                 {
                     title: "Total Ventas Tarjeta",
                     data: "totalVentasTarjeta",
                     mRender: function ( e ) {
-                        return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+                        return '¢'+ parseFloat(Number(e)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ".")
                     }
                 },
                 {
@@ -200,7 +200,7 @@ class MovimientosCaja {
 
 
         //Desabilita el boton del modal de abrir caja hasta que el monto contalizado en la caja sea igual o superior
-        $("#abrirCaja").attr("disabled", "disabled");
+        /*$("#abrirCaja").attr("disabled", "disabled");
         $("#saldoContabilizado").on("change paste keyup", function() {
             
             $("#lblDescuadre").text( parseFloat($("#saldoContabilizado").val()) - movimientosCaja.montoAperturaDefault);
@@ -210,7 +210,7 @@ class MovimientosCaja {
             }else{
                 $("#abrirCaja").attr("disabled", "disabled");
             }
-        });
+        });*/
     
         $("#abrirCaja").click(function(){
             movimientosCaja.montoApertura = $("#saldoContabilizado").val();
@@ -243,7 +243,9 @@ class MovimientosCaja {
     };
 
     loadModalCierreCaja(e){
+        
         var data = JSON.parse(e);  
+        
         if(Number(data.montoAperturaDefault[0].montoDefaultApertura) == 0)
             data.montoAperturaDefault[0].montoDefaultApertura = 0;
 
@@ -261,9 +263,12 @@ class MovimientosCaja {
         $('#lblTotalVentas').text('¢'+ (parseFloat(data.totalVentasEfectivo[0].efectivo) + parseFloat(data.totalVentasTarjeta[0].tarjeta)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, "."));
         var totalCierre = (parseFloat(data.montoAperturaDefault[0].montoDefaultApertura) + parseFloat(data.totalVentasEfectivo[0].efectivo) + parseFloat(data.totalVentasTarjeta[0].tarjeta)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
         $('#cierreCajaTotal').text('¢'+ totalCierre.toString());
+
+        
+        $('.cierra-caja-modal-lg').modal('show');
        
         //Desabilita el boton del modal de cerrar caja hasta que el monto contalizado en la caja sea igual o superior al monto de apertura
-        $("#cierraCaja").attr("disabled", "disabled");
+        /*$("#cierraCaja").attr("disabled", "disabled");
         $("#saldoCaja").on("change paste keyup", function() {
             
             $("#lblDescuadre").text( parseFloat($("#saldoCaja").val()) - data.montoAperturaDefault);
@@ -273,10 +278,9 @@ class MovimientosCaja {
             }else{
                 $("#cierraCaja").attr("disabled", "disabled");
             }
-        });
+        });*/
 
 
-        $('.cierra-caja-modal-lg').modal('show');
 
         
         $("#cierraCaja").click(function(){
@@ -309,11 +313,6 @@ $(document).ready(function () {
     movimientosCaja.CargaMovimientosCaja();
 });
 
-
-$("#modalCerrarCaja").click(function () {    
-    alert("entra");
-    $('.cierra-caja-modal-lg').modal('hide');
-});
 
 $("#cerrarCaja").click(function () {
     $.ajax({

@@ -275,7 +275,7 @@
 </body>
 
 <!-- Large modal Validar Apertura de Sesion Caja -->
-<div class="modal fade valida-caja-modal-lg" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" data-keyboard="false" data-backdrop="static">
+<div class="modal fade valida-caja-modal-lg" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
@@ -288,47 +288,23 @@
                             <h2 style="font-size: 30px" class="modal-title call_Bodega"></h2>
                         </center>
                     </div>
-                    <div class="col-md-3">
-                        <h4 class="modal-title">Saldo Caja: ¢ <spam class="txtMontoDefaultApertura"></spam></h4>
-                    </div>
                 </div>
             </div>
             <div class="modal-body">
                 <div class="row">
-
-                    <form class="form-inline">
-                        <div class="col-md-3 col-md-offset-6">
-                            <label>Saldo contabilizado:</label>
-                        </div>
-                        <div class="col-md-3">
-                            <input type="number" class="form-control" id="saldoContabilizado" autocomplete="off">
-                        </div>
-
-                    </form>
-                </div>
-                <br>
-                <div class="row">
-                    <form class="form-inline">
-                        <div class="col-md-3 col-md-offset-6">
-                            <label>Descuadre:</label>
-                        </div>
-                        <div class="col-md-3">
-                            <label id="lblDescuadre" readonly> ¢0.00</label>
-                        </div>
-                    </form>
-                </div>
-                <div class="row">
-                    <div class="form-group">
-                        <label for="comment">Observaciones:</label>
-                        <textarea style="resize:none;" class="form-control" rows="5" id="comment"></textarea>
+                    <div class="col-md-5 col-md-offset-5">
+                        <h4 class="modal-title">Saldo Caja: ¢
+                            <spam class="txtMontoDefaultApertura"></spam>
+                        </h4>
                     </div>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <a href="Dashboard.html">
-                    <button id="openDash" type="button" class="btn btn-info">Regresar al Dashboard</button>
-                </a>
-                <button id="abrirCaja" type="button" class="btn btn-success">Abrir Caja</button>
+                <br>
+                <div class="modal-footer">
+                    <a href="Dashboard.html">
+                        <button id="openDash" type="button" class="btn btn-info">Regresar al Dashboard</button>
+                    </a>
+                    <button id="abrirCaja" type="button" class="btn btn-success">Abrir Caja</button>
+                </div>
             </div>
         </div>
     </div>
@@ -336,7 +312,7 @@
 
 
 
-<!-- Large modal Validar Cierre de Sesion Caja -->
+    <!-- Large modal Validar Cierre de Sesion Caja -->
 <div class="modal fade cierra-caja-modal-lg" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -356,7 +332,7 @@
                 </div>
             </div>
             <div class="modal-body">
-                
+
                 <br>
                 <div class="row">
                 </div>
@@ -389,8 +365,8 @@
                             <label id="cierreTarjeta" readonly> ¢0.00</label>
                         </div>
                     </form>
-                </div>     
-                <br>           
+                </div>
+                <br>
                 <div class="row">
                 </div>
                 <div class="row">
@@ -402,7 +378,7 @@
                             <label id="lblTotalVentas" readonly> ¢0.00</label>
                         </div>
                     </form>
-                </div> 
+                </div>
                 <br>
                 <div class="row">
                 </div>
@@ -415,23 +391,12 @@
                             <label id="cierreCajaTotal" readonly> ¢0.00</label>
                         </div>
                     </form>
-                </div> 
+                </div>
                 <br>
                 <div class="row">
                 </div>
-                <div class="row">
-                    <form class="form-inline">
-                        <div class="col-md-3 col-md-offset-4">
-                            <label>Saldo contabilizado:</label>
-                        </div>
-                        <div class="col-md-3">
-                            <input type="number" class="form-control" id="saldoCaja">
-                        </div>
-                    </form>
-                </div>    
             </div>
             <div class="modal-footer">
-                <button id="modalCerrarCaja" type="button" class="btn btn-warning">Cancelar Cierre</button>
                 <button id="cierraCaja" type="button" class="btn btn-success">Cerrar Caja</button>
             </div>
         </div>
@@ -456,11 +421,11 @@
     });
 
     //Abre en pantalla completa el modulo de facturacion al precionar el body
-    var elem = document.getElementById("body");
-    elem.onclick = function () {
-        req = elem.requestFullScreen || elem.webkitRequestFullScreen || elem.mozRequestFullScreen;
-        req.call(elem);
-    }
+    // var elem = document.getElementById("body");
+    // elem.onclick = function () {
+    //     req = elem.requestFullScreen || elem.webkitRequestFullScreen || elem.mozRequestFullScreen;
+    //     req.call(elem);
+    // }
     //Sale de pantalla completa del modulo de facturacion
     $("#exitFullScreem").click(function exitFullScreen(elem) {
         var requestMethod = elem.exitFullscreen ||
