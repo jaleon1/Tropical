@@ -19,10 +19,10 @@ class InventarioProducto{
     public static function entrada($item){
         try {
             $created = true;
-            $sql="SELECT saldoCantidad, saldoCosto, costoPromedio 
-                FROM producto WHERE id=:idProducto;";
-            $param = array(':idProducto'=>$item->id);
-            $data = DATA::Ejecutar($sql,$param);
+            // $sql="SELECT saldoCantidad, saldoCosto, costoPromedio 
+            //     FROM producto WHERE id=:idProducto;";
+            // $param = array(':idProducto'=>$item->id);
+            // $data = DATA::Ejecutar($sql,$param);
             //
             // $sql="SELECT fecha FROM ordenCompra WHERE id=:idOrdenEntrada;";
             // $param = array(':idOrdenEntrada'=>$item->idOrdenEntrada);

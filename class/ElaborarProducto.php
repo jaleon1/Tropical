@@ -93,6 +93,7 @@ class ElaborarProducto{
                 // Actualiza los saldos y calcula promedio
                 Producto::UpdateSaldoProducto($item->id, $item->cantidad, $totalproducto);
                 // entrada a inventario.
+                $item->idOrdenEntrada = $this->numeroOrden;
                 InventarioProducto::entrada($item);
             }
             return $created;
