@@ -262,50 +262,75 @@ function crearOrden(facUUID){
 
 
 function facturar (){
-    var miAccion = 'Create';   
+    var miAccion = 'Create';       
     facturaCli.totalVenta = 0;
+    facturaCli.totalDescuentos = 0;
+    facturaCli.totalVentaneta = 0;    
+    facturaCli.totalImpuesto = 0;
+    facturaCli.totalComprobante=0;
+    // detalle.
     facturaCli.detalleFactura = [];
     facturaCli.detalleOrden = [];
-
     $(t.rows().data()).each(function (i, item) {
-
         var precioUnitario;
         var idPrecio;
         switch (item[0]) {
             case (0):
-                precioUnitario = parseFloat(precioMediano.precio);
+                precioUnitario = parseFloat(precioMediano.precio/1.13); // resta el iv.
                 idPrecio = precioMediano.id;
-                // facturaCli.totalVenta = facturaCli.totalVenta + parseFloat(precioMediano);
                 break;
             case (1):
-                precioUnitario = parseFloat(precioGrande.precio);
+                precioUnitario = parseFloat(precioGrande.precio/1.13); // resta el iv.
                 idPrecio = precioGrande.id;
-                // facturaCli.totalVenta = facturaCli.totalVenta + parseFloat(precioGrande);
                 break;
-        }; 
-
-        facturaCli.totalVenta = facturaCli.totalVenta + precioUnitario;
-
+        };
         var objetoDetalleFactura = new Object();
-        objetoDetalleFactura.numeroLinea = i+1;
-        objetoDetalleFactura.precioUnitario = precioUnitario;
-        objetoDetalleFactura.detalle = `${item[1]}, ${item[3]}, ${item[5]}, ${item[7]}`;
         objetoDetalleFactura.idPrecio = idPrecio;
+        objetoDetalleFactura.numeroLinea = i+1;
+        objetoDetalleFactura.idTipoCodigo = 1; // 1 = codigo de vendedor
+        objetoDetalleFactura.codigo = item[1];
+        objetoDetalleFactura.cantidad = 1;
+        objetoDetalleFactura.idUnidadMedida = 78; // 78 =  unidades.
+        objetoDetalleFactura.detalle = `Venta de producto ${item[1]}, ${item[3]}, ${item[5]}, ${item[7]}`;
+        objetoDetalleFactura.precioUnitario = precioUnitario;
+        objetoDetalleFactura.montoTotal =  objetoDetalleFactura.precioUnitario *  objetoDetalleFactura.cantidad;
+        objetoDetalleFactura.montoDescuento = 0;
+        objetoDetalleFactura.naturalezaDescuento = 'No aplican descuentos';
+        objetoDetalleFactura.subTotal = objetoDetalleFactura.montoTotal - objetoDetalleFactura.montoDescuento;        
+        // exoneracion
+        //objetoDetalleFactura.idExoneracionImpuesto = null;
+        // iv
+        objetoDetalleFactura.codigoImpuesto = 1; // 1 = Impuesto General sobre las Ventas.
+        objetoDetalleFactura.tarifaImpuesto = 13;
+        objetoDetalleFactura.montoImpuesto = objetoDetalleFactura.subTotal * (objetoDetalleFactura.tarifaImpuesto/100); // debe tomar el impuesto como parametro de un tabla.
+        objetoDetalleFactura.montoTotalLinea = objetoDetalleFactura.subTotal + objetoDetalleFactura.montoImpuesto;
         facturaCli.detalleFactura.push(objetoDetalleFactura);
-
-
-        var objetoDetalleOrden = new Object();
-    
+        // actualiza totales de factura.
+        facturaCli.totalVenta = facturaCli.totalVenta + objetoDetalleFactura.montoTotal;
+        facturaCli.totalDescuentos = facturaCli.totalDescuentos + objetoDetalleFactura.montoDescuento;
+        facturaCli.totalImpuesto =  facturaCli.totalImpuesto + objetoDetalleFactura.montoImpuesto;
+        //
+        var objetoDetalleOrden = new Object();    
         objetoDetalleOrden.idTamano = item[0];
         objetoDetalleOrden.idSabor1 = item[2];
         objetoDetalleOrden.idSabor2 = item[4];
         objetoDetalleOrden.idTopping = item[6];
-
         facturaCli.detalleOrden.push(objetoDetalleOrden);
+    });
+    // totales de factura.
+    // exonera y grava de mercancias y servicios
+    facturaCli.totalServGravados = 0;
+    facturaCli.totalServExentos = 0;
+    facturaCli.totalMercanciasGravadas = facturaCli.totalVenta;
+    facturaCli.totalMercanciasExentas = 0;
+    facturaCli.totalGravado = facturaCli.totalServGravados + facturaCli.totalMercanciasGravadas;
+    facturaCli.totalExento = facturaCli.totalServExentos  + facturaCli.totalMercanciasExentas;
+    facturaCli.totalVenta = facturaCli.totalGravado + facturaCli.totalExento;
+    // total venta neta.
+    facturaCli.totalVentaneta =  facturaCli.totalVenta - facturaCli.totalDescuentos;
+    // total comprobante.
+    facturaCli.totalComprobante = facturaCli.totalVentaneta + facturaCli.totalImpuesto;
 
-    }); 
-
-    facturaCli.totalComprobante = facturaCli.totalVenta;
 
     $.ajax({
         type: "POST",
@@ -317,6 +342,7 @@ function facturar (){
     })
     .done(function(e){
         ticketPrint(e);
+
     })
     .fail(function (e) {
         swal({

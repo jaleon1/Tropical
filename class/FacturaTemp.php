@@ -4,7 +4,6 @@ class Factura{
     public $plazoCredito=null; //
     public $idMedioPago; //efectivo, tarjeta, cheque ...  
     public $codigoReferencia= null; // info. de documentos de rererencia. opt
-    public $ResumenFactura= null; // info. resumen factura. opt
     public $codigoMoneda;
     public $tipoCambio;
     public $totalServGravados;
@@ -39,8 +38,6 @@ class Factura{
             $this->idEstadoComprobante= $data[0]['idestadocomprobante'];
             $this->plazoCredito= $data[0]['plazoCredito'];
             $this->idMedioPago= $data[0]['idMedioPago'];
-            // resumen factura
-            $this->ResumenFactura= $data[0]['ResumenFactura'];
             // $this->idcodigoMoneda= $data[0]['idcodigoMoneda'];
             // $this->tipoCambio= $data[0]['tipoCambio'];
             // ...

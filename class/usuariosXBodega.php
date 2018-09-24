@@ -10,7 +10,7 @@ class usuariosXBodega{
     //
     public static function Read($idUsuario){
         try{
-            $sql='SELECT ub.idBodega, b.nombre, b.descripcion, b.ubicacion
+            $sql='SELECT ub.idBodega, b.nombre, b.descripcion, b.ubicacion, b.local
                 FROM usuariosXBodega ub INNER JOIN bodega b on b.id=ub.idBodega
                 where ub.idUsuario=:idUsuario';
             $param= array(':idUsuario'=>$idUsuario);
@@ -21,7 +21,8 @@ class usuariosXBodega{
                 $bodega->idBodega = $value['idBodega'];
                 $bodega->nombre = $value['nombre'];
                 $bodega->descripcion = $value['descripcion'];
-                $bodega->ubicacion = $value['ubicacion'];        
+                $bodega->ubicacion = $value['ubicacion'];
+                $bodega->local = $value['local'];
                 array_push ($lista, $bodega);
             }
             return $lista;

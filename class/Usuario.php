@@ -215,6 +215,7 @@ class Usuario{
                         if(count($this->bodegas)==1){
                             $this->idBodega= $this->bodegas[0]->idBodega;
                             $this->bodega= $this->bodegas[0]->nombre;
+                            $this->local= $this->bodegas[0]->local;
                         }
                     }
                     else { // password invalido
@@ -474,6 +475,7 @@ class Usuario{
     function setBodega(){
         $_SESSION["userSession"]->idBodega= $_POST['idBodega'];
         $_SESSION["userSession"]->bodega= $_POST['nombre'];
+        $_SESSION["userSession"]->local= $_POST['local'];
     }
 
 }
