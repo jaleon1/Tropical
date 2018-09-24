@@ -421,11 +421,11 @@
     });
 
     //Abre en pantalla completa el modulo de facturacion al precionar el body
-    // var elem = document.getElementById("body");
-    // elem.onclick = function () {
-    //     req = elem.requestFullScreen || elem.webkitRequestFullScreen || elem.mozRequestFullScreen;
-    //     req.call(elem);
-    // }
+    var elem = document.getElementById("body");
+    elem.onclick = function () {
+        req = elem.requestFullScreen || elem.webkitRequestFullScreen || elem.mozRequestFullScreen;
+        req.call(elem);
+    }
     //Sale de pantalla completa del modulo de facturacion
     $("#exitFullScreem").click(function exitFullScreen(elem) {
         var requestMethod = elem.exitFullscreen ||
