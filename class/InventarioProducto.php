@@ -28,7 +28,7 @@ class InventarioProducto{
             // $param = array(':idOrdenEntrada'=>$item->idOrdenEntrada);
             // $fecha = DATA::Ejecutar($sql,$param);
             //                
-            $sql="INSERT INTO inventarioProducto   (id, idOrdenEntrada, idProducto, entrada, saldo, costoAdquisicion, valorEntrada, valorSaldo, costoPromedio)
+            $sql="INSERT INTO inventarioProducto  (id, idOrdenEntrada, idProducto, entrada, saldo, costoAdquisicion, valorEntrada, valorSaldo, costoPromedio)
                 VALUES (uuid(), :idOrdenEntrada, :idProducto, :entrada, :saldo, :costoAdquisicion, :valorEntrada, :valorSaldo, :costoPromedio);";
             $param= array(':idOrdenEntrada'=>$item->idOrdenEntrada, 
                 ':idProducto'=>$item->id,
@@ -44,6 +44,7 @@ class InventarioProducto{
             return $created;
         }     
         catch(Exception $e) {
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             return false;
         }
     }
