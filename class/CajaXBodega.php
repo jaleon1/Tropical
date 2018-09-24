@@ -216,6 +216,7 @@ class CajaXBodega{
             else return "cajaAbierta"; //false cuando existe el usuario con caja abierta
         }
         catch(Exception $e){
+            error_log("error: ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
