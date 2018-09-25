@@ -1,6 +1,7 @@
 <?php 
 require_once("Conexion.php");
 require_once("InventarioProducto.php");
+require_once("InventarioInsumo.php");
 
 class InsumosXOrdenCompra{
     public $idOrdenCompra;
@@ -31,12 +32,12 @@ class InsumosXOrdenCompra{
                 if($data){
                     // Actualiza los saldos y calcula promedio
                     //Insumo::UpdateSaldoPromedioEntrada($item->idInsumo, $item->cantidadBueno, $item->valorBueno);
-                    if($item->esVenta=1) { // 0= articulo
+                    if($item->esVenta==0) { // 0= articulo
                         InventarioProducto::entrada($item->idInsumo, $item->OrdenCompra, $item->cantidadBueno, $item->costoUnitario);
                     }
-                    // else { // -1= insumo.
-                        //InventarioInsumo::entrada($item->idInsumo, $item->OrdenCompra, $item->cantidadBueno, $item->costoUnitario);
-                    // }
+                    else { // -1= insumo.
+                        InventarioInsumo::entrada($item->idInsumo, $item->OrdenCompra, $item->cantidadBueno, $item->costoUnitario);
+                    }
                 }
                 else $created= false;
             }

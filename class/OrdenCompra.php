@@ -118,8 +118,7 @@ class OrdenCompra{
             {
                 //save array obj
                 if(InsumosXOrdenCompra::Create($this->lista)){
-                    if($this->CreateInventarioInsumo($this->lista))
-                        return true;
+                    return true;
                 }
                 else throw new Exception('Error al guardar los roles.', 03);
             }

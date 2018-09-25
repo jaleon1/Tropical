@@ -2,7 +2,7 @@
 require_once("Conexion.php");
 require_once("Producto.php");
 define('ERROR_ENTRADA_INVENTARIO', '-650');
-define('ERROR_SALIDA_INVENTARIO', '-650');
+define('ERROR_SALIDA_INVENTARIO', '-651');
 
 class InventarioProducto{
     //public static $idOrdenEntrada;
@@ -74,7 +74,7 @@ class InventarioProducto{
     //
     // Agrega la salida al histórico de inventario y actualiza los valores actuales del producto.
     //
-    public static function salida($outItem){
+    public static function salida($idProducto, $inOrden, $inCantidad, $inCostoUnitario){
         try {
             $sql="SELECT saldoCantidad, saldoCosto 
                 FROM producto WHERE id=:idProducto;";
