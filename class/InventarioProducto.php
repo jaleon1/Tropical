@@ -74,25 +74,26 @@ class InventarioProducto{
     //
     // Agrega la salida al histórico de inventario y actualiza los valores actuales del producto.
     //
-    public static function salida($idProducto, $inOrden, $inCantidad, $inCostoUnitario){
+    public static function salida($idProducto, $outOrden, $outCantidad){
         try {
-            $sql="SELECT saldoCantidad, saldoCosto 
+            $sql="SELECT saldoCantidad, costoPromedio 
                 FROM producto WHERE id=:idProducto;";
-            $param = array(':idProducto'=>$outItem->id);
+            $param = array(':idProducto'=>$idProducto);
             $data = DATA::Ejecutar($sql,$param);
             if($data){
-                // calculo de saldos.
-                $outItem->saldoCantidad = $data[0]['saldoCantidad'] - $outItem->cantidad;
-                $outItem->saldoCosto = $data[0]['saldoCosto'] - floatval($outItem->costoUnitario * $outItem->cantidad);
+                // calculo de saldos. 
+                self::$valorSalida = floatval($data[0]['costoPromedio'] * $outCantidad);
+                self::$saldoCantidad = $data[0]['saldoCantidad'] - $outCantidad;
+                self::$saldoCosto = floatval($data[0]['costoPromedio'] * self::$saldoCantidad);
                 // agrega ENTRADA histórico inventario.
                 $sql="INSERT INTO inventarioProducto  (id, idOrdenSalida, idProducto, salida, saldo, valorSalida, valorSaldo)
-                    VALUES (uuid(), :idOrdenSalida, :idProducto, :entrada, :saldo, :valorSalida, :valorSaldo );";
-                $param= array(':idOrdenSalida'=>$outItem->idOrden, 
-                    ':idProducto'=>$outItem->id,
-                    ':entrada'=>$outItem->cantidad,
-                    ':saldo'=>$outItem->saldoCantidad, 
-                    ':valorSalida'=>floatval($outItem->costoUnitario * $outItem->cantidad),
-                    ':valorSaldo'=>$outItem->saldoCosto
+                    VALUES (uuid(), :idOrdenSalida, :idProducto, :salida, :saldo, :valorSalida, :valorSaldo );";
+                $param= array(':idOrdenSalida'=>$outOrden, 
+                    ':idProducto'=>$idProducto,
+                    ':salida'=>$outCantidad,
+                    ':saldo'=>self::$saldoCantidad, 
+                    ':valorSalida'=> self::$valorSalida,
+                    ':valorSaldo'=>self::$saldoCosto
                 );
                 $data = DATA::Ejecutar($sql, $param, false);
                 if($data){
@@ -100,15 +101,15 @@ class InventarioProducto{
                     $sql = 'UPDATE producto
                         SET saldoCantidad=:saldoCantidad, saldoCosto=:saldoCosto
                         WHERE id=:idProducto;';
-                    $param = array(':idProducto'=>$outItem->id, ':saldoCantidad'=>$outItem->saldoCantidad, ':saldoCosto'=>$outItem->saldoCosto);
+                    $param = array(':idProducto'=>$idProducto, ':saldoCantidad'=>self::$saldoCantidad, ':saldoCosto'=>self::$saldoCosto);
                     $data = DATA::Ejecutar($sql, $param, false);
                     if($data) 
                         return true;
-                    else throw new Exception('Error al consultar actualizar los saldos de producto ('.$outItem->id.')' , ERROR_ENTRADA_INVENTARIO);        
+                    else throw new Exception('Error al consultar actualizar los saldos de producto ('.$idProducto.')' , ERROR_SALIDA_INVENTARIO);        
                 }
-                else throw new Exception('Error al consultar insertar la entrada de inventario ('.$outItem->id.')' , ERROR_ENTRADA_INVENTARIO);
+                else throw new Exception('Error al consultar insertar la entrada de inventario ('.$idProducto.')' , ERROR_SALIDA_INVENTARIO);
             } 
-            else throw new Exception('Error al consultar el codigo del producto para actualizar inventario ('.$outItem->id.')' , ERROR_ENTRADA_INVENTARIO);
+            else throw new Exception('Error al consultar el codigo del producto para actualizar inventario ('.$idProducto.')' , ERROR_SALIDA_INVENTARIO);
         }
         catch(Exception $e) {
             error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());

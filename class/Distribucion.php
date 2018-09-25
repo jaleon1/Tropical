@@ -69,7 +69,7 @@ class Distribucion{
                 foreach ($obj["lista"] as $itemlist) {
                     $item= new ProductosXDistribucion();
                     $item->idDistribucion= $this->id;
-                    $item->idProducto= $itemlist['idProducto'];
+                    $item->idProducto= $itemlist['idProducto'];                    
                     $item->cantidad= $itemlist['cantidad'];
                     $item->valor= $itemlist['valor'];
                     array_push ($this->lista, $item);

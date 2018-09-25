@@ -6,6 +6,8 @@ if(isset($_POST["action"])){
     require_once("Conexion.php");
     require_once("Insumo.php");
     require_once("Producto.php");
+    require_once("InventarioInsumo.php");
+    require_once("InventarioProducto.php");
     // Session
     if (!isset($_SESSION))
         session_start();
@@ -92,7 +94,7 @@ class Merma{
                 if(!$data)
                     $created= false;
                 // actualiza item
-                //Insumo::UpdateSaldoPromedioSalida($item->id, $item->cantidad);
+                InventarioInsumo::salida( $item->id, 'merma', $item->cantidad);
             }
             // productos
             foreach ($this->listaProducto as $item) {
@@ -104,7 +106,7 @@ class Merma{
                 if(!$data)
                     $created= false;
                 // actualiza item
-                //Producto::UpdateSaldoPromedioSalida($item->id, $item->cantidad);
+                InventarioProducto::salida($item->id, 'merma', $item->cantidad);
             }
             //
             if($created)

@@ -1,5 +1,6 @@
 <?php 
 require_once("Conexion.php");
+require_once("InventarioProducto.php");
 
 class ProductosXDistribucion{
     public $id;
@@ -50,8 +51,13 @@ class ProductosXDistribucion{
                 );
                 $data = DATA::Ejecutar($sql,$param,false);                
                 if($data){
+                    $sql="SELECT orden 
+                        FROM distribucion   
+                        WHERE id=:idDistribucion";
+                    $param= array(':idDistribucion'=>$item->idDistribucion);
+                    $data = DATA::Ejecutar($sql,$param);
                     // Actualiza los saldos y calcula promedio
-                    Producto::UpdateSaldoPromedioSalida($item->idProducto, $item->cantidad);
+                    InventarioProducto::salida($item->idProducto, $data[0]['orden'] ,$item->cantidad);
                 }
                 else $created= false;
             }
