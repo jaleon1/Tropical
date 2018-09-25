@@ -60,7 +60,9 @@ class OrdenCompra{
                 foreach ($obj["lista"] as $itemlist) {
                     $item= new InsumosXOrdenCompra();
                     $item->idOrdenCompra= $this->id;
+                    $item->ordenCompra= $this->orden;
                     $item->idInsumo= $itemlist['idInsumo'];
+                    $item->esVenta= $itemlist['esVenta'];
                     $item->costoUnitario= $itemlist['costoUnitario'];
                     $item->cantidadBueno= $itemlist['cantidadBueno'];
                     $item->cantidadMalo= $itemlist['cantidadMalo'];
@@ -110,9 +112,6 @@ class OrdenCompra{
     function Create(){
         try {
             $sql="INSERT INTO ordenCompra   (id, idProveedor, orden, idUsuario) VALUES (:id, :idProveedor, :orden, :idUsuario);";
-            //
-            //require_once('Evento.php');
-            
             $param= array(':id'=>$this->id ,':idProveedor'=>$this->idProveedor, ':orden'=>$this->orden, ':idUsuario'=>$_SESSION['userSession']->id);
             $data = DATA::Ejecutar($sql,$param,false);
             if($data)

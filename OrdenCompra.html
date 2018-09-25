@@ -27,7 +27,7 @@
     <!-- iCheck -->
     <link href="assets/css/iCheck/skins/flat/green.css" rel="stylesheet">
     <!-- Custom Theme Style -->
-    <link href="assets/css/custom.min.css" rel="stylesheet">
+    <link href="assets/css/custom.css" rel="stylesheet">
     <!-- Custom Table Scroll -->
     <link href="assets/css/facturacion.css" rel="stylesheet">
     <!-- Custom TablePRD -->
@@ -359,6 +359,7 @@
                 { "title": "id" },
                 { "title": "Codigo" },
                 { "title": "Descripcion" },
+                { "title": "Tipo", className: "itemId" },
                 { "title": "Precio/U" },
                 { "title": "CantidadBueno" },
                 { "title": "CantidadMalo" },
@@ -386,12 +387,7 @@
                     "searchable": false
                 },
                 {//precio
-                    "width": "10%", "targets": 3,
-                    "data": null,
-                    "defaultContent": '<input class="cantidad form-control" type="number">'
-                },
-                {//cant.
-                    "width": "5%", "targets": 4,
+                    "width": "10%", "targets": 4,
                     "data": null,
                     "defaultContent": '<input class="cantidad form-control" type="number">'
                 },
@@ -400,18 +396,23 @@
                     "data": null,
                     "defaultContent": '<input class="cantidad form-control" type="number">'
                 },
-                {//valor.
-                    "width": "15%", "targets": 6,
+                {//cant.
+                    "width": "5%", "targets": 6,
                     "data": null,
-                    "defaultContent": '<input readonly class="valor"><input readonly class="display">'
+                    "defaultContent": '<input class="cantidad form-control" type="number">'
                 },
                 {//valor.
                     "width": "15%", "targets": 7,
                     "data": null,
                     "defaultContent": '<input readonly class="valor"><input readonly class="display">'
                 },
-                {
+                {//valor.
                     "width": "15%", "targets": 8,
+                    "data": null,
+                    "defaultContent": '<input readonly class="valor"><input readonly class="display">'
+                },
+                {
+                    "width": "15%", "targets": 9,
                     "data": null,
                     "defaultContent": '<input readonly class="valor"><input readonly class="display">'
                 }

@@ -30,11 +30,12 @@ class OrdenCompra {
         $('#productos tr').each(function(i, item) {
             var objlista = new Object();
             objlista.idInsumo= $('#dsitems').dataTable().fnGetData(item)[0]; // id del item.
-            objlista.costoUnitario= $(this).find('td:eq(2) input').val();
-            objlista.cantidadBueno= $(this).find('td:eq(3) input').val();
-            objlista.cantidadMalo= $(this).find('td:eq(4) input').val();
-            objlista.valorBueno= $(this).find('td:eq(5) input.valor').val();
-            objlista.valorMalo= $(this).find('td:eq(6) input.valor').val();
+            objlista.esVenta= $('#dsitems').dataTable().fnGetData(item)[3]; // tipo insumo / articulo.
+            objlista.costoUnitario= $(this).find('td:eq(3) input').val();
+            objlista.cantidadBueno= $(this).find('td:eq(4) input').val();
+            objlista.cantidadMalo= $(this).find('td:eq(5) input').val();
+            objlista.valorBueno= $(this).find('td:eq(6) input.valor').val();
+            objlista.valorMalo= $(this).find('td:eq(7) input.valor').val();
             ordenCompra.lista.push(objlista);
         });
         $.ajax({
@@ -236,30 +237,31 @@ class OrdenCompra {
     //Agrega el insumo a la factura
     AgregaInsumo(){
         //insumo.UltPro = insumo.codigo;
-        var rowNode = t   //t es la tabla de insumos
-        .row.add( [insumo.id, insumo.codigo, insumo.nombre,"Precio Unitario", "0", "0", "0" , "0","0" ])
+        var rowNode = 
+        t   //t es la tabla de insumos
+        .row.add( [insumo.id, insumo.codigo, insumo.nombre, insumo.esVenta || -1, "Precio Unitario", "0", "0", "0" , "0","0" ])
         .draw() //dibuja la tabla con el nuevo insumo
         .node();     
         //
-        $('td:eq(2) input', rowNode).attr({id: ("prec_"+insumo.codigo), max:  "9999999999", min: "0", step:"1", value:"1" }).change(function(){
+        $('td:eq(3) input', rowNode).attr({id: ("prec_"+insumo.codigo), max:  "9999999999", min: "0", step:"1", value:"1" }).change(function(){
             ordenCompra.CalcImporte($(this).parents('tr').find('td:eq(0)').html());
         });
         //
-        $('td:eq(3) input', rowNode).attr({id: ("cantBueno_"+insumo.codigo), max:  "9999999999", min: "1", step:"1", value:"1"}).change(function(){
+        $('td:eq(4) input', rowNode).attr({id: ("cantBueno_"+insumo.codigo), max:  "9999999999", min: "1", step:"1", value:"1"}).change(function(){
              ordenCompra.CalcImporte($(this).parents('tr').find('td:eq(0)').html());
         });
 
-        //$('td:eq(4)', rowNode).attr({id: ("cantMalo_"+insumo.codigo)});
-        $('td:eq(4) input', rowNode).attr({id: ("cantMalo_"+insumo.codigo), max:  "9999999999", min: "0", step:"1", value:"0"}).change(function(){
+        //$('td:eq(5)', rowNode).attr({id: ("cantMalo_"+insumo.codigo)});
+        $('td:eq(5) input', rowNode).attr({id: ("cantMalo_"+insumo.codigo), max:  "9999999999", min: "0", step:"1", value:"0"}).change(function(){
              ordenCompra.CalcImporte($(this).parents('tr').find('td:eq(0)').html());
         });
         //
-        $('td:eq(5) input.valor', rowNode).attr({id: ("valorBueno_v"+insumo.codigo), style: "display:none"});
-        $('td:eq(5) input.display', rowNode).attr({id: ("valorBueno_d"+insumo.codigo)});    
-        $('td:eq(6) input.valor', rowNode).attr({id: ("valorMalo_v"+insumo.codigo), style: "display:none"});
-        $('td:eq(6) input.display', rowNode).attr({id: ("valorMalo_d"+insumo.codigo)});
-        $('td:eq(7) input.valor', rowNode).attr({id: ("subtotal_v"+insumo.codigo), style: "display:none"});
-        $('td:eq(7) input.display', rowNode).attr({id: ("subtotal_d"+insumo.codigo)});   
+        $('td:eq(6) input.valor', rowNode).attr({id: ("valorBueno_v"+insumo.codigo), style: "display:none"});
+        $('td:eq(6) input.display', rowNode).attr({id: ("valorBueno_d"+insumo.codigo)});    
+        $('td:eq(7) input.valor', rowNode).attr({id: ("valorMalo_v"+insumo.codigo), style: "display:none"});
+        $('td:eq(7) input.display', rowNode).attr({id: ("valorMalo_d"+insumo.codigo)});
+        $('td:eq(8) input.valor', rowNode).attr({id: ("subtotal_v"+insumo.codigo), style: "display:none"});
+        $('td:eq(8) input.display', rowNode).attr({id: ("subtotal_d"+insumo.codigo)});   
         //t.order([0, 'desc']).draw();
         t.columns.adjust().draw();
         ordenCompra.CalcImporte(insumo.codigo);

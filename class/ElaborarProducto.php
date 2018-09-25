@@ -63,7 +63,7 @@ class ElaborarProducto{
             foreach ($this->listaProducto as $item){
                 $cantidadProductos += $item->cantidad;
             }
-            $costopromedio=0;
+            $costopromedio=0; // Costo promedio Unitario de cada producto generado en la orden.
             //INSERTA los datos en porductosXOrdenSalida
             foreach ($this->listaProducto as $item){
                 $costopromedio=$item->costo/$cantidadProductos;
@@ -90,9 +90,7 @@ class ElaborarProducto{
             {
                 $costounitario = $item->costo/$cantidadproductos;
                 $totalproducto = $costounitario * $item->cantidad;
-                // Actualiza los saldos y calcula promedio
-                Producto::UpdateSaldoProducto($item->id, $item->cantidad, $totalproducto);
-                // entrada a inventario.
+                // entrada a inventario. Actualiza los saldos y calcula promedio
                 $item->idOrdenEntrada = $this->numeroOrden;
                 InventarioProducto::entrada($item);
             }
@@ -123,7 +121,7 @@ class ElaborarProducto{
             $sql="SELECT idInsumo,cantidad,costoPromedio FROM tropical.insumosXOrdenSalida WHERE idOrdenSalida="."'".$_POST["idOrdenSalida"]."'";
             $listaInsumos = DATA::Ejecutar($sql);
 
-            foreach ($listaInsumos as $item) 
+            foreach ($listaInsumos as $item)
             {
                 $sql="CALL spRevierteInsumo(:mid, :ncantidad, :ncosto);";
                 $param= array(':mid'=>$item["idInsumo"], ':ncantidad'=>$item["cantidad"], ':ncosto'=>$item["costoPromedio"]);
