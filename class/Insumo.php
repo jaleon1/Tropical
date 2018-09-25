@@ -318,41 +318,5 @@ class Insumo{
             );
         }
     }
-    
-    public static function UpdateSaldoPromedioSalida($id, $ncantidad){
-        try {
-            $saldoCantidad = 0;
-            $saldoCosto = 0;
-            $sql="SELECT saldoCantidad, costoPromedio 
-                FROM insumo 
-                WHERE id=:id";
-            $param= array(':id'=>$id);
-            $data = DATA::Ejecutar($sql,$param);
-            if(!$data)
-                throw new Exception('Error al calcular SALDOS Y PROMEDIOS de insumos, debe realizar el cálculo manualmente.', 667);
-            foreach ($data as $key => $value){
-                $saldoCantidad = $value['saldoCantidad'] - $ncantidad;
-                $saldoCosto = $value['costoPromedio'] * $saldoCantidad;
-            }
-            //Actualiza la cantidad de Insumos
-            $sql="UPDATE insumo 
-                SET saldoCantidad=:saldoCantidad, saldoCosto=:saldoCosto 
-                WHERE id=:id";
-            $param= array(':saldoCantidad'=>$saldoCantidad, ':saldoCosto'=>$saldoCosto, ':id'=>$id);
-            $data = DATA::Ejecutar($sql,$param,false);
-            //
-            if($data)
-                return true;
-            else throw new Exception('Error al calcular SALDOS Y PROMEDIOS de insumos, debe realizar el cálculo manualmente.', 666);
-        }     
-        catch(Exception $e) {
-            header('HTTP/1.0 400 Bad error');
-            die(json_encode(array(
-                'code' => $e->getCode() ,
-                'msg' => $e->getMessage()))
-            );
-        }
-    }
-
 }
 ?>
