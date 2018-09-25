@@ -85,7 +85,6 @@ class ElaborarProducto{
             {
                 $cantidadproductos = $cantidadproductos + $item->cantidad;
             }
-
             foreach ($this->listaProducto as $item) 
             {
                 $costounitario = $item->costo/$cantidadproductos;
