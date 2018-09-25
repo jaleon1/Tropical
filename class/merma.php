@@ -92,10 +92,10 @@ class Merma{
                 if(!$data)
                     $created= false;
                 // actualiza item
-                Insumo::UpdateSaldoPromedioSalida($item->id, $item->cantidad);
+                //Insumo::UpdateSaldoPromedioSalida($item->id, $item->cantidad);
             }
             // productos
-            foreach ($this->listaProducto as $item) {                
+            foreach ($this->listaProducto as $item) {
                 // historico merma
                 $sql="INSERT INTO mermaProducto (id, idProducto, cantidad, descripcion)
                     VALUES (uuid(), :idProducto, :cantidad, :descripcion)";
@@ -104,7 +104,7 @@ class Merma{
                 if(!$data)
                     $created= false;
                 // actualiza item
-                Producto::UpdateSaldoPromedioSalida($item->id, $item->cantidad);
+                //Producto::UpdateSaldoPromedioSalida($item->id, $item->cantidad);
             }
             //
             if($created)

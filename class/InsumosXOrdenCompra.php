@@ -31,7 +31,6 @@ class InsumosXOrdenCompra{
                 $data = DATA::Ejecutar($sql,$param,false);                
                 if($data){
                     // Actualiza los saldos y calcula promedio
-                    //Insumo::UpdateSaldoPromedioEntrada($item->idInsumo, $item->cantidadBueno, $item->valorBueno);
                     if($item->esVenta==0) { // 0= articulo
                         InventarioProducto::entrada($item->idInsumo, $item->OrdenCompra, $item->cantidadBueno, $item->costoUnitario);
                     }
