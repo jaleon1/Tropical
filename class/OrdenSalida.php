@@ -199,13 +199,12 @@ class OrdenSalida{
                 $fecha=DATA::Ejecutar($sql,$param);
 
                 $costoAdquisicion = $item->cantidad*$item->costoPromedio;
-                $sql="INSERT INTO inventarioInsumo   (id, idOrdenSalida, idInsumo, salida, saldo, costoAdquisicion, valorSalida, valorSaldo, costoPromedio, fecha)
-                    VALUES (uuid(), :idOrdenSalida, :idInsumo, :salida, :saldo, :costoAdquisicion, :valorSalida, :valorSaldo, :costoPromedio, :fecha)";
+                $sql="INSERT INTO inventarioInsumo   (id, idOrdenSalida, idInsumo, salida, saldo, valorSalida, valorSaldo, costoPromedio, fecha)
+                    VALUES (uuid(), :idOrdenSalida, :idInsumo, :salida, :saldo, :valorSalida, :valorSaldo, :costoPromedio, :fecha)";
                 $param= array(':idOrdenSalida'=>$item->idOrdenSalida, 
                     ':idInsumo'=>$item->idInsumo,
                     ':salida'=>$item->cantidad,
                     ':saldo'=>$valor[0]['saldoCantidad'], 
-                    ':costoAdquisicion'=>$item->costoPromedio,
                     ':valorSalida'=>(string)$costoAdquisicion,
                     ':valorSaldo'=>$valor[0]['saldoCosto'],
                     ':costoPromedio'=>$valor[0]['costoPromedio'],
