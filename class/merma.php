@@ -121,6 +121,40 @@ class Merma{
             );
         }
     }
+    
+    function CreateInventarioInsumo($obj){
+        try {
+            $created = true;
+            require_once("Insumo.php");
+            foreach ($obj as $item) {          
+                
+                $sql="SELECT saldoCantidad, saldoCosto, costoPromedio FROM insumo WHERE id=:idInsumo;";
+                $param= array(':idInsumo'=>$item->id);
+                $valor=DATA::Ejecutar($sql,$param);              
+                
+                $sql="select fecha from mermaInsumo order by fecha desc limit 1;";
+                $fecha=DATA::Ejecutar($sql);
+
+                $valorSalida = $item->cantidad*$valor[0]['costoPromedio'];
+
+                $sql="INSERT INTO inventarioInsumo   (id, idInsumo, salida, saldo, valorSalida, valorSaldo, costoPromedio, fecha)
+                    VALUES (uuid(), :idInsumo, :salida, :saldo, :valorSalida, :valorSaldo, :costoPromedio, :fecha)";
+                $param= array(':idInsumo'=>$item->id,
+                    ':salida'=>$item->cantidad,
+                    ':saldo'=>$valor[0]['saldoCantidad'], 
+                    ':valorSalida'=>(string)$valorSalida,
+                    ':valorSaldo'=>$valor[0]['saldoCosto'],
+                    ':costoPromedio'=>$valor[0]['costoPromedio'],
+                    ':fecha'=>$fecha[0]['fecha']
+                );
+                DATA::Ejecutar($sql,$param,false);                
+            }
+            return $created;
+        }     
+        catch(Exception $e) {
+            return false;
+        }
+    }
 }
 
 
