@@ -38,6 +38,8 @@ class Merma{
         }
         if(isset($_POST["obj"])){
             $obj= json_decode($_POST["obj"],true);
+            require_once("UUID.php");
+            $this->id= $obj["id"] ?? UUID::v4();
             // merma
             if(isset($obj["listaInsumo"] )){
                 $this->listaInsumo= [];
@@ -88,13 +90,13 @@ class Merma{
             foreach ($this->listaInsumo as $item) {
                 // historico merma
                 $sql="INSERT INTO mermaInsumo (id, idInsumo, cantidad, descripcion)
-                    VALUES (uuid(), :idInsumo, :cantidad, :descripcion)";
-                $param= array(':idInsumo'=> $item->id, ':cantidad'=> $item->cantidad, ':descripcion'=> $item->descripcion);
+                    VALUES (:id, :idInsumo, :cantidad, :descripcion)";
+                $param= array(':id'=> $this->id, ':idInsumo'=> $item->id, ':cantidad'=> $item->cantidad, ':descripcion'=> $item->descripcion);
                 $data = DATA::Ejecutar($sql,$param,false);
                 if(!$data)
                     $created= false;
                 // actualiza item
-                InventarioInsumo::salida( $item->id, 'merma', $item->cantidad);
+                InventarioInsumo::salida( $item->id, $this->id, $item->cantidad);
             }
             // productos
             foreach ($this->listaProducto as $item) {
@@ -105,8 +107,9 @@ class Merma{
                 $data = DATA::Ejecutar($sql,$param,false);
                 if(!$data)
                     $created= false;
-                // actualiza item
-                InventarioProducto::salida($item->id, 'merma', $item->cantidad);
+                // actualiza item y registra inventario.
+                
+                InventarioProducto::salida($item->id, $this->id, $item->cantidad);
             }
             //
             if($created)

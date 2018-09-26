@@ -1,8 +1,8 @@
 <?php 
 require_once("Conexion.php");
 require_once("Insumo.php");
-define('ERROR_ENTRADA_INVENTARIO', '-750');
-define('ERROR_SALIDA_INVENTARIO', '-751');
+define('ERROR_ENTRADA_INVENTARIO_INSUMO', '-750');
+define('ERROR_SALIDA_INVENTARIO_INSUMO', '-751');
 
 class InventarioInsumo{
     // public $idOrdenCompra;
@@ -54,11 +54,11 @@ class InventarioInsumo{
                     $data = DATA::Ejecutar($sql, $param, false);
                     if($data) 
                         return true;
-                    else throw new Exception('Error al consultar actualizar los saldos de insumo ('.$idInsumo.')' , ERROR_ENTRADA_INVENTARIO);        
+                    else throw new Exception('Error al consultar actualizar los saldos de insumo ('.$idInsumo.')' , ERROR_ENTRADA_INVENTARIO_INSUMO);        
                 }
-                else throw new Exception('Error al consultar insertar la entrada de inventario ('.$idInsumo.')' , ERROR_ENTRADA_INVENTARIO);
+                else throw new Exception('Error al consultar insertar la entrada de inventario ('.$idInsumo.')' , ERROR_ENTRADA_INVENTARIO_INSUMO);
             } 
-            else throw new Exception('Error al consultar el codigo del insumo para actualizar inventario ('.$idInsumo.')' , ERROR_ENTRADA_INVENTARIO);
+            else throw new Exception('Error al consultar el codigo del insumo para actualizar inventario ('.$idInsumo.')' , ERROR_ENTRADA_INVENTARIO_INSUMO);
         }
         catch(Exception $e) {
             error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
@@ -103,11 +103,11 @@ class InventarioInsumo{
                     $data = DATA::Ejecutar($sql, $param, false);
                     if($data) 
                         return true;
-                    else throw new Exception('Error al consultar actualizar los saldos de insumo ('.$idInsumo.')' , ERROR_SALIDA_INVENTARIO);        
+                    else throw new Exception('Error al consultar actualizar los saldos de insumo ('.$idInsumo.')' , ERROR_SALIDA_INVENTARIO_INSUMO);        
                 }
-                else throw new Exception('Error al consultar insertar la entrada de inventario ('.$idInsumo.')' , ERROR_SALIDA_INVENTARIO);
+                else throw new Exception('Error al consultar insertar la entrada de inventario ('.$idInsumo.')' , ERROR_SALIDA_INVENTARIO_INSUMO);
             } 
-            else throw new Exception('Error al consultar el codigo del insumo para actualizar inventario ('.$idInsumo.')' , ERROR_SALIDA_INVENTARIO);
+            else throw new Exception('Error al consultar el codigo del insumo para actualizar inventario ('.$idInsumo.')' , ERROR_SALIDA_INVENTARIO_INSUMO);
         }
         catch(Exception $e) {
             error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());

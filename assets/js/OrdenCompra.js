@@ -10,6 +10,17 @@ class OrdenCompra {
     }
 
     get Save() {
+        if($('#orden').val()==''){
+            swal({
+                type: 'warning',
+                title: 'Orden de Compra',
+                text: 'Debe digitar el número de factura de proveedor',
+                showConfirmButton: false,
+                timer: 3000
+            });
+            return;
+        }
+
         if($('#productos').length==0 ){
             swal({
                 type: 'warning',

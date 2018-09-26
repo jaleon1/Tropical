@@ -32,10 +32,10 @@ class InsumosXOrdenCompra{
                 if($data){
                     // Actualiza los saldos y calcula promedio
                     if($item->esVenta==0) { // 0= articulo
-                        InventarioProducto::entrada($item->idInsumo, $item->OrdenCompra, $item->cantidadBueno, $item->costoUnitario);
+                        InventarioProducto::entrada($item->idInsumo, $item->idOrdenCompra, $item->cantidadBueno, $item->costoUnitario);
                     }
                     else { // -1= insumo.
-                        InventarioInsumo::entrada($item->idInsumo, $item->OrdenCompra, $item->cantidadBueno, $item->costoUnitario);
+                        InventarioInsumo::entrada($item->idInsumo, $item->idOrdenCompra, $item->cantidadBueno, $item->costoUnitario);
                     }
                 }
                 else $created= false;

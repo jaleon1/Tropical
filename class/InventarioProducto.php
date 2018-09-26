@@ -1,8 +1,8 @@
 <?php 
 require_once("Conexion.php");
 require_once("Producto.php");
-define('ERROR_ENTRADA_INVENTARIO', '-650');
-define('ERROR_SALIDA_INVENTARIO', '-651');
+define('ERROR_ENTRADA_INVENTARIO_PRODUCTO', '-650');
+define('ERROR_SALIDA_INVENTARIO_PRODUCTO', '-651');
 
 class InventarioProducto{
     //public static $idOrdenEntrada;
@@ -56,11 +56,11 @@ class InventarioProducto{
                     $data = DATA::Ejecutar($sql, $param, false);
                     if($data) 
                         return true;
-                    else throw new Exception('Error al consultar actualizar los saldos de producto ('.$idProducto.')' , ERROR_ENTRADA_INVENTARIO);        
+                    else throw new Exception('Error al consultar actualizar los saldos de producto ('.$idProducto.')' , ERROR_ENTRADA_INVENTARIO_PRODUCTO);        
                 }
-                else throw new Exception('Error al consultar insertar la entrada de inventario ('.$idProducto.')' , ERROR_ENTRADA_INVENTARIO);
+                else throw new Exception('Error al consultar insertar la entrada de inventario ('.$idProducto.')' , ERROR_ENTRADA_INVENTARIO_PRODUCTO);
             } 
-            else throw new Exception('Error al consultar el codigo del producto para actualizar inventario ('.$idProducto.')' , ERROR_ENTRADA_INVENTARIO);
+            else throw new Exception('Error al consultar el codigo del producto para actualizar inventario ('.$idProducto.')' , ERROR_ENTRADA_INVENTARIO_PRODUCTO);
         }
         catch(Exception $e) {
             error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
@@ -105,11 +105,11 @@ class InventarioProducto{
                     $data = DATA::Ejecutar($sql, $param, false);
                     if($data) 
                         return true;
-                    else throw new Exception('Error al consultar actualizar los saldos de producto ('.$idProducto.')' , ERROR_SALIDA_INVENTARIO);        
+                    else throw new Exception('Error al consultar actualizar los saldos de producto ('.$idProducto.')' , ERROR_SALIDA_INVENTARIO_PRODUCTO);        
                 }
-                else throw new Exception('Error al consultar insertar la entrada de inventario ('.$idProducto.')' , ERROR_SALIDA_INVENTARIO);
+                else throw new Exception('Error al consultar insertar la entrada de inventario ('.$idProducto.')' , ERROR_SALIDA_INVENTARIO_PRODUCTO);
             } 
-            else throw new Exception('Error al consultar el codigo del producto para actualizar inventario ('.$idProducto.')' , ERROR_SALIDA_INVENTARIO);
+            else throw new Exception('Error al consultar el codigo del producto para actualizar inventario ('.$idProducto.')' , ERROR_SALIDA_INVENTARIO_PRODUCTO);
         }
         catch(Exception $e) {
             error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());

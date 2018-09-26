@@ -90,7 +90,7 @@ class ElaborarProducto{
                 $costounitario = $item->costo/$cantidadproductos;
                 $totalproducto = $costounitario * $item->cantidad;
                 // entrada a inventario. Actualiza los saldos y calcula promedio
-                InventarioProducto::entrada($item->id, $this->numeroOrden, $item->cantidad, $costounitario);
+                InventarioProducto::entrada($item->id, $id, $item->cantidad, $costounitario);
             }
             return $created;
         }     

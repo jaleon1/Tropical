@@ -50,14 +50,9 @@ class ProductosXDistribucion{
                     ':valor'=>$item->valor
                 );
                 $data = DATA::Ejecutar($sql,$param,false);                
-                if($data){
-                    $sql="SELECT orden 
-                        FROM distribucion   
-                        WHERE id=:idDistribucion";
-                    $param= array(':idDistribucion'=>$item->idDistribucion);
-                    $data = DATA::Ejecutar($sql,$param);
+                if($data){                    
                     // Actualiza los saldos y calcula promedio
-                    InventarioProducto::salida($item->idProducto, $data[0]['orden'] ,$item->cantidad);
+                    InventarioProducto::salida($item->idProducto, $item->idDistribucion ,$item->cantidad);
                 }
                 else $created= false;
             }

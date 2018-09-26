@@ -379,11 +379,7 @@ class Producto{
 
     function ReadAllInventario(){
         try {
-            $sql='SELECT id, idOrdenEntrada,
-            (SELECT orden FROM ordenCompra WHERE id=idOrdenEntrada) AS ordenCompra,
-            idOrdenSalida,
-            (SELECT numeroOrden FROM ordenSalida WHERE id=idOrdenSalida) AS ordenSalida,
-            idProducto,
+            $sql='SELECT id, idOrdenEntrada, idOrdenSalida, idProducto,
             (SELECT codigo FROM producto WHERE id=idProducto) AS producto,
             entrada,
             salida,
