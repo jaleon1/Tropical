@@ -40,6 +40,9 @@ if(isset($_POST["action"])){
             break;   
         case "ValidarEstado":
             echo json_encode($cajaXBodega->ValidarEstado());
+            break;  
+        case "ValidarCajaCierreDiario":
+            echo json_encode($cajaXBodega->ValidarCajaCierreDiario());
             break; 
     }
     
@@ -225,6 +228,102 @@ class CajaXBodega{
         }
     }
 
+
+    function ValidarCajaCierreDiario(){
+        try{
+            $sql = "SELECT ca.id, ca.idusuarioCajero, ca.estado, bo.nombre
+            FROM cajasXBodega ca
+            INNER JOIN bodega bo on ca.idBodega = bo.id 
+            WHERE idusuarioCajero = :idusuarioCajero and
+            estado = 1;";            
+            $param= array(':idusuarioCajero'=>$_SESSION["userSession"]->id);
+            $data= DATA::Ejecutar($sql, $param);
+            if($data){
+                $sql = "Select sum(totalComprobante) as efectivo
+                FROM factura
+                where idMedioPago = 1 and
+                fechaCreacion Between 	(
+                        SELECT date_format(CURRENT_TIMESTAMP(),'%Y-%c-%d 00:00:00') AS Fecha 
+                    )
+                and CURRENT_TIMESTAMP() and
+                idBodega = :idBodega;";            
+                $param= array(':idBodega'=>$_SESSION["userSession"]->idBodega);
+                $this->totalVentasEfectivo= DATA::Ejecutar($sql, $param);
+                if($this->totalVentasEfectivo){
+                    $sql = "Select sum(totalComprobante) as tarjeta
+                    FROM factura
+                    where idMedioPago = 2 and
+                    fechaCreacion Between 	(
+                        SELECT date_format(CURRENT_TIMESTAMP(),'%Y-%c-%d 00:00:00') AS Fecha 
+                            )
+                        and CURRENT_TIMESTAMP() and
+                        idBodega = :idBodega;";                 
+                    $param= array(':idBodega'=>$_SESSION["userSession"]->idBodega);
+                    $this->totalVentasTarjeta= DATA::Ejecutar($sql, $param);
+                    if($this->totalVentasTarjeta){
+                        $sql="SELECT montoDefaultApertura FROM cajaDefault;"; 
+                        $this->montoAperturaDefault = DATA::Ejecutar($sql);    
+                        
+                        return $this;
+                    }
+                }
+            }
+            else return "cajaAbierta"; //false cuando existe el usuario con caja abierta
+        }
+        catch(Exception $e){
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }
+    }
+    
+    function cerrarCajaDiario(){
+        try {
+            $sql="UPDATE tropical.cajasXBodega as ca,
+            (	SELECT ca.fechaApertura
+                FROM cajasXBodega ca
+                WHERE idusuarioCajero = :idusuarioCajero and
+                estado = 1
+            ) as apertura
+            
+             
+            SET fechaCierre= CURRENT_TIMESTAMP(), 
+                estado='0',
+                montoCierre = (SELECT montoDefaultApertura FROM cajaDefault;),
+                totalVentasEfectivo = 	( 	Select sum(totalComprobante)
+                                            FROM factura
+                                            where idMedioPago = 1 and
+                                            fechaCreacion Between apertura.fechaApertura 
+                                            and CURRENT_TIMESTAMP()
+                                        ),
+                totalVentasTarjeta = 	(
+                                            Select sum(totalComprobante)
+                                            FROM factura
+                                            where idMedioPago = 2 and
+                                            fechaCreacion Between apertura.fechaApertura 
+                                            and CURRENT_TIMESTAMP()
+                                        )
+            WHERE idusuarioCajero = :idusuarioCajero and
+            estado ='1';";
+
+            $param= array(':idusuarioCajero'=>$_SESSION["userSession"]->id, 'montoCierre'=>$this->montoCierre);
+            $data = DATA::Ejecutar($sql,$param,false);
+            if($data){
+                return true;
+            }
+        }     
+        catch(Exception $e) {
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }
+    }   
+
+    
     function cerrarCaja(){
         try {
             $sql="UPDATE tropical.cajasXBodega as ca,
