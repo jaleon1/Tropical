@@ -279,9 +279,9 @@ class CajaXBodega{
         }
     }
     
-    function cerrarCajaDiario(){
+    function cerrarCaja(){
         try {
-            $sql="UPDATE tropical.cajasXBodega as ca,
+            $sql="UPDATE cajasXBodega as ca,
             (	SELECT ca.fechaApertura
                 FROM cajasXBodega ca
                 WHERE idusuarioCajero = :idusuarioCajero and
@@ -289,9 +289,9 @@ class CajaXBodega{
             ) as apertura
             
              
-            SET fechaCierre= CURRENT_TIMESTAMP(), 
-                estado='0',
-                montoCierre = (SELECT montoDefaultApertura FROM cajaDefault;),
+            SET fechaCierre = CURRENT_TIMESTAMP(), 
+                estado = '0',
+                montoCierre = (SELECT montoDefaultApertura FROM cajaDefault),
                 totalVentasEfectivo = 	( 	Select sum(totalComprobante)
                                             FROM factura
                                             where idMedioPago = 1 and
@@ -324,49 +324,49 @@ class CajaXBodega{
     }   
 
     
-    function cerrarCaja(){
-        try {
-            $sql="UPDATE tropical.cajasXBodega as ca,
-            (	SELECT ca.fechaApertura
-                FROM cajasXBodega ca
-                WHERE idusuarioCajero = :idusuarioCajero and
-                estado = 1
-            ) as apertura
+    // function cerrarCaja(){
+    //     try {
+    //         $sql="UPDATE tropical.cajasXBodega as ca,
+    //         (	SELECT ca.fechaApertura
+    //             FROM cajasXBodega ca
+    //             WHERE idusuarioCajero = :idusuarioCajero and
+    //             estado = 1
+    //         ) as apertura
             
              
-            SET fechaCierre= CURRENT_TIMESTAMP(), 
-                estado='0',
-                montoCierre = :montoCierre,
-                totalVentasEfectivo = 	( 	Select sum(totalComprobante)
-                                            FROM factura
-                                            where idMedioPago = 1 and
-                                            fechaCreacion Between apertura.fechaApertura 
-                                            and CURRENT_TIMESTAMP()
-                                        ),
-                totalVentasTarjeta = 	(
-                                            Select sum(totalComprobante)
-                                            FROM factura
-                                            where idMedioPago = 2 and
-                                            fechaCreacion Between apertura.fechaApertura 
-                                            and CURRENT_TIMESTAMP()
-                                        )
-            WHERE idusuarioCajero = :idusuarioCajero and
-            estado ='1';";
+    //         SET fechaCierre= CURRENT_TIMESTAMP(), 
+    //             estado='0',
+    //             montoCierre = :montoCierre,
+    //             totalVentasEfectivo = 	( 	Select sum(totalComprobante)
+    //                                         FROM factura
+    //                                         where idMedioPago = 1 and
+    //                                         fechaCreacion Between apertura.fechaApertura 
+    //                                         and CURRENT_TIMESTAMP()
+    //                                     ),
+    //             totalVentasTarjeta = 	(
+    //                                         Select sum(totalComprobante)
+    //                                         FROM factura
+    //                                         where idMedioPago = 2 and
+    //                                         fechaCreacion Between apertura.fechaApertura 
+    //                                         and CURRENT_TIMESTAMP()
+    //                                     )
+    //         WHERE idusuarioCajero = :idusuarioCajero and
+    //         estado ='1';";
 
-            $param= array(':idusuarioCajero'=>$_SESSION["userSession"]->id, 'montoCierre'=>$this->montoCierre);
-            $data = DATA::Ejecutar($sql,$param,false);
-            if($data){
-                return true;
-            }
-        }     
-        catch(Exception $e) {
-            header('HTTP/1.0 400 Bad error');
-            die(json_encode(array(
-                'code' => $e->getCode() ,
-                'msg' => $e->getMessage()))
-            );
-        }
-    }   
+    //         $param= array(':idusuarioCajero'=>$_SESSION["userSession"]->id, 'montoCierre'=>$this->montoCierre);
+    //         $data = DATA::Ejecutar($sql,$param,false);
+    //         if($data){
+    //             return true;
+    //         }
+    //     }     
+    //     catch(Exception $e) {
+    //         header('HTTP/1.0 400 Bad error');
+    //         die(json_encode(array(
+    //             'code' => $e->getCode() ,
+    //             'msg' => $e->getMessage()))
+    //         );
+    //     }
+    // }   
 
     function ValidarEstado(){
         try{

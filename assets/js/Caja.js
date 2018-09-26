@@ -305,7 +305,7 @@ class MovimientosCaja {
                 type: "POST",
                 url: "class/CajaXBodega.php",
                 data: {
-                    action: "cerrarCajaDiario",
+                    action: "cerrarCaja",
                     obj: JSON.stringify(movimientosCaja)
                 }
             })
