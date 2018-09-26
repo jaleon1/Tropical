@@ -93,6 +93,8 @@ class Insumo{
             (SELECT orden FROM ordenCompra WHERE id=inventarioInsumo.idOrdenCompra) AS ordenCompra,
             `inventarioInsumo`.`idOrdenSalida`,
             (SELECT numeroOrden FROM ordenSalida WHERE id=inventarioInsumo.idOrdenSalida) AS ordenSalida,
+            `inventarioInsumo`.`idMerma`,
+            (SELECT consecutivo FROM mermaInsumo WHERE id=inventarioInsumo.idMerma) AS consecutivo,
             `inventarioInsumo`.`idInsumo`,
             (SELECT codigo FROM insumo WHERE id=inventarioInsumo.idInsumo) AS insumo,
             `inventarioInsumo`.`entrada`,

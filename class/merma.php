@@ -131,20 +131,21 @@ class Merma{
                 $param= array(':idInsumo'=>$item->id);
                 $valor=DATA::Ejecutar($sql,$param);              
                 
-                $sql="select fecha from mermaInsumo order by fecha desc limit 1;";
-                $fecha=DATA::Ejecutar($sql);
+                $sql="select id,fecha from mermaInsumo order by fecha desc limit 1;";
+                $data=DATA::Ejecutar($sql);
 
                 $valorSalida = $item->cantidad*$valor[0]['costoPromedio'];
 
-                $sql="INSERT INTO inventarioInsumo   (id, idInsumo, salida, saldo, valorSalida, valorSaldo, costoPromedio, fecha)
-                    VALUES (uuid(), :idInsumo, :salida, :saldo, :valorSalida, :valorSaldo, :costoPromedio, :fecha)";
-                $param= array(':idInsumo'=>$item->id,
+                $sql="INSERT INTO inventarioInsumo   (id, idMerma, idInsumo, salida, saldo, valorSalida, valorSaldo, costoPromedio, fecha)
+                    VALUES (uuid(), :idMerma, :idInsumo, :salida, :saldo, :valorSalida, :valorSaldo, :costoPromedio, :fecha)";
+                $param= array(':idMerma'=>$data[0]['id'],
+                    ':idInsumo'=>$item->id,
                     ':salida'=>$item->cantidad,
                     ':saldo'=>$valor[0]['saldoCantidad'], 
                     ':valorSalida'=>(string)$valorSalida,
                     ':valorSaldo'=>$valor[0]['saldoCosto'],
                     ':costoPromedio'=>$valor[0]['costoPromedio'],
-                    ':fecha'=>$fecha[0]['fecha']
+                    ':fecha'=>$data[0]['fecha']
                 );
                 DATA::Ejecutar($sql,$param,false);                
             }

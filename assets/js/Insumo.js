@@ -613,13 +613,13 @@ class Insumo {
                 {
                     extend: 'excelHtml5',
                     exportOptions: {
-                        columns: [ 1, 3, 5, 7, 8, 9, 10, 11, 12, 13, 14, 15 ]
+                        columns: [ 1, 3, 5, 7, 9, 10, 11, 12, 13, 14, 15, 16, 17 ]
                     }
                 },
                 {
                     extend: 'pdfHtml5',
                     exportOptions: {
-                        columns: [ 1, 3, 5, 7, 8, 9, 10, 11, 12, 13, 14, 15 ]
+                        columns: [ 1, 3, 5, 7, 9, 10, 11, 12, 13, 14, 15, 16, 17 ]
                     }
                 }
             ],
@@ -636,7 +636,6 @@ class Insumo {
                     "previous": "Anterior"
                 }
             },
-            // columnDefs: [{ className: "text-right", "targets": [4, 5, 6] }],
             columns: [
                 {
                     title: "ID",
@@ -668,6 +667,16 @@ class Insumo {
                 {
                     title: "ORDEN SALIDA",
                     data: "ordenSalida",
+                    width: "auto"
+                },
+                {
+                    title: "CONSECUTIVO MERMA",
+                    data: "idMerma",
+                    visible: false
+                },
+                {
+                    title: "CONSECUTIVO MERMA",
+                    data: "consecutivo",
                     width: "auto"
                 },
                 {
