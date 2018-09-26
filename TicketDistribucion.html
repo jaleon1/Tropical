@@ -67,7 +67,9 @@
                     <td style="line-height:10px;font-family:Uroob; width:90%; text-align:left;">${item.codigo}</td>
                 </tr>
           `);
-        });  
+        });
+        $('#tableBody-TicketTotal').append(`
+        <tr style="line-height:10px;"><td colspan="2"><label>-------------------------------------------------------</label></td></tr>`);
       }
       else{
         $('#tableBody-TicketDistribucion').append(`  
