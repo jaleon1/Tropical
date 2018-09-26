@@ -315,6 +315,21 @@ class Producto {
             destroy: true,
             // data: data,
             order: [[ 1, "asc" ]],
+            dom: 'Bfrtip',
+            buttons: [
+                {
+                    extend: 'excelHtml5',
+                    exportOptions: {
+                        columns: [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ]
+                    }
+                },
+                {
+                    extend: 'pdfHtml5',
+                    exportOptions: {
+                        columns: [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ]
+                    }
+                }
+            ],
             language: {
                 "infoEmpty": "Sin Usuarios Registrados",
                 "emptyTable": "Sin Usuarios Registrados",
@@ -725,48 +740,48 @@ class Producto {
         }
     };
 
-ValidatePrdMerma(e){
-    //compara si el articulo ya existe
-    // carga lista con datos.
-    if(e == "[]"){
-        swal({
-            type: 'warning',
-            title: 'Orden de Compra',
-            text: 'El item ' + producto.codigo + ' No existe.',
-            showConfirmButton: false,
-            timer: 3000
-        });
-        return;
-    }
-    if(e != "false" && e != ''){
-        var data = JSON.parse(e)[0];
-        producto.id= data.id; 
-        producto.codigo= data.codigo; 
-        producto.nombre= data.nombre; 
-        producto.descripcion= data.descripcion;
-        producto.saldoCantidad= data.saldoCantidad;
-        var repetido = false;
-        //
-        if(document.getElementById("tProducto").rows.length != 0 && producto != null){
-            $(document.getElementById("tProducto").rows).each(function(i,item){
-                if(item.childNodes[0].innerText==producto.id){
-                    repetido=true;
-                    swal({
-                        type: 'warning',
-                        title: 'Orden de Compra',
-                        text: 'El item ' + producto.codigo + ' ya se encuentra en la lista',
-                        showConfirmButton: false,
-                        timer: 3000
-                    });
-                }     
+    ValidatePrdMerma(e){
+        //compara si el articulo ya existe
+        // carga lista con datos.
+        if(e == "[]"){
+            swal({
+                type: 'warning',
+                title: 'Orden de Compra',
+                text: 'El item ' + producto.codigo + ' No existe.',
+                showConfirmButton: false,
+                timer: 3000
             });
-        }    
-        if (repetido==false){
-            producto.agregarItem();
-            $("#p_searhProducto").val('');
+            return;
         }
-    }
-};
+        if(e != "false" && e != ''){
+            var data = JSON.parse(e)[0];
+            producto.id= data.id; 
+            producto.codigo= data.codigo; 
+            producto.nombre= data.nombre; 
+            producto.descripcion= data.descripcion;
+            producto.saldoCantidad= data.saldoCantidad;
+            var repetido = false;
+            //
+            if(document.getElementById("tProducto").rows.length != 0 && producto != null){
+                $(document.getElementById("tProducto").rows).each(function(i,item){
+                    if(item.childNodes[0].innerText==producto.id){
+                        repetido=true;
+                        swal({
+                            type: 'warning',
+                            title: 'Orden de Compra',
+                            text: 'El item ' + producto.codigo + ' ya se encuentra en la lista',
+                            showConfirmButton: false,
+                            timer: 3000
+                        });
+                    }     
+                });
+            }    
+            if (repetido==false){
+                producto.agregarItem();
+                $("#p_searhProducto").val('');
+            }
+        }
+    };
 
     agregarItem(){
         if(producto.saldoCantidad<=0){

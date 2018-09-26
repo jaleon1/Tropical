@@ -375,6 +375,21 @@ class Insumo {
             responsive: true,
             destroy: true,
             order: [[1, "asc"]],
+            dom: 'Bfrtip',
+            buttons: [
+                {
+                    extend: 'excelHtml5',
+                    exportOptions: {
+                        columns: [ 1, 2, 3, 4, 5, 6]
+                    }
+                },
+                {
+                    extend: 'pdfHtml5',
+                    exportOptions: {
+                        columns: [ 1, 2, 3, 4, 5, 6]
+                    }
+                }
+            ],
             language: {
                 "infoEmpty": "Sin Usuarios Registrados",
                 "emptyTable": "Sin Usuarios Registrados",
@@ -607,7 +622,6 @@ class Insumo {
                         columns: [ 1, 3, 5, 7, 8, 9, 10, 11, 12, 13, 14, 15 ]
                     }
                 }
-                // 'copy', 'csv', 'excel', 'pdf', 'print'
             ],
             language: {
                 "infoEmpty": "Sin Usuarios Registrados",
