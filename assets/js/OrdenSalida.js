@@ -54,6 +54,7 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
             var objInsumo = new Object();
             objInsumo.id= $(this).find('td:eq(0)').html();
             objInsumo.nombreInsumo= $(this).find('td:eq(2)').html();
+            objInsumo.codigo= $(this).find('td:eq(1)').html();
             objInsumo.cantidad= $(this).find('td:eq(7) input').val();
             objInsumo.costoPromedio= $(this).find('td:eq(6)').html();
             ordenSalida.listaInsumo.push(objInsumo);

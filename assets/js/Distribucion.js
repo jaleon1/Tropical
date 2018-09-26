@@ -69,6 +69,7 @@ class Distribucion {
         $('#tDistribucion tbody tr').each(function(i, item) {
             var objlista = new Object();
             objlista.idProducto= $(item).find('td:eq(0)')[0].textContent; // id del item.
+            objlista.codigo= $(this).find('td:eq(1)').html();
             objlista.cantidad= $(item).find('td:eq(5) input').val();
             objlista.valor= $(item).find('td:eq(6)').attr('value'); // valor: precio de venta para distribucióncion bodega externa. 
             distr.lista.push(objlista);
