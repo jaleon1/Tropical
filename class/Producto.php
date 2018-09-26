@@ -379,8 +379,11 @@ class Producto{
 
     function ReadAllInventario(){
         try {
-            $sql='SELECT id, idOrdenEntrada, idOrdenSalida, idProducto,
-            (SELECT codigo FROM producto WHERE id=idProducto) AS producto,
+            $sql='SELECT i.id, 
+            
+            idOrdenEntrada, idOrdenSalida,
+            
+            p.codigo AS producto,
             entrada,
             salida,
             saldo,
@@ -388,9 +391,9 @@ class Producto{
             valorEntrada,
             valorSalida,
             valorSaldo,
-            costoPromedio,
-            fecha
-                FROM  inventarioProducto
+            i.costoPromedio,
+            i.fecha
+                FROM  inventarioProducto i inner join producto p on p.id = i.idProducto
                 ORDER BY fecha desc';
             $data= DATA::Ejecutar($sql);
             return $data;

@@ -133,40 +133,40 @@ class OrdenCompra{
         }
     }
 
-    function CreateInventarioInsumo($obj){
-        try {
-            $created = true;
-            require_once("Insumo.php");
-            foreach ($obj as $item) {          
+    // function CreateInventarioInsumo($obj){
+    //     try {
+    //         $created = true;
+    //         require_once("Insumo.php");
+    //         foreach ($obj as $item) {          
                 
-                $sql="SELECT saldoCantidad, saldoCosto, costoPromedio FROM insumo WHERE id=:idInsumo;";
-                $param= array(':idInsumo'=>$item->idInsumo);
-                $valor=DATA::Ejecutar($sql,$param); 
+    //             $sql="SELECT saldoCantidad, saldoCosto, costoPromedio FROM insumo WHERE id=:idInsumo;";
+    //             $param= array(':idInsumo'=>$item->idInsumo);
+    //             $valor=DATA::Ejecutar($sql,$param); 
                 
-                $sql="SELECT fecha FROM ordenCompra WHERE id=:idOrdenCompra;";
-                $param= array(':idOrdenCompra'=>$item->idOrdenCompra);
-                $fecha=DATA::Ejecutar($sql,$param);
+    //             $sql="SELECT fecha FROM ordenCompra WHERE id=:idOrdenCompra;";
+    //             $param= array(':idOrdenCompra'=>$item->idOrdenCompra);
+    //             $fecha=DATA::Ejecutar($sql,$param);
                 
-                $sql="INSERT INTO inventarioInsumo   (id, idOrdenCompra, idInsumo, entrada, saldo, costoAdquisicion, valorEntrada, valorSaldo, costoPromedio, fecha)
-                    VALUES (uuid(), :idOrdenCompra, :idInsumo, :entrada, :saldo, :costoAdquisicion, :valorEntrada, :valorSaldo, :costoPromedio, :fecha);";
-                $param= array(':idOrdenCompra'=>$item->idOrdenCompra, 
-                    ':idInsumo'=>$item->idInsumo,
-                    ':entrada'=>$item->cantidadBueno,
-                    ':saldo'=>$valor[0]['saldoCantidad'], 
-                    ':costoAdquisicion'=>$item->costoUnitario, 
-                    ':valorEntrada'=>$item->valorBueno,
-                    ':valorSaldo'=>$valor[0]['saldoCosto'],
-                    ':costoPromedio'=>$valor[0]['costoPromedio'],
-                    ':fecha'=>$fecha[0]['fecha']
-                );
-                DATA::Ejecutar($sql,$param,false);                
-            }
-            return $created;
-        }     
-        catch(Exception $e) {
-            return false;
-        }
-    }
+    //             $sql="INSERT INTO inventarioInsumo   (id, idOrdenCompra, idInsumo, entrada, saldo, costoAdquisicion, valorEntrada, valorSaldo, costoPromedio, fecha)
+    //                 VALUES (uuid(), :idOrdenCompra, :idInsumo, :entrada, :saldo, :costoAdquisicion, :valorEntrada, :valorSaldo, :costoPromedio, :fecha);";
+    //             $param= array(':idOrdenCompra'=>$item->idOrdenCompra, 
+    //                 ':idInsumo'=>$item->idInsumo,
+    //                 ':entrada'=>$item->cantidadBueno,
+    //                 ':saldo'=>$valor[0]['saldoCantidad'], 
+    //                 ':costoAdquisicion'=>$item->costoUnitario, 
+    //                 ':valorEntrada'=>$item->valorBueno,
+    //                 ':valorSaldo'=>$valor[0]['saldoCosto'],
+    //                 ':costoPromedio'=>$valor[0]['costoPromedio'],
+    //                 ':fecha'=>$fecha[0]['fecha']
+    //             );
+    //             DATA::Ejecutar($sql,$param,false);                
+    //         }
+    //         return $created;
+    //     }     
+    //     catch(Exception $e) {
+    //         return false;
+    //     }
+    // }
 
     function Update(){
         try {

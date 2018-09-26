@@ -592,7 +592,7 @@ class Insumo {
         this.tablainsumo = $('#dsInsumoReporte').DataTable( {
             responsive: true,
             destroy: true,
-            order: [[2, "desc"]],
+            order: [1, "desc"],
             dom: 'Bfrtip',
             buttons: [
                 {

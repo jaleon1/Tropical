@@ -32,13 +32,14 @@ class ElaborarProducto{
 
     function __construct(){
         // identificador único
-        // $this->$idOrdenSalida= $_POST["idOrdenSalida"] ??'';
+        // 
         if(isset($_POST["id"])){
             $this->id= $_POST["id"];
         }
         if(isset($_POST["obj"])){
             $obj= json_decode($_POST["obj"],true);
             $this->numeroOrden= $obj["numeroOrden"] ?? '';
+            $this->idOrdenSalida= $obj["idOrdenSalida"] ??'';
             $this->fechaLiquida= $obj["fechaLiquida"] ?? '';
             //Productos
             if (isset($obj["listaProducto"] )) {
@@ -90,11 +91,12 @@ class ElaborarProducto{
                 $costounitario = $item->costo/$cantidadproductos;
                 $totalproducto = $costounitario * $item->cantidad;
                 // entrada a inventario. Actualiza los saldos y calcula promedio
-                InventarioProducto::entrada($item->id, $id, $item->cantidad, $costounitario);
+                InventarioProducto::entrada($item->id, $this->idOrdenSalida, $item->cantidad, $costounitario);
             }
             return $created;
         }     
         catch(Exception $e) {
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             return false;
         }
     }

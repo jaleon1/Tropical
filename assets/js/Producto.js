@@ -1015,11 +1015,6 @@ class Producto {
                     data: "idOrdenSalida"
                 },
                 {
-                    title: "ID PRODUCTO",
-                    data: "idProducto",
-                    visible: false
-                },
-                {
                     title: "PRODUCTO",
                     data: "producto",
                     width: "auto"

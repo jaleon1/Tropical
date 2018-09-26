@@ -508,6 +508,7 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
             var data = JSON.parse(e);
             if(document.URL.indexOf("ElaborarProducto.html")!=-1)
             {
+                this.id=data.id;
                 $.each(data.listaInsumo, function (i, item) {
                     $('#tableBody-InsumosOrdenSalida').append(`
                         <tr id="row"${item.id}> 

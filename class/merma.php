@@ -107,8 +107,7 @@ class Merma{
                 $data = DATA::Ejecutar($sql,$param,false);
                 if(!$data)
                     $created= false;
-                // actualiza item y registra inventario.
-                
+                // actualiza item y registra inventario.                
                 InventarioProducto::salida($item->id, $this->id, $item->cantidad);
             }
             //

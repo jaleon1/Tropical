@@ -50,7 +50,8 @@ class InsumosxOrdenSalida{
                 VALUES (uuid(),:idOrdenSalida, :idInsumo, :cantidad, :costoPromedio)";
                 $param= array(':idOrdenSalida'=>$ins_orden->idOrdenSalida, ':idInsumo'=>$ins_orden->idInsumo,':cantidad'=>$ins_orden->cantidad, ':costoPromedio'=>$ins_orden->costoPromedio);
                 $data = DATA::Ejecutar($sql,$param,false);
-                
+                // inventario
+                //InventarioInsumo::salida( $ins_orden->idInsumo, $ins_orden->idOrdenSalida, $ins_orden->cantidad);
                 if(!$data and !$data_insumo)
                     $created= false;
             }
