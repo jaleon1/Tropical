@@ -333,6 +333,21 @@ class Producto {
             destroy: true,
             // data: data,
             order: [[ 1, "asc" ]],
+            dom: 'Bfrtip',
+            buttons: [
+                {
+                    extend: 'excelHtml5',
+                    exportOptions: {
+                        columns: [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ]
+                    }
+                },
+                {
+                    extend: 'pdfHtml5',
+                    exportOptions: {
+                        columns: [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ]
+                    }
+                }
+            ],
             language: {
                 "infoEmpty": "Sin Usuarios Registrados",
                 "emptyTable": "Sin Usuarios Registrados",

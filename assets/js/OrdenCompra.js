@@ -9,6 +9,25 @@ class OrdenCompra {
         this.lista = lista || [];
     }
 
+    //Getter
+    get Read() {
+        var miAccion = this.id == null ? 'ReadAll' : 'ReadbyOrden';
+        $.ajax({
+            type: "POST",
+            url: "class/OrdenCompra.php",
+            data: {
+                action: miAccion,
+                id: this.id
+            }
+        })
+            .done(function (e) {
+                ordenCompra.Reload(e);
+            })
+            .fail(function (e) {
+                // ordenCompra.showError(e);
+            });
+    }
+
     get Save() {
         if($('#orden').val()==''){
             swal({
@@ -67,6 +86,194 @@ class OrdenCompra {
                 ordenCompra.CleanCtls();
                 $("#p_searh").focus();
             });
+    };
+
+    Reload(e){
+        if (this.id == null)
+            this.ShowAll(e);
+        else this.ShowItemData(e);
+    };
+
+    ShowAll(e) {
+        //Crea los eventos según sea el url
+        var t = $('#dsOrdenCompra').DataTable();
+        if (t.rows().count() == 0) {
+            t.clear();
+            t.rows.add(JSON.parse(e));
+            t.draw();
+            $( document ).on( 'click', '#dsOrdenCompra tbody tr td:not(.buttons)', ordenCompra.SelectEventHandler);
+        } else {
+            t.clear();
+            t.rows.add(JSON.parse(e));
+            t.draw();
+        }
+    };
+
+    ShowItemData(e) {
+        //Crea los eventos según sea el url
+        var t = $('#dsInsumoOrdenCompra').DataTable();
+        if (t.rows().count() == 0) {
+            t.clear();
+            t.rows.add(JSON.parse(e));
+            t.draw();
+        } else {
+            t.clear();
+            t.rows.add(JSON.parse(e));
+            t.draw();
+        }
+    };
+
+    SelectEventHandler() {
+        ordenCompra.id = $(this).parents("tr").find(".itemId").text() || $(this).find(".itemId").text();
+        var fecha = $(this).parents('tr').find('td:eq(1)').html();
+        var usuario = $(this).parents('tr').find('td:eq(4)').html();
+        var orden = $(this).parents('tr').find('td:eq(3)').html();
+        var proveedor = $(this).parents('tr').find('td:eq(2)').html();
+        ordenCompra.setTableInsumoOrdenCompra(orden, usuario, proveedor, fecha);
+        ordenCompra.Read;
+        $(".bs-ordenCompra-modal-lg").modal('toggle');
+    };
+
+    setTableOrdenCompra() {
+        this.tablaOrdenCompra = $('#dsOrdenCompra').DataTable({
+            responsive: true,
+            destroy: true,
+            order: [[1, "desc"]],
+            columns: [
+                {
+                    title: "ID",
+                    data: "id",
+                    className: "itemId",
+                    searchable: false
+                },
+                {
+                    title: "FECHA",
+                    data: "fecha"
+                },
+                {
+                    title: "PROVEEDOR",
+                    data: "idProveedor"
+                },
+                {
+                    title: "ORDEN",
+                    data: "orden"
+                },
+                {
+                    title: "ID USUARIO",
+                    data: "idUsuario",
+                    visible: false
+                },
+                {
+                    title: "USUARIO",
+                    data: "usuario"
+               }
+            ]
+        });
+    };
+
+    setTableInsumoOrdenCompra(orden, usuario, proveedor, fecha) {
+        jQuery.extend( jQuery.fn.dataTableExt.oSort, {
+            "formatted-num-pre": function ( a ) {
+                a = (a === "-" || a === "") ? 0 : a.replace( /[^\d\-\.]/g, "" );
+                return parseFloat( a );
+            }, 
+            "formatted-num-asc": function ( a, b ) {
+                return a - b;
+            },
+            "formatted-num-desc": function ( a, b ) {
+                return b - a;
+            }
+        } );
+
+        this.tablaOrdenCompra = $('#dsInsumoOrdenCompra').DataTable({
+            responsive: true,
+            destroy: true,
+            order: [[3, "asc"]],
+            dom: 'Bfrtip',
+            buttons: [
+                {
+                    extend: 'excelHtml5',
+                    exportOptions: {columns: [3, 4, 5, 6, 7]},
+                    messageTop:'FECHA:  '+ fecha + '  ORDEN:  '+ orden,
+                    messageBottom:' PROVEEDOR:  '+ proveedor + '  USUARIO:  ' + usuario,
+                },
+                {
+                    extend: 'pdfHtml5',
+                    exportOptions: {columns: [3, 4, 5, 6, 7]}
+                }
+            ],
+            columnDefs: [{ className: "text-right", "targets": [4, 5, 6, 7, 8] }],
+            language: {
+                "infoEmpty": "Sin Insumos",
+                "emptyTable": "Sin Insumos",
+                "search": "Buscar",
+                "zeroRecords": "No hay resultados",
+                "lengthMenu": "Mostrar _MENU_ registros",
+                "paginate": {
+                    "first": "Primera",
+                    "last": "Ultima",
+                    "next": "Siguiente",
+                    "previous": "Anterior"
+                }
+            },
+            columns: [
+                {
+                    title: "ID",
+                    data: "id",
+                    className: "itemId",
+                    searchable: false
+                },
+                {
+                    title: "ID ORDEN COMPRA",
+                    data: "idOrdenCompra",
+                    visible: false
+                },
+                {
+                    title: "ID INSUMO",
+                    data: "idInsumo",
+                    visible: false
+                },
+                {
+                    title: "INSUMO",
+                    data: "insumo",
+                    width:"auto"
+                },
+                {
+                    title:"COSTO UNITARIO",
+                    data:"costoUnitario",
+                    width:"auto",
+                    type: 'formatted-num',
+                    mRender: function ( e ) {
+                        return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                },
+                {
+                    title: "BUENO",
+                    data: "cantidadBueno",
+                    width:"auto"
+                },
+                {
+                    title: "MALO",
+                    data: "cantidadMalo",
+                    width:"auto"
+                },
+                {
+                    title:"VALOR BUENO",
+                    data:"valorBueno",
+                    width:"auto",
+                    type: 'formatted-num',
+                    mRender: function ( e ) {
+                        return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                },
+                {
+                    title:"VALOR MALO",
+                    data:"valorMalo",
+                    width:"auto",
+                    type: 'formatted-num',
+                    mRender: function ( e ) {
+                        return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                }
+            ]
+        });
     };
 
     // Muestra información en ventana

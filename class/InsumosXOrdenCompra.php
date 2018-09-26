@@ -47,6 +47,31 @@ class InsumosXOrdenCompra{
         }
     }
 
+    public static function Read($idOrdenCompra){
+        try {
+            $sql='SELECT `insumosXOrdenCompra`.`id`,
+                `insumosXOrdenCompra`.`idOrdenCompra`,
+                `insumosXOrdenCompra`.`idInsumo`,
+                `insumosXOrdenCompra`.`costoUnitario`,
+                `insumosXOrdenCompra`.`cantidadBueno`,
+                `insumosXOrdenCompra`.`cantidadMalo`,
+                `insumosXOrdenCompra`.`valorBueno`,
+                `insumosXOrdenCompra`.`valorMalo`
+            FROM `tropical`.`insumosXOrdenCompra`
+                where idOrdenCompra=:idOrdenCompra';
+            $param= array(':idOrdenCompra'=>$idOrdenCompra);
+            $data= DATA::Ejecutar($sql,$param);
+            return $data;
+        }     
+        catch(Exception $e) {
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar el ordenCompra'))
+            );
+        }
+    }
+
     public static function Update($obj){
         try {
             $updated = true;

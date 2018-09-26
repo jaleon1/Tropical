@@ -20,6 +20,9 @@ if(isset($_POST["action"])){
         case "Read":
             echo json_encode($ordenCompra->Read());
             break;
+        case "ReadbyOrden":
+            echo json_encode($ordenCompra->ReadbyOrden());
+            break;
         case "Create":
             $ordenCompra->Create();
             break;
@@ -76,7 +79,7 @@ class OrdenCompra{
 
     function ReadAll(){
         try {
-            $sql='SELECT id, fecha, idProveedor, orden, idUsuario
+            $sql='SELECT id, fecha, idProveedor, orden, idUsuario, (SELECT nombre FROM usuario WHERE id=idUsuario) AS usuario
                 FROM     ordenCompra       
                 ORDER BY fecha asc';
             $data= DATA::Ejecutar($sql);
@@ -93,12 +96,40 @@ class OrdenCompra{
 
     function Read(){
         try {
-            $sql='SELECT id, fecha, idProveedor, orden, idUsuario
+            $sql='SELECT id, fecha, idProveedor, orden, idUsuario, (SELECT nombre FROM usuario WHERE id=idUsuario) AS usuario
                 FROM ordenCompra  
                 where id=:id';
             $param= array(':id'=>$this->id);
             $data= DATA::Ejecutar($sql,$param);
             return $data;
+        }     
+        catch(Exception $e) {
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar el ordenCompra'))
+            );
+        }
+    }
+
+    function ReadbyOrden(){
+        try {
+            $sql='SELECT `insumosXOrdenCompra`.`id`,
+                `insumosXOrdenCompra`.`idOrdenCompra`,
+                `insumosXOrdenCompra`.`idInsumo`,
+                (SELECT nombre FROM insumo WHERE id=insumosXOrdenCompra.idInsumo)AS insumo,
+                `insumosXOrdenCompra`.`costoUnitario`,
+                `insumosXOrdenCompra`.`cantidadBueno`,
+                `insumosXOrdenCompra`.`cantidadMalo`,
+                `insumosXOrdenCompra`.`valorBueno`,
+                `insumosXOrdenCompra`.`valorMalo`
+            FROM `tropical`.`insumosXOrdenCompra`
+                where idOrdenCompra=:idOrdenCompra';
+            $param= array(':idOrdenCompra'=>$this->id);
+            $data= DATA::Ejecutar($sql,$param);
+            return $data;
+            // $data = InsumosXOrdenCompra::Read($this->id);
+            // return $data;
         }     
         catch(Exception $e) {
             header('HTTP/1.0 400 Bad error');
