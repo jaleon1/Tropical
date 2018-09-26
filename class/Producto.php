@@ -56,6 +56,9 @@ if(isset($_POST["action"])){
                 $producto->ActualizaPrecios();
             }
             break;
+        case "ReadAllInventario":
+            echo json_encode($producto->ReadAllInventario());
+            break;
     }
 }
 
@@ -373,6 +376,38 @@ class Producto{
             );
         }
     } 
+
+    function ReadAllInventario(){
+        try {
+            $sql='SELECT id, idOrdenEntrada,
+            (SELECT orden FROM ordenCompra WHERE id=idOrdenEntrada) AS ordenCompra,
+            idOrdenSalida,
+            (SELECT numeroOrden FROM ordenSalida WHERE id=idOrdenSalida) AS ordenSalida,
+            idProducto,
+            (SELECT codigo FROM producto WHERE id=idProducto) AS producto,
+            entrada,
+            salida,
+            saldo,
+            costoAdquisicion,
+            valorEntrada,
+            valorSalida,
+            valorSaldo,
+            costoPromedio,
+            fecha
+                FROM  inventarioProducto
+                ORDER BY fecha desc';
+            $data= DATA::Ejecutar($sql);
+            return $data;
+        }     
+        catch(Exception $e) {
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar la lista'))
+            );
+        }    
+    }
 }
 
 ?>
