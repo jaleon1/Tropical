@@ -200,19 +200,28 @@ let inventarioFacturas = new InventarioFacturas();
 $('#tb_facturas tbody').on('click', 'tr', function () {
     inventarioFacturas.ReadbyID(inventarioFacturas.tb_facturas.row(this).data());
     var dtTable = $('#tb_facturas').DataTable();
-    var efectivo = dtTable.cells().data()[5];
-    var tarjeta = dtTable.cells().data()[6];
-    var total = dtTable.cells().data()[7];
+    var efectivo=0;
+    var total=0;
+    efectivo = parseFloat(dtTable.row(this).data()[4]);
+    total = parseFloat(dtTable.row(this).data()[3]);
     if (dtTable.cells().data()[5]==null) 
         efectivo = 0;
     if (dtTable.cells().data()[6]==null) 
         tarjeta = 0;
+
+    if (efectivo=="0"){
+        localStorage.setItem("lsVuelto","0");
+        localStorage.setItem("lsTarjetaCredito",String(total));
+    }
+    else{
+        localStorage.setItem("lsVuelto",String(efectivo-total));
+        localStorage.setItem("lsTarjetaCredito","0");
+    }
     
-    localStorage.setItem("lsEfectivo",efectivo);
-    localStorage.setItem("lsTarjetaCredito",tarjeta);
-    localStorage.setItem("lsTotal",total);
-    localStorage.setItem("lsVuelto",efectivo-total);
+    localStorage.setItem("lsEfectivo",String(efectivo));
+    localStorage.setItem("lsTotal",String(total));
     localStorage.setItem("lsDif","0");
+    localStorage.setItem("lsReimpresion","OK");
 });
 
 

@@ -391,8 +391,8 @@ class MovimientosCaja {
         localStorage.setItem("lsTarjeta",$('#cierreTarjeta').text());
         localStorage.setItem("lsTotalVentas",$('#lblTotalVentas').text());
         localStorage.setItem("lsTotalNeto",$('#cierreCajaTotal').text());
-        // location.href ="/TicketCierreCaja.html";
-        location.href ="/Tropical/TicketCierreCaja.html";
+        location.href ="/TicketCierreCaja.html";
+        // location.href ="/Tropical/TicketCierreCaja.html";
     }
     
 }
