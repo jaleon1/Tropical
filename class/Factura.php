@@ -1,6 +1,6 @@
 <?php
 date_default_timezone_set('America/Costa_Rica');
-
+error_reporting(0);
 // require '../ticket/autoload.php';
 // use Mike42\Escpos\Printer;
 // use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
@@ -80,6 +80,8 @@ class Factura{
     public $plazoCredito= null;
     public $idCodigoMoneda= null;
     public $tipoCambio= null;
+    public $montoEfectivo= null;
+    public $montoTarjeta= null;
     //
     function __construct(){
         //
@@ -120,6 +122,8 @@ class Factura{
             $this->totalVentaneta= $obj["totalVentaneta"];
             $this->totalImpuesto= $obj["totalImpuesto"];
             $this->totalComprobante= $obj["totalComprobante"];
+            $this->montoEfectivo= $obj["montoEfectivo"];
+            $this->montoTarjeta= $obj["montoTarjeta"];
             // d. Informacion de referencia
             $this->tipoDocumento = $obj["tipoDocumento"] ?? "FE"; // documento de Referencia.
             $this->codigoReferencia = $obj["codigoReferencia"] ?? "01"; //codigo de documento de Referencia.            
@@ -188,7 +192,7 @@ class Factura{
 
     function ReadAllById(){
         try {
-            $sql='SELECT f.id, f.consecutivo, f.fechaCreacion, f.totalComprobante, b.nombre, u.userName
+            $sql='SELECT f.id, f.consecutivo, f.fechaCreacion, f.totalComprobante, f.montoEfectivo, f.montoTarjeta, b.nombre, u.userName
                 FROM factura f
                 INNER JOIN bodega b on f.idBodega = b.id
                 INNER JOIN usuario u on u.id = f.idusuario
@@ -291,10 +295,10 @@ class Factura{
         try {
             $sql="INSERT INTO factura   (id, idBodega, local, terminal, idCondicionVenta, idSituacionComprobante, idEstadoComprobante, plazoCredito, 
                 idMedioPago, idCodigoMoneda, tipoCambio, totalServGravados, totalServExentos, totalMercanciasGravadas, totalMercanciasExentas, totalGravado, totalExento, codigoReferencia, 
-                totalVenta, totalDescuentos, totalVentaneta, totalImpuesto, totalComprobante, idReceptor, idEmisor, idUsuario, tipoDocumento)
+                totalVenta, totalDescuentos, totalVentaneta, totalImpuesto, totalComprobante, idReceptor, idEmisor, idUsuario, tipoDocumento, montoEfectivo)
             VALUES  (:uuid, :idBodega, :local, :terminal, :idCondicionVenta, :idSituacionComprobante, :idEstadoComprobante, :plazoCredito,
                 :idMedioPago, :idCodigoMoneda, :tipoCambio, :totalServGravados, :totalServExentos, :totalMercanciasGravadas, :totalMercanciasExentas, :totalGravado, :totalExento, :codigoReferencia, 
-                :totalVenta, :totalDescuentos, :totalVentaneta, :totalImpuesto, :totalComprobante, :idReceptor, :idEmisor, :idUsuario, :tipoDocumento)"; 
+                :totalVenta, :totalDescuentos, :totalVentaneta, :totalImpuesto, :totalComprobante, :idReceptor, :idEmisor, :idUsuario, :tipoDocumento, :montoEfectivo)"; 
             $param= array(':uuid'=>$this->id,
                 ':idBodega'=>$this->idBodega,
                 ':local'=>$this->local,
@@ -321,7 +325,8 @@ class Factura{
                 ':idReceptor'=>$this->idReceptor,
                 ':idEmisor'=>$this->idEmisor,
                 ':idUsuario'=>$_SESSION["userSession"]->id, 
-                ':tipoDocumento'=>$this->tipoDocumento);
+                ':tipoDocumento'=>$this->tipoDocumento,
+                ':montoEfectivo'=>$this->montoEfectivo);
             $data = DATA::Ejecutar($sql,$param, false);
             if($data)
             {

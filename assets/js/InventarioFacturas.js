@@ -1,7 +1,8 @@
 class InventarioFacturas {
     // Constructor
-    constructor(facturas, tb_facturas, tb_prdXFact) {
+    constructor(facturas, tb_facturas, factDetalle, tb_prdXFact) {
         this.facturas = facturas || new Array();
+        this.factDetalle = factDetalle || new Array();
         this.tb_facturas = tb_facturas || null;
     };
 
@@ -33,12 +34,11 @@ class InventarioFacturas {
 
     drawFac(e) {
         var facturas = JSON.parse(e);
-
         this.tb_facturas = $('#tb_facturas').DataTable({
             data: facturas,                               
             "language": {
-                "infoEmpty":  "Sin Productos Ingresados",
-                "emptyTable": "Sin Productos Ingresados",
+                "infoEmpty":  "Sin Facturas",
+                "emptyTable": "Sin Facturas",
                 "search":     "Buscar",
                 "zeroRecords": "No hay resultados",
                 "lengthMenu":  "Mostar _MENU_ registros",
@@ -73,12 +73,34 @@ class InventarioFacturas {
                     data: "userName"
                 },
                 {
+                    title: "Monto Efectivo",
+                    data: "montoEfectivo",
+                    visible: false,
+                    mRender: function ( e ) {
+                        if (e==null) 
+                            return '¢0'; 
+                        else
+                            return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+                    }
+                },
+                {
+                    title: "Monto Tarjeta",
+                    data: "montoTarjeta",
+                    visible: false,
+                    mRender: function ( e ) {
+                        if (e==null) 
+                            return '¢0'; 
+                        else
+                            return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+                    }
+                },
+                {
                     title: "Total",
                     data: "totalComprobante",
                     mRender: function ( e ) {
                         return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ".")
                     }
-                },
+                }
             ]
         });
     };
@@ -87,21 +109,24 @@ class InventarioFacturas {
         $("#detalleFac").empty();
         var detalleFac =
             `<button type="button" class="close" data-dismiss="modal">
-                <span aria-hidden="true">X</span>
+                <span aria-hidden="true">x</span>
             </button>
-            <h4 class="modal-title" id="myModalLabel">Factura #${id.consecutivo}.</h4>
+            <h4 class="modal-title">Factura #</h4>
+            <h4 class="modal-title" id="consecutivo">${id.consecutivo}.</h4>
             <div class="row">
-                
                 <div class="col-md-6 col-sm-6 col-xs-6">
-                    <p>Fecha: ${id.fechaCreacion}</p>
+                    <label>Fecha:</label>
+                    <label id='fecha'>${id.fechaCreacion}</label>
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-6 col-sm-6 col-xs-6">
-                    <p>Cajero: ${id.userName}</p>
+                    <label>Cajero:</label>
+                    <label id='cajero'>${id.userName}</label>
                 </div>
                 <div class="col-md-6 col-sm-6 col-xs-6">
-                    <p>Bodega: ${id.nombre}</p>
+                    <label>Bodega:</label>
+                    <label id='bodega'>${id.nombre}</label>
                 </div>
             </div>`;
         $("#detalleFac").append(detalleFac);
@@ -128,10 +153,10 @@ class InventarioFacturas {
     };
 
     drawFactDetail(e) {
-        var facturas = JSON.parse(e);
+        this.factDetalle = JSON.parse(e);
 
         this.tb_prdXFact = $('#tb_detalle_fact').DataTable({
-            data: facturas,
+            data: this.factDetalle,
             destroy: true,
             "searching": false,
             "paging": false,
@@ -159,13 +184,35 @@ class InventarioFacturas {
 
     };
 
+    ticketPrint() {
+        localStorage.setItem("lsFactura",$('#consecutivo').text());
+        localStorage.setItem("lsFecha",$('#fecha').text());
+        localStorage.setItem("lsBodega",$('#bodega').text());
+        localStorage.setItem("lsUsuario",$('#cajero').text());
+        localStorage.setItem("lsListaProducto",JSON.stringify(this.factDetalle));
+        // location.href ="/Tropical/TicketFacturacion.html";
+        location.href = "/TicketFacturacion.html";
+    };
 }
 //Class Instance
 let inventarioFacturas = new InventarioFacturas();
 
-
 $('#tb_facturas tbody').on('click', 'tr', function () {
     inventarioFacturas.ReadbyID(inventarioFacturas.tb_facturas.row(this).data());
+    var dtTable = $('#tb_facturas').DataTable();
+    var efectivo = dtTable.cells().data()[5];
+    var tarjeta = dtTable.cells().data()[6];
+    var total = dtTable.cells().data()[7];
+    if (dtTable.cells().data()[5]==null) 
+        efectivo = 0;
+    if (dtTable.cells().data()[6]==null) 
+        tarjeta = 0;
+    
+    localStorage.setItem("lsEfectivo",efectivo);
+    localStorage.setItem("lsTarjetaCredito",tarjeta);
+    localStorage.setItem("lsTotal",total);
+    localStorage.setItem("lsVuelto",efectivo-total);
+    localStorage.setItem("lsDif","0");
 });
 
 
