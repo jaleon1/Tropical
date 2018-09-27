@@ -164,7 +164,7 @@ class Factura{
 
     function ReadAll(){
         try {
-            $sql='SELECT f.id, f.consecutivo, f.fechaCreacion, f.totalVenta, b.nombre, u.userName
+            $sql='SELECT f.id, f.consecutivo, f.fechaCreacion, f.totalComprobante, b.nombre, u.userName
                 FROM factura f
                 INNER JOIN bodega b on f.idBodega = b.id
                 INNER JOIN usuario u on u.id = f.idusuario   

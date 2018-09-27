@@ -331,8 +331,8 @@ function facturar (){
     // total comprobante.
     facturaCli.totalComprobante = facturaCli.totalVentaneta + facturaCli.totalImpuesto;
     //
-    // $('#send').addClass('Nosend');
-    // $('#send').attr("disabled", "disabled");
+    $('#send').addClass('Nosend');
+    $('#send').attr("disabled", "disabled");
     //
     $.ajax({
         type: "POST",
