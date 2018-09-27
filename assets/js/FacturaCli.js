@@ -1,12 +1,14 @@
 class FacturaCli {
     // Constructor
-    constructor(id, totalVenta, detalleOrden, detalleFactura, medioPago, totalComprobante, estadoCaja) {
+    constructor(id, totalVenta, detalleOrden, detalleFactura, medioPago, totalComprobante, montoEfectivo, montoTarjeta, estadoCaja) {
         this.id = id || null;
         this.totalVenta = totalVenta || '';
         this.detalleFactura = detalleFactura || new Array();
         this.detalleOrden = detalleOrden || new Array();
         this.medioPago = medioPago || 0;
         this.totalComprobante = totalComprobante || 0;
+        this.montoEfectivo = montoEfectivo || 0;
+        this.montoTarjeta = montoTarjeta || 0;
         // this.total = total || '';
         // this.fechaCreacion = fechaCreacion || null;
         // this.importe = importe || 0;

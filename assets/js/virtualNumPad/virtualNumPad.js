@@ -268,6 +268,8 @@ function facturar (){
     facturaCli.totalVentaneta = 0;    
     facturaCli.totalImpuesto = 0;
     facturaCli.totalComprobante=0;
+    facturaCli.montoEfectivo=0;
+    facturaCli.montoTarjeta=0;
     // detalle.
     facturaCli.detalleFactura = [];
     facturaCli.detalleOrden = [];
@@ -319,6 +321,8 @@ function facturar (){
     });
     // totales de factura.
     // exonera y grava de mercancias y servicios
+    facturaCli.montoEfectivo = $("#txt_pagoCash").val();
+    facturaCli.montoTarjeta = $("#txt_pagoCard").val();
     facturaCli.totalServGravados = 0;
     facturaCli.totalServExentos = 0;
     facturaCli.totalMercanciasGravadas = facturaCli.totalVenta;

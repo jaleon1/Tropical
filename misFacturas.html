@@ -182,7 +182,6 @@
 
                         <div class="row">
                             <div class="col-md-12 col-sm-12 col-xs-12">
-                                <!-- <div class="x_panel"> -->
                                     <!--  CONTENIDO DE LA PAGINA -->
                                     <div class="x_content">
                                         <div class="table-responsive">
@@ -196,7 +195,6 @@
                                             </table>
                                         </div>
                                     </div>
-                                <!-- </div> -->
                             </div>
                         </div>
     
@@ -204,8 +202,12 @@
 
                     </div>
                 <div class="modal-footer">
+                    <div class="form-group">
+                        <div class="col-md-6 col-md-offset-3">
+                            <button id="btnReimprimeFactura" type="submit" class="btn btn-success">Reimprimir</button>
+                        </div>
+                    </div>
                     <div id="totalFact">
-                        
                     </div>
                 </div>
             </div>
@@ -249,5 +251,12 @@
 <script>
 $(document).ready(function () {
     inventarioFacturas.CargaFacturasXUsuario();
+});
+$(document).on('click', '#btnReimprimeFactura', function (event) {
+    // insumo.id = null;
+    // insumo.setTableOrdenSalida();
+    // insumo.Read;
+    // insumo.Init();
+    inventarioFacturas.ticketPrint();
 });
 </script>
