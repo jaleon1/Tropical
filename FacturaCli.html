@@ -112,7 +112,10 @@
                                                     </li>
                                                     <li role="separator" class="divider"></li>
                                                     <li role="presentation">
-                                                        <a id="cerrarCaja" role="menuitem" tabindex="-1">Cerrar Caja</a>
+                                                        <a id="menu_CerrarCaja" role="menuitem" tabindex="-1">Cerrar Caja</a>
+                                                    </li>
+                                                    <li role="presentation">
+                                                        <a id="menu_CerrarCajaReporte" role="menuitem" tabindex="-1">Cerrar y Generar Reporte</a>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -161,7 +164,7 @@
 
                                                     <button id="null" style="background-color:#ff3535;" class="btn_topping btn_venta" onclick="agrega_toppings('null', 'Sin Topping')">
                                                         <div style="color:whitesmoke;">
-
+                                                            <h5 hidden="">NTOP</h5>
                                                             <h5>
                                                                 <b>Sin Topping</b>
                                                             </h5>
@@ -294,7 +297,7 @@
                 <div class="row">
                     <div class="col-md-5 col-md-offset-5">
                         <h4 class="modal-title">Saldo Caja: ¢
-                            <spam class="txtMontoDefaultApertura"></spam>
+                            <spam id="lbl_MontoDefaultApertura" class="txtMontoDefaultApertura"></spam>
                         </h4>
                     </div>
                 </div>
@@ -397,7 +400,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button id="cierraCaja" type="button" class="btn btn-success">Cerrar Caja</button>
+                <button type="button" class="btn btn-success btn_ModalCierreCaja">Cerrar y Generar Reporte</button>
             </div>
         </div>
     </div>
@@ -421,11 +424,11 @@
     });
 
     //Abre en pantalla completa el modulo de facturacion al precionar el body
-    var elem = document.getElementById("body");
-    elem.onclick = function () {
-        req = elem.requestFullScreen || elem.webkitRequestFullScreen || elem.mozRequestFullScreen;
-        req.call(elem);
-    }
+    // var elem = document.getElementById("body");
+    // elem.onclick = function () {
+    //     req = elem.requestFullScreen || elem.webkitRequestFullScreen || elem.mozRequestFullScreen;
+    //     req.call(elem);
+    // }
     //Sale de pantalla completa del modulo de facturacion
     $("#exitFullScreem").click(function exitFullScreen(elem) {
         var requestMethod = elem.exitFullscreen ||

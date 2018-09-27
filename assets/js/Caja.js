@@ -199,23 +199,9 @@ class MovimientosCaja {
         .fail(function (e) {
             movimientosCaja.errorAbrirCaja("Error", "No se pudo cargar el monto de apertura establecido!" );
         });
-
-
-        //Desabilita el boton del modal de abrir caja hasta que el monto contalizado en la caja sea igual o superior
-        /*$("#abrirCaja").attr("disabled", "disabled");
-        $("#saldoContabilizado").on("change paste keyup", function() {
-            
-            $("#lblDescuadre").text( parseFloat($("#saldoContabilizado").val()) - movimientosCaja.montoAperturaDefault);
-
-            if($("#saldoContabilizado").val() >= movimientosCaja.montoAperturaDefault){
-                $("#abrirCaja").removeAttr("disabled"); 
-            }else{
-                $("#abrirCaja").attr("disabled", "disabled");
-            }
-        });*/
     
         $("#abrirCaja").click(function(){
-            movimientosCaja.montoApertura = $("#saldoContabilizado").val();
+            movimientosCaja.montoApertura = movimientosCaja.montoAperturaDefault;
             $.ajax({
                 type: "POST",
                 url: "class/CajaXBodega.php",
@@ -268,24 +254,52 @@ class MovimientosCaja {
 
         
         $('.cierra-caja-modal-lg').modal('show');
-       
-        //Desabilita el boton del modal de cerrar caja hasta que el monto contalizado en la caja sea igual o superior al monto de apertura
-        /*$("#cierraCaja").attr("disabled", "disabled");
-        $("#saldoCaja").on("change paste keyup", function() {
-            
-            $("#lblDescuadre").text( parseFloat($("#saldoCaja").val()) - data.montoAperturaDefault);
+        
+        $("#btn_ModalCierreCaja").click(function(){
+            movimientosCaja.montoCierre = data.montoAperturaDefault[0].montoDefaultApertura;           
+            $.ajax({
+                type: "POST",
+                url: "class/CajaXBodega.php",
+                data: {
+                    action: "cerrarCaja",
+                    obj: JSON.stringify(movimientosCaja)
+                }
+            })
+            .done(function (e) {
+                window.location.href = 'Dashboard.html';
+            })
+            .fail(function (e) {
+                movimientosCaja.errorAbrirCaja("Operación invalida", "Imposible cerrar caja!" );
+            });
+        });
+    };
 
-            if(parseFloat( $("#saldoCaja").val() ) >= parseFloat(data.montoAperturaDefault[0].montoDefaultApertura)){
-                $("#cierraCaja").removeAttr("disabled"); 
-            }else{
-                $("#cierraCaja").attr("disabled", "disabled");
-            }
-        });*/
+    loadModalCajaCierreDiario(e){
+        
+        var data = JSON.parse(e);  
+        
+        if(Number(data.montoAperturaDefault[0].montoDefaultApertura) == 0)
+            data.montoAperturaDefault[0].montoDefaultApertura = 0;
 
+        if(Number(data.totalVentasEfectivo[0].efectivo) == 0)
+            data.totalVentasEfectivo[0].efectivo = 0;
 
+        if(Number(data.totalVentasTarjeta[0].tarjeta) == 0)        
+            data.totalVentasTarjeta[0].tarjeta = 0;
+        
+        $(".txtMontoDefaultApertura").text('¢'+ parseFloat(data.montoAperturaDefault[0].montoDefaultApertura).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, "."));
+        $('#cierreEfectivo').text('¢'+ parseFloat(data.totalVentasEfectivo[0].efectivo).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, "."));
+        $('#cierreTarjeta').text('¢'+ parseFloat(data.totalVentasTarjeta[0].tarjeta).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, "."));
+        
+        
+        $('#lblTotalVentas').text('¢'+ (parseFloat(data.totalVentasEfectivo[0].efectivo) + parseFloat(data.totalVentasTarjeta[0].tarjeta)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, "."));
+        var totalCierre = (parseFloat(data.montoAperturaDefault[0].montoDefaultApertura) + parseFloat(data.totalVentasEfectivo[0].efectivo) + parseFloat(data.totalVentasTarjeta[0].tarjeta)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        $('#cierreCajaTotal').text('¢'+ totalCierre.toString());
 
         
-        $("#cierraCaja").click(function(){
+        $('.cierra-caja-modal-lg').modal('show');
+        
+        $("#btn_ModalCierreCajaReporte").click(function(){
             movimientosCaja.montoCierre = data.montoAperturaDefault[0].montoDefaultApertura;           
             $.ajax({
                 type: "POST",
@@ -316,7 +330,12 @@ $(document).ready(function () {
 });
 
 
-$("#cerrarCaja").click(function () {
+$("#menu_CerrarCaja").click(function () {
+
+    $('.btn_ModalCierreCaja').attr('id', "btn_ModalCierreCaja");
+    $('.btn_ModalCierreCaja').text("Cerrar Caja");
+
+
     $.ajax({
         type: "POST",
         url: "class/CajaXBodega.php",
@@ -328,6 +347,26 @@ $("#cerrarCaja").click(function () {
         movimientosCaja.loadModalCierreCaja(e);
     })
 });
+
+//Aplica para cerrar caja y generar el reporte
+$("#menu_CerrarCajaReporte").click(function () {
+
+    $('.btn_ModalCierreCaja').attr('id', "btn_ModalCierreCajaReporte");
+    $('.btn_ModalCierreCaja').text("Cerrar Caja y General Reporte");
+
+
+    $.ajax({
+        type: "POST",
+        url: "class/CajaXBodega.php",
+        data: {
+            action: "ValidarCajaCierreDiario"
+        }
+    })
+    .done(function (e) {
+        movimientosCaja.loadModalCajaCierreDiario(e);
+    })
+});
+
 
 $('#tb_movimientosCaja tbody').on('click', 'tr', function () {
     movimientosCaja.ReadbyID(movimientosCaja.tb_movimientosCaja.row(this).data());
