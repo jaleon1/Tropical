@@ -36,7 +36,9 @@ precioMediano.precio = 0
 // });
 
 $(document).ready(function () {
-
+    window.onbeforeunload = function () {
+        $("input[type=button], input[type=submit]").attr("disabled", "disabled");
+    };
     // NProgress.set(0.4)
     movimientosCaja.getStatusCashRegister();
     //Muestra el modal de sesion de caja
@@ -645,7 +647,7 @@ function CreateFact() {
             producto.showError(e);
         })
         .always(function () {
-            setTimeout('$("#btnProducto").removeAttr("disabled")', 1000);
+            $("#btnProducto").removeAttr("disabled");
             producto = new Producto();
             producto.ClearCtls();
             producto.Read;

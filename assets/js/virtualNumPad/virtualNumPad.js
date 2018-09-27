@@ -291,7 +291,7 @@ function facturar (){
         objetoDetalleFactura.codigo = item[1];
         objetoDetalleFactura.cantidad = 1;
         objetoDetalleFactura.idUnidadMedida = 78; // 78 =  unidades.
-        objetoDetalleFactura.detalle = `Venta de producto ${item[1]}, ${item[3]}, ${item[5]}, ${item[7]}`;
+        objetoDetalleFactura.detalle = `${item[1]}, ${item[3]}, ${item[5]}, ${item[7]}`;
         objetoDetalleFactura.precioUnitario = precioUnitario;
         objetoDetalleFactura.montoTotal =  objetoDetalleFactura.precioUnitario *  objetoDetalleFactura.cantidad;
         objetoDetalleFactura.montoDescuento = 0;
@@ -330,8 +330,10 @@ function facturar (){
     facturaCli.totalVentaneta =  facturaCli.totalVenta - facturaCli.totalDescuentos;
     // total comprobante.
     facturaCli.totalComprobante = facturaCli.totalVentaneta + facturaCli.totalImpuesto;
-
-
+    //
+    $('#send').addClass('Nosend');
+    $('#send').attr("disabled", "disabled");
+    //
     $.ajax({
         type: "POST",
         url: "class/Factura.php",
@@ -342,7 +344,6 @@ function facturar (){
     })
     .done(function(e){
         ticketPrint(e);
-
     })
     .fail(function (e) {
         swal({

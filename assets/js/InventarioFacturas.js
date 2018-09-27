@@ -18,6 +18,19 @@ class InventarioFacturas {
             });
     };
 
+    CargaFacturasXUsuario() {
+        $.ajax({
+            type: "POST",
+            url: "class/Factura.php",
+            data: {
+                action: "ReadAllById"
+            }
+        })
+            .done(function (e) {
+                inventarioFacturas.drawFac(e)
+            });
+    };
+
     drawFac(e) {
         var facturas = JSON.parse(e);
 
@@ -61,7 +74,7 @@ class InventarioFacturas {
                 },
                 {
                     title: "Total",
-                    data: "totalVenta",
+                    data: "totalComprobante",
                     mRender: function ( e ) {
                         return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ".")
                     }
@@ -150,9 +163,6 @@ class InventarioFacturas {
 //Class Instance
 let inventarioFacturas = new InventarioFacturas();
 
-$(document).ready(function () {
-    inventarioFacturas.CargaFacturas();
-});
 
 $('#tb_facturas tbody').on('click', 'tr', function () {
     inventarioFacturas.ReadbyID(inventarioFacturas.tb_facturas.row(this).data());
