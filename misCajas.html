@@ -167,7 +167,7 @@
                             <div class="x_panel">
                                 <!--  CONTENIDO DE LA PAGINA -->
                                 <div class="x_content">
-                                    
+
                                     <div class="table-responsive">
                                         <table id="tb_movimientosCaja" class="table table-striped jambo_table bulk_action">
                                             <thead>
@@ -217,6 +217,12 @@
                                             <tbody id="detalle_prd">
 
                                             </tbody>
+                                            <tfoot>
+                                            <tr>
+                                                <th colspan="8" style="text-align:right">Total:</th>
+                                                <th></th>
+                                            </tr>
+                                            </tfoot>
                                         </table>
                                     </div>
                                 </div>
@@ -279,7 +285,7 @@
 </html>
 
 <script>
-$(document).ready(function () {
-    movimientosCaja.CargaMovimientosCajaXUsuario();
-});
+    $(document).ready(function () {
+        movimientosCaja.CargaMovimientosCajaXUsuario();
+    });
 </script>

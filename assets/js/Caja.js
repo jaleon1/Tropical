@@ -39,28 +39,46 @@ class MovimientosCaja {
 
 
     drawMovimientosCaja(e) {
-        jQuery.fn.dataTable.Api.register('sum()', function () {
-            return this.flatten().reduce(function (a, b) {
-                if (typeof a === 'string') {
-                    a = a.replace(/[^\d.-]/g, '') * 1;
-                }
-                if (typeof b === 'string') {
-                    b = b.replace(/[^\d.-]/g, '') * 1;
-                }
 
-                return a + b;
-            }, 0);
-        });
 
         var movimientos = JSON.parse(e);
+        var total=0;
+        var pageTotal=0;
 
         this.tb_movimientosCaja = $('#tb_movimientosCaja').DataTable({
-            drawCallback: function () {
-                var api = this.api();
-                $(api.table().footer()).html(
-                    api.column(8, { page: 'current' }).data().sum()
+            "footerCallback": function (row, data, start, end, display) {
+                var api = this.api(), data;
+
+                // Remove the formatting to get integer data for summation
+                var intVal = function (i) {
+                    return typeof i === 'string' ?
+                        i.replace(/[\$,]/g, '') * 1 :
+                        typeof i === 'number' ?
+                            i : 0;
+                };
+
+                // Total over all pages
+                total = api
+                    .column(8)
+                    .data()
+                    .reduce(function (a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0);
+
+                // Total over this page
+                var pageTotal = api
+                    .column(8, { page: 'current' })
+                    .data()
+                    .reduce(function (a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0);
+
+                // Update footer
+                $(api.column(8).footer()).html(
+                    '$' + pageTotal + ' ( $' + total + ' total)'
                 );
             },
+
             dom: 'Blfrtip',
             buttons: [
                 {
@@ -103,7 +121,7 @@ class MovimientosCaja {
             },
             footer: true,
             "order": [[11, "desc"]],
-            columnDefs: [{className: "text-right", "targets": [9]},{className: "text-right", "targets": [8]},{className: "text-right", "targets": [7]}],
+            columnDefs: [{ className: "text-right", "targets": [9] }, { className: "text-right", "targets": [8] }, { className: "text-right", "targets": [7] }],
             columns: [
                 {
                     title: "ID Movimientos Caja",
@@ -151,6 +169,7 @@ class MovimientosCaja {
                 {
                     title: "Total Ventas Efectivo",
                     data: "totalVentasEfectivo",
+                    footer: true,
                     mRender: function (e) {
                         return '¢' + parseFloat(Number(e)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ".")
                     }
@@ -158,6 +177,7 @@ class MovimientosCaja {
                 {
                     title: "Total Ventas Tarjeta",
                     data: "totalVentasTarjeta",
+                    footer: true,
                     mRender: function (e) {
                         return '¢' + parseFloat(Number(e)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ".")
                     }
@@ -172,10 +192,6 @@ class MovimientosCaja {
                 },
             ]
         });
-
-
-        this.tb_movimientosCaja.column(8).data().sum();
-
 
     };
 
