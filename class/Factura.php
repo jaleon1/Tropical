@@ -29,6 +29,9 @@ if(isset($_POST["action"])){
         case "ReadAll":
             echo json_encode($factura->ReadAll());
             break;
+        case "ReadAllById":
+            echo json_encode($factura->ReadAllById());
+            break;
         case "Read":
             echo json_encode($factura->Read());
             break;
@@ -170,6 +173,27 @@ class Factura{
                 INNER JOIN usuario u on u.id = f.idusuario   
                 ORDER BY f.consecutivo asc';
             $data= DATA::Ejecutar($sql);
+            return $data;
+        }     
+        catch(Exception $e) {
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar la lista'))
+            );
+        }
+    }
+
+    function ReadAllById(){
+        try {
+            $sql='SELECT f.id, f.consecutivo, f.fechaCreacion, f.totalComprobante, b.nombre, u.userName
+                FROM factura f
+                INNER JOIN bodega b on f.idBodega = b.id
+                INNER JOIN usuario u on u.id = f.idusuario
+                WHERE f.idUsuario =:idUsuario
+                ORDER BY f.consecutivo asc';
+            $param= array(':idUsuario'=>$_SESSION["userSession"]->id);
+            $data = DATA::Ejecutar($sql,$param);
             return $data;
         }     
         catch(Exception $e) {
