@@ -344,6 +344,8 @@ class MovimientosCaja {
         if (Number(data.totalVentasTarjeta[0].tarjeta) == 0)
             data.totalVentasTarjeta[0].tarjeta = 0;
 
+        this.montoApertura = '¢' + parseFloat(data.montoAperturaDefault[0].montoDefaultApertura).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+
         $(".txtMontoDefaultApertura").text('¢' + parseFloat(data.montoAperturaDefault[0].montoDefaultApertura).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, "."));
         $('#cierreEfectivo').text('¢' + parseFloat(data.totalVentasEfectivo[0].efectivo).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, "."));
         $('#cierreTarjeta').text('¢' + parseFloat(data.totalVentasTarjeta[0].tarjeta).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, "."));
@@ -367,7 +369,8 @@ class MovimientosCaja {
                 }
             })
                 .done(function (e) {
-                    window.location.href = 'Dashboard.html';
+                    movimientosCaja.ticketPrint();
+                    // window.location.href = 'Dashboard.html';
                 })
                 .fail(function (e) {
                     movimientosCaja.errorAbrirCaja("Operación invalida", "Imposible cerrar caja!");
@@ -379,17 +382,17 @@ class MovimientosCaja {
         // alert("En construcción");
     };
 
-    ticketPrint(e){
+    ticketPrint(){
         // var data = JSON.parse(e);
-        localStorage.setItem("lsUsuario",e);
-        localStorage.setItem("lsFecha",e);
-        localStorage.setItem("lsApertura",e);
-        localStorage.setItem("lsEfectivo",e);
-        localStorage.setItem("lsTarjeta",e);
-        localStorage.setItem("lsTotalVentas",e);
-        localStorage.setItem("lsTotalNeto",e);
-        location.href ="/TicketCierreCaja.html";
-        // location.href ="/Tropical/TicketCierreCaja.html";
+        localStorage.setItem("lsUsuario",$("#call_name").text());
+        localStorage.setItem("lsFecha",moment().format("YYYY-MM-DD HH:mm"));
+        localStorage.setItem("lsApertura",this.montoApertura);
+        localStorage.setItem("lsEfectivo",$('#cierreEfectivo').text());
+        localStorage.setItem("lsTarjeta",$('#cierreTarjeta').text());
+        localStorage.setItem("lsTotalVentas",$('#lblTotalVentas').text());
+        localStorage.setItem("lsTotalNeto",$('#cierreCajaTotal').text());
+        // location.href ="/TicketCierreCaja.html";
+        location.href ="/Tropical/TicketCierreCaja.html";
     }
     
 }

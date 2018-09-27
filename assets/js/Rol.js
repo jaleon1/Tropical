@@ -166,13 +166,19 @@ class Rol {
 
     ShowAll(e) {
         var t= $('#tRol').DataTable();
-        t.clear();
-        t.rows.add(JSON.parse(e));
-        t.draw();
-        $( document ).on( 'click', '.delete', rol.DeleteEventHandler);
-        $( document ).on( 'click', '#tRol tbody tr td:not(.buttons)', 
-            rol.viewType==undefined || rol.viewType==rol.tUpdate ? rol.UpdateEventHandler : rol.SelectEventHandler
-        );
+        if(t.rows().count()==0){
+            t.clear();
+            t.rows.add(JSON.parse(e));
+            t.draw();
+            $( document ).on( 'click', '.delete', rol.DeleteEventHandler);
+            $( document ).on( 'click', '#tRol tbody tr td:not(.buttons)', 
+                rol.viewType==undefined || rol.viewType==rol.tUpdate ? rol.UpdateEventHandler : rol.SelectEventHandler
+            );
+        }else{
+            t.clear();
+            t.rows.add(JSON.parse(e));
+            t.draw();
+        }
     };
 
     UpdateEventHandler() {
