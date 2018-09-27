@@ -1,10 +1,10 @@
 <?php
 date_default_timezone_set('America/Costa_Rica');
 
-require '../ticket/autoload.php';
-use Mike42\Escpos\Printer;
+// require '../ticket/autoload.php';
+// use Mike42\Escpos\Printer;
 // use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
-use Mike42\Escpos\PrintConnectors\FilePrintConnector;
+// use Mike42\Escpos\PrintConnectors\FilePrintConnector;
 
 
 if(isset($_POST["action"])){

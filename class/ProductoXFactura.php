@@ -13,8 +13,8 @@
         // Instance
         $productoXFactura= new ProductoXFactura();
         switch($opt){
-            case "ReadbyID":
-                echo json_encode($productoXFactura->ReadbyID());
+            case "ReadByIdFactura":
+                echo json_encode($productoXFactura->ReadByIdFactura($_POST['id']));
                 break;
         }
         

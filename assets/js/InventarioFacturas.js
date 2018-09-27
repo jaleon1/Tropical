@@ -118,8 +118,8 @@ class InventarioFacturas {
             type: "POST",
             url: "class/ProductoXFactura.php",
             data: {
-                action: "ReadbyID",
-                obj: JSON.stringify(id.id)
+                action: "ReadByIdFactura",
+                id: id.id
             }
         })
             .done(function (e) {
