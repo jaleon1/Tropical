@@ -321,8 +321,15 @@ function facturar (){
     });
     // totales de factura.
     // exonera y grava de mercancias y servicios
-    facturaCli.montoEfectivo = $("#txt_pagoCash").val();
-    facturaCli.montoTarjeta = $("#txt_pagoCard").val();
+    if ($("#txt_pagoCash").val()==null)
+        facturaCli.montoEfectivo = "0";
+    else
+        facturaCli.montoEfectivo = $("#txt_pagoCash").val();
+    if($("#total_pagar").text()==null)
+        facturaCli.montoTarjeta = "0";
+    else
+        facturaCli.montoTarjeta = ($("#total_pagar").text()).substring(16);;
+
     facturaCli.totalServGravados = 0;
     facturaCli.totalServExentos = 0;
     facturaCli.totalMercanciasGravadas = facturaCli.totalVenta;
