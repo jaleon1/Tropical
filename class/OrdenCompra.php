@@ -119,6 +119,8 @@ class OrdenCompra{
                 `insumosXOrdenCompra`.`idInsumo`,
                 (SELECT codigo FROM insumo WHERE id=insumosXOrdenCompra.idInsumo)AS codigo,
                 (SELECT nombre FROM insumo WHERE id=insumosXOrdenCompra.idInsumo)AS insumo,
+                (SELECT codigo FROM producto WHERE id=insumosXOrdenCompra.idInsumo)AS codigo_p,
+                (SELECT nombre FROM producto WHERE id=insumosXOrdenCompra.idInsumo)AS insumo_p,
                 ((insumosXOrdenCompra.cantidadBueno + insumosXOrdenCompra.cantidadMalo) * insumosXOrdenCompra.costoUnitario)AS subtotal,
                 `insumosXOrdenCompra`.`costoUnitario`,
                 `insumosXOrdenCompra`.`cantidadBueno`,
