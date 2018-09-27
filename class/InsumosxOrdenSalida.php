@@ -20,7 +20,7 @@ class InsumosxOrdenSalida{
             $data= DATA::Ejecutar($sql,$param);
             return $data;
         }     
-        catch(Exception $e) {
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
@@ -57,7 +57,7 @@ class InsumosxOrdenSalida{
             }
             return $created;
         }     
-        catch(Exception $e) {
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             return false;
         }
     }
@@ -90,7 +90,7 @@ class InsumosxOrdenSalida{
             }
             return $created;
         }     
-        catch(Exception $e) {
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             return false;
         }
     }
@@ -126,7 +126,7 @@ class InsumosxOrdenSalida{
             
             return $created;
         }     
-        catch(Exception $e) {
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             return false;
         }
     }
@@ -142,7 +142,7 @@ class InsumosxOrdenSalida{
             $updated= self::Create($obj);
             return $updated;
         }     
-        catch(Exception $e) {
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
@@ -161,7 +161,7 @@ class InsumosxOrdenSalida{
                 return true;
             else false;
         }
-        catch(Exception $e) {
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             return false;
         }
     }

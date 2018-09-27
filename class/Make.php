@@ -48,7 +48,7 @@ if(isset($_POST["action"])){
             }
             else return '';            
         }     
-        catch(Exception $e) {
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 405 Read error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
@@ -71,7 +71,7 @@ if(isset($_POST["action"])){
             }
             else return '';
         }     
-        catch(Exception $e) {
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 406 Write error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
