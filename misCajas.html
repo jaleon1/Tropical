@@ -24,7 +24,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>TropicalSNO | Caja</title>
+    <title>TropicalSNO | Mis Cajas</title>
 
     <!-- Bootstrap -->
     <link href="assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -130,7 +130,8 @@
 
                         <ul class="nav navbar-nav navbar-right">
                             <li class="">
-                                <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false" id='call_username'>
+                                <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown"
+                                    aria-expanded="false" id='call_username'>
                                 </a>
                                 <ul class="dropdown-menu dropdown-usermenu pull-right">
                                     <li>
@@ -152,7 +153,7 @@
 
                     <div class="page-title">
                         <div class="title_left">
-                            <h3>Movimientos de Caja</h3>
+                            <h3>Mis Movimientos de Caja</h3>
                         </div>
                         <div class="title_right">
                             <h3 id="fecha" style="float:right"></h3>
@@ -166,21 +167,7 @@
                             <div class="x_panel">
                                 <!--  CONTENIDO DE LA PAGINA -->
                                 <div class="x_content">
-                                    <div>
-                                        <div class="row">
-                                            <div class="col-lg-3">
-                                                <div class="input-group">
-                                                    <input id="inpMontoAperturaDefault" type="number" class="form-control" placeholder="Monto en Cajas">
-                                                    <span class="input-group-btn">
-                                                        <button id="btnMontoCajas" class="btn btn-success" type="button">Guardar</button>
-                                                    </span>
-                                                </div>
-                                                <!-- /input-group -->
-                                            </div>
-                                            <!-- /.col-lg-6 -->
-                                        </div>
-                                        <!-- /.row -->
-                                    </div>
+                                    
                                     <div class="table-responsive">
                                         <table id="tb_movimientosCaja" class="table table-striped jambo_table bulk_action">
                                             <thead>
@@ -249,46 +236,49 @@
             </div>
         </div>
     </div>
-        <!-- modals -->
-        <!-- Large modal -->
+    <!-- modals -->
+    <!-- Large modal -->
 
-        <!-- jQuery -->
-        <script src="assets/js/jquery.min.js"></script>
-        <!-- Require -->
-        <!-- <script data-main="assets/main" src="assets/js/require.js"></script> -->
-        <!-- JS Scripts -->
-        <script src="assets/js/Caja.js"></script>
-        <!-- Bootstrap -->
-        <script src="assets/bootstrap/js/bootstrap.min.js"></script>
-        <!-- FastClick -->
-        <script src="assets/js/fastclick/lib/fastclick.js"></script>
-        <!-- NProgress -->
-        <script src="assets/js/nprogress/nprogress.js"></script>
-        <!-- iCheck -->
-        <script src="assets/js/iCheck/icheck.min.js"></script>
-        <!-- Validator -->
-        <script src="assets/js/validator.js"></script>
-        <!-- Custom Theme Scripts -->
-        <script src="assets/js/custom.js"></script>
-        <!-- Input mask -->
-        <script src="assets/js/jquery.inputmask/jquery.inputmask.bundle.min.js"></script>
-        <!-- JS dataTables -->
-        <script src="assets/js/jquery.dataTables.min.js"></script>
-        <script src="assets/jquery.dataTables/dataTables.buttons.min.js"></script>
-        <script src="assets/jquery.dataTables/buttons.flash.min.js"></script>
-        <script src="assets/jquery.dataTables/jszip.min.js"></script>
-        <script src="assets/jquery.dataTables/pdfmake.min.js"></script>
-        <script src="assets/jquery.dataTables/vfs_fonts.js"></script>
-        <script src="assets/jquery.dataTables/buttons.html5.min.js"></script>
-        <script src="assets/jquery.dataTables/buttons.print.min.js"></script>
-        <!-- JS Moments -->
-        <script src="assets/js/moment.min.js"></script>
-        <!-- Sweet Alert -->
-        <script src="assets/js/sweetalert2.min.js"></script>
+    <!-- jQuery -->
+    <script src="assets/js/jquery.min.js"></script>
+    <!-- Require -->
+    <!-- <script data-main="assets/main" src="assets/js/require.js"></script> -->
+    <!-- JS Scripts -->
+    <script src="assets/js/Caja.js"></script>
+    <!-- Bootstrap -->
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <!-- FastClick -->
+    <script src="assets/js/fastclick/lib/fastclick.js"></script>
+    <!-- NProgress -->
+    <script src="assets/js/nprogress/nprogress.js"></script>
+    <!-- iCheck -->
+    <script src="assets/js/iCheck/icheck.min.js"></script>
+    <!-- Validator -->
+    <script src="assets/js/validator.js"></script>
+    <!-- Custom Theme Scripts -->
+    <script src="assets/js/custom.js"></script>
+    <!-- Input mask -->
+    <script src="assets/js/jquery.inputmask/jquery.inputmask.bundle.min.js"></script>
+    <!-- JS dataTables -->
+    <script src="assets/js/jquery.dataTables.min.js"></script>
+    <script src="assets/jquery.dataTables/dataTables.buttons.min.js"></script>
+    <script src="assets/jquery.dataTables/buttons.flash.min.js"></script>
+    <script src="assets/jquery.dataTables/jszip.min.js"></script>
+    <script src="assets/jquery.dataTables/pdfmake.min.js"></script>
+    <script src="assets/jquery.dataTables/vfs_fonts.js"></script>
+    <script src="assets/jquery.dataTables/buttons.html5.min.js"></script>
+    <script src="assets/jquery.dataTables/buttons.print.min.js"></script>
+    <!-- JS Moments -->
+    <script src="assets/js/moment.min.js"></script>
+    <!-- Sweet Alert -->
+    <script src="assets/js/sweetalert2.min.js"></script>
 
 </body>
 
 </html>
 
 <script>
+$(document).ready(function () {
+    movimientosCaja.CargaMovimientosCajaXUsuario();
+});
 </script>

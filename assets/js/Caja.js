@@ -23,6 +23,19 @@ class MovimientosCaja {
             });
     };
 
+    CargaMovimientosCajaXUsuario() {
+        $.ajax({
+            type: "POST",
+            url: "class/CajaXBodega.php",
+            data: {
+                action: "ReadByUser"
+            }
+        })
+            .done(function (e) {
+                movimientosCaja.drawMovimientosCaja(e)
+            });
+    };
+
     drawMovimientosCaja(e) {
         var movimientos = JSON.parse(e);
 
@@ -325,9 +338,7 @@ class MovimientosCaja {
 //Class Instance
 let movimientosCaja = new MovimientosCaja();
 
-$(document).ready(function () {
-    movimientosCaja.CargaMovimientosCaja();
-});
+
 
 
 $("#menu_CerrarCaja").click(function () {
