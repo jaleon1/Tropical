@@ -328,7 +328,8 @@ class Factura{
                     $this->restartInsumo($this->detalleOrden);
                     // retorna orden autogenerada.
                     OrdenXFactura::$id=$this->id;
-                    OrdenXFactura::Create($this->detalleOrden);                    
+                    OrdenXFactura::Create($this->detalleOrden);
+                    //                 
                     $this->Read();                    
                     return $this;
                 }
