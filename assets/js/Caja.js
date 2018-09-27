@@ -378,6 +378,20 @@ class MovimientosCaja {
     ReadbyID() {
         // alert("En construcción");
     };
+
+    ticketPrint(e){
+        // var data = JSON.parse(e);
+        localStorage.setItem("lsUsuario",e);
+        localStorage.setItem("lsFecha",e);
+        localStorage.setItem("lsApertura",e);
+        localStorage.setItem("lsEfectivo",e);
+        localStorage.setItem("lsTarjeta",e);
+        localStorage.setItem("lsTotalVentas",e);
+        localStorage.setItem("lsTotalNeto",e);
+        location.href ="/TicketCierreCaja.html";
+        // location.href ="/Tropical/TicketCierreCaja.html";
+    }
+    
 }
 //Class Instance
 let movimientosCaja = new MovimientosCaja();
