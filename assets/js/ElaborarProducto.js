@@ -54,6 +54,7 @@ constructor(numeroOrden, p, idOrdenSalida) {
             }
         })
             .done(function(e){
+                $('#btnAddProductoGenerado').attr("disabled", false);
                 swal({
                     type: 'success',
                     title: 'Número de Orden:' + $("#orden").val(),

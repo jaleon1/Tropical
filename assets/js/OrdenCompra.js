@@ -151,10 +151,6 @@ class OrdenCompra {
                     data: "fecha"
                 },
                 {
-                    title: "PROVEEDOR",
-                    data: "idProveedor"
-                },
-                {
                     title: "ORDEN",
                     data: "orden"
                 },
@@ -193,16 +189,16 @@ class OrdenCompra {
             buttons: [
                 {
                     extend: 'excelHtml5',
-                    exportOptions: {columns: [3, 4, 5, 6, 7]},
+                    exportOptions: {columns: [3, 4, 5, 6, 7, 8, 9, 10]},
                     messageTop:'FECHA:  '+ fecha + '  ORDEN:  '+ orden,
-                    messageBottom:' PROVEEDOR:  '+ proveedor + '  USUARIO:  ' + usuario,
+                    messageBottom:'USUARIO:  ' + usuario,
                 },
                 {
                     extend: 'pdfHtml5',
-                    exportOptions: {columns: [3, 4, 5, 6, 7]}
+                    exportOptions: {columns: [3, 4, 5, 6, 7, 8, 9, 10]}
                 }
             ],
-            columnDefs: [{ className: "text-right", "targets": [4, 5, 6, 7, 8] }],
+            columnDefs: [{ className: "text-right", "targets": [5, 6, 7, 8, 9, 10]}],
             language: {
                 "infoEmpty": "Sin Insumos",
                 "emptyTable": "Sin Insumos",
@@ -232,6 +228,11 @@ class OrdenCompra {
                     title: "ID INSUMO",
                     data: "idInsumo",
                     visible: false
+                },
+                {
+                    title: "CODIGO",
+                    data: "codigo",
+                    width:"auto"
                 },
                 {
                     title: "INSUMO",
@@ -267,6 +268,14 @@ class OrdenCompra {
                 {
                     title:"VALOR MALO",
                     data:"valorMalo",
+                    width:"auto",
+                    type: 'formatted-num',
+                    mRender: function ( e ) {
+                        return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                },
+                {
+                    title:"SUBTOTAL",
+                    data:"subtotal",
                     width:"auto",
                     type: 'formatted-num',
                     mRender: function ( e ) {

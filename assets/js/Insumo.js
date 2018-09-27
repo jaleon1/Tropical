@@ -108,26 +108,26 @@ class Insumo {
             });
     }
 
-        //Getter
-        get ReadInventarioInsumo() {
-            var miAccion = this.id == null ? 'ReadAllInventario' : 'ReadbyInsumo';
-            if (miAccion == 'ReadAll' && $('#tableBody-InsumoReporte').length == 0)
-                return;
-            $.ajax({
-                type: "POST",
-                url: "class/Insumo.php",
-                data: {
-                    action: miAccion,
-                    id: this.id
-                }
+    //Getter
+    get ReadInventarioInsumo() {
+        var miAccion = this.id == null ? 'ReadAllInventario' : 'ReadbyInsumo';
+        if (miAccion == 'ReadAll' && $('#tableBody-InsumoReporte').length == 0)
+            return;
+        $.ajax({
+            type: "POST",
+            url: "class/Insumo.php",
+            data: {
+                action: miAccion,
+                id: this.id
+            }
+        })
+            .done(function (e) {
+                insumo.ShowAllInventario(e);
             })
-                .done(function (e) {
-                    insumo.ShowAllInventario(e);
-                })
-                .fail(function (e) {
-                    insumo.showError(e);
-                });
-        }
+            .fail(function (e) {
+                insumo.showError(e);
+            });
+    }
 
     // Methods    
     Reload(e) {
