@@ -379,11 +379,9 @@ class Producto{
 
     function ReadAllInventario(){
         try {
-            $sql='SELECT i.id, 
-            
-            COALESCE(o.orden, s.numeroOrden) as idOrdenEntrada,
-            COALESCE(d.orden,  m.consecutivo) as idOrdenSalida,
-            
+            $sql='SELECT i.id,            
+            COALESCE(o.orden, CONCAT("Orden: ", s.numeroOrden)) as idOrdenEntrada,
+            COALESCE(CONCAT("Traslado: ", d.orden),  CONCAT("Merma:", m.consecutivo)) as idOrdenSalida,            
             p.codigo AS producto,
             entrada,
             salida,

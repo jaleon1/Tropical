@@ -68,6 +68,7 @@ class Merma {
             info: false,
             iDisplayLength: nPaging,
             paging: false,
+            order: [2, "desc"],
             "language": {
                 "infoEmpty": "Sin Registros Ingresados",
                 "emptyTable": "Sin Registros Ingresados",

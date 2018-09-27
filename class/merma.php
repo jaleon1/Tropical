@@ -69,7 +69,7 @@ class Merma{
             $sql='SELECT m.id, i.codigo, m.consecutivo, i.nombre, i.descripcion, m.cantidad, m.descripcion, m.fecha
                 FROM mermaInsumo m inner join insumo i on i.id = m.idInsumo
                 UNION
-                SELECT m.id, p.codigo, p.nombre, p.descripcion, m.cantidad, m.descripcion, m.fecha
+                SELECT m.id, p.codigo, m.consecutivo, p.nombre, p.descripcion, m.cantidad, m.descripcion, m.fecha
                 FROM mermaProducto m inner join producto p on p.id = m.idProducto';
             $data= DATA::Ejecutar($sql);
             return $data;
@@ -103,8 +103,8 @@ class Merma{
             foreach ($this->listaProducto as $item) {
                 // historico merma
                 $sql="INSERT INTO mermaProducto (id, idProducto, cantidad, descripcion)
-                    VALUES (uuid(), :idProducto, :cantidad, :descripcion)";
-                $param= array(':idProducto'=> $item->id, ':cantidad'=> $item->cantidad, ':descripcion'=> $item->descripcion);
+                    VALUES (:id, :idProducto, :cantidad, :descripcion)";
+                $param= array(':id'=> $this->id, ':idProducto'=> $item->id, ':cantidad'=> $item->cantidad, ':descripcion'=> $item->descripcion);
                 $data = DATA::Ejecutar($sql,$param,false);
                 if(!$data)
                     $created= false;
