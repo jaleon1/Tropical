@@ -199,13 +199,15 @@
                                 <!-- </div> -->
                             </div>
                         </div>
-    
                         <div class="clearfix"></div>
-
                     </div>
                 <div class="modal-footer">
+                    <div class="form-group">
+                        <div class="col-md-6 col-md-offset-3">
+                            <button id="btnReimprimeFactura" type="submit" class="btn btn-success">Reimprimir</button>
+                        </div>
+                    </div>
                     <div id="totalFact">
-                        
                     </div>
                 </div>
             </div>
@@ -249,5 +251,8 @@
 <script>
 $(document).ready(function () {
     inventarioFacturas.CargaFacturas();
+});
+$(document).on('click', '#btnReimprimeFactura', function (event) {
+    inventarioFacturas.ticketPrint();
 });
 </script>
