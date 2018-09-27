@@ -861,8 +861,8 @@ function ticketPrint(e) {
 
     localStorage.setItem("lsListaProducto",JSON.stringify(data.detalleFactura));
 
-    location.href ="/Tropical/TicketFacturacion.html";
-    // location.href = "/TicketFacturacion.html";
+    // location.href ="/Tropical/TicketFacturacion.html";
+    location.href = "/TicketFacturacion.html";
 
    
    

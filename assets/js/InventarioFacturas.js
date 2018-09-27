@@ -190,8 +190,8 @@ class InventarioFacturas {
         localStorage.setItem("lsBodega",$('#bodega').text());
         localStorage.setItem("lsUsuario",$('#cajero').text());
         localStorage.setItem("lsListaProducto",JSON.stringify(this.factDetalle));
-        location.href ="/Tropical/TicketFacturacion.html";
-        // location.href = "/TicketFacturacion.html";
+        // location.href ="/Tropical/TicketFacturacion.html";
+        location.href = "/TicketFacturacion.html";
     };
 }
 //Class Instance
