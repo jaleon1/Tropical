@@ -66,7 +66,7 @@ class Merma{
 
     function ReadAll(){
         try {
-            $sql='SELECT m.id, i.codigo, i.nombre, i.descripcion, m.cantidad, m.descripcion, m.fecha
+            $sql='SELECT m.id, i.codigo, m.consecutivo, i.nombre, i.descripcion, m.cantidad, m.descripcion, m.fecha
                 FROM mermaInsumo m inner join insumo i on i.id = m.idInsumo
                 UNION
                 SELECT m.id, p.codigo, p.nombre, p.descripcion, m.cantidad, m.descripcion, m.fecha

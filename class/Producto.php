@@ -381,7 +381,8 @@ class Producto{
         try {
             $sql='SELECT i.id, 
             
-            idOrdenEntrada, idOrdenSalida,
+            COALESCE(o.orden, s.numeroOrden) as idOrdenEntrada,
+            COALESCE(d.orden,  m.consecutivo) as idOrdenSalida,
             
             p.codigo AS producto,
             entrada,
@@ -394,6 +395,10 @@ class Producto{
             i.costoPromedio,
             i.fecha
                 FROM  inventarioProducto i inner join producto p on p.id = i.idProducto
+                    left join ordenCompra o on i.idOrdenEntrada = o.id 
+                    left join ordenSalida s on i.idOrdenEntrada = s.id
+                    left join distribucion d on i.idOrdenSalida = d.id
+                    left join mermaProducto m on i.idOrdenSalida = m.id
                 ORDER BY fecha desc';
             $data= DATA::Ejecutar($sql);
             return $data;
