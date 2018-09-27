@@ -186,7 +186,7 @@ class InventarioFacturas {
 
     ticketPrint() {
         localStorage.setItem("lsFactura",$('#consecutivo').text());
-        localStorage.setItem("lsFecha",$('#fecha').text());
+        localStorage.setItem("lsFecha",moment().format("YYYY-MM-DD HH:mm"));
         localStorage.setItem("lsBodega",$('#bodega').text());
         localStorage.setItem("lsUsuario",$('#cajero').text());
         localStorage.setItem("lsListaProducto",JSON.stringify(this.factDetalle));
