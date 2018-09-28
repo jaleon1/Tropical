@@ -983,16 +983,15 @@ class Producto {
                 {
                     extend: 'excelHtml5',
                     exportOptions: {
-                        columns: [ 1, 2, 3, 4, 5, 6 , 7, 8, 9, 10, 11, 12 ]
+                        columns: [1, 4, 5, 6, 7, 8, 9, 10, 11, 12]
                     }
                 },
                 {
                     extend: 'pdfHtml5',
                     exportOptions: {
-                        columns: [ 1, 2, 3, 4, 5, 6 , 7, 8, 9, 10, 11, 12 ]
+                        columns: [1, 4, 5, 6, 7, 8, 9, 10, 11, 12]
                     }
                 }
-                // 'copy', 'csv', 'excel', 'pdf', 'print'
             ],
             language: {
                 "infoEmpty": "Sin Usuarios Registrados",
@@ -1007,7 +1006,7 @@ class Producto {
                     "previous": "Anterior"
                 }
             },
-            // columnDefs: [{ className: "text-right", "targets": [4, 5, 6] }],
+            columnDefs: [{ className: "text-right", "targets": [5, 6, 7, 8, 9, 10, 11, 12] }],
             columns: [
                 {
                     title: "ID",
