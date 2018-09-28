@@ -374,9 +374,12 @@ class Factura{
 
     function actualizaInventario($insumos){
         foreach ($insumos as $key => $value){
-            // resta inventario sabor y topping.
-            InventarioInsumoXBodega::salida($value->idSabor1, 'ordenXX', 1);
-            InventarioInsumoXBodega::salida($value->idSabor2, 'ordenXX', 1);
+            // resta inventario sabor y topping.             
+            if($value->idTamano==0)
+                $porcion= 1;
+            else $porcion= 1.4285714;
+            InventarioInsumoXBodega::salida($value->idSabor1, 'ordenXX', $porcion);
+            InventarioInsumoXBodega::salida($value->idSabor2, 'ordenXX', $porcion);
             InventarioInsumoXBodega::salida($value->idTopping, 'ordenXX', 1);
             // resta inventario consumibles.
             consumible::salida($value->idTamano);
