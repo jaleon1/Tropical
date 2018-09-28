@@ -37,6 +37,9 @@ if(isset($_POST["action"])){
         case "Read":
             echo json_encode($factura->Read());
             break;
+        case "ReadVentas":
+            echo json_encode($factura->ReadVentas());
+            break;
         case "Create":
             echo json_encode($factura->Create());
             break;
@@ -261,6 +264,24 @@ class Factura{
             die(json_encode(array(
                 'code' => $e->getCode() ,
                 'msg' => 'Error al cargar el factura'))
+            );
+        }
+    }
+
+    function ReadVentas(){
+        try {
+            $sql='SELECT f.id, f.fechaCreacion, f.consecutivo, f.totalComprobante,
+            (SELECT count(pxf.codigo) FROM tropical.productosXFactura pxf WHERE pxf.codigo="12oz" AND pxf.idFactura=f.id) AS _12oz, 
+            (SELECT count(pxf.codigo) FROM tropical.productosXFactura pxf WHERE pxf.codigo="08oz" AND pxf.idFactura=f.id) AS _08oz 
+            FROM tropical.factura f ORDER BY f.fechaCreacion DESC;';
+            $data= DATA::Ejecutar($sql);
+            return $data;
+        }     
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar la lista'))
             );
         }
     }
