@@ -988,9 +988,12 @@ class Producto {
                 },
                 {
                     extend: 'pdfHtml5',
-                    exportOptions: {
-                        columns: [1, 4, 5, 6, 7, 8, 9, 10, 11, 12]
-                    }
+                    orientation : 'landscape',
+                    exportOptions: {columns: [1, 4, 5, 6, 7, 8, 9, 10, 11, 12]},
+                    customize: function(doc) {
+                        doc.defaultStyle.alignment = 'right';
+                        doc.styles.tableHeader.alignment = 'right';
+                    } 
                 }
             ],
             language: {
