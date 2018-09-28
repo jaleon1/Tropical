@@ -79,8 +79,8 @@ class OrdenCompra{
 
     function ReadAll(){
         try {
-            $sql='SELECT id, fecha, idProveedor, orden, idUsuario, (SELECT nombre FROM usuario WHERE id=idUsuario) AS usuario
-                FROM     ordenCompra       
+            $sql='SELECT o.id, o.fecha, o.orden, u.nombre as usuario
+                FROM     ordenCompra o INNER JOIN usuario  u on u.id=o.idUsuario
                 ORDER BY fecha asc';
             $data= DATA::Ejecutar($sql);
             return $data;
@@ -114,21 +114,20 @@ class OrdenCompra{
 
     function ReadbyOrden(){
         try {
-            $sql='SELECT `insumosXOrdenCompra`.`id`,
-                `insumosXOrdenCompra`.`idOrdenCompra`,
-                `insumosXOrdenCompra`.`idInsumo`,
-                (SELECT codigo FROM insumo WHERE id=insumosXOrdenCompra.idInsumo)AS codigo,
-                (SELECT nombre FROM insumo WHERE id=insumosXOrdenCompra.idInsumo)AS insumo,
-                (SELECT codigo FROM producto WHERE id=insumosXOrdenCompra.idInsumo)AS codigo_p,
-                (SELECT nombre FROM producto WHERE id=insumosXOrdenCompra.idInsumo)AS insumo_p,
-                ((insumosXOrdenCompra.cantidadBueno + insumosXOrdenCompra.cantidadMalo) * insumosXOrdenCompra.costoUnitario)AS subtotal,
-                `insumosXOrdenCompra`.`costoUnitario`,
-                `insumosXOrdenCompra`.`cantidadBueno`,
-                `insumosXOrdenCompra`.`cantidadMalo`,
-                `insumosXOrdenCompra`.`valorBueno`,
-                `insumosXOrdenCompra`.`valorMalo`
-            FROM `tropical`.`insumosXOrdenCompra`
-                where idOrdenCompra=:idOrdenCompra';
+            $sql='SELECT ixo.id,
+                oc.orden as codigo,
+                COALESCE(i.codigo, p.codigo) as insumo,
+                ((ixo.cantidadBueno + ixo.cantidadMalo) * ixo.costoUnitario)AS subtotal,
+                costoUnitario,
+                cantidadBueno,
+                cantidadMalo,
+                valorBueno,
+                valorMalo
+            FROM insumosXOrdenCompra ixo
+                left join ordenCompra oc on oc.id = ixo.idOrdenCompra
+                left join insumo i on i.id = ixo.idInsumo
+                left join producto p on p.id = ixo.idInsumo
+            where idOrdenCompra=:idOrdenCompra';
             $param= array(':idOrdenCompra'=>$this->id);
             $data= DATA::Ejecutar($sql,$param);
             return $data;

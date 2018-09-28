@@ -155,11 +155,6 @@ class OrdenCompra {
                     data: "orden"
                 },
                 {
-                    title: "ID USUARIO",
-                    data: "idUsuario",
-                    visible: false
-                },
-                {
                     title: "USUARIO",
                     data: "usuario"
                }
@@ -189,16 +184,18 @@ class OrdenCompra {
             buttons: [
                 {
                     extend: 'excelHtml5',
-                    exportOptions: {columns: [3, 4, 5, 6, 7, 8, 9, 10]},
+                    exportOptions: {columns: [1, 2, 3, 4, 5, 6, 7, 8]},
                     messageTop:'FECHA:  '+ fecha + '  ORDEN:  '+ orden,
                     messageBottom:'USUARIO:  ' + usuario,
                 },
                 {
                     extend: 'pdfHtml5',
-                    exportOptions: {columns: [3, 4, 5, 6, 7, 8, 9, 10]}
+                    exportOptions: {columns: [1, 2, 3, 4, 5, 6, 7, 8]},
+                    messageTop:'FECHA:  '+ fecha + '  ORDEN:  '+ orden,
+                    messageBottom:'USUARIO:  ' + usuario,
                 }
             ],
-            columnDefs: [{ className: "text-right", "targets": [5, 6, 7, 8, 9, 10]}],
+            columnDefs: [{ className: "text-right", "targets": [3, 4, 5, 6, 7, 8]}],
             language: {
                 "infoEmpty": "Sin Insumos",
                 "emptyTable": "Sin Insumos",
@@ -218,16 +215,6 @@ class OrdenCompra {
                     data: "id",
                     className: "itemId",
                     searchable: false
-                },
-                {
-                    title: "ID ORDEN COMPRA",
-                    data: "idOrdenCompra",
-                    visible: false
-                },
-                {
-                    title: "ID INSUMO",
-                    data: "idInsumo",
-                    visible: false
                 },
                 {
                     title: "CODIGO",
