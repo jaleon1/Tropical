@@ -113,6 +113,9 @@ class Producto {
         this.precioVenta = $("#precioVenta").val();
         this.tipoProducto = $('#tipoProducto option:selected').val();
 
+        var z = this.tablaproducto;
+        this.tablaproducto = [];
+
         $.ajax({
             type: "POST",
             url: "class/Producto.php",
@@ -121,7 +124,10 @@ class Producto {
                 obj: JSON.stringify(this)
             }
         })
-            .done(producto.showInfo)
+            .done(function (e) {
+                this.tablaproducto = z;
+                producto.showInfo();
+            })
             .fail(function (e) {
                 producto.showError(e);
             })
@@ -249,12 +255,12 @@ class Producto {
 
     // Muestra información en ventana
     showInfo() {
-        //$(".modal").css({ display: "none" });   
+        //$(".modal").css({ display: "none" });  
         $(".close").click();
         swal({
             
             type: 'success',
-            title: 'Good!',
+            title: 'Listo!',
             showConfirmButton: false,
             timer: 1000
         });

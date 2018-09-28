@@ -8,7 +8,7 @@ class Insumo {
         this.saldoCantidad = saldoCantidad || 0;
         this.saldoCosto = saldoCosto || 0;
         this.costoPromedio = costoPromedio || 0;
-        //this.tablainsumo;
+        this.tablainsumo;
     }
 
     //Getter
@@ -43,6 +43,10 @@ class Insumo {
         this.saldoCantidad = $("#saldoCantidad").val();
         this.saldoCosto = $("#saldoCosto").val();
         this.costoPromedio = $("#costoPromedio").val();
+
+        var z = this.tablainsumo;
+        this.tablainsumo = [];
+
         $.ajax({
             type: "POST",
             url: "class/Insumo.php",
@@ -51,7 +55,10 @@ class Insumo {
                 obj: JSON.stringify(this)
             }
         })
-            .done(insumo.showInfo)
+            .done(function (e) {
+                this.tablainsumo = z;
+                insumo.showInfo();
+            })
             .fail(function (e) {
                 insumo.showError(e);
             })
