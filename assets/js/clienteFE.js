@@ -324,9 +324,9 @@ class ClienteFE {
             })
             .always(function () {
                 $("#btnSubmit").removeAttr("disabled");
-                clientefe = new ClienteFE();
-                clientefe.ClearCtls();
-                clientefe.ReadProfile;
+                // clientefe = new ClienteFE();
+                // clientefe.ClearCtls();
+                // clientefe.ReadProfile;
                 //$("#nombre").focus();
                 // NProgress.done();
             });
