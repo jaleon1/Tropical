@@ -210,8 +210,8 @@
                     <div class="ln_solid"></div>
                     <div class="form-group">
                         <div class="col-md-12 col-md-offset-9">
-                            <button type="submit" class="btn btn-primary" id="reload">Limpiar</button>
-                            <button type="button" class="btn btn-success" id="btnSubmit">Aceptar</button>
+                            <button type="button" class="btn btn-primary" id="reload">Limpiar</button>
+                            <button type="button" class="btn btn-success" id="btnProducto">Aceptar</button>
                         </div>
                     </div>
                 </div>
@@ -301,7 +301,7 @@
     var t= null; // tabla
     $(document).ready(function () {
         //ordenCompra.Init();
-        $('#btnSubmit').click(function () {
+        $('#btnProducto').click(function () {
             producto.ActualizarPrecios();
         });
         //Valida si se presiona enter -> carga el producto en la lista

@@ -215,7 +215,7 @@ class Factura{
     }
 
     function Read(){
-        try { 
+        try {
             $sql='SELECT idBodega, fechaCreacion, consecutivo, local, terminal, idCondicionVenta, idSituacionComprobante, idEstadoComprobante, plazoCredito, 
                 idMedioPago, idCodigoMoneda, tipoCambio, totalServGravados, totalServExentos, totalMercanciasGravadas, totalMercanciasExentas, totalGravado, totalExento, fechaEmision, codigoReferencia, 
                 totalVenta, totalDescuentos, totalVentaneta, totalImpuesto, totalComprobante, idReceptor, idEmisor, idUsuario, tipoDocumento
@@ -304,7 +304,7 @@ class Factura{
     function EnviarFE(){
         try {
             // consulta datos de factura en bd.
-            $this->Read();
+            //$this->Read();
             $this->perfildeContribuyente();
             // envía la factura
             FacturaElectronica::Iniciar($this);
@@ -358,7 +358,8 @@ class Factura{
                     OrdenXFactura::$id=$this->id;
                     OrdenXFactura::Create($this->detalleOrden);
                     //                 
-                    $this->Read();                    
+                    $this->Read();
+                    $this->EnviarFE();         
                     return $this;
                 }
                 else throw new Exception('Error al guardar los productos.', 03);

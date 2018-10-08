@@ -13,7 +13,7 @@ $cfile= encdes::cifrar($_FILES['file']['name']);
 // busca si el string cifrado tiene un caracter: / ó \
 $continuar = false;
 while ($continuar==false) {
-    if(strpos($cfile, DIRECTORY_SEPARATOR)){
+    if(strpos($cfile, '/') || strpos($cfile, '\\')){
         $cfile= encdes::cifrar($_FILES['file']['name']);
         $continuar= false;
     }

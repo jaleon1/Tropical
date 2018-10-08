@@ -158,8 +158,10 @@ class Usuario{
     }
 
     function EndSession(){
-        unset($_SESSION['userSession']);
-        //return true;
+        // remove all session variables
+        session_unset(); 
+        // destroy the session 
+        session_destroy(); 
     }
 
     function Login(){

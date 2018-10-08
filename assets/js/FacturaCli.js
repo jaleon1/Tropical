@@ -869,14 +869,14 @@ function ticketPrint(e) {
     /*******************************************/
     //*************** ENVIO FE *****************/
     /*******************************************/
-    $.ajax({
-        type: "POST",
-        url: "class/Factura.php",
-        data: {
-            action: 'EnviarFE',
-            id: data.id
-        }
-    })
+    // $.ajax({
+    //     type: "POST",
+    //     url: "class/Factura.php",
+    //     data: {
+    //         action: 'EnviarFE',
+    //         id: data.id
+    //     }
+    // })
 }
 
 function calcVuelto(pago, xPagar) {
