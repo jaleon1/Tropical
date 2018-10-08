@@ -606,6 +606,7 @@ class ClienteFE{
             }
             $this->sessionKey= $sArray->resp->sessionKey;
             $_SESSION['API']->sessionKey= $this->sessionKey;
+            $_SESSION['API']->correoElectronico = $this->correoElectronico;
             error_log("sessionKey: ". $sArray->resp->sessionKey);
         } 
         catch(Exception $e) {
