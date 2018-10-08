@@ -165,8 +165,8 @@ class Distribucion {
         $('#tDistribucion tbody tr').each(function (i, item) {
             var objlista = new Object();
             objlista.idProducto = $(item).find('td:eq(0)')[0].textContent;
-            objlista.cantidad = $(item).find('td:eq(5) input').val();
-            objlista.costo = $(item).find('td:eq(6)').attr('value'); // costo: precio de venta para distrcion bodega externa. 
+            objlista.cantidad = $(item).find('td:eq(4) input').val();
+            objlista.costo = $(item).find('td:eq(5)').attr('value'); // costo: precio de venta para distrcion bodega externa. 
             objlista.valor = parseFloat(parseInt(objlista.cantidad) * parseFloat(objlista.costo)); // valor. costo*cantidad.
             distr.lista.push(objlista);
         });
