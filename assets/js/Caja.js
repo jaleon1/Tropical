@@ -358,8 +358,10 @@ class MovimientosCaja {
 
         $('.cierra-caja-modal-lg').modal('show');
 
-        $("#btn_ModalCierreCajaReporte").click(function () {
-            movimientosCaja.montoCierre = data.montoAperturaDefault[0].montoDefaultApertura;
+        $("#btn_ModalCierreCajaReporte").click(function(){
+            var nombre = $('#call_name').text();
+            movimientosCaja.montoCierre = data.montoAperturaDefault[0].montoDefaultApertura;           
+
             $.ajax({
                 type: "POST",
                 url: "class/CajaXBodega.php",
