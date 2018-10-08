@@ -128,7 +128,7 @@ class Factura{
             $this->montoEfectivo= $obj["montoEfectivo"];
             $this->montoTarjeta= $obj["montoTarjeta"];
             // d. Informacion de referencia
-            $this->tipoDocumento = $obj["tipoDocumento"] ?? "FE"; // documento de Referencia.
+            $this->tipoDocumento = $obj["tipoDocumento"] ?? "TE"; // documento de Referencia.
             $this->codigoReferencia = $obj["codigoReferencia"] ?? "01"; //codigo de documento de Referencia.            
             $this->fechaEmision= $obj["fechaEmision"] ?? null; // emision del comprobante electronico.
             //
