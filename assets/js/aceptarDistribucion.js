@@ -30,13 +30,13 @@ class Distribucion {
         if (miAccion == 'ReadAll' && $('#tDistribucion tbody').length == 0)
             return;
         $.ajax({
-            type: "POST",
-            url: "class/Distribucion.php",
-            data: {
-                action: miAccion,
-                id: this.id
-            }
-        })
+                type: "POST",
+                url: "class/Distribucion.php",
+                data: {
+                    action: miAccion,
+                    id: this.id
+                }
+            })
             .done(function (e) {
                 distr.Reload(e);
             })
@@ -71,17 +71,17 @@ class Distribucion {
             objlista.idProducto = $(item).find('td:eq(0)')[0].textContent; // id del item.
             objlista.codigo = $(this).find('td:eq(1)').html();
             objlista.cantidad = $(item).find('td:eq(5) input').val();
-            objlista.valor = $(item).find('td:eq(6)').attr('value'); // valor: precio de venta para distribucióncion bodega externa. 
+            objlista.valor = $(item).find('td:eq(6)').attr('value'); // valor: precio de venta para distribucion bodega externa...
             distr.lista.push(objlista);
         });
         $.ajax({
-            type: "POST",
-            url: "class/Distribucion.php",
-            data: {
-                action: miAccion,
-                obj: JSON.stringify(this)
-            }
-        })
+                type: "POST",
+                url: "class/Distribucion.php",
+                data: {
+                    action: miAccion,
+                    obj: JSON.stringify(this)
+                }
+            })
             .done(function (e) {
                 // muestra el numero de orden: IMPRIMIR.
                 distr.ticketPrint(e)
@@ -130,13 +130,13 @@ class Distribucion {
         var miAccion = 'ReadbyOrden';
         distr.orden = $('#p_searh').val();
         $.ajax({
-            type: "POST",
-            url: "class/Distribucion.php",
-            data: {
-                action: miAccion,
-                obj: JSON.stringify(this)
-            }
-        })
+                type: "POST",
+                url: "class/Distribucion.php",
+                data: {
+                    action: miAccion,
+                    obj: JSON.stringify(this)
+                }
+            })
             .done(function (e) {
                 if (e == 'null' || e == '') {
                     swal({
@@ -147,8 +147,7 @@ class Distribucion {
                         showConfirmButton: false,
                         timer: 3000
                     });
-                }
-                else distr.ShowOrderData(e);
+                } else distr.ShowOrderData(e);
             })
             .fail(function (e) {
                 distr.showError(e);
@@ -171,13 +170,13 @@ class Distribucion {
             distr.lista.push(objlista);
         });
         $.ajax({
-            type: "POST",
-            url: "class/Distribucion.php",
-            data: {
-                action: miAccion,
-                obj: JSON.stringify(this)
-            }
-        })
+                type: "POST",
+                url: "class/Distribucion.php",
+                data: {
+                    action: miAccion,
+                    obj: JSON.stringify(this)
+                }
+            })
             .done(distr.showInfo)
             .fail(function (e) {
                 distr.showError(e);
@@ -266,9 +265,10 @@ class Distribucion {
             "info": false,
             "ordering": false,
             // "retrieve": true,
-            "order": [[0, "desc"]],
-            columns: [
-                {
+            "order": [
+                [0, "desc"]
+            ],
+            columns: [{
                     title: "Codigo",
                     data: "codigo"
                 },
@@ -349,13 +349,13 @@ class Distribucion {
             producto.codigo = $("#p_searh").val();
             //
             $.ajax({
-                type: "POST",
-                url: "class/Producto.php",
-                data: {
-                    action: "ReadByCode",
-                    obj: JSON.stringify(producto)
-                }
-            })
+                    type: "POST",
+                    url: "class/Producto.php",
+                    data: {
+                        action: "ReadByCode",
+                        obj: JSON.stringify(producto)
+                    }
+                })
                 .done(function (e) {
                     distr.ResetSearch();
                     distr.ValidateProductoFac(e);
@@ -396,8 +396,7 @@ class Distribucion {
                         timer: 3000
                     });
             }
-        }
-        else {
+        } else {
             swal({
                 type: 'warning',
                 title: 'El producto ' + producto.codigo + ' NO existe.',
@@ -414,13 +413,28 @@ class Distribucion {
             .draw()
             .node();
         //
-        $('td:eq(4) input', rowNode).attr({ id: ("cantidad" + producto.id), max: producto.saldoCantidad, min: "1", step: "1", value: producto.cantidad, align: "right" })[0]
+        $('td:eq(4) input', rowNode).attr({
+                id: ("cantidad" + producto.id),
+                max: producto.saldoCantidad,
+                min: "1",
+                step: "1",
+                value: producto.cantidad,
+                align: "right"
+            })[0]
             .textContent = (parseFloat(producto.cantidad).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
         // Precio Venta
-        $('td:eq(5)', rowNode).attr({ id: ("precioVenta" + producto.id), value: producto.precioVenta , align: "right" })[0]
-            .textContent = ("¢" + parseFloat(producto.precioVenta ).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+        $('td:eq(5)', rowNode).attr({
+                id: ("precioVenta" + producto.id),
+                value: producto.precioVenta,
+                align: "right"
+            })[0]
+            .textContent = ("¢" + parseFloat(producto.precioVenta).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
         // subtotal
-        $('td:eq(6)', rowNode).attr({ id: ("subtotal" + producto.id), value: 0, align: "right" })[0].textContent = 0;
+        $('td:eq(6)', rowNode).attr({
+            id: ("subtotal" + producto.id),
+            value: 0,
+            align: "right"
+        })[0].textContent = 0;
         t.columns.adjust().draw();
         //
         distr.setProducto(producto.id);
@@ -433,9 +447,19 @@ class Distribucion {
             .draw()
             .node();
         //
-        $('td:eq(4)', rowNode).attr({ id: ("saldoCantidad" + producto.id), value: producto.saldoCantidad, align: "right" })[0]
+        $('td:eq(4)', rowNode).attr({
+                id: ("saldoCantidad" + producto.id),
+                value: producto.saldoCantidad,
+                align: "right"
+            })[0]
             .textContent = (parseFloat(producto.saldoCantidad).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
-        $('td:eq(5) input', rowNode).attr({ id: ("cantidad" + producto.id), max: producto.saldoCantidad, min: "1", step: "1", value: (producto.cantidad || 1) }).on('keyup keypress', function (e) {
+        $('td:eq(5) input', rowNode).attr({
+            id: ("cantidad" + producto.id),
+            max: producto.saldoCantidad,
+            min: "1",
+            step: "1",
+            value: (producto.cantidad || 1)
+        }).on('keyup keypress', function (e) {
             var keyCode = e.keyCode || e.which;
             if (keyCode == 109) {
                 e.preventDefault();
@@ -456,10 +480,18 @@ class Distribucion {
             distr.CalcImporte();
         });
         // Precio Venta
-        $('td:eq(6)', rowNode).attr({ id: ("precioVenta" + producto.id), value: producto.precioVenta , align: "right" })[0]
-            .textContent = ("¢" + parseFloat(producto.precioVenta ).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+        $('td:eq(6)', rowNode).attr({
+                id: ("precioVenta" + producto.id),
+                value: producto.precioVenta,
+                align: "right"
+            })[0]
+            .textContent = ("¢" + parseFloat(producto.precioVenta).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
         // subtotal
-        $('td:eq(7)', rowNode).attr({ id: ("subtotal" + producto.id), value: 0, align: "right" })[0].textContent = 0;
+        $('td:eq(7)', rowNode).attr({
+            id: ("subtotal" + producto.id),
+            value: 0,
+            align: "right"
+        })[0].textContent = 0;
         t.columns.adjust().draw();
         //
         distr.setProducto(producto.id);
@@ -490,7 +522,9 @@ class Distribucion {
 
     CalcImporte() {
         // Subtotal de linea.
-        $(`#subtotal${producto.id}`).attr({ value: producto.subtotal });
+        $(`#subtotal${producto.id}`).attr({
+            value: producto.subtotal
+        });
         $(`#subtotal${producto.id}`)[0].textContent = ("¢" + parseFloat(producto.subtotal).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
         //
         distr.calcTotal();
@@ -543,18 +577,32 @@ class Distribucion {
                     "previous": "Anterior"
                 }
             },
-            columnDefs: [{ className: "text-center", "targets": [4] }],
-            columns: [
-                {
+            columnDefs: [{
+                className: "text-center",
+                "targets": [4]
+            }],
+            columns: [{
                     title: "id",
                     data: "id",
                     className: "itemId",
                     searchable: false
                 },
-                { title: "Codigo", data: "codigo" },
-                { title: "Nombre", data: "nombre" },
-                { title: "Descripción", data: "descripcion" },
-                { title: "Saldo Cantidad", data: "saldoCantidad" },
+                {
+                    title: "Codigo",
+                    data: "codigo"
+                },
+                {
+                    title: "Nombre",
+                    data: "nombre"
+                },
+                {
+                    title: "Descripción",
+                    data: "descripcion"
+                },
+                {
+                    title: "Saldo Cantidad",
+                    data: "saldoCantidad"
+                },
                 {
                     title: "Cantidad",
                     data: "cantidad",
@@ -605,17 +653,28 @@ class Distribucion {
                     "previous": "Anterior"
                 }
             },
-            columnDefs: [{ className: "text-center", "targets": [4] }],
-            columns: [
-                {
+            columnDefs: [{
+                className: "text-center",
+                "targets": [4]
+            }],
+            columns: [{
                     title: "id",
                     data: "id",
                     className: "itemId",
                     searchable: false
                 },
-                { title: "Codigo", data: "codigo" },
-                { title: "Nombre", data: "nombre" },
-                { title: "Descripción", data: "descripcion" },
+                {
+                    title: "Codigo",
+                    data: "codigo"
+                },
+                {
+                    title: "Nombre",
+                    data: "nombre"
+                },
+                {
+                    title: "Descripción",
+                    data: "descripcion"
+                },
                 {
                     title: "Cantidad",
                     data: "cantidad",
@@ -665,17 +724,28 @@ class Distribucion {
                     "previous": "Anterior"
                 }
             },
-            columns: [
-                {
+            columns: [{
                     title: "id",
                     data: "id",
                     className: "itemId",
                     searchable: false
                 },
-                { title: "Fecha", data: "fecha" },
-                { title: "Orden", data: "orden" },
-                { title: "Usuario", data: "userName" },
-                { title: "Bodega", data: "bodega" },
+                {
+                    title: "Fecha",
+                    data: "fecha"
+                },
+                {
+                    title: "Orden",
+                    data: "orden"
+                },
+                {
+                    title: "Usuario",
+                    data: "userName"
+                },
+                {
+                    title: "Bodega",
+                    data: "bodega"
+                },
                 {
                     title: "Total",
                     data: "total",

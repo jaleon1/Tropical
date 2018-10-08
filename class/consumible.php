@@ -147,7 +147,7 @@ class Consumible{
         try {                  
             $sql='SELECT idProducto, cantidad 
                 FROM consumible
-                WHERE tamano=:tamano';
+                WHERE  tamano=:tamano';
             $param= array(':tamano'=> $tamano);
             $data= DATA::Ejecutar($sql, $param);
             foreach ($data as $key => $value){
@@ -168,8 +168,8 @@ class Consumible{
         try {
             $sql="SELECT saldoCantidad, costoPromedio 
                 FROM insumosXBodega 
-                WHERE idProducto=:idProducto;";
-            $param = array(':idProducto'=>$idProducto);
+                WHERE idBodega:=idBodega and idProducto=:idProducto;";
+            $param = array(':idProducto'=>$idProducto, ':idBodega'=>$_SESSION['userSession']->idBodega);
             $data = DATA::Ejecutar($sql,$param);
             if($data){
                 // calculo de saldos. 

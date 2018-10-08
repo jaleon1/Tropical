@@ -42,8 +42,8 @@ class InventarioInsumoXBodega{
         try {
             $sql="SELECT saldoCantidad, costoPromedio 
                 FROM insumosXBodega 
-                WHERE id=:idProducto;";
-            $param = array(':idProducto'=>$idProducto);
+                WHERE id=:idProducto and idBodega = idBodega;";
+            $param = array(':idProducto'=>$idProducto, ':idBodega'=>$_SESSION['userSession']->idBodega);
             $data = DATA::Ejecutar($sql,$param);
             if($data){
                 // calculo de saldos. 
@@ -54,8 +54,8 @@ class InventarioInsumoXBodega{
                 // actualiza saldos.
                 $sql = 'UPDATE insumosXBodega
                     SET saldoCantidad=:saldoCantidad, saldoCosto=:saldoCosto
-                    WHERE id=:idProducto;';
-                $param = array(':idProducto'=>$idProducto, ':saldoCantidad'=>self::$saldoCantidad, ':saldoCosto'=>self::$saldoCosto);
+                    WHERE id=:idProducto and idBodega = idBodega;';
+                $param = array(':idProducto'=>$idProducto, ':idBodega'=>$_SESSION['userSession']->idBodega, ':saldoCantidad'=>self::$saldoCantidad, ':saldoCosto'=>self::$saldoCosto);
                 $data = DATA::Ejecutar($sql, $param, false);
                 if($data) {
                     return true;
