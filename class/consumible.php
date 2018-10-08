@@ -168,7 +168,7 @@ class Consumible{
         try {
             $sql="SELECT saldoCantidad, costoPromedio 
                 FROM insumosXBodega 
-                WHERE idBodega:=idBodega and idProducto=:idProducto;";
+                WHERE idBodega=:idBodega and idProducto=:idProducto;";
             $param = array(':idProducto'=>$idProducto, ':idBodega'=>$_SESSION['userSession']->idBodega);
             $data = DATA::Ejecutar($sql,$param);
             if($data){
@@ -176,19 +176,23 @@ class Consumible{
                 // self::$valorSalida = floatval($data[0]['costoPromedio'] * $outCantidad);
                 $saldoCantidad = $data[0]['saldoCantidad'] - $outCantidad;
                 $saldoCosto = floatval($data[0]['costoPromedio'] * $saldoCantidad);
+                if($saldoCantidad < 0){
+                    $saldoCantidad = 0;
+                    $saldoCosto = 0;
+                }
                 // agrega ENTRADA histórico inventario. *** NO IMPLEMENTADO **
                 // actualiza saldos.
                 $sql = 'UPDATE insumosXBodega
                     SET saldoCantidad=:saldoCantidad, saldoCosto=:saldoCosto
-                    WHERE idProducto=:idProducto;';
-                $param = array(':idProducto'=>$idProducto, ':saldoCantidad'=>$saldoCantidad, ':saldoCosto'=>$saldoCosto);
+                    WHERE idBodega=:idBodega and idProducto=:idProducto;';
+                $param = array(':idProducto'=>$idProducto, ':idBodega'=>$_SESSION['userSession']->idBodega, ':saldoCantidad'=>$saldoCantidad, ':saldoCosto'=>$saldoCosto);
                 $data = DATA::Ejecutar($sql, $param, false);
                 if($data) {
                     return true;
                 }                
                 else throw new Exception('Error al consultar actualizar los saldos de insumo x bodega ('.$idProducto.')' , ERROR_SALIDA_INVENTARIO_INSUMOXBODEGA);
             }
-            else throw new Exception('Error al consultar el codigo del insumo para actualizar inventario ('.$idProducto.')' , ERROR_SALIDA_INVENTARIO_INSUMOXBODEGA);
+            else throw new Exception('Warning, el código de insumo no se encuentra en el inventario, no es posible actualizar por facturacion. ('.$idProducto.')' , ERROR_SALIDA_INVENTARIO_INSUMOXBODEGA);
 
         }
         catch(Exception $e) {

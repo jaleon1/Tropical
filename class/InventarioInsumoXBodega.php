@@ -42,7 +42,7 @@ class InventarioInsumoXBodega{
         try {
             $sql="SELECT saldoCantidad, costoPromedio 
                 FROM insumosXBodega 
-                WHERE id=:idProducto and idBodega = idBodega;";
+                WHERE id=:idProducto and idBodega =:idBodega;";
             $param = array(':idProducto'=>$idProducto, ':idBodega'=>$_SESSION['userSession']->idBodega);
             $data = DATA::Ejecutar($sql,$param);
             if($data){
@@ -50,11 +50,15 @@ class InventarioInsumoXBodega{
                 // self::$valorSalida = floatval($data[0]['costoPromedio'] * $outCantidad);
                 self::$saldoCantidad = $data[0]['saldoCantidad'] - $outCantidad;
                 self::$saldoCosto = floatval($data[0]['costoPromedio'] * self::$saldoCantidad);
+                if(self::$saldoCantidad < 0){
+                    self::$saldoCantidad = 0;
+                    self::$saldoCosto = 0;
+                }
                 // agrega ENTRADA histórico inventario. *** NO IMPLEMENTADO **
                 // actualiza saldos.
                 $sql = 'UPDATE insumosXBodega
                     SET saldoCantidad=:saldoCantidad, saldoCosto=:saldoCosto
-                    WHERE id=:idProducto and idBodega = idBodega;';
+                    WHERE id=:idProducto and idBodega =:idBodega;';
                 $param = array(':idProducto'=>$idProducto, ':idBodega'=>$_SESSION['userSession']->idBodega, ':saldoCantidad'=>self::$saldoCantidad, ':saldoCosto'=>self::$saldoCosto);
                 $data = DATA::Ejecutar($sql, $param, false);
                 if($data) {
