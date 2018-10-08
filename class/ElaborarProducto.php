@@ -8,6 +8,7 @@ if(isset($_POST["action"])){
     require_once('Evento.php');
     require_once('Usuario.php');
     require_once("Producto.php");
+    require_once("InventarioProducto.php");
     // Session
     if (!isset($_SESSION))
         session_start();
@@ -31,13 +32,14 @@ class ElaborarProducto{
 
     function __construct(){
         // identificador único
-        // $this->$idOrdenSalida= $_POST["idOrdenSalida"] ??'';
+        // 
         if(isset($_POST["id"])){
             $this->id= $_POST["id"];
         }
         if(isset($_POST["obj"])){
             $obj= json_decode($_POST["obj"],true);
             $this->numeroOrden= $obj["numeroOrden"] ?? '';
+            $this->idOrdenSalida= $obj["idOrdenSalida"] ??'';
             $this->fechaLiquida= $obj["fechaLiquida"] ?? '';
             //Productos
             if (isset($obj["listaProducto"] )) {
@@ -62,7 +64,7 @@ class ElaborarProducto{
             foreach ($this->listaProducto as $item){
                 $cantidadProductos += $item->cantidad;
             }
-            $costopromedio=0;
+            $costopromedio=0; // Costo promedio Unitario de cada producto generado en la orden.
             //INSERTA los datos en porductosXOrdenSalida
             foreach ($this->listaProducto as $item){
                 $costopromedio=$item->costo/$cantidadProductos;
@@ -72,30 +74,29 @@ class ElaborarProducto{
                 $param=array(':id'=>$id,':idOrdenSalida'=>$this->numeroOrden,':idProducto'=>$item->id,':cantidad'=>$item->cantidad,':costo'=>$costopromedio);
                 $data = DATA::Ejecutar($sql,$param,false);
             }
-            
+            //
             $sql="UPDATE ordenSalida 
                 SET idEstado=1, fechaLiquida=:fechaLiquida
                 WHERE numeroOrden=:numeroOrden";
             $param= array(':numeroOrden'=>$this->numeroOrden,':fechaLiquida'=>$this->fechaLiquida);
             $data = DATA::Ejecutar($sql,$param,false);
-
             //averiguar cuantos productos de venta llevo para dividir el costo.
             $cantidadproductos = 0;
             foreach ($this->listaProducto as $item) 
             {
                 $cantidadproductos = $cantidadproductos + $item->cantidad;
             }
-
             foreach ($this->listaProducto as $item) 
             {
                 $costounitario = $item->costo/$cantidadproductos;
                 $totalproducto = $costounitario * $item->cantidad;
-                // Actualiza los saldos y calcula promedio
-                Producto::UpdateSaldoProducto($item->id, $item->cantidad, $totalproducto);
+                // entrada a inventario. Actualiza los saldos y calcula promedio
+                InventarioProducto::entrada($item->id, $this->idOrdenSalida, $item->cantidad, $costounitario);
             }
             return $created;
         }     
         catch(Exception $e) {
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             return false;
         }
     }
@@ -120,7 +121,7 @@ class ElaborarProducto{
             $sql="SELECT idInsumo,cantidad,costoPromedio FROM tropical.insumosXOrdenSalida WHERE idOrdenSalida="."'".$_POST["idOrdenSalida"]."'";
             $listaInsumos = DATA::Ejecutar($sql);
 
-            foreach ($listaInsumos as $item) 
+            foreach ($listaInsumos as $item)
             {
                 $sql="CALL spRevierteInsumo(:mid, :ncantidad, :ncosto);";
                 $param= array(':mid'=>$item["idInsumo"], ':ncantidad'=>$item["cantidad"], ':ncosto'=>$item["costoPromedio"]);
@@ -134,7 +135,7 @@ class ElaborarProducto{
             }
             else throw new Exception('Error al calcular SALDOS Y PROMEDIOS, debe realizar el cálculo manualmente.', 666);
         }     
-        catch(Exception $e) {
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             return false;
         }
     }

@@ -16,7 +16,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>TropicalSNO | Facturas</title>
+    <title>TropicalSNO | Ventas</title>
 
     <!-- Bootstrap -->
     <link href="assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -24,18 +24,25 @@
     <link href="assets/css/font-awesome/css/font-awesome.min.css" rel="stylesheet">
     <!-- NProgress -->
     <link href="assets/css/nprogress/nprogress.css" rel="stylesheet">
+    <!-- bootstrap-datetimepicker -->
+    <link href="assets/css/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css" rel="stylesheet">
     <!-- iCheck -->
     <link href="assets/css/iCheck/skins/flat/green.css" rel="stylesheet">
-    <!-- Custom Theme Style -->
-    <link href="assets/css/custom.min.css" rel="stylesheet">
-    <!-- Custom Table Scroll -->
-    <link href="assets/css/facturacion.css" rel="stylesheet">
-    <!-- Custom TablePRD -->
-    <link href="assets/css/datatables.net-bs/css/dataTables.bootstrap.min.css" rel="stylesheet">
     <!-- SweetAlert -->
     <link rel="stylesheet" href="assets/css/sweetalert2.min.css">
-    <!-- css -->
-    <link rel="stylesheet" href="assets/css/facturaCli.css">
+
+    <!-- Datatables Export-->
+    <link href="assets/css/datatables.net-bs/css/buttons.dataTables.min.css" rel="stylesheet">
+
+    <!-- Datatables -->
+    <link href="../vendors/datatables.net-bs/css/dataTables.bootstrap.min.css" rel="stylesheet">
+    <link href="../vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css" rel="stylesheet">
+    <link href="../vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css" rel="stylesheet">
+    <link href="../vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css" rel="stylesheet">
+    <link href="../vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom Theme Style -->
+    <link href="assets/css/custom.css" rel="stylesheet">
 
 </head>
 
@@ -126,123 +133,100 @@
 
             <!-- page content -->
             <div class="right_col" role="main">
-                <div class="">
-
-                    <div class="page-title">
-                        <div class="title_left">
-                            <h3>Lista de Facturas</h3>
-                        </div>
-                        <div class="title_right">
-                            <h3 id="fecha" style="float:right"></h3>
-                        </div>
-                    </div>
-
-                    <div class="clearfix"></div>
-
-                    <div class="row">
-                        <div class="col-md-12 col-sm-12 col-xs-12">
-                            <div class="x_panel">
-                                <!--  CONTENIDO DE LA PAGINA -->
-                                <div class="x_content">
-                                    <div class="table-responsive">
-                                        <table id="tb_facturas" class="table table-striped jambo_table bulk_action">
-                                            <thead>
-                                              
-                                            </thead>
-                                            <tbody id="lista_facturas">
-
-                                            </tbody>
-                                        </table>
+                    <div class="">
+                        <div class="page-title">
+                            <div class="title_left">
+                                <h3>VENTAS REPORTE</h3>
+                            </div>
+    
+                            <div class="title_right">
+                                <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
+                                    <div class="input-group">
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-
-                    <div class="clearfix"></div>
-
-                    <div class="ln_solid"></div>
-                    
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- modals -->
-    <!-- Large modal -->
-    <div id="modalFac" class="modal fade factura-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content modal-factura">
-                <div id="detalleFac" class="modal-header">
-
-                </div>
-                <div class="modal-body">
-                    <div class="row">
+    
                         <div class="clearfix"></div>
-
+    
                         <div class="row">
                             <div class="col-md-12 col-sm-12 col-xs-12">
-                                <!-- <div class="x_panel"> -->
+                                <div class="x_panel">
+                                    <div class="x_title">               
+                                        
+                                        <div class="clearfix"></div>
+                                    </div>
+    
                                     <!--  CONTENIDO DE LA PAGINA -->
                                     <div class="x_content">
-                                        <div class="table-responsive">
-                                            <table id="tb_detalle_fact" style="width:100%" class="table table-striped jambo_table bulk_action">
-                                                <thead>
-                                                    
-                                                </thead>
-                                                <tbody id="detalle_prd">
-    
-                                                </tbody>
-                                            </table>
+                                        <!-- TABLE -->
+                                        <div id="datatable_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <table id="tb_ventas" class="table display responsive table-striped jambo_table no-wrap" width="100%" role="grid" aria-describedby="datatable_info">
+                                                        <tbody>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
                                         </div>
+                                        <!-- /TABLE -->
+    
                                     </div>
-                                <!-- </div> -->
+                                    <!--  /CONTENIDO DE LA PAGINA -->
+                                </div>
                             </div>
                         </div>
-                        <div class="clearfix"></div>
-                    </div>
-                <div class="modal-footer">
-                    <div class="form-group">
-                        <div class="col-md-6 col-md-offset-3">
-                            <button id="btnReimprimeFactura" type="submit" class="btn btn-success">Reimprimir</button>
-                        </div>
-                    </div>
-                    <div id="totalFact">
                     </div>
                 </div>
-            </div>
+                <!-- footer content -->
+                <footer>
+                    <div class="pull-right">
+                        TropicalSNO
+                        <a href="http://storylabscr.com">powered by Story Labs</a>
+                    </div>
+                    <div class="clearfix"></div>
+                </footer>
+                <!-- /footer content -->
         </div>
     </div>
-    <!-- modals -->
-    <!-- Large modal -->
 
-    <!-- jQuery -->
-    <script src="assets/js/jquery.min.js"></script>
-    <!-- Require -->    
-    <!-- <script data-main="assets/main" src="assets/js/require.js"></script> -->
-    <!-- JS Scripts -->
-    <script src="assets/js/InventarioFacturas.js"></script>
     <!-- Bootstrap -->
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
     <!-- FastClick -->
     <script src="assets/js/fastclick/lib/fastclick.js"></script>
     <!-- NProgress -->
     <script src="assets/js/nprogress/nprogress.js"></script>
-    <!-- iCheck -->
-    <script src="assets/js/iCheck/icheck.min.js"></script>
+    <!-- Moment -->
+    <script src="assets/js/moment.min.js"></script>
+    <script src="assets/js/moment-timezone.js"></script>
+    <!-- bootstrap-datetimepicker -->
+    <script src="assets/js/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js"></script>
     <!-- Validator -->
     <script src="assets/js/validator.js"></script>
-    <!-- Custom Theme Scripts -->
-    <script src="assets/js/custom.js"></script>
     <!-- Input mask -->
     <script src="assets/js/jquery.inputmask/jquery.inputmask.bundle.min.js"></script>
-    <!-- JS dataTables -->
-    <script src="assets/js/jquery.dataTables.min.js"></script>
-    <script src="assets/js/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
-    <!-- JS Moments -->
-    <script src="assets/js/moment.min.js"></script>
+    <!-- JS Scripts -->
+    <script src="assets/js/InventarioVentas.js"></script>
     <!-- Sweet Alert -->
     <script src="assets/js/sweetalert2.min.js"></script>
+    <!-- JS dataTables -->
+    <script src="assets/js/jquery.dataTables.min.js"></script>
+    <script src="assets/jquery.dataTables/dataTables.buttons.min.js"></script>
+    <script src="assets/jquery.dataTables/buttons.flash.min.js"></script>
+    <script src="assets/jquery.dataTables/jszip.min.js"></script>
+    <script src="assets/jquery.dataTables/pdfmake.min.js"></script>
+    <script src="assets/jquery.dataTables/vfs_fonts.js"></script>
+    <script src="assets/jquery.dataTables/buttons.html5.min.js"></script>
+    <script src="assets/jquery.dataTables/buttons.print.min.js"></script>
+    <!-- FastClick -->
+    <script src="../vendors/fastclick/lib/fastclick.js"></script>
+    <!-- NProgress -->
+    <script src="../vendors/nprogress/nprogress.js"></script>
+    <!-- iCheck -->
+    <script src="../vendors/iCheck/icheck.min.js"></script>
+    <!-- Custom Theme Scripts -->
+    <script src="assets/js/custom.js"></script>
 
 </body>
 
@@ -250,9 +234,6 @@
 
 <script>
 $(document).ready(function () {
-    inventarioFacturas.CargaFacturas();
-});
-$(document).on('click', '#btnReimprimeFactura', function (event) {
-    inventarioFacturas.ticketPrint();
+    inventarioVentas.Carga();
 });
 </script>

@@ -1,10 +1,10 @@
 <?php
 date_default_timezone_set('America/Costa_Rica');
-
-require '../ticket/autoload.php';
-use Mike42\Escpos\Printer;
+error_reporting(0);
+// require '../ticket/autoload.php';
+// use Mike42\Escpos\Printer;
 // use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
-use Mike42\Escpos\PrintConnectors\FilePrintConnector;
+// use Mike42\Escpos\PrintConnectors\FilePrintConnector;
 
 
 if(isset($_POST["action"])){
@@ -17,6 +17,8 @@ if(isset($_POST["action"])){
     require_once("Receptor.php");
     require_once("FacturaElectronica.php");
     require_once("encdes.php");
+    require_once("InventarioInsumoXBodega.php");
+    require_once("consumible.php");
     // Session
     if (!isset($_SESSION))
         session_start();
@@ -29,8 +31,14 @@ if(isset($_POST["action"])){
         case "ReadAll":
             echo json_encode($factura->ReadAll());
             break;
+        case "ReadAllById":
+            echo json_encode($factura->ReadAllById());
+            break;
         case "Read":
             echo json_encode($factura->Read());
+            break;
+        case "ReadVentas":
+            echo json_encode($factura->ReadVentas());
             break;
         case "Create":
             echo json_encode($factura->Create());
@@ -75,6 +83,8 @@ class Factura{
     public $plazoCredito= null;
     public $idCodigoMoneda= null;
     public $tipoCambio= null;
+    public $montoEfectivo= null;
+    public $montoTarjeta= null;
     //
     function __construct(){
         //
@@ -115,6 +125,8 @@ class Factura{
             $this->totalVentaneta= $obj["totalVentaneta"];
             $this->totalImpuesto= $obj["totalImpuesto"];
             $this->totalComprobante= $obj["totalComprobante"];
+            $this->montoEfectivo= $obj["montoEfectivo"];
+            $this->montoTarjeta= $obj["montoTarjeta"];
             // d. Informacion de referencia
             $this->tipoDocumento = $obj["tipoDocumento"] ?? "FE"; // documento de Referencia.
             $this->codigoReferencia = $obj["codigoReferencia"] ?? "01"; //codigo de documento de Referencia.            
@@ -164,7 +176,7 @@ class Factura{
 
     function ReadAll(){
         try {
-            $sql='SELECT f.id, f.consecutivo, f.fechaCreacion, f.totalVenta, b.nombre, u.userName
+            $sql='SELECT f.id, f.consecutivo, f.fechaCreacion, f.totalComprobante, f.montoEfectivo, f.montoTarjeta, b.nombre, u.userName
                 FROM factura f
                 INNER JOIN bodega b on f.idBodega = b.id
                 INNER JOIN usuario u on u.id = f.idusuario   
@@ -172,7 +184,28 @@ class Factura{
             $data= DATA::Ejecutar($sql);
             return $data;
         }     
-        catch(Exception $e) {
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar la lista'))
+            );
+        }
+    }
+
+    function ReadAllById(){
+        try {
+            $sql='SELECT f.id, f.consecutivo, f.fechaCreacion, f.totalComprobante, f.montoEfectivo, f.montoTarjeta, b.nombre, u.userName
+                FROM factura f
+                INNER JOIN bodega b on f.idBodega = b.id
+                INNER JOIN usuario u on u.id = f.idusuario
+                WHERE f.idUsuario =:idUsuario
+                ORDER BY f.consecutivo asc';
+            $param= array(':idUsuario'=>$_SESSION["userSession"]->id);
+            $data = DATA::Ejecutar($sql,$param);
+            return $data;
+        }     
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
@@ -226,11 +259,29 @@ class Factura{
             }
             return $this;
         }     
-        catch(Exception $e) {
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
                 'msg' => 'Error al cargar el factura'))
+            );
+        }
+    }
+
+    function ReadVentas(){
+        try {
+            $sql='SELECT f.id, f.fechaCreacion, f.consecutivo, f.totalComprobante,
+            (SELECT count(pxf.codigo) FROM tropical.productosXFactura pxf WHERE pxf.codigo="12oz" AND pxf.idFactura=f.id) AS _12oz, 
+            (SELECT count(pxf.codigo) FROM tropical.productosXFactura pxf WHERE pxf.codigo="08oz" AND pxf.idFactura=f.id) AS _08oz 
+            FROM tropical.factura f ORDER BY f.fechaCreacion DESC;';
+            $data= DATA::Ejecutar($sql);
+            return $data;
+        }     
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar la lista'))
             );
         }
     }
@@ -265,10 +316,10 @@ class Factura{
         try {
             $sql="INSERT INTO factura   (id, idBodega, local, terminal, idCondicionVenta, idSituacionComprobante, idEstadoComprobante, plazoCredito, 
                 idMedioPago, idCodigoMoneda, tipoCambio, totalServGravados, totalServExentos, totalMercanciasGravadas, totalMercanciasExentas, totalGravado, totalExento, codigoReferencia, 
-                totalVenta, totalDescuentos, totalVentaneta, totalImpuesto, totalComprobante, idReceptor, idEmisor, idUsuario, tipoDocumento)
+                totalVenta, totalDescuentos, totalVentaneta, totalImpuesto, totalComprobante, idReceptor, idEmisor, idUsuario, tipoDocumento, montoEfectivo)
             VALUES  (:uuid, :idBodega, :local, :terminal, :idCondicionVenta, :idSituacionComprobante, :idEstadoComprobante, :plazoCredito,
                 :idMedioPago, :idCodigoMoneda, :tipoCambio, :totalServGravados, :totalServExentos, :totalMercanciasGravadas, :totalMercanciasExentas, :totalGravado, :totalExento, :codigoReferencia, 
-                :totalVenta, :totalDescuentos, :totalVentaneta, :totalImpuesto, :totalComprobante, :idReceptor, :idEmisor, :idUsuario, :tipoDocumento)"; 
+                :totalVenta, :totalDescuentos, :totalVentaneta, :totalImpuesto, :totalComprobante, :idReceptor, :idEmisor, :idUsuario, :tipoDocumento, :montoEfectivo)"; 
             $param= array(':uuid'=>$this->id,
                 ':idBodega'=>$this->idBodega,
                 ':local'=>$this->local,
@@ -295,16 +346,18 @@ class Factura{
                 ':idReceptor'=>$this->idReceptor,
                 ':idEmisor'=>$this->idEmisor,
                 ':idUsuario'=>$_SESSION["userSession"]->id, 
-                ':tipoDocumento'=>$this->tipoDocumento);
+                ':tipoDocumento'=>$this->tipoDocumento,
+                ':montoEfectivo'=>$this->montoEfectivo);
             $data = DATA::Ejecutar($sql,$param, false);
             if($data)
             {
                  //save array obj
                  if(ProductoXFactura::Create($this->detalleFactura)){
-                    $this->restartInsumo($this->detalleOrden);
+                    $this->actualizaInventario($this->detalleOrden);
                     // retorna orden autogenerada.
                     OrdenXFactura::$id=$this->id;
-                    OrdenXFactura::Create($this->detalleOrden);                    
+                    OrdenXFactura::Create($this->detalleOrden);
+                    //                 
                     $this->Read();                    
                     return $this;
                 }
@@ -339,27 +392,19 @@ class Factura{
         }
     }
 
-    function restartInsumo($insumos){
+
+    function actualizaInventario($insumos){
         foreach ($insumos as $key => $value){
-            $sql="UPDATE insumosXBodega 
-            SET saldoCantidad = saldoCantidad - 1
-            WHERE id =:idSabor1;"; 
-            $param= array(':idSabor1'=>$value->idSabor1);
-            $data = DATA::Ejecutar($sql,$param, false);
-
-            $sql="UPDATE insumosXBodega 
-            SET saldoCantidad = saldoCantidad - 1
-            WHERE id =:idSabor2;"; 
-            $param= array(':idSabor2'=>$value->idSabor2);
-            $data = DATA::Ejecutar($sql,$param, false);
-
-            $sql="UPDATE insumosXBodega 
-            SET saldoCantidad = saldoCantidad - 1
-            WHERE id =:idTopping;"; 
-            $param= array(':idTopping'=>$value->idTopping);
-            $data = DATA::Ejecutar($sql,$param, false);
+            // resta inventario sabor y topping.             
+            if($value->idTamano==0)
+                $porcion= 1;
+            else $porcion= 1.4285714;
+            InventarioInsumoXBodega::salida($value->idSabor1, 'ordenXX', $porcion);
+            InventarioInsumoXBodega::salida($value->idSabor2, 'ordenXX', $porcion);
+            InventarioInsumoXBodega::salida($value->idTopping, 'ordenXX', 1);
+            // resta inventario consumibles.
+            consumible::salida($value->idTamano);
         };
-        
     }
 
     function TicketPrint($data){
@@ -409,7 +454,7 @@ class Factura{
 
             return true;
             }     
-            catch(Exception $e) {
+            catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
                 header('HTTP/1.0 777 Bad error');
                 die(json_encode(array(
                     'code' => $e->getCode() ,
@@ -441,7 +486,7 @@ class Factura{
             }
             else throw new Exception('Error al guardar.', 123);
         }     
-        catch(Exception $e) {
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
@@ -488,7 +533,7 @@ class Factura{
             }
             else throw new Exception('Error al eliminar.', 978);
         }
-        catch(Exception $e) {
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,

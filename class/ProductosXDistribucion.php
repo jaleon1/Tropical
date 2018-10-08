@@ -1,5 +1,6 @@
 <?php 
 require_once("Conexion.php");
+require_once("InventarioProducto.php");
 
 class ProductosXDistribucion{
     public $id;
@@ -31,7 +32,7 @@ class ProductosXDistribucion{
             }
             return $lista;
         }
-        catch(Exception $e) {
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             return false;
         }
     }
@@ -49,15 +50,15 @@ class ProductosXDistribucion{
                     ':valor'=>$item->valor
                 );
                 $data = DATA::Ejecutar($sql,$param,false);                
-                if($data){
+                if($data){                    
                     // Actualiza los saldos y calcula promedio
-                    Producto::UpdateSaldoPromedioSalida($item->idProducto, $item->cantidad);
+                    InventarioProducto::salida($item->idProducto, $item->idDistribucion ,$item->cantidad);
                 }
                 else $created= false;
             }
             return $created;
         }     
-        catch(Exception $e) {
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             return false;
         }
     }
@@ -71,7 +72,7 @@ class ProductosXDistribucion{
             $updated= self::Create($obj);
             return $updated;
         }     
-        catch(Exception $e) {
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             return false;
         }
     }
@@ -86,7 +87,7 @@ class ProductosXDistribucion{
                 return true;
             else false;
         }
-        catch(Exception $e) {
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             return false;
         }
     }

@@ -20,6 +20,9 @@ if(isset($_POST["action"])){
         case "Read":
             echo json_encode($ordenCompra->Read());
             break;
+        case "ReadbyOrden":
+            echo json_encode($ordenCompra->ReadbyOrden());
+            break;
         case "Create":
             $ordenCompra->Create();
             break;
@@ -60,7 +63,9 @@ class OrdenCompra{
                 foreach ($obj["lista"] as $itemlist) {
                     $item= new InsumosXOrdenCompra();
                     $item->idOrdenCompra= $this->id;
+                    $item->ordenCompra= $this->orden;
                     $item->idInsumo= $itemlist['idInsumo'];
+                    $item->esVenta= $itemlist['esVenta'];
                     $item->costoUnitario= $itemlist['costoUnitario'];
                     $item->cantidadBueno= $itemlist['cantidadBueno'];
                     $item->cantidadMalo= $itemlist['cantidadMalo'];
@@ -74,13 +79,13 @@ class OrdenCompra{
 
     function ReadAll(){
         try {
-            $sql='SELECT id, fecha, idProveedor, orden, idUsuario
-                FROM     ordenCompra       
+            $sql='SELECT o.id, o.fecha, o.orden, u.nombre as usuario
+                FROM     ordenCompra o INNER JOIN usuario  u on u.id=o.idUsuario
                 ORDER BY fecha asc';
             $data= DATA::Ejecutar($sql);
             return $data;
         }     
-        catch(Exception $e) {
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
@@ -91,14 +96,45 @@ class OrdenCompra{
 
     function Read(){
         try {
-            $sql='SELECT id, fecha, idProveedor, orden, idUsuario
+            $sql='SELECT id, fecha, idProveedor, orden, idUsuario, (SELECT nombre FROM usuario WHERE id=idUsuario) AS usuario
                 FROM ordenCompra  
                 where id=:id';
             $param= array(':id'=>$this->id);
             $data= DATA::Ejecutar($sql,$param);
             return $data;
         }     
-        catch(Exception $e) {
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar el ordenCompra'))
+            );
+        }
+    }
+
+    function ReadbyOrden(){
+        try {
+            $sql='SELECT ixo.id,
+                oc.orden as codigo,
+                COALESCE(i.codigo, p.codigo) as insumo,
+                ((ixo.cantidadBueno + ixo.cantidadMalo) * ixo.costoUnitario)AS subtotal,
+                costoUnitario,
+                cantidadBueno,
+                cantidadMalo,
+                valorBueno,
+                valorMalo
+            FROM insumosXOrdenCompra ixo
+                left join ordenCompra oc on oc.id = ixo.idOrdenCompra
+                left join insumo i on i.id = ixo.idInsumo
+                left join producto p on p.id = ixo.idInsumo
+            where idOrdenCompra=:idOrdenCompra';
+            $param= array(':idOrdenCompra'=>$this->id);
+            $data= DATA::Ejecutar($sql,$param);
+            return $data;
+            // $data = InsumosXOrdenCompra::Read($this->id);
+            // return $data;
+        }     
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
@@ -110,23 +146,19 @@ class OrdenCompra{
     function Create(){
         try {
             $sql="INSERT INTO ordenCompra   (id, idProveedor, orden, idUsuario) VALUES (:id, :idProveedor, :orden, :idUsuario);";
-            //
-            //require_once('Evento.php');
-            
             $param= array(':id'=>$this->id ,':idProveedor'=>$this->idProveedor, ':orden'=>$this->orden, ':idUsuario'=>$_SESSION['userSession']->id);
             $data = DATA::Ejecutar($sql,$param,false);
             if($data)
             {
                 //save array obj
                 if(InsumosXOrdenCompra::Create($this->lista)){
-                    if($this->CreateInventarioInsumo($this->lista))
-                        return true;
+                    return true;
                 }
                 else throw new Exception('Error al guardar los roles.', 03);
             }
             else throw new Exception('Error al guardar.', 02);
         }     
-        catch(Exception $e) {
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
@@ -135,40 +167,40 @@ class OrdenCompra{
         }
     }
 
-    function CreateInventarioInsumo($obj){
-        try {
-            $created = true;
-            require_once("Insumo.php");
-            foreach ($obj as $item) {          
+    // function CreateInventarioInsumo($obj){
+    //     try {
+    //         $created = true;
+    //         require_once("Insumo.php");
+    //         foreach ($obj as $item) {          
                 
-                $sql="SELECT saldoCantidad, saldoCosto, costoPromedio FROM insumo WHERE id=:idInsumo;";
-                $param= array(':idInsumo'=>$item->idInsumo);
-                $valor=DATA::Ejecutar($sql,$param); 
+    //             $sql="SELECT saldoCantidad, saldoCosto, costoPromedio FROM insumo WHERE id=:idInsumo;";
+    //             $param= array(':idInsumo'=>$item->idInsumo);
+    //             $valor=DATA::Ejecutar($sql,$param); 
                 
-                $sql="SELECT fecha FROM ordenCompra WHERE id=:idOrdenCompra;";
-                $param= array(':idOrdenCompra'=>$item->idOrdenCompra);
-                $fecha=DATA::Ejecutar($sql,$param);
+    //             $sql="SELECT fecha FROM ordenCompra WHERE id=:idOrdenCompra;";
+    //             $param= array(':idOrdenCompra'=>$item->idOrdenCompra);
+    //             $fecha=DATA::Ejecutar($sql,$param);
                 
-                $sql="INSERT INTO inventarioInsumo   (id, idOrdenCompra, idInsumo, entrada, saldo, costoAdquisicion, valorEntrada, valorSaldo, costoPromedio, fecha)
-                    VALUES (uuid(), :idOrdenCompra, :idInsumo, :entrada, :saldo, :costoAdquisicion, :valorEntrada, :valorSaldo, :costoPromedio, :fecha);";
-                $param= array(':idOrdenCompra'=>$item->idOrdenCompra, 
-                    ':idInsumo'=>$item->idInsumo,
-                    ':entrada'=>$item->cantidadBueno,
-                    ':saldo'=>$valor[0]['saldoCantidad'], 
-                    ':costoAdquisicion'=>$item->costoUnitario, 
-                    ':valorEntrada'=>$item->valorBueno,
-                    ':valorSaldo'=>$valor[0]['saldoCosto'],
-                    ':costoPromedio'=>$valor[0]['costoPromedio'],
-                    ':fecha'=>$fecha[0]['fecha']
-                );
-                DATA::Ejecutar($sql,$param,false);                
-            }
-            return $created;
-        }     
-        catch(Exception $e) {
-            return false;
-        }
-    }
+    //             $sql="INSERT INTO inventarioInsumo   (id, idOrdenCompra, idInsumo, entrada, saldo, costoAdquisicion, valorEntrada, valorSaldo, costoPromedio, fecha)
+    //                 VALUES (uuid(), :idOrdenCompra, :idInsumo, :entrada, :saldo, :costoAdquisicion, :valorEntrada, :valorSaldo, :costoPromedio, :fecha);";
+    //             $param= array(':idOrdenCompra'=>$item->idOrdenCompra, 
+    //                 ':idInsumo'=>$item->idInsumo,
+    //                 ':entrada'=>$item->cantidadBueno,
+    //                 ':saldo'=>$valor[0]['saldoCantidad'], 
+    //                 ':costoAdquisicion'=>$item->costoUnitario, 
+    //                 ':valorEntrada'=>$item->valorBueno,
+    //                 ':valorSaldo'=>$valor[0]['saldoCosto'],
+    //                 ':costoPromedio'=>$valor[0]['costoPromedio'],
+    //                 ':fecha'=>$fecha[0]['fecha']
+    //             );
+    //             DATA::Ejecutar($sql,$param,false);                
+    //         }
+    //         return $created;
+    //     }     
+    //     catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+    //         return false;
+    //     }
+    // }
 
     function Update(){
         try {
@@ -181,7 +213,7 @@ class OrdenCompra{
                 return true;
             else throw new Exception('Error al guardar.', 123);
         }     
-        catch(Exception $e) {
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
@@ -226,7 +258,7 @@ class OrdenCompra{
                 return $sessiondata['status']=0; 
             else throw new Exception('Error al eliminar.', 978);
         }
-        catch(Exception $e) {
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,

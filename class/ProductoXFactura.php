@@ -13,8 +13,8 @@
         // Instance
         $productoXFactura= new ProductoXFactura();
         switch($opt){
-            case "ReadbyID":
-                echo json_encode($productoXFactura->ReadbyID());
+            case "ReadByIdFactura":
+                echo json_encode($productoXFactura->ReadByIdFactura($_POST['id']));
                 break;
         }
         
@@ -36,7 +36,7 @@ class ProductoXFactura{
             }
             return $lista;
         }
-        catch(Exception $e) {
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             return false;
         }
     }
@@ -76,7 +76,7 @@ class ProductoXFactura{
             }
             return $lista;
         }
-        catch(Exception $e) {
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             return false;
         }
     }
@@ -113,7 +113,7 @@ class ProductoXFactura{
             }
             return $created;
         }     
-        catch(Exception $e) {
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             return false;
         }
     }

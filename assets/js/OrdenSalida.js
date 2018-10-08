@@ -54,6 +54,7 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
             var objInsumo = new Object();
             objInsumo.id= $(this).find('td:eq(0)').html();
             objInsumo.nombreInsumo= $(this).find('td:eq(2)').html();
+            objInsumo.codigo= $(this).find('td:eq(1)').html();
             objInsumo.cantidad= $(this).find('td:eq(7) input').val();
             objInsumo.costoPromedio= $(this).find('td:eq(6)').html();
             ordenSalida.listaInsumo.push(objInsumo);
@@ -508,6 +509,7 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
             var data = JSON.parse(e);
             if(document.URL.indexOf("ElaborarProducto.html")!=-1)
             {
+                this.id=data.id;
                 $.each(data.listaInsumo, function (i, item) {
                     $('#tableBody-InsumosOrdenSalida').append(`
                         <tr id="row"${item.id}> 

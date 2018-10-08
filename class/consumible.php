@@ -5,6 +5,7 @@ if(isset($_POST["action"])){
     // Classes
     require_once("Conexion.php");
     require_once("Producto.php");
+    require_once("InventarioInsumoXBodega.php");
     // Session
     if (!isset($_SESSION))
         session_start();
@@ -63,7 +64,7 @@ class Consumible{
             $data= DATA::Ejecutar($sql);
             return $data;
         }     
-        catch(Exception $e) {
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
@@ -114,7 +115,7 @@ class Consumible{
                 return true;
             else throw new Exception('Error al crear el consumible.', 66923);
         }     
-        catch(Exception $e) {
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
@@ -133,12 +134,70 @@ class Consumible{
                 return $sessiondata['status']=0;
             else throw new Exception('Error al eliminar.', 54649);
         }
-        catch(Exception $e) {
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
                 'msg' => $e->getMessage()))
             );
+        }
+    }
+
+    public static function salida($tamano){
+        try {                  
+            $sql='SELECT idProducto, cantidad 
+                FROM consumible
+                WHERE tamano=:tamano';
+            $param= array(':tamano'=> $tamano);
+            $data= DATA::Ejecutar($sql, $param);
+            foreach ($data as $key => $value){
+                self::salidaBodega($value['idProducto'], 'ordenXX', $value['cantidad']);
+            }
+        }
+        catch(Exception $e) {
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            // header('HTTP/1.0 400 Bad error');
+            // die(json_encode(array(
+            //     'code' => $e->getCode() ,
+            //     'msg' => $e->getMessage()))
+            // );
+        }
+    }
+
+    public static function salidaBodega($idProducto, $outOrden, $outCantidad){
+        try {
+            $sql="SELECT saldoCantidad, costoPromedio 
+                FROM insumosXBodega 
+                WHERE idProducto=:idProducto;";
+            $param = array(':idProducto'=>$idProducto);
+            $data = DATA::Ejecutar($sql,$param);
+            if($data){
+                // calculo de saldos. 
+                // self::$valorSalida = floatval($data[0]['costoPromedio'] * $outCantidad);
+                $saldoCantidad = $data[0]['saldoCantidad'] - $outCantidad;
+                $saldoCosto = floatval($data[0]['costoPromedio'] * $saldoCantidad);
+                // agrega ENTRADA histórico inventario. *** NO IMPLEMENTADO **
+                // actualiza saldos.
+                $sql = 'UPDATE insumosXBodega
+                    SET saldoCantidad=:saldoCantidad, saldoCosto=:saldoCosto
+                    WHERE idProducto=:idProducto;';
+                $param = array(':idProducto'=>$idProducto, ':saldoCantidad'=>$saldoCantidad, ':saldoCosto'=>$saldoCosto);
+                $data = DATA::Ejecutar($sql, $param, false);
+                if($data) {
+                    return true;
+                }                
+                else throw new Exception('Error al consultar actualizar los saldos de insumo x bodega ('.$idProducto.')' , ERROR_SALIDA_INVENTARIO_INSUMOXBODEGA);
+            }
+            else throw new Exception('Error al consultar el codigo del insumo para actualizar inventario ('.$idProducto.')' , ERROR_SALIDA_INVENTARIO_INSUMOXBODEGA);
+
+        }
+        catch(Exception $e) {
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            // header('HTTP/1.0 400 Bad error');
+            // die(json_encode(array(
+            //     'code' => $e->getCode() ,
+            //     'msg' => $e->getMessage()))
+            // );
         }
     }
 }

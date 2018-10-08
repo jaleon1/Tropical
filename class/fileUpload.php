@@ -6,10 +6,20 @@ require_once("ClienteFE.php");
 if (!isset($_SESSION))
     session_start();
 error_log("*** INICIO: subir certificado ***");
-$uploaddir= '../../CU/'.$_SESSION['userSession']->idBodega.'/';
+$uploaddir= '../../CU/'.$_SESSION['userSession']->idBodega.DIRECTORY_SEPARATOR;
 if (!file_exists($uploaddir)) 
-    mkdir($uploaddir, 0777, true);
+    mkdir($uploaddir, 0755, true);
 $cfile= encdes::cifrar($_FILES['file']['name']);
+// busca si el string cifrado tiene un caracter: / ó \
+$continuar = false;
+while ($continuar==false) {
+    if(strpos($cfile, DIRECTORY_SEPARATOR)){
+        $cfile= encdes::cifrar($_FILES['file']['name']);
+        $continuar= false;
+    }
+    else $continuar= true;
+}
+//
 $uploadfile = $uploaddir . explode('::', $cfile)[0];
 if (!empty($_FILES)) {
     // elimina archivos previos, solo debe existir un certificado por agencia.
@@ -37,7 +47,7 @@ if (!empty($_FILES)) {
             copy($uploadfile, $cliente->certificado);
             chmod($cliente->certificado, 0777); 
             if($cliente->APIUploadCert()){
-                //unlink($cliente->certificado);
+                unlink($cliente->certificado);
                 error_log("Certificado OK");
                 echo "UPLOADED";
                 return true;

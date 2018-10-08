@@ -56,6 +56,9 @@ if(isset($_POST["action"])){
                 $producto->ActualizaPrecios();
             }
             break;
+        case "ReadAllInventario":
+            echo json_encode($producto->ReadAllInventario());
+            break;
     }
 }
 
@@ -104,7 +107,7 @@ class Producto{
             $data= DATA::Ejecutar($sql);
             return $data;
         }     
-        catch(Exception $e) {
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
@@ -125,7 +128,7 @@ class Producto{
             $data= DATA::Ejecutar($sql,$param);
             return $data;
         }     
-        catch(Exception $e) {
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
@@ -143,7 +146,7 @@ class Producto{
             $data= DATA::Ejecutar($sql);
             return $data;
         }     
-        catch(Exception $e) {
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
@@ -161,7 +164,7 @@ class Producto{
             $data= DATA::Ejecutar($sql,$param);
             return $data;
         }     
-        catch(Exception $e) {
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
@@ -179,7 +182,7 @@ class Producto{
             $data= DATA::Ejecutar($sql,$param);
             return $data;
         }     
-        catch(Exception $e) {
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
@@ -197,7 +200,7 @@ class Producto{
             $data= DATA::Ejecutar($sql,$param);
             return $data;
         }     
-        catch(Exception $e) {
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
@@ -234,7 +237,7 @@ class Producto{
             }
             else throw new Exception('Error al guardar.', 02);
         }     
-        catch(Exception $e) {
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
@@ -254,7 +257,7 @@ class Producto{
                 return true;
             else throw new Exception('Error al guardar.', 123);
         }     
-        catch(Exception $e) {
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
@@ -299,7 +302,7 @@ class Producto{
                 return $sessiondata['status']=0;
             else throw new Exception('Error al eliminar.', 978);
         }
-        catch(Exception $e) {
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
@@ -356,42 +359,6 @@ class Producto{
         }
     }
 
-    public static function UpdateSaldoPromedioSalida($id, $ncantidad){
-        try {
-            $sql="CALL spUpdateSaldosPromedioProductoSalida(:mid, :ncantidad);";
-            $param= array(':mid'=>$id, ':ncantidad'=>$ncantidad);
-            $data = DATA::Ejecutar($sql,$param,false);
-            if($data)
-                return true;
-            else throw new Exception('Error al calcular SALDOS Y PROMEDIOS, debe realizar el cálculo manualmente.', 666);
-        }
-        catch(Exception $e) {
-            header('HTTP/1.0 400 Bad error');
-            die(json_encode(array(
-                'code' => $e->getCode() ,
-                'msg' => $e->getMessage()))
-            );
-        }
-    }  
-    
-    public static function UpdateSaldoProducto($id, $ncantidad, $ncosto){
-        try {
-            $sql="CALL spUpdateSaldosPromedioProducto(:mid, :ncantidad, :ncosto);";
-            $param= array(':mid'=>$id, ':ncantidad'=>$ncantidad, ':ncosto'=>$ncosto);
-            $data = DATA::Ejecutar($sql,$param,false);
-            if($data)
-                return true;
-            else throw new Exception('Error al calcular SALDOS Y PROMEDIOS, debe realizar el cálculo manualmente.', 666);
-        }     
-        catch(Exception $e) {
-            header('HTTP/1.0 400 Bad error');
-            die(json_encode(array(
-                'code' => $e->getCode() ,
-                'msg' => $e->getMessage()))
-            );
-        }
-    } 
-
     public static function RevierteProducto($id, $cantidad, $costo){
         try {
             $sql="CALL spRevierteProducto(:mid, :ncantidad, :ncosto);";
@@ -401,7 +368,7 @@ class Producto{
                 return true;
             else throw new Exception('Error al calcular SALDOS Y PROMEDIOS, debe realizar el cálculo manualmente.', 666);
         }     
-        catch(Exception $e) {
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
@@ -409,6 +376,40 @@ class Producto{
             );
         }
     } 
+
+    function ReadAllInventario(){
+        try {
+            $sql='SELECT i.id,            
+            COALESCE(o.orden, CONCAT("Orden: ", s.numeroOrden)) as idOrdenEntrada,
+            COALESCE(CONCAT("Traslado: ", d.orden),  CONCAT("Merma:", m.consecutivo)) as idOrdenSalida,            
+            p.codigo AS producto,
+            entrada,
+            salida,
+            saldo,
+            costoAdquisicion,
+            valorEntrada,
+            valorSalida,
+            valorSaldo,
+            i.costoPromedio,
+            i.fecha
+                FROM  inventarioProducto i inner join producto p on p.id = i.idProducto
+                    left join ordenCompra o on i.idOrdenEntrada = o.id 
+                    left join ordenSalida s on i.idOrdenEntrada = s.id
+                    left join distribucion d on i.idOrdenSalida = d.id
+                    left join mermaProducto m on i.idOrdenSalida = m.id
+                ORDER BY fecha desc';
+            $data= DATA::Ejecutar($sql);
+            return $data;
+        }     
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar la lista'))
+            );
+        }    
+    }
 }
 
 ?>

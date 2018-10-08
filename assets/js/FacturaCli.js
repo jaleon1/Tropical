@@ -1,12 +1,14 @@
 class FacturaCli {
     // Constructor
-    constructor(id, totalVenta, detalleOrden, detalleFactura, medioPago, totalComprobante, estadoCaja) {
+    constructor(id, totalVenta, detalleOrden, detalleFactura, medioPago, totalComprobante, montoEfectivo, montoTarjeta, estadoCaja) {
         this.id = id || null;
         this.totalVenta = totalVenta || '';
         this.detalleFactura = detalleFactura || new Array();
         this.detalleOrden = detalleOrden || new Array();
         this.medioPago = medioPago || 0;
         this.totalComprobante = totalComprobante || 0;
+        this.montoEfectivo = montoEfectivo || 0;
+        this.montoTarjeta = montoTarjeta || 0;
         // this.total = total || '';
         // this.fechaCreacion = fechaCreacion || null;
         // this.importe = importe || 0;
@@ -36,7 +38,9 @@ precioMediano.precio = 0
 // });
 
 $(document).ready(function () {
-
+    window.onbeforeunload = function () {
+        $("input[type=button], input[type=submit]").attr("disabled", "disabled");
+    };
     // NProgress.set(0.4)
     movimientosCaja.getStatusCashRegister();
     //Muestra el modal de sesion de caja
@@ -645,7 +649,7 @@ function CreateFact() {
             producto.showError(e);
         })
         .always(function () {
-            setTimeout('$("#btnProducto").removeAttr("disabled")', 1000);
+            $("#btnProducto").removeAttr("disabled");
             producto = new Producto();
             producto.ClearCtls();
             producto.Read;
@@ -831,7 +835,7 @@ function alertFact() {
 
 function ticketPrint(e) {
     var data = JSON.parse(e);
-    
+    localStorage.setItem("lsReimpresion","NOT");
     localStorage.setItem("lsFactura",data.consecutivo);
     localStorage.setItem("lsFecha",data.fechaCreacion);
     localStorage.setItem("lsBodega",data.bodega);

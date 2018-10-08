@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <!-- <link rel="stylesheet" href="style.css"> -->
+  <script src="assets/js/jquery.min.js"></script>
+  <script src="assets/js/Session.js"></script>
+  <link href="assets/css/print.css" rel="stylesheet">
+  <!-- <script>Session.Check();</script> -->
+</head>
+<body>
+  <div class="ticket" style="width:88mm;">
+    
+    <table style="width:91%;">
+        <tbody>
+          <tr style="line-height:10px;"><td><label>-------------------------------------------------------</label></td></tr>
+          <tr style="line-height:10px;font-family:Uroob,Bahnschrift Light Condensed; text-align: center;">
+              <td>TROPICAL SNO. <label id="bodega"></label></td>
+          </tr>
+          <tr style="line-height:10px;"><td><label>-------------------------------------------------------</label></td></tr>
+          <tr style="line-height:10px;font-family:Uroob,Bahnschrift Light Condensed; text-align: center;"><td>CIERRE DE CAJA</td></tr>
+          <tr style="line-height:10px;font-family:Uroob,Bahnschrift Light Condensed; text-align: center;"><td>Fecha: <label id="fecha"></label></td></tr>
+          <tr style="line-height:10px;font-family:Uroob,Bahnschrift Light Condensed; text-align: center;"><td>Usuario: <label id="usuario"></label></td></tr>
+        </tbody>
+      </table>
+
+    <table style="width:91%;">
+      <tbody id="tableBody-TicketCierreCaja">
+            <tr style="line-height:10px;"td colspan="2"><label>-------------------------------------------------------</label></td></tr>
+            <tr>
+                <td style="line-height:10px;font-family:Uroob,Bahnschrift Light Condensed; width:10%; text-align:left;">Apertura:</td>
+                <td id="apertura" style="line-height:10px;font-family:Uroob,Bahnschrift Light Condensed; width:90%; text-align:left;"></td>
+            </tr>
+            <tr>
+                <td style="line-height:10px;font-family:Uroob,Bahnschrift Light Condensed; width:10%; text-align:left;">Efectivo:</td>
+                <td id="efectivo" style="line-height:10px;font-family:Uroob,Bahnschrift Light Condensed; width:90%; text-align:left;"></td>
+            </tr>
+
+            <tr>
+                <td style="line-height:10px;font-family:Uroob,Bahnschrift Light Condensed; width:10%; text-align:left;">Tarjeta:</td>
+                <td id="tarjeta" style="line-height:10px;font-family:Uroob,Bahnschrift Light Condensed; width:90%; text-align:left;"></td>
+            </tr>
+            <tr>
+                <td style="line-height:10px;font-family:Uroob,Bahnschrift Light Condensed; width:10%; text-align:left;">Total Ventas:</td>
+                <td id="totalventas" style="line-height:10px;font-family:Uroob,Bahnschrift Light Condensed; width:90%; text-align:left;"></td>
+            </tr>
+            <tr>
+                <td style="line-height:10px;font-family:Uroob,Bahnschrift Light Condensed; width:10%; text-align:left;">Total Neto:</td>
+                <td id="totalneto" style="line-height:10px;font-family:Uroob,Bahnschrift Light Condensed; width:90%; text-align:left;"></td>
+            </tr>
+            <tr style="line-height:10px;"><td colspan="2"><label>-------------------------------------------------------</label></td></tr>
+      </tbody>
+    </table>
+    <label style="line-height:10px;">Firma:</label></br>
+    <label style="line-height:10px;">______________________</label></br>
+    <label style="line-height:10px;">-------------------------------------------------------</label>
+    <!-- <p style="line-height:10px;font-family:Uroob,Bahnschrift Light Condensed;" class="centrado">Firma:</p> -->
+  </div>
+  <!-- <script src="assets/js/Caja.js"></script> -->
+</body>
+</html>
+<script>
+    $(document).ready(function () {
+        $("#usuario").text(localStorage.getItem("lsUsuario"));
+        $("#fecha").text(localStorage.getItem("lsFecha"));
+        $("#apertura").text(localStorage.getItem("lsApertura"));
+        $("#efectivo").text(localStorage.getItem("lsEfectivo"));
+        $("#tarjeta").text(localStorage.getItem("lsTarjeta"));
+        $("#totalventas").text(localStorage.getItem("lsTotalVentas"));
+        $("#totalneto").text(localStorage.getItem("lsTotalNeto"));
+        window.print();
+        localStorage.setItem("lsPrintOK","OK");
+        location.href ="/Caja.html";
+        // location.href ="/Tropical/Caja.html";
+  });  
+</script>

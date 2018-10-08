@@ -8,7 +8,7 @@ class Insumo {
         this.saldoCantidad = saldoCantidad || 0;
         this.saldoCosto = saldoCosto || 0;
         this.costoPromedio = costoPromedio || 0;
-        //this.tablainsumo;
+        this.tablainsumo;
     }
 
     //Getter
@@ -43,6 +43,10 @@ class Insumo {
         this.saldoCantidad = $("#saldoCantidad").val();
         this.saldoCosto = $("#saldoCosto").val();
         this.costoPromedio = $("#costoPromedio").val();
+
+        var z = this.tablainsumo;
+        this.tablainsumo = [];
+
         $.ajax({
             type: "POST",
             url: "class/Insumo.php",
@@ -51,7 +55,10 @@ class Insumo {
                 obj: JSON.stringify(this)
             }
         })
-            .done(insumo.showInfo)
+            .done(function (e) {
+                this.tablainsumo = z;
+                insumo.showInfo();
+            })
             .fail(function (e) {
                 insumo.showError(e);
             })
@@ -108,26 +115,26 @@ class Insumo {
             });
     }
 
-        //Getter
-        get ReadInventarioInsumo() {
-            var miAccion = this.id == null ? 'ReadAllInventario' : 'ReadbyInsumo';
-            if (miAccion == 'ReadAll' && $('#tableBody-InsumoReporte').length == 0)
-                return;
-            $.ajax({
-                type: "POST",
-                url: "class/Insumo.php",
-                data: {
-                    action: miAccion,
-                    id: this.id
-                }
+    //Getter
+    get ReadInventarioInsumo() {
+        var miAccion = this.id == null ? 'ReadAllInventario' : 'ReadbyInsumo';
+        if (miAccion == 'ReadAll' && $('#tableBody-InsumoReporte').length == 0)
+            return;
+        $.ajax({
+            type: "POST",
+            url: "class/Insumo.php",
+            data: {
+                action: miAccion,
+                id: this.id
+            }
+        })
+            .done(function (e) {
+                insumo.ShowAllInventario(e);
             })
-                .done(function (e) {
-                    insumo.ShowAllInventario(e);
-                })
-                .fail(function (e) {
-                    insumo.showError(e);
-                });
-        }
+            .fail(function (e) {
+                insumo.showError(e);
+            });
+    }
 
     // Methods    
     Reload(e) {
@@ -375,6 +382,21 @@ class Insumo {
             responsive: true,
             destroy: true,
             order: [[1, "asc"]],
+            dom: 'Bfrtip',
+            buttons: [
+                {
+                    extend: 'excelHtml5',
+                    exportOptions: {
+                        columns: [ 1, 2, 3, 4, 5, 6]
+                    }
+                },
+                {
+                    extend: 'pdfHtml5',
+                    exportOptions: {
+                        columns: [ 1, 2, 3, 4, 5, 6]
+                    }
+                }
+            ],
             language: {
                 "infoEmpty": "Sin Usuarios Registrados",
                 "emptyTable": "Sin Usuarios Registrados",
@@ -592,22 +614,21 @@ class Insumo {
         this.tablainsumo = $('#dsInsumoReporte').DataTable( {
             responsive: true,
             destroy: true,
-            order: [[2, "desc"]],
+            order: [1, "desc"],
             dom: 'Bfrtip',
             buttons: [
                 {
                     extend: 'excelHtml5',
                     exportOptions: {
-                        columns: [ 1, 3, 5, 7, 8, 9, 10, 11, 12, 13, 14, 15 ]
+                        columns: [ 1, 3, 5, 7, 9, 10, 11, 12, 13, 14, 15, 16, 17 ]
                     }
                 },
                 {
                     extend: 'pdfHtml5',
                     exportOptions: {
-                        columns: [ 1, 3, 5, 7, 8, 9, 10, 11, 12, 13, 14, 15 ]
+                        columns: [ 1, 3, 5, 7, 9, 10, 11, 12, 13, 14, 15, 16, 17 ]
                     }
                 }
-                // 'copy', 'csv', 'excel', 'pdf', 'print'
             ],
             language: {
                 "infoEmpty": "Sin Usuarios Registrados",
@@ -622,7 +643,6 @@ class Insumo {
                     "previous": "Anterior"
                 }
             },
-            // columnDefs: [{ className: "text-right", "targets": [4, 5, 6] }],
             columns: [
                 {
                     title: "ID",
@@ -654,6 +674,16 @@ class Insumo {
                 {
                     title: "ORDEN SALIDA",
                     data: "ordenSalida",
+                    width: "auto"
+                },
+                {
+                    title: "CONSECUTIVO MERMA",
+                    data: "idMerma",
+                    visible: false
+                },
+                {
+                    title: "CONSECUTIVO MERMA",
+                    data: "consecutivo",
                     width: "auto"
                 },
                 {

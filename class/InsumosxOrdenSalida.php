@@ -20,7 +20,7 @@ class InsumosxOrdenSalida{
             $data= DATA::Ejecutar($sql,$param);
             return $data;
         }     
-        catch(Exception $e) {
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
@@ -50,13 +50,14 @@ class InsumosxOrdenSalida{
                 VALUES (uuid(),:idOrdenSalida, :idInsumo, :cantidad, :costoPromedio)";
                 $param= array(':idOrdenSalida'=>$ins_orden->idOrdenSalida, ':idInsumo'=>$ins_orden->idInsumo,':cantidad'=>$ins_orden->cantidad, ':costoPromedio'=>$ins_orden->costoPromedio);
                 $data = DATA::Ejecutar($sql,$param,false);
-                
+                // inventario
+                //InventarioInsumo::salida( $ins_orden->idInsumo, $ins_orden->idOrdenSalida, $ins_orden->cantidad);
                 if(!$data and !$data_insumo)
                     $created= false;
             }
             return $created;
         }     
-        catch(Exception $e) {
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             return false;
         }
     }
@@ -89,7 +90,7 @@ class InsumosxOrdenSalida{
             }
             return $created;
         }     
-        catch(Exception $e) {
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             return false;
         }
     }
@@ -125,7 +126,7 @@ class InsumosxOrdenSalida{
             
             return $created;
         }     
-        catch(Exception $e) {
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             return false;
         }
     }
@@ -141,7 +142,7 @@ class InsumosxOrdenSalida{
             $updated= self::Create($obj);
             return $updated;
         }     
-        catch(Exception $e) {
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
@@ -160,7 +161,7 @@ class InsumosxOrdenSalida{
                 return true;
             else false;
         }
-        catch(Exception $e) {
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             return false;
         }
     }

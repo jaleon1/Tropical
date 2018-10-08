@@ -77,7 +77,7 @@ class Insumo{
             $data= DATA::Ejecutar($sql);
             return $data;
         }     
-        catch(Exception $e) {
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
@@ -93,6 +93,8 @@ class Insumo{
             (SELECT orden FROM ordenCompra WHERE id=inventarioInsumo.idOrdenCompra) AS ordenCompra,
             `inventarioInsumo`.`idOrdenSalida`,
             (SELECT numeroOrden FROM ordenSalida WHERE id=inventarioInsumo.idOrdenSalida) AS ordenSalida,
+            `inventarioInsumo`.`idMerma`,
+            (SELECT consecutivo FROM mermaInsumo WHERE id=inventarioInsumo.idMerma) AS consecutivo,
             `inventarioInsumo`.`idInsumo`,
             (SELECT codigo FROM insumo WHERE id=inventarioInsumo.idInsumo) AS insumo,
             `inventarioInsumo`.`entrada`,
@@ -109,7 +111,7 @@ class Insumo{
             $data= DATA::Ejecutar($sql);
             return $data;
         }     
-        catch(Exception $e) {
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
@@ -126,7 +128,7 @@ class Insumo{
             $data= DATA::Ejecutar($sql);
             return $data;
         }     
-        catch(Exception $e) {
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
@@ -145,7 +147,7 @@ class Insumo{
             else
                 return floatval($data[0][0]);
         }     
-        catch(Exception $e) {
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
@@ -164,7 +166,7 @@ class Insumo{
             else
                 return floatval($data[0][0]);
         }     
-        catch(Exception $e) {
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
@@ -182,7 +184,7 @@ class Insumo{
             $data= DATA::Ejecutar($sql,$param);
             return $data;
         }     
-        catch(Exception $e) {
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
@@ -205,7 +207,7 @@ class Insumo{
             }
             else throw new Exception('Error al guardar.', 02);
         }     
-        catch(Exception $e) {
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
@@ -225,7 +227,7 @@ class Insumo{
                 return true;
             else throw new Exception('Error al guardar.', 123);
         }     
-        catch(Exception $e) {
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
@@ -270,7 +272,7 @@ class Insumo{
                 return $sessiondata['status']=0; 
             else throw new Exception('Error al eliminar.', 978);
         }
-        catch(Exception $e) {
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
@@ -310,7 +312,7 @@ class Insumo{
                 return true;
             else throw new Exception('Error al calcular SALDOS Y PROMEDIOS de insumos, debe realizar el cálculo manualmente.', 666);
         }     
-        catch(Exception $e) {
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
@@ -318,41 +320,5 @@ class Insumo{
             );
         }
     }
-    
-    public static function UpdateSaldoPromedioSalida($id, $ncantidad){
-        try {
-            $saldoCantidad = 0;
-            $saldoCosto = 0;
-            $sql="SELECT saldoCantidad, costoPromedio 
-                FROM insumo 
-                WHERE id=:id";
-            $param= array(':id'=>$id);
-            $data = DATA::Ejecutar($sql,$param);
-            if(!$data)
-                throw new Exception('Error al calcular SALDOS Y PROMEDIOS de insumos, debe realizar el cálculo manualmente.', 667);
-            foreach ($data as $key => $value){
-                $saldoCantidad = $value['saldoCantidad'] - $ncantidad;
-                $saldoCosto = $value['costoPromedio'] * $saldoCantidad;
-            }
-            //Actualiza la cantidad de Insumos
-            $sql="UPDATE insumo 
-                SET saldoCantidad=:saldoCantidad, saldoCosto=:saldoCosto 
-                WHERE id=:id";
-            $param= array(':saldoCantidad'=>$saldoCantidad, ':saldoCosto'=>$saldoCosto, ':id'=>$id);
-            $data = DATA::Ejecutar($sql,$param,false);
-            //
-            if($data)
-                return true;
-            else throw new Exception('Error al calcular SALDOS Y PROMEDIOS de insumos, debe realizar el cálculo manualmente.', 666);
-        }     
-        catch(Exception $e) {
-            header('HTTP/1.0 400 Bad error');
-            die(json_encode(array(
-                'code' => $e->getCode() ,
-                'msg' => $e->getMessage()))
-            );
-        }
-    }
-
 }
 ?>

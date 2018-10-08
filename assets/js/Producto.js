@@ -113,6 +113,9 @@ class Producto {
         this.precioVenta = $("#precioVenta").val();
         this.tipoProducto = $('#tipoProducto option:selected').val();
 
+        var z = this.tablaproducto;
+        this.tablaproducto = [];
+
         $.ajax({
             type: "POST",
             url: "class/Producto.php",
@@ -121,7 +124,10 @@ class Producto {
                 obj: JSON.stringify(this)
             }
         })
-            .done(producto.showInfo)
+            .done(function (e) {
+                this.tablaproducto = z;
+                producto.showInfo();
+            })
             .fail(function (e) {
                 producto.showError(e);
             })
@@ -222,6 +228,24 @@ class Producto {
             });
     }
 
+    get ReadInventarioProducto() {
+        var miAccion = 'ReadAllInventario';
+        $.ajax({
+            type: "POST",
+            url: "class/Producto.php",
+            data: {
+                action: miAccion,
+                id: this.id
+            }
+        })
+            .done(function (e) {
+                producto.ShowAllInventario(e);
+            })
+            .fail(function (e) {
+                producto.showError(e);
+            });
+    }
+
     // Methods
     Reload(e) {
         if (this.id == null)
@@ -231,12 +255,12 @@ class Producto {
 
     // Muestra información en ventana
     showInfo() {
-        //$(".modal").css({ display: "none" });   
+        //$(".modal").css({ display: "none" });  
         $(".close").click();
         swal({
             
             type: 'success',
-            title: 'Good!',
+            title: 'Listo!',
             showConfirmButton: false,
             timer: 1000
         });
@@ -315,6 +339,21 @@ class Producto {
             destroy: true,
             // data: data,
             order: [[ 1, "asc" ]],
+            dom: 'Bfrtip',
+            buttons: [
+                {
+                    extend: 'excelHtml5',
+                    exportOptions: {
+                        columns: [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ]
+                    }
+                },
+                {
+                    extend: 'pdfHtml5',
+                    exportOptions: {
+                        columns: [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ]
+                    }
+                }
+            ],
             language: {
                 "infoEmpty": "Sin Usuarios Registrados",
                 "emptyTable": "Sin Usuarios Registrados",
@@ -725,48 +764,48 @@ class Producto {
         }
     };
 
-ValidatePrdMerma(e){
-    //compara si el articulo ya existe
-    // carga lista con datos.
-    if(e == "[]"){
-        swal({
-            type: 'warning',
-            title: 'Orden de Compra',
-            text: 'El item ' + producto.codigo + ' No existe.',
-            showConfirmButton: false,
-            timer: 3000
-        });
-        return;
-    }
-    if(e != "false" && e != ''){
-        var data = JSON.parse(e)[0];
-        producto.id= data.id; 
-        producto.codigo= data.codigo; 
-        producto.nombre= data.nombre; 
-        producto.descripcion= data.descripcion;
-        producto.saldoCantidad= data.saldoCantidad;
-        var repetido = false;
-        //
-        if(document.getElementById("tProducto").rows.length != 0 && producto != null){
-            $(document.getElementById("tProducto").rows).each(function(i,item){
-                if(item.childNodes[0].innerText==producto.id){
-                    repetido=true;
-                    swal({
-                        type: 'warning',
-                        title: 'Orden de Compra',
-                        text: 'El item ' + producto.codigo + ' ya se encuentra en la lista',
-                        showConfirmButton: false,
-                        timer: 3000
-                    });
-                }     
+    ValidatePrdMerma(e){
+        //compara si el articulo ya existe
+        // carga lista con datos.
+        if(e == "[]"){
+            swal({
+                type: 'warning',
+                title: 'Orden de Compra',
+                text: 'El item ' + producto.codigo + ' No existe.',
+                showConfirmButton: false,
+                timer: 3000
             });
-        }    
-        if (repetido==false){
-            producto.agregarItem();
-            $("#p_searhProducto").val('');
+            return;
         }
-    }
-};
+        if(e != "false" && e != ''){
+            var data = JSON.parse(e)[0];
+            producto.id= data.id; 
+            producto.codigo= data.codigo; 
+            producto.nombre= data.nombre; 
+            producto.descripcion= data.descripcion;
+            producto.saldoCantidad= data.saldoCantidad;
+            var repetido = false;
+            //
+            if(document.getElementById("tProducto").rows.length != 0 && producto != null){
+                $(document.getElementById("tProducto").rows).each(function(i,item){
+                    if(item.childNodes[0].innerText==producto.id){
+                        repetido=true;
+                        swal({
+                            type: 'warning',
+                            title: 'Orden de Compra',
+                            text: 'El item ' + producto.codigo + ' ya se encuentra en la lista',
+                            showConfirmButton: false,
+                            timer: 3000
+                        });
+                    }     
+                });
+            }    
+            if (repetido==false){
+                producto.agregarItem();
+                $("#p_searhProducto").val('');
+            }
+        }
+    };
 
     agregarItem(){
         if(producto.saldoCantidad<=0){
@@ -912,6 +951,180 @@ ValidatePrdMerma(e){
                 $("#p_searh").focus();
             });
     }
+
+    ShowAllInventario(e) {
+        //Crea los eventos según sea el url
+        var t = $('#dsProductoReporte').DataTable();
+        if (t.rows().count() == 0) {
+            t.clear();
+            t.rows.add(JSON.parse(e));
+            t.draw();
+        } else {
+            t.clear();
+            t.rows.add(JSON.parse(e));
+            t.draw();
+        }
+    };
+
+    setTableInventarioProductoReporte(){
+        jQuery.extend( jQuery.fn.dataTableExt.oSort, {
+            "formatted-num-pre": function ( a ) {
+                a = (a === "-" || a === "") ? 0 : a.replace( /[^\d\-\.]/g, "" );
+                return parseFloat( a );
+            }, 
+            "formatted-num-asc": function ( a, b ) {
+                return a - b;
+            },
+            "formatted-num-desc": function ( a, b ) {
+                return b - a;
+            }
+        } );
+        
+        this.tablainsumo = $('#dsProductoReporte').DataTable( {
+            responsive: true,
+            destroy: true,
+            order: [3, "desc"],
+            dom: 'Bfrtip',
+            buttons: [
+                {
+                    extend: 'excelHtml5',
+                    exportOptions: {
+                        columns: [1, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+                    }
+                },
+                {
+                    extend: 'pdfHtml5',
+                    orientation : 'landscape',
+                    exportOptions: {columns: [1, 4, 5, 6, 7, 8, 9, 10, 11, 12]},
+                    customize: function(doc) {
+                        doc.defaultStyle.alignment = 'right';
+                        doc.styles.tableHeader.alignment = 'right';
+                    } 
+                }
+            ],
+            language: {
+                "infoEmpty": "Sin Usuarios Registrados",
+                "emptyTable": "Sin Usuarios Registrados",
+                "search": "Buscar",
+                "zeroRecords": "No hay resultados",
+                "lengthMenu": "Mostrar _MENU_ registros",
+                "paginate": {
+                    "first": "Primera",
+                    "last": "Ultima",
+                    "next": "Siguiente",
+                    "previous": "Anterior"
+                }
+            },
+            columnDefs: [{ className: "text-right", "targets": [5, 6, 7, 8, 9, 10, 11, 12] }],
+            columns: [
+                {
+                    title: "ID",
+                    data: "id",
+                    className: "itemId",
+                    width: "auto",
+                    searchable: false
+                },
+                {
+                    title: "FECHA",
+                    data: "fecha",
+                    width: "auto"
+                },
+                {
+                    title: "ORDEN COMPRA",
+                    data: "idOrdenEntrada"
+                },
+                {
+                    title: "ORDEN SALIDA",
+                    data: "idOrdenSalida"
+                },
+                {
+                    title: "PRODUCTO",
+                    data: "producto",
+                    width: "auto"
+                },
+                {
+                    title: "ENTRADA",
+                    data: "entrada",
+                    width: "auto",
+                    mRender: function ( e ) {
+                        if (e==null) 
+                            return '0'
+                        else
+                            return e}
+                },
+                {
+                    title: "SALIDA",
+                    data: "salida",
+                    width: "auto",
+                    mRender: function ( e ) {
+                        if (e==null) 
+                            return '0'
+                        else
+                            return e}
+                },
+                {
+                    title: "SALDO",
+                    data: "saldo",
+                    width: "auto"
+                },
+                {
+                    title: "COSTO ADQUISICION",
+                    data: "costoAdquisicion",
+                    width: "auto",
+                    type: 'formatted-num',
+                    mRender: function ( e ) {
+                        if (e==null) 
+                            return '¢0'
+                        else
+                            return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                },
+                {
+                    title:"VALOR ENTRADA",
+                    data:"valorEntrada",
+                    width:"auto",
+                    type: 'formatted-num',
+                    mRender: function ( e ) {
+                        if (e==null) 
+                            return '¢0'
+                        else
+                            return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                },
+                {
+                    title:"VALOR SALIDA",
+                    data:"valorSalida",
+                    width:"auto",
+                    type: 'formatted-num',
+                    mRender: function ( e ) {
+                        if (e==null) 
+                            return '¢0'
+                        else
+                        return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                },
+                {
+                    title:"VALOR SALDO",
+                    data:"valorSaldo",
+                    width:"auto",
+                    type: 'formatted-num',
+                    mRender: function ( e ) {
+                        if (e==null) 
+                            return '¢0'
+                        else
+                        return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                },
+                {
+                    title:"COSTO PROMEDIO",
+                    data:"costoPromedio",
+                    width:"auto",
+                    type: 'formatted-num',
+                    mRender: function ( e ) {
+                        if (e==null) 
+                            return '¢0'
+                        else
+                        return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                }
+            ]
+        });
+    };
 
     Init() {
         // validator.js

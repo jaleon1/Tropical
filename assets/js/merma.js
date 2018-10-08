@@ -51,12 +51,24 @@ class Merma {
         }
     };
 
+    showError(e) {
+        //$(".modal").css({ display: "none" });  
+        var data = JSON.parse(e.responseText);
+        swal({
+            type: 'error',
+            title: 'Oops...',
+            text: 'Algo no está bien (' + data.code + '): ' + data.msg,
+            footer: '<a href>Contacte a Soporte Técnico</a>',
+        })
+    };
+
     setTable(buttons=true, nPaging=10){
         $('#tMerma').DataTable({
             responsive: true,
             info: false,
             iDisplayLength: nPaging,
             paging: false,
+            order: [2, "desc"],
             "language": {
                 "infoEmpty": "Sin Registros Ingresados",
                 "emptyTable": "Sin Registros Ingresados",
@@ -78,6 +90,7 @@ class Merma {
                     searchable: false
                 },
                 { title: "Codigo", data: "codigo" },
+                { title: "Consecutivo", data: "consecutivo" },
                 { title: "Nombre", data: "nombre" },
                 { title: "Descripción", data: "descripcion" },
                 { 

@@ -1,8 +1,11 @@
 <?php 
 require_once("Conexion.php");
+require_once("InventarioProducto.php");
+require_once("InventarioInsumo.php");
 
 class InsumosXOrdenCompra{
     public $idOrdenCompra;
+    public $OrdenCompra;
     public $idInsumo;
     public $costoUnitario;
     public $cantidadBueno;
@@ -28,14 +31,44 @@ class InsumosXOrdenCompra{
                 $data = DATA::Ejecutar($sql,$param,false);                
                 if($data){
                     // Actualiza los saldos y calcula promedio
-                    Insumo::UpdateSaldoPromedioEntrada($item->idInsumo, $item->cantidadBueno, $item->valorBueno);
+                    if($item->esVenta==0) { // 0= articulo
+                        InventarioProducto::entrada($item->idInsumo, $item->idOrdenCompra, $item->cantidadBueno, $item->costoUnitario);
+                    }
+                    else { // -1= insumo.
+                        InventarioInsumo::entrada($item->idInsumo, $item->idOrdenCompra, $item->cantidadBueno, $item->costoUnitario);
+                    }
                 }
                 else $created= false;
             }
             return $created;
         }     
-        catch(Exception $e) {
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             return false;
+        }
+    }
+
+    public static function Read($idOrdenCompra){
+        try {
+            $sql='SELECT `insumosXOrdenCompra`.`id`,
+                `insumosXOrdenCompra`.`idOrdenCompra`,
+                `insumosXOrdenCompra`.`idInsumo`,
+                `insumosXOrdenCompra`.`costoUnitario`,
+                `insumosXOrdenCompra`.`cantidadBueno`,
+                `insumosXOrdenCompra`.`cantidadMalo`,
+                `insumosXOrdenCompra`.`valorBueno`,
+                `insumosXOrdenCompra`.`valorMalo`
+            FROM `tropical`.`insumosXOrdenCompra`
+                where idOrdenCompra=:idOrdenCompra';
+            $param= array(':idOrdenCompra'=>$idOrdenCompra);
+            $data= DATA::Ejecutar($sql,$param);
+            return $data;
+        }     
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar el ordenCompra'))
+            );
         }
     }
 
@@ -48,7 +81,7 @@ class InsumosXOrdenCompra{
             $updated= self::Create($obj);
             return $updated;
         }     
-        catch(Exception $e) {
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             return false;
         }
     }
@@ -63,7 +96,7 @@ class InsumosXOrdenCompra{
                 return true;
             else false;
         }
-        catch(Exception $e) {
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             return false;
         }
     }

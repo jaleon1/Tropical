@@ -33,7 +33,7 @@ class Evento{
             $data= DATA::Ejecutar($sql);
             return $data;
         }     
-        catch(Exception $e) {   
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());   
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,

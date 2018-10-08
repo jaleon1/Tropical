@@ -276,6 +276,8 @@ function facturar (){
     facturaCli.totalVentaneta = 0;    
     facturaCli.totalImpuesto = 0;
     facturaCli.totalComprobante=0;
+    facturaCli.montoEfectivo=0;
+    facturaCli.montoTarjeta=0;
     // detalle.
     facturaCli.detalleFactura = [];
     facturaCli.detalleOrden = [];
@@ -299,7 +301,7 @@ function facturar (){
         objetoDetalleFactura.codigo = item[1];
         objetoDetalleFactura.cantidad = 1;
         objetoDetalleFactura.idUnidadMedida = 78; // 78 =  unidades.
-        objetoDetalleFactura.detalle = `Venta de producto ${item[1]}, ${item[3]}, ${item[5]}, ${item[7]}`;
+        objetoDetalleFactura.detalle = `${item[1]}, ${item[3]}, ${item[5]}, ${item[7]}`;
         objetoDetalleFactura.precioUnitario = precioUnitario;
         objetoDetalleFactura.montoTotal =  objetoDetalleFactura.precioUnitario *  objetoDetalleFactura.cantidad;
         objetoDetalleFactura.montoDescuento = 0;
@@ -327,6 +329,15 @@ function facturar (){
     });
     // totales de factura.
     // exonera y grava de mercancias y servicios
+    if ($("#txt_pagoCash").val()==null)
+        facturaCli.montoEfectivo = "0";
+    else
+        facturaCli.montoEfectivo = $("#txt_pagoCash").val();
+    if($("#total_pagar").text()==null)
+        facturaCli.montoTarjeta = "0";
+    else
+        facturaCli.montoTarjeta = ($("#total_pagar").text()).substring(16);;
+
     facturaCli.totalServGravados = 0;
     facturaCli.totalServExentos = 0;
     facturaCli.totalMercanciasGravadas = facturaCli.totalVenta;
@@ -338,8 +349,10 @@ function facturar (){
     facturaCli.totalVentaneta =  facturaCli.totalVenta - facturaCli.totalDescuentos;
     // total comprobante.
     facturaCli.totalComprobante = facturaCli.totalVentaneta + facturaCli.totalImpuesto;
-
-
+    //
+    $('#send').addClass('Nosend');
+    $('#send').attr("disabled", "disabled");
+    //
     $.ajax({
         type: "POST",
         url: "class/Factura.php",
@@ -350,7 +363,6 @@ function facturar (){
     })
     .done(function(e){
         ticketPrint(e);
-
     })
     .fail(function (e) {
         swal({

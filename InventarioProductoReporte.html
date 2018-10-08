@@ -16,7 +16,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>TropicalSNO | Insumos</title>
+    <title>TropicalSNO | Productos</title>
 
     <!-- Bootstrap -->
     <link href="assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -34,6 +34,7 @@
     <!-- Datatables Export-->
     <link href="assets/css/datatables.net-bs/css/buttons.dataTables.min.css" rel="stylesheet">
 
+    
     <!-- Datatables -->
     <link href="../vendors/datatables.net-bs/css/dataTables.bootstrap.min.css" rel="stylesheet">
     <link href="../vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css" rel="stylesheet">
@@ -141,7 +142,7 @@
                 <div class="">
                     <div class="page-title">
                         <div class="title_left">
-                            <h3>MATERIA PRIMA REPORTE</h3>
+                            <h3>PRODUCTO / ARTÍCULO REPORTE</h3>
                         </div>
 
                         <div class="title_right">
@@ -173,111 +174,14 @@
                                     <div id="datatable_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
                                         <div class="row">
                                             <div class="col-sm-12">
-                                                <table id="dsInsumoReporte" class="table display responsive table-striped jambo_table no-wrap" width="100%" role="grid" aria-describedby="datatable_info">
-                                                    <!-- <thead>
-                                                        <tr role="row" class="headings">
-                                                            <th><input type='checkbox' id='check-all' class='iCheck-helper'></th><th class='itemId'>ID</th><th>Codigo</th> <th>Nombre</th> <th>descripcion</th> <th>Saldo Cantidad</th>  <th>Saldo Costo</th> <th>Costo Promedio</th> <th>Acción</th>
-                                                        </tr>
-                                                    </thead> -->
-                                                    <tbody id="tableBody-InsumoReporte">
+                                                <table id="dsProductoReporte" class="table display responsive table-striped jambo_table no-wrap" width="100%" role="grid" aria-describedby="datatable_info">
+                                                    <tbody id="tableBody-ProductoReporte">
                                                     </tbody>
                                                 </table>
                                             </div>
                                         </div>
                                     </div>
                                     <!-- /TABLE -->
-
-                                    <!-- MODAL -->
-                                    <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
-                                        <div class="modal-dialog modal-lg">
-                                            <div class="modal-content">
-
-                                                <div class="modal-header">
-                                                    <button type="button" class="close" data-dismiss="modal">
-                                                        <span aria-hidden="true">×</span>
-                                                    </button>
-                                                    <h4 class="modal-title" id="myModalLabel">Editar Insumo</h4>
-                                                </div>
-
-                                                <div class="modal-body">
-                                                    <form class="form-horizontal form-label-left" id="frmInsumo" novalidate>
-
-                                                        
-
-                                                        <div class="item form-group">
-                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="codigo">Codigo
-                                                                <span class="required">*</span>
-                                                            </label>
-                                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <input id="codigo" class="form-control col-md-7 col-xs-12" name="codigo" required="required" type="text">
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="item form-group">
-                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="nombre">Nombre
-                                                                <span class="required">*</span>
-                                                            </label>
-                                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <input id="nombre" class="form-control col-md-7 col-xs-12" name="nombre" required="required" type="text">
-                                                            </div>
-                                                        </div>
-                
-                                                        <div class="item form-group">
-                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="descripcion">Descripción
-                                                                <span class="required">*</span>
-                                                            </label>
-                                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <input id="descripcion" class="form-control col-md-7 col-xs-12" name="descripcion" required="required" type="text">
-                                                            </div>
-                                                        </div>
-                
-                                                        <div class="item form-group">
-                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="saldoCantidad">Saldo Cantidad
-                                                                <span class="required">*</span>
-                                                            </label>
-                                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <input id="saldoCantidad" class="form-control col-md-7 col-xs-12" name="saldoCantidad" required="required" type="text"
-                                                                value ="0">
-                                                            </div>
-                                                        </div>
-                
-                                                        <div class="item form-group">
-                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="saldoCosto">Saldo Costo
-                                                                <span class="required">*</span>
-                                                            </label>
-                                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <input id="saldoCosto" class="form-control col-md-7 col-xs-12" name="saldoCosto" required="required" type="text"
-                                                                value ="0">
-                                                            </div>
-                                                        </div>
-                
-                                                        <div class="item form-group">
-                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="costoPromedio">Costo Promedio
-                                                                <span class="required">*</span>
-                                                            </label>
-                                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <input id="costoPromedio" class="form-control col-md-7 col-xs-12" name="costoPromedio" required="required" type="text"
-                                                                value ="0">
-                                                            </div>
-                                                        </div>
-                
-                                                        <div class="ln_solid"></div>
-                                                        <div class="form-group">
-                                                            <div class="col-md-6 col-md-offset-3">
-                                                                <button type="button" class="btn btn-default" data-dismiss="modal" id="reload">Limpiar</button>
-                                                                <button id="btnInsumo" type="submit" class="btn btn-success">Aceptar</button>
-                                                            </div>
-                                                        </div>
-                                                    </form>
-                                                </div>
-
-                                                <div class="modal-footer">
-                                                </div>
-
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- /modal -->
 
                                 </div>
                                 <!--  /CONTENIDO DE LA PAGINA -->
@@ -317,7 +221,7 @@
     <!-- Input mask -->
     <script src="assets/js/jquery.inputmask/jquery.inputmask.bundle.min.js"></script>
     <!-- JS Scripts -->
-    <script src="assets/js/Insumo.js"></script>
+    <script src="assets/js/Producto.js"></script>
     <!-- Sweet Alert -->
     <script src="assets/js/sweetalert2.min.js"></script>
     <!-- JS dataTables -->
@@ -346,10 +250,10 @@
     $(document).ready(function () {
         // if(!Session.state)
         //     return;
-        insumo.id=null;
-        insumo.setTableInventarioInsumoReporte();
-        insumo.ReadInventarioInsumo;
-        insumo.Init();
+        producto.id=null;
+        producto.setTableInventarioProductoReporte();
+        producto.ReadInventarioProducto;
+        producto.Init();
         //
     });
 

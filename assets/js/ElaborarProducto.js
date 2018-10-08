@@ -1,9 +1,10 @@
 class ElaborarProducto {
     // Constructor
-constructor(numeroOrden, p) {
+constructor(numeroOrden, p, idOrdenSalida) {
         this.numeroOrden = numeroOrden || '';
         this.fechaLiquida = this.fechaLiquida || '';
         this.listaProducto = p || [];
+        this.idOrdenSalida= idOrdenSalida;
     }
 
     get Save() {
@@ -27,6 +28,7 @@ constructor(numeroOrden, p) {
         $('#btnAddProductoGenerado').attr("disabled", "disabled");
         var miAccion = this.id == null ? 'Create' : 'Update';
         elaborarProducto.numeroOrden = $("#orden").val();
+        elaborarProducto.idOrdenSalida = ordenSalida.id;
         elaborarProducto.fechaLiquida = moment().format("YYYY-MM-DD HH:mm:ss");
         // lista de insumos
         elaborarProducto.listaProducto = [];
@@ -52,6 +54,7 @@ constructor(numeroOrden, p) {
             }
         })
             .done(function(e){
+                $('#btnAddProductoGenerado').attr("disabled", false);
                 swal({
                     type: 'success',
                     title: 'Número de Orden:' + $("#orden").val(),

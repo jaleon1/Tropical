@@ -9,7 +9,37 @@ class OrdenCompra {
         this.lista = lista || [];
     }
 
+    //Getter
+    get Read() {
+        var miAccion = this.id == null ? 'ReadAll' : 'ReadbyOrden';
+        $.ajax({
+            type: "POST",
+            url: "class/OrdenCompra.php",
+            data: {
+                action: miAccion,
+                id: this.id
+            }
+        })
+            .done(function (e) {
+                ordenCompra.Reload(e);
+            })
+            .fail(function (e) {
+                // ordenCompra.showError(e);
+            });
+    }
+
     get Save() {
+        if($('#orden').val()==''){
+            swal({
+                type: 'warning',
+                title: 'Orden de Compra',
+                text: 'Debe digitar el número de factura de proveedor',
+                showConfirmButton: false,
+                timer: 3000
+            });
+            return;
+        }
+
         if($('#productos').length==0 ){
             swal({
                 type: 'warning',
@@ -30,11 +60,12 @@ class OrdenCompra {
         $('#productos tr').each(function(i, item) {
             var objlista = new Object();
             objlista.idInsumo= $('#dsitems').dataTable().fnGetData(item)[0]; // id del item.
-            objlista.costoUnitario= $(this).find('td:eq(2) input').val();
-            objlista.cantidadBueno= $(this).find('td:eq(3) input').val();
-            objlista.cantidadMalo= $(this).find('td:eq(4) input').val();
-            objlista.valorBueno= $(this).find('td:eq(5) input.valor').val();
-            objlista.valorMalo= $(this).find('td:eq(6) input.valor').val();
+            objlista.esVenta= $('#dsitems').dataTable().fnGetData(item)[3]; // tipo insumo / articulo.
+            objlista.costoUnitario= $(this).find('td:eq(3) input').val();
+            objlista.cantidadBueno= $(this).find('td:eq(4) input').val();
+            objlista.cantidadMalo= $(this).find('td:eq(5) input').val();
+            objlista.valorBueno= $(this).find('td:eq(6) input.valor').val();
+            objlista.valorMalo= $(this).find('td:eq(7) input.valor').val();
             ordenCompra.lista.push(objlista);
         });
         $.ajax({
@@ -55,6 +86,190 @@ class OrdenCompra {
                 ordenCompra.CleanCtls();
                 $("#p_searh").focus();
             });
+    };
+
+    Reload(e){
+        if (this.id == null)
+            this.ShowAll(e);
+        else this.ShowItemData(e);
+    };
+
+    ShowAll(e) {
+        //Crea los eventos según sea el url
+        var t = $('#dsOrdenCompra').DataTable();
+        if (t.rows().count() == 0) {
+            t.clear();
+            t.rows.add(JSON.parse(e));
+            t.draw();
+            $( document ).on( 'click', '#dsOrdenCompra tbody tr td:not(.buttons)', ordenCompra.SelectEventHandler);
+        } else {
+            t.clear();
+            t.rows.add(JSON.parse(e));
+            t.draw();
+        }
+    };
+
+    ShowItemData(e) {
+        //Crea los eventos según sea el url
+        var t = $('#dsInsumoOrdenCompra').DataTable();
+        if (t.rows().count() == 0) {
+            t.clear();
+            t.rows.add(JSON.parse(e));
+            t.draw();
+        } else {
+            t.clear();
+            t.rows.add(JSON.parse(e));
+            t.draw();
+        }
+    };
+
+    SelectEventHandler() {
+        ordenCompra.id = $(this).parents("tr").find(".itemId").text() || $(this).find(".itemId").text();
+        var fecha = $(this).parents('tr').find('td:eq(1)').html();
+        var usuario = $(this).parents('tr').find('td:eq(4)').html();
+        var orden = $(this).parents('tr').find('td:eq(3)').html();
+        var proveedor = $(this).parents('tr').find('td:eq(2)').html();
+        ordenCompra.setTableInsumoOrdenCompra(orden, usuario, proveedor, fecha);
+        ordenCompra.Read;
+        $(".bs-ordenCompra-modal-lg").modal('toggle');
+    };
+
+    setTableOrdenCompra() {
+        this.tablaOrdenCompra = $('#dsOrdenCompra').DataTable({
+            responsive: true,
+            destroy: true,
+            order: [[1, "desc"]],
+            columns: [
+                {
+                    title: "ID",
+                    data: "id",
+                    className: "itemId",
+                    searchable: false
+                },
+                {
+                    title: "FECHA",
+                    data: "fecha"
+                },
+                {
+                    title: "ORDEN",
+                    data: "orden"
+                },
+                {
+                    title: "USUARIO",
+                    data: "usuario"
+               }
+            ]
+        });
+    };
+
+    setTableInsumoOrdenCompra(orden, usuario, proveedor, fecha) {
+        jQuery.extend( jQuery.fn.dataTableExt.oSort, {
+            "formatted-num-pre": function ( a ) {
+                a = (a === "-" || a === "") ? 0 : a.replace( /[^\d\-\.]/g, "" );
+                return parseFloat( a );
+            }, 
+            "formatted-num-asc": function ( a, b ) {
+                return a - b;
+            },
+            "formatted-num-desc": function ( a, b ) {
+                return b - a;
+            }
+        } );
+
+        this.tablaOrdenCompra = $('#dsInsumoOrdenCompra').DataTable({
+            responsive: true,
+            destroy: true,
+            order: [[3, "asc"]],
+            dom: 'Bfrtip',
+            buttons: [
+                {
+                    extend: 'excelHtml5',
+                    exportOptions: {columns: [1, 2, 3, 4, 5, 6, 7, 8]},
+                    messageTop:'FECHA:  '+ fecha + '  ORDEN:  '+ orden,
+                    messageBottom:'USUARIO:  ' + usuario,
+                },
+                {
+                    extend: 'pdfHtml5',
+                    exportOptions: {columns: [1, 2, 3, 4, 5, 6, 7, 8]},
+                    messageTop:'FECHA:  '+ fecha + '  ORDEN:  '+ orden,
+                    messageBottom:'USUARIO:  ' + usuario,
+                }
+            ],
+            columnDefs: [{ className: "text-right", "targets": [3, 4, 5, 6, 7, 8]}],
+            language: {
+                "infoEmpty": "Sin Insumos",
+                "emptyTable": "Sin Insumos",
+                "search": "Buscar",
+                "zeroRecords": "No hay resultados",
+                "lengthMenu": "Mostrar _MENU_ registros",
+                "paginate": {
+                    "first": "Primera",
+                    "last": "Ultima",
+                    "next": "Siguiente",
+                    "previous": "Anterior"
+                }
+            },
+            columns: [
+                {
+                    title: "ID",
+                    data: "id",
+                    className: "itemId",
+                    searchable: false
+                },
+                {
+                    title: "CODIGO",
+                    data: "codigo",
+                    width:"auto"
+                },
+                {
+                    title: "INSUMO",
+                    data: "insumo",
+                    width:"auto"
+                },
+                {
+                    title:"COSTO UNITARIO",
+                    data:"costoUnitario",
+                    width:"auto",
+                    type: 'formatted-num',
+                    mRender: function ( e ) {
+                        return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                },
+                {
+                    title: "BUENO",
+                    data: "cantidadBueno",
+                    width:"auto"
+                },
+                {
+                    title: "MALO",
+                    data: "cantidadMalo",
+                    width:"auto"
+                },
+                {
+                    title:"VALOR BUENO",
+                    data:"valorBueno",
+                    width:"auto",
+                    type: 'formatted-num',
+                    mRender: function ( e ) {
+                        return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                },
+                {
+                    title:"VALOR MALO",
+                    data:"valorMalo",
+                    width:"auto",
+                    type: 'formatted-num',
+                    mRender: function ( e ) {
+                        return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                },
+                {
+                    title:"SUBTOTAL",
+                    data:"subtotal",
+                    width:"auto",
+                    type: 'formatted-num',
+                    mRender: function ( e ) {
+                        return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                }
+            ]
+        });
     };
 
     // Muestra información en ventana
@@ -236,30 +451,31 @@ class OrdenCompra {
     //Agrega el insumo a la factura
     AgregaInsumo(){
         //insumo.UltPro = insumo.codigo;
-        var rowNode = t   //t es la tabla de insumos
-        .row.add( [insumo.id, insumo.codigo, insumo.nombre,"Precio Unitario", "0", "0", "0" , "0","0" ])
+        var rowNode = 
+        t   //t es la tabla de insumos
+        .row.add( [insumo.id, insumo.codigo, insumo.nombre, insumo.esVenta || -1, "Precio Unitario", "0", "0", "0" , "0","0" ])
         .draw() //dibuja la tabla con el nuevo insumo
         .node();     
         //
-        $('td:eq(2) input', rowNode).attr({id: ("prec_"+insumo.codigo), max:  "9999999999", min: "0", step:"1", value:"1" }).change(function(){
+        $('td:eq(3) input', rowNode).attr({id: ("prec_"+insumo.codigo), max:  "9999999999", min: "0", step:"1", value:"1" }).change(function(){
             ordenCompra.CalcImporte($(this).parents('tr').find('td:eq(0)').html());
         });
         //
-        $('td:eq(3) input', rowNode).attr({id: ("cantBueno_"+insumo.codigo), max:  "9999999999", min: "1", step:"1", value:"1"}).change(function(){
+        $('td:eq(4) input', rowNode).attr({id: ("cantBueno_"+insumo.codigo), max:  "9999999999", min: "1", step:"1", value:"1"}).change(function(){
              ordenCompra.CalcImporte($(this).parents('tr').find('td:eq(0)').html());
         });
 
-        //$('td:eq(4)', rowNode).attr({id: ("cantMalo_"+insumo.codigo)});
-        $('td:eq(4) input', rowNode).attr({id: ("cantMalo_"+insumo.codigo), max:  "9999999999", min: "0", step:"1", value:"0"}).change(function(){
+        //$('td:eq(5)', rowNode).attr({id: ("cantMalo_"+insumo.codigo)});
+        $('td:eq(5) input', rowNode).attr({id: ("cantMalo_"+insumo.codigo), max:  "9999999999", min: "0", step:"1", value:"0"}).change(function(){
              ordenCompra.CalcImporte($(this).parents('tr').find('td:eq(0)').html());
         });
         //
-        $('td:eq(5) input.valor', rowNode).attr({id: ("valorBueno_v"+insumo.codigo), style: "display:none"});
-        $('td:eq(5) input.display', rowNode).attr({id: ("valorBueno_d"+insumo.codigo)});    
-        $('td:eq(6) input.valor', rowNode).attr({id: ("valorMalo_v"+insumo.codigo), style: "display:none"});
-        $('td:eq(6) input.display', rowNode).attr({id: ("valorMalo_d"+insumo.codigo)});
-        $('td:eq(7) input.valor', rowNode).attr({id: ("subtotal_v"+insumo.codigo), style: "display:none"});
-        $('td:eq(7) input.display', rowNode).attr({id: ("subtotal_d"+insumo.codigo)});   
+        $('td:eq(6) input.valor', rowNode).attr({id: ("valorBueno_v"+insumo.codigo), style: "display:none"});
+        $('td:eq(6) input.display', rowNode).attr({id: ("valorBueno_d"+insumo.codigo)});    
+        $('td:eq(7) input.valor', rowNode).attr({id: ("valorMalo_v"+insumo.codigo), style: "display:none"});
+        $('td:eq(7) input.display', rowNode).attr({id: ("valorMalo_d"+insumo.codigo)});
+        $('td:eq(8) input.valor', rowNode).attr({id: ("subtotal_v"+insumo.codigo), style: "display:none"});
+        $('td:eq(8) input.display', rowNode).attr({id: ("subtotal_d"+insumo.codigo)});   
         //t.order([0, 'desc']).draw();
         t.columns.adjust().draw();
         ordenCompra.CalcImporte(insumo.codigo);
