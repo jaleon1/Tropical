@@ -73,8 +73,7 @@ $(document).ready(function () {
             "emptyTable": "Seleccione el sabor",
             "search": "Buscar En Factura" //Cambia el texto de Search
         },
-        "columnDefs": [
-            {
+        "columnDefs": [{
                 "title": "idTamaño",
                 "visible": false,
                 "targets": 0,
@@ -153,12 +152,12 @@ $("#btnmediano").click(function () {
 
 function LoadAllPrdVenta() {
     $.ajax({
-        type: "POST",
-        url: "class/Producto.php",
-        data: {
-            action: "ReadAllProductoVenta"
-        }
-    })
+            type: "POST",
+            url: "class/Producto.php",
+            data: {
+                action: "ReadAllProductoVenta"
+            }
+        })
         .done(function (e) {
             DrawPrd(e);
         })
@@ -170,25 +169,24 @@ function LoadAllPrdVenta() {
 
 function LoadPreciosTamanos() {
     $.ajax({
-        type: "POST",
-        url: "class/Factura.php",
-        data: {
-            action: "LoadPreciosTamanos"
-        }
-    })
-        .done(function (e) {
-            if(JSON.parse(e).msg=='NOCONTRIB'){
-               swal({
-                type: 'warning',
-                title: 'Contribuyente',
-                text: 'Contribuyente no registrado para Facturación Electrónica',
-                footer: '<a href="clienteFE.html">Agregar Contribuyente</a>',
-                }).then((result) => {
-                    if (result.value) 
-                        location.href = "Dashboard.html";
-                })                
+            type: "POST",
+            url: "class/Factura.php",
+            data: {
+                action: "LoadPreciosTamanos"
             }
-            else setPrecios(e);
+        })
+        .done(function (e) {
+            if (JSON.parse(e).msg == 'NOCONTRIB') {
+                swal({
+                    type: 'warning',
+                    title: 'Contribuyente',
+                    text: 'Contribuyente no registrado para Facturación Electrónica',
+                    footer: '<a href="clienteFE.html">Agregar Contribuyente</a>',
+                }).then((result) => {
+                    if (result.value)
+                        location.href = "Dashboard.html";
+                })
+            } else setPrecios(e);
         })
         .fail(function (e) {
             showError(e);
@@ -276,8 +274,7 @@ function agregaSabor(id, nombre) {
     if (verificaCantidad("sabor")) {
         if (($("#cant_sabor_" + id).text()) != "1" && ($("#cant_sabor_" + id).text()) != "2") {
             $("#cant_sabor_" + id).text("1");
-        }
-        else {
+        } else {
             $("#cant_sabor_" + id).text((parseInt($("#cant_sabor_" + id)[0].textContent) + 1));
         }
 
@@ -300,8 +297,7 @@ function agregaSabor(id, nombre) {
 function quitaSabor(id) {
     if (($("#cant_sabor_" + id).text()) == "2") {
         $("#cant_sabor_" + id).text("1");
-    }
-    else {
+    } else {
         $("#" + id).removeClass("selected");
         // $("#eleccion_" + id).remove();
         $("#cant_sabor_" + id).text("\xa0");
@@ -317,8 +313,7 @@ function agrega_toppings(id_topping, nombre_topping) {
     if (verificaCantidad("topping")) {
         if (($("#cant_topping_" + id_topping).text()) != "1" && ($("#cant_topping_" + id_topping).text()) != "2") {
             $("#cant_topping_" + id_topping).text("1");
-        }
-        else {
+        } else {
             $("#cant_topping_" + id_topping).text((parseInt($("#cant_topping_" + id_topping).text()) + 1));
         }
 
@@ -341,8 +336,7 @@ function agrega_toppings(id_topping, nombre_topping) {
 function quitaTopping(id) {
     if (($("#cant_topping_" + id).text()) == "2") {
         $("#cant_topping_" + id).text("1");
-    }
-    else {
+    } else {
         $("#" + id).removeClass("selected");
         $("#cant_topping_" + id).text("\xa0");
     }
@@ -375,7 +369,7 @@ $("#btn_agrega_prd").click(function () {
 
     });
 
-    var rowNode = t   //t es la tabla de productos
+    var rowNode = t //t es la tabla de productos
         .row.add([sel_tamano, codigoTamano(), idSabor[0], nombresabor[0], idSabor[1], nombresabor[1], id_topping, nombre_topping])
         .draw() //dibuja la tabla con el nuevo producto
         .node();
@@ -443,8 +437,7 @@ function calcTotal() {
 
         });
         $("#total").html("¢" + total);
-    }
-    else {
+    } else {
         $("#total")[0].textContent = "¢0";
     };
 
@@ -453,8 +446,7 @@ function calcTotal() {
 function btnFacturar() {
     if (t.row().count() > 0) {
         $('#btnFacturar').removeAttr('disabled');
-    }
-    else {
+    } else {
         $("#btnFacturar").attr('disabled', 'disabled');
     }
 };
@@ -467,16 +459,13 @@ function btnAgregaPRD() {
 
             if ($("#toppings").find(".selected").length >= 1) {
                 $('#btn_agrega_prd').removeAttr('disabled');
-            }
-            else {
+            } else {
                 $('#btn_agrega_prd').attr('disabled', 'disabled');
             }
-        }
-        else {
+        } else {
             $('#btn_agrega_prd').attr('disabled', 'disabled');
         }
-    }
-    else {
+    } else {
         $('#btn_agrega_prd').attr('disabled', 'disabled');
     }
 };
@@ -635,13 +624,13 @@ function CreateFact() {
     var miAccion = this.id == null ? 'Create' : 'Update';
 
     $.ajax({
-        type: "POST",
-        url: "class/Factura.php",
-        data: {
-            action: miAccion,
-            obj: JSON.stringify(factura)
-        }
-    })
+            type: "POST",
+            url: "class/Factura.php",
+            data: {
+                action: miAccion,
+                obj: JSON.stringify(factura)
+            }
+        })
         .done(function (e) {
             ticketPrint(e);
         })
@@ -701,8 +690,7 @@ function ValidateProductFac(e) {
                         item.childNodes[3].firstElementChild.value = parseFloat(item.childNodes[3].firstElementChild.value) + 1;
                         item.childNodes[04].firstChild.textContent = "¢" + parseFloat((item.childNodes[2].firstChild.textContent).replace("¢", "")) * parseFloat(item.childNodes[3].firstElementChild.value);
                         calcTotal();
-                    }
-                    else {
+                    } else {
                         // alert("No hay mas de este producto");
                         alertSwal(producto.cantidad)
                         // $("#cant_"+ producto.UltPrd).val($("#cant_"+ producto.UltPrd)[0].attributes[3].value); 
@@ -717,8 +705,7 @@ function ValidateProductFac(e) {
             // showDataProducto(e);
             AgregaPrd();
         }
-    }
-    else {
+    } else {
         CleanCtls();
     }
 };
@@ -726,13 +713,24 @@ function ValidateProductFac(e) {
 //Agrega el producto a la factura
 function AgregaPrd() {
     producto.UltPro = producto.codigoRapido;
-    var rowNode = t   //t es la tabla de productos
+    var rowNode = t //t es la tabla de productos
         .row.add([producto.id, producto.codigoRapido, producto.descripcion, "¢" + producto.precio, "1", "¢" + producto.precio])
         .draw() //dibuja la tabla con el nuevo producto
         .node();
-    $('td:eq(2)', rowNode).attr({ id: ("prec_" + producto.codigoRapido) });
-    $('td:eq(4)', rowNode).attr({ id: ("impo_" + producto.codigoRapido) });
-    $('td:eq(3) input', rowNode).attr({ id: ("cant_" + producto.codigoRapido), max: producto.cantidad, min: "0", step: "1", value: "1", onchage: "CalcImporte(" + producto.codigoRapido + ")" });
+    $('td:eq(2)', rowNode).attr({
+        id: ("prec_" + producto.codigoRapido)
+    });
+    $('td:eq(4)', rowNode).attr({
+        id: ("impo_" + producto.codigoRapido)
+    });
+    $('td:eq(3) input', rowNode).attr({
+        id: ("cant_" + producto.codigoRapido),
+        max: producto.cantidad,
+        min: "0",
+        step: "1",
+        value: "1",
+        onchage: "CalcImporte(" + producto.codigoRapido + ")"
+    });
     $('td:eq(3) input', rowNode).change(function () {
         CalcImporte(producto.codigoRapido);
     });
@@ -744,14 +742,13 @@ function AgregaPrd() {
 
 //Calcula el nuevo importe al cambiar la cantidad del prodcuto seleccionado de forma manual y no por producto repetido.
 function CalcImporte(prd) {
-    producto.UltPrd = prd;//validar
+    producto.UltPrd = prd; //validar
     pUnit = $(`#prec_${prd}`)[0].textContent.replace("¢", "");
     cant = parseInt($(`#cant_${prd}`)[0].value);
 
     if (cant <= parseInt($(`#cant_${prd}`)[0].attributes[3].value)) {
         $(`#impo_${prd}`)[0].textContent = "¢" + (parseFloat(pUnit) * parseFloat(cant)).toString();
-    }
-    else {
+    } else {
         // alert("Cantidad invalida, la cantidad maxima disponible es: "+ $(`#cant_${prd}`)[0].attributes[3].value)
         alertSwal(producto.cantidad)
         $("#cant_" + producto.UltPrd).val($(`#cant_${prd}`)[0].attributes[3].value);
@@ -800,8 +797,7 @@ function valPago(val) {
         if (pago >= xPagar) {
             $(".procesarFac").prop('disabled', false);
             calcVuelto(pago, xPagar);
-        }
-        else {
+        } else {
             $(".procesarFac").prop('disabled', true);
         }
     }
@@ -830,18 +826,20 @@ function alertFact() {
     });
     $(".procesarFac").prop('disabled', true);
     // calcVuelto();
-    setTimeout(function () { location.reload(); }, 2000);
+    setTimeout(function () {
+        location.reload();
+    }, 2000);
 }
 
 function ticketPrint(e) {
     var data = JSON.parse(e);
-    localStorage.setItem("lsReimpresion","NOT");
-    localStorage.setItem("lsFactura",data.consecutivo);
-    localStorage.setItem("lsFecha",data.fechaCreacion);
-    localStorage.setItem("lsBodega",data.bodega);
-    localStorage.setItem("lsUsuario",data.usuario);
-    localStorage.setItem("lsSubTotal",data.totalComprobante);
-    localStorage.setItem("lsTotal",data.totalComprobante);
+    localStorage.setItem("lsReimpresion", "NOT");
+    localStorage.setItem("lsFactura", data.consecutivo);
+    localStorage.setItem("lsFecha", data.fechaCreacion);
+    localStorage.setItem("lsBodega", data.bodega);
+    localStorage.setItem("lsUsuario", data.usuario);
+    localStorage.setItem("lsSubTotal", data.totalComprobante);
+    localStorage.setItem("lsTotal", data.totalComprobante);
 
     // var groupedProducts = data.detalleFactura.reduce((curr, next) => {
     //     if (curr[next.detalle]) {
@@ -851,21 +849,21 @@ function ticketPrint(e) {
     //     }
     //     return curr 
     //     }, {})
-    
+
     // var results = Object.keys(groupedProducts).map(key => ({
     //     detalle: key,
     //     precioUnitario: groupedProducts[key].toString()
     //     }))
-    
+
     // alert(jQuery.makeArray(results));
 
-    localStorage.setItem("lsListaProducto",JSON.stringify(data.detalleFactura));
+    localStorage.setItem("lsListaProducto", JSON.stringify(data.detalleFactura));
 
     // location.href ="/Tropical/TicketFacturacion.html";
     location.href = "/TicketFacturacion.html";
 
-   
-   
+
+
     /*******************************************/
     //*************** ENVIO FE *****************/
     /*******************************************/
