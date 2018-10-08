@@ -37,9 +37,9 @@ class InventarioVentas {
             buttons: [
                 {
                     extend: 'excelHtml5',
-                    exportOptions: {
-                        columns: [1, 2, 3, 4, 5]
-                    }
+                    exportOptions: {columns: [1, 2, 3, 4, 5]},
+                    messageTop:'TITULO',
+                    messageBottom:'PIE'
                 },
                 {
                     extend: 'pdfHtml5',
