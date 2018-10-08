@@ -270,24 +270,24 @@ class Distribucion {
             "order": [[0, "desc"]],
             columns: [
                 {
-                    title: "Codigo",
+                    title: "CODIGO",
                     data: "codigo"
                 },
                 {
-                    title: "Nombre",
+                    title: "NOMBRE",
                     data: "nombre"
                 },
                 {
-                    title: "Cantidad",
+                    title: "CANTIDAD",
                     data: "cantidad"
                 },
                 {
-                    title: "Precio Venta",
+                    title: "PRECIO VENTA",
                     data: "precioVenta"
                 }
                 // ,
                 // {
-                //     title: "Subtotal",
+                //     title: "SUBTOTAL",
                 //     data: "subtotal"
                 // }
             ]
@@ -304,7 +304,7 @@ class Distribucion {
         swal({
             
             type: 'success',
-            title: 'Good!',
+            title: 'Listo!',
             showConfirmButton: false,
             timer: 1000
         });
@@ -529,17 +529,17 @@ class Distribucion {
             columnDefs: [{className: "text-center", "targets": [4]}],
             columns: [
                 {
-                    title: "id",
+                    title: "ID",
                     data: "id",
                     className: "itemId",
                     searchable: false
                 },
-                { title: "Codigo", data: "codigo" },
-                { title: "Nombre", data: "nombre" },
-                { title: "Descripción", data: "descripcion" },
-                { title: "Saldo Cantidad", data: "saldoCantidad" },
+                { title: "CODIGO", data: "codigo" },
+                { title: "NOMBRE", data: "nombre" },
+                { title: "DESCRIPCION", data: "descripcion" },
+                { title: "SALDO CANTIDAD", data: "saldoCantidad" },
                 { 
-                    title: "Cantidad", 
+                    title: "CANTIDAD", 
                     data: "cantidad",
                     // defaultContent: '<input class="cantidad form-control" type="number" min="1" max="9999999999" step="1" style="text-align:right;" >'
                     mRender: function () {
@@ -547,15 +547,15 @@ class Distribucion {
                     }
                 },
                 { 
-                    title: "Precio Venta", 
+                    title: "PRECIO VENTA", 
                     data: "precioVenta"
                 },
                 { 
-                    title: "Subtotal", 
+                    title: "SUBTOTAL", 
                     data: null
                 },
                 {
-                    title: "Acción",
+                    title: "ACCION",
                     orderable: false,
                     searchable:false,
                     visible: buttons,
@@ -589,17 +589,17 @@ class Distribucion {
             },  
             columns: [
                 {
-                    title: "id",
+                    title: "ID",
                     data: "id",
                     className: "itemId",                    
                     searchable: false
                 },
-                { title: "Fecha", data: "fecha" },
-                { title: "Orden", data: "orden" },
-                { title: "Usuario", data: "userName" },
-                { title: "Bodega", data: "bodega" },
+                { title: "FECHA", data: "fecha" },
+                { title: "ORDEN", data: "orden" },
+                { title: "USUARIO", data: "userName" },
+                { title: "BODEGA", data: "bodega" },
                 { 
-                    title: "Total", 
+                    title: "TOTAL", 
                     data: "total",
                     className: "text-right",
                     // className: "total",
@@ -608,11 +608,11 @@ class Distribucion {
                     }
                 },
                 { 
-                    title: "Estado", 
+                    title: "ESTADO", 
                     data: "estado"
                 },
                 {
-                    title: "Acción",
+                    title: "ACCION",
                     orderable: false,
                     searchable:false,
                     visible: buttons,

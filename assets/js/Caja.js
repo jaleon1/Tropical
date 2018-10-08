@@ -124,50 +124,50 @@ class MovimientosCaja {
             columnDefs: [{ className: "text-right", "targets": [9] }, { className: "text-right", "targets": [8] }, { className: "text-right", "targets": [7] }],
             columns: [
                 {
-                    title: "ID Movimientos Caja",
+                    title: "ID MOVIMIENTOS CAJA",
                     data: "id",
                     visible: false
                 },
                 {
-                    title: "IDBodega",
+                    title: "IDBODEGA",
                     data: "idBodega",
                     "visible": false,
                     "searchable": false
                 },
                 {
-                    title: "Bodega",
+                    title: "BODEGA",
                     data: "nombreBodega"
                 },
                 {
-                    title: "IDCajero",
+                    title: "IDCAJERO",
                     data: "idUsuarioCajero",
                     "visible": false,
                     "searchable": false
                 },
                 {
-                    title: "Cajero",
+                    title: "CAJERO",
                     data: "cajero"
                 },
                 {
-                    title: "Estado",
+                    title: "ESTADO",
                     data: "estado"
                 },
                 {
-                    title: "Monto Apertura",
+                    title: "MONTO APERTURA",
                     data: "montoApertura",
                     mRender: function (e) {
                         return '¢' + parseFloat(Number(e)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ".")
                     }
                 },
                 {
-                    title: "Monto Cierre",
+                    title: "MONTO CIERRE",
                     data: "montoCierre",
                     mRender: function (e) {
                         return '¢' + parseFloat(Number(e)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ".")
                     }
                 },
                 {
-                    title: "Total Ventas Efectivo",
+                    title: "TOTAL VENTAS EFECTIVO",
                     data: "totalVentasEfectivo",
                     footer: true,
                     mRender: function (e) {
@@ -175,7 +175,7 @@ class MovimientosCaja {
                     }
                 },
                 {
-                    title: "Total Ventas Tarjeta",
+                    title: "TOTAL VENTAS TARJETA",
                     data: "totalVentasTarjeta",
                     footer: true,
                     mRender: function (e) {
@@ -183,11 +183,11 @@ class MovimientosCaja {
                     }
                 },
                 {
-                    title: "Fecha Apertura",
+                    title: "FECHA APERTURA",
                     data: "fechaApertura"
                 },
                 {
-                    title: "Fecha Cierre",
+                    title: "FECHA CIERRE",
                     data: "fechaCierre"
                 },
             ]

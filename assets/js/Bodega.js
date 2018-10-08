@@ -175,7 +175,7 @@ class Bodega {
         swal({
             
             type: 'success',
-            title: 'Good!',
+            title: 'Listo!',
             showConfirmButton: false,
             timer: 1000
         });
@@ -360,16 +360,16 @@ class Bodega {
             },
             columns: [
                 {
-                    title: "id",
+                    title: "ID",
                     data: "id",
                     className: "itemId",                    
                     searchable: false
                 },
-                { title: "Nombre", data: "nombre" },
-                { title: "Descripción", data: "descripcion" },
-                { title: "Tipo", data: "tipo" },
+                { title: "NOBRE", data: "nombre" },
+                { title: "DESCRIPCION", data: "descripcion" },
+                { title: "TIPO", data: "tipo" },
                 {
-                    title: "Acción",
+                    title: "ACCION",
                     orderable: false,
                     searchable:false,
                     visible: buttons,

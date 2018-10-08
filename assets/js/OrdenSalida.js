@@ -242,6 +242,17 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
         // location.href ="/Tropical/TicketOrdenSalida.html";
     }
 
+    ticketRePrint(){
+        // var data = JSON.parse(e);
+        localStorage.setItem("lsNumeroOrden",$('#numeroOrden').val());
+        localStorage.setItem("lsFechaOrdensalida",$('#dt_fecha').val());
+        localStorage.setItem("lsUsuarioRecibe",$("#nombre").val());
+        localStorage.setItem("lsListaInsumo",JSON.stringify(ordenSalida.listaInsumo));
+
+        location.href ="/TicketOrdenSalida.html";
+        // location.href ="/Tropical/TicketOrdenSalida.html";
+    }
+
     // Muestra errores en ventana
     showError(e) {
         var data = JSON.parse(e.responseText);
@@ -284,8 +295,8 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
             destroy: true,
             order: [[ 0, "desc" ]],                  
             "language": {
-                "infoEmpty": "Sin Productos Ingresados",
-                "emptyTable": "Sin Productos Ingresados",
+                "infoEmpty": "Sin Ordenes Ingresadas",
+                "emptyTable": "Sin Ordenes Ingresadas",
                 "search": "Buscar",
                 "zeroRecords":    "No hay resultados",
                 "lengthMenu":     "Mostrar _MENU_ registros",
@@ -299,13 +310,11 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
             columns: [
                 {
                     title:"Orden",
-                    data:"numeroOrden",
-                    "width":"auto"},
+                    data:"numeroOrden"},
                 {
                     title:"ID",
                     data:"id",
-                    className:"itemId",                    
-                    width:"auto"},
+                    className:"itemId"},
                 {
                     title:"ID USUARIO ENTREGA",
                     data:"idUsuarioEntrega",
@@ -316,24 +325,19 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
                     visible:false},
                 {
                     title:"FECHA",
-                    data:"fecha",
-                    width:"auto"},
+                    data:"fecha"},
                 {
                     title:"ENTREGA",
-                    data:"usuarioEntrega",
-                    width:"auto"},
+                    data:"usuarioEntrega"},
                 {
                     title:"RECIBE",
-                    data:"usuarioRecibe",
-                    width:"auto"},
+                    data:"usuarioRecibe"},
                 {
                     title:"FECHA LIQUIDA",
-                    data:"fechaLiquida",
-                    width:"auto"},
+                    data:"fechaLiquida"},
                 {
                     title:"ESTADO",
                     data:"idEstado",
-                    width:"auto",
                     mRender: function ( e ) {
                         var estado="1";
                         if (e=="0") 
@@ -352,8 +356,8 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
                     className: 'buttons',
                     mRender: function () {
                         return '<a class="deleteOrdenSalida" style="cursor: pointer;" > <i class="glyphicon glyphicon-trash"> </i> </a>' 
-                    },
-                    "width":"5%"}
+                    },}
+                    // width:"5%"}
             ]
         });        
     };
@@ -377,7 +381,7 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
                 <td>
                     <input id="cantidadInsumo${id}" class="form-control cantidadInsumo" name="cantidadInsumo" type="number" placeholder="Cantidad de paquetes" autofocus="" value=${cant}>
                 </td>
-                <td class=" last">
+                <td class="last">
                     <a id="delete_row${id}" class="btnDeleteItem" onclick="ordenSalida.DeleteInsumo(this)" > <i class="glyphicon glyphicon-trash" onclick="DeleteInsumo(this)"> </i> Eliminar </a>
                 </td>
             </tr>
@@ -385,8 +389,6 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
         //datatable         
         if ( $.fn.dataTable.isDataTable( '#dsInsumosOrdenSalida' ) ) {
             var table = $('#dsInsumosOrdenSalida').DataTable();
-            // table.destroy();
-            // $('#dsInsumosOrdenSalida').DataTable();
         }
         else 
             $('#dsInsumosOrdenSalida').DataTable( {
@@ -408,34 +410,6 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
                 "searching": false,
                 "scrollCollapse": true
             } );
-            // $("#cantidadInsumo"+id).keyup(function (e) {
-            //     var cantidad = $(this).val();
-            //     $.ajax({
-            //         type: "POST",
-            //         url: "class/Insumo.php",
-            //         data: {
-            //             action: "saldoCorrecto",
-            //             id:id,
-            //             cantidad: cantidad
-            //         }
-            //     })
-            //         .done(function (e) {
-            //             var cantidad = parseFloat(e);
-            //             if(e!="true")
-            //                 swal({
-            //                     type: 'error',
-            //                     title: 'El insumo no posee saldo suficiente...',
-            //                     text: 'La cantidad de insumos disponibles es '+ parseFloat(cantidad)                        
-            //                 }).then($("#cantidadInsumo"+id).val(cantidad))
-            //         })
-            //         .fail(function (e) {
-            //             // distr.showError(e);
-            //         })
-            //         .always(function () {
-            //             // setTimeout('$("#orden").removeAttr("disabled")', 1000);
-            //         });
-                
-            // });
             $("#cantidadInsumo"+id).change(function (e) {
                 $('#btnOrdenSalida').attr("disabled", true);
                 var cantidad = $(this).val();
@@ -490,6 +464,8 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
                     $('#btnAddUsuarioRecibe').attr("disabled", true);
                     $('#btnAddInsumo').attr("disabled", true);
                     $('.btnDeleteItem').attr("disabled", true);
+                    $('.form-control').attr("disabled", true);
+                    $('.hidden').attr("visibility", "hidden");
                 });
         }
     };
@@ -649,7 +625,6 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
                 $("#numeroOrden").val(data.numeroOrden);
                 $("#dt_fecha").val(data.fecha);
                 $("#nombre").val(data.usuarioRecibe);
-                // $("#usuarioRecibe").val(data.usuarioRecibe); 
                 
                 ordenSalida.listaInsumoCantidad = [];
                 $('#tableBody-InsumosOrdenSalida tr').each(function() {

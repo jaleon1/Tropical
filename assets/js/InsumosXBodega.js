@@ -103,7 +103,7 @@ class InsumoBodega {
         swal({
             
             type: 'success',
-            title: 'Good!',
+            title: 'Listo!',
             showConfirmButton: false,
             timer: 1000
         });
@@ -203,39 +203,39 @@ class InsumoBodega {
             columnDefs: [{className: "text-right", "targets": [4,5,6]}],
             columns: [
                 {
-                    title: "id",
+                    title: "ID",
                     data: "id",
                     className: "itemId",                    
                     searchable: false
                 },
                 { 
-                    title: "Código", 
+                    title: "CODIGO", 
                     data: "codigo"       
                 },
                 { 
-                    title: "Nombre", 
+                    title: "NOMBRE", 
                     data: "nombre"       
                 },
                 { 
-                    title: "Descripción", 
+                    title: "DESCRIPCION", 
                     data: "descripcion"       
                 },
                 { 
-                    title: "Cantidad", 
+                    title: "CANTIDAD", 
                     data: "saldoCantidad"       
                 },
                 { 
-                    title: "Costo", 
+                    title: "COSTO", 
                     data: "saldoCosto",
                     visible: false       
                 },
                 { 
-                    title: "Costo Promedio", 
+                    title: "COSTO PROMEDIO", 
                     data: "costoPromedio",
                     visible: false       
                 },
                 {
-                    title: "Acción",
+                    title: "ACCION",
                     orderable: false,
                     searchable:false,
                     visible: buttons,

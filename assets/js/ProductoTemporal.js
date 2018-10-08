@@ -145,7 +145,7 @@ constructor(id, idproducto, producto, idusuario, idusuariorecibe, usuario, usuar
         swal({
             position: 'top-end',
             type: 'success',
-            title: 'Good!',
+            title: 'Listo!',
             showConfirmButton: false,
             timer: 1000
         });

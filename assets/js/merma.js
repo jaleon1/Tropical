@@ -84,25 +84,25 @@ class Merma {
             },
             columns: [
                 {
-                    title: "id",
+                    title: "ID",
                     data: "id",
                     className: "itemId",
                     searchable: false
                 },
-                { title: "Codigo", data: "codigo" },
-                { title: "Consecutivo", data: "consecutivo" },
-                { title: "Nombre", data: "nombre" },
-                { title: "Descripción", data: "descripcion" },
+                { title: "CODIGO", data: "codigo" },
+                { title: "CONSECUTIVO", data: "consecutivo" },
+                { title: "NOMBRE", data: "nombre" },
+                { title: "DESCRIPCION", data: "descripcion" },
                 { 
-                    title: "Cantidad", 
+                    title: "CANTIDAD", 
                     data: "cantidad"
 //                     mRender: function () {
 //                         return '<input class="cantidad form-control" type="number" min="1" max="9999999999" step="1" style="text-align:right;" >'
 //                     }
                 },
-                { title: "Observaciones", data: "descripcion" },
+                { title: "OBSERVACIONES", data: "descripcion" },
                 { 
-                    title: "Fecha", 
+                    title: "FECHA", 
                     data: "fecha"
                 }                
             ]
@@ -134,7 +134,7 @@ class Merma {
         //$(".modal").css({ display: "none" });   
         swal({
             type: 'success',
-            title: 'Good!',
+            title: 'Listo!',
             showConfirmButton: false,
             timer: 1000
         });

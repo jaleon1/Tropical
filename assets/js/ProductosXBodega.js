@@ -191,7 +191,7 @@ class ProductoBodega {
         swal({
             
             type: 'success',
-            title: 'Good!',
+            title: 'Listo!',
             showConfirmButton: false,
             timer: 1000
         });
@@ -357,13 +357,13 @@ class ProductoBodega {
             },  
             columns: [
                 {
-                    title: "id",
+                    title: "ID",
                     data: "id",
                     className: "itemId",                    
                     searchable: false
                 },
                 { 
-                    title: "Tamaño", 
+                    title: "TAMAÑO", 
                     data: null,
                     render: function (data, type, row) {                        
                         var fdata='';                        
@@ -374,14 +374,14 @@ class ProductoBodega {
                     }                    
                 },
                 { 
-                    title: "precioVenta",                     
+                    title: "PRECIO VENTA",                     
                     mRender: function (data, row) {                        
                         return '<input class="cantidad form-control" type="number" min="1" max="9999999999" step="1" style="text-align:right;" precioVenta='+ data +'  value= '+ parseFloat(data).toFixed(2) +' >'
                     },
                     data: "precioVenta"
                 },
                 {
-                    title: "Acción",
+                    title: "ACCION",
                     orderable: false,
                     searchable:false,
                     visible: buttons,
