@@ -657,10 +657,12 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
                 confirmButtonClass: 'btn btn-success',
                 cancelButtonClass: 'btn btn-danger'
             }).then((result) => {
-                liquidada = false;
-                if($(this).parents("tr").find("td:eq(6)").html()=="LIQUIDADO")
-                    liquidada = true;
-                ordenSalida.Delete;
+                if (result.value) {        
+                    liquidada = false;
+                    if($(this).parents("tr").find("td:eq(6)").html()=="LIQUIDADO")
+                        liquidada = true;
+                    ordenSalida.Delete;
+                }
             })
         }
     };

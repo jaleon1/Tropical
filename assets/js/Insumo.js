@@ -386,9 +386,9 @@ class Insumo {
             buttons: [
                 {
                     extend: 'excelHtml5',
-                    exportOptions: {
-                        columns: [ 1, 2, 3, 4, 5, 6]
-                    }
+                    exportOptions: {columns: [ 1, 2, 3, 4, 5, 6]},
+                    messageTop:'TITULO',
+                    messageBottom:'PIE'
                 },
                 {
                     extend: 'pdfHtml5',
@@ -619,9 +619,9 @@ class Insumo {
             buttons: [
                 {
                     extend: 'excelHtml5',
-                    exportOptions: {
-                        columns: [ 1, 3, 5, 7, 9, 10, 11, 12, 13, 14, 15, 16, 17 ]
-                    }
+                    exportOptions: {columns: [ 1, 3, 5, 7, 9, 10, 11, 12, 13, 14, 15, 16, 17 ]},
+                    messageTop:'TITULO',
+                    messageBottom:'PIE'
                 },
                 {
                     extend: 'pdfHtml5',
