@@ -262,6 +262,14 @@ function crearOrden(facUUID){
 
 
 function facturar (){
+
+    $("#keyboard li").css("pointer-events", "none");
+
+    var element = document.getElementsByClassName("send")[0];
+    element.classList.add("green", "letter", "Nosend");        
+    // element.classList.add("letter");
+    element.classList.remove("send");
+
     var miAccion = 'Create';       
     facturaCli.totalVenta = 0;
     facturaCli.totalDescuentos = 0;
