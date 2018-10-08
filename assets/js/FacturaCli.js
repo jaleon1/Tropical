@@ -946,7 +946,7 @@ function CleanCtls() {
 //     // swal({
 //     //     
 //     //     type: 'success',
-//     //     title: 'Good!',
+//     //     title: 'Listo!',
 //     //     showConfirmButton: false,
 //     //     timer: 1500
 //     // });

@@ -74,28 +74,28 @@ class InventarioFacturas {
             "order": [[1, "desc"]],
             columns: [
                 {
-                    title: "ID Factura",
+                    title: "ID FACTURA",
                     data: "id",
                     visible: false
                 },
                 {
-                    title: "#Factura",
+                    title: "#FACTURA",
                     data: "consecutivo"
                 },
                 {
-                    title: "Fecha",
+                    title: "FECHA",
                     data: "fechaCreacion"
                 },
                 {
-                    title: "Almacen",
+                    title: "ALMACEN",
                     data: "nombre"
                 },
                 {
-                    title: "Vendedor",
+                    title: "VENDEDOR",
                     data: "userName"
                 },
                 {
-                    title: "Monto Efectivo",
+                    title: "MONTO EFECTIVO",
                     data: "montoEfectivo",
                     visible: false,
                     mRender: function ( e ) {
@@ -106,7 +106,7 @@ class InventarioFacturas {
                     }
                 },
                 {
-                    title: "Monto Tarjeta",
+                    title: "MONTO TARJETA",
                     data: "montoTarjeta",
                     visible: false,
                     mRender: function ( e ) {
@@ -117,7 +117,7 @@ class InventarioFacturas {
                     }
                 },
                 {
-                    title: "Total",
+                    title: "TOTAL",
                     data: "totalComprobante",
                     mRender: function ( e ) {
                         return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ".")
@@ -188,16 +188,22 @@ class InventarioFacturas {
             "order": [[0, "desc"]],
             columns: [
                 {
-                    title: "Producto",
+                    title: "PRODUCTO",
                     data: "detalle"
                 },
                 {
-                    title: "Cantidad",
-                    data: "cantidad"
+                    title: "CANTIDAD",
+                    data: "cantidad",
+                    type: 'formatted-num',
+                    mRender: function ( e ) {
+                        return parseFloat(e).toFixed(2)}
                 },
                 {
-                    title: "Precio",
-                    data: "montoTotalLinea"
+                    title: "PRECIO",
+                    data: "montoTotalLinea",
+                    type: 'formatted-num',
+                    mRender: function ( e ) {
+                        return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                 }
             ]
         });

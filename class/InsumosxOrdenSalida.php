@@ -13,6 +13,7 @@ class InsumosxOrdenSalida{
             `insumosXOrdenSalida`.`id`,
             `insumosXOrdenSalida`.`idInsumo`,
             (SELECT nombre FROM insumo WHERE id=`insumosXOrdenSalida`.`idInsumo`) AS nombreInsumo,
+            (SELECT codigo FROM insumo WHERE id=`insumosXOrdenSalida`.`idInsumo`) AS codigo,
             `insumosXOrdenSalida`.`cantidad`,
             `insumosXOrdenSalida`.`costoPromedio`
             FROM `tropical`.`insumosXOrdenSalida` WHERE idOrdenSalida=:id';

@@ -370,33 +370,33 @@ class Producto {
             columnDefs: [{className: "text-right", "targets": [5,6,7,8]}],
             columns: [
                 {
-                    title:"Id",
+                    title:"ID",
                     data:"id",
                     className:"itemId",                    
                     width:"auto",
                     searchable: false},
                 {
-                    title:"Codigo",
+                    title:"CODIGO",
                     data:"codigo",
                     width:"auto"},
                 {
-                    title:"Nombre",
+                    title:"NOMBRE",
                     data:"nombre",
                     width:"auto"},
                 {
-                    title:"Abreviatura",
+                    title:"ABREVIATURA",
                     data:"nombreAbreviado",
                     width:"auto"},
                 {
-                    title:"Descripción",
+                    title:"DESCRIPCION",
                     data:"descripcion",
                     width:"auto"},
                 {
-                    title:"Saldo Cantidad",
+                    title:"SALDO CANTIDAD",
                     data:"saldoCantidad",
                     width:"auto"},
                 {
-                    title:"Saldo Costo",
+                    title:"SALDO COSTO",
                     data:"saldoCosto",
                     width:"auto",
                     type: 'formatted-num',
@@ -405,7 +405,7 @@ class Producto {
                     }
                     },
                 {
-                    title:"Costo Promedio",
+                    title:"COSTO PROMEDIO",
                     data:"costoPromedio",
                     width:"auto",
                     type: 'formatted-num',
@@ -413,7 +413,7 @@ class Producto {
                         return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                     }},
                 {
-                    title:"Precio Venta",
+                    title:"PRECIO VENTA",
                     data:"precioVenta",
                     width:"auto",
                     type: 'formatted-num',
@@ -421,7 +421,7 @@ class Producto {
                         return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                     }},
                 {
-                    title:"Tipo",
+                    title:"TIPO",
                     data:"esVenta",
                     width:"auto",
                     mRender: function ( e ) {
@@ -435,7 +435,7 @@ class Producto {
                         return tipo
                     }},
                 {
-                    title:"Acción",
+                    title:"ACCION",
                     orderable: false,
                     searchable:false,
                     className: 'buttons',
@@ -468,45 +468,45 @@ class Producto {
             columnDefs: [{className: "text-right", "targets": [5]}],
             columns: [
                 {
-                    title:"Id",
+                    title:"ID",
                     data:"id",
                     className:"itemId",
                     searchable: false,                    
                     width:"auto"},
                 {
-                    title:"Codigo",
+                    title:"CODIGO",
                     data:"codigo",
                     width:"auto"},
                 {
-                    title:"Nombre",
+                    title:"NOMBRE",
                     data:"nombre",
                     width:"auto"},
                 {
-                    title:"Abreviatura",
+                    title:"ABREVIATURA",
                     data:"nombreAbreviado",
                     width:"auto"},
                 {
-                    title:"Descripción",
+                    title:"DESCRIPCION",
                     data:"descripcion",
                     width:"auto"},
                 {
-                    title:"Saldo Cantidad",
+                    title:"SALDO CANTIDAD",
                     data:"saldoCantidad",
                     width:"auto"},
                 {
-                    title:"Saldo Costo",
+                    title:"SALDO COSTO",
                     data:"saldoCosto",
                     visible:false},
                 {
-                    title:"Costo Promedio",
+                    title:"COSTO PROMEDIO",
                     data:"costoPromedio",
                     visible:false},
                 {
-                    title:"Precio Venta",
+                    title:"PRECIO VENTA",
                     data:"precioVenta",
                     visible:false,},
                 {
-                    title:"Tipo",
+                    title:"TIPO",
                     data:"esVenta",
                     width:"auto",
                     mRender: function ( e ) {
@@ -520,7 +520,7 @@ class Producto {
                         return tipo
                     }},
                 {
-                    title:"Acción",
+                    title:"ACCION",
                     orderable: false,
                     searchable:false,
                     mRender: function () {

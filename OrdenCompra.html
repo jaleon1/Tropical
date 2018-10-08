@@ -113,11 +113,8 @@
                                 </a>
                                 <ul class="dropdown-menu dropdown-usermenu pull-right">
                                     <li>
-                                        <a href="javascript:;"> Profile</a>
-                                    </li>
-                                    <li>
                                         <a onclick="Session.End();">
-                                            <i class="fa fa-sign-out pull-right"></i> Log Out</a>
+                                            <i class="fa fa-sign-out pull-right"></i> Cerrar Sesión</a>
                                     </li>
                                 </ul>
                             </li>
@@ -168,31 +165,16 @@
                                 </div>
                                 <!--  CONTENIDO DE LA PAGINA -->
                                 <div class="x_content">
-                                    <div class="table-responsive">
-                                        <table id="dsitems" class="table table-striped jambo_table bulk_action">
-                                            <!-- <thead>
-                                                    <tr class="headings">
-                                                        <th>
-                                                            <input type="checkbox" id="check-all" class="flat">
-                                                        </th>
-                                                        <th class="column-title">Codigo </th>
-                                                        <th class="column-title">Descripción </th>
-                                                        <th class="column-title">Precio/U </th>
-                                                        <th class="column-title">Cantidad </th>
-                                                        <th class="column-title">Importe </th> -->
-                                            <!--<th class="column-title">Amount </th>
-                                                        <th class="column-title no-link last"><span class="nobr">Action</span>
-                                                        </th> -->
-                                            <!-- <th class="bulk-actions" colspan="7">
-                                                        <a class="antoo" style="color:#fff; font-weight:500;">Acciones Masivas ( <span class="action-cnt"> </span> ) <i class="fa fa-chevron-down"></i></a>
-                                                        </th>
-                                                    </tr>
-                                                </thead> -->
-                                            <tbody id="productos">
-
-                                            </tbody>
-                                        </table>
+                                    <!-- TABLE -->
+                                    <div class="row">
+                                        <div class="col-md-12 col-sm-12 col-xs-12">
+                                            <table id="dsitems" class="table display responsive table-striped jambo_table no-wrap" width="100%" role="grid" aria-describedby="datatable_info">
+                                                <tbody id="productos">
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
+                                    <!-- /TABLE -->
                                 </div>
 
                                 <!--  CONTENIDO DE SUBTOTALES -->
@@ -356,18 +338,18 @@
                 "search": "Buscar En Factura" //Cambia el texto de Search
             },
             "columns": [
-                { "title": "id" },
-                { "title": "Codigo" },
+                { "title": "ID" },
+                { "title": "CODIGO" },
                 { "title": "Descripcion" },
-                { "title": "Tipo", className: "itemId" },
-                { "title": "Precio/U" },
-                { "title": "CantidadBueno" },
-                { "title": "CantidadMalo" },
-                { "title": "ValorBueno" },
-                { "title": "ValorMalo" },
-                { "title": "Subtotal" },
+                { "title": "TIPO", className: "itemId" },
+                { "title": "PRECIO/U" },
+                { "title": "CANTIDAD BUENO" },
+                { "title": "CANTIDAD MALO" },
+                { "title": "VALOR BUENO" },
+                { "title": "VALOR MALO" },
+                { "title": "SUBTOTAL" },
                 {
-                    title:"Acción",
+                    title:"ACCION",
                     orderable: false,
                     searchable:false,
                     mRender: function () {
@@ -376,9 +358,9 @@
                     visible:true
                 }
             ], // crea las columnas
-            "scrollY": "190px",
+            "scrollY": "2000px",
             // "searching": false,
-            "scrollCollapse": true,
+             "scrollCollapse": true,
             "iDisplayLength": 100,
             "columnDefs": [
                 {//id

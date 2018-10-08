@@ -138,7 +138,7 @@ class Rol {
         swal({
             
             type: 'success',
-            title: 'Good!',
+            title: 'Listo!',
             showConfirmButton: false,
             timer: 1000
         });
@@ -259,15 +259,15 @@ class Rol {
             },
             columns: [
                 {
-                    title: "id",
+                    title: "ID",
                     data: "id",
                     className: "itemId",                    
                     searchable: false
                 },
-                { title: "Nombre", data: "nombre" },
-                { title: "Descripción", data: "descripcion" },
+                { title: "NOMBRE", data: "nombre" },
+                { title: "DESCRIPCION", data: "descripcion" },
                 {
-                    title: "Acción",
+                    title: "ACCION",
                     orderable: false,
                     searchable:false,
                     visible: buttons,

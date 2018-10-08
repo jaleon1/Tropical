@@ -150,7 +150,7 @@ class Insumo {
         swal({
 
             type: 'success',
-            title: 'Good!',
+            title: 'Listo!',
             showConfirmButton: false,
             timer: 1000
         });
@@ -563,7 +563,7 @@ class Insumo {
                     width: "auto"
                 },
                 {
-                    title: "Codigo",
+                    title: "CODIGO",
                     data: "codigo",
                     width: "auto"
                 },
@@ -573,7 +573,7 @@ class Insumo {
                     width: "auto"
                 },                
                 {//cant.
-                    title: "Cantidad",
+                    title: "CANTIDAD",
                     "width": "15%",
                     "data": null,
                     "defaultContent": '<input class="cantidad form-control" min="1" max="9999999999" step="1" style="text-align:right;"  type="number" value=1>'
@@ -625,6 +625,7 @@ class Insumo {
                 },
                 {
                     extend: 'pdfHtml5',
+                    orientation : 'landscape',
                     exportOptions: {
                         columns: [ 1, 3, 5, 7, 9, 10, 11, 12, 13, 14, 15, 16, 17 ]
                     }

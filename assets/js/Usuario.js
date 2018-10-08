@@ -138,7 +138,7 @@ class Usuario {
         swal({
             
             type: 'success',
-            title: 'Good!',
+            title: 'Listo!',
             showConfirmButton: false,
             timer: 1000
         });
@@ -365,17 +365,17 @@ class Usuario {
             },
             columns: [
                 {
-                    title: "id",
+                    title: "ID",
                     data: "id",
                     className: "itemId",                    
                     searchable: false
                 }, 
-                { title: "Nombre", data: "nombre" },
-                { title: "Usuario", data: "username" },
-                { title: "Correo", data: "email" },
-                { title: "Activo", data: "activo" },
+                { title: "NOMBRE", data: "nombre" },
+                { title: "USUARIO", data: "username" },
+                { title: "CORREO", data: "email" },
+                { title: "ACTIVO", data: "activo" },
                 {
-                    title: "Eliminar",
+                    title: "ELIMINAR",
                     orderable: false,
                     searchable:false,
                     visible: buttons,
