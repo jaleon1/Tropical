@@ -438,8 +438,8 @@ class Distribucion {
             distr.CalcImporte();
         }); 
         // Precio Venta
-        $('td:eq(6)', rowNode).attr({id: ("precioVenta"+producto.id), value: producto.precioVenta, align: "right" })[0]
-            .textContent= ("¢"+parseFloat(producto.precioVenta).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+        $('td:eq(6)', rowNode).attr({id: ("precioVenta"+producto.id), value: producto.precioVenta / 1.13, align: "right" })[0]
+            .textContent= ("¢"+parseFloat(producto.precioVenta / 1.13).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
         // subtotal
         $('td:eq(7)', rowNode).attr({id: ("subtotal"+producto.id), value:0, align: "right" })[0].textContent=0;
         t.columns.adjust().draw();
@@ -467,11 +467,11 @@ class Distribucion {
         producto.id = idp;
         producto.saldoCantidad =  parseFloat($(`#saldoCantidad${idp}`).attr('value'));
         producto.cantidad =  $(`#cantidad${idp}`).val();
-        producto.precioVenta = $(`#precioVenta${idp}`).attr('value');
+        producto.precioVenta = parseFloat($(`#precioVenta${idp}`).attr('value'));
         producto.subtotal= (producto.cantidad * producto.precioVenta).toFixed(10);
     }
 
-    CalcImporte(){        
+    CalcImporte(){
         // Subtotal de linea.
         $(`#subtotal${producto.id}`).attr({value: producto.subtotal});
         $(`#subtotal${producto.id}`)[0].textContent= ("¢"+parseFloat(producto.subtotal).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
