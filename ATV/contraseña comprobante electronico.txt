@@ -28,6 +28,26 @@ PINP12 0011
 
 
 
-               
-                
+
+/*********************** produccion *************************/
+
+Datos de Usuario
+Su usuario de ingreso es: 
+ 	cpf-01-1187-0763@prod.comprobanteselectronicos.go.cr 
+
+Su contraseña de ingreso es: 
+ 	V$[0.fH!Rs(@H}=7-P=V 
+
+== PRODUCCION ==
+
+URL API RECEPCION = https://api.comprobanteselectronicos.go.cr/recepcion/v1/
+
+OAUTH 2.0 ACCESS TOKEN URL = https://idp.comprobanteselectronicos.go.cr/auth/realms/rut/protocol/openid-connect/token
+
+CLIENT ID = api-prod
+
+CLIENT SECRET = [VACIO]
+
+SCOPE = [VACIO]
+           
                
