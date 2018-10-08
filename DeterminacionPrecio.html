@@ -113,11 +113,8 @@
                                 </a>
                                 <ul class="dropdown-menu dropdown-usermenu pull-right">
                                     <li>
-                                        <a href="javascript:;"> Profile</a>
-                                    </li>
-                                    <li>
                                         <a onclick="Session.End();">
-                                            <i class="fa fa-sign-out pull-right"></i> Log Out</a>
+                                            <i class="fa fa-sign-out pull-right"></i> Cerrar Sesión</a>
                                     </li>
                                 </ul>
                             </li>
@@ -159,12 +156,16 @@
                                 </div>
                                 <!--  CONTENIDO DE LA PAGINA -->
                                 <div class="x_content">
-                                    <div class="table-responsive">
-                                        <table id="dsItems" class="table table-striped jambo_table bulk_action">                                           
-                                            <tbody id="tbodyItems">
-                                            </tbody>
-                                        </table>
+                                    <!-- TABLE -->
+                                    <div class="row">
+                                        <div class="col-md-12 col-sm-12 col-xs-12">
+                                            <table id="dsItems" class="table display responsive table-striped jambo_table no-wrap" width="100%" role="grid" aria-describedby="datatable_info">
+                                                <tbody id="tbodyItems">
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
+                                    <!-- /TABLE -->
                                 </div>
 
                                 <!--  CONTENIDO DE SUBTOTALES -->
@@ -321,16 +322,21 @@
         //Usa la variable t que es el datatable donde estan los productos
         t = $('#dsItems').DataTable({
             responsive: true,
-            "ordering": false,            
-            "searching": true,
-            "paging": true,
-            "info": false, //Quita el pie de pagina
+            destroy: true,
+            order: [[ 0, "desc" ]],                  
             "language": {
-                "infoEmpty": "No hay productos agregados",
-                "emptyTable": "No hay productos agregados",
-                "search": "Buscar En Productos", //Cambia el texto de Search
-                "lengthMenu":     "Mostrar _MENU_ registros"
-            },
+                "infoEmpty": "Sin Ordenes Ingresadas",
+                "emptyTable": "Sin Ordenes Ingresadas",
+                "search": "Buscar",
+                "zeroRecords":    "No hay resultados",
+                "lengthMenu":     "Mostrar _MENU_ registros",
+                "paginate": {
+                    "first":      "Primera",
+                    "last":       "Ultima",
+                    "next":       "Siguiente",
+                    "previous":   "Anterior"
+                }
+            }, 
             "columns": [
                 { "title": "id" },
                 { "title": "Codigo" },

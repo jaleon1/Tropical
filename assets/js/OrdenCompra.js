@@ -126,10 +126,9 @@ class OrdenCompra {
     SelectEventHandler() {
         ordenCompra.id = $(this).parents("tr").find(".itemId").text() || $(this).find(".itemId").text();
         var fecha = $(this).parents('tr').find('td:eq(1)').html();
-        var usuario = $(this).parents('tr').find('td:eq(4)').html();
-        var orden = $(this).parents('tr').find('td:eq(3)').html();
-        var proveedor = $(this).parents('tr').find('td:eq(2)').html();
-        ordenCompra.setTableInsumoOrdenCompra(orden, usuario, proveedor, fecha);
+        var usuario = $(this).parents('tr').find('td:eq(3)').html();
+        var orden = $(this).parents('tr').find('td:eq(2)').html();
+        ordenCompra.setTableInsumoOrdenCompra(orden, usuario, fecha);
         ordenCompra.Read;
         $(".bs-ordenCompra-modal-lg").modal('toggle');
     };
@@ -167,7 +166,7 @@ class OrdenCompra {
         });
     };
 
-    setTableInsumoOrdenCompra(orden, usuario, proveedor, fecha) {
+    setTableInsumoOrdenCompra(orden, usuario, fecha) {
         jQuery.extend( jQuery.fn.dataTableExt.oSort, {
             "formatted-num-pre": function ( a ) {
                 a = (a === "-" || a === "") ? 0 : a.replace( /[^\d\-\.]/g, "" );
@@ -292,7 +291,7 @@ class OrdenCompra {
         swal({
             
             type: 'success',
-            title: 'Good!',
+            title: 'Listo!',
             showConfirmButton: false,
             timer: 1000
         });

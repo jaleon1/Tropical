@@ -71,11 +71,11 @@ class InventarioVentas {
                     visible: false
                 },
                 {
-                    title: "Fecha",
+                    title: "FECHA",
                     data: "fechaCreacion"
                 },
                 {
-                    title: "Consecutivo",
+                    title: "CONSECUTIVO",
                     data: "consecutivo"
                 },
                 {
@@ -87,7 +87,7 @@ class InventarioVentas {
                     data: "_08oz"
                 },
                 {
-                    title: "Total Comprobante",
+                    title: "TOTAL COMPROBANTE",
                     data: "totalComprobante",
                     mRender: function ( e ) {
                         if (e==null) 

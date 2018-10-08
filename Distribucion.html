@@ -113,11 +113,8 @@
                                 </a>
                                 <ul class="dropdown-menu dropdown-usermenu pull-right">
                                     <li>
-                                        <a href="javascript:;"> Profile</a>
-                                    </li>
-                                    <li>
                                         <a onclick="Session.End();">
-                                            <i class="fa fa-sign-out pull-right"></i> Log Out</a>
+                                            <i class="fa fa-sign-out pull-right"></i> Cerrar Sesión</a>
                                     </li>
                                 </ul>
                             </li>
@@ -196,14 +193,10 @@
 
                                     <div class="x_content">
                                         <form class="form-horizontal form-label-left" id="frmBodega" method="POST" novalidate>
-
-                                            <div id="reportrange" class="pull-right">
-                                                <button id="btnAddBodega" data-toggle="modal" data-target=".bs-bodega-modal-lg" type="button" class="btn btn-info btn-lg">+</button>
-                                            </div>
                                             <div class="row">
-                                                <div class="col-sm-12">
+                                                <div class="col-sm-14">
                                                     <div class="item form-group">
-                                                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="nombre">Nombre
+                                                        <label class="control-label col-md-4 col-sm-3 col-xs-12" for="nombre">Nombre
                                                             <span class="required">*</span>
                                                         </label>
                                                         <div class="col-md-6 col-sm-6 col-xs-12">
@@ -212,10 +205,13 @@
                                                         </div>
                                                     </div>
                                                     <div class="item form-group ">
-                                                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="descripcion">Descripción
+                                                        <label class="control-label col-md-4 col-sm-3 col-xs-12" for="descripcion">Descripción
                                                         </label>
                                                         <div class="col-md-6 col-sm-6 col-xs-12">
                                                             <input id="descripcion" class="form-control col-md-7 col-xs-12" name="descripcion" readonly>
+                                                        </div>
+                                                        <div id="reportrange" class="pull-right"  class="col-sm-1">
+                                                            <button id="btnAddBodega" data-toggle="modal" data-target=".bs-bodega-modal-lg" type="button" class="btn btn-info btn-sm">+</button>
                                                         </div>
                                                     </div>
                                                 </div>

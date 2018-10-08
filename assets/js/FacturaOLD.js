@@ -139,7 +139,7 @@ function showInfo() {
     // swal({
     //     
     //     type: 'success',
-    //     title: 'Good!',
+    //     title: 'Listo!',
     //     showConfirmButton: false,
     //     timer: 1500
     // });

@@ -112,10 +112,19 @@ class OrdenSalida{
             $ordenSalida=null;
             $insumoxordensalida=null;
 
-            $sql_ordensalida=$sql='SELECT `id`,`fecha`,`numeroOrden`,`idUsuarioEntrega`, (SELECT nombre FROM usuario WHERE id=idUsuarioEntrega) as usuarioEntrega,
-            `idUsuarioRecibe`, (SELECT nombre FROM usuario WHERE id=idUsuarioRecibe) as usuarioRecibe, `fechaLiquida`, `idEstado`
+            $sql_ordensalida=$sql='SELECT `id`,`fecha`,`numeroOrden`,`idUsuarioEntrega`, 
+            (SELECT nombre FROM usuario WHERE id=idUsuarioEntrega) as usuarioEntrega,
+            `idUsuarioRecibe`, 
+            (SELECT nombre FROM usuario WHERE id=idUsuarioRecibe) as usuarioRecibe, 
+            `fechaLiquida`, 
+            `idEstado`
             FROM ordenSalida WHERE id=:id ORDER BY numeroOrden asc';
-            $sql_insumoxordensalida='SELECT id,idOrdenSalida,idInsumo,(SELECT nombre FROM insumo WHERE id=idInsumo) AS nombreInsumo,cantidad,costoPromedio FROM insumosXOrdenSalida WHERE idOrdenSalida=:id';
+            $sql_insumoxordensalida='SELECT id,idOrdenSalida,idInsumo,
+            (SELECT nombre FROM insumo WHERE id=idInsumo) AS nombreInsumo,
+            (SELECT codigo FROM insumo WHERE id=idInsumo) AS codigo,
+            cantidad,
+            costoPromedio 
+            FROM insumosXOrdenSalida WHERE idOrdenSalida=:id';
 
             $param= array(':id'=>$this->id);
             $ordenSalida = DATA::Ejecutar($sql_ordensalida,$param);
@@ -134,6 +143,7 @@ class OrdenSalida{
                 require_once("InsumosxOrdenSalida.php");
                 $ins_ordensalida = new InsumosxOrdenSalida();
                 $ins_ordensalida->id = $value['id'];
+                $ins_ordensalida->codigo = $value['codigo'];
                 $ins_ordensalida->idOrdenSalida = $value['idOrdenSalida'];
                 $ins_ordensalida->idInsumo = $value['idInsumo'];
                 $ins_ordensalida->nombreInsumo = $value['nombreInsumo'];

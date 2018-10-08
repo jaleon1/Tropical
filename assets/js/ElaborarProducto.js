@@ -133,7 +133,7 @@ constructor(numeroOrden, p, idOrdenSalida) {
         swal({
             
             type: 'success',
-            title: 'Good!',
+            title: 'Listo!',
             showConfirmButton: false,
             timer: 1000
         });

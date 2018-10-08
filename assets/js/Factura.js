@@ -68,20 +68,17 @@ $(document).ready(function () {
             "search": "Buscar En Factura" //Cambia el texto de Search
         },
         "columns": [
-            { "title": "id" },
-            { "title": "Codigo" },
-            { "title": "Descripcion" },
-            { "title": "Precio/U" },
-            { "title": "Cantidad" },
-            { "title": "Importe" }
+            { "title": "ID" }, 
+            { "title": "CODIGO" },
+            { "title": "DESCRIPCION" },
+            { "title": "PRECIO/U" },
+            { "title": "CANTIDAD" },
+            { "title": "IMPORTE" }
           ], // crea las columnas
         "scrollY":        "190px",
         // "searching": false,
         "scrollCollapse": true,
         "paging":         false,
-
-
-
         "columnDefs": [ 
             { 
                 "width": "2%", "targets": 0,
@@ -488,7 +485,7 @@ function CleanCtls() {
 //     // swal({
 //     //     
 //     //     type: 'success',
-//     //     title: 'Good!',
+//     //     title: 'Listo!',
 //     //     showConfirmButton: false,
 //     //     timer: 1500
 //     // });

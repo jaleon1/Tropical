@@ -126,7 +126,7 @@ class Producto {
         swal({
             
             type: 'success',
-            title: 'Good!',
+            title: 'Listo!',
             showConfirmButton: false,
             timer: 1000
         });
@@ -197,16 +197,16 @@ class Producto {
         else
             $('#dsProducto').DataTable({
                 columns: [
-                    { title: "Check" },
+                    { title: "CHECK" },
                     {
                         title: "ID"
                         //,visible: false
                     },
-                    { title: "Nombre" },
-                    { title: "Código Rapido" },
-                    { title: "Cantidad" },
-                    { title: "Precio" },
-                    { title: "Acción" }
+                    { title: "NOMBRE" },
+                    { title: "CODIGO RAPIDO" },
+                    { title: "CANTIDAD" },
+                    { title: "PRECIO" },
+                    { title: "ACCION" }
                 ],
                 paging: true,
                 search: true

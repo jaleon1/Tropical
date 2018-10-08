@@ -146,7 +146,7 @@ class Consumible {
         //$(".modal").css({ display: "none" });   
         swal({
             type: 'success',
-            title: 'Good!',
+            title: 'Listo!',
             showConfirmButton: false,
             timer: 1000
         });
@@ -267,31 +267,31 @@ class Consumible {
             columnDefs: [{className: "text-right", "targets": [4]}],
             columns: [
                 {
-                    title:"Id",
+                    title:"ID",
                     data:"id",
                     className:"itemId",
                     searchable: false,                    
                     width:"auto"
                 },
                 {
-                    title:"idProducto",
+                    title:"IDPRODUCTO",
                     data:"idProducto",
                     className:"itemId",
                     searchable: false,                    
                     width:"auto"
                 },
                 {
-                    title:"Codigo",
+                    title:"CODIGO",
                     data:"codigo",
                     width:"auto"
                 },
                 {
-                    title:"Producto",
+                    title:"PRODUCTO",
                     data:"nombre",
                     width:"auto"
                 },
                 {//cant.
-                    title:"Cantidad",
+                    title:"CANTIDAD",
                     "width": "15%", 
                     "data": "cantidad",
                     // "defaultContent": '<input class="cantidad form-control" type="number" min="1" max="9999999999" step="1" style="text-align:right;" value=1 >'
@@ -300,7 +300,7 @@ class Consumible {
                     }
                 },
                 {
-                    title:"Acción",
+                    title:"ACCION",
                     orderable: false,
                     searchable:false,
                     mRender: function () {
@@ -330,31 +330,31 @@ class Consumible {
             columnDefs: [{className: "text-right", "targets": [4]}],
             columns: [
                 {
-                    title:"Id",
+                    title:"ID",
                     data:"id",
                     className:"itemId",
                     searchable: false,                    
                     width:"auto"
                 },
                 {
-                    title:"idProducto",
+                    title:"IDPRODUCTO",
                     data:"idProducto",
                     className:"itemId",
                     searchable: false,                    
                     width:"auto"
                 },
                 {
-                    title:"Codigo",
+                    title:"CODIGO",
                     data:"codigo",
                     width:"auto"
                 },
                 {
-                    title:"Producto",
+                    title:"PRODUCTO",
                     data:"nombre",
                     width:"auto"
                 },
                 {//cant.
-                    title:"Cantidad",
+                    title:"CANTIDAD",
                     "width": "15%", 
                     "data": "cantidad",
                     // "defaultContent": '<input class="cantidad form-control" type="number" min="1" max="9999999999" step="1" style="text-align:right;" value=1 >'
@@ -363,7 +363,7 @@ class Consumible {
                     }
                 },
                 {
-                    title:"Acción",
+                    title:"ACCION",
                     orderable: false,
                     searchable:false,
                     mRender: function () {
