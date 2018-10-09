@@ -317,7 +317,7 @@ class Factura{
     function EnviarFE(){
         try {
             // consulta datos de factura en bd.
-            //$this->Read();
+            $this->Read();
             $this->perfildeContribuyente();
             // envía la factura
             FacturaElectronica::Iniciar($this);
@@ -329,10 +329,10 @@ class Factura{
         try {
             $sql="INSERT INTO factura   (id, idBodega, local, terminal, idCondicionVenta, idSituacionComprobante, idEstadoComprobante, plazoCredito, 
                 idMedioPago, idCodigoMoneda, tipoCambio, totalServGravados, totalServExentos, totalMercanciasGravadas, totalMercanciasExentas, totalGravado, totalExento, codigoReferencia, 
-                totalVenta, totalDescuentos, totalVentaneta, totalImpuesto, totalComprobante, idReceptor, idEmisor, idUsuario, tipoDocumento, montoEfectivo)
+                totalVenta, totalDescuentos, totalVentaneta, totalImpuesto, totalComprobante, idReceptor, idEmisor, idUsuario, montoEfectivo)
             VALUES  (:uuid, :idBodega, :local, :terminal, :idCondicionVenta, :idSituacionComprobante, :idEstadoComprobante, :plazoCredito,
                 :idMedioPago, :idCodigoMoneda, :tipoCambio, :totalServGravados, :totalServExentos, :totalMercanciasGravadas, :totalMercanciasExentas, :totalGravado, :totalExento, :codigoReferencia, 
-                :totalVenta, :totalDescuentos, :totalVentaneta, :totalImpuesto, :totalComprobante, :idReceptor, :idEmisor, :idUsuario, :tipoDocumento, :montoEfectivo)"; 
+                :totalVenta, :totalDescuentos, :totalVentaneta, :totalImpuesto, :totalComprobante, :idReceptor, :idEmisor, :idUsuario, :montoEfectivo)";
             $param= array(':uuid'=>$this->id,
                 ':idBodega'=>$this->idBodega,
                 ':local'=>$this->local,
@@ -358,8 +358,7 @@ class Factura{
                 ':totalComprobante'=>$this->totalComprobante,
                 ':idReceptor'=>$this->idReceptor,
                 ':idEmisor'=>$this->idEmisor,
-                ':idUsuario'=>$_SESSION["userSession"]->id, 
-                ':tipoDocumento'=>$this->tipoDocumento,
+                ':idUsuario'=>$this->idUsuario,
                 ':montoEfectivo'=>$this->montoEfectivo);
             $data = DATA::Ejecutar($sql,$param, false);
             if($data)
@@ -367,11 +366,10 @@ class Factura{
                  //save array obj
                  if(ProductoXFactura::Create($this->detalleFactura)){
                     $this->actualizaInventario($this->detalleOrden);
-                    // retorna orden autogenerada.
+                    // orden de factura para mostrar en despacho.
                     OrdenXFactura::$id=$this->id;
                     OrdenXFactura::Create($this->detalleOrden);
-                    //                 
-                    $this->Read();
+                    // envio de comprobantes en tiempo real.
                     $this->EnviarFE();         
                     return $this;
                 }
@@ -405,7 +403,6 @@ class Factura{
             // debe notificar que no se esta actualizando el historico de comprobantes.
         }
     }
-
 
     function actualizaInventario($insumos){
         foreach ($insumos as $key => $value){
