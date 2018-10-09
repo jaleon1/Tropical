@@ -132,7 +132,7 @@
                     <div id="${item.id}" class="${item.consecutivo%2?`container`:`containerPar`}">   
                         
                         <p>Orden Número: <span class='cod'>${item.consecutivo}</span></p>
-                        <h3><p>${item.tamano}onz | ${item.sabor1} | ${item.sabor2} | <span class='topping'>${item.topping}</span></p></h3>
+                        <h3><p>${item.tamano}onz | ${item.sabor1} | ${item.sabor2} | <span class='topping' style="color:gray;">${item.topping}</span></p></h3>
                         
                         <span class="time-right cod">${moment(item.fechaCreacion).fromNow()}
                             <span class="idBox cod">${item.fechaCreacion}</span>
