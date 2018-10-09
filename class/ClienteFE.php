@@ -347,15 +347,45 @@ class ClienteFE{
         }
     }
 
-    function Read(){
+    
+    public function read(){
         try {
-            $sql='SELECT id, codigoSeguridad, idCodigoPais, nombre, idTipoIdentificacion, identificacion, nombreComercial, idProvincia,idCanton, idDistrito, idBarrio, otrasSenas, 
-            idCodigoPaisTel, numTelefono, correoElectronico, username, password, certificado, idBodega, pinp12
-                FROM clienteFE  
+            $sql='SELECT id, codigoSeguridad, idCodigoPais, codigoReferencia, nombre, idTipoIdentificacion, identificacion, nombreComercial, idProvincia, idCanton, idDistrito, 
+                    idBarrio, otrasSenas, numTelefono, correoElectronico, username, password, pinp12, downloadCode, certificado, cpath
+                FROM entidad
                 where id=:id';
             $param= array(':id'=>$this->id);
-            $data= DATA::Ejecutar($sql,$param);
-            return $data;
+            $data= DATA::Ejecutar($sql, $param);
+            if($data){
+                $this->id= $data[0]['id'];
+                $this->codigoSeguridad= $data[0]['codigoSeguridad'];
+                $this->idCodigoPais= $data[0]['idCodigoPais'];
+                $this->codigoReferencia= $data[0]['codigoReferencia'];
+                $this->nombre= $data[0]['nombre'];
+                $this->idTipoIdentificacion= $data[0]['idTipoIdentificacion'];
+                $this->identificacion= $data[0]['identificacion'];
+                $this->nombreComercial= $data[0]['nombreComercial'];
+                $this->idProvincia= $data[0]['idProvincia'];
+                $this->idCanton= $data[0]['idCanton'];
+                $this->idDistrito= $data[0]['idDistrito'];
+                $this->idBarrio= $data[0]['idBarrio'];
+                $this->otrasSenas= $data[0]['otrasSenas'];
+                $this->numTelefono= $data[0]['numTelefono']; 
+                $this->correoElectronico= $data[0]['correoElectronico'];
+                $this->username= encdes::decifrar($data[0]['username']);
+                $this->password= encdes::decifrar($data[0]['password']);
+                $this->pinp12= encdes::decifrar($data[0]['pinp12']);
+                $this->downloadCode= $data[0]['downloadCode'];
+                $this->certificado= $data[0]['certificado'];
+                $this->cpath = $data[0]['cpath'];                
+                // estado del certificado.
+                if(file_exists(Globals::certDir.$this->id.DIRECTORY_SEPARATOR.$this->cpath))
+                    $this->estadoCertificado=1;
+                else $this->estadoCertificado=0;      
+                $this->certificado= encdes::decifrar($data[0]['certificado']);
+                return $this;
+            }
+            return null;
         }     
         catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
@@ -363,6 +393,19 @@ class ClienteFE{
                 'code' => $e->getCode() ,
                 'msg' => 'Error al cargar el producto'))
             );
+        }
+    }
+
+    function checkProfile(){
+        if(!isset($_SESSION['userSession']->idEntidad)){
+            return array(
+                'status' =>  false,
+                'codigoReferencia' => null);
+        }
+        else {
+            return array(
+                'status' =>  true,
+                'codigoReferencia' => $_SESSION['userSession']->codigoReferencia);            
         }
     }
 

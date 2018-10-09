@@ -63,9 +63,12 @@ class Factura{
     public $local="";
     public $terminal="";
     public $idCondicionVenta=null;
+    public $clave=null;
+    public $consecutivoFE=null;
     public $idSituacionComprobante=null;
     public $idEstadoComprobante= null;
     public $idMedioPago=null;
+    public $codigoReferencia = null; // FE - TE - ND - NC ...  documento para envio MH    
     public $fechaEmision="";
     public $totalVenta=null; //Precio del producto
     public $totalDescuentos=null;
@@ -75,11 +78,12 @@ class Factura{
     public $idEmisor=null;
     public $detalleFactura = [];
     public $detalleOrden = [];
+    public $datosReceptor = [];
+    public $datosEntidad = [];
     public $lista= [];// Se usa para retornar los detalles de una factura
     public $consecutivo= [];
     public $usuario="";
     public $bodega="";
-    public $tipoDocumento=""; // FE - TE - ND - NC ...  documento para envio MH    
     public $plazoCredito= null;
     public $idCodigoMoneda= null;
     public $tipoCambio= null;
@@ -87,9 +91,6 @@ class Factura{
     public $montoTarjeta= null;
     //
     function __construct(){
-        //
-        // Inicia sesion de cliente FE sin login al api (false).
-        $this->perfildeContribuyente(false);
         // identificador único
         if(isset($_POST["id"])){
             $this->id= $_POST["id"];
@@ -100,7 +101,7 @@ class Factura{
             require_once("UUID.php");
             // a. Datos de encabezado
             $this->id= $obj["id"] ?? UUID::v4();     
-            $this->fechaCreacion= $obj["fechaCreacion"] ?? null;
+            $this->fechaCreacion= $obj["fechaCreacion"] ?? null;  //  fecha de creacion en base de datos 
             $this->idBodega= $obj["idBodega"] ?? $_SESSION["userSession"]->idBodega;
             $this->consecutivo= $obj["consecutivo"] ?? null;
             $this->local= $obj["local"] ?? $_SESSION["userSession"]->local;
@@ -113,7 +114,7 @@ class Factura{
             // c. Resumen de la factura/Total de la Factura 
             // definir si es servicio o mercancia (producto). En caso Tropical, siempre es mercancia
             $this->idCodigoMoneda= $obj["idCodigoMoneda"] ?? 55; // CRC
-            $this->tipoCambio= $obj['tipoCambio'] ?? 582.83;
+            $this->tipoCambio= $obj['tipoCambio'] ?? 582.83; // tipo de cambio dinamico con BCCR
             $this->totalServGravados= $obj['totalServGravados'];
             $this->totalServExentos= $obj['totalServExentos'];
             $this->totalMercanciasGravadas= $obj['totalMercanciasGravadas'];
@@ -128,12 +129,12 @@ class Factura{
             $this->montoEfectivo= $obj["montoEfectivo"];
             $this->montoTarjeta= $obj["montoTarjeta"];
             // d. Informacion de referencia
-            $this->tipoDocumento = $obj["tipoDocumento"] ?? "TE"; // documento de Referencia.
-            $this->codigoReferencia = $obj["codigoReferencia"] ?? "01"; //codigo de documento de Referencia.            
+            $this->codigoReferencia = $obj["codigoReferencia"] ?? $_SESSION["userSession"]->codigoReferencia; //codigo de documento de Referencia.
             $this->fechaEmision= $obj["fechaEmision"] ?? null; // emision del comprobante electronico.
             //
-            $this->idReceptor = $obj['idReceptor'] ?? Receptor::default()->id; // receptor por defecto.
-            $this->idEmisor = $_SESSION['API']->id;
+            $this->idReceptor = $obj['idReceptor'] ?? Receptor::default()->id; // si es null, utiliza el Receptor por defecto.
+            $this->idEmisor =  $_SESSION["userSession"]->idEntidad;  //idEmisor no es necesario, es igual al idEntidad.
+            $this->idUsuario=  $_SESSION["userSession"]->id;   
             //
             if(isset($obj["detalleFactura"] )){
                 foreach ($obj["detalleFactura"] as $itemDetalle) {
@@ -143,7 +144,7 @@ class Factura{
                     $item->idPrecio= $itemDetalle['idPrecio'];
                     $item->numeroLinea= $itemDetalle['numeroLinea'];
                     $item->idTipoCodigo= $itemDetalle['idTipoCodigo']?? 1;
-                    $item->codigo= $itemDetalle['codigo'];
+                    $item->codigo= $itemDetalle['codigo'] ?? 999;
                     $item->cantidad= $itemDetalle['cantidad'] ?? 1;
                     $item->idUnidadMedida= $itemDetalle['idUnidadMedida'] ?? 78;
                     $item->detalle= $itemDetalle['detalle'];
@@ -170,7 +171,12 @@ class Factura{
                     $item->idTopping= $itemOrden['idTopping'];
                     array_push ($this->detalleOrden, $item);
                 }
-            }            
+            }
+
+            if(isset($_POST["dataReceptor"] )){
+                $this->datosReceptor = new Receptor();
+                $this->datosReceptor = json_decode($_POST["dataReceptor"],true);
+            }
         }
     }
 
@@ -216,9 +222,9 @@ class Factura{
 
     function Read(){
         try {
-            $sql='SELECT idBodega, fechaCreacion, consecutivo, local, terminal, idCondicionVenta, idSituacionComprobante, idEstadoComprobante, plazoCredito, 
+            $sql='SELECT idBodega, fechaCreacion, consecutivo, clave, consecutivoFE, local, terminal, idCondicionVenta, idSituacionComprobante, idEstadoComprobante, plazoCredito, 
                 idMedioPago, idCodigoMoneda, tipoCambio, totalServGravados, totalServExentos, totalMercanciasGravadas, totalMercanciasExentas, totalGravado, totalExento, fechaEmision, codigoReferencia, 
-                totalVenta, totalDescuentos, totalVentaneta, totalImpuesto, totalComprobante, idReceptor, idEmisor, idUsuario, tipoDocumento
+                totalVenta, totalDescuentos, totalVentaneta, totalImpuesto, totalComprobante, idReceptor, idEmisor, idUsuario
                 from factura
                 where id=:id';
             $param= array(':id'=>$this->id);
@@ -228,6 +234,8 @@ class Factura{
                 $this->bodega = $_SESSION["userSession"]->bodega; // nombre de la bodega.
                 $this->fechaCreacion = $value['fechaCreacion'];
                 $this->consecutivo = $value['consecutivo'];
+                $this->clave = $value['clave'] ?? null;
+                $this->consecutivoFE = $value['consecutivoFE'] ?? null;
                 $this->local = $value['local'];
                 $this->terminal = $value['terminal'];
                 $this->idCondicionVenta = $value['idCondicionVenta'];
@@ -253,9 +261,14 @@ class Factura{
                 $this->idReceptor = $value['idReceptor'];
                 $this->idEmisor = $value['idEmisor'];
                 $this->idUsuario = $value['idUsuario'];
-                $this->usuario = $_SESSION["userSession"]->username;
-                $this->tipoDocumento = $value["tipoDocumento"];
+                // $this->usuario =  nombre de la persona que hizo la transaccion
                 $this->detalleFactura= ProductoXFactura::ReadByIdFactura($this->id);
+                $receptor = new Receptor();
+                $receptor->id = $this->idReceptor;
+                $this->datosReceptor = $receptor->read();
+                $entidad = new Entidad();
+                $entidad->id = $this->idEntidad;
+                $this->datosEntidad = $entidad->read();
             }
             return $this;
         }     
