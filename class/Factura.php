@@ -133,7 +133,7 @@ class Factura{
             $this->fechaEmision= $obj["fechaEmision"] ?? null; // emision del comprobante electronico.
             //
             $this->idReceptor = $obj['idReceptor'] ?? Receptor::default()->id; // si es null, utiliza el Receptor por defecto.
-            $this->idEmisor =  $_SESSION["userSession"]->idEntidad;  //idEmisor no es necesario, es igual al idEntidad.
+            $this->idEmisor =  $_SESSION["userSession"]->idBodega;  //idEmisor no es necesario, es igual al idBodega.
             $this->idUsuario=  $_SESSION["userSession"]->id;   
             //
             if(isset($obj["detalleFactura"] )){
@@ -267,7 +267,7 @@ class Factura{
                 $receptor->id = $this->idReceptor;
                 $this->datosReceptor = $receptor->read();
                 $entidad = new Entidad();
-                $entidad->id = $this->idEntidad;
+                $entidad->id = $this->idBodega;
                 $this->datosEntidad = $entidad->read();
             }
             return $this;
@@ -299,26 +299,10 @@ class Factura{
         }
     }
 
-    private function perfildeContribuyente($apiloging=true){
-        // Inicia sesión de API.
-        $cliente= new ClienteFE();
-        if($cliente->Check())
-            $cliente->ReadProfile($apiloging);
-        else {
-            // retorna warning de facturacion sin contribuyente.
-            echo json_encode(array(
-                'code' => 000 ,
-                'msg' => 'NOCONTRIB')
-            );
-            exit;
-        }
-    }
-
     function EnviarFE(){
         try {
             // consulta datos de factura en bd.
             $this->Read();
-            $this->perfildeContribuyente();
             // envía la factura
             FacturaElectronica::Iniciar($this);
         }
@@ -373,12 +357,12 @@ class Factura{
                     $this->EnviarFE();         
                     return $this;
                 }
-                else throw new Exception('Error al guardar los productos.', 03);
+                else throw new Exception('[ERROR] al guardar los productos.', 03);
             }
-            else throw new Exception('Error al guardar.', 02);
+            else throw new Exception('[ERROR] al guardar.', 02);
         }     
         catch(Exception $e) {
-            error_log("error: ". $e->getMessage());
+            error_log("[ERROR]: ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
@@ -554,9 +538,10 @@ class Factura{
     }
 
     function LoadPreciosTamanos(){
-        try{     
-            // require_once("Rol.php");
-            // require_once("Bodega.php");
+        try{ 
+            // ANTES DE CARGAR PRECIOS, VALIDA EL PERFIL DEL CONTRIBUYENTE
+            $clientefe = new CLienteFE();
+            $clientefe->checkProfile();
 
             $sql="SELECT id, tamano, precioVenta FROM preciosXBodega where idBodega = :idBodega;";
             $param= array(':idBodega'=>$_SESSION["userSession"]->idBodega);

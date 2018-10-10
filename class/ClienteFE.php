@@ -346,7 +346,6 @@ class ClienteFE{
             );
         }
     }
-
     
     public function read(){
         try {

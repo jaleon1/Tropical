@@ -15,18 +15,19 @@ class InventarioFacturas {
             }
         })
             .done(function (e) {
-                if(JSON.parse(e).msg=='NOCONTRIB'){
-                swal({
-                    type: 'warning',
-                    title: 'Contribuyente',
-                    text: 'Contribuyente no registrado para Facturación Electrónica',
-                    footer: '<a href="clienteFE.html">Agregar Contribuyente</a>',
-                    }).then((result) => {
-                        if (result.value) 
-                            location.href = "Dashboard.html";
-                    })                
-                }
-                else inventarioFacturas.drawFac(e)
+//                 if(JSON.parse(e).msg=='NOCONTRIB'){
+//                 swal({
+//                     type: 'warning',
+//                     title: 'Contribuyente',
+//                     text: 'Contribuyente no registrado para Facturación Electrónica',
+//                     footer: '<a href="clienteFE.html">Agregar Contribuyente</a>',
+//                     }).then((result) => {
+//                         if (result.value) 
+//                             location.href = "Dashboard.html";
+//                     })                
+//                 }
+//                 else 
+                inventarioFacturas.drawFac(e)
             });
     };
 
