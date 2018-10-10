@@ -190,6 +190,7 @@ class ClienteFE{
     public $idTipoIdentificacion=null;
     public $identificacion='';
     public $nombreComercial=null;
+    public $codigoReferencia;
     public $idProvincia=null;
     public $idCanton=null;
     public $idDistrito=null;
@@ -225,6 +226,7 @@ class ClienteFE{
             require_once("UUID.php");
             $this->id= $obj["id"] ?? UUID::v4();         
             $this->codigoSeguridad= $obj["codigoSeguridad"];
+            $this->codigoReferencia= $obj["codigoReferencia"] ?? 1;
             $this->nombre= $obj["nombre"] ?? '';   
             $this->idCodigoPais= $obj["idCodigoPais"] ?? null;                  
             $this->idTipoIdentificacion= $obj["idTipoIdentificacion"] ?? null;
@@ -349,11 +351,11 @@ class ClienteFE{
     
     public function read(){
         try {
-            $sql='SELECT id, codigoSeguridad, idCodigoPais, codigoReferencia, nombre, idTipoIdentificacion, identificacion, nombreComercial, idProvincia, idCanton, idDistrito, 
+            $sql='SELECT idBodega, codigoSeguridad, idCodigoPais, codigoReferencia, nombre, idTipoIdentificacion, identificacion, nombreComercial, idProvincia, idCanton, idDistrito, 
                     idBarrio, otrasSenas, numTelefono, correoElectronico, username, password, pinp12, downloadCode, certificado, cpath
-                FROM entidad
-                where id=:id';
-            $param= array(':id'=>$this->id);
+                FROM clienteFE
+                where idBodega=:idBodega';
+            $param= array(':idBodega'=>$this->idBodega);
             $data= DATA::Ejecutar($sql, $param);
             if($data){
                 $this->id= $data[0]['id'];
@@ -396,15 +398,16 @@ class ClienteFE{
     }
 
     function checkProfile(){
-        if(!isset($_SESSION['userSession']->idBodega)){
-            return array(
-                'status' =>  false,
-                'codigoReferencia' => null);
+        $sql="SELECT id
+            from clienteFE
+            where idBodega=:idBodega";
+        $param= array(':idBodega'=>$_SESSION["userSession"]->idBodega);
+        $data= DATA::Ejecutar($sql,$param);
+        if(count($data)){
+            return true;
         }
         else {
-            return array(
-                'status' =>  true,
-                'codigoReferencia' => $_SESSION['userSession']->codigoReferencia);            
+            return false;
         }
     }
 
@@ -532,7 +535,6 @@ class ClienteFE{
             error_log("[INFO]  ". $server_output);
             curl_close($ch);
             // variables para loguear al api server
-            //$_SESSION['APISERVER'] = new Entidad();
             $_SESSION['APISERVER-username']= $this->username;
             $_SESSION['APISERVER-password']= $this->password;      
             //
@@ -580,8 +582,7 @@ class ClienteFE{
             );
             $data = DATA::Ejecutar($sql,$param,false);
             if($data)
-            {            
-                $_SESSION['userSession']->idBodega= $this->id;
+            {                
                 $_SESSION['userSession']->bodega= $this->nombre;
                 $_SESSION['userSession']->codigoReferencia= $this->codigoReferencia; // fe - te...   
                 return true;               
@@ -600,7 +601,7 @@ class ClienteFE{
 
     function updateAPIProfile(){
         try{
-            // ... modifica datos del entidad en el api ...//
+            // ... modifica datos del perfil en el api ...//
             $this->getApiUrl();
             $this->APILogin();
             $ch = curl_init();
@@ -610,7 +611,7 @@ class ClienteFE{
                 'sessionKey'=> $_SESSION['APISERVER-sessionKey'],
                 'iam'=> $_SESSION['APISERVER-username'],
                 'fullName'   => $this->nombre,
-                'userName'   => $this->username, // username dentro del API es el correo electronico del entidad.
+                'userName'   => $this->username, // username dentro del API es el correo electronico del perfil o bodega.
                 'email'   => $this->username,
                 'about'   => 'StoryLabsUser Updated',
                 'country'   => 'CR',
@@ -666,12 +667,12 @@ class ClienteFE{
         try {
             $this->updateAPIProfile();
             $sql="UPDATE clienteFE 
-                SET nombre=:nombre, codigoSeguridad=:codigoSeguridad, idCodigoPais=:idCodigoPais, codigoReferencia=:codigoReferencia, idTipoIdentificacion=:idTipoIdentificacion, 
+                SET nombre=:nombre, codigoSeguridad=:codigoSeguridad, idCodigoPais=:idCodigoPais, idTipoIdentificacion=:idTipoIdentificacion, 
                     identificacion=:identificacion, nombreComercial=:nombreComercial, idProvincia=:idProvincia, idCanton=:idCanton, idDistrito=:idDistrito, 
                     idBarrio=:idBarrio, otrasSenas=:otrasSenas, numTelefono=:numTelefono, correoElectronico=:correoElectronico, username=:username, password=:password, 
-                    certificado=:certificado, idBodega=:idBodega, pinp12= :pinp12
-                WHERE id=:id";
-            $param= array(':id'=>$this->id, ':nombre'=>$this->nombre, ':codigoSeguridad'=>$this->codigoSeguridad, ':idCodigoPais'=>$this->idCodigoPais, ':idTipoIdentificacion'=>$this->idTipoIdentificacion,
+                    certificado=:certificado, pinp12= :pinp12
+                WHERE idBodega=:idBodega";
+            $param= array(':nombre'=>$this->nombre, ':codigoSeguridad'=>$this->codigoSeguridad, ':idCodigoPais'=>$this->idCodigoPais, ':idTipoIdentificacion'=>$this->idTipoIdentificacion,
                 ':identificacion'=>$this->identificacion, ':nombreComercial'=>$this->nombreComercial, ':idProvincia'=>$this->idProvincia,
                 ':idCanton'=>$this->idCanton, ':idDistrito'=>$this->idDistrito, ':idBarrio'=>$this->idBarrio,
                 ':otrasSenas'=>$this->otrasSenas, ':numTelefono'=>$this->numTelefono, ':correoElectronico'=>$this->correoElectronico,
@@ -680,8 +681,6 @@ class ClienteFE{
             );
             $data = DATA::Ejecutar($sql,$param,false);
             if($data){
-                $_SESSION['userSession']->nombreEntidad= $this->nombre;
-                $_SESSION['userSession']->codigoReferencia= $this->codigoReferencia; // fe - te...   
                 return true;
             }   
             else throw new Exception('Error al actualizar el perfil.', 123);

@@ -231,7 +231,7 @@ class Factura{
             $data= DATA::Ejecutar($sql,$param);     
             foreach ($data as $key => $value){
                 $this->idBodega = $value['idBodega'];
-                $this->bodega = $_SESSION["userSession"]->bodega; // nombre de la bodega.
+                //$this->bodega =  // nombre de la bodega.
                 $this->fechaCreacion = $value['fechaCreacion'];
                 $this->consecutivo = $value['consecutivo'];
                 $this->clave = $value['clave'] ?? null;
@@ -266,8 +266,8 @@ class Factura{
                 $receptor = new Receptor();
                 $receptor->id = $this->idReceptor;
                 $this->datosReceptor = $receptor->read();
-                $entidad = new Entidad();
-                $entidad->id = $this->idBodega;
+                $entidad = new ClienteFE();
+                $entidad->idBodega = $this->idBodega;
                 $this->datosEntidad = $entidad->read();
             }
             return $this;
@@ -541,15 +541,16 @@ class Factura{
         try{ 
             // ANTES DE CARGAR PRECIOS, VALIDA EL PERFIL DEL CONTRIBUYENTE
             $clientefe = new CLienteFE();
-            $clientefe->checkProfile();
-
-            $sql="SELECT id, tamano, precioVenta FROM preciosXBodega where idBodega = :idBodega;";
-            $param= array(':idBodega'=>$_SESSION["userSession"]->idBodega);
-            $data= DATA::Ejecutar($sql,$param);
-            
-            if(count($data))
-                return $data;
-            else return false;
+            if ($clientefe->checkProfile()){
+                //
+                $sql="SELECT id, tamano, precioVenta FROM preciosXBodega where idBodega = :idBodega;";
+                $param= array(':idBodega'=>$_SESSION["userSession"]->idBodega);
+                $data= DATA::Ejecutar($sql,$param);            
+                if(count($data))
+                    return $data;
+                else return false;
+            }
+            return "NOCONTRIB";
         }
         catch(Exception $e){
             header('HTTP/1.0 400 Bad error');
