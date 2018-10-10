@@ -37,11 +37,7 @@ Su usuario de ingreso es:
  	cpf-01-1187-0763@prod.comprobanteselectronicos.go.cr 
 
 Su contraseña de ingreso es: 
-<<<<<<< HEAD
  	V$[0.fH!Rs(@H}=7-P=V
-=======
- 	V$[0.fH!Rs(@H}=7-P=V 
->>>>>>> origin/master
 
 == PRODUCCION ==
 
