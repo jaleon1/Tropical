@@ -1,10 +1,9 @@
 class ClienteFE {
     // Constructor
-    constructor(id, nombre, codigoSeguridad, idCodigoPais, idTipoIdentificacion, identificacion, nombreComercial, idProvincia, idCanton, idDistrito, idBarrio, otrasSenas, 
+    constructor(id, nombre, idCodigoPais, idTipoIdentificacion, identificacion, nombreComercial, idProvincia, idCanton, idDistrito, idBarrio, otrasSenas, 
         idCodigoPaisTel, numTelefono, idCodigoPaisFax, numTelefonoFax, correoElectronico, username, password, certificado, idBodega, filename, filesize, filetype, estadoCertificado, pinp12) {
         this.id = id || null;
-        this.nombre = nombre || '';
-        this.codigoSeguridad = codigoSeguridad || '';
+        this.nombre = nombre || '';        
         this.idCodigoPais = idCodigoPais || '';
         this.idTipoIdentificacion = idTipoIdentificacion || '';
         this.identificacion = identificacion || '';
@@ -251,7 +250,10 @@ class ClienteFE {
         // NProgress.start();        
         var miAccion = this.id == null ? 'Create' : 'Update';
         this.nombre = $("#nombre").val();
-        this.codigoSeguridad = $("#codigoSeguridad").val();
+        // codigo de seguridad autogenerado
+        var max = 11111111;
+        var min = 99999999;
+        this.codigoSeguridad =  Math.floor(Math.random()*(max-min+1)+min);
         this.idCodigoPais = '52'; //$("#codigoPais").val(); 52 = 506 Costa Rica.
         this.idTipoIdentificacion = $('#idTipoIdentificacion option:selected').val();
         this.identificacion = $("#identificacion").val();
@@ -506,7 +508,6 @@ class ClienteFE {
         $("#id").val('');
         //$("#idBodega").val('');
         $("#nombre").val('');
-        $("#codigoSeguridad").val('');
         $("#idCodigoPais").val('');
         $('#idTipoIdentificacion option').prop("selected", false);    
         $("#idTipoIdentificacion").selectpicker("refresh"); 
@@ -544,7 +545,7 @@ class ClienteFE {
         if(e!="null"){
             // carga objeto.
             var data = JSON.parse(e);
-            clientefe= new ClienteFE(data.id, data.nombre, data.codigoSeguridad, data.idCodigoPais, data.idTipoIdentificacion, data.identificacion, data.nombreComercial, data.idProvincia, data.idCanton, data.idDistrito, data.idBarrio, data.otrasSenas, data.
+            clientefe= new ClienteFE(data.id, data.nombre, data.idCodigoPais, data.idTipoIdentificacion, data.identificacion, data.nombreComercial, data.idProvincia, data.idCanton, data.idDistrito, data.idBarrio, data.otrasSenas, data.
                 idCodigoPaisTel, data.numTelefono, data.idCodigoPaisFax, data.numTelefonoFax, data.correoElectronico, data.username, data.password, data.certificado, data.idBodega,
                 data.filename, data.filesize, data.filetype, data.estadoCertificado, data.pinp12
             );
@@ -552,7 +553,6 @@ class ClienteFE {
             $("#id").val(clientefe.id);
             $("#nombre").val(clientefe.nombre);
             $("#contribuyente").html('<h3>Registro de Contribuyente de Factura Electrónica: ' + $('.call_Bodega').text() + '<h3>' );
-            $("#codigoSeguridad").val(clientefe.codigoSeguridad);
             $("#idCodigoPais").val(clientefe.idCodigoPais);
             $('#idTipoIdentificacion option[value=' + clientefe.idTipoIdentificacion + ']').prop("selected", true);  
             $("#idTipoIdentificacion").selectpicker("refresh");

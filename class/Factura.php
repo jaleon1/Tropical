@@ -129,7 +129,7 @@ class Factura{
             $this->montoEfectivo= $obj["montoEfectivo"];
             $this->montoTarjeta= $obj["montoTarjeta"];
             // d. Informacion de referencia
-            $this->codigoReferencia = $obj["codigoReferencia"] ?? $_SESSION["userSession"]->codigoReferencia; //codigo de documento de Referencia.
+            $this->codigoReferencia = $obj["codigoReferencia"] ?? 1; //codigo de documento de Referencia. Tropical tiene el documento por defecto 1
             $this->fechaEmision= $obj["fechaEmision"] ?? null; // emision del comprobante electronico.
             //
             $this->idReceptor = $obj['idReceptor'] ?? Receptor::default()->id; // si es null, utiliza el Receptor por defecto.

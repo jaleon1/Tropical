@@ -391,7 +391,7 @@ class ClienteFE{
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
-                'msg' => 'Error al cargar el producto'))
+                'msg' => 'Error al cargar el contribuyente'))
             );
         }
     }
@@ -412,7 +412,7 @@ class ClienteFE{
     function ReadProfile(){
         try {
             $sql='SELECT id, codigoSeguridad, idCodigoPais, codigoReferencia, nombre, idTipoIdentificacion, identificacion, nombreComercial, idProvincia, idCanton, idDistrito, 
-                idBarrio, otrasSenas, numTelefono, correoElectronico, username, password, pinp12, downloadCode, , certificado, cpath
+                idBarrio, otrasSenas, numTelefono, correoElectronico, username, password, pinp12, downloadCode, certificado, cpath
                 FROM clienteFE  
                 where idBodega=:idBodega';
             $param= array(':idBodega'=>$_SESSION['userSession']->idBodega);
@@ -455,7 +455,7 @@ class ClienteFE{
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
-                'msg' => 'Error al cargar el producto'))
+                'msg' => 'Error al cargar el contribuyente'))
             );
         }
     }
@@ -708,7 +708,7 @@ class ClienteFE{
 
     public function APILogin(){
         try{
-            error_log("... API LOGIN ... ");
+            error_log("[INFO] API LOGIN ... ");
             //
             $this->getApiUrl();
             $ch = curl_init();
@@ -736,7 +736,6 @@ class ClienteFE{
             $error_msg = "";
             if (curl_error($ch)) {
                 $error_msg = curl_error($ch);
-                error_log("[ERROR]  ". $error_msg);
                 throw new Exception('Error al iniciar login API. '. $error_msg , 02);
             }
             curl_close($ch);
@@ -762,8 +761,6 @@ class ClienteFE{
                 throw new Exception('Error CRITICO al inciar sesion del API. DEBE COMUNICARSE CON SOPORTE TECNICO'. $error_msg , '66612');
             }            
             $this->sessionKey= $sArray->resp->sessionKey;
-            // $_SESSION['userSession']->sessionKey= $this->sessionKey;
-            // $_SESSION['userSession']->username= $this->username;
             $_SESSION['APISERVER-sessionKey']=  $this->sessionKey;
             error_log("sessionKey: ". $sArray->resp->sessionKey);
             return true;
@@ -780,7 +777,7 @@ class ClienteFE{
 
     public function APIUploadCert(){
         try{
-            error_log(" subiendo certificado API CRL: ". $this->certificado);
+            error_log("[INFO] Subiendo certificado API CRL: ". $this->certificado);
             if (!file_exists($this->certificado)){
                 throw new Exception('Error al guardar el certificado. El certificado no existe' , 002256);
             }
@@ -813,7 +810,7 @@ class ClienteFE{
                 $error_msg = curl_error($ch);
                 throw new Exception('Error al guardar el certificado. '. $error_msg , 033);
             }
-            error_log("****** Certificado ****** : ". $server_output);
+            error_log("[INFO]: ". $server_output);
             $sArray= json_decode($server_output);
             if(!isset($sArray->resp->downloadCode)){
                 // ERROR CRITICO:
@@ -840,6 +837,60 @@ class ClienteFE{
                 'code' => $e->getCode() ,
                 'msg' => $e->getMessage()))
             );
+        }
+    }
+
+    function testConnection(){
+        try{
+            $url='';
+            $apiMode = strpos($this->username, 'prod');
+            if ($apiMode === false){
+                $url= 'https://idp.comprobanteselectronicos.go.cr/auth/realms/rut-stag/protocol/openid-connect/token';
+                $apiMode = 'api-stag';
+            }
+            else{
+                $url= 'https://idp.comprobanteselectronicos.go.cr/auth/realms/rut/protocol/openid-connect/token';
+                $apiMode = 'api-prod';
+            }
+            //
+            $data = array(
+                'client_id' => $apiMode, 
+                'grant_type' => 'password',
+                'username' => $this->username,
+                'password' => $this->password
+            );
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL,$url);
+            curl_setopt($ch, CURLOPT_POST, 1);
+            //curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLINFO_HEADER_OUT, true);
+            curl_setopt($ch,CURLOPT_VERBOSE,true);    
+            curl_setopt($ch, CURLOPT_FAILONERROR, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+            $server_output = curl_exec ($ch);
+            $information = curl_getinfo($ch);            
+            //
+            $error_msg = "";
+            if (curl_error($ch)) {
+                $error_msg = curl_error($ch);
+                throw new Exception('Error al adquirir token. '. $error_msg , -305);
+            }
+            if ($information['http_code'] == 200) { 
+                $sArray= json_decode($server_output);
+                $accessToken=$sArray->access_token;
+                error_log("[INFO] PRUEBA DE CONEXION, TOKEN = " . $accessToken);
+                curl_close($ch);
+                return true;
+            }
+            else{
+                throw new Exception('Error CRITICO al Solicitar token SERVER. DEBE COMUNICARSE CON SOPORTE TECNICO: '. $server_output , -305);                
+            }            
+        } 
+        catch(Exception $e) {
+            //curl_close($ch);
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            return false;
         }
     }
 
@@ -898,12 +949,14 @@ class ClienteFE{
                 SET certificado= "<eliminado por el usuario>", cpath= "", nkey= ""
                 WHERE id= :id';
             $param= array(':id'=>$this->id);
-            DATA::Ejecutar($sql, $param, false);                         
+            DATA::Ejecutar($sql, $param, false);
+            error_log("[INFO]  Certificado eliminado");
         }
-        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+        catch(Exception $e) { 
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
-                'code' => $e->getCode() ,
+                'code' => $e->getCode(),
                 'msg' => $e->getMessage()))
             );
         }
