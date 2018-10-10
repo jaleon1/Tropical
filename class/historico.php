@@ -1,6 +1,6 @@
 <?php
 class historico{
-    public static function create($idFactura, $idEstadoComprobante, $respuesta= null, $xml= null, $idEntidad=null){
+    public static function create($idFactura, $idEntidad=null, $idEstadoComprobante, $respuesta= null, $xml= null){
         try {
             $sql="INSERT INTO historicoComprobante (id, idFactura, idEntidad, idEstadoComprobante, respuesta, xml)                                       
                 VALUES  (uuid(), :idFactura, :idEntidad, :idEstadoComprobante, :respuesta, :xml)";        
