@@ -34,6 +34,7 @@ class FacturaElectronica{
     static $consecutivoFE;
     static $xml;
     static $xmlFirmado;
+    static $apiMode;
 
     public static function iniciar($t){
         try{
@@ -297,16 +298,16 @@ class FacturaElectronica{
     public static function APIGetToken(){
         try{
             $username = self::$transaccion->datosEntidad->username;
-            $apiMode = strpos($username, 'prod');
-            if ($apiMode === false) 
-                $apiMode = 'api-stag';
-            else $apiMode = 'api-prod';
+            self::$apiMode = strpos($username, 'prod');
+            if (self::$apiMode === false) 
+                self::$apiMode = 'api-stag';
+            else self::$apiMode = 'api-prod';
             $ch = curl_init();
             $post = [
                 'w' => 'token',
                 'r' => 'gettoken',
                 'grant_type'=>'password', 
-                'client_id'=>  $apiMode,
+                'client_id'=>  self::$apiMode,
                 'username' => $username,
                 'password'=>  self::$transaccion->datosEntidad->password
             ];
@@ -595,7 +596,7 @@ class FacturaElectronica{
                 'recp_tipoIdentificacion'=> '01',
                 'recp_numeroIdentificacion'=> '000000000',
                 'comprobanteXml'=>	self::$xmlFirmado,
-                'client_id'=> 'api-stag' // api-prod
+                'client_id'=> self::$apiMode,
             ];
             curl_setopt_array($ch, array(
                 CURLOPT_URL => self::$apiUrl,
