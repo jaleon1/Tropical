@@ -201,7 +201,7 @@ class Factura{
 
     function ReadAllById(){
         try {
-            $sql='SELECT f.id, f.consecutivo, f.fechaCreacion, f.totalComprobante, f.montoEfectivo, f.montoTarjeta, b.nombre, u.userName
+            $sql='SELECT f.id, f.consecutivo, f.fechaCreacion, f.totalComprobante, f.montoEfectivo, f.montoTarjeta, b.nombre, u.userName, f.idEstadoComprobante
                 FROM factura f
                 INNER JOIN bodega b on f.idBodega = b.id
                 INNER JOIN usuario u on u.id = f.idusuario
