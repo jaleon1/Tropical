@@ -7,8 +7,7 @@ Datos de Usuario
 Su usuario de ingreso es: 
  	cpf-01-1187-0763@stag.comprobanteselectronicos.go.cr
 
-Su contraseña de ingreso es: 
- 	9zgr)L#szb^Z=%*+;%c|
+Su contraseña de ingreso es:
 	axQ-ypX[-[Ed}&}$@Gw^
 
 == STAGING / SANDBOX (PRUEBAS)==
