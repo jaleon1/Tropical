@@ -68,7 +68,8 @@ class Factura{
     public $idSituacionComprobante=null;
     public $idEstadoComprobante= null;
     public $idMedioPago=null;
-    public $idDocumentoReferencia = null; // FE - TE - ND - NC ...  documento para envio MH    
+    public $idDocumentoReferencia = null; // FE - TE - ND - NC ...  documento para envio MH
+    public $codigoReferencia = null;
     public $fechaEmision="";
     public $totalVenta=null; //Precio del producto
     public $totalDescuentos=null;
@@ -129,7 +130,7 @@ class Factura{
             $this->montoEfectivo= $obj["montoEfectivo"];
             $this->montoTarjeta= $obj["montoTarjeta"];
             // d. Informacion de referencia
-            $this->idDocumentoReferencia = $obj["idDocumentoReferencia"] ?? 1; //codigo de documento de Referencia. Tropical tiene el documento por defecto 1
+            $this->idDocumentoReferencia = $obj["idDocumentoReferencia"] ?? 1; //codigo de documento de Referencia. Tropical tiene el documento por defecto 1            
             $this->fechaEmision= $obj["fechaEmision"] ?? null; // emision del comprobante electronico.
             //
             $this->idReceptor = $obj['idReceptor'] ?? Receptor::default()->id; // si es null, utiliza el Receptor por defecto.
@@ -252,7 +253,7 @@ class Factura{
                 $this->totalGravado = $value['totalGravado'];
                 $this->totalExento = $value['totalExento'];
                 $this->fechaEmision = $value['fechaEmision'];
-                $this->idDocumentoReferencia = $value['idDocumentoReferencia'];
+                $this->idDocumentoReferencia = $value['idDocumentoReferencia'];                
                 $this->totalVenta = $value['totalVenta'];
                 $this->totalDescuentos = $value['totalDescuentos'];
                 $this->totalVentaneta = $value['totalVentaneta'];
