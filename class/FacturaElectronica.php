@@ -365,7 +365,7 @@ class FacturaElectronica{
                 'codigoPais'=> '506',
                 'consecutivo'=> self::$transaccion->consecutivo,
                 'codigoSeguridad'=> self::$transaccion->datosEntidad->codigoSeguridad,
-                'tipoDocumento'=> self::getCodigoReferenciaVal(self::$transaccion->codigoReferencia),
+                'tipoDocumento'=> self::getCodigoReferenciaVal(self::$transaccion->idDocumentoReferencia),
                 'terminal'=> self::$transaccion->terminal,
                 'sucursal'=> self::$transaccion->local
             ];
@@ -540,7 +540,7 @@ class FacturaElectronica{
                 'p12Url'=> self::$transaccion->datosEntidad->downloadCode,
                 'inXml'=> self::$xml,
                 'pinP12' => self::$transaccion->datosEntidad->pinp12,
-                'tipodoc'=> self::getCodigoReferenciaVal(self::$transaccion->codigoReferencia)
+                'tipodoc'=> self::getCodigoReferenciaVal(self::$transaccion->idDocumentoReferencia)
             ];
             curl_setopt_array($ch, array(
                 CURLOPT_URL => self::$apiUrl,

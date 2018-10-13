@@ -190,7 +190,7 @@ class ClienteFE{
     public $idTipoIdentificacion=null;
     public $identificacion='';
     public $nombreComercial=null;
-    public $codigoReferencia;
+    public $idDocumentoReferencia;
     public $idProvincia=null;
     public $idCanton=null;
     public $idDistrito=null;
@@ -226,7 +226,7 @@ class ClienteFE{
             require_once("UUID.php");
             $this->id= $obj["id"] ?? UUID::v4();         
             $this->codigoSeguridad= $obj["codigoSeguridad"];
-            $this->codigoReferencia= $obj["codigoReferencia"] ?? 1;
+            $this->idDocumentoReferencia= $obj["idDocumentoReferencia"] ?? 1;
             $this->nombre= $obj["nombre"] ?? '';   
             $this->idCodigoPais= $obj["idCodigoPais"] ?? null;                  
             $this->idTipoIdentificacion= $obj["idTipoIdentificacion"] ?? null;
@@ -351,7 +351,7 @@ class ClienteFE{
     
     public function read(){
         try {
-            $sql='SELECT idBodega, codigoSeguridad, idCodigoPais, codigoReferencia, nombre, idTipoIdentificacion, identificacion, nombreComercial, idProvincia, idCanton, idDistrito, 
+            $sql='SELECT idBodega, codigoSeguridad, idCodigoPais, idDocumentoReferencia, nombre, idTipoIdentificacion, identificacion, nombreComercial, idProvincia, idCanton, idDistrito, 
                     idBarrio, otrasSenas, numTelefono, correoElectronico, username, password, pinp12, downloadCode, certificado, cpath
                 FROM clienteFE
                 where idBodega=:idBodega';
@@ -361,7 +361,7 @@ class ClienteFE{
                 $this->id= $data[0]['id'];
                 $this->codigoSeguridad= $data[0]['codigoSeguridad'];
                 $this->idCodigoPais= $data[0]['idCodigoPais'];
-                $this->codigoReferencia= $data[0]['codigoReferencia'];
+                $this->idDocumentoReferencia= $data[0]['idDocumentoReferencia'];
                 $this->nombre= $data[0]['nombre'];
                 $this->idTipoIdentificacion= $data[0]['idTipoIdentificacion'];
                 $this->identificacion= $data[0]['identificacion'];
@@ -413,7 +413,7 @@ class ClienteFE{
 
     function ReadProfile(){
         try {
-            $sql='SELECT id, codigoSeguridad, idCodigoPais, codigoReferencia, nombre, idTipoIdentificacion, identificacion, nombreComercial, idProvincia, idCanton, idDistrito, 
+            $sql='SELECT id, codigoSeguridad, idCodigoPais, idDocumentoReferencia, nombre, idTipoIdentificacion, identificacion, nombreComercial, idProvincia, idCanton, idDistrito, 
                 idBarrio, otrasSenas, numTelefono, correoElectronico, username, password, pinp12, downloadCode, certificado, cpath
                 FROM clienteFE  
                 where idBodega=:idBodega';
@@ -423,7 +423,7 @@ class ClienteFE{
                 $this->id= $data[0]['id'];
                 $this->codigoSeguridad= $data[0]['codigoSeguridad'];
                 $this->idCodigoPais= $data[0]['idCodigoPais'];
-                $this->codigoReferencia= $data[0]['codigoReferencia'];
+                $this->idDocumentoReferencia= $data[0]['idDocumentoReferencia'];
                 $this->nombre= $data[0]['nombre'];
                 $this->idTipoIdentificacion= $data[0]['idTipoIdentificacion'];
                 $this->identificacion= $data[0]['identificacion'];
@@ -554,14 +554,14 @@ class ClienteFE{
         try {
             $this->createAPIProfile();
             //
-            $sql="INSERT INTO clienteFE  (id, codigoSeguridad, idCodigoPais, codigoReferencia, nombre, idTipoIdentificacion, identificacion, nombreComercial, idProvincia,idCanton, idDistrito, idBarrio, otrasSenas, 
+            $sql="INSERT INTO clienteFE  (id, codigoSeguridad, idCodigoPais, idDocumentoReferencia, nombre, idTipoIdentificacion, identificacion, nombreComercial, idProvincia,idCanton, idDistrito, idBarrio, otrasSenas, 
                 idCodigoPaisTel, numTelefono, correoElectronico, username, password, certificado, idBodega, pinp12)
-                VALUES (:id, :codigoSeguridad, :idCodigoPais, :codigoReferencia, :nombre, :idTipoIdentificacion, :identificacion, :nombreComercial, :idProvincia, :idCanton, :idDistrito, :idBarrio, :otrasSenas, 
+                VALUES (:id, :codigoSeguridad, :idCodigoPais, :idDocumentoReferencia, :nombre, :idTipoIdentificacion, :identificacion, :nombreComercial, :idProvincia, :idCanton, :idDistrito, :idBarrio, :otrasSenas, 
                     :idCodigoPaisTel, :numTelefono, :correoElectronico, :username, :password, :certificado, :idBodega, :pinp12);";
             $param= array(':id'=>$this->id,
                 ':codigoSeguridad'=>$this->codigoSeguridad, 
                 ':idCodigoPais'=>$this->idCodigoPais,
-                ':codigoReferencia'=>$this->codigoReferencia,
+                ':idDocumentoReferencia'=>$this->idDocumentoReferencia,
                 ':nombre'=>$this->nombre,
                 ':idTipoIdentificacion'=>$this->idTipoIdentificacion,
                 ':identificacion'=>$this->identificacion,
@@ -584,7 +584,7 @@ class ClienteFE{
             if($data)
             {                
                 $_SESSION['userSession']->bodega= $this->nombre;
-                $_SESSION['userSession']->codigoReferencia= $this->codigoReferencia; // fe - te...   
+                $_SESSION['userSession']->idDocumentoReferencia= $this->idDocumentoReferencia; // fe - te...   
                 return true;               
             }
             else throw new Exception('Error al guardar.', 02);
