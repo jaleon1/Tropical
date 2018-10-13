@@ -629,7 +629,7 @@ class FacturacionElectronica{
                 'infoRefeTipoDoc'=>  self::$transaccion->idDocumentoReferencia,
                 'infoRefeNumero'=>  self::$transaccion->clave,
                 'infoRefeFechaEmision'=>  self::$fechaEmision->format("c"),
-                'infoRefeCodigo'=>  self::$transaccion->codigoReferencia,
+                'infoRefeCodigo'=>  self::$transaccion->idReferencia,
                 'infoRefeRazon'=>  self::$transaccion->Razon,
             ];
             curl_setopt_array($ch, array(
