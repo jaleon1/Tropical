@@ -15,7 +15,7 @@ if(isset($_POST["action"])){
     require_once("Usuario.php");
     require_once("ClienteFE.php");
     require_once("Receptor.php");
-    require_once("FacturaElectronica.php");
+    require_once("facturacionElectronica.php");
     require_once("encdes.php");
     require_once("InventarioInsumoXBodega.php");
     require_once("consumible.php");
@@ -304,7 +304,7 @@ class Factura{
             // consulta datos de factura en bd.
             $this->Read();
             // envía la factura
-            FacturaElectronica::Iniciar($this);
+            FacturacionElectronica::Iniciar($this);
         }
         catch(Exception $e){}
     }
