@@ -43,9 +43,6 @@ if(isset($_POST["action"])){
         case "Create":
             echo json_encode($factura->Create());
             break;
-        case "EnviarFE":
-            $factura->EnviarFE();
-            break;
         case "Update":
             $factura->Update();
             break;
@@ -69,7 +66,6 @@ class Factura{
     public $idEstadoComprobante= null;
     public $idMedioPago=null;
     public $idDocumentoReferencia = null; // FE - TE - ND - NC ...  documento para envio MH
-    public $codigoReferencia = null;
     public $fechaEmision="";
     public $totalVenta=null; //Precio del producto
     public $totalDescuentos=null;
@@ -300,7 +296,7 @@ class Factura{
         }
     }
 
-    function EnviarFE(){
+    function enviarDocumentoElectronico(){
         try {
             // consulta datos de factura en bd.
             $this->Read();
@@ -355,7 +351,7 @@ class Factura{
                     OrdenXFactura::$id=$this->id;
                     OrdenXFactura::Create($this->detalleOrden);
                     // envio de comprobantes en tiempo real.
-                    $this->EnviarFE();         
+                    $this->enviarDocumentoElectronico();         
                     return $this;
                 }
                 else throw new Exception('[ERROR] al guardar los productos.', 03);
