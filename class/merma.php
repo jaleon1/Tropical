@@ -89,27 +89,31 @@ class Merma{
             $created=true;            
             // insumos
             foreach ($this->listaInsumo as $item) {
+                require_once("UUID.php");
+                $id= UUID::v4();
                 // historico merma
                 $sql="INSERT INTO mermaInsumo (id, idInsumo, cantidad, descripcion)
                     VALUES (:id, :idInsumo, :cantidad, :descripcion)";
-                $param= array(':id'=> $this->id, ':idInsumo'=> $item->id, ':cantidad'=> $item->cantidad, ':descripcion'=> $item->descripcion);
+                $param= array(':id'=> $id,':idInsumo'=> $item->id, ':cantidad'=> $item->cantidad, ':descripcion'=> $item->descripcion);
                 $data = DATA::Ejecutar($sql,$param,false);
                 if(!$data)
                     $created= false;
                 // actualiza item
-                InventarioInsumo::salida( $item->id, $this->id, $item->cantidad);
+                InventarioInsumo::salida( $item->id, $id, $item->cantidad);
             }
             // productos
             foreach ($this->listaProducto as $item) {
+                require_once("UUID.php");
+                $id= UUID::v4();
                 // historico merma
                 $sql="INSERT INTO mermaProducto (id, idProducto, cantidad, descripcion)
                     VALUES (:id, :idProducto, :cantidad, :descripcion)";
-                $param= array(':id'=> $this->id, ':idProducto'=> $item->id, ':cantidad'=> $item->cantidad, ':descripcion'=> $item->descripcion);
+                $param= array(':id'=> $id, ':idProducto'=> $item->id, ':cantidad'=> $item->cantidad, ':descripcion'=> $item->descripcion);
                 $data = DATA::Ejecutar($sql,$param,false);
                 if(!$data)
                     $created= false;
                 // actualiza item y registra inventario.                
-                InventarioProducto::salida($item->id, $this->id, $item->cantidad);
+                InventarioProducto::salida($item->id, $id, $item->cantidad);
             }
             //
             if($created)
