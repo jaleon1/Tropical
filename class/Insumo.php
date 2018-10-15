@@ -88,13 +88,18 @@ class Insumo{
 
     function ReadAllInventario(){
         try {
-            $sql='SELECT `inventarioInsumo`.`id`,
+            $sql='SELECT 		`inventarioInsumo`.`id`,
             `inventarioInsumo`.`idOrdenCompra`,
-            (SELECT orden FROM ordenCompra WHERE id=inventarioInsumo.idOrdenCompra) AS ordenCompra,
             `inventarioInsumo`.`idOrdenSalida`,
-            (SELECT numeroOrden FROM ordenSalida WHERE id=inventarioInsumo.idOrdenSalida) AS ordenSalida,
-            `inventarioInsumo`.`idMerma`,
-            (SELECT consecutivo FROM mermaInsumo WHERE id=inventarioInsumo.idMerma) AS consecutivo,
+            COALESCE(
+                CONCAT("Ord Compra: ",(SELECT orden FROM ordenCompra WHERE id=inventarioInsumo.idOrdenCompra)),
+                CONCAT("Ord Prod ",ordenEliminada),
+                CONCAT("Ord Prod cancel: ",ordenCancelada)
+            ) AS ordenEntrada,
+            COALESCE(
+                CONCAT("Ord Prod: ",ordenGuardada),
+                CONCAT("Merma: ",(SELECT consecutivo FROM mermaInsumo WHERE id=inventarioInsumo.idOrdenSalida))
+            ) AS ordenSalida,
             `inventarioInsumo`.`idInsumo`,
             (SELECT codigo FROM insumo WHERE id=inventarioInsumo.idInsumo) AS insumo,
             `inventarioInsumo`.`entrada`,

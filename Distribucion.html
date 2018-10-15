@@ -158,7 +158,9 @@
                                         <div class="input-group">
                                             <input autofocus type="text" class="form-control" id="p_searh" placeholder="Ingresar Producto...">
                                             <span class="input-group-btn">
-                                                <button class="btn btn-default" type="button">Buscar</button>
+                                                <button id="#btnAddProductoTraslado" class="btn btn-default" type="button">Buscar</button>
+                                                <!-- <button id="#btnAddProductoTraslado" data-toggle="modal" data-target=".bs-example-modal-lg-productogenerado"
+                                                class="btn btn-default" type="button">Buscar</button> -->
                                             </span>
                                         </div>
                                     </div>
@@ -324,13 +326,57 @@
                             <div class="row">
                                 <div class="col-sm-12">
                                     <table id="tBodega" class="table display responsive table-striped jambo_table no-wrap" width="100%" role="grid" aria-describedby="datatable_info">
-                                        <tbody id="tbodyBodega">
+                                        <tbody id="tbodyBodega">frase
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
                         </div>
                         <div class="ln_solid"></div>
+                    </form>
+                </div>
+
+                <div class="modal-footer">
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="modal fade bs-example-modal-lg-productogenerado" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">Seleccionar Producto</h4>
+                </div>
+
+                <div class="modal-body">
+                    <form class="form-horizontal form-label-left" id="frmProducto" novalidate>
+
+                        <span class="section">Productos</span>
+                        <div id="datatable_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <table id="dsProducto" class="table table-striped jambo_table bulk_action"
+                                        role="grid" aria-describedby="datatable_info">
+                                        <tbody id="tableBody-Producto">
+                                        </tbody>
+
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ln_solid"></div>
+
+                        <div class="form-group">
+                            <div class="col-md-6 col-md-offset-3">
+                                <button type="button" class="btn btn-default" data-dismiss="modal" id="btnSalirModalInsumo">Cerrar</button>
+                            </div>
+                        </div>
+
                     </form>
                 </div>
 
@@ -378,6 +424,11 @@
 
 <script>
     $(document).ready(function () {
+        producto.id = null;
+        producto.setTableElaboraProducto();
+        producto.ReadAllPrdVenta;
+        producto.Init();
+
         if (localStorage.getItem("lsPrintOK") == "OK") {
             swal({
                 type: 'success',
@@ -420,6 +471,13 @@
             if (validatorResult.valid)
                 distr.Save;
             return false;
+        });
+
+        $(document).on('click', '#btnAddProductoTraslado', function (event) {
+            producto.id = null;
+            producto.setTableElaboraProducto();
+            producto.ReadAllPrdVenta;
+            producto.Init();
         });
     });
 </script>

@@ -1,4 +1,5 @@
 <?php
+date_default_timezone_set('America/Costa_Rica');
 error_reporting(0);
 if(isset($_POST["action"])){
     $opt= $_POST["action"];
@@ -59,7 +60,7 @@ class ElaborarProducto{
     function Create(){
         try {
             $created = true;
-            $now = date("Y-m-d H:i:s", localtime());
+            // $now = date("Y-m-d H:i:s", localtime());
             $cantidadProductos=0;
             foreach ($this->listaProducto as $item){
                 $cantidadProductos += $item->cantidad;
@@ -109,24 +110,30 @@ class ElaborarProducto{
             $param = array(':idOrdenSalida'=>$_POST["idOrdenSalida"]);
             $idOrdenSalida = DATA::Ejecutar($sql,$param);
             
-            $sql="SELECT idProducto,cantidad,costo FROM tropical.productosXOrdenSalida WHERE idOrdenSalida=".$idOrdenSalida[0][0];
+            $sql="SELECT idProducto,cantidad,costo,(SELECT idOrdenSalida FROM ordenSalida WHERE id=productosXOrdenSalida.idOrdenSalida)
+            AS idOrdenSalida FROM tropical.productosXOrdenSalida WHERE idOrdenSalida=".$idOrdenSalida[0][0];
             $listaProducto = DATA::Ejecutar($sql);
 
             foreach ($listaProducto as $item) 
             {
                 // Revierte saldos y vuelve a calcular el promedio
-                Producto::RevierteProducto($item["idProducto"], $item["cantidad"], $item["costo"]);
+                // Producto::RevierteProducto($item["idProducto"], $item["cantidad"], $item["costo"]);
+                // $this->salida($item["idProducto"], $_POST["idOrdenSalida"], $item["cantidad"]);
+                InventarioProducto::salida($item['idProducto'], $_POST["idOrdenSalida"], $item['cantidad']);
             }
 
-            $sql="SELECT idInsumo,cantidad,costoPromedio FROM tropical.insumosXOrdenSalida WHERE idOrdenSalida="."'".$_POST["idOrdenSalida"]."'";
+            $sql="SELECT idInsumo,cantidad,costoPromedio,idOrdenSalida,(SELECT numeroOrden FROM ordenSalida WHERE id=idOrdenSalida)
+            AS consecutivo FROM tropical.insumosXOrdenSalida WHERE idOrdenSalida="."'".$_POST["idOrdenSalida"]."'";
             $listaInsumos = DATA::Ejecutar($sql);
 
             foreach ($listaInsumos as $item)
             {
                 $sql="CALL spRevierteInsumo(:mid, :ncantidad, :ncosto);";
                 $param= array(':mid'=>$item["idInsumo"], ':ncantidad'=>$item["cantidad"], ':ncosto'=>$item["costoPromedio"]);
-                $data = DATA::Ejecutar($sql,$param,false);
+                $data = DATA::Ejecutar($sql,$param,false);       
             }
+
+            $this->CreateInventarioInsumo($listaInsumos);
 
             if($data){
                 $sql="UPDATE ordenSalida SET idEstado=2 WHERE numeroOrden=".$idOrdenSalida[0][0];
@@ -139,6 +146,78 @@ class ElaborarProducto{
             return false;
         }
     }
+
+    public function salida($idProducto, $outOrden, $outCantidad){
+        try {
+            $sql="SELECT saldoCantidad, costoPromedio FROM producto WHERE id=:idProducto;";
+            $param = array(':idProducto'=>$idProducto);
+            $data = DATA::Ejecutar($sql,$param);
+            if($data){
+                // calculo de saldos. 
+                $valorSalida = floatval($data[0]['costoPromedio'] * $outCantidad);
+                $saldoCantidad = $data[0]['saldoCantidad'] - $outCantidad;
+                $saldoCosto = floatval($data[0]['costoPromedio'] * $saldoCantidad);
+                // agrega ENTRADA histórico inventario.
+                $sql="INSERT INTO inventarioProducto  (id, idOrdenSalida, idProducto, salida, saldo, valorSalida, valorSaldo)
+                    VALUES (uuid(), :idOrdenSalida, :idProducto, :salida, :saldo, :valorSalida, :valorSaldo );";
+                $param= array(':idOrdenSalida'=>$outOrden, 
+                    ':idProducto'=>$idProducto,
+                    ':salida'=>$outCantidad,
+                    ':saldo'=>$saldoCantidad, 
+                    ':valorSalida'=> $valorSalida,
+                    ':valorSaldo'=>$saldoCosto
+                );
+                $data = DATA::Ejecutar($sql, $param, false);
+            } 
+            else throw new Exception('Error al consultar el codigo del producto para actualizar inventario ('.$idProducto.')' , ERROR_SALIDA_INVENTARIO_PRODUCTO);
+        }
+        catch(Exception $e) {
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }
+    }
+
+    //Orden Produccion Cancelada (ENTRADA)
+    public function CreateInventarioInsumo($obj){
+        try {
+            $created = true;
+            require_once("Insumo.php");
+            foreach ($obj as $item) {          
+                
+                $sql="SELECT saldoCantidad, saldoCosto, costoPromedio FROM insumo WHERE id=:idInsumo;";
+                $param= array(':idInsumo'=>$item['idInsumo']);
+                $valor=DATA::Ejecutar($sql,$param);     
+                
+                $sql="INSERT INTO ordenCancel (id,idOrdenSalida)VALUES(UUID(),:idOrdenSalida)";
+                $param= array(':idOrdenSalida'=>$item['idOrdenSalida']);
+                DATA::Ejecutar($sql,$param,false);
+
+                $costoAdquisicion = $item['cantidad']*$item['costoPromedio'];
+                $sql="INSERT INTO inventarioInsumo (id, idOrdenSalida, idInsumo, entrada, saldo, valorEntrada, valorSaldo, costoPromedio, fecha, ordenCancelada)
+                                       VALUES (uuid(),:idOrdenSalida, :idInsumo, :entrada, :saldo, :valorEntrada, :valorSaldo, :costoPromedio, :fecha, :ordenCancelada)";
+                $param= array(':idOrdenSalida'=>$item['idOrdenSalida'], 
+                    ':idInsumo'=>$item['idInsumo'],
+                    ':entrada'=>$item['cantidad'],
+                    ':saldo'=>$valor[0]['saldoCantidad'], 
+                    ':valorEntrada'=>(string)$costoAdquisicion,
+                    ':valorSaldo'=>$valor[0]['saldoCosto'],
+                    ':costoPromedio'=>$valor[0]['costoPromedio'],
+                    ':fecha'=>date("Y-m-d H:i:s"),
+                    ':ordenCancelada'=>$item['consecutivo']
+                );
+                DATA::Ejecutar($sql,$param,false);                
+            }
+            return $created;
+        }     
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            return false;
+        }
+    }
+
 
 }
 

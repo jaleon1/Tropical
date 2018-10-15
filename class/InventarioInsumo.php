@@ -6,7 +6,7 @@ define('ERROR_SALIDA_INVENTARIO_INSUMO', '-751');
 
 class InventarioInsumo{
     // public $idOrdenCompra;
-    // public $idOrdensalida;
+    // public $idOrdenSalida;
     public static $idOrden; // entrada o salida
     public static $idInsumo;
     public static $entrada;
