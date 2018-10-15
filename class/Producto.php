@@ -381,7 +381,7 @@ class Producto{
         try {
             $sql='SELECT i.id,            
             COALESCE(o.orden, CONCAT("Orden: ", s.numeroOrden)) as idOrdenEntrada,
-            COALESCE(CONCAT("Traslado: ", d.orden),  CONCAT("Merma:", m.consecutivo)) as idOrdenSalida,            
+            COALESCE(CONCAT("Traslado: ", d.orden), CONCAT("Merma:", m.consecutivo), CONCAT("Ord Cancel:", os.numeroOrden)) as idOrdenSalida,            
             p.codigo AS producto,
             entrada,
             salida,
@@ -397,6 +397,7 @@ class Producto{
                     left join ordenSalida s on i.idOrdenEntrada = s.id
                     left join distribucion d on i.idOrdenSalida = d.id
                     left join mermaProducto m on i.idOrdenSalida = m.id
+                    left join ordenSalida os on i.idOrdenSalida = os.id
                 ORDER BY fecha desc';
             $data= DATA::Ejecutar($sql);
             return $data;

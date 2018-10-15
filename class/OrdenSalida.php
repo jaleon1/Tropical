@@ -1,4 +1,5 @@
 <?php
+date_default_timezone_set('America/Costa_Rica');
 error_reporting(0);
 if(isset($_POST["action"])){
     $opt= $_POST["action"];
@@ -193,7 +194,7 @@ class OrdenSalida{
             );
         }
     }
-
+    //Orden Produccion (SALIDA)
     function CreateInventarioInsumo($obj){
         try {
             $created = true;
@@ -204,13 +205,13 @@ class OrdenSalida{
                 $param= array(':idInsumo'=>$item->idInsumo);
                 $valor=DATA::Ejecutar($sql,$param);              
                 
-                $sql="SELECT fecha FROM ordenSalida WHERE id=:idOrdenSalida;";
+                $sql="SELECT fecha, numeroOrden FROM ordenSalida WHERE id=:idOrdenSalida;";
                 $param= array(':idOrdenSalida'=>$item->idOrdenSalida);
-                $fecha=DATA::Ejecutar($sql,$param);
+                $data=DATA::Ejecutar($sql,$param);
 
                 $costoAdquisicion = $item->cantidad*$item->costoPromedio;
-                $sql="INSERT INTO inventarioInsumo   (id, idOrdenSalida, idInsumo, salida, saldo, valorSalida, valorSaldo, costoPromedio, fecha)
-                    VALUES (uuid(), :idOrdenSalida, :idInsumo, :salida, :saldo, :valorSalida, :valorSaldo, :costoPromedio, :fecha)";
+                $sql="INSERT INTO inventarioInsumo   (id, idOrdenSalida, idInsumo, salida, saldo, valorSalida, valorSaldo, costoPromedio, fecha, ordenGuardada)
+                    VALUES (uuid(), :idOrdenSalida, :idInsumo, :salida, :saldo, :valorSalida, :valorSaldo, :costoPromedio, :fecha, :ordenGuardada)";
                 $param= array(':idOrdenSalida'=>$item->idOrdenSalida, 
                     ':idInsumo'=>$item->idInsumo,
                     ':salida'=>$item->cantidad,
@@ -218,7 +219,8 @@ class OrdenSalida{
                     ':valorSalida'=>(string)$costoAdquisicion,
                     ':valorSaldo'=>$valor[0]['saldoCosto'],
                     ':costoPromedio'=>$valor[0]['costoPromedio'],
-                    ':fecha'=>$fecha[0]['fecha']
+                    ':fecha'=>$data[0]['fecha'],
+                    ':ordenGuardada'=>$data[0]['numeroOrden']
                 );
                 DATA::Ejecutar($sql,$param,false);                
             }
@@ -293,13 +295,16 @@ class OrdenSalida{
             }                    
             //Volver a sumar al Inventario de Insumos
             //Selecciona lista de insumos ligados a la orden
-            $sql="SELECT idInsumo, idOrdenSalida, cantidad FROM insumosXOrdenSalida WHERE idOrdenSalida=:idOrdenSalida;";
+            $sql="SELECT idInsumo,idOrdenSalida,cantidad,costoPromedio,(SELECT numeroOrden FROM ordenSalida WHERE id=idOrdenSalida)
+            AS consecutivo FROM insumosXOrdenSalida WHERE idOrdenSalida=:idOrdenSalida;";
             $param= array(':idOrdenSalida'=>$this->id);
             $insumos= DATA::Ejecutar($sql, $param);
             InsumosxOrdenSalida::UpdateSaldoCantidadInsumo2($insumos);
-            
-            $sql='DELETE FROM ordenSalida  
-            WHERE id=:id';
+
+            $this->DeleteInventarioInsumo($insumos);
+
+            $sql='DELETE FROM ordenSalida
+            WHERE id= :id';
             $param= array(':id'=>$this->id);
             $data= DATA::Ejecutar($sql, $param, false);
             if($data)
@@ -312,6 +317,43 @@ class OrdenSalida{
                 'code' => $e->getCode() ,
                 'msg' => $e->getMessage()))
             );
+        }
+    }
+
+    //Orden Produccion (ENTRADA)
+    public function DeleteInventarioInsumo($obj){
+        try {
+            $created = true;
+            require_once("Insumo.php");
+            foreach ($obj as $item) {          
+                
+                $sql="SELECT saldoCantidad, saldoCosto, costoPromedio FROM insumo WHERE id=:idInsumo;";
+                $param= array(':idInsumo'=>$item['idInsumo']);
+                $valor=DATA::Ejecutar($sql,$param); 
+
+                $sql="INSERT INTO ordenCancel (id,idOrdenSalida)VALUES(UUID(),:idOrdenSalida)";
+                $param= array(':idOrdenSalida'=>$item['idOrdenSalida']);
+                DATA::Ejecutar($sql,$param,false);
+
+                $costoAdquisicion = $item['cantidad']*$item['costoPromedio'];
+                $sql="INSERT INTO inventarioInsumo (id, idOrdenSalida, idInsumo, entrada, saldo, valorEntrada, valorSaldo, costoPromedio, fecha, ordenEliminada)
+                VALUES (uuid(), :idOrdenSalida, :idInsumo, :entrada, :saldo, :valorEntrada, :valorSaldo, :costoPromedio, :fecha, :ordenEliminada)";
+                $param= array(':idOrdenSalida'=>$item['idOrdenSalida'],
+                    ':idInsumo'=>$item['idInsumo'],
+                    ':entrada'=>$item['cantidad'],
+                    ':saldo'=>$valor[0]['saldoCantidad'], 
+                    ':valorEntrada'=>(string)$costoAdquisicion,
+                    ':valorSaldo'=>$valor[0]['saldoCosto'],
+                    ':costoPromedio'=>$valor[0]['costoPromedio'],
+                    ':fecha'=>date("Y-m-d H:i:s"),
+                    ':ordenEliminada'=>'eliminada'
+                );
+                DATA::Ejecutar($sql,$param,false);                
+            }
+            return $created;
+        }     
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            return false;
         }
     }
     

@@ -632,8 +632,8 @@ class Insumo {
                 }
             ],
             language: {
-                "infoEmpty": "Sin Usuarios Registrados",
-                "emptyTable": "Sin Usuarios Registrados",
+                "infoEmpty": "Sin movimientos de Materia Prima",
+                "emptyTable": "Sin movimientos de Materia Prima",
                 "search": "Buscar",
                 "zeroRecords": "No hay resultados",
                 "lengthMenu": "Mostrar _MENU_ registros",
@@ -658,13 +658,13 @@ class Insumo {
                     width: "auto"
                 },
                 {
-                    title: "OERDEN COMPRA",
+                    title: "ORDEN COMPRA",
                     data: "idOrdenCompra",
                     visible: false
                 },
                 {
-                    title: "ORDEN COMPRA",
-                    data: "ordenCompra",
+                    title: "ENTRADA",
+                    data: "ordenEntrada",
                     width: "auto"
                 },
                 {
@@ -673,18 +673,8 @@ class Insumo {
                     visible: false
                 },
                 {
-                    title: "ORDEN SALIDA",
+                    title: "SALIDA",
                     data: "ordenSalida",
-                    width: "auto"
-                },
-                {
-                    title: "CONSECUTIVO MERMA",
-                    data: "idMerma",
-                    visible: false
-                },
-                {
-                    title: "CONSECUTIVO MERMA",
-                    data: "consecutivo",
                     width: "auto"
                 },
                 {

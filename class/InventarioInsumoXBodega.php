@@ -6,7 +6,7 @@ define('ERROR_SALIDA_INVENTARIO_INSUMOXBODEGA', '-851');
 
 class InventarioInsumoXBodega{
     // public $idOrdenCompra;
-    // public $idOrdensalida;
+    // public $idOrdenSalida;
     public static $idOrden; // entrada o salida
     public static $idProducto; // insumo de bodega relacionado con producto (sabor - articulo).
     public static $idBodega;
