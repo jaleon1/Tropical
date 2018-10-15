@@ -95,6 +95,10 @@ class InventarioFacturas {
                     data: "userName"
                 },
                 {
+                    title: "ESTADO",
+                    data: "idEstadoComprobante"
+                },
+                {
                     title: "MONTO EFECTIVO",
                     data: "montoEfectivo",
                     visible: false,
