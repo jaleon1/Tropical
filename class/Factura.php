@@ -1,11 +1,6 @@
 <?php
 date_default_timezone_set('America/Costa_Rica');
 error_reporting(0);
-// require '../ticket/autoload.php';
-// use Mike42\Escpos\Printer;
-// use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
-// use Mike42\Escpos\PrintConnectors\FilePrintConnector;
-
 
 if(isset($_POST["action"])){
     $opt= $_POST["action"];
@@ -71,7 +66,7 @@ class Factura{
     public $idSituacionComprobante=null;
     public $idEstadoComprobante= null;
     public $idMedioPago=null;
-    public $idDocumentoReferencia = null; // FE - TE - ND - NC ...  documento para envio MH
+    public $idDocumento = null; // FE - TE - ND - NC ...  documento para envio MH
     public $fechaEmision="";
     public $totalVenta=null; //Precio del producto
     public $totalDescuentos=null;
@@ -92,6 +87,12 @@ class Factura{
     public $tipoCambio= null;
     public $montoEfectivo= null;
     public $montoTarjeta= null;
+    // Referencia
+    public $idDocumentoReferencia = null;
+    public $claveReferencia = null;
+    public $idReferencia = null;
+    public $fechaEmisionReferencia = null;
+    public $razon=null;
     //
     function __construct(){
         // identificador único
@@ -132,7 +133,7 @@ class Factura{
             $this->montoEfectivo= $obj["montoEfectivo"];
             $this->montoTarjeta= $obj["montoTarjeta"];
             // d. Informacion de referencia
-            $this->idDocumentoReferencia = $obj["idDocumentoReferencia"] ?? 1; //codigo de documento de Referencia. Tropical tiene el documento por defecto 1            
+            $this->idDocumento = $obj["idDocumento"] ?? 1; //codigo de documento de Referencia. Tropical tiene el documento por defecto 1            
             $this->fechaEmision= $obj["fechaEmision"] ?? null; // emision del comprobante electronico.
             //
             $this->idReceptor = $obj['idReceptor'] ?? Receptor::default()->id; // si es null, utiliza el Receptor por defecto.
@@ -180,6 +181,17 @@ class Factura{
                 $this->datosReceptor = new Receptor();
                 $this->datosReceptor = json_decode($_POST["dataReceptor"],true);
             }
+            // Ref
+            // Referencias.
+            if(isset($obj["ref"] )){
+                foreach ($obj["ref"] as $itemDetalle) {
+                    $factura->refidDocumento= $itemDetalle["idDocumentoReferencia"]; // documento al que se hace referencia.
+                    $factura->refclave= $itemDetalle["claveReferencia"]; // clave del documento al que se hace referencia.
+                    $factura->reffechaEmision= $itemDetalle["fechaEmisionReferencia"]; // fecha de emision del documento original en referencia.
+                    $factura->idReferencia= $itemDetalle["idReferencia"]; // código de referencia: 4 : Referencia a otro documento.
+                    $factura->razon= $itemDetalle["razon"]; // Referencia a otro documento.
+                }                
+            }
         }
     }
 
@@ -226,7 +238,7 @@ class Factura{
     function Read(){
         try {
             $sql='SELECT idBodega, fechaCreacion, consecutivo, clave, consecutivoFE, local, terminal, idCondicionVenta, idSituacionComprobante, idEstadoComprobante, plazoCredito, 
-                idMedioPago, idCodigoMoneda, tipoCambio, totalServGravados, totalServExentos, totalMercanciasGravadas, totalMercanciasExentas, totalGravado, totalExento, fechaEmision, idDocumentoReferencia, 
+                idMedioPago, idCodigoMoneda, tipoCambio, totalServGravados, totalServExentos, totalMercanciasGravadas, totalMercanciasExentas, totalGravado, totalExento, fechaEmision, idDocumento, 
                 totalVenta, totalDescuentos, totalVentaneta, totalImpuesto, totalComprobante, idReceptor, idEmisor, idUsuario, idReferencia, razon
                 from factura
                 where id=:id';
@@ -255,7 +267,7 @@ class Factura{
                 $this->totalGravado = $value['totalGravado'];
                 $this->totalExento = $value['totalExento'];
                 $this->fechaEmision = $value['fechaEmision'];
-                $this->idDocumentoReferencia = $value['idDocumentoReferencia'];                
+                $this->idDocumento = $value['idDocumento'];                
                 $this->totalVenta = $value['totalVenta'];
                 $this->totalDescuentos = $value['totalDescuentos'];
                 $this->totalVentaneta = $value['totalVentaneta'];
@@ -319,10 +331,10 @@ class Factura{
     function Create(){
         try {
             $sql="INSERT INTO factura   (id, idBodega, local, terminal, idCondicionVenta, idSituacionComprobante, idEstadoComprobante, plazoCredito, 
-                idMedioPago, idCodigoMoneda, tipoCambio, totalServGravados, totalServExentos, totalMercanciasGravadas, totalMercanciasExentas, totalGravado, totalExento, idDocumentoReferencia, 
+                idMedioPago, idCodigoMoneda, tipoCambio, totalServGravados, totalServExentos, totalMercanciasGravadas, totalMercanciasExentas, totalGravado, totalExento, idDocumento, 
                 totalVenta, totalDescuentos, totalVentaneta, totalImpuesto, totalComprobante, idReceptor, idEmisor, idUsuario, montoEfectivo)
             VALUES  (:uuid, :idBodega, :local, :terminal, :idCondicionVenta, :idSituacionComprobante, :idEstadoComprobante, :plazoCredito,
-                :idMedioPago, :idCodigoMoneda, :tipoCambio, :totalServGravados, :totalServExentos, :totalMercanciasGravadas, :totalMercanciasExentas, :totalGravado, :totalExento, :idDocumentoReferencia, 
+                :idMedioPago, :idCodigoMoneda, :tipoCambio, :totalServGravados, :totalServExentos, :totalMercanciasGravadas, :totalMercanciasExentas, :totalGravado, :totalExento, :idDocumento, 
                 :totalVenta, :totalDescuentos, :totalVentaneta, :totalImpuesto, :totalComprobante, :idReceptor, :idEmisor, :idUsuario, :montoEfectivo)";
             $param= array(':uuid'=>$this->id,
                 ':idBodega'=>$this->idBodega,
@@ -341,7 +353,7 @@ class Factura{
                 ':totalMercanciasExentas'=> $this->totalMercanciasExentas,
                 ':totalGravado'=> $this->totalGravado,
                 ':totalExento'=> $this->totalExento,
-                ':idDocumentoReferencia'=> $this->idDocumentoReferencia,
+                ':idDocumento'=> $this->idDocumento,
                 ':totalVenta'=>$this->totalVenta,
                 ':totalDescuentos'=>$this->totalDescuentos,
                 ':totalVentaneta'=>$this->totalVentaneta,
@@ -499,13 +511,13 @@ class Factura{
 
     public function contingencia(){
         try {
-            // idDocumentoReferencia 08 = Comprobante emitido en contingencia.
+            // idDocumento 08 = Comprobante emitido en contingencia.
             // SituacionComprobante 02 = Contingencia
             // Estado de Comprobante 01 = Sin enviar.
             $sql="UPDATE factura
-                SET idSituacionComprobante=:idSituacionComprobante , idDocumentoReferencia=:idDocumentoReferencia, idEstadoComprobante=:idEstadoComprobante
+                SET idSituacionComprobante=:idSituacionComprobante , idDocumento=:idDocumento, idEstadoComprobante=:idEstadoComprobante
                 WHERE id=:id";
-            $param= array(':id'=>$this->id, ':idSituacionComprobante'=>2 , ':idDocumentoReferencia'=>8, ':idEstadoComprobante'=>1);
+            $param= array(':id'=>$this->id, ':idSituacionComprobante'=>2 , ':idDocumento'=>8, ':idEstadoComprobante'=>1);
             $data = DATA::Ejecutar($sql,$param, false);
             if($data){
                 // lee la transaccion completa y re envia
@@ -527,13 +539,13 @@ class Factura{
     function notaCredito(){
         try {
             $sql="UPDATE factura
-                SET idReferencia=:idReferencia, razon=:razon, idDocumentoReferencia=:idDocumentoReferencia , idEstadoComprobante=:idEstadoComprobante
+                SET idReferencia=:idReferencia, razon=:razon, idDocumento=:idDocumento , idEstadoComprobante=:idEstadoComprobante
                 WHERE id=:id";
             $param= array(
                 ':id'=>$this->id,
                 ':idReferencia'=>$this->idReferencia,
                 ':razon'=>$this->razon,
-                ':idDocumentoReferencia'=>3 , 
+                ':idDocumento'=>3 , 
                 ':idEstadoComprobante'=>1);
             $data = DATA::Ejecutar($sql,$param, false);
             if($data)
