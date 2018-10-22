@@ -329,14 +329,14 @@ class Factura{
 
     function enviarDocumentoElectronico(){
         try {
-            error_log("[INFO]: lee factura");
             // consulta datos de factura en bd.
             $this->Read();
-            error_log("[INFO]: lee factura: ok");
             // envía la factura
             FacturacionElectronica::iniciar($this);
         }
-        catch(Exception $e){}
+        catch(Exception $e){
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+        }
     }
 
     function Create(){
