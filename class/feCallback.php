@@ -17,7 +17,7 @@
         foreach ($data as $key => $transaccion){
             $factura = new Factura();
             $factura->id = $transaccion['id'];
-            $factura = $factura->read();
+            $factura = $factura->Read();
             FacturacionElectronica::APIConsultaComprobante($factura);
         }
         // Notas de crédito.
@@ -29,7 +29,7 @@
         foreach ($data as $key => $transaccion){
             $factura = new Factura();
             $factura->id = $transaccion['id'];
-            $factura = $factura->read();
+            $factura = $factura->Read();
             // clave  & idDocumento de NC
             $factura->clave = $factura->claveNC;
             $factura->idDocumento = $factura->idDocumentoNC;
