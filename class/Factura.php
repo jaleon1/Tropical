@@ -1,6 +1,6 @@
 <?php
 date_default_timezone_set('America/Costa_Rica');
-error_reporting(1);
+error_reporting(0);
 
 if(isset($_POST["action"])){
     $opt= $_POST["action"];
@@ -377,7 +377,7 @@ class Factura{
             {
                  //save array obj
                  if(ProductoXFactura::Create($this->detalleFactura)){
-                    $this->actualizaInventario($this->detalleOrden);
+                    //$this->actualizaInventario($this->detalleOrden);
                     // orden de factura para mostrar en despacho.
                     OrdenXFactura::$id=$this->id;
                     OrdenXFactura::Create($this->detalleOrden);
