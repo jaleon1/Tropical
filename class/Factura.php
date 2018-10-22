@@ -399,6 +399,38 @@ class Factura{
         }
     }
 
+    public static function setClave($documento, $idFactura, $clave, $consecutivoFE=null){
+        try {
+            $sql='';
+            $param= [];
+            switch($documento){
+                case 1: //fe
+                case 4: //te
+                case 8: //contingencia
+                    $sql="UPDATE factura
+                        SET clave=:clave, consecutivoFE=:consecutivoFE
+                        WHERE id=:idFactura";
+                    $param= array(':idFactura'=>$idFactura, ':clave'=>$clave, ':consecutivoFE'=>$consecutivoFE);
+                break;
+                case 3: // NC
+                    $sql="UPDATE factura
+                        SET claveNC=:claveNC
+                        WHERE id=:idFactura";
+                    $param= array(':idFactura'=>$idFactura, ':claveNC'=>$clave);
+                break;
+            }
+            //
+            $data = DATA::Ejecutar($sql,$param, false);
+            if($data)
+                return true;
+            else throw new Exception('Error al guardar el histórico.', 03);            
+        }     
+        catch(Exception $e) {
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            // debe notificar que no se esta actualizando el historico de comprobantes.
+        }
+    }
+
     public static function updateEstado($documento, $idFactura, $idEstadoComprobante, $fechaEmision){
         try {
             $sql='';
