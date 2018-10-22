@@ -332,7 +332,7 @@ class Factura{
             // consulta datos de factura en bd.
             $this->Read();
             // envía la factura
-            FacturacionElectronica::Iniciar($this);
+            FacturacionElectronica::iniciar($this);
         }
         catch(Exception $e){}
     }
