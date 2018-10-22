@@ -505,7 +505,7 @@ class Factura{
             InventarioInsumoXBodega::salida($value->idSabor2, 'ordenXX', $porcion);
             InventarioInsumoXBodega::salida($value->idTopping, 'ordenXX', 1);
             // resta inventario consumibles.
-            consumible::salida($value->idTamano);
+            Consumible::salida($value->idTamano);
         };
     }
 
