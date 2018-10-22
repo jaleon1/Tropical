@@ -31,6 +31,7 @@
     <link href="assets/css/custom.css" rel="stylesheet">
     <!-- Dropzone.js -->
     <link href="../vendors/dropzone/dist/min/dropzone.min.css" rel="stylesheet">
+    <link href="assets/css/passShow.css" rel="stylesheet">
 </head>
 
 <body class="nav-md">
@@ -313,7 +314,7 @@
                                             <label class="control-label col-md-3 col-sm-3 col-xs-12" for="password">ATV contraseña
                                                 <span class="required">*</span>
                                             </label>
-                                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                            <div class="col-md-6 col-sm-6 col-xs-12 pass_show">
                                                 <input id="password" class="form-control col-md-7 col-xs-12" required name="password" type="password">
                                             </div>
                                         </div>
@@ -322,7 +323,7 @@
                                             <label class="control-label col-md-3 col-sm-3 col-xs-12" for="pinp12">Pin de Llave Criptográfica
                                                 <span class="required">*</span>
                                             </label>
-                                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                            <div class="col-md-6 col-sm-6 col-xs-12 pass_show">
                                                 <input id="pinp12" class="form-control col-md-7 col-xs-12" required name="pinp12" type="password" placeholder="PIN de cuatro digitos de la llave criptográfica">
                                             </div>
                                         </div>
@@ -417,4 +418,8 @@
     $('#reload').click(function () {
 		location.reload();
 	});
+    $(document).on('click','.pass_show .ptxt', function(){
+        $(this).text($(this).text() == "Show" ? "Hide" : "Show"); 
+        $(this).prev().attr('type', function(index, attr){return attr == 'password' ? 'text' : 'password'; }); 
+    });  
 </script>

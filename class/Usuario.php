@@ -78,7 +78,7 @@ class Usuario{
     public $url;
     public $idBodega; // bodega selecconada en la sesión.
     public $bodega;
-    public $codigoReferencia; // para FE - tipo de documento.
+    public $idDocumento; // para FE - tipo de documento.
     public $ip;
 
     function __construct(){
@@ -219,7 +219,7 @@ class Usuario{
                             $this->idBodega= $this->bodegas[0]->idBodega;
                             $this->bodega= $this->bodegas[0]->nombre;
                             $this->local= $this->bodegas[0]->local;
-                            //$this->codigoReferencia = $this->entidades[0]->codigoReferencia;
+                            //$this->idDocumento = $this->entidades[0]->idDocumento;
                         }
                     }
                     else { // password invalido
@@ -480,7 +480,7 @@ class Usuario{
         $_SESSION["userSession"]->idBodega= $_POST['idBodega'];
         $_SESSION["userSession"]->bodega= $_POST['nombre'];
         $_SESSION["userSession"]->local= $_POST['local'];
-        //$_SESSION["userSession"]->local= $_POST['codigoReferencia'];
+        //$_SESSION["userSession"]->local= $_POST['idDocumento'];
     }
 
 }

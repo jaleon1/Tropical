@@ -1,11 +1,6 @@
 <?php
 date_default_timezone_set('America/Costa_Rica');
 error_reporting(0);
-// require '../ticket/autoload.php';
-// use Mike42\Escpos\Printer;
-// use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
-// use Mike42\Escpos\PrintConnectors\FilePrintConnector;
-
 
 if(isset($_POST["action"])){
     $opt= $_POST["action"];
@@ -15,7 +10,7 @@ if(isset($_POST["action"])){
     require_once("Usuario.php");
     require_once("ClienteFE.php");
     require_once("Receptor.php");
-    require_once("FacturaElectronica.php");
+    require_once("facturacionElectronica.php");
     require_once("encdes.php");
     require_once("InventarioInsumoXBodega.php");
     require_once("consumible.php");
@@ -43,9 +38,6 @@ if(isset($_POST["action"])){
         case "Create":
             echo json_encode($factura->Create());
             break;
-        case "EnviarFE":
-            $factura->EnviarFE();
-            break;
         case "Update":
             $factura->Update();
             break;
@@ -54,7 +46,18 @@ if(isset($_POST["action"])){
             break;   
         case "LoadPreciosTamanos":
             echo json_encode($factura->LoadPreciosTamanos());
-            break; 
+            break;
+        case "sendContingencia":
+            // $factura->sendContingencia();
+            break;
+        case "sendNotaCredito":
+            // Nota de Credito.
+            $factura->idDocumentoNC= $_POST["idDocumentoNC"] ?? 3; // documento tipo 3: NC
+            $factura->idReferencia= $_POST["idReferencia"] ?? 1; // código de referencia: 1 : Referencia a otro documento.
+            $factura->razon= $_POST["razon"]; // Referencia a otro documento.
+            $factura->notaCredito();
+            break;
+
     }    
 }
 
@@ -68,7 +71,7 @@ class Factura{
     public $idSituacionComprobante=null;
     public $idEstadoComprobante= null;
     public $idMedioPago=null;
-    public $codigoReferencia = null; // FE - TE - ND - NC ...  documento para envio MH    
+    public $idDocumento = null; // FE - TE - ND - NC ...  documento para envio MH
     public $fechaEmision="";
     public $totalVenta=null; //Precio del producto
     public $totalDescuentos=null;
@@ -89,6 +92,16 @@ class Factura{
     public $tipoCambio= null;
     public $montoEfectivo= null;
     public $montoTarjeta= null;
+    // Referencia
+    public $idDocumentoReferencia = null; // utilizado en COMPROBANTE EMITIDO DESPUES DE UNA NC.
+    public $claveReferencia = null;
+    public $fechaEmisionReferencia = null;
+    // NC
+    public $idDocumentoNC = null;
+    public $claveNC = null;
+    public $idReferencia = null;
+    public $fechaEmisionNC = null;
+    public $razon=null;
     //
     function __construct(){
         // identificador único
@@ -126,15 +139,15 @@ class Factura{
             $this->totalVentaneta= $obj["totalVentaneta"];
             $this->totalImpuesto= $obj["totalImpuesto"];
             $this->totalComprobante= $obj["totalComprobante"];
-            $this->montoEfectivo= $obj["montoEfectivo"];
-            $this->montoTarjeta= $obj["montoTarjeta"];
+            $this->montoEfectivo= $obj["montoEfectivo"] ?? null;
+            $this->montoTarjeta= $obj["montoTarjeta"] ?? null;
             // d. Informacion de referencia
-            $this->codigoReferencia = $obj["codigoReferencia"] ?? 1; //codigo de documento de Referencia. Tropical tiene el documento por defecto 1
+            $this->idDocumento = $obj["idDocumento"] ?? $_SESSION["userSession"]->idDocumento; // Documento de Referencia.
             $this->fechaEmision= $obj["fechaEmision"] ?? null; // emision del comprobante electronico.
             //
             $this->idReceptor = $obj['idReceptor'] ?? Receptor::default()->id; // si es null, utiliza el Receptor por defecto.
             $this->idEmisor =  $_SESSION["userSession"]->idBodega;  //idEmisor no es necesario, es igual al idBodega.
-            $this->idUsuario=  $_SESSION["userSession"]->id;   
+            $this->idUsuario=  $_SESSION["userSession"]->id;  
             //
             if(isset($obj["detalleFactura"] )){
                 foreach ($obj["detalleFactura"] as $itemDetalle) {
@@ -172,10 +185,18 @@ class Factura{
                     array_push ($this->detalleOrden, $item);
                 }
             }
-
+            //
             if(isset($_POST["dataReceptor"] )){
                 $this->datosReceptor = new Receptor();
                 $this->datosReceptor = json_decode($_POST["dataReceptor"],true);
+            }
+            // Referencias.
+            if(isset($obj["ref"] )){
+                foreach ($obj["ref"] as $ref) {
+                    $factura->idDocumentoNC= $ref["idDocumentoNC"]; // documento al que se hace referencia.
+                    $factura->idReferencia= $ref["idReferencia"]; // código de referencia: 4 : Referencia a otro documento.
+                    $factura->razon= $ref["razon"]; // Referencia a otro documento.
+                }                
             }
         }
     }
@@ -223,8 +244,9 @@ class Factura{
     function Read(){
         try {
             $sql='SELECT idBodega, fechaCreacion, consecutivo, clave, consecutivoFE, local, terminal, idCondicionVenta, idSituacionComprobante, idEstadoComprobante, plazoCredito, 
-                idMedioPago, idCodigoMoneda, tipoCambio, totalServGravados, totalServExentos, totalMercanciasGravadas, totalMercanciasExentas, totalGravado, totalExento, fechaEmision, codigoReferencia, 
-                totalVenta, totalDescuentos, totalVentaneta, totalImpuesto, totalComprobante, idReceptor, idEmisor, idUsuario
+                idMedioPago, idCodigoMoneda, tipoCambio, totalServGravados, totalServExentos, totalMercanciasGravadas, totalMercanciasExentas, totalGravado, totalExento, fechaEmision, idDocumento, 
+                totalVenta, totalDescuentos, totalVentaneta, totalImpuesto, totalComprobante, idReceptor, idEmisor, idUsuario, idDocumentoNC, claveNC, fechaEmisionNC,
+                    idReferencia, razon, idEstadoNC
                 from factura
                 where id=:id';
             $param= array(':id'=>$this->id);
@@ -252,7 +274,7 @@ class Factura{
                 $this->totalGravado = $value['totalGravado'];
                 $this->totalExento = $value['totalExento'];
                 $this->fechaEmision = $value['fechaEmision'];
-                $this->codigoReferencia = $value['codigoReferencia'];
+                $this->idDocumento = $value['idDocumento'];                
                 $this->totalVenta = $value['totalVenta'];
                 $this->totalDescuentos = $value['totalDescuentos'];
                 $this->totalVentaneta = $value['totalVentaneta'];
@@ -261,6 +283,12 @@ class Factura{
                 $this->idReceptor = $value['idReceptor'];
                 $this->idEmisor = $value['idEmisor'];
                 $this->idUsuario = $value['idUsuario'];
+                $this->idDocumentoNC = $value['idDocumentoNC'];
+                $this->claveNC = $value['claveNC'];
+                $this->fechaEmisionNC = $value['fechaEmisionNC'];
+                $this->idReferencia = $value['idReferencia'];
+                $this->razon = $value['razon'];
+                $this->idEstadoNC = $value['idEstadoNC'];
                 // $this->usuario =  nombre de la persona que hizo la transaccion
                 $this->detalleFactura= ProductoXFactura::ReadByIdFactura($this->id);
                 $receptor = new Receptor();
@@ -299,12 +327,12 @@ class Factura{
         }
     }
 
-    function EnviarFE(){
+    function enviarDocumentoElectronico(){
         try {
             // consulta datos de factura en bd.
             $this->Read();
             // envía la factura
-            FacturaElectronica::Iniciar($this);
+            FacturacionElectronica::Iniciar($this);
         }
         catch(Exception $e){}
     }
@@ -312,10 +340,10 @@ class Factura{
     function Create(){
         try {
             $sql="INSERT INTO factura   (id, idBodega, local, terminal, idCondicionVenta, idSituacionComprobante, idEstadoComprobante, plazoCredito, 
-                idMedioPago, idCodigoMoneda, tipoCambio, totalServGravados, totalServExentos, totalMercanciasGravadas, totalMercanciasExentas, totalGravado, totalExento, codigoReferencia, 
+                idMedioPago, idCodigoMoneda, tipoCambio, totalServGravados, totalServExentos, totalMercanciasGravadas, totalMercanciasExentas, totalGravado, totalExento, idDocumento, 
                 totalVenta, totalDescuentos, totalVentaneta, totalImpuesto, totalComprobante, idReceptor, idEmisor, idUsuario, montoEfectivo)
             VALUES  (:uuid, :idBodega, :local, :terminal, :idCondicionVenta, :idSituacionComprobante, :idEstadoComprobante, :plazoCredito,
-                :idMedioPago, :idCodigoMoneda, :tipoCambio, :totalServGravados, :totalServExentos, :totalMercanciasGravadas, :totalMercanciasExentas, :totalGravado, :totalExento, :codigoReferencia, 
+                :idMedioPago, :idCodigoMoneda, :tipoCambio, :totalServGravados, :totalServExentos, :totalMercanciasGravadas, :totalMercanciasExentas, :totalGravado, :totalExento, :idDocumento, 
                 :totalVenta, :totalDescuentos, :totalVentaneta, :totalImpuesto, :totalComprobante, :idReceptor, :idEmisor, :idUsuario, :montoEfectivo)";
             $param= array(':uuid'=>$this->id,
                 ':idBodega'=>$this->idBodega,
@@ -334,7 +362,7 @@ class Factura{
                 ':totalMercanciasExentas'=> $this->totalMercanciasExentas,
                 ':totalGravado'=> $this->totalGravado,
                 ':totalExento'=> $this->totalExento,
-                ':codigoReferencia'=> $this->codigoReferencia,
+                ':idDocumento'=> $this->idDocumento,
                 ':totalVenta'=>$this->totalVenta,
                 ':totalDescuentos'=>$this->totalDescuentos,
                 ':totalVentaneta'=>$this->totalVentaneta,
@@ -354,7 +382,7 @@ class Factura{
                     OrdenXFactura::$id=$this->id;
                     OrdenXFactura::Create($this->detalleOrden);
                     // envio de comprobantes en tiempo real.
-                    $this->EnviarFE();         
+                    $this->enviarDocumentoElectronico();         
                     return $this;
                 }
                 else throw new Exception('[ERROR] al guardar los productos.', 03);
@@ -371,19 +399,66 @@ class Factura{
         }
     }
 
-    public static function updateEstado($idFactura, $idEstadoComprobante, $fechaEmision){
+    public static function updateEstado($documento, $idFactura, $idEstadoComprobante, $fechaEmision){
         try {
-            $sql="UPDATE factura
-                SET idEstadoComprobante=:idEstadoComprobante, fechaEmision=:fechaEmision
-                WHERE id=:idFactura";
-            $param= array(':idFactura'=>$idFactura, ':idEstadoComprobante'=>$idEstadoComprobante, ':fechaEmision'=>$fechaEmision);
+            $sql='';
+            $param= [];
+            switch($documento){
+                case 1: //fe
+                case 4: //te
+                case 8: //contingencia                
+                    $sql="UPDATE factura
+                        SET idEstadoComprobante=:idEstadoComprobante, fechaEmision=:fechaEmision
+                        WHERE id=:idFactura";
+                    $param= array(':idFactura'=>$idFactura, ':idEstadoComprobante'=>$idEstadoComprobante, ':fechaEmision'=>$fechaEmision);
+                break;
+                case 3: // NC
+                    $sql="UPDATE factura
+                        SET idEstadoNC=:idEstadoNC, fechaEmisionNC=:fechaEmisionNC
+                        WHERE id=:idFactura";
+                    $param= array(':idFactura'=>$idFactura, ':idEstadoNC'=>$idEstadoComprobante, ':fechaEmisionNC'=>$fechaEmision);
+                break;
+            }
+            //
             $data = DATA::Ejecutar($sql,$param, false);
             if($data)
                 return true;
             else throw new Exception('Error al guardar el histórico.', 03);            
         }     
         catch(Exception $e) {
-            error_log("error: ". $e->getMessage());
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            // debe notificar que no se esta actualizando el historico de comprobantes.
+        }
+    }
+
+    public static function updateIdEstadoComprobante($idFactura, $documento, $idEstadoComprobante){
+        try {
+            $sql='';
+            $param= [];
+            switch($documento){
+                case 1: //fe
+                case 4: //te
+                case 8: //contingencia                
+                    $sql="UPDATE factura
+                        SET idEstadoComprobante=:idEstadoComprobante
+                        WHERE id=:idFactura";
+                    $param= array(':idFactura'=>$idFactura, ':idEstadoComprobante'=>$idEstadoComprobante);
+                break;
+                case 3: // NC
+                    $sql="UPDATE factura
+                        SET idEstadoNC=:idEstadoNC
+                        WHERE id=:idFactura";
+                    $param= array(':idFactura'=>$idFactura, ':idEstadoNC'=>$idEstadoComprobante);
+                break;
+            }
+            //
+            $data = DATA::Ejecutar($sql,$param, false);
+            if($data)
+                return true;
+            else throw new Exception('Error al actualizar el estado del comprobante.', 0456);            
+        }     
+        catch(Exception $e) {
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             // debe notificar que no se esta actualizando el historico de comprobantes.
         }
     }
@@ -488,7 +563,99 @@ class Factura{
                 'msg' => $e->getMessage()))
             );
         }
-    }   
+    }
+
+    public function sendContingencia(){
+        // busca facturas con error (5) y las reenvia con contingencia, para los documentos 1 - 4  (FE - TE)
+        error_log("************************************************************");
+        error_log("************************************************************");
+        error_log("     [INFO] Iniciando Ejecucíon masiva de contingencia      ");
+        error_log("************************************************************");
+        error_log("************************************************************");
+        $sql="SELECT f.id, b.nombre as entidad, consecutivo
+            from factura f inner join bodega b on b.id = f.idBodega
+            WHERE  f.idEstadoComprobante = 5 and (f.idDocumento = 1 or  f.idDocumento = 4 or  f.idDocumento = 8) 
+            ORDER BY consecutivo asc";
+            //idBodega=:idBodega and
+        // $param= array(':idBodega'=>'0cf4f234-9479-4dcb-a8c0-faa4efe82db0');
+        // $param= array(':idBodega'=>'f787b579-8306-4d68-a7ba-9ae328975270'); // carlos.echc11.
+        $data = DATA::Ejecutar($sql);
+        error_log("[INFO] Total de transacciones en Contingencia: ". count($data));
+        foreach ($data as $key => $transaccion){
+            error_log("[INFO] Contingencia Entidad (". $transaccion['entidad'] .") Transaccion (".$transaccion['consecutivo'].")");
+            $this->id = $transaccion['id'];
+            $this->contingencia();                
+        }
+        error_log("[INFO] Finaliza Contingencia Masiva de Comprobantes");
+    }
+
+    public function contingencia(){
+        try {
+            // idDocumento 08 = Comprobante emitido en contingencia.
+            // SituacionComprobante 02 = Contingencia
+            // Estado de Comprobante 01 = Sin enviar.
+            $sql="UPDATE factura
+                SET idSituacionComprobante=:idSituacionComprobante , idDocumento=:idDocumento, idEstadoComprobante=:idEstadoComprobante
+                WHERE id=:id";
+            $param= array(':id'=>$this->id, ':idSituacionComprobante'=>2 , ':idDocumento'=>8, ':idEstadoComprobante'=>1);
+            $data = DATA::Ejecutar($sql,$param, false);
+            if($data){
+                // lee la transaccion completa y re envia
+                $this->enviarDocumentoElectronico();                
+                return true;
+            }
+            else throw new Exception('Error al actualizar la situación del comprobante en Contingencia.', 45656);            
+        }     
+        catch(Exception $e) {
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }
+    }
+
+    public function notaCredito(){
+        try {
+            // check si ya existe la NC.
+            $sql="SELECT id
+                FROM factura
+                WHERE id=:id and (idEstadoNC IS NULL OR idEstadoNC = 5 OR idEstadoNC = 1)";
+            $param= array(':id'=>$this->id);
+            $data = DATA::Ejecutar($sql,$param);
+            // si hay comprobante sin NC, continua:
+            if($data){
+                // actualiza estado de comprobante con NC.
+                $sql="UPDATE factura
+                    SET idDocumentoNC=:idDocumentoNC, idReferencia=:idReferencia, razon=:razon, idEstadoNC=:idEstadoNC
+                    WHERE id=:id";
+                $param= array(
+                    ':id'=>$this->id,
+                    ':idDocumentoNC'=>$this->idDocumentoNC,
+                    ':idReferencia'=>$this->idReferencia,
+                    ':razon'=>$this->razon,
+                    ':idEstadoNC'=>1);
+                $data = DATA::Ejecutar($sql,$param, false);
+                if($data)
+                {
+                    $this->read();
+                    // envía la factura
+                    FacturacionElectronica::iniciarNC($this);
+                    return true;
+                }
+                else throw new Exception('Error al guardar.', 02);
+            } else throw new Exception('Warning, el comprobante ('. $this->id .') ya tiene una Nota de Crédito asignada.', 0763);
+        }     
+        catch(Exception $e) {
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }
+    }
 
     private function CheckRelatedItems(){
         try{
