@@ -1,6 +1,6 @@
 <?php
 include_once('historico.php');
-require_once("invoice.php");
+//require_once("invoice.php");
 //
 define('ERROR_USERS_NO_VALID', '-500');
 define('ERROR_TOKEN_NO_VALID', '-501');
