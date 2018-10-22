@@ -442,9 +442,10 @@ class ClienteFE{
                 $this->certificado= $data[0]['certificado'];
                 $this->cpath = $data[0]['cpath'];    
                 // estado del certificado.
-                if(file_exists(Globals::certDir.$this->id.DIRECTORY_SEPARATOR.$this->cpath))
+                if(file_exists(Globals::certDir.$this->idBodega.'/'.$this->cpath) || file_exists(Globals::certDir.$this->idBodega.'\\'.$this->cpath))
                     $this->estadoCertificado=1;
-                else $this->estadoCertificado=0;   
+                else 
+                    $this->estadoCertificado=0;   
                 $this->certificado= encdes::decifrar($data[0]['certificado']);
                 // variables para loguear al api server
                 $_SESSION['APISERVER-username']= $this->username;
