@@ -14,12 +14,12 @@ if(isset($_POST["action"])){
     require_once("encdes.php");
     require_once("InventarioInsumoXBodega.php");
     require_once("consumible.php");
+    require_once("OrdenXFactura.php");
+    require_once("ProductoXFactura.php");
     // Session
     if (!isset($_SESSION))
-        session_start();
-        
-    require_once("OrdenXFactura.php");
-    require_once("ProductoXFactura.php");    
+        session_start();        
+    
     // Instance
     $factura= new Factura();
     switch($opt){
@@ -375,12 +375,16 @@ class Factura{
             $data = DATA::Ejecutar($sql,$param, false);
             if($data)
             {
-                 //save array obj
-                 if(ProductoXFactura::Create($this->detalleFactura)){
-                    //$this->actualizaInventario($this->detalleOrden);
+                error_log("[INFO]: Guarda factura: ok");
+                //save array obj
+                if(ProductoXFactura::Create($this->detalleFactura)){
+                    error_log("[INFO]: Guarda detalle: ok");
+                    $this->actualizaInventario($this->detalleOrden);
+                    error_log("[INFO]: Guarda actualiza inventario: ok");
                     // orden de factura para mostrar en despacho.
                     OrdenXFactura::$id=$this->id;
                     OrdenXFactura::Create($this->detalleOrden);
+                    error_log("[INFO]: Crea orden: ok");
                     // envio de comprobantes en tiempo real.
                     $this->enviarDocumentoElectronico();         
                     return $this;
