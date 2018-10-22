@@ -76,7 +76,9 @@ class FacturacionElectronica{
             //date_default_timezone_set('America/Costa_Rica');
             error_log("[INFO]: iniciando FE...");
             self::$transaccion= $t;
+            error_log("[INFO]: t ok...");
             self::$fechaEmision= date_create();
+            error_log("[INFO]: emision ok...");
             // fe o nc
             // if(self::$transaccion->idDocumentoNC!=null)
             //     self::$transaccion->idDocumento = self::$transaccion->idDocumentoNC;
@@ -117,7 +119,7 @@ class FacturacionElectronica{
 
     public static function getApiUrl(){
         try{
-            require_once('globals.php');
+            require_once('Globals.php');
             if (file_exists(Globals::configFile)) {
                 $set = parse_ini_file(Globals::configFile,true); 
                 self::$apiUrl= $set[Globals::app]['apiurl'];
