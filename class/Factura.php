@@ -329,8 +329,10 @@ class Factura{
 
     function enviarDocumentoElectronico(){
         try {
+            error_log("[INFO]: lee factura");
             // consulta datos de factura en bd.
             $this->Read();
+            error_log("[INFO]: lee factura: ok");
             // envía la factura
             FacturacionElectronica::iniciar($this);
         }
@@ -375,16 +377,12 @@ class Factura{
             $data = DATA::Ejecutar($sql,$param, false);
             if($data)
             {
-                error_log("[INFO]: Guarda factura: ok");
                 //save array obj
                 if(ProductoXFactura::Create($this->detalleFactura)){
-                    error_log("[INFO]: Guarda detalle: ok");
                     $this->actualizaInventario($this->detalleOrden);
-                    error_log("[INFO]: Guarda actualiza inventario: ok");
                     // orden de factura para mostrar en despacho.
                     OrdenXFactura::$id=$this->id;
                     OrdenXFactura::Create($this->detalleOrden);
-                    error_log("[INFO]: Crea orden: ok");
                     // envio de comprobantes en tiempo real.
                     $this->enviarDocumentoElectronico();         
                     return $this;
