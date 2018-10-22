@@ -284,11 +284,11 @@ function facturar() {
         var idPrecio;
         switch (item[0]) {
             case (0):
-                precioUnitario = parseFloat(precioMediano.precio / 1.13); // resta el iv.
+                precioUnitario = parseFloat((precioMediano.precio / 1.13).toFixed(5)); // resta el iv.
                 idPrecio = precioMediano.id;
                 break;
             case (1):
-                precioUnitario = parseFloat(precioGrande.precio / 1.13); // resta el iv.
+                precioUnitario = parseFloat((precioGrande.precio / 1.13).toFixed(5)); // resta el iv.
                 idPrecio = precioGrande.id;
                 break;
         };
@@ -301,22 +301,22 @@ function facturar() {
         objetoDetalleFactura.idUnidadMedida = 78; // 78 =  unidades.
         objetoDetalleFactura.detalle = `${item[1]}, ${item[3]}, ${item[5]}, ${item[7]}`;
         objetoDetalleFactura.precioUnitario = precioUnitario;
-        objetoDetalleFactura.montoTotal = objetoDetalleFactura.precioUnitario * objetoDetalleFactura.cantidad;
+        objetoDetalleFactura.montoTotal = parseFloat((objetoDetalleFactura.precioUnitario * objetoDetalleFactura.cantidad).toFixed(5));
         objetoDetalleFactura.montoDescuento = 0;
         objetoDetalleFactura.naturalezaDescuento = 'No aplican descuentos';
-        objetoDetalleFactura.subTotal = objetoDetalleFactura.montoTotal - objetoDetalleFactura.montoDescuento;
+        objetoDetalleFactura.subTotal = parseFloat((objetoDetalleFactura.montoTotal - objetoDetalleFactura.montoDescuento).toFixed(5));
         // exoneracion
         //objetoDetalleFactura.idExoneracionImpuesto = null;
         // iv
         objetoDetalleFactura.codigoImpuesto = 1; // 1 = Impuesto General sobre las Ventas.
         objetoDetalleFactura.tarifaImpuesto = 13;
-        objetoDetalleFactura.montoImpuesto = objetoDetalleFactura.subTotal * (objetoDetalleFactura.tarifaImpuesto / 100); // debe tomar el impuesto como parametro de un tabla.
-        objetoDetalleFactura.montoTotalLinea = objetoDetalleFactura.subTotal + objetoDetalleFactura.montoImpuesto;
+        objetoDetalleFactura.montoImpuesto = parseFloat((objetoDetalleFactura.subTotal * (objetoDetalleFactura.tarifaImpuesto / 100)).toFixed(5)); // debe tomar el impuesto como parametro de un tabla.
+        objetoDetalleFactura.montoTotalLinea = parseFloat((objetoDetalleFactura.subTotal + objetoDetalleFactura.montoImpuesto).toFixed(5));
         facturaCli.detalleFactura.push(objetoDetalleFactura);
         // actualiza totales de factura.
-        facturaCli.totalVenta = facturaCli.totalVenta + objetoDetalleFactura.montoTotal;
-        facturaCli.totalDescuentos = facturaCli.totalDescuentos + objetoDetalleFactura.montoDescuento;
-        facturaCli.totalImpuesto = facturaCli.totalImpuesto + objetoDetalleFactura.montoImpuesto;
+        facturaCli.totalVenta = parseFloat((facturaCli.totalVenta + objetoDetalleFactura.montoTotal).toFixed(5));
+        facturaCli.totalDescuentos = parseFloat((facturaCli.totalDescuentos + objetoDetalleFactura.montoDescuento).toFixed(5));
+        facturaCli.totalImpuesto = parseFloat((facturaCli.totalImpuesto + objetoDetalleFactura.montoImpuesto).toFixed(5));
         //
         var objetoDetalleOrden = new Object();
         objetoDetalleOrden.idTamano = item[0];
@@ -340,13 +340,13 @@ function facturar() {
     facturaCli.totalServExentos = 0;
     facturaCli.totalMercanciasGravadas = facturaCli.totalVenta;
     facturaCli.totalMercanciasExentas = 0;
-    facturaCli.totalGravado = facturaCli.totalServGravados + facturaCli.totalMercanciasGravadas;
-    facturaCli.totalExento = facturaCli.totalServExentos + facturaCli.totalMercanciasExentas;
-    facturaCli.totalVenta = facturaCli.totalGravado + facturaCli.totalExento;
+    facturaCli.totalGravado = parseFloat((facturaCli.totalServGravados + facturaCli.totalMercanciasGravadas).toFixed(5));
+    facturaCli.totalExento = parseFloat((facturaCli.totalServExentos + facturaCli.totalMercanciasExentas).toFixed(5));
+    facturaCli.totalVenta = parseFloat((facturaCli.totalGravado + facturaCli.totalExento).toFixed(5));
     // total venta neta.
-    facturaCli.totalVentaneta = facturaCli.totalVenta - facturaCli.totalDescuentos;
+    facturaCli.totalVentaneta = parseFloat((facturaCli.totalVenta - facturaCli.totalDescuentos).toFixed(5));
     // total comprobante.
-    facturaCli.totalComprobante = facturaCli.totalVentaneta + facturaCli.totalImpuesto;
+    facturaCli.totalComprobante = parseFloat((facturaCli.totalVentaneta + facturaCli.totalImpuesto).toFixed(5));
     //
     $('#send').addClass('Nosend');
     $('#send').attr("disabled", "disabled");
