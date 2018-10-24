@@ -26,6 +26,7 @@ constructor(numeroOrden, p, idOrdenSalida) {
         }
         
         $('#btnAddProductoGenerado').attr("disabled", "disabled");
+        $('#btnSaveProductoGenerado').attr("disabled", "disabled");
         var miAccion = this.id == null ? 'Create' : 'Update';
         elaborarProducto.numeroOrden = $("#orden").val();
         elaborarProducto.idOrdenSalida = ordenSalida.id;
@@ -55,6 +56,7 @@ constructor(numeroOrden, p, idOrdenSalida) {
         })
             .done(function(e){
                 $('#btnAddProductoGenerado').attr("disabled", false);
+                $('#btnSaveProductoGenerado').attr("disabled", false);
                 swal({
                     type: 'success',
                     title: 'Número de Orden:' + $("#orden").val(),

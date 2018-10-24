@@ -74,7 +74,7 @@ class InventarioInsumo{
     //
     public static function salida($idInsumo, $outOrden, $outCantidad){
         try {
-            $sql="SELECT saldoCantidad, costoPromedio 
+            $sql="SELECT saldoCantidad, costoPromedio
                 FROM insumo WHERE id=:idInsumo;";
             $param = array(':idInsumo'=>$idInsumo);
             $data = DATA::Ejecutar($sql,$param);
