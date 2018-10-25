@@ -619,16 +619,14 @@ class Insumo {
             buttons: [
                 {
                     extend: 'excelHtml5',
-                    exportOptions: {columns: [ 1, 3, 5, 7, 9, 10, 11, 12, 13, 14, 15, 16, 17 ]},
-                    messageTop:'TITULO',
+                    exportOptions: {columns: [ 1, 3, 5, 7, 9, 10, 11, 12, 13, 14, 15 ]},
+                    messageTop:'Reporte de Insumos',
                     messageBottom:'PIE'
                 },
                 {
                     extend: 'pdfHtml5',
                     orientation : 'landscape',
-                    exportOptions: {
-                        columns: [ 1, 3, 5, 7, 9, 10, 11, 12, 13, 14, 15, 16, 17 ]
-                    }
+                    exportOptions: {columns: [ 1, 3, 5, 7, 9, 10, 11, 12, 13, 14, 15 ]}
                 }
             ],
             language: {
