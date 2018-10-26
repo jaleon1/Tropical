@@ -114,7 +114,7 @@ class Factura{
             require_once("UUID.php");
             // a. Datos de encabezado
             $this->id= $obj["id"] ?? UUID::v4();     
-            $this->fechaCreacion= $obj["fechaCreacion"] ?? null;  //  fecha de creacion en base de datos 
+            $this->fechaCreacion= $obj["fechaCreacion"] ?? null;  //  fecha de creacion en base de datos             
             $this->idBodega= $obj["idBodega"] ?? $_SESSION["userSession"]->idBodega;
             $this->consecutivo= $obj["consecutivo"] ?? null;
             $this->local= $obj["local"] ?? $_SESSION["userSession"]->local;
@@ -146,7 +146,16 @@ class Factura{
             $this->fechaEmision= $obj["fechaEmision"] ?? null; // emision del comprobante electronico.
             //
             $this->idReceptor = $obj['idReceptor'] ?? Receptor::default()->id; // si es null, utiliza el Receptor por defecto.
-            $this->idEmisor =  $_SESSION["userSession"]->idBodega;  //idEmisor no es necesario, es igual al idBodega.
+            // si la bodega es interna usa el certificado principal.
+            // bodega interna. 
+            $central = new Bodega();
+            $central->readCentral();
+            $bodega = new Bodega();
+            $bodega->ReadbyId($_SESSION['userSession']->idBodega);
+            if($bodega->tipo == $central->tipo){
+                $this->idEmisor =  $central->id;
+            } else $this->idEmisor =  $_SESSION["userSession"]->idBodega;
+            //
             $this->idUsuario=  $_SESSION["userSession"]->id;  
             //
             if(isset($obj["detalleFactura"] )){

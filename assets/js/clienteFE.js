@@ -75,7 +75,13 @@ class ClienteFE {
             }
         })
             .done(function (e) {
-                clientefe.ShowItemData(e);
+                if(e=='"INTERNA"')
+                {
+                     $('.x_content').html(`<center><h3>Registro de Contribuyente Interno</h3></center>`);
+                     $('.x_content').append(`<center><span>Dirígase a la Agencia Principal para realizar cambios</span></center>`);
+                }
+                else
+                    clientefe.ShowItemData(e);
             })
             .fail(function (e) {
                 clientefe.showError(e);
