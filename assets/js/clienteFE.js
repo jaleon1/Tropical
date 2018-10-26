@@ -613,6 +613,8 @@ class ClienteFE {
                 })
                 
             });
+            // datos sin modificar = conexion valida.
+            testConn.res = true;
             // $('#certDescargar').click(function(){
             //     clientefe.DownloadCertificado;
             // });

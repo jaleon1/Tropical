@@ -427,15 +427,13 @@ class ClienteFE{
             $bodega->ReadbyId($_SESSION['userSession']->idBodega);
             if($bodega->tipo == $central->tipo && $bodega->id != $central->id){
                 // interna. Solo muestra certificado en central
-                $param= array(':idBodega'=>$central->id);
-            }else { // externa.
-                $param= array(':idBodega'=>$_SESSION['userSession']->idBodega);
+                return "INTERNA";
             }
             $sql='SELECT id, codigoSeguridad, idCodigoPais, idDocumento, nombre, idTipoIdentificacion, identificacion, nombreComercial, idProvincia, idCanton, idDistrito, 
-            idBarrio, otrasSenas, numTelefono, correoElectronico, username, password, pinp12, downloadCode, certificado, cpath
-            FROM clienteFE
-            where idBodega=:idBodega';
-            // param
+                    idBarrio, otrasSenas, numTelefono, correoElectronico, username, password, pinp12, downloadCode, certificado, cpath
+                FROM clienteFE
+                where idBodega=:idBodega';
+            $param= array(':idBodega'=>$_SESSION['userSession']->idBodega);
             $data= DATA::Ejecutar($sql,$param);
             if($data){
                 $this->id= $data[0]['id'];
