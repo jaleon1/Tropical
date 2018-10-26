@@ -99,8 +99,32 @@ class Bodega{
         }
     }
 
+    function ReadbyId($id){
+        try {
+            $sql='SELECT b.id, b.nombre, b.descripcion, b.ubicacion, b.contacto, b.telefono, b.idTipoBodega as tipo
+                FROM bodega  b
+                where b.id=:id';
+            $param= array(':id'=> $id);
+            $data= DATA::Ejecutar($sql, $param);
+            if(count($data)) {
+                $this->id = $data[0]['id'];
+                $this->nombre = $data[0]['nombre'];
+                $this->descripcion = $data[0]['descripcion'];
+                $this->tipo = $data[0]['tipo'];
+                return $this;
+            }else return true;
+        }
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar la bodega'))
+            );
+        }
+    }
+
     function readByUser(){
-        try {                                    
+        try {
             require_once('Usuario.php');
             session_reset();
             $sql='SELECT b.id, b.nombre, b.descripcion , t.nombre as tipo
@@ -119,6 +143,29 @@ class Bodega{
             die(json_encode(array(
                 'code' => $e->getCode() ,
                 'msg' => 'Error al cargar la lista'))
+            );
+        }
+    }
+
+    function readCentral(){
+        try {
+            $sql='SELECT b.id, b.nombre, b.descripcion, b.ubicacion, b.contacto, b.telefono, b.idTipoBodega as tipo
+                FROM bodega  b
+                where b.local=0'; // local 0 = oficinas centrales.
+            $data= DATA::Ejecutar($sql);
+            if(count($data)) {
+                $this->id = $data[0]['id'];
+                $this->nombre = $data[0]['nombre'];
+                $this->descripcion = $data[0]['descripcion'];
+                $this->tipo = $data[0]['tipo'];
+                return $this;
+            }else return true;
+        }     
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar la bodega'))
             );
         }
     }
@@ -166,8 +213,7 @@ class Bodega{
             $param= array(':id'=>$this->id, ':nombre'=>$this->nombre, ':ubicacion'=>$this->ubicacion, ':descripcion'=>$this->descripcion, 
                 ':contacto'=>$this->contacto, ':telefono'=>$this->telefono, ':tipo'=>$this->tipo);
             $data = DATA::Ejecutar($sql,$param, false);
-            if($data)
-            {
+            if($data){
                 require_once("ProductosXBodega.php");
                 $pb = new ProductosXBodega();
                 $pb->idBodega= $this->id;
