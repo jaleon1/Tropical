@@ -405,10 +405,22 @@ class ClienteFE{
     }
 
     function checkProfile(){
+        // bodega interna. 
+        // require_once("Bodega.php");
+        $central = new Bodega();
+        $central->readCentral();
+        $bodega = new Bodega();
+        $bodega->ReadbyId($_SESSION['userSession']->idBodega);
+        $param='';
+        if($bodega->tipo == $central->tipo){
+            $param= array(':idBodega'=>$central->id);
+        }
+        else $param= array(':idBodega'=>$_SESSION["userSession"]->idBodega);
+        //
         $sql="SELECT id
             from clienteFE
             where idBodega=:idBodega";
-        $param= array(':idBodega'=>$_SESSION["userSession"]->idBodega);
+        //
         $data= DATA::Ejecutar($sql,$param);
         if(count($data)){
             return true;

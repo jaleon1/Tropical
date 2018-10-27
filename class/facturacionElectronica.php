@@ -63,7 +63,7 @@ class FacturacionElectronica{
                 }
             }
         }
-        catch(Exception $e) {
+        catch(Exception $e){
             Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
             historico::create(self::$transaccion->id, self::$transaccion->emisor, self::$transaccion->idDocumento, 5, 'ERROR_INICIAL: '. $e->getMessage());
             error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
@@ -110,7 +110,7 @@ class FacturacionElectronica{
                 }
             }
         }
-        catch(Exception $e) {
+        catch(Exception $e){
             Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
             historico::create(self::$transaccion->id, self::$transaccion->emisor, self::$transaccion->idDocumento, 5, 'ERROR_INICIAL: '. $e->getMessage());
             error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());

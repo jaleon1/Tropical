@@ -36,7 +36,7 @@
             FacturacionElectronica::APIConsultaComprobante($factura);
         }
     } 
-    catch(Exception $e) {
+    catch(Exception $e){ 
         error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
     }
     error_log("[INFO] Finaliza Consulta de Comprobantes");
