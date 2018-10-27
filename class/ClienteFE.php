@@ -436,6 +436,7 @@ class ClienteFE{
 
     function ReadProfile(){
         try {
+<<<<<<< HEAD
             // bodega interna. 
             $central = new Bodega();
             $central->readCentral();
@@ -448,6 +449,11 @@ class ClienteFE{
             $sql='SELECT id, codigoSeguridad, idCodigoPais, idDocumento, nombre, idTipoIdentificacion, identificacion, nombreComercial, idProvincia, idCanton, idDistrito, 
                     idBarrio, otrasSenas, numTelefono, correoElectronico, username, password, pinp12, downloadCode, certificado, cpath
                 FROM clienteFE
+=======
+            $sql='SELECT id, codigoSeguridad, idCodigoPais, idDocumento, nombre, idTipoIdentificacion, identificacion, nombreComercial, idProvincia, idCanton, idDistrito, 
+                idBarrio, otrasSenas, numTelefono, correoElectronico, username, password, pinp12, downloadCode, certificado, cpath
+                FROM clienteFE  
+>>>>>>> parent of 5091ef6... fix01
                 where idBodega=:idBodega';
             $param= array(':idBodega'=>$_SESSION['userSession']->idBodega);
             $data= DATA::Ejecutar($sql,$param);
