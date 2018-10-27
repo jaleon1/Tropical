@@ -320,14 +320,16 @@ class CajaXBodega{
                                             FROM factura
                                             where idMedioPago = 1 and
                                             fechaCreacion Between apertura.fechaApertura 
-                                            and CURRENT_TIMESTAMP()
+                                            and CURRENT_TIMESTAMP() and
+                                            idusuario = :idusuarioCajero
                                         ),
                 totalVentasTarjeta = 	(
                                             Select sum(totalComprobante)
                                             FROM factura
                                             where idMedioPago = 2 and
                                             fechaCreacion Between apertura.fechaApertura 
-                                            and CURRENT_TIMESTAMP()
+                                            and CURRENT_TIMESTAMP() and
+                                            idusuario = :idusuarioCajero
                                         )
             WHERE idusuarioCajero = :idusuarioCajero and
             estado ='1';";
