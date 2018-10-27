@@ -18,8 +18,7 @@ if(isset($_POST["action"])){
     require_once("ProductoXFactura.php");
     // Session
     if (!isset($_SESSION))
-        session_start();        
-    
+        session_start();
     // Instance
     $factura= new Factura();
     switch($opt){
@@ -751,7 +750,7 @@ class Factura{
                     return $data;
                 else return false;
             }
-            return "NOCONTRIB";
+            // return "NOCONTRIB";
         }
         catch(Exception $e){
             header('HTTP/1.0 400 Bad error');
