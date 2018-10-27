@@ -18,7 +18,7 @@ if(isset($_POST["action"])){
     require_once("ProductoXFactura.php");
     // Session
     if (!isset($_SESSION))
-        session_start();        
+        session_start();
     
     // Instance
     $factura= new Factura();
@@ -220,7 +220,8 @@ class Factura{
             $data= DATA::Ejecutar($sql);
             return $data;
         }     
-        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+        catch(Exception $e) { 
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
