@@ -989,7 +989,7 @@ class Producto {
                 {
                     extend: 'excelHtml5',
                     exportOptions: {columns: [1, 4, 5, 6, 7, 8, 9, 10, 11, 12]},
-                    messageTop:'TITULO',
+                    messageTop:'Reporte de Productos',
                     messageBottom:'PIE'
                 },
                 {

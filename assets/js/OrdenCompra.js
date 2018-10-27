@@ -137,7 +137,37 @@ class OrdenCompra {
         this.tablaOrdenCompra = $('#dsOrdenCompra').DataTable({
             responsive: true,
             destroy: true,
-            order: [[1, "desc"]],
+            order: [1, "desc"],
+            dom: 'Bfrtip',
+            buttons: [
+                {
+                    extend: 'excelHtml5',
+                    exportOptions: {columns: [1, 2, 3]},
+                    messageTop:'Reporte Orden de Compra',
+                    messageBottom:'PIE'
+                },
+                {
+                    extend: 'pdfHtml5',
+                    exportOptions: {columns: [1, 2, 3]},
+                    customize: function(doc) {
+                        doc.defaultStyle.alignment = 'right';
+                        doc.styles.tableHeader.alignment = 'right';
+                    } 
+                }
+            ],
+            language: {
+                "infoEmpty": "Sin Usuarios Registrados",
+                "emptyTable": "Sin Usuarios Registrados",
+                "search": "Buscar",
+                "zeroRecords": "No hay resultados",
+                "lengthMenu": "Mostrar _MENU_ registros",
+                "paginate": {
+                    "first": "Primera",
+                    "last": "Ultima",
+                    "next": "Siguiente",
+                    "previous": "Anterior"
+                }
+            },
             columns: [
                 {
                     title: "ID",
