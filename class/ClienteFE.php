@@ -6,6 +6,7 @@ if(isset($_POST["action"])){
     require_once("Conexion.php");
     require_once("Usuario.php");
     require_once("encdes.php");
+    require_once("Bodega.php");
     // Session
     if (!isset($_SESSION))
         session_start();
@@ -57,7 +58,13 @@ if(isset($_POST["action"])){
         case "DeleteCertificado":
             $clientefe->certificado = $_POST['certificado'];
             $clientefe->DeleteCertificado();
-            break;               
+            break;
+        case "testConnection":
+            $clientefe->username= $_POST["username"];
+            $clientefe->password= $_POST["password"];
+            $clientefe->correoElectronico= $_POST["correoElectronico"];
+            echo json_encode($clientefe->testConnection());
+            break;      
     }
 }
 
@@ -351,7 +358,7 @@ class ClienteFE{
     
     public function read(){
         try {
-            $sql='SELECT idBodega, codigoSeguridad, idCodigoPais, idDocumento, nombre, idTipoIdentificacion, identificacion, nombreComercial, idProvincia, idCanton, idDistrito,
+            $sql='SELECT id, idBodega, codigoSeguridad, idCodigoPais, idDocumento, nombre, idTipoIdentificacion, identificacion, nombreComercial, idProvincia, idCanton, idDistrito,
                     idBarrio, otrasSenas, numTelefono, correoElectronico, username, password, pinp12, downloadCode, certificado, cpath
                 FROM clienteFE
                 where idBodega=:idBodega';
@@ -398,24 +405,56 @@ class ClienteFE{
     }
 
     function checkProfile(){
-        $sql="SELECT id
-            from clienteFE
-            where idBodega=:idBodega";
-        $param= array(':idBodega'=>$_SESSION["userSession"]->idBodega);
-        $data= DATA::Ejecutar($sql,$param);
-        if(count($data)){
-            return true;
+        try{
+            // bodega interna. 
+            // require_once("Bodega.php");
+            $central = new Bodega();
+            $central->readCentral();
+            $bodega = new Bodega();
+            $bodega->ReadbyId($_SESSION['userSession']->idBodega);
+            $param='';
+            if($bodega->tipo == $central->tipo){
+                $param= array(':idBodega'=>$central->id);
+            }
+            else 
+                $param= array(':idBodega'=>$_SESSION["userSession"]->idBodega);
+            //
+            $sql="SELECT id
+                from clienteFE
+                where idBodega=:idBodega";
+            //
+            $data= DATA::Ejecutar($sql,$param);
+            if(count($data)){
+                return true;
+            }
+            else {
+                return false;
+            }
         }
-        else {
-            return false;
+        catch(Exception $e) { 
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar la lista'))
+            );
         }
     }
 
     function ReadProfile(){
         try {
+            // bodega interna. 
+            $central = new Bodega();
+            $central->readCentral();
+            $bodega = new Bodega();
+            $bodega->ReadbyId($_SESSION['userSession']->idBodega);
+            if($bodega->tipo == $central->tipo && $bodega->id != $central->id){
+                // interna. Solo muestra certificado en central
+                return "INTERNA";
+            }
             $sql='SELECT id, codigoSeguridad, idCodigoPais, idDocumento, nombre, idTipoIdentificacion, identificacion, nombreComercial, idProvincia, idCanton, idDistrito, 
-                idBarrio, otrasSenas, numTelefono, correoElectronico, username, password, pinp12, downloadCode, certificado, cpath
-                FROM clienteFE  
+                    idBarrio, otrasSenas, numTelefono, correoElectronico, username, password, pinp12, downloadCode, certificado, cpath
+                FROM clienteFE
                 where idBodega=:idBodega';
             $param= array(':idBodega'=>$_SESSION['userSession']->idBodega);
             $data= DATA::Ejecutar($sql,$param);
@@ -444,16 +483,15 @@ class ClienteFE{
                 // estado del certificado.
                 if(file_exists(Globals::certDir.$this->idBodega.'/'.$this->cpath) || file_exists(Globals::certDir.$this->idBodega.'\\'.$this->cpath))
                     $this->estadoCertificado=1;
-                else 
+                else
                     $this->estadoCertificado=0;   
                 $this->certificado= encdes::decifrar($data[0]['certificado']);
                 // variables para loguear al api server
                 $_SESSION['APISERVER-username']= $this->username;
                 $_SESSION['APISERVER-password']= $this->password;
                 return $this;
-            }
-            return null;
-        }     
+            } else return null;
+        }
         catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(

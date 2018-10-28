@@ -1,24 +1,27 @@
 <?php
-date_default_timezone_set('America/Costa_Rica');
-error_reporting(0);
+//date_default_timezone_set('America/Costa_Rica');
+//error_reporting(0);
 
 if(isset($_POST["action"])){
     $opt= $_POST["action"];
     unset($_POST['action']);
-    // Classes
+    // Classes    
     require_once("Conexion.php");
     require_once("Usuario.php");
-    require_once("ClienteFE.php");
-    require_once("Receptor.php");
+    require_once("ClienteFE.php");    
     require_once("facturacionElectronica.php");
-    require_once("encdes.php");
-    require_once("InventarioInsumoXBodega.php");
+    require_once("encdes.php");    
     require_once("consumible.php");
-    require_once("OrdenXFactura.php");
-    require_once("ProductoXFactura.php");
+    require_once("InventarioInsumoXBodega.php");
+    require_once("OrdenXFactura.php");    
+    require_once("Receptor.php");
+    require_once("Bodega.php");
+    // require_once("productoXFactura.php");
+    
     // Session
     if (!isset($_SESSION))
         session_start();
+    require_once("productoXFactura.php");
     // Instance
     $factura= new Factura();
     switch($opt){
@@ -113,7 +116,7 @@ class Factura{
             require_once("UUID.php");
             // a. Datos de encabezado
             $this->id= $obj["id"] ?? UUID::v4();     
-            $this->fechaCreacion= $obj["fechaCreacion"] ?? null;  //  fecha de creacion en base de datos 
+            $this->fechaCreacion= $obj["fechaCreacion"] ?? null;  //  fecha de creacion en base de datos             
             $this->idBodega= $obj["idBodega"] ?? $_SESSION["userSession"]->idBodega;
             $this->consecutivo= $obj["consecutivo"] ?? null;
             $this->local= $obj["local"] ?? $_SESSION["userSession"]->local;
@@ -145,7 +148,16 @@ class Factura{
             $this->fechaEmision= $obj["fechaEmision"] ?? null; // emision del comprobante electronico.
             //
             $this->idReceptor = $obj['idReceptor'] ?? Receptor::default()->id; // si es null, utiliza el Receptor por defecto.
-            $this->idEmisor =  $_SESSION["userSession"]->idBodega;  //idEmisor no es necesario, es igual al idBodega.
+            // si la bodega es interna usa el certificado principal.
+            // bodega interna. 
+            $central = new Bodega();
+            $central->readCentral();
+            $bodega = new Bodega();
+            $bodega->ReadbyId($_SESSION['userSession']->idBodega);
+            if($bodega->tipo == $central->tipo){
+                $this->idEmisor =  $central->id;
+            } else $this->idEmisor =  $_SESSION["userSession"]->idBodega;
+            //
             $this->idUsuario=  $_SESSION["userSession"]->id;  
             //
             if(isset($obj["detalleFactura"] )){
@@ -210,7 +222,8 @@ class Factura{
             $data= DATA::Ejecutar($sql);
             return $data;
         }     
-        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+        catch(Exception $e) { 
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
@@ -294,7 +307,7 @@ class Factura{
                 $receptor->id = $this->idReceptor;
                 $this->datosReceptor = $receptor->read();
                 $entidad = new ClienteFE();
-                $entidad->idBodega = $this->idBodega;
+                $entidad->idBodega = $this->idEmisor;
                 $this->datosEntidad = $entidad->read();
             }
             return $this;
@@ -701,7 +714,8 @@ class Factura{
                 return true;
             else return false;
         }
-        catch(Exception $e){
+        catch(Exception $e){ 
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
@@ -749,10 +763,10 @@ class Factura{
                 if(count($data))
                     return $data;
                 else return false;
-            }
-            // return "NOCONTRIB";
+            } else return "NOCONTRIB";
         }
-        catch(Exception $e){
+        catch(Exception $e){ 
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,

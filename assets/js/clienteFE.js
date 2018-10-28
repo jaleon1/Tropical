@@ -75,7 +75,13 @@ class ClienteFE {
             }
         })
             .done(function (e) {
-                clientefe.ShowItemData(e);
+                if(e=='"INTERNA"')
+                {
+                     $('.x_content').html(`<center><h3>Registro de Contribuyente Interno</h3></center>`);
+                     $('.x_content').append(`<center><span>Dirígase a la Agencia Principal para realizar cambios</span></center>`);
+                }
+                else
+                    clientefe.ShowItemData(e);
             })
             .fail(function (e) {
                 clientefe.showError(e);
@@ -613,6 +619,8 @@ class ClienteFE {
                 })
                 
             });
+            // datos sin modificar = conexion valida.
+            testConn.res = true;
             // $('#certDescargar').click(function(){
             //     clientefe.DownloadCertificado;
             // });
@@ -655,6 +663,56 @@ class ClienteFE {
         var validator = new FormValidator({ "events": ['blur', 'input', 'change'] }, document.forms["frm"]);
     }
 
+    probarConexion(showMess = false){
+        if ($('#username').val() == "" || $('#password').val() == "" ){
+            // swal({
+            //     type: 'warning',
+            //     title: 'Conexión...',
+            //     text: 'Debe llenar el formulario para probar la conexión.',
+            //     footer: '<a href>Contacte a Soporte Técnico</a>',
+            // });
+            return;
+        }
+        var miAccion = 'testConnection';
+        this.username = $("#username").val();
+        this.password = $("#password").val();
+        $.ajax({
+            type: "POST",
+            url: "class/clienteFE.php",
+            data: {
+                action: miAccion,
+                username: this.username,
+                password: this.password,
+                correoElectronico: this.correoElectronico
+            }
+        })
+            .done(function (e) {
+                if(e=='true'){
+                    if(showMess)
+                        swal({
+                            type: 'info',
+                            title: 'Conexión...',
+                            text: 'Conexión Exitosa!',
+                        });
+                    testConn.res = true;
+                }
+                else {
+                    if(showMess)
+                        swal({
+                            type: 'error',
+                            title: 'Conexión...',
+                            text: 'Conexión Fallida, revise su usuario y contraseña de ATV.',
+                            footer: '<a href>Contacte a Soporte Técnico</a>'
+                        });
+                    testConn.res = false;
+                }
+
+            })
+            .fail(function (e) {
+                usuario.showError(e);
+            });
+    };
+
     Init() {
         // validator.js
         var validator = new FormValidator({ "events": ['blur', 'input', 'change'] }, document.forms["frm"]);
@@ -671,8 +729,7 @@ class ClienteFE {
         }
         //NProgress
         $(function()
-        {
-            $(document)
+        {$(document)
                 .ajaxStart(NProgress.start)
                 .ajaxStop(NProgress.done);
         });
@@ -747,8 +804,47 @@ class ClienteFE {
         $('#btnEliminar').click(function () {
             
         });
+        // emisor.
+        // prueba de conexion// test conexion
+        $('#btnTest').click(function () {
+            clientefe.probarConexion(true);
+        });
+        // prueba de conexion// test conexion
+        $('#btnTest').click(function () {
+            clientefe.probarConexion(true);
+        });
+        $('#username').on('change', function (e) {
+            clientefe.probarConexion();
+        });
+        $('#password').on('change', function (e) {
+            clientefe.probarConexion();
+        });
     };
 }
 //Class Instance
 var dz;
 let clientefe = new ClienteFE();
+var testConn = {
+    aInternal: false,
+    aListener: function(val) {},
+    set res(val) {
+      this.aInternal = val;
+      this.aListener(val);
+    },
+    get res() {
+      return this.aInternal;
+    },
+    registerListener: function(listener) {
+      this.aListener = listener;
+    }
+}
+testConn.registerListener(function(val) {
+    if(!val){
+        $("#btnTest").text('Probar Conexión');
+        $("#btnTest").attr('class', 'btn btn-danger');
+    }
+    else {
+        $("#btnTest").text('Conexión Ok!');
+        $("#btnTest").attr('class', 'btn btn-success');
+    }
+});

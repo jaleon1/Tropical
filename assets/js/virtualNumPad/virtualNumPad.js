@@ -190,7 +190,7 @@ function crearDetalle(facUUID) {
 
         $.ajax({
                 type: "POST",
-                url: "class/ProductoXFactura.php",
+                url: "class/productoXFactura.php",
                 data: {
                     action: miAccion,
                     obj: JSON.stringify(prdVenta)

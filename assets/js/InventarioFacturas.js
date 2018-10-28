@@ -173,7 +173,7 @@ class InventarioFacturas {
 
         $.ajax({
             type: "POST",
-            url: "class/ProductoXFactura.php",
+            url: "class/productoXFactura.php",
             data: {
                 action: "ReadByIdFactura",
                 id: id.id
