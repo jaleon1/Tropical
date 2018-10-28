@@ -151,7 +151,7 @@ class Bodega{
         try {
             $sql='SELECT b.id, b.nombre, b.descripcion, b.ubicacion, b.contacto, b.telefono, b.idTipoBodega as tipo
                 FROM bodega  b
-                where b.local=0'; // local 0 = oficinas centrales.
+                where b.local=1'; // local 1 = oficinas centrales.
             $data= DATA::Ejecutar($sql);
             if(count($data)) {
                 $this->id = $data[0]['id'];

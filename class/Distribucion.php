@@ -46,6 +46,10 @@ class Distribucion{
     public $porcentajeDescuento=0;
     public $porcentajeIva=null;
     public $lista= [];
+    // para comprobante externo.
+    public $detalleFactura= []; 
+    public $datosReceptor = [];
+    public $datosEntidad = [];
 
     function __construct(){
         // identificador único
@@ -54,17 +58,53 @@ class Distribucion{
         }
         if(isset($_POST["obj"])){
             $obj= json_decode($_POST["obj"],true);
+            unset($_POST['obj']);
             require_once("UUID.php");
             $this->id= $obj["id"] ?? UUID::v4();
-            //$this->fecha= $obj["fecha"] ?? '';            
-            $this->idBodega= $obj["idBodega"] ?? $_SESSION["userSession"]->idBodega; // si no está seteada el idBodega, toma el de la sesion.
-            $this->porcentajeDescuento= $obj["porcentajeDescuento"] ?? 0;
-            $this->porcentajeIva= $obj["porcentajeIva"] ?? '';
-            $this->orden= $obj["orden"] ?? '';      
+            $this->idBodega= $obj["idBodega"];
+            $this->orden= $obj["orden"] ?? '';
+            // $this->porcentajeDescuento= $obj["porcentajeDescuento"] ?? 0;
+            // $this->porcentajeIva= $obj["porcentajeIva"] ?? '';
             //$this->idUsuario= $obj["idUsuario"] ?? null;
+            // comprobante electronico para bodega externa.
+            $this->fechaCreacion= $obj["fechaCreacion"] ?? null;  //  fecha de creacion en base de datos.
+            //$this->idEntidad= $obj["idEntidad"] ?? $_SESSION["userSession"]->idEntidad;            
+            $this->consecutivo= $this->orden;
+            $this->local= '001';//$obj["local"] ?? $_SESSION["userSession"]->local;
+            $this->terminal= '00001'; //$obj["terminal"] ?? $_SESSION["userSession"]->terminal;
+            $this->idCondicionVenta= 1;
+            $this->idSituacionComprobante= 1;
+            $this->idEstadoComprobante= 1;
+            $this->plazoCredito= 0;
+            $this->idMedioPago= 1;
+            // c. Resumen de la factura/Total de la Factura 
+            // definir si es servicio o mercancia (producto).
+            $this->idCodigoMoneda= 55; // CRC
+            $this->tipoCambio= 595.00; // tipo de cambio dinamico con BCCR
+            $this->totalServGravados= $obj['totalServGravados'];
+            $this->totalServExentos= $obj['totalServExentos'];
+            $this->totalMercanciasGravadas= $obj['totalMercanciasGravadas'];
+            $this->totalMercanciasExentas= $obj['totalMercanciasExentas'];
+            $this->totalGravado= $obj['totalGravado'];
+            $this->totalExento= $obj['totalExento'];
+            $this->totalVenta= $obj["totalVenta"];
+            $this->totalDescuentos= $obj["totalDescuentos"];
+            $this->totalVentaneta= $obj["totalVentaneta"];
+            $this->totalImpuesto= $obj["totalImpuesto"];
+            $this->totalComprobante= $obj["totalComprobante"];
+            // $this->montoEfectivo= $obj["montoEfectivo"]; //Jason: Lo comente temporalmente
+            // $this->montoTarjeta= $obj["montoTarjeta"];   //Jason: Lo comente temporalmente
+            // d. Informacion de referencia
+            $this->idDocumento = 1; // Documento de Referencia.            
+            $this->fechaEmision= $obj["fechaEmision"] ?? null; // emision del comprobante electronico.
+            //
+            $this->idReceptor = $obj['idReceptor'] ?? Receptor::default()->id; // si es null, utiliza el Receptor por defecto.
+            //$this->idEmisor =  $_SESSION["userSession"]->idEntidad;  //idEmisor no es necesario, es igual al idEntidad.
+            $this->idUsuario=  $_SESSION["userSession"]->id;
             // lista.
             if(isset($obj["lista"] )){
                 require_once("ProductosXDistribucion.php");
+                require_once("productoXFactura.php");
                 //
                 foreach ($obj["lista"] as $itemlist) {
                     $item= new ProductosXDistribucion();
@@ -73,6 +113,27 @@ class Distribucion{
                     $item->cantidad= $itemlist['cantidad'];
                     $item->valor= $itemlist['valor'];
                     array_push ($this->lista, $item);
+                    // b. Detalle de la mercancía o servicio prestado
+                    $item= new ProductoXFactura();
+                    $item->idFactura = $this->id;
+                    //$item->idPrecio= $itemlist['idPrecio'];
+                    $item->numeroLinea= $itemlist['numeroLinea'];
+                    $item->idTipoCodigo= $itemlist['idTipoCodigo']?? 1;
+                    $item->codigo= $itemlist['codigo'] ?? 999;
+                    $item->cantidad= $itemlist['cantidad'] ?? 1;
+                    $item->idUnidadMedida= $itemlist['idUnidadMedida'] ?? 78;
+                    $item->detalle= $itemlist['detalle'];
+                    $item->precioUnitario= $itemlist['precioUnitario'];                    
+                    $item->montoTotal= $itemlist['montoTotal'];
+                    $item->montoDescuento= $itemlist['montoDescuento'];
+                    $item->naturalezaDescuento= $itemlist['naturalezaDescuento']??'No aplican descuentos'; // en Tropical no se manejan descuentos
+                    $item->subTotal= $itemlist['subTotal'];
+                    $item->idExoneracionImpuesto= $itemlist['idExoneracionImpuesto'] ?? null;
+                    $item->codigoImpuesto= $itemlist['codigoImpuesto'] ?? 1; // impuesto ventas = 1
+                    $item->tarifaImpuesto= $itemlist['tarifaImpuesto'];
+                    $item->montoImpuesto= $itemlist['montoImpuesto'];                    
+                    $item->montoTotalLinea= $itemlist['montoTotalLinea']; // subtotal + impuesto.
+                    array_push ($this->detalleFactura, $item);
                 }
             }
         }
@@ -190,15 +251,13 @@ class Distribucion{
                     $param= array(':idBodega'=>$this->idBodega);
                     $data = DATA::Ejecutar($sql,$param);
                     if(count($data)){
-                        $this->Aceptar();
-                        $this->Read();
+                        $this->Aceptar();                        
                     }
                     else{ // es externa. Crea comprobante.
-                        $this->Read();
                         $this->setFacturaExterna();                        
                     }
                     // retorna orden autogenerada.
-                    return $this;
+                    return $this->Read();
                 }
                 else throw new Exception('Error al guardar los productos.', 03);
             }
@@ -216,41 +275,24 @@ class Distribucion{
     function setFacturaExterna(){
         try{
             require_once('Factura.php');
+            require_once('Receptor.php');
+            require_once('facturacionElectronica.php');
+            require_once('Bodega.php');
+            require_once('ClienteFE.php');
             $factura = new Factura();
+            $factura = $this;
+            // receptor
+            $receptor = new ClienteFE();
+            $receptor->idBodega = $this->idReceptor;
+            $factura->datosReceptor = $receptor->read();
+            // emisor - Central.
+            $central = new Bodega();
+            $central->readCentral();
+            $entidad = new ClienteFE();
+            $entidad->idBodega = $central->id;
+            $factura->datosEntidad = $entidad->read();
             //
-            $factura->id= $this->id;
-            $factura->fechaCreacion=   $this->fecha;  //  fecha de creacion en base de datos             
-            $factura->idBodega= $this->idBodega;
-            $factura->consecutivo= $this->orden;
-            $factura->local= '001';
-            $factura->terminal= '00001';
-            $factura->idCondicionVenta= 1;
-            $factura->idSituacionComprobante= 1;
-            $factura->idEstadoComprobante= 1;
-            $factura->plazoCredito= 0;
-            $factura->idMedioPago= 1;
-            // c. Resumen de la factura/Total de la Factura 
-            // definir si es servicio o mercancia (producto). En caso Tropical, siempre es mercancia
-            $factura->idCodigoMoneda= 55; // CRC
-            $factura->tipoCambio= 595.00; // tipo de cambio dinamico con BCCR
-            $factura->totalServGravados= $obj['totalServGravados'];
-            $factura->totalServExentos= $obj['totalServExentos'];
-            $factura->totalMercanciasGravadas= $obj['totalMercanciasGravadas'];
-            $factura->totalMercanciasExentas= $obj['totalMercanciasExentas'];
-            $factura->totalGravado= $obj['totalGravado'];
-            $factura->totalExento= $obj['totalExento'];
-            $factura->totalVenta= $obj["totalVenta"];
-            $factura->totalDescuentos= $obj["totalDescuentos"];
-            $factura->totalVentaneta= $obj["totalVentaneta"];
-            $factura->totalImpuesto= $obj["totalImpuesto"];
-            $factura->totalComprobante= $obj["totalComprobante"];
-            $factura->montoEfectivo= $obj["montoEfectivo"] ?? null;
-            $factura->montoTarjeta= $obj["montoTarjeta"] ?? null;
-            // d. Informacion de referencia
-            $factura->idDocumento = 1;//$_SESSION["userSession"]->idDocumento; // Documento de Referencia.
-            $factura->fechaEmision=  null; // emision del comprobante electronico.
-            //
-            $factura->idReceptor = $this->bodegaexternaaaaaaaa ?? Receptor::default()->id; // si es null, utiliza el Receptor por defecto.
+            FacturacionElectronica::iniciar($factura);
         }
         catch(Exception $e) { 
             error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
