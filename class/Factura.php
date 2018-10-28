@@ -19,7 +19,6 @@ if(isset($_POST["action"])){
     // Session
     if (!isset($_SESSION))
         session_start();
-    
     // Instance
     $factura= new Factura();
     switch($opt){
