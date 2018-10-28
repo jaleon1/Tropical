@@ -60,10 +60,6 @@ class Distribucion {
         //
         $('#btnDistribucion').attr("disabled", "disabled");
         var miAccion = distr.id == null ? 'Create' : 'Update';        
-        distr.orden = $("#orden").val();
-        distr.idBodega = bodega.id;
-        distr.porcentajeDescuento = $("#desc_100").val();
-        distr.porcentajeIva=$("#iv_100").val();
         //
         distr.lista = [];
         $('#tDistribucion tbody tr').each(function(i, item) {
@@ -74,6 +70,12 @@ class Distribucion {
             objlista.valor= $(item).find('td:eq(6)').attr('value'); // valor: precio de venta para distribucióncion bodega externa. 
             distr.lista.push(objlista);
         });
+        //
+        distr.orden = $("#orden").val();
+        distr.idBodega = bodega.id;
+        distr.porcentajeDescuento = $("#desc_100").val();
+        distr.porcentajeIva=$("#iv_100").val();
+        //
         $.ajax({
             type: "POST",
             url: "class/Distribucion.php",

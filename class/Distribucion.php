@@ -182,23 +182,78 @@ class Distribucion{
             {
                 //save array obj
                 if(ProductosXDistribucion::Create($this->lista)){
-                    // si es una bodega interna, acepta la distribución.
+                    // si es una bodega interna, acepta la distribución. Si es externa, crea el comprobante electrónico.
                     $sql="SELECT t.nombre
                         FROM tropical.bodega b
                         INNER JOIN tipoBodega t on t.id = b.idTipoBodega
                         WHERE b.id=:idBodega and t.nombre= 'Interna' ";
                     $param= array(':idBodega'=>$this->idBodega);
                     $data = DATA::Ejecutar($sql,$param);
-                    if(count($data))
+                    if(count($data)){
                         $this->Aceptar();
+                        $this->Read();
+                    }
+                    else{ // es externa. Crea comprobante.
+                        $this->Read();
+                        $this->setFacturaExterna();                        
+                    }
                     // retorna orden autogenerada.
-                    return $this->Read();
+                    return $this;
                 }
                 else throw new Exception('Error al guardar los productos.', 03);
             }
             else throw new Exception('Error al guardar.', 02);
         }     
         catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }
+    }
+
+    function setFacturaExterna(){
+        try{
+            require_once('Factura.php');
+            $factura = new Factura();
+            //
+            $factura->id= $this->id;
+            $factura->fechaCreacion=   $this->fecha;  //  fecha de creacion en base de datos             
+            $factura->idBodega= $this->idBodega;
+            $factura->consecutivo= $this->orden;
+            $factura->local= '001';
+            $factura->terminal= '00001';
+            $factura->idCondicionVenta= 1;
+            $factura->idSituacionComprobante= 1;
+            $factura->idEstadoComprobante= 1;
+            $factura->plazoCredito= 0;
+            $factura->idMedioPago= 1;
+            // c. Resumen de la factura/Total de la Factura 
+            // definir si es servicio o mercancia (producto). En caso Tropical, siempre es mercancia
+            $factura->idCodigoMoneda= 55; // CRC
+            $factura->tipoCambio= 595.00; // tipo de cambio dinamico con BCCR
+            $factura->totalServGravados= $obj['totalServGravados'];
+            $factura->totalServExentos= $obj['totalServExentos'];
+            $factura->totalMercanciasGravadas= $obj['totalMercanciasGravadas'];
+            $factura->totalMercanciasExentas= $obj['totalMercanciasExentas'];
+            $factura->totalGravado= $obj['totalGravado'];
+            $factura->totalExento= $obj['totalExento'];
+            $factura->totalVenta= $obj["totalVenta"];
+            $factura->totalDescuentos= $obj["totalDescuentos"];
+            $factura->totalVentaneta= $obj["totalVentaneta"];
+            $factura->totalImpuesto= $obj["totalImpuesto"];
+            $factura->totalComprobante= $obj["totalComprobante"];
+            $factura->montoEfectivo= $obj["montoEfectivo"] ?? null;
+            $factura->montoTarjeta= $obj["montoTarjeta"] ?? null;
+            // d. Informacion de referencia
+            $factura->idDocumento = 1;//$_SESSION["userSession"]->idDocumento; // Documento de Referencia.
+            $factura->fechaEmision=  null; // emision del comprobante electronico.
+            //
+            $factura->idReceptor = $this->bodegaexternaaaaaaaa ?? Receptor::default()->id; // si es null, utiliza el Receptor por defecto.
+        }
+        catch(Exception $e) { 
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
