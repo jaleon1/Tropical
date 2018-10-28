@@ -15,11 +15,13 @@ if(isset($_POST["action"])){
     require_once("InventarioInsumoXBodega.php");
     require_once("OrdenXFactura.php");    
     require_once("Receptor.php");
+    require_once("Bodega.php");
     // require_once("productoXFactura.php");
     
     // Session
     if (!isset($_SESSION))
         session_start();
+    require_once("productoXFactura.php");
     // Instance
     $factura= new Factura();
     switch($opt){
@@ -305,7 +307,7 @@ class Factura{
                 $receptor->id = $this->idReceptor;
                 $this->datosReceptor = $receptor->read();
                 $entidad = new ClienteFE();
-                $entidad->idBodega = $this->idBodega;
+                $entidad->idBodega = $this->idEmisor;
                 $this->datosEntidad = $entidad->read();
             }
             return $this;
@@ -761,8 +763,7 @@ class Factura{
                 if(count($data))
                     return $data;
                 else return false;
-            }
-            return "NOCONTRIB";
+            } else return "NOCONTRIB";
         }
         catch(Exception $e){ 
             error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());

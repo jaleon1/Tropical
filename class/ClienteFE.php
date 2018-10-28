@@ -358,7 +358,7 @@ class ClienteFE{
     
     public function read(){
         try {
-            $sql='SELECT idBodega, codigoSeguridad, idCodigoPais, idDocumento, nombre, idTipoIdentificacion, identificacion, nombreComercial, idProvincia, idCanton, idDistrito,
+            $sql='SELECT id, idBodega, codigoSeguridad, idCodigoPais, idDocumento, nombre, idTipoIdentificacion, identificacion, nombreComercial, idProvincia, idCanton, idDistrito,
                     idBarrio, otrasSenas, numTelefono, correoElectronico, username, password, pinp12, downloadCode, certificado, cpath
                 FROM clienteFE
                 where idBodega=:idBodega';
