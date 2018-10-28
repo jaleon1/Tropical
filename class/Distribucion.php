@@ -1,4 +1,7 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 0);
+
 if(isset($_POST["action"])){
     $opt= $_POST["action"];
     unset($_POST['action']);
@@ -6,6 +9,12 @@ if(isset($_POST["action"])){
     require_once("Conexion.php");
     require_once("Usuario.php");
     require_once("ProductosXDistribucion.php");
+    require_once('Factura.php');
+    require_once('Receptor.php');
+    require_once('facturacionElectronica.php');
+    require_once("Bodega.php");
+    require_once("ClienteFE.php");
+    require_once("encdes.php");
     // Session
     if (!isset($_SESSION))
         session_start();
@@ -22,6 +31,14 @@ if(isset($_POST["action"])){
             echo json_encode($distribucion->ReadbyOrden());
             break;
         case "Create":
+            if($distribucion->datosReceptor == null){
+                echo json_encode("NORECEPTOR");
+                return false;
+            }
+            if($distribucion->datosEntidad == null){
+                echo json_encode("NOCONTRIB");
+                return false;
+            }
             echo json_encode($distribucion->Create());
             break;
         case "Update":
@@ -59,6 +76,22 @@ class Distribucion{
         if(isset($_POST["obj"])){
             $obj= json_decode($_POST["obj"],true);
             unset($_POST['obj']);
+            // si la bodega es externa, tiene que estar el ClienteFE (receptor) registrado.
+            $central = new Bodega();
+            $central->readCentral();
+            $externa = new Bodega();
+            $externa->ReadbyId($obj["idBodega"]); // bodega receptor.
+            if($externa->tipo != $central->tipo){
+                // receptor
+                $receptor = new ClienteFE();
+                $receptor->idBodega = $this->idReceptor;
+                $this->datosReceptor = $receptor->read();                
+                // emisor - Central.
+                $entidad = new ClienteFE();
+                $entidad->idBodega = $central->id;
+                $this->datosEntidad = $entidad->read();
+            }
+            //
             require_once("UUID.php");
             $this->id= $obj["id"] ?? UUID::v4();
             $this->idBodega= $obj["idBodega"];
@@ -254,7 +287,7 @@ class Distribucion{
                         $this->Aceptar();                        
                     }
                     else{ // es externa. Crea comprobante.
-                        $this->setFacturaExterna();                        
+                        FacturacionElectronica::iniciar($this);
                     }
                     // retorna orden autogenerada.
                     return $this->Read();
@@ -264,38 +297,6 @@ class Distribucion{
             else throw new Exception('Error al guardar.', 02);
         }     
         catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
-            header('HTTP/1.0 400 Bad error');
-            die(json_encode(array(
-                'code' => $e->getCode() ,
-                'msg' => $e->getMessage()))
-            );
-        }
-    }
-
-    function setFacturaExterna(){
-        try{
-            require_once('Factura.php');
-            require_once('Receptor.php');
-            require_once('facturacionElectronica.php');
-            require_once('Bodega.php');
-            require_once('ClienteFE.php');
-            $factura = new Factura();
-            $factura = $this;
-            // receptor
-            $receptor = new ClienteFE();
-            $receptor->idBodega = $this->idReceptor;
-            $factura->datosReceptor = $receptor->read();
-            // emisor - Central.
-            $central = new Bodega();
-            $central->readCentral();
-            $entidad = new ClienteFE();
-            $entidad->idBodega = $central->id;
-            $factura->datosEntidad = $entidad->read();
-            //
-            FacturacionElectronica::iniciar($factura);
-        }
-        catch(Exception $e) { 
-            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,

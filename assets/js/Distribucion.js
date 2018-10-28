@@ -126,7 +126,22 @@ class Distribucion {
             })
             .done(function (e) {
                 // muestra el numero de orden: IMPRIMIR.
-                distr.ticketPrint(e)
+                if (JSON.parse(e) == 'NORECEPTOR') {
+                    swal({
+                        type: 'warning',
+                        title: 'Receptor',
+                        text: 'Receptor no registrado para Facturación Electrónica',
+                        allowOutsideClick: false
+                    });
+                }
+                else if (JSON.parse(e) == 'NOCONTRIB') {
+                    swal({
+                        type: 'warning',
+                        title: 'Contibuyente',
+                        text: 'Emisor no registrado para Facturación Electrónica',
+                        allowOutsideClick: false
+                    });
+                } else distr.ticketPrint(e)
                 // var data = JSON.parse(e)[0];
                 // swal({
                 //     type: 'success',
