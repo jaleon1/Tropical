@@ -15,7 +15,7 @@ if(isset($_POST["action"])){
     require_once("InventarioInsumoXBodega.php");
     require_once("OrdenXFactura.php");    
     require_once("Receptor.php");
-    require_once("productoXFactura.php"); 
+    // require_once("productoXFactura.php");
     
     // Session
     if (!isset($_SESSION))

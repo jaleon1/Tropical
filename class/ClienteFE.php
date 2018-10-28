@@ -408,15 +408,15 @@ class ClienteFE{
         try{
             // bodega interna. 
             // require_once("Bodega.php");
-            // $central = new Bodega();
-            // $central->readCentral();
-            // $bodega = new Bodega();
-            // $bodega->ReadbyId($_SESSION['userSession']->idBodega);
-            // $param='';
-            // if($bodega->tipo == $central->tipo){
-            //     $param= array(':idBodega'=>$central->id);
-            // }
-            // else 
+            $central = new Bodega();
+            $central->readCentral();
+            $bodega = new Bodega();
+            $bodega->ReadbyId($_SESSION['userSession']->idBodega);
+            $param='';
+            if($bodega->tipo == $central->tipo){
+                $param= array(':idBodega'=>$central->id);
+            }
+            else 
                 $param= array(':idBodega'=>$_SESSION["userSession"]->idBodega);
             //
             $sql="SELECT id
