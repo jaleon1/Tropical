@@ -5,17 +5,18 @@ error_reporting(0);
 if(isset($_POST["action"])){
     $opt= $_POST["action"];
     unset($_POST['action']);
-    // Classes
+    // Classes    
     require_once("Conexion.php");
     require_once("Usuario.php");
-    require_once("ClienteFE.php");
-    require_once("Receptor.php");
+    require_once("ClienteFE.php");    
     require_once("facturacionElectronica.php");
-    require_once("encdes.php");
-    require_once("InventarioInsumoXBodega.php");
+    require_once("encdes.php");    
     require_once("consumible.php");
-    require_once("OrdenXFactura.php");
-    require_once("ProductoXFactura.php");
+    require_once("InventarioInsumoXBodega.php");
+    require_once("OrdenXFactura.php");    
+    require_once("Receptor.php");
+    require_once("ProductoXFactura.php"); 
+    
     // Session
     if (!isset($_SESSION))
         session_start();
