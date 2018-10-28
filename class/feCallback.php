@@ -6,7 +6,7 @@
     include_once("Receptor.php");
     include_once("Factura.php");
     include_once("encdes.php");
-    require_once("ProductoXFactura.php");
+    require_once("productoXFactura.php");
     try{
         // Comprobantes 1-4-8.
         $sql='SELECT id

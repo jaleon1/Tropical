@@ -1,6 +1,6 @@
 <?php
-date_default_timezone_set('America/Costa_Rica');
-error_reporting(0);
+//date_default_timezone_set('America/Costa_Rica');
+//error_reporting(0);
 
 if(isset($_POST["action"])){
     $opt= $_POST["action"];
@@ -15,7 +15,7 @@ if(isset($_POST["action"])){
     require_once("InventarioInsumoXBodega.php");
     require_once("OrdenXFactura.php");    
     require_once("Receptor.php");
-    require_once("ProductoXFactura.php"); 
+    require_once("productoXFactura.php"); 
     
     // Session
     if (!isset($_SESSION))
