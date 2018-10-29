@@ -916,7 +916,7 @@ class FacturacionElectronica{
                 historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 2, 'Comprobante ENVIADO EXITOSAMENTE, STATUS('.$sArray->resp->Status.')');
                 if(!self::$distr)
                     Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 2, self::$fechaEmision->format("c"));
-                else Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 2, self::$fechaEmision->format("c"));
+                else Distribucion::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 2, self::$fechaEmision->format("c"));
             }
             //
             error_log("[INFO] API ENVIO EXITOSO!" );
