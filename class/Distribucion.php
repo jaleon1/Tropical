@@ -83,7 +83,7 @@ class Distribucion{
             $this->idBodega= $obj["idBodega"];
             $this->orden= $obj["orden"] ?? '';
             // $this->porcentajeDescuento= $obj["porcentajeDescuento"] ?? 0;
-            // $this->porcentajeIva= $obj["porcentajeIva"] ?? '';
+            $this->porcentajeIva= $obj["porcentajeIva"] ?? '13';
             //$this->idUsuario= $obj["idUsuario"] ?? null;
             // comprobante electronico para bodega externa.
             $this->fechaCreacion= $obj["fechaCreacion"] ?? null;  //  fecha de creacion en base de datos.
@@ -180,8 +180,8 @@ class Distribucion{
             //     FROM     distribucion       
             //     ORDER BY fecha asc';
             $sql= 'SELECT d.id, fecha, orden, u.userName, b.nombre as bodega, e.nombre as estado, 
-                    (sum(cantidad*valor) + sum(cantidad*valor)*0.13) as total
-                FROM tropical.distribucion d 
+                    (sum(cantidad*valor) + sum(cantidad*valor)*0.13) as total, idEstadoComprobante
+                FROM tropical.distribucion d
                     INNER JOIN usuario u on u.id=d.idUsuario
                     INNER JOIN bodega b on b.id=d.idBodega
                     INNER JOIN estado e on e.id=d.idEstado
@@ -191,7 +191,8 @@ class Distribucion{
             $data= DATA::Ejecutar($sql);
             return $data;
         }     
-        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+        catch(Exception $e) { 
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,

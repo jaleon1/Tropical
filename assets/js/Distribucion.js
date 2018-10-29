@@ -712,6 +712,11 @@ class Distribucion {
                     data: "estado"
                 },
                 {
+                    title: "ESTADO COMPROBANTE",
+                    data: "idEstadoComprobante",
+                    width: '5%'
+                },
+                {
                     title: "ACCION",
                     orderable: false,
                     searchable: false,
