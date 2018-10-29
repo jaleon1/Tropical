@@ -295,6 +295,7 @@ class Distribucion{
                         $factura= $this;
                         $this->Read();
                         $factura->consecutivo= $this->orden;
+                        FacturacionElectronica::$distr= true;
                         FacturacionElectronica::iniciar($factura);
                         // retorna orden autogenerada.
                         return $this;
@@ -429,6 +430,102 @@ class Distribucion{
                 'code' => $e->getCode() ,
                 'msg' => $e->getMessage()))
             );
+        }
+    }
+
+    public static function setClave($documento, $idDistr, $clave, $consecutivoFE=null){
+        try {
+            $sql='';
+            $param= [];
+            switch($documento){
+                case 1: //fe
+                case 4: //te
+                case 8: //contingencia
+                    $sql="UPDATE distribucion
+                        SET clave=:clave, consecutivoFE=:consecutivoFE
+                        WHERE id=:idDistr";
+                    $param= array(':idDistr'=>$idDistr, ':clave'=>$clave, ':consecutivoFE'=>$consecutivoFE);
+                break;
+                case 3: // NC
+                    $sql="UPDATE distribucion
+                        SET claveNC=:claveNC
+                        WHERE id=:idDistr";
+                    $param= array(':idDistr'=>$idDistr, ':claveNC'=>$clave);
+                break;
+            }
+            //
+            $data = DATA::Ejecutar($sql,$param, false);
+            if($data)
+                return true;
+            else throw new Exception('Error al guardar el histórico Distr.', 555);
+        }     
+        catch(Exception $e) {
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            // debe notificar que no se esta actualizando el historico de comprobantes.
+        }
+    }
+
+    public static function updateEstado($documento, $idDistr, $idEstadoComprobante, $fechaEmision){
+        try {
+            $sql='';
+            $param= [];
+            switch($documento){
+                case 1: //fe
+                case 4: //te
+                case 8: //contingencia                
+                    $sql="UPDATE distribucion
+                        SET idEstadoComprobante=:idEstadoComprobante, fechaEmision=:fechaEmision
+                        WHERE id=:idDistr";
+                    $param= array(':idDistr'=>$idDistr, ':idEstadoComprobante'=>$idEstadoComprobante, ':fechaEmision'=>$fechaEmision);
+                break;
+                case 3: // NC
+                    $sql="UPDATE distribucion
+                        SET idEstadoNC=:idEstadoNC, fechaEmisionNC=:fechaEmisionNC
+                        WHERE id=:idDistr";
+                    $param= array(':idDistr'=>$idDistr, ':idEstadoNC'=>$idEstadoComprobante, ':fechaEmisionNC'=>$fechaEmision);
+                break;
+            }
+            //
+            $data = DATA::Ejecutar($sql,$param, false);
+            if($data)
+                return true;
+            else throw new Exception('Error al guardar el histórico distr.', 556);
+        }     
+        catch(Exception $e) {
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            // debe notificar que no se esta actualizando el historico de comprobantes.
+        }
+    }
+
+    public static function updateIdEstadoComprobante($idDistr, $documento, $idEstadoComprobante){
+        try {
+            $sql='';
+            $param= [];
+            switch($documento){
+                case 1: //fe
+                case 4: //te
+                case 8: //contingencia                
+                    $sql="UPDATE distribucion
+                        SET idEstadoComprobante=:idEstadoComprobante
+                        WHERE id=:idDistr";
+                    $param= array(':idDistr'=>$idDistr, ':idEstadoComprobante'=>$idEstadoComprobante);
+                break;
+                case 3: // NC
+                    $sql="UPDATE distribucion
+                        SET idEstadoNC=:idEstadoNC
+                        WHERE id=:idDistr";
+                    $param= array(':idDistr'=>$idDistr, ':idEstadoNC'=>$idEstadoComprobante);
+                break;
+            }
+            //
+            $data = DATA::Ejecutar($sql,$param, false);
+            if($data)
+                return true;
+            else throw new Exception('Error al actualizar el estado del comprobante.', 0456);            
+        }     
+        catch(Exception $e) {
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            // debe notificar que no se esta actualizando el historico de comprobantes.
         }
     }
 }
