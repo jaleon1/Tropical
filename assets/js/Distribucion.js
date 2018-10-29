@@ -289,6 +289,7 @@ class Distribucion {
     ShowItemData(e) {
         var data = JSON.parse(e);
         distr = new Distribucion(data.id, data.orden, data.fecha, data.idUsuario, data.idBodega, data.porcentajeDescuento, data.porcentajeIva, data.lista, data.bodega);
+        distr.total= data.total;
         $("#detalleDistribucion").empty();
         var detalleDistribucion =
             `<button type="button" class="close" data-dismiss="modal">
@@ -304,6 +305,11 @@ class Distribucion {
             <div class="row">                
                 <div class="col-md-6 col-sm-6 col-xs-6">
                     <p>Destino: ${distr.bodega}</p>
+                </div>
+            </div>
+            <div class="row">                
+                <div class="col-md-6 col-sm-6 col-xs-6">
+                    <p>TOTAL: ${'¢' + parseFloat(distr.total).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ".")}</p>
                 </div>
             </div>`;
         $("#detalleDistribucion").append(detalleDistribucion);
@@ -339,7 +345,27 @@ class Distribucion {
                 },
                 {
                     title: "PRECIO VENTA",
-                    data: "precioVenta"
+                    data: "precioVenta",
+                    className: "text-right",
+                    mRender: function (e) {
+                        return '¢' + parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+                    }
+                },
+                {
+                    title: "IV",
+                    data: "impuesto",
+                    className: "text-right",
+                    mRender: function (e) {
+                        return '¢' + parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+                    }
+                },
+                {
+                    title: "SUBTOTAL",
+                    data: "subtotal",
+                    className: "text-right",
+                    mRender: function (e) {
+                        return '¢' + parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+                    }
                 }
                 // ,
                 // {

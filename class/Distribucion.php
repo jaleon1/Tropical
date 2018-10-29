@@ -233,9 +233,10 @@ class Distribucion{
 
     function Read(){
         try {
-            $sql='SELECT d.id, d.fecha, d.orden, d.idUsuario, d.idBodega, b.nombre as bodega, d.porcentajeDescuento, d.porcentajeIva
+            $sql='SELECT d.id, d.fecha, d.orden, d.idUsuario, d.idBodega, b.nombre as bodega, d.porcentajeDescuento, d.porcentajeIva,  (sum(cantidad*valor) + sum(cantidad*valor)*0.13) as total
                 FROM distribucion d
                 INNER JOIN bodega b on b.id=d.idBodega
+                INNER JOIN productosXDistribucion p on p.idDistribucion=d.id
                 where d.id=:id';
             $param= array(':id'=>$this->id);
             $data= DATA::Ejecutar($sql,$param);     
@@ -248,6 +249,7 @@ class Distribucion{
                 $this->bodega = $data[0]['bodega'];
                 $this->porcentajeDescuento = $data[0]['porcentajeDescuento'];
                 $this->porcentajeIva = $data[0]['porcentajeIva'];
+                $this->total = $data[0]['total'];
                 // productos x distribucion.
                 $this->lista= ProductosXDistribucion::Read($this->id);
                 //

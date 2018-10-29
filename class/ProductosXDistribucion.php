@@ -12,7 +12,7 @@ class ProductosXDistribucion{
     public static function Read($id){
         try{
             $sql="SELECT pd.idProducto as id, pd.cantidad, pd.valor,
-                    p.codigo, p.nombre, p.descripcion
+                    p.codigo, p.nombre, p.descripcion, pd.valor*1.13 as subtotal, (pd.valor*1.13) - pd.valor as impuesto
                 FROM productosXDistribucion pd INNER JOIN producto p on p.id = pd.idProducto	
                 WHERE pd.idDistribucion= :idDistribucion";
             $param= array(':idDistribucion'=>$id);
@@ -27,7 +27,9 @@ class ProductosXDistribucion{
                 //
                 $producto->codigo = $value['codigo'];
                 $producto->nombre = $value['nombre'];
-                $producto->descripcion = $value['descripcion'];          
+                $producto->descripcion = $value['descripcion'];     
+                $producto->impuesto = $value['impuesto'];
+                $producto->subtotal = $value['subtotal'];
                 array_push ($lista, $producto);
             }
             return $lista;
