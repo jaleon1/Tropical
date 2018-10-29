@@ -33,13 +33,15 @@ if(isset($_POST["action"])){
             echo json_encode($distribucion->ReadbyOrden());
             break;
         case "Create":
-            if($distribucion->datosReceptor == null){
-                echo json_encode("NORECEPTOR");
-                return false;
-            }
-            if($distribucion->datosEntidad == null){
-                echo json_encode("NOCONTRIB");
-                return false;
+            if(!$distribucion->esInterna){
+                if($distribucion->datosReceptor == null){
+                    echo json_encode("NORECEPTOR");
+                    return false;
+                }
+                if($distribucion->datosEntidad == null){
+                    echo json_encode("NOCONTRIB");
+                    return false;
+                }
             }
             echo json_encode($distribucion->Create());
             break;
@@ -64,6 +66,7 @@ class Distribucion{
     public $idUsuario=null;
     public $porcentajeDescuento=0;
     public $porcentajeIva=null;
+    public $esInterna=true;
     public $lista= [];
     // para comprobante externo.
     public $detalleFactura= []; 
@@ -126,6 +129,7 @@ class Distribucion{
             $externa = new Bodega();
             $externa->ReadbyId($obj["idBodega"]); // bodega receptor.
             if($externa->tipo != $central->tipo){
+                $this->esInterna= false;
                 // receptor
                 $receptor = new ClienteFE();
                 $receptor->idBodega = $this->idReceptor;
