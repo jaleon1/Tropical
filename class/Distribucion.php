@@ -286,13 +286,19 @@ class Distribucion{
                     $param= array(':idBodega'=>$this->idBodega);
                     $data = DATA::Ejecutar($sql,$param);
                     if(count($data)){
-                        $this->Aceptar();                        
+                        $this->Aceptar();
+                        // retorna orden autogenerada.
+                        return $this->Read();
                     }
                     else{ // es externa. Crea comprobante.
-                        FacturacionElectronica::iniciar($this);
+                        $factura = new Factura();
+                        $factura= $this;
+                        $this->Read();
+                        $factura->consecutivo= $this->orden;
+                        FacturacionElectronica::iniciar($factura);
+                        // retorna orden autogenerada.
+                        return $this;
                     }
-                    // retorna orden autogenerada.
-                    return $this->Read();
                 }
                 else throw new Exception('Error al guardar los productos.', 03);
             }
