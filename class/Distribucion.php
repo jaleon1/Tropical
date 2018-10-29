@@ -117,12 +117,12 @@ class Distribucion{
             $this->idDocumento = 1; // Documento de Referencia.            
             $this->fechaEmision= $obj["fechaEmision"] ?? null; // emision del comprobante electronico.
             //
-            $this->idReceptor = $obj['idReceptor'] ?? Receptor::default()->id; // si es null, utiliza el Receptor por defecto.
-            //$this->idEmisor =  $_SESSION["userSession"]->idEntidad;  //idEmisor no es necesario, es igual al idEntidad.
+            $this->idReceptor = $obj['idReceptor'] ?? Receptor::default()->id; // si es null, utiliza el Receptor por defecto.            
             $this->idUsuario=  $_SESSION["userSession"]->id;
             // si la bodega es externa, tiene que estar el ClienteFE (receptor) registrado.
             $central = new Bodega();
             $central->readCentral();
+            $this->idEmisor =  $central->id;
             $externa = new Bodega();
             $externa->ReadbyId($obj["idBodega"]); // bodega receptor.
             if($externa->tipo != $central->tipo){
