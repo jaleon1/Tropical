@@ -76,9 +76,7 @@ class FacturacionElectronica{
             //date_default_timezone_set('America/Costa_Rica');
             error_log("[INFO]: iniciando FE...");
             self::$transaccion= $t;
-            error_log("[INFO]: t ok...");
             self::$fechaEmision= date_create();
-            error_log("[INFO]: emision ok...");
             // fe o nc
             // if(self::$transaccion->idDocumentoNC!=null)
             //     self::$transaccion->idDocumento = self::$transaccion->idDocumentoNC;

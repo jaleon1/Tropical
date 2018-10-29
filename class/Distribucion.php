@@ -28,6 +28,8 @@ if(isset($_POST["action"])){
             echo json_encode($distribucion->Read());
             break;
         case "ReadbyOrden":
+            $distribucion->idBodega= $_SESSION["userSession"]->idBodega;
+            $distribucion->orden= $_POST["orden"];
             echo json_encode($distribucion->ReadbyOrden());
             break;
         case "Create":
@@ -76,22 +78,6 @@ class Distribucion{
         if(isset($_POST["obj"])){
             $obj= json_decode($_POST["obj"],true);
             unset($_POST['obj']);
-            // si la bodega es externa, tiene que estar el ClienteFE (receptor) registrado.
-            $central = new Bodega();
-            $central->readCentral();
-            $externa = new Bodega();
-            $externa->ReadbyId($obj["idBodega"]); // bodega receptor.
-            if($externa->tipo != $central->tipo){
-                // receptor
-                $receptor = new ClienteFE();
-                $receptor->idBodega = $this->idReceptor;
-                $this->datosReceptor = $receptor->read();                
-                // emisor - Central.
-                $entidad = new ClienteFE();
-                $entidad->idBodega = $central->id;
-                $this->datosEntidad = $entidad->read();
-            }
-            //
             require_once("UUID.php");
             $this->id= $obj["id"] ?? UUID::v4();
             $this->idBodega= $obj["idBodega"];
@@ -134,6 +120,22 @@ class Distribucion{
             $this->idReceptor = $obj['idReceptor'] ?? Receptor::default()->id; // si es null, utiliza el Receptor por defecto.
             //$this->idEmisor =  $_SESSION["userSession"]->idEntidad;  //idEmisor no es necesario, es igual al idEntidad.
             $this->idUsuario=  $_SESSION["userSession"]->id;
+            // si la bodega es externa, tiene que estar el ClienteFE (receptor) registrado.
+            $central = new Bodega();
+            $central->readCentral();
+            $externa = new Bodega();
+            $externa->ReadbyId($obj["idBodega"]); // bodega receptor.
+            if($externa->tipo != $central->tipo){
+                // receptor
+                $receptor = new ClienteFE();
+                $receptor->idBodega = $this->idReceptor;
+                $this->datosReceptor = $receptor->read();
+                // emisor - Central.
+                $entidad = new ClienteFE();
+                $entidad->idBodega = $central->id;
+                $this->datosEntidad = $entidad->read();
+            }
+            //
             // lista.
             if(isset($obj["lista"] )){
                 require_once("ProductosXDistribucion.php");
