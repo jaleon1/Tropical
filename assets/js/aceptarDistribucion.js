@@ -134,7 +134,7 @@ class Distribucion {
                 url: "class/Distribucion.php",
                 data: {
                     action: miAccion,
-                    obj: JSON.stringify(this)
+                    orden: distr.orden
                 }
             })
             .done(function (e) {
