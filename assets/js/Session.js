@@ -50,7 +50,7 @@ var Session=  {
     },
     setUsername(un, n, b){
         $('#call_username').html(
-            '<img src="images/user.png" alt="" > ' + un+ ' ' + 
+            '<img src="images/logoTropical.png" alt="" > ' + un+ ' ' + 
             '<span class=" fa fa-angle-down" ></span> '        
         );
         $('#call_name').text(n);

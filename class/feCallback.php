@@ -35,6 +35,20 @@
             $factura->idDocumento = $factura->idDocumentoNC;
             FacturacionElectronica::APIConsultaComprobante($factura);
         }
+        // Distribuciones.
+        $sql='SELECT id
+            from distribucion
+            where idEstadoComprobante = 2
+            order by idBodega';
+        $data= DATA::Ejecutar($sql);
+        foreach ($data as $key => $transaccion){
+            $distr = new Distribucion();
+            $distr->id = $transaccion['id'];
+            $distr = $distr->Read();
+            // idDocumento.
+            $distr->idDocumento = 1;
+            facturacionElectronica::APIConsultaComprobante($distr);
+        }
     } 
     catch(Exception $e){ 
         error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
