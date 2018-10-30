@@ -15,6 +15,12 @@ class FacturaCli {
         // this.t = t || null;
     }
 }
+// const express = require('express');
+// const app = express();
+// const fs = require('fs');
+// const compression = require('compression');
+
+// app.use(compression);
 
 let facturaCli = new FacturaCli();
 var t; //se usa para la tabla
@@ -176,12 +182,13 @@ function LoadPreciosTamanos() {
             }
         })
         .done(function (e) {
-            if (JSON.parse(e).msg == 'NOCONTRIB') {
+            if (JSON.parse(e) == 'NOCONTRIB') {
                 swal({
                     type: 'warning',
                     title: 'Contribuyente',
                     text: 'Contribuyente no registrado para Facturación Electrónica',
                     footer: '<a href="clienteFE.html">Agregar Contribuyente</a>',
+                    allowOutsideClick: false
                 }).then((result) => {
                     if (result.value)
                         location.href = "Dashboard.html";

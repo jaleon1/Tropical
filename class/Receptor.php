@@ -22,31 +22,40 @@ class Receptor{
     public $numTelefonoFax= null;
     public $correoElectronico= null;
 
-    public static function read($id){
-        $sql='SELECT r.id, nombre, idtipoidentificacion, identificacion, identificacionExtranjero, nombrecomercial, idProvincia, idCanton, idDistrito, idBarrio, otrasSenas, idCodigoPaisTel, numtelefono, idcodigopaisfax, numtelefonofax, correoelectronico
-            FROM receptor r inner join factura f on f.idreceptor=r.id
-            WHERE r.id= :identificacion';
-        $param= array(':identificacion'=> $id);
-        $data= DATA::Ejecutar($sql, $param);
-        if(count($data)){
-            self::$nombre= $data[0]['nombre'];
-            self::$idTipoIdentificacion= $data[0]['idTipoIdentificacion'];
-            self::$identificacion= $data[0]['identificacion'];
-            self::$identificacionExtranjero= $data[0]['identificacionExtranjero'];
-            self::$nombreComercial= $data[0]['nombreComercial'];
-            self::$idProvincia= $data[0]['idProvincia'];
-            self::$idCanton= $data[0]['idCanton'];
-            self::$idDistrito= $data[0]['idDistrito'];
-            self::$idBarrio= $data[0]['idBarrio'];
-            self::$otrasSenas= $data[0]['otrasSenas'];
-            self::$idCodigoPaisTel= $data[0]['idCodigoPaisTel'];
-            self::$numTelefono= $data[0]['numTelefono'];
-            self::$idCodigoPaisFax= $data[0]['idCodigoPaisFax'];
-            self::$numTelefonoFax= $data[0]['numTelefonoFax'];
-            self::$correoElectronico= $data[0]['correoElectronico']; 
-            return  self;
+    public function read(){
+        try{
+            $sql= 'SELECT  id, nombre, idTipoIdentificacion, identificacion, identificacionExtranjero, nombreComercial, idProvincia, idCanton, idDistrito, idBarrio, otrasSenas, idCodigoPaisTel, numTelefono, idCodigoPaisFax, numTelefonoFax, correoElectronico
+            FROM receptor
+            WHERE id= :id';
+            $param= array(':id'=> $this->id);
+            $data= DATA::Ejecutar($sql, $param);        
+            if($data){
+                $this->nombre= $data[0]['nombre'];
+                $this->idTipoIdentificacion= $data[0]['idTipoIdentificacion'];
+                $this->identificacion= $data[0]['identificacion'];
+                $this->identificacionExtranjero= $data[0]['identificacionExtranjero'];
+                $this->nombreComercial= $data[0]['nombreComercial'];
+                $this->idProvincia= $data[0]['idProvincia'];
+                $this->idCanton= $data[0]['idCanton'];
+                $this->idDistrito= $data[0]['idDistrito'];
+                $this->idBarrio= $data[0]['idBarrio'];
+                $this->otrasSenas= $data[0]['otrasSenas'];
+                $this->idCodigoPaisTel= $data[0]['idCodigoPaisTel'];
+                $this->numTelefono= $data[0]['numTelefono'];
+                $this->idCodigoPaisFax= $data[0]['idCodigoPaisFax'];
+                $this->numTelefonoFax= $data[0]['numTelefonoFax'];
+                $this->correoElectronico= $data[0]['correoElectronico']; 
+                return  $this;
+            }
+            else return null;
         }
-        else return null;
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar el receptor'))
+            );
+        }
     }
 
     public static function default(){

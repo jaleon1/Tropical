@@ -6,6 +6,7 @@ if(isset($_POST["action"])){
     require_once("Conexion.php");
     require_once("Usuario.php");
     require_once("encdes.php");
+    require_once("Bodega.php");
     // Session
     if (!isset($_SESSION))
         session_start();
@@ -57,7 +58,13 @@ if(isset($_POST["action"])){
         case "DeleteCertificado":
             $clientefe->certificado = $_POST['certificado'];
             $clientefe->DeleteCertificado();
-            break;               
+            break;
+        case "testConnection":
+            $clientefe->username= $_POST["username"];
+            $clientefe->password= $_POST["password"];
+            $clientefe->correoElectronico= $_POST["correoElectronico"];
+            echo json_encode($clientefe->testConnection());
+            break;      
     }
 }
 
@@ -190,6 +197,7 @@ class ClienteFE{
     public $idTipoIdentificacion=null;
     public $identificacion='';
     public $nombreComercial=null;
+    public $idDocumento;
     public $idProvincia=null;
     public $idCanton=null;
     public $idDistrito=null;
@@ -225,6 +233,7 @@ class ClienteFE{
             require_once("UUID.php");
             $this->id= $obj["id"] ?? UUID::v4();         
             $this->codigoSeguridad= $obj["codigoSeguridad"];
+            $this->idDocumento= $obj["idDocumento"] ?? 1;
             $this->nombre= $obj["nombre"] ?? '';   
             $this->idCodigoPais= $obj["idCodigoPais"] ?? null;                  
             $this->idTipoIdentificacion= $obj["idTipoIdentificacion"] ?? null;
@@ -346,38 +355,20 @@ class ClienteFE{
             );
         }
     }
-
-    function Read(){
+    
+    public function read(){
         try {
-            $sql='SELECT id, codigoSeguridad, idCodigoPais, nombre, idTipoIdentificacion, identificacion, nombreComercial, idProvincia,idCanton, idDistrito, idBarrio, otrasSenas, 
-            idCodigoPaisTel, numTelefono, correoElectronico, username, password, certificado, idBodega, pinp12
-                FROM clienteFE  
-                where id=:id';
-            $param= array(':id'=>$this->id);
-            $data= DATA::Ejecutar($sql,$param);
-            return $data;
-        }     
-        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
-            header('HTTP/1.0 400 Bad error');
-            die(json_encode(array(
-                'code' => $e->getCode() ,
-                'msg' => 'Error al cargar el producto'))
-            );
-        }
-    }
-
-    function ReadProfile($apilogin=true){
-        try {
-            $sql='SELECT id, codigoSeguridad, idCodigoPais, nombre, idTipoIdentificacion, identificacion, nombreComercial, idProvincia, idCanton, idDistrito, 
-                idBarrio, otrasSenas, numTelefono, correoElectronico, username, password, pinp12, downloadCode
-                FROM clienteFE  
+            $sql='SELECT id, idBodega, codigoSeguridad, idCodigoPais, idDocumento, nombre, idTipoIdentificacion, identificacion, nombreComercial, idProvincia, idCanton, idDistrito,
+                    idBarrio, otrasSenas, numTelefono, correoElectronico, username, password, pinp12, downloadCode, certificado, cpath
+                FROM clienteFE
                 where idBodega=:idBodega';
-            $param= array(':idBodega'=>$_SESSION['userSession']->idBodega);
-            $data= DATA::Ejecutar($sql,$param);
+            $param= array(':idBodega'=>$this->idBodega);
+            $data= DATA::Ejecutar($sql, $param);
             if($data){
                 $this->id= $data[0]['id'];
                 $this->codigoSeguridad= $data[0]['codigoSeguridad'];
                 $this->idCodigoPais= $data[0]['idCodigoPais'];
+                $this->idDocumento= $data[0]['idDocumento'];
                 $this->nombre= $data[0]['nombre'];
                 $this->idTipoIdentificacion= $data[0]['idTipoIdentificacion'];
                 $this->identificacion= $data[0]['identificacion'];
@@ -393,22 +384,13 @@ class ClienteFE{
                 $this->password= encdes::decifrar($data[0]['password']);
                 $this->pinp12= encdes::decifrar($data[0]['pinp12']);
                 $this->downloadCode= $data[0]['downloadCode'];
-                // certificado
-                $sql='SELECT certificado, cpath
-                    FROM clienteFE  
-                    where idBodega=:idBodega';
-                $param= array(':idBodega'=>$this->idBodega);
-                $data= DATA::Ejecutar($sql,$param);
                 $this->certificado= $data[0]['certificado'];
-                $cpath = $data[0]['cpath'];
+                $this->cpath = $data[0]['cpath'];                
                 // estado del certificado.
-                if(file_exists('../../CU/'.$_SESSION['userSession']->idBodega.'/'.$cpath))
+                if(file_exists(Globals::certDir.$this->id.DIRECTORY_SEPARATOR.$this->cpath))
                     $this->estadoCertificado=1;
                 else $this->estadoCertificado=0;      
                 $this->certificado= encdes::decifrar($data[0]['certificado']);
-                $_SESSION['API']= $this;
-                if($apilogin)
-                    $this->APILogin();
                 return $this;
             }
             return null;
@@ -417,7 +399,104 @@ class ClienteFE{
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
-                'msg' => 'Error al cargar el producto'))
+                'msg' => 'Error al cargar el contribuyente'))
+            );
+        }
+    }
+
+    function checkProfile(){
+        try{
+            // bodega interna. 
+            // require_once("Bodega.php");
+            $central = new Bodega();
+            $central->readCentral();
+            $bodega = new Bodega();
+            $bodega->ReadbyId($_SESSION['userSession']->idBodega);
+            $param='';
+            if($bodega->tipo == $central->tipo){
+                $param= array(':idBodega'=>$central->id);
+            }
+            else 
+                $param= array(':idBodega'=>$_SESSION["userSession"]->idBodega);
+            //
+            $sql="SELECT id
+                from clienteFE
+                where idBodega=:idBodega";
+            //
+            $data= DATA::Ejecutar($sql,$param);
+            if(count($data)){
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        catch(Exception $e) { 
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar la lista'))
+            );
+        }
+    }
+
+    function ReadProfile(){
+        try {
+            // bodega interna. 
+            $central = new Bodega();
+            $central->readCentral();
+            $bodega = new Bodega();
+            $bodega->ReadbyId($_SESSION['userSession']->idBodega);
+            if($bodega->tipo == $central->tipo && $bodega->id != $central->id){
+                // interna. Solo muestra certificado en central
+                return "INTERNA";
+            }
+            $sql='SELECT id, codigoSeguridad, idCodigoPais, idDocumento, nombre, idTipoIdentificacion, identificacion, nombreComercial, idProvincia, idCanton, idDistrito, 
+                    idBarrio, otrasSenas, numTelefono, correoElectronico, username, password, pinp12, downloadCode, certificado, cpath
+                FROM clienteFE
+                where idBodega=:idBodega';
+            $param= array(':idBodega'=>$_SESSION['userSession']->idBodega);
+            $data= DATA::Ejecutar($sql,$param);
+            if($data){
+                $this->id= $data[0]['id'];
+                $this->codigoSeguridad= $data[0]['codigoSeguridad'];
+                $this->idCodigoPais= $data[0]['idCodigoPais'];
+                $this->idDocumento= $data[0]['idDocumento'];
+                $this->nombre= $data[0]['nombre'];
+                $this->idTipoIdentificacion= $data[0]['idTipoIdentificacion'];
+                $this->identificacion= $data[0]['identificacion'];
+                $this->nombreComercial= $data[0]['nombreComercial'];
+                $this->idProvincia= $data[0]['idProvincia'];
+                $this->idCanton= $data[0]['idCanton'];
+                $this->idDistrito= $data[0]['idDistrito'];
+                $this->idBarrio= $data[0]['idBarrio'];
+                $this->otrasSenas= $data[0]['otrasSenas'];
+                $this->numTelefono= $data[0]['numTelefono']; 
+                $this->correoElectronico= $data[0]['correoElectronico'];
+                $this->username= encdes::decifrar($data[0]['username']);
+                $this->password= encdes::decifrar($data[0]['password']);
+                $this->pinp12= encdes::decifrar($data[0]['pinp12']);
+                $this->downloadCode= $data[0]['downloadCode'];
+                $this->certificado= $data[0]['certificado'];
+                $this->cpath = $data[0]['cpath'];    
+                // estado del certificado.
+                if(file_exists(Globals::certDir.$this->idBodega.'/'.$this->cpath) || file_exists(Globals::certDir.$this->idBodega.'\\'.$this->cpath))
+                    $this->estadoCertificado=1;
+                else
+                    $this->estadoCertificado=0;   
+                $this->certificado= encdes::decifrar($data[0]['certificado']);
+                // variables para loguear al api server
+                $_SESSION['APISERVER-username']= $this->username;
+                $_SESSION['APISERVER-password']= $this->password;
+                return $this;
+            } else return null;
+        }
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar el contribuyente'))
             );
         }
     }
@@ -435,20 +514,93 @@ class ClienteFE{
             return false;
         }     
         catch(Exception $e) {
-            error_log("error: ". $e->getMessage());
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             return false;
+        }
+    }
+
+    function createAPIProfile(){
+        try{
+            //guarda api_base.users
+            $this->getApiUrl();
+            $ch = curl_init();
+            $post = [
+                'w' => 'users',
+                'r' => 'users_register',
+                'fullName'   => $this->nombre,
+                'userName'   => $this->username, // username dentro del API SERVER = username ATV.
+                'email'   => $this->username,
+                'about'   => 'StoryLabsUser',
+                'country'   => 'CR',
+                'pwd'   => $this->password
+            ];  
+            curl_setopt_array($ch, array(
+                CURLOPT_URL => $this->apiUrl,
+                CURLOPT_RETURNTRANSFER => true,   
+                CURLOPT_VERBOSE => true,      
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 30,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => "POST",
+                CURLOPT_POSTFIELDS => $post
+            ));
+            $server_output = curl_exec($ch);
+            $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+            $header = substr($server_output, 0, $header_size);
+            $body = substr($server_output, $header_size);
+            $error_msg = "";
+            if (curl_error($ch)) {
+                $error_msg = curl_error($ch);
+                error_log("[ERROR]  ". $error_msg);
+                throw new Exception('Error al crear usuario API SERVER. Comunicarse con Soporte Técnico', 055);
+            }
+            $sArray=json_decode($header);
+            if(!isset($sArray->resp)){
+                throw new Exception('Error CRITICO al inciar sesion del API y crear perfil. DEBE COMUNICARSE CON SOPORTE TECNICO', '66690');
+            }
+            if($sArray->resp=='-300')
+                throw new Exception('[ERROR_USERS_NO_VALID] Error CRITICO al inciar sesion del API. DEBE COMUNICARSE CON SOPORTE TECNICO'. $error_msg , $sArray->resp);
+            if($sArray->resp=='-301')
+                throw new Exception('[ERROR_USERS_WRONG_LOGIN_INFO] Error CRITICO al inciar sesion del API. DEBE COMUNICARSE CON SOPORTE TECNICO'. $error_msg , $sArray->resp);
+            if($sArray->resp=='-302')
+                throw new Exception('[ERROR_USERS_NO_VALID_SESSION] Error CRITICO al inciar sesion del API. DEBE COMUNICARSE CON SOPORTE TECNICO'. $error_msg , $sArray->resp);
+            if($sArray->resp=='-303')
+                throw new Exception('[ERROR_USERS_ACCESS_DENIED] Error CRITICO al inciar sesion del API. DEBE COMUNICARSE CON SOPORTE TECNICO'. $error_msg , $sArray->resp);
+            if($sArray->resp=='-304')
+                throw new Exception('[USUARIO] Error, El usuario de ATV ya se encuentra registrado', $sArray->resp);
+            if($sArray->resp=='-305')
+                throw new Exception('[ERROR_USERS_NO_TOKEN] Error CRITICO al inciar sesion del API. DEBE COMUNICARSE CON SOPORTE TECNICO'. $error_msg , $sArray->resp);
+            //
+            error_log("[INFO]  ". $server_output);
+            curl_close($ch);
+            // variables para loguear al api server
+            $_SESSION['APISERVER-username']= $this->username;
+            $_SESSION['APISERVER-password']= $this->password;      
+            //
+            return true;
+        }
+        catch(Exception $e) {
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
         }
     }
 
     function Create(){
         try {
-            $sql="INSERT INTO clienteFE  (id, codigoSeguridad, idCodigoPais, nombre, idTipoIdentificacion, identificacion, nombreComercial, idProvincia,idCanton, idDistrito, idBarrio, otrasSenas, 
+            $this->createAPIProfile();
+            //
+            $sql="INSERT INTO clienteFE  (id, codigoSeguridad, idCodigoPais, idDocumento, nombre, idTipoIdentificacion, identificacion, nombreComercial, idProvincia,idCanton, idDistrito, idBarrio, otrasSenas, 
                 idCodigoPaisTel, numTelefono, correoElectronico, username, password, certificado, idBodega, pinp12)
-                VALUES (:id, :codigoSeguridad, :idCodigoPais, :nombre, :idTipoIdentificacion, :identificacion, :nombreComercial, :idProvincia, :idCanton, :idDistrito, :idBarrio, :otrasSenas, 
+                VALUES (:id, :codigoSeguridad, :idCodigoPais, :idDocumento, :nombre, :idTipoIdentificacion, :identificacion, :nombreComercial, :idProvincia, :idCanton, :idDistrito, :idBarrio, :otrasSenas, 
                     :idCodigoPaisTel, :numTelefono, :correoElectronico, :username, :password, :certificado, :idBodega, :pinp12);";
             $param= array(':id'=>$this->id,
                 ':codigoSeguridad'=>$this->codigoSeguridad, 
-                ':idCodigoPais'=>$this->idCodigoPais, 
+                ':idCodigoPais'=>$this->idCodigoPais,
+                ':idDocumento'=>$this->idDocumento,
                 ':nombre'=>$this->nombre,
                 ':idTipoIdentificacion'=>$this->idTipoIdentificacion,
                 ':identificacion'=>$this->identificacion,
@@ -469,66 +621,97 @@ class ClienteFE{
             );
             $data = DATA::Ejecutar($sql,$param,false);
             if($data)
-            {
-                //guarda api_base.users
-                $this->getApiUrl();
-                $ch = curl_init();
-                $post = [
-                    'w' => 'users',
-                    'r' => 'users_register',
-                    'fullName'   => $this->nombre,
-                    'userName'   => $this->correoElectronico, // username dentro del API es el correo electronico del contribuyente.
-                    'email'   => $this->correoElectronico,
-                    'about'   => 'StoryLabsUser',
-                    'country'   => 'CR',
-                    'pwd'   => $this->password
-                ];  
-                curl_setopt_array($ch, array(
-                    CURLOPT_URL => $this->apiUrl,
-                    CURLOPT_RETURNTRANSFER => true,   
-                    CURLOPT_VERBOSE => true,      
-                    CURLOPT_MAXREDIRS => 10,
-                    CURLOPT_TIMEOUT => 300,
-                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                    CURLOPT_CUSTOMREQUEST => "POST",
-                    CURLOPT_POSTFIELDS => $post
-                ));
-                $server_output = curl_exec($ch);
-                $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-                $header = substr($server_output, 0, $header_size);
-                $body = substr($server_output, $header_size);
-                $error_msg = "";
-                if (curl_error($ch)) {
-                    $error_msg = curl_error($ch);
-                    error_log("error: ". $error_msg);
-                    throw new Exception('Error al crear usuario API MH. Comunicarse con Soporte Técnico', 055);
-                }     
-                error_log("error: ". $server_output);
-                curl_close($ch);
-                $this->APILogin();                
+            {                
+                $_SESSION['userSession']->bodega= $this->nombre;
+                $_SESSION['userSession']->idDocumento= $this->idDocumento; // fe - te...   
                 return true;               
             }
             else throw new Exception('Error al guardar.', 02);
         }     
         catch(Exception $e) {
-            error_log("error: ". $e->getMessage());
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
                 'msg' => $e->getMessage()))
             );
         }
-    } 
+    }
+
+    function updateAPIProfile(){
+        try{
+            // ... modifica datos del perfil en el api ...//
+            $this->getApiUrl();
+            $this->APILogin();
+            $ch = curl_init();
+            $post = [
+                'w' => 'users',
+                'r' => 'users_update_profile',
+                'sessionKey'=> $_SESSION['APISERVER-sessionKey'],
+                'iam'=> $_SESSION['APISERVER-username'],
+                'fullName'   => $this->nombre,
+                'userName'   => $this->username, // username dentro del API es el correo electronico del perfil o bodega.
+                'email'   => $this->username,
+                'about'   => 'StoryLabsUser Updated',
+                'country'   => 'CR',
+                'pwd'   => $this->password
+            ];  
+            curl_setopt_array($ch, array(
+                CURLOPT_URL => $this->apiUrl,
+                CURLOPT_RETURNTRANSFER => true,   
+                CURLOPT_VERBOSE => true,      
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 30,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => "POST",
+                CURLOPT_POSTFIELDS => $post
+            ));
+            $server_output = curl_exec($ch);
+            $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+            $header = substr($server_output, 0, $header_size);
+            $body = substr($server_output, $header_size);
+            $error_msg = "";
+            if (curl_error($ch)) {
+                $error_msg = curl_error($ch);
+                error_log("[ERROR]  ". $error_msg);
+                throw new Exception('Error al crear usuario API SERVER. Comunicarse con Soporte Técnico', 055);
+            }
+            $sArray=json_decode($header);
+            if(!isset($sArray->resp)){
+                throw new Exception('Error CRITICO al inciar sesion del API y actualizar perfil. DEBE COMUNICARSE CON SOPORTE TECNICO', '66615');
+            }
+            if($sArray->resp=='-304'){
+                throw new Exception('Error, El usuario de ATV ya se encuentra registrado', '-304');
+            }
+            if($sArray->resp!='1'){
+                throw new Exception('Error CRITICO al inciar sesion del API y actualizar perfil, STATUS('.$sArray->resp.') . DEBE COMUNICARSE CON SOPORTE TECNICO', '66615');
+            }
+            error_log("[INFO]: Perfil actualizado:  ". $sArray->resp);
+            curl_close($ch);
+            // Nuevas variables para loguear al api server
+            $_SESSION['APISERVER-username']= $this->username;
+            $_SESSION['APISERVER-password']= $this->password;
+        }
+        catch(Exception $e) {
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }
+    }
 
     function Update(){
         try {
+            $this->updateAPIProfile();
             $sql="UPDATE clienteFE 
                 SET nombre=:nombre, codigoSeguridad=:codigoSeguridad, idCodigoPais=:idCodigoPais, idTipoIdentificacion=:idTipoIdentificacion, 
                     identificacion=:identificacion, nombreComercial=:nombreComercial, idProvincia=:idProvincia, idCanton=:idCanton, idDistrito=:idDistrito, 
                     idBarrio=:idBarrio, otrasSenas=:otrasSenas, numTelefono=:numTelefono, correoElectronico=:correoElectronico, username=:username, password=:password, 
-                    certificado=:certificado, idBodega=:idBodega, pinp12= :pinp12
-                WHERE id=:id";
-            $param= array(':id'=>$this->id, ':nombre'=>$this->nombre, ':codigoSeguridad'=>$this->codigoSeguridad, ':idCodigoPais'=>$this->idCodigoPais, ':idTipoIdentificacion'=>$this->idTipoIdentificacion,
+                    certificado=:certificado, pinp12= :pinp12
+                WHERE idBodega=:idBodega";
+            $param= array(':nombre'=>$this->nombre, ':codigoSeguridad'=>$this->codigoSeguridad, ':idCodigoPais'=>$this->idCodigoPais, ':idTipoIdentificacion'=>$this->idTipoIdentificacion,
                 ':identificacion'=>$this->identificacion, ':nombreComercial'=>$this->nombreComercial, ':idProvincia'=>$this->idProvincia,
                 ':idCanton'=>$this->idCanton, ':idDistrito'=>$this->idDistrito, ':idBarrio'=>$this->idBarrio,
                 ':otrasSenas'=>$this->otrasSenas, ':numTelefono'=>$this->numTelefono, ':correoElectronico'=>$this->correoElectronico,
@@ -537,15 +720,12 @@ class ClienteFE{
             );
             $data = DATA::Ejecutar($sql,$param,false);
             if($data){
-                // ... modifica datos del cliente en el api ...//
-                // ... sube el nuevo certificado ...//
-                $this->APILogin();
                 return true;
             }   
-            else throw new Exception('Error al guardar.', 123);
+            else throw new Exception('Error al actualizar el perfil.', 123);
         }     
         catch(Exception $e) {
-            error_log("error: ". $e->getMessage());
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
@@ -565,15 +745,15 @@ class ClienteFE{
 
     public function APILogin(){
         try{
-            error_log("... API LOGIN ... ");
+            error_log("[INFO] API LOGIN ... ");
             //
             $this->getApiUrl();
             $ch = curl_init();
             $post = [
                 'w' => 'users',
                 'r' => 'users_log_me_in',
-                'userName'   => $this->correoElectronico, // al API loguea con email
-                'pwd'   => $this->password
+                'userName'   => $_SESSION['APISERVER-username'],
+                'pwd'   => $_SESSION['APISERVER-password']
             ];  
             curl_setopt_array($ch, array(
                 CURLOPT_URL => $this->apiUrl,
@@ -581,7 +761,7 @@ class ClienteFE{
                 CURLOPT_VERBOSE => true,      
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_MAXREDIRS => 10,
-                CURLOPT_TIMEOUT => 300,
+                CURLOPT_TIMEOUT => 30,
                 CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
                 CURLOPT_CUSTOMREQUEST => "POST",
                 CURLOPT_POSTFIELDS => $post
@@ -593,7 +773,6 @@ class ClienteFE{
             $error_msg = "";
             if (curl_error($ch)) {
                 $error_msg = curl_error($ch);
-                error_log("error: ". $error_msg);
                 throw new Exception('Error al iniciar login API. '. $error_msg , 02);
             }
             curl_close($ch);
@@ -602,15 +781,29 @@ class ClienteFE{
             if(!isset($sArray->resp->sessionKey)){
                 // ERROR CRITICO:
                 // debe notificar al contibuyente. 
+                if(isset($sArray->resp)){
+                    if($sArray->resp=='-300')
+                        throw new Exception('[ERROR_USERS_NO_VALID] Error CRITICO al inciar sesion del API. DEBE COMUNICARSE CON SOPORTE TECNICO'. $error_msg , $sArray->resp);
+                    if($sArray->resp=='-301')
+                        throw new Exception('[ERROR_USERS_WRONG_LOGIN_INFO] Error CRITICO al inciar sesion del API. DEBE COMUNICARSE CON SOPORTE TECNICO'. $error_msg , $sArray->resp);
+                    if($sArray->resp=='-302')
+                        throw new Exception('[ERROR_USERS_NO_VALID_SESSION] Error CRITICO al inciar sesion del API. DEBE COMUNICARSE CON SOPORTE TECNICO'. $error_msg , $sArray->resp);
+                    if($sArray->resp=='-303')
+                        throw new Exception('[ERROR_USERS_ACCESS_DENIED] Error CRITICO al inciar sesion del API. DEBE COMUNICARSE CON SOPORTE TECNICO'. $error_msg , $sArray->resp);
+                    if($sArray->resp=='-304')
+                        throw new Exception('[ERROR_USERS_EXISTS] Error CRITICO al inciar sesion del API. DEBE COMUNICARSE CON SOPORTE TECNICO'. $error_msg , $sArray->resp);
+                    if($sArray->resp=='-305')
+                        throw new Exception('[ERROR_USERS_NO_TOKEN] Error CRITICO al inciar sesion del API. DEBE COMUNICARSE CON SOPORTE TECNICO'. $error_msg , $sArray->resp);
+                }
                 throw new Exception('Error CRITICO al inciar sesion del API. DEBE COMUNICARSE CON SOPORTE TECNICO'. $error_msg , '66612');
-            }
+            }            
             $this->sessionKey= $sArray->resp->sessionKey;
-            $_SESSION['API']->sessionKey= $this->sessionKey;
-            $_SESSION['API']->correoElectronico = $this->correoElectronico;
+            $_SESSION['APISERVER-sessionKey']=  $this->sessionKey;
             error_log("sessionKey: ". $sArray->resp->sessionKey);
+            return true;
         } 
         catch(Exception $e) {
-            error_log("error: ". $e->getMessage());
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
@@ -621,18 +814,19 @@ class ClienteFE{
 
     public function APIUploadCert(){
         try{
-            error_log(" subiendo certificado API CRL: ". $this->certificado);
+            error_log("[INFO] Subiendo certificado API CRL: ". $this->certificado);
             if (!file_exists($this->certificado)){
                 throw new Exception('Error al guardar el certificado. El certificado no existe' , 002256);
             }
             $this->getApiUrl();
+            $this->APILogin();
             $ch = curl_init();
             $post = [
                 'w' => 'fileUploader',
                 'r' => 'subir_certif',
-                'sessionKey'=>$_SESSION['API']->sessionKey,
+                'sessionKey'=> $_SESSION['APISERVER-sessionKey'],
                 'fileToUpload' => new CurlFile($this->certificado, 'application/x-pkcs12'),
-                'iam'=>$_SESSION['API']->correoElectronico
+                'iam'=> $_SESSION['APISERVER-username']
             ];
             curl_setopt_array($ch, array(
                 CURLOPT_URL => $this->apiUrl,
@@ -653,7 +847,7 @@ class ClienteFE{
                 $error_msg = curl_error($ch);
                 throw new Exception('Error al guardar el certificado. '. $error_msg , 033);
             }
-            error_log("****** buscar : ". $server_output);
+            error_log("[INFO]: ". $server_output);
             $sArray= json_decode($server_output);
             if(!isset($sArray->resp->downloadCode)){
                 // ERROR CRITICO:
@@ -674,12 +868,66 @@ class ClienteFE{
             return true;
         } 
         catch(Exception $e) {
-            error_log("****** Error: ". $e->getMessage());
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
                 'msg' => $e->getMessage()))
             );
+        }
+    }
+
+    function testConnection(){
+        try{
+            $url='';
+            $apiMode = strpos($this->username, 'prod');
+            if ($apiMode === false){
+                $url= 'https://idp.comprobanteselectronicos.go.cr/auth/realms/rut-stag/protocol/openid-connect/token';
+                $apiMode = 'api-stag';
+            }
+            else{
+                $url= 'https://idp.comprobanteselectronicos.go.cr/auth/realms/rut/protocol/openid-connect/token';
+                $apiMode = 'api-prod';
+            }
+            //
+            $data = array(
+                'client_id' => $apiMode, 
+                'grant_type' => 'password',
+                'username' => $this->username,
+                'password' => $this->password
+            );
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL,$url);
+            curl_setopt($ch, CURLOPT_POST, 1);
+            //curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLINFO_HEADER_OUT, true);
+            curl_setopt($ch,CURLOPT_VERBOSE,true);    
+            curl_setopt($ch, CURLOPT_FAILONERROR, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+            $server_output = curl_exec ($ch);
+            $information = curl_getinfo($ch);            
+            //
+            $error_msg = "";
+            if (curl_error($ch)) {
+                $error_msg = curl_error($ch);
+                throw new Exception('Error al adquirir token. '. $error_msg , -305);
+            }
+            if ($information['http_code'] == 200) { 
+                $sArray= json_decode($server_output);
+                $accessToken=$sArray->access_token;
+                error_log("[INFO] PRUEBA DE CONEXION, TOKEN = " . $accessToken);
+                curl_close($ch);
+                return true;
+            }
+            else{
+                throw new Exception('Error CRITICO al Solicitar token SERVER. DEBE COMUNICARSE CON SOPORTE TECNICO: '. $server_output , -305);                
+            }            
+        } 
+        catch(Exception $e) {
+            //curl_close($ch);
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            return false;
         }
     }
 
@@ -738,12 +986,14 @@ class ClienteFE{
                 SET certificado= "<eliminado por el usuario>", cpath= "", nkey= ""
                 WHERE id= :id';
             $param= array(':id'=>$this->id);
-            DATA::Ejecutar($sql, $param, false);                         
+            DATA::Ejecutar($sql, $param, false);
+            error_log("[INFO]  Certificado eliminado");
         }
-        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+        catch(Exception $e) { 
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
-                'code' => $e->getCode() ,
+                'code' => $e->getCode(),
                 'msg' => $e->getMessage()))
             );
         }

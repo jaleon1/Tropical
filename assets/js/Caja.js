@@ -39,8 +39,6 @@ class MovimientosCaja {
 
 
     drawMovimientosCaja(e) {
-
-
         var movimientos = JSON.parse(e);
         var total=0;
         var pageTotal=0;

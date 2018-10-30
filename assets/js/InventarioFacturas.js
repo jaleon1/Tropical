@@ -15,18 +15,19 @@ class InventarioFacturas {
             }
         })
             .done(function (e) {
-                if(JSON.parse(e).msg=='NOCONTRIB'){
-                swal({
-                    type: 'warning',
-                    title: 'Contribuyente',
-                    text: 'Contribuyente no registrado para Facturación Electrónica',
-                    footer: '<a href="clienteFE.html">Agregar Contribuyente</a>',
-                    }).then((result) => {
-                        if (result.value) 
-                            location.href = "Dashboard.html";
-                    })                
-                }
-                else inventarioFacturas.drawFac(e)
+//                 if(JSON.parse(e).msg=='NOCONTRIB'){
+//                 swal({
+//                     type: 'warning',
+//                     title: 'Contribuyente',
+//                     text: 'Contribuyente no registrado para Facturación Electrónica',
+//                     footer: '<a href="clienteFE.html">Agregar Contribuyente</a>',
+//                     }).then((result) => {
+//                         if (result.value) 
+//                             location.href = "Dashboard.html";
+//                     })                
+//                 }
+//                 else 
+                inventarioFacturas.drawFac(e)
             });
     };
 
@@ -126,6 +127,11 @@ class InventarioFacturas {
                     mRender: function ( e ) {
                         return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ".")
                     }
+                },
+                {
+                    title: "ESTADO COMPROBANTE",
+                    width: '5%',
+                    data: "idEstadoComprobante"
                 }
             ]
         });
@@ -167,7 +173,7 @@ class InventarioFacturas {
 
         $.ajax({
             type: "POST",
-            url: "class/ProductoXFactura.php",
+            url: "class/productoXFactura.php",
             data: {
                 action: "ReadByIdFactura",
                 id: id.id

@@ -1,10 +1,9 @@
 class ClienteFE {
     // Constructor
-    constructor(id, nombre, codigoSeguridad, idCodigoPais, idTipoIdentificacion, identificacion, nombreComercial, idProvincia, idCanton, idDistrito, idBarrio, otrasSenas, 
+    constructor(id, nombre, idCodigoPais, idTipoIdentificacion, identificacion, nombreComercial, idProvincia, idCanton, idDistrito, idBarrio, otrasSenas, 
         idCodigoPaisTel, numTelefono, idCodigoPaisFax, numTelefonoFax, correoElectronico, username, password, certificado, idBodega, filename, filesize, filetype, estadoCertificado, pinp12) {
         this.id = id || null;
-        this.nombre = nombre || '';
-        this.codigoSeguridad = codigoSeguridad || '';
+        this.nombre = nombre || '';        
         this.idCodigoPais = idCodigoPais || '';
         this.idTipoIdentificacion = idTipoIdentificacion || '';
         this.identificacion = identificacion || '';
@@ -76,7 +75,13 @@ class ClienteFE {
             }
         })
             .done(function (e) {
-                clientefe.ShowItemData(e);
+                if(e=='"INTERNA"')
+                {
+                     $('.x_content').html(`<center><h3>Registro de Contribuyente Interno</h3></center>`);
+                     $('.x_content').append(`<center><span>Dirígase a la Agencia Principal para realizar cambios</span></center>`);
+                }
+                else
+                    clientefe.ShowItemData(e);
             })
             .fail(function (e) {
                 clientefe.showError(e);
@@ -251,7 +256,10 @@ class ClienteFE {
         // NProgress.start();        
         var miAccion = this.id == null ? 'Create' : 'Update';
         this.nombre = $("#nombre").val();
-        this.codigoSeguridad = $("#codigoSeguridad").val();
+        // codigo de seguridad autogenerado
+        var max = 11111111;
+        var min = 99999999;
+        this.codigoSeguridad =  Math.floor(Math.random()*(max-min+1)+min);
         this.idCodigoPais = '52'; //$("#codigoPais").val(); 52 = 506 Costa Rica.
         this.idTipoIdentificacion = $('#idTipoIdentificacion option:selected').val();
         this.identificacion = $("#identificacion").val();
@@ -506,7 +514,6 @@ class ClienteFE {
         $("#id").val('');
         //$("#idBodega").val('');
         $("#nombre").val('');
-        $("#codigoSeguridad").val('');
         $("#idCodigoPais").val('');
         $('#idTipoIdentificacion option').prop("selected", false);    
         $("#idTipoIdentificacion").selectpicker("refresh"); 
@@ -544,7 +551,7 @@ class ClienteFE {
         if(e!="null"){
             // carga objeto.
             var data = JSON.parse(e);
-            clientefe= new ClienteFE(data.id, data.nombre, data.codigoSeguridad, data.idCodigoPais, data.idTipoIdentificacion, data.identificacion, data.nombreComercial, data.idProvincia, data.idCanton, data.idDistrito, data.idBarrio, data.otrasSenas, data.
+            clientefe= new ClienteFE(data.id, data.nombre, data.idCodigoPais, data.idTipoIdentificacion, data.identificacion, data.nombreComercial, data.idProvincia, data.idCanton, data.idDistrito, data.idBarrio, data.otrasSenas, data.
                 idCodigoPaisTel, data.numTelefono, data.idCodigoPaisFax, data.numTelefonoFax, data.correoElectronico, data.username, data.password, data.certificado, data.idBodega,
                 data.filename, data.filesize, data.filetype, data.estadoCertificado, data.pinp12
             );
@@ -552,7 +559,6 @@ class ClienteFE {
             $("#id").val(clientefe.id);
             $("#nombre").val(clientefe.nombre);
             $("#contribuyente").html('<h3>Registro de Contribuyente de Factura Electrónica: ' + $('.call_Bodega').text() + '<h3>' );
-            $("#codigoSeguridad").val(clientefe.codigoSeguridad);
             $("#idCodigoPais").val(clientefe.idCodigoPais);
             $('#idTipoIdentificacion option[value=' + clientefe.idTipoIdentificacion + ']').prop("selected", true);  
             $("#idTipoIdentificacion").selectpicker("refresh");
@@ -613,6 +619,8 @@ class ClienteFE {
                 })
                 
             });
+            // datos sin modificar = conexion valida.
+            testConn.res = true;
             // $('#certDescargar').click(function(){
             //     clientefe.DownloadCertificado;
             // });
@@ -655,6 +663,56 @@ class ClienteFE {
         var validator = new FormValidator({ "events": ['blur', 'input', 'change'] }, document.forms["frm"]);
     }
 
+    probarConexion(showMess = false){
+        if ($('#username').val() == "" || $('#password').val() == "" ){
+            // swal({
+            //     type: 'warning',
+            //     title: 'Conexión...',
+            //     text: 'Debe llenar el formulario para probar la conexión.',
+            //     footer: '<a href>Contacte a Soporte Técnico</a>',
+            // });
+            return;
+        }
+        var miAccion = 'testConnection';
+        this.username = $("#username").val();
+        this.password = $("#password").val();
+        $.ajax({
+            type: "POST",
+            url: "class/clienteFE.php",
+            data: {
+                action: miAccion,
+                username: this.username,
+                password: this.password,
+                correoElectronico: this.correoElectronico
+            }
+        })
+            .done(function (e) {
+                if(e=='true'){
+                    if(showMess)
+                        swal({
+                            type: 'info',
+                            title: 'Conexión...',
+                            text: 'Conexión Exitosa!',
+                        });
+                    testConn.res = true;
+                }
+                else {
+                    if(showMess)
+                        swal({
+                            type: 'error',
+                            title: 'Conexión...',
+                            text: 'Conexión Fallida, revise su usuario y contraseña de ATV.',
+                            footer: '<a href>Contacte a Soporte Técnico</a>'
+                        });
+                    testConn.res = false;
+                }
+
+            })
+            .fail(function (e) {
+                usuario.showError(e);
+            });
+    };
+
     Init() {
         // validator.js
         var validator = new FormValidator({ "events": ['blur', 'input', 'change'] }, document.forms["frm"]);
@@ -671,8 +729,7 @@ class ClienteFE {
         }
         //NProgress
         $(function()
-        {
-            $(document)
+        {$(document)
                 .ajaxStart(NProgress.start)
                 .ajaxStop(NProgress.done);
         });
@@ -747,8 +804,47 @@ class ClienteFE {
         $('#btnEliminar').click(function () {
             
         });
+        // emisor.
+        // prueba de conexion// test conexion
+        $('#btnTest').click(function () {
+            clientefe.probarConexion(true);
+        });
+        // prueba de conexion// test conexion
+        $('#btnTest').click(function () {
+            clientefe.probarConexion(true);
+        });
+        $('#username').on('change', function (e) {
+            clientefe.probarConexion();
+        });
+        $('#password').on('change', function (e) {
+            clientefe.probarConexion();
+        });
     };
 }
 //Class Instance
 var dz;
 let clientefe = new ClienteFE();
+var testConn = {
+    aInternal: false,
+    aListener: function(val) {},
+    set res(val) {
+      this.aInternal = val;
+      this.aListener(val);
+    },
+    get res() {
+      return this.aInternal;
+    },
+    registerListener: function(listener) {
+      this.aListener = listener;
+    }
+}
+testConn.registerListener(function(val) {
+    if(!val){
+        $("#btnTest").text('Probar Conexión');
+        $("#btnTest").attr('class', 'btn btn-danger');
+    }
+    else {
+        $("#btnTest").text('Conexión Ok!');
+        $("#btnTest").attr('class', 'btn btn-success');
+    }
+});

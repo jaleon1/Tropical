@@ -1,31 +1,28 @@
 <?php
-    require_once("Conexion.php");
+require_once("Conexion.php");
+if(isset($_POST["action"])){
+    $opt= $_POST["action"];
+    unset($_POST['action']);
+    // Classes        
+    require_once("Usuario.php");
+    // Session
+    if (!isset($_SESSION))
+        session_start();            
+    // Instance
+    $productoXFactura= new ProductoXFactura();
+    switch($opt){
+        case "ReadByIdFactura":
+            echo json_encode($productoXFactura->ReadByIdFactura($_POST['id']));
+            break;
+    }        
+}
 
-    if(isset($_POST["action"])){
-        $opt= $_POST["action"];
-        unset($_POST['action']);
-        // Classes
-        require_once("Usuario.php");
-        // Session
-        if (!isset($_SESSION))
-            session_start();
-            
-        // Instance
-        $productoXFactura= new ProductoXFactura();
-        switch($opt){
-            case "ReadByIdFactura":
-                echo json_encode($productoXFactura->ReadByIdFactura($_POST['id']));
-                break;
-        }
-        
-    }
-    
 class ProductoXFactura{
 
     public static function Read(){
         try{
             $sql="SELECT detalle from productosXFactura
-            where idFactura = :idDistribucion";
+                where idFactura = :idDistribucion";
             $param= array(':idDistribucion'=>self::$id);
             $data = DATA::Ejecutar($sql,$param);            
             $lista = [];
@@ -36,7 +33,8 @@ class ProductoXFactura{
             }
             return $lista;
         }
-        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+        catch(Exception $e) { 
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             return false;
         }
     }
@@ -76,7 +74,8 @@ class ProductoXFactura{
             }
             return $lista;
         }
-        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+        catch(Exception $e) { 
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             return false;
         }
     }
@@ -87,9 +86,9 @@ class ProductoXFactura{
             //$idUnidadMedida= 78;  // Unid.
             foreach ($obj as $item) {
                 $sql="INSERT INTO productosXFactura (id, idFactura, idPrecio, numeroLinea, idTipoCodigo, codigo, cantidad, idUnidadMedida, detalle, precioUnitario, montoTotal, montoDescuento, naturalezaDescuento,
-                    subTotal, codigoImpuesto, tarifaImpuesto, montoImpuesto, idExoneracionImpuesto, montoTotalLinea)
-                VALUES (uuid(), :idFactura, :idPrecio, :numeroLinea, :idTipoCodigo, :codigo, :cantidad, :idUnidadMedida, :detalle, :precioUnitario, :montoTotal, :montoDescuento, :naturalezaDescuento,                
-                    :subTotal, :codigoImpuesto, :tarifaImpuesto, :montoImpuesto, :idExoneracionImpuesto, :montoTotalLinea)";              
+                        subTotal, codigoImpuesto, tarifaImpuesto, montoImpuesto, idExoneracionImpuesto, montoTotalLinea)
+                    VALUES (uuid(), :idFactura, :idPrecio, :numeroLinea, :idTipoCodigo, :codigo, :cantidad, :idUnidadMedida, :detalle, :precioUnitario, :montoTotal, :montoDescuento, :naturalezaDescuento,                
+                        :subTotal, :codigoImpuesto, :tarifaImpuesto, :montoImpuesto, :idExoneracionImpuesto, :montoTotalLinea)";              
                 $param= array(
                     ':idFactura'=>$item->idFactura,
                     ':idPrecio'=>$item->idPrecio,
@@ -113,7 +112,8 @@ class ProductoXFactura{
             }
             return $created;
         }     
-        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+        catch(Exception $e) { 
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             return false;
         }
     }
