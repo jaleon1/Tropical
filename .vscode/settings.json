@@ -42,5 +42,6 @@
             "preamble": null,
             "quote_style": "best"
         }
-    }
+    },
+    "es6-css-minify.minifyOnSave": "exists"
 }
