@@ -38,8 +38,7 @@ class InventarioVentas {
                 {
                     extend: 'excelHtml5',
                     exportOptions: {columns: [1, 2, 3, 4, 5]},
-                    messageTop:'TITULO',
-                    messageBottom:'PIE'
+                    messageTop:'Reporte de Ventas'
                 },
                 {
                     extend: 'pdfHtml5',
