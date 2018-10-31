@@ -354,8 +354,8 @@ class Producto {
                 }
             ],
             language: {
-                "infoEmpty": "Sin Usuarios Registrados",
-                "emptyTable": "Sin Usuarios Registrados",
+                "infoEmpty": "Sin Productos",
+                "emptyTable": "Sin Productos",
                 "search": "Buscar",
                 "zeroRecords":    "No hay resultados",
                 "lengthMenu":     "Mostrar _MENU_ registros",
