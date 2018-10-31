@@ -29,6 +29,38 @@ class InventarioVentas {
 
         var ventas = JSON.parse(e);
         this.tb_ventas = $('#tb_ventas').DataTable({
+            "footerCallback": function ( row, ventas, start, end, display ) {
+                var api = this.api(), ventas;
+     
+                // Remove the formatting to get integer data for summation
+                var intVal = function ( i ) {
+                    return typeof i === 'string' ?
+                        i.replace(/[\$,]/g, '')*1 :
+                        typeof i === 'number' ?
+                            i : 0;
+                };
+     
+                // Total over all pages
+                total = api
+                    .column( 5 )
+                    .data()
+                    .reduce( function (a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0 );
+     
+                // Total over this page
+                pageTotal = api
+                    .column( 5, { page: 'current'} )
+                    .data()
+                    .reduce( function (a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0 );
+     
+                // Update footer
+                $( api.column( 5 ).footer() ).html(
+                    '$'+pageTotal +' ( $'+ total +' total)'
+                );
+            },
             responsive: true,
             destroy: true,
             data: ventas,                               
@@ -38,8 +70,7 @@ class InventarioVentas {
                 {
                     extend: 'excelHtml5',
                     exportOptions: {columns: [1, 2, 3, 4, 5]},
-                    messageTop:'TITULO',
-                    messageBottom:'PIE'
+                    messageTop:'Reporte de Ventas'
                 },
                 {
                     extend: 'pdfHtml5',

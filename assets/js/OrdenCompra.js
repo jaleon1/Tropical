@@ -143,8 +143,7 @@ class OrdenCompra {
                 {
                     extend: 'excelHtml5',
                     exportOptions: {columns: [1, 2, 3]},
-                    messageTop:'Reporte Orden de Compra',
-                    messageBottom:'PIE'
+                    messageTop:'Reporte Orden de Compra'
                 },
                 {
                     extend: 'pdfHtml5',
