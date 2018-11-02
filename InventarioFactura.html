@@ -36,6 +36,7 @@
     <link rel="stylesheet" href="assets/css/sweetalert2.min.css">
     <!-- css -->
     <link rel="stylesheet" href="assets/css/facturaCli.css">
+    <link rel="stylesheet" href="assets/css/ajaxLoad.css">
 
 </head>
 
@@ -70,9 +71,9 @@
                     <br />
                     <!-- sidebar menu DINAMICO-->
                     <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
-                        
+
                     </div>
-                    
+
 
                     <!-- /menu footer buttons -->
                     <div class="sidebar-footer hidden-small">
@@ -105,7 +106,8 @@
 
                         <ul class="nav navbar-nav navbar-right">
                             <li class="">
-                                <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false" id='call_username'>
+                                <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown"
+                                    aria-expanded="false" id='call_username'>
                                 </a>
                                 <ul class="dropdown-menu dropdown-usermenu pull-right">
                                     <li>
@@ -131,6 +133,13 @@
                         </div>
                         <div class="title_right">
                             <h3 id="fecha" style="float:right"></h3>
+
+                            <div id="dp_rangoFacturas" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 70%; float:right">
+                                <i class="fa fa-calendar"></i>&nbsp;
+                                <span></span> <i class="fa fa-caret-down"></i>
+                            </div>
+
+                            <!-- <input type="text" id="rangoFacturas" name="daterange" value="01/01/2018 - 01/15/2018" style="float:right"/> -->
                         </div>
                     </div>
 
@@ -144,7 +153,8 @@
                                     <!-- TABLE -->
                                     <div class="row">
                                         <div class="col-md-12 col-sm-12 col-xs-12">
-                                            <table id="tb_facturas" class="table display responsive table-striped jambo_table no-wrap" width="100%" role="grid" aria-describedby="datatable_info">
+                                            <table id="tb_facturas" class="table display responsive table-striped jambo_table no-wrap"
+                                                width="100%" role="grid" aria-describedby="datatable_info">
                                                 <tbody id="lista_facturas">
                                                 </tbody>
                                             </table>
@@ -155,11 +165,12 @@
                             </div>
                         </div>
                     </div>
-
+                    <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#modalLoad">Open
+                        Modal</button>
                     <div class="clearfix"></div>
 
                     <div class="ln_solid"></div>
-                    
+
                 </div>
             </div>
         </div>
@@ -176,80 +187,188 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="clearfix"></div>
-
                         <div class="row">
                             <div class="col-md-12 col-sm-12 col-xs-12">
                                 <!-- <div class="x_panel"> -->
-                                    <!--  CONTENIDO DE LA PAGINA -->
-                                    <div class="x_content">
-                                        <div class="table-responsive">
-                                            <table id="tb_detalle_fact" style="width:100%" class="table table-striped jambo_table bulk_action">
-                                                <thead>
-                                                    
-                                                </thead>
-                                                <tbody id="detalle_prd">
-    
-                                                </tbody>
-                                            </table>
-                                        </div>
+                                <!--  CONTENIDO DE LA PAGINA -->
+                                <div class="x_content">
+                                    <div class="table-responsive">
+                                        <table id="tb_detalle_fact" style="width:100%" class="table table-striped jambo_table bulk_action">
+                                            <thead>
+
+                                            </thead>
+                                            <tbody id="detalle_prd">
+
+                                            </tbody>
+                                        </table>
                                     </div>
+                                </div>
                                 <!-- </div> -->
                             </div>
                         </div>
                         <div class="clearfix"></div>
                     </div>
-                <div class="modal-footer">
-                    <div class="form-group">
-                        <div class="col-md-6 col-md-offset-3">
-                            <button id="btnReimprimeFactura" type="submit" class="btn btn-success">Reimprimir</button>
+                    <div class="modal-footer">
+                        <div class="form-group">
+                            <div class="col-md-6 col-md-offset-3">
+                                <button id="btnReimprimeFactura" type="submit" class="btn btn-success">Reimprimir</button>
+                            </div>
                         </div>
-                    </div>
-                    <div id="totalFact">
+                        <div id="totalFact">
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <!-- modals -->
-    <!-- Large modal -->
+        <!-- modals -->
+        <!-- Large modal -->
 
-    <!-- jQuery -->
-    <script src="assets/js/jquery.min.js"></script>
-    <!-- Require -->    
-    <!-- <script data-main="assets/main" src="assets/js/require.js"></script> -->
-    <!-- JS Scripts -->
-    <script src="assets/js/InventarioFacturas.js"></script>
-    <!-- Bootstrap -->
-    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
-    <!-- FastClick -->
-    <script src="assets/js/fastclick/lib/fastclick.js"></script>
-    <!-- NProgress -->
-    <script src="assets/js/nprogress/nprogress.js"></script>
-    <!-- iCheck -->
-    <script src="assets/js/iCheck/icheck.min.js"></script>
-    <!-- Validator -->
-    <script src="assets/js/validator.min.js"></script>
-    <!-- Custom Theme Scripts -->
-    <script src="assets/js/custom.min.js"></script>
-    <!-- Input mask -->
-    <script src="assets/js/jquery.inputmask/jquery.inputmask.bundle.min.js"></script>
-    <!-- JS dataTables -->
-    <script src="assets/js/jquery.dataTables.min.js"></script>
-    <script src="assets/js/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
-    <!-- JS Moments -->
-    <script src="assets/js/moment.min.js"></script>
-    <!-- Sweet Alert -->
-    <script src="assets/js/sweetalert2.min.js"></script>
+        <!-- modals Cargando -->
+        <div class="modal modalLoad"> </div>
+
+        <!-- Modal -->
+        <!-- <div class="modal fade" id="modalLoad" role="dialog" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Modal Header</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>Some text in the modal.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+
+            </div>
+        </div> -->
+
+        <!-- modals Cargando -->
+
+        <!-- jQuery -->
+        <script src="assets/js/jquery.min.js"></script>
+        <!-- Require -->
+        <!-- <script data-main="assets/main" src="assets/js/require.js"></script> -->
+        <!-- JS Scripts -->
+        <script src="assets/js/InventarioFacturas.js"></script>
+        <!-- Bootstrap -->
+        <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+        <!-- FastClick -->
+        <script src="assets/js/fastclick/lib/fastclick.js"></script>
+        <!-- NProgress -->
+        <script src="assets/js/nprogress/nprogress.js"></script>
+        <!-- iCheck -->
+        <script src="assets/js/iCheck/icheck.min.js"></script>
+        <!-- Validator -->
+        <script src="assets/js/validator.min.js"></script>
+        <!-- Custom Theme Scripts -->
+        <script src="assets/js/custom.min.js"></script>
+        <!-- Input mask -->
+        <script src="assets/js/jquery.inputmask/jquery.inputmask.bundle.min.js"></script>
+        <!-- JS dataTables -->
+        <script src="assets/js/jquery.dataTables.min.js"></script>
+        <script src="assets/js/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+        <!-- JS Moments -->
+        <script src="assets/js/moment.min.js"></script>
+        <!-- Sweet Alert -->
+        <script src="assets/js/sweetalert2.min.js"></script>
+        <!-- Moment -->
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+        <script type="text/javascript" src="//cdn.jsdelivr.net/momentjs/latest/moment-with-locales.min.js"></script>
+
+
 
 </body>
 
 </html>
 
 <script>
-$(document).ready(function () {
-    inventarioFacturas.CargaFacturas();
-});
-$(document).on('click', '#btnReimprimeFactura', function (event) {
-    inventarioFacturas.ticketPrint();
-});
+    $(document).ready(function () {
+        moment.locale('es');
+
+        $body = $("body");
+        $(document).on({
+            ajaxStart: function () { $body.addClass("loading"); },
+            ajaxStop: function () { $body.removeClass("loading"); }
+        });
+
+        $(function () {
+            var start = moment().subtract(29, 'days');
+            var end = moment();
+
+            function cb(start, end) {
+                $('#dp_rangoFacturas span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+            }
+
+            $('#dp_rangoFacturas').daterangepicker({
+                "opens": "left",
+                "locale": {
+                    "format": "DD/MM/YYYY",
+                    "separator": " - ",
+                    "applyLabel": "Aplicar",
+                    "cancelLabel": "Cancelar",
+                    "fromLabel": "From",
+                    "toLabel": "To",
+                    "customRangeLabel": "Manual",
+                    "daysOfWeek": [
+                        "DO",
+                        "Lu",
+                        "Ma",
+                        "Mi",
+                        "Ju",
+                        "Vi",
+                        "Sa"
+                    ],
+                    "monthNames": [
+                        "Enero",
+                        "Febrero",
+                        "Marzo",
+                        "Abril",
+                        "Mayo",
+                        "Junio",
+                        "Julio",
+                        "Agosto",
+                        "Setiembre",
+                        "Octubre",
+                        "Noviembre",
+                        "Diciembre"
+                    ],
+                    "firstDay": 1
+                },
+                startDate: start,
+                endDate: end,
+                ranges: {
+                    'Hoy': [moment(), moment()],
+                    'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                    'Ultimos 7 Días': [moment().subtract(6, 'days'), moment()],
+                    'Ultimos 30 Días': [moment().subtract(29, 'days'), moment()],
+                    'Este Mes': [moment().startOf('month'), moment().endOf('month')],
+                    'Ultimo Mes': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                }
+            }, cb);
+
+            cb(start, end);
+
+            inventarioFacturas.fechaInicial = start.format('YYYY-MM-DD') + ' 00:00';
+            inventarioFacturas.fechaFinal = end.format('YYYY-MM-DD') + ' 23:59';
+            inventarioFacturas.CargaFacturas();
+        });
+    });
+
+    $(document).on('click', '#btnReimprimeFactura', function (event) {
+        inventarioFacturas.ticketPrint();
+    });
+
+    $('#dp_rangoFacturas').on('apply.daterangepicker', function (ev, picker) {
+        inventarioFacturas.fechaInicial = picker.startDate.format('YYYY-MM-DD');
+        inventarioFacturas.fecchaFinal = picker.endDate.format('YYYY-MM-DD');
+        inventarioFacturas.CargaFacturas();
+    });
+
 </script>

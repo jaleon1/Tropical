@@ -1,18 +1,23 @@
 class InventarioFacturas {
     // Constructor
-    constructor(facturas, tb_facturas, factDetalle, tb_prdXFact) {
+    constructor(facturas, tb_facturas, factDetalle, tb_prdXFact,fechaInicial, fechaFinal) {
         this.facturas = facturas || new Array();
         this.factDetalle = factDetalle || new Array();
         this.tb_facturas = tb_facturas || null;
+        this.fechaInicial = fechaInicial || "";
+        this.fechaFinal = fechaFinal || "";
     };
 
     CargaFacturas() {
         $.ajax({
+            beforeSend: function() {  $("body").addClass("loading"); },
             type: "POST",
             url: "class/Factura.php",
             data: {
-                action: "ReadAll"
-            }
+                action: "ReadAllbyRange",
+                obj: JSON.stringify(inventarioFacturas)
+            },
+            complete: function() {  $("body").removeClass("loading"); }
         })
             .done(function (e) {
 //                 if(JSON.parse(e).msg=='NOCONTRIB'){
@@ -58,7 +63,8 @@ class InventarioFacturas {
     drawFac(e) {
         var facturas = JSON.parse(e);
         this.tb_facturas = $('#tb_facturas').DataTable({
-            data: facturas,                               
+            data: facturas,      
+            destroy: true,                         
             "language": {
                 "infoEmpty":  "Sin Facturas",
                 "emptyTable": "Sin Facturas",
@@ -89,15 +95,38 @@ class InventarioFacturas {
                 },
                 {
                     title: "ALMACEN",
-                    data: "nombre"
+                    data: "bodega"
                 },
                 {
                     title: "VENDEDOR",
-                    data: "userName"
+                    data: "vendedor"
                 },
                 {
                     title: "ESTADO",
-                    data: "idEstadoComprobante"
+                    data: "idEstadoComprobante",
+                    mRender: function ( e ) {
+                        switch (e) {
+                            case "1":
+                                return '<i class="fa fa-paper-plane" aria-hidden="true" style="color:red"> Sin Enviar</i>';
+                                break;
+                            case "2":
+                                return '<i class="fa fa-paper-plane" aria-hidden="true" style="color:green"> Enviado</i>';
+                                break;
+                            case "3":
+                                return '<i class="fa fa-check-square-o" aria-hidden="true" style="color:green"> Aceptado</i>';
+                                break;
+                            case "4":
+                                return '<i class="fa fa-times-circle" aria-hidden="true" style="color:red"> Rechazado</i>';
+                                break;
+                            case "5":
+                                return '<i class="fa fa-exclamation-triangle" aria-hidden="true" style="color:#FF6F00"> Otro</i>';
+                                break;
+                            default:
+                                return 'Desconocido';
+                                break;
+
+                        }
+                    }
                 },
                 {
                     title: "MONTO EFECTIVO",
