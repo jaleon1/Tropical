@@ -237,7 +237,7 @@ class Distribucion{
 
     function Read(){
         try {
-            $sql='SELECT d.id, d.fecha, d.orden, d.idUsuario, d.idBodega, b.nombre as bodega, d.porcentajeDescuento, d.porcentajeIva,  (sum(cantidad*valor) + sum(cantidad*valor)*0.13) as total
+            $sql='SELECT d.id, d.fecha, d.orden, clave, d.idUsuario, d.idBodega, b.nombre as bodega, d.porcentajeDescuento, d.porcentajeIva,  (sum(cantidad*valor) + sum(cantidad*valor)*0.13) as total
                 FROM distribucion d
                 INNER JOIN bodega b on b.id=d.idBodega
                 INNER JOIN productosXDistribucion p on p.idDistribucion=d.id
@@ -248,6 +248,7 @@ class Distribucion{
                 $this->id = $data[0]['id'];
                 $this->fecha = $data[0]['fecha'];
                 $this->orden = $data[0]['orden'];
+                $this->clave = $data[0]['clave'];
                 $this->idUsuario = $data[0]['idUsuario'];
                 $this->idBodega = $data[0]['idBodega'];
                 $this->bodega = $data[0]['bodega'];

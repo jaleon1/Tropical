@@ -44,39 +44,6 @@ class MovimientosCaja {
         var pageTotal=0;
 
         this.tb_movimientosCaja = $('#tb_movimientosCaja').DataTable({
-            "footerCallback": function (row, data, start, end, display) {
-                var api = this.api(), data;
-
-                // Remove the formatting to get integer data for summation
-                var intVal = function (i) {
-                    return typeof i === 'string' ?
-                        i.replace(/[\$,]/g, '') * 1 :
-                        typeof i === 'number' ?
-                            i : 0;
-                };
-
-                // Total over all pages
-                total = api
-                    .column(8)
-                    .data()
-                    .reduce(function (a, b) {
-                        return intVal(a) + intVal(b);
-                    }, 0);
-
-                // Total over this page
-                var pageTotal = api
-                    .column(8, { page: 'current' })
-                    .data()
-                    .reduce(function (a, b) {
-                        return intVal(a) + intVal(b);
-                    }, 0);
-
-                // Update footer
-                $(api.column(8).footer()).html(
-                    '$' + pageTotal + ' ( $' + total + ' total)'
-                );
-            },
-
             dom: 'Blfrtip',
             buttons: [
                 {
@@ -104,9 +71,9 @@ class MovimientosCaja {
             ],
             ///////////////// 
             data: movimientos,
-            "language": {
-                "infoEmpty": "Sin Movimientos Ingresados",
-                "emptyTable": "Sin Movimientos Ingresados",
+            language: {
+                "infoEmpty": "Sin Movimientos de Cierres de Caja",
+                "emptyTable": "Sin Movimientos  de Cierres de Caja",
                 "search": "Buscar",
                 "zeroRecords": "No hay resultados",
                 "lengthMenu": "Mostar _MENU_ registros",
@@ -154,14 +121,14 @@ class MovimientosCaja {
                     title: "MONTO APERTURA",
                     data: "montoApertura",
                     mRender: function (e) {
-                        return '¢' + parseFloat(Number(e)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+                        return '¢' + parseFloat(Number(e)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                     }
                 },
                 {
                     title: "MONTO CIERRE",
                     data: "montoCierre",
                     mRender: function (e) {
-                        return '¢' + parseFloat(Number(e)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+                        return '¢' + parseFloat(Number(e)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                     }
                 },
                 {
@@ -169,7 +136,7 @@ class MovimientosCaja {
                     data: "totalVentasEfectivo",
                     footer: true,
                     mRender: function (e) {
-                        return '¢' + parseFloat(Number(e)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+                        return '¢' + parseFloat(Number(e)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                     }
                 },
                 {
@@ -177,7 +144,7 @@ class MovimientosCaja {
                     data: "totalVentasTarjeta",
                     footer: true,
                     mRender: function (e) {
-                        return '¢' + parseFloat(Number(e)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+                        return '¢' + parseFloat(Number(e)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                     }
                 },
                 {
@@ -187,7 +154,7 @@ class MovimientosCaja {
                 {
                     title: "FECHA CIERRE",
                     data: "fechaCierre"
-                },
+                }
             ]
         });
 
@@ -394,7 +361,26 @@ class MovimientosCaja {
         location.href ="/TicketCierreCaja.html";
         // location.href ="/Tropical/TicketCierreCaja.html";
     }
-    
+
+    ticketPrintRePrint(lsRowCierre){
+        var row = JSON.parse(lsRowCierre);
+        var apertura = row.montoApertura;
+        var efectivo = row.totalVentasEfectivo;
+        if(efectivo==null)efectivo=0;
+        var tarjeta = row.totalVentasTarjeta;
+        if(tarjeta==null)tarjeta=0;
+        var totalventas = parseFloat(efectivo) + parseFloat(tarjeta);
+        var totalneto = parseFloat(efectivo) + parseFloat(tarjeta) + parseFloat(apertura);
+        localStorage.setItem("lsUsuario",row.cajero);
+        localStorage.setItem("lsFecha",row.fechaApertura);
+        localStorage.setItem("lsApertura",'¢' + parseFloat(Number(apertura)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+        localStorage.setItem("lsEfectivo",'¢' + parseFloat(Number(efectivo)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+        localStorage.setItem("lsTarjeta",'¢' + parseFloat(Number(tarjeta)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+        localStorage.setItem("lsTotalVentas",'¢' + parseFloat(Number(totalventas)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+        localStorage.setItem("lsTotalNeto",'¢' + parseFloat(Number(totalneto)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+        location.href ="/TicketCierreCaja.html";
+        // location.href ="/Tropical/TicketCierreCaja.html";
+    }
 }
 //Class Instance
 let movimientosCaja = new MovimientosCaja();

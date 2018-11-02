@@ -56,7 +56,7 @@
 
                     <div class="navbar nav_title" style="border: 0;">
                         <a href="index.html" class="site_title">
-                            <i class="glyphicon glyphicon-share-alt"></i>
+                            
                             <span>TropicalSNO!</span>
                         </a>
                     </div>
@@ -66,7 +66,7 @@
                     <!-- menu profile quick info -->
                     <div class="profile">
                         <div class="profile_pic">
-                            <img src="images/user.png" alt="..." class="img-circle profile_img">
+                            <img src="images/logoTropical.png" alt="..." class="img-circle profile_img">
                         </div>
                         <div class="profile_info">
                             <span>Bienvenido,</span>
@@ -197,49 +197,23 @@
 
     <!-- modals -->
     <!-- Large modal -->
-    <div id="modalFac" class="modal fade factura-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
+    <div id="modalCierre" class="modal fade factura-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-sm">
             <div class="modal-content modal-factura">
-                <div id="detalleFac" class="modal-header">
-
+                <div class="modal-header">
+                    <h4 class="modal-title">Reimprimir Cierre de Caja</h4>
                 </div>
                 <div class="modal-body">
                     <div class="row">
                         <div class="clearfix"></div>
-
                         <div class="row">
-                            <div class="col-md-12 col-sm-12 col-xs-12">
-                                <!-- <div class="x_panel"> -->
-                                <!--  CONTENIDO DE LA PAGINA -->
-                                <div class="x_content">
-                                    <div class="table-responsive">
-                                        <table id="tb_detalle_fact" style="width:100%" class="table table-striped jambo_table bulk_action">
-                                            <thead>
-
-                                            </thead>
-                                            <tbody id="detalle_prd">
-
-                                            </tbody>
-                                            <tfoot>
-                                            <tr>
-                                                <th colspan="8" style="text-align:right">Total:</th>
-                                                <th></th>
-                                            </tr>
-                                            </tfoot>
-                                        </table>
-                                    </div>
-                                </div>
-                                <!-- </div> -->
+                            <div class="col-md-6 col-md-offset-3">
+                                <button id="btnReimprimeCierre" type="submit" class="btn btn-success">Reimprimir</button>
                             </div>
                         </div>
-
                         <div class="clearfix"></div>
-
                     </div>
                     <div class="modal-footer">
-                        <div id="totalFact">
-
-                        </div>
                     </div>
                 </div>
             </div>
@@ -253,7 +227,8 @@
     <!-- Require -->
     <!-- <script data-main="assets/main" src="assets/js/require.js"></script> -->
     <!-- JS Scripts -->
-    <script src="assets/js/Caja.min.js"></script>
+    <!-- <script src="assets/js/Caja.min.js"></script> -->
+    <script src="assets/js/Caja.js"></script>
     <!-- Bootstrap -->
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
     <!-- FastClick -->
@@ -290,5 +265,14 @@
 <script>
     $(document).ready(function () {
         movimientosCaja.CargaMovimientosCajaXUsuario();
+    });
+    $('#tb_movimientosCaja tbody').on('click', 'tr', function () {
+        var table = $('#tb_movimientosCaja').DataTable();
+        var rowCierre = table.row(this).data();
+        localStorage.setItem("lsRowCierre",JSON.stringify(rowCierre));
+        $('#modalCierre').modal('toggle');
+    });
+    $("#btnReimprimeCierre").click(function () {
+        movimientosCaja.ticketPrintRePrint(localStorage.getItem("lsRowCierre"));
     });
 </script>

@@ -344,8 +344,7 @@ class Producto {
                 {
                     extend: 'excelHtml5',
                     exportOptions: {columns: [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ]},                    
-                    messageTop:'TITULO',
-                    messageBottom:'PIE'
+                    messageTop:'Inventario Producto Terminado'
                 },
                 {
                     extend: 'pdfHtml5',
@@ -355,8 +354,8 @@ class Producto {
                 }
             ],
             language: {
-                "infoEmpty": "Sin Usuarios Registrados",
-                "emptyTable": "Sin Usuarios Registrados",
+                "infoEmpty": "Sin Productos",
+                "emptyTable": "Sin Productos",
                 "search": "Buscar",
                 "zeroRecords":    "No hay resultados",
                 "lengthMenu":     "Mostrar _MENU_ registros",
@@ -989,8 +988,7 @@ class Producto {
                 {
                     extend: 'excelHtml5',
                     exportOptions: {columns: [1, 4, 5, 6, 7, 8, 9, 10, 11, 12]},
-                    messageTop:'Reporte de Productos',
-                    messageBottom:'PIE'
+                    messageTop:'Movimientos de Productos'
                 },
                 {
                     extend: 'pdfHtml5',
