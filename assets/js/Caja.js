@@ -154,6 +154,17 @@ class MovimientosCaja {
                 {
                     title: "FECHA CIERRE",
                     data: "fechaCierre"
+                },
+                {
+                    title: "TOTAL NETO",
+                    mRender: function(data, row){
+                        // if(type === 'display'){
+                        //    var montoApertura = row['montoApertura'];
+                        //    var totalVentasEfectivo = row['totalVentasEfectivo'];
+                        //    var totalVentasTarjeta = row['totalVentasTarjeta'];
+                        totalNeto = parseFloat(row['montoApertura'])+parseFloat(row['totalVentasEfectivo'])+parseFloat(row['totalVentasTarjeta']);
+                        '¢' + parseFloat(Number(totalNeto)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                     }
                 }
             ]
         });
