@@ -55,26 +55,20 @@
             //
             $central = new Bodega();
             $central->readCentral();
-            $distr->idEmisor =  $central->id;
-            $externa = new Bodega();
-            // $externa->ReadbyId($distr["idBodega"]); // bodega receptor.
-            if($externa->tipo != $central->tipo){
-                $distr->esInterna= false;
-                // receptor
-                $receptor = new ClienteFE();
-                $receptor->idBodega = $distr->idReceptor;
-                $distr->datosReceptor = $receptor->read();
-                // emisor - Central.
-                $entidad = new ClienteFE();
-                $entidad->idBodega = $central->id;
-                $distr->datosEntidad = $entidad->read();
-            }
+            // emisor - Central.
+            $entidad = new ClienteFE();
+            $entidad->idBodega = $central->id;
+            $distr->datosEntidad = $entidad->read();
+            // receptor
+            $receptor = new ClienteFE();
+            $receptor->idBodega = $distr->idBodega;
+            $distr->datosReceptor = $receptor->read();
             // idDocumento.
             $distr->idDocumento = 1;
             facturacionElectronica::APIConsultaComprobante($distr);
             error_log("[INFO] Finaliza Consulta de Distribucion");
         }
-    } 
+    }
     catch(Exception $e){ 
         error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
     }    
