@@ -11,7 +11,7 @@
     require_once("productoXFactura.php");
     try{
         // Comprobantes 1-4-8.
-        /*$sql='SELECT id
+        $sql='SELECT id
             from factura
             where idEstadoComprobante = 2
             order by idBodega';
@@ -40,7 +40,7 @@
             $factura->idDocumento = $factura->idDocumentoNC;
             FacturacionElectronica::APIConsultaComprobante($factura);
             error_log("[INFO] Finaliza Consulta NC");
-        }*/
+        }
         // Distribuciones.
         $sql='SELECT id
             from distribucion
@@ -65,6 +65,7 @@
             $distr->datosReceptor = $receptor->read();
             // idDocumento.
             $distr->idDocumento = 1;
+            FacturacionElectronica::$distr= true;
             facturacionElectronica::APIConsultaComprobante($distr);
             error_log("[INFO] Finaliza Consulta de Distribucion");
         }
