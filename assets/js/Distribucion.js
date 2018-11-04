@@ -75,7 +75,7 @@ class Distribucion {
             // campos de facturación electrónica.
             objlista.cantidad = parseFloat($(item).find('td:eq(5) input').val());
             objlista.detalle = objlista.codigo;
-            objlista.precioUnitario = parseFloat(objlista.valor);
+            objlista.precioUnitario = parseFloat(parseFloat(objlista.valor).toFixed(5));
             objlista.numeroLinea = i + 1;
             objlista.idTipoCodigo = 1; // 1 = codigo de vendedor
             objlista.codigo = objlista.codigo
