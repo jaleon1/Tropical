@@ -79,6 +79,47 @@ class InventarioInsumoXBodega{
         }
     }
 
+    public static function mermaAgenciaSalida($idProducto, $outOrden, $outCantidad){
+        try {
+            $sql="SELECT saldoCantidad, costoPromedio 
+                FROM insumosXBodega 
+                WHERE idProducto=:idProducto and idBodega =:idBodega;";
+            $param = array(':idProducto'=>$idProducto, ':idBodega'=>$_SESSION['userSession']->idBodega);
+            $data = DATA::Ejecutar($sql,$param);
+            if($data){
+                // calculo de saldos. 
+                // self::$valorSalida = floatval($data[0]['costoPromedio'] * $outCantidad);
+                self::$saldoCantidad = $data[0]['saldoCantidad'] - $outCantidad;
+                self::$saldoCosto = floatval($data[0]['costoPromedio'] * self::$saldoCantidad);
+                if(self::$saldoCantidad < 0){
+                    self::$saldoCantidad = 0;
+                    self::$saldoCosto = 0;
+                }
+                // agrega ENTRADA histórico inventario. *** NO IMPLEMENTADO **
+                // actualiza saldos.
+                $sql = 'UPDATE insumosXBodega
+                    SET saldoCantidad=:saldoCantidad, saldoCosto=:saldoCosto
+                    WHERE idProducto=:idProducto and idBodega =:idBodega;';
+                $param = array(':idProducto'=>$idProducto, ':idBodega'=>$_SESSION['userSession']->idBodega, ':saldoCantidad'=>self::$saldoCantidad, ':saldoCosto'=>self::$saldoCosto);
+                $data = DATA::Ejecutar($sql, $param, false);
+                if($data) {
+                    return true;
+                }                
+                else throw new Exception('Error al consultar actualizar los saldos de insumo x bodega ('.$idProducto.')' , ERROR_SALIDA_INVENTARIO_INSUMOXBODEGA);
+            }
+            else throw new Exception('Error al consultar el codigo del insumo para actualizar inventario ('.$idProducto.')' , ERROR_SALIDA_INVENTARIO_INSUMOXBODEGA);
+
+        }
+        catch(Exception $e) {
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            // header('HTTP/1.0 400 Bad error');
+            // die(json_encode(array(
+            //     'code' => $e->getCode() ,
+            //     'msg' => $e->getMessage()))
+            // );
+        }
+    }
+
 
 }
 ?>
