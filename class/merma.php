@@ -128,6 +128,7 @@ class Merma{
             );
         }
     }
+    
     //Merma (SALIDA)
     function CreateInventarioInsumo($obj){
         try {
