@@ -256,12 +256,12 @@ class Producto {
     // Muestra información en ventana
     showInfo() {
         //$(".modal").css({ display: "none" });          
-        swal({            
-            type: 'success',
-            title: 'Listo!',
-            showConfirmButton: false,
-            timer: 1000
-        });
+        // swal({            
+        //     type: 'success',
+        //     title: 'Listo!',
+        //     // showConfirmButton: false,
+        //     timer: 1000
+        // });
         $(".close").click();
         $("body").css({"padding-right":"0px"});
     };
