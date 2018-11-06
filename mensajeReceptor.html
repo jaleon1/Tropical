@@ -181,8 +181,11 @@
                                             <div class="item form-group">
                                                 <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tipoMensaje">Tipo </label>
                                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                                    <input id="tipoMensaje" class="form-control col-md-7 col-xs-12"
-                                                        data-validate-length-range="1,20" name="tipoMensaje" required="required" >
+                                                        <select class="selectpicker show-menu-arrow form-control" type="select" required="required" id="tipoMensaje" name="tipoMensaje">
+                                                            <option value=1>Aceptar</option>
+                                                            <option value=2>Aceptar Parcialmente</option>
+                                                            <option value=3>Rechazar</option>
+                                                        </select>
                                                 </div>
                                             </div>
     
@@ -190,7 +193,7 @@
                                                 <label class="control-label col-md-3 col-sm-3 col-xs-12" for="detalle">Detalle
                                                 </label>
                                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                                    <input id="detalle" class="form-control col-md-7 col-xs-12" name="detalle" >
+                                                    <input id="detalle" class="form-control col-md-7 col-xs-12" name="detalle" placeholder="Observaciones del mensaje" >
                                                 </div>
                                             </div>
     
