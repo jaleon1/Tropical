@@ -60,7 +60,10 @@ if(isset($_POST["action"])){
             $factura->notaCredito();
             break;
         case "ReadAllbyRange":
-            echo json_encode($ordenCompra->ReadAllbyRange());
+            echo json_encode($factura->ReadAllbyRange());
+            break;
+        case "ReadAllbyRangeInvVentas":
+            echo json_encode($factura->ReadAllbyRangeInvVentas());
             break;
     }    
 }
@@ -356,6 +359,26 @@ class Factura{
             (SELECT count(pxf.codigo) FROM tropical.productosXFactura pxf WHERE pxf.codigo="08oz" AND pxf.idFactura=f.id) AS _08oz 
             FROM tropical.factura f ORDER BY f.fechaCreacion DESC;';
             $data= DATA::Ejecutar($sql);
+            return $data;
+        }     
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar la lista'))
+            );
+        }
+    }
+
+    function ReadAllbyRangeInvVentas(){
+        try {
+            $sql='SELECT f.id, f.fechaCreacion, f.consecutivo, f.totalComprobante,
+            (SELECT count(pxf.codigo) FROM tropical.productosXFactura pxf WHERE pxf.codigo="12oz" AND pxf.idFactura=f.id) AS _12oz, 
+            (SELECT count(pxf.codigo) FROM tropical.productosXFactura pxf WHERE pxf.codigo="08oz" AND pxf.idFactura=f.id) AS _08oz 
+            FROM tropical.factura f WHERE f.fechaCreacion Between :fechaInicial and :fechaFinal  
+            ORDER BY f.consecutivo desc';
+            $param= array(':fechaInicial'=>$this->fechaInicial, ':fechaFinal'=>$this->fechaFinal);            
+            $data= DATA::Ejecutar($sql, $param);
             return $data;
         }     
         catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());

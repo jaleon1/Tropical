@@ -1,4 +1,9 @@
 class InventarioVentas {
+    constructor(tb_ventas, fechaInicial, fechaFinal) {
+        this.tb_ventas = tb_ventas || [];
+        this.fechaInicial = fechaInicial || "";
+        this.fechaFinal = fechaFinal || "";
+    }
 
     Carga() {
         $.ajax({
@@ -10,6 +15,23 @@ class InventarioVentas {
         })
             .done(function (e) {
                 inventarioVentas.drawReporteVentas(e)
+            });
+    };
+
+    CargaInventarioVentasRango() {
+        var referenciaCircular = inventarioVentas.tb_ventas;
+        inventarioVentas.tb_ventas = [];
+        $.ajax({
+            type: "POST",
+            url: "class/Factura.php",
+            data: {
+                action: "ReadAllbyRangeInvVentas",
+                obj: JSON.stringify(inventarioVentas)
+            }
+        })
+            .done(function (e) {
+                inventarioVentas.tb_ventas = referenciaCircular;        
+                inventarioVentas.drawReporteVentas(e); 
             });
     };
 
@@ -29,38 +51,38 @@ class InventarioVentas {
 
         var ventas = JSON.parse(e);
         this.tb_ventas = $('#tb_ventas').DataTable({
-            "footerCallback": function ( row, ventas, start, end, display ) {
-                var api = this.api(), ventas;
+            // "footerCallback": function ( row, ventas, start, end, display ) {
+            //     var api = this.api(), ventas;
      
-                // Remove the formatting to get integer data for summation
-                var intVal = function ( i ) {
-                    return typeof i === 'string' ?
-                        i.replace(/[\$,]/g, '')*1 :
-                        typeof i === 'number' ?
-                            i : 0;
-                };
+            //     // Remove the formatting to get integer data for summation
+            //     var intVal = function ( i ) {
+            //         return typeof i === 'string' ?
+            //             i.replace(/[\$,]/g, '')*1 :
+            //             typeof i === 'number' ?
+            //                 i : 0;
+            //     };
      
-                // Total over all pages
-                total = api
-                    .column( 5 )
-                    .data()
-                    .reduce( function (a, b) {
-                        return intVal(a) + intVal(b);
-                    }, 0 );
+            //     // Total over all pages
+            //     total = api
+            //         .column( 5 )
+            //         .data()
+            //         .reduce( function (a, b) {
+            //             return intVal(a) + intVal(b);
+            //         }, 0 );
      
-                // Total over this page
-                pageTotal = api
-                    .column( 5, { page: 'current'} )
-                    .data()
-                    .reduce( function (a, b) {
-                        return intVal(a) + intVal(b);
-                    }, 0 );
+            //     // Total over this page
+            //     pageTotal = api
+            //         .column( 5, { page: 'current'} )
+            //         .data()
+            //         .reduce( function (a, b) {
+            //             return intVal(a) + intVal(b);
+            //         }, 0 );
      
-                // Update footer
-                $( api.column( 5 ).footer() ).html(
-                    '$'+pageTotal +' ( $'+ total +' total)'
-                );
-            },
+            //     // Update footer
+            //     $( api.column( 5 ).footer() ).html(
+            //         '$'+pageTotal +' ( $'+ total +' total)'
+            //     );
+            // },
             responsive: true,
             destroy: true,
             data: ventas,                               

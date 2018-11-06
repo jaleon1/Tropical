@@ -204,8 +204,8 @@ class InventarioFacturas {
     };
 
     CargaListaFacturasRango(){
-        // var referenciaCircular = inventarioFacturas.tablainsumo;
-        // inventarioFacturas.tablainsumo = [];
+        var referenciaCircular = inventarioFacturas.tb_facturas;
+        inventarioFacturas.tb_facturas = [];
         $.ajax({
             type: "POST",
             url: "class/Factura.php",
@@ -215,7 +215,7 @@ class InventarioFacturas {
             }
         })
             .done(function (e) {
-                // inventarioFacturas.tablainsumo = referenciaCircular;        
+                inventarioFacturas.tb_facturas = referenciaCircular;        
                 inventarioFacturas.drawFac(e); 
             });
     };
