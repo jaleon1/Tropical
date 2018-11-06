@@ -62,7 +62,6 @@ class InventarioFacturas {
         this.tb_facturas = $('#tb_facturas').DataTable({
             responsive: true,
             destroy: true,
-            order: [[1, "asc"]],
             dom: 'Bfrtip',
             buttons: [
                 {
@@ -211,6 +210,23 @@ class InventarioFacturas {
             url: "class/Factura.php",
             data: {
                 action: "ReadAllbyRange",
+                obj: JSON.stringify(inventarioFacturas)
+            }
+        })
+            .done(function (e) {
+                inventarioFacturas.tb_facturas = referenciaCircular;        
+                inventarioFacturas.drawFac(e); 
+            });
+    };
+
+    CargaMisFacturasRango(){
+        var referenciaCircular = inventarioFacturas.tb_facturas;
+        inventarioFacturas.tb_facturas = [];
+        $.ajax({
+            type: "POST",
+            url: "class/Factura.php",
+            data: {
+                action: "ReadAllbyRangeUser",
                 obj: JSON.stringify(inventarioFacturas)
             }
         })
