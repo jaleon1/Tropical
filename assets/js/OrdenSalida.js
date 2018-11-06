@@ -113,7 +113,7 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
                 distr.showError(e);
             })
             .always(function () {
-                setTimeout('$("#orden").removeAttr("disabled")', 1000);
+                $("#orden").removeAttr("disabled");
             });
     }
 
@@ -436,7 +436,6 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
                         // distr.showError(e);
                     })
                     .always(function () {
-                        // setTimeout('$("#orden").removeAttr("disabled")', 1000);
                     });
                 
             });

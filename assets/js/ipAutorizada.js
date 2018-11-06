@@ -42,7 +42,7 @@ class IpAutorizada {
                 ipautorizada.showError(e);
             })
             .always(function () {
-                setTimeout('$("#btnIp").removeAttr("disabled")', 1000);
+                $("#btnIp").removeAttr("disabled");
                 ipautorizada = new IpAutorizada();
                 ipautorizada.ClearCtls();
                 ipautorizada.Read;

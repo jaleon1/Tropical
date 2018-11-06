@@ -59,7 +59,7 @@ class ProductoBodega {
                 productobodega.showError(e);
             })
             .always(function () {
-                setTimeout('$("#btnProductosXBodega").removeAttr("disabled")', 1000);
+                $("#btnProductosXBodega").removeAttr("disabled");
                 productobodega = new ProductoBodega();
                 productobodega.ClearCtls();
                 productobodega.Read;
@@ -94,7 +94,7 @@ class ProductoBodega {
                 productobodega.showError(e);
             })
             .always(function () {
-                setTimeout('$("#btnProductosXBodega").removeAttr("disabled")', 1000);
+                $("#btnProductosXBodega").removeAttr("disabled");
                 productobodega = new ProductoBodega();
                 productobodega.ClearCtls();
                 productobodega.Read;
@@ -118,7 +118,7 @@ class ProductoBodega {
                 productobodega.showError(e);
             })
             .always(function () {
-                setTimeout('$("#btnProductosXBodega").removeAttr("disabled")', 1000);
+                $("#btnProductosXBodega").removeAttr("disabled");
                 productobodega = new ProductoBodega();
                 productobodega.ClearCtls();
                 productobodega.Read;
@@ -143,7 +143,7 @@ class ProductoBodega {
                 productobodega.showError(e);
             })
             .always(function () {
-                setTimeout('$("#btnCantidadCosto").removeAttr("disabled")', 1000);
+                $("#btnCantidadCosto").removeAttr("disabled");
                 productobodega = new ProductoBodega();
                 productobodega.ClearCtls();
                 productobodega.Read;
@@ -415,7 +415,7 @@ class ProductoBodega {
                 producto.showError(e);
             })
             .always(function () {
-                setTimeout('$("#btnSubmit").removeAttr("disabled")', 1000);
+                $("#btnSubmit").removeAttr("disabled");
                 producto = new Producto();
                 //producto.CleanCtls();
                 $("#p_searh").focus();

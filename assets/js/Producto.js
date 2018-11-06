@@ -132,7 +132,7 @@ class Producto {
                 producto.showError(e);
             })
             .always(function () {
-                setTimeout('$("#btnProducto").removeAttr("disabled")', 1000);
+                $("#btnProducto").removeAttr("disabled");
                 producto = new Producto();
                 producto.ClearCtls();
                 producto.Read;
@@ -177,7 +177,7 @@ class Producto {
                 producto.showError(e);
             })
             .always(function () {
-                setTimeout('$("#btnArticulo").removeAttr("disabled")', 1000);
+                $("#btnArticulo").removeAttr("disabled");
                 producto = new Producto();
                 // limpia el ds
                 $('#tableBody-ArticuloBodega').html("");
@@ -255,15 +255,15 @@ class Producto {
 
     // Muestra información en ventana
     showInfo() {
-        //$(".modal").css({ display: "none" });  
-        $(".close").click();
-        swal({
-            
+        //$(".modal").css({ display: "none" });          
+        swal({            
             type: 'success',
             title: 'Listo!',
             showConfirmButton: false,
             timer: 1000
         });
+        $(".close").click();
+        $("body").css({"padding-right":"0px"});
     };
 
     // Muestra errores en ventana
@@ -944,7 +944,7 @@ class Producto {
                 producto.showError(e);
             })
             .always(function () {
-                setTimeout('$("#btnSubmit").removeAttr("disabled")', 1000);
+                $("#btnSubmit").removeAttr("disabled");
                 producto = new Producto();
                 //producto.CleanCtls();
                 $("#p_searh").focus();
