@@ -93,7 +93,8 @@ class CajaXBodega{
             // ORDER BY fechaApertura DESC;';
 
             $sql='SELECT ca.id, ca.idBodega, bo.nombre as nombreBodega, ca.idUsuarioCajero, us.nombre as cajero, ca.estado, ca.montoApertura, 
-            ca.montoCierre,ca.totalVentasEfectivo, ca.totalVentasTarjeta, ca.fechaApertura, ca.fechaCierre
+            ca.montoCierre,ca.totalVentasEfectivo, ca.totalVentasTarjeta, ca.fechaApertura, ca.fechaCierre,
+            (IFNULL(ca.totalVentasEfectivo,0) + IFNULL(ca.totalVentasTarjeta,0) + ca.montoApertura) as totalNeto
             FROM tropical.cajasXBodega ca
             INNER JOIN bodega bo on ca.idBodega = bo.id
             INNER JOIN usuario us on ca.idUsuarioCajero = us.id
@@ -113,7 +114,8 @@ class CajaXBodega{
     function ReadByUser(){
         try {
             $sql='SELECT ca.id, ca.idBodega, bo.nombre as nombreBodega, ca.idUsuarioCajero, us.nombre as cajero, ca.estado, ca.montoApertura, 
-                ca.montoCierre,ca.totalVentasEfectivo, ca.totalVentasTarjeta, ca.fechaApertura, ca.fechaCierre
+                ca.montoCierre,ca.totalVentasEfectivo, ca.totalVentasTarjeta, ca.fechaApertura, ca.fechaCierre,
+                (IFNULL(ca.totalVentasEfectivo,0) + IFNULL(ca.totalVentasTarjeta,0) + ca.montoApertura) as totalNeto
                 FROM tropical.cajasXBodega ca
                 INNER JOIN bodega bo on ca.idBodega = bo.id
                 INNER JOIN usuario us on ca.idUsuarioCajero = us.id                

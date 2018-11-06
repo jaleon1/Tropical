@@ -59,7 +59,9 @@ if(isset($_POST["action"])){
             $factura->razon= $_POST["razon"]; // Referencia a otro documento.
             $factura->notaCredito();
             break;
-
+        case "ReadAllbyRange":
+            echo json_encode($ordenCompra->ReadAllbyRange());
+            break;
     }    
 }
 
@@ -105,6 +107,8 @@ class Factura{
     public $fechaEmisionNC = null;
     public $razon=null;
     //
+    public $fechaInicial='';
+    public $fechaFinal='';
     function __construct(){
         // identificador único
         if(isset($_POST["id"])){
@@ -160,6 +164,8 @@ class Factura{
             //
             $this->idUsuario=  $_SESSION["userSession"]->id;  
             //
+            $this->fechaInicial= $obj["fechaInicial"] ?? '';
+            $this->fechaFinal= $obj["fechaFinal"] ?? '';
             if(isset($obj["detalleFactura"] )){
                 foreach ($obj["detalleFactura"] as $itemDetalle) {
                     // b. Detalle de la mercancía o servicio prestado
@@ -220,6 +226,28 @@ class Factura{
                 INNER JOIN usuario u on u.id = f.idusuario   
                 ORDER BY f.consecutivo asc';
             $data= DATA::Ejecutar($sql);
+            return $data;
+        }     
+        catch(Exception $e) { 
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar la lista'))
+            );
+        }
+    }
+
+    function ReadAllbyRange(){
+        try {
+            $sql='SELECT f.id, f.consecutivo, f.fechaCreacion, f.totalComprobante, f.montoEfectivo, f.montoTarjeta, b.nombre, u.userName, f.idEstadoComprobante
+                FROM factura f
+                INNER JOIN bodega b on f.idBodega = b.id
+                INNER JOIN usuario u on u.id = f.idusuario  
+                WHERE f.fechaCreacion Between :fechaInicial and :fechaFinal  
+                ORDER BY f.consecutivo desc';
+            $param= array(':fechaInicial'=>$this->fechaInicial, ':fechaFinal'=>$this->fechaFinal);            
+            $data= DATA::Ejecutar($sql, $param);
             return $data;
         }     
         catch(Exception $e) { 

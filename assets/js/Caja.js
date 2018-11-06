@@ -44,30 +44,34 @@ class MovimientosCaja {
         var pageTotal=0;
 
         this.tb_movimientosCaja = $('#tb_movimientosCaja').DataTable({
-            dom: 'Blfrtip',
+            responsive: true,
+            destroy: true,
+            order: [11, "desc"],
+            dom: 'Bfrtip',
+            bLengthChange : false,
             buttons: [
                 {
-                    extend: 'pdf',
+                    extend: 'excelHtml5',
                     footer: false,
                     exportOptions: {
-                        columns: [2, 4, 5, 6, 7, 8, 9, 10, 11]
+                        columns: [2, 4, 5, 6, 7, 8, 9, 10, 11, 12]
                     }
                 },
                 {
-                    extend: 'print',
+                    extend: 'pdfHtml5',
                     footer: false,
                     exportOptions: {
-                        columns: [2, 4, 5, 6, 7, 8, 9, 10, 11]
-                    }
-
-                },
-                {
-                    extend: 'excel',
-                    footer: false,
-                    exportOptions: {
-                        columns: [2, 4, 5, 6, 7, 8, 9, 10, 11]
+                        columns: [2, 4, 5, 6, 7, 8, 9, 10, 11, 12]
                     }
                 }
+                // {
+                //     extend: 'print',
+                //     footer: false,
+                //     exportOptions: {
+                //         columns: [2, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+                //     }
+
+                // }
             ],
             ///////////////// 
             data: movimientos,
@@ -85,7 +89,6 @@ class MovimientosCaja {
                 }
             },
             footer: true,
-            "order": [[11, "desc"]],
             columnDefs: [{ className: "text-right", "targets": [9] }, { className: "text-right", "targets": [8] }, { className: "text-right", "targets": [7] }],
             columns: [
                 {
@@ -157,14 +160,10 @@ class MovimientosCaja {
                 },
                 {
                     title: "TOTAL NETO",
-                    mRender: function(data, row){
-                        // if(type === 'display'){
-                        //    var montoApertura = row['montoApertura'];
-                        //    var totalVentasEfectivo = row['totalVentasEfectivo'];
-                        //    var totalVentasTarjeta = row['totalVentasTarjeta'];
-                        totalNeto = parseFloat(row['montoApertura'])+parseFloat(row['totalVentasEfectivo'])+parseFloat(row['totalVentasTarjeta']);
-                        '¢' + parseFloat(Number(totalNeto)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-                     }
+                    data: "totalNeto",
+                    mRender: function (e) {
+                        return '¢' + parseFloat(Number(e)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                    }
                 }
             ]
         });

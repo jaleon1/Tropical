@@ -40,11 +40,18 @@
     <!-- Custom Table Scroll -->
     <link href="assets/css/facturacion.css" rel="stylesheet">
     <!-- Custom TablePRD -->
-    <link href="assets/css/datatables.net-bs/css/dataTables.bootstrap.min.css" rel="stylesheet">
+    <!-- <link href="assets/css/datatables.net-bs/css/dataTables.bootstrap.min.css" rel="stylesheet"> -->
     <!-- SweetAlert -->
     <link rel="stylesheet" href="assets/css/sweetalert2.min.css">
     <!-- css -->
     <link rel="stylesheet" href="assets/css/facturaCli.css">
+
+    <!-- Datatables -->
+    <link href="../vendors/datatables.net-bs/css/dataTables.bootstrap.min.css" rel="stylesheet">
+    <link href="../vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css" rel="stylesheet">
+    <link href="../vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css" rel="stylesheet">
+    <link href="../vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css" rel="stylesheet">
+    <link href="../vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css" rel="stylesheet">
 
 </head>
 
@@ -156,6 +163,10 @@
                         </div>
                         <div class="title_right">
                             <h3 id="fecha" style="float:right"></h3>
+                            <div id="dp_rango" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 70%; float:right">
+                                <i class="fa fa-calendar"></i>&nbsp;
+                                <span></span> <i class="fa fa-caret-down"></i>
+                            </div>
                         </div>
                     </div>
 
@@ -164,6 +175,9 @@
                     <div class="row">
                         <div class="col-md-12 col-sm-12 col-xs-12">
                             <div class="x_panel">
+                                <div class="x_title">               
+                                    <div class="clearfix"></div>
+                                </div>
                                 <!--  CONTENIDO DE LA PAGINA -->
                                 <div class="x_content">
                                     <div>
@@ -182,7 +196,7 @@
                                         <!-- /.row -->
                                     </div>
                                     <div class="table-responsive">
-                                        <table id="tb_movimientosCaja" class="table table-striped jambo_table bulk_action">
+                                        <table id="tb_movimientosCaja" class="table display responsive table-striped jambo_table no-wrap" width="100%" role="grid" aria-describedby="datatable_info">
                                             <thead>
 
                                             </thead>
@@ -257,7 +271,7 @@
         <!-- Require -->
         <!-- <script data-main="assets/main" src="assets/js/require.js"></script> -->
         <!-- JS Scripts -->
-        <script src="assets/js/Caja.min.js"></script>
+        <script src="assets/js/Caja.js"></script>
         <!-- Bootstrap -->
         <script src="assets/bootstrap/js/bootstrap.min.js"></script>
         <!-- FastClick -->

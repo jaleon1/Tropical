@@ -32,6 +32,9 @@ if(isset($_POST["action"])){
         case "Delete":
             $ordenCompra->Delete();
             break;   
+        case "ReadAllbyRange":
+            echo json_encode($ordenCompra->ReadAllbyRange());
+            break;
     }
 }
 
@@ -42,6 +45,8 @@ class OrdenCompra{
     public $orden='';
     public $idUsuario=null;
     public $lista= [];
+    public $fechaInicial='';
+    public $fechaFinal='';
 
     function __construct(){
         // identificador único
@@ -56,6 +61,8 @@ class OrdenCompra{
             $this->idProveedor= $obj["idProveedor"] ?? null;
             $this->orden= $obj["orden"] ?? '';            
             //$this->idUsuario= $obj["idUsuario"] ?? null;
+            $this->fechaInicial= $obj["fechaInicial"] ?? '';
+            $this->fechaFinal= $obj["fechaFinal"] ?? '';
             // lista.
             if(isset($obj["lista"] )){
                 require_once("InsumosXOrdenCompra.php");
@@ -284,6 +291,25 @@ class OrdenCompra{
             die(json_encode(array(
                 'code' => $e->getCode() ,
                 'msg' => $e->getMessage()))
+            );
+        }
+    }
+
+    function ReadAllbyRange(){
+        try {
+            $sql='SELECT o.id, o.fecha, o.orden, u.nombre as usuario
+                FROM ordenCompra o INNER JOIN usuario  u on u.id=o.idUsuario
+                WHERE o.fecha Between :fechaInicial and :fechaFinal               
+            ORDER BY o.fecha desc;';
+            $param= array(':fechaInicial'=>$this->fechaInicial, ':fechaFinal'=>$this->fechaFinal);            
+            $data= DATA::Ejecutar($sql, $param);
+            return $data;
+        }     
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar la lista'))
             );
         }
     }

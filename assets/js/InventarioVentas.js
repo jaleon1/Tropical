@@ -124,7 +124,7 @@ class InventarioVentas {
                         if (e==null) 
                             return '¢0'; 
                         else
-                            return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+                            return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                     }
                 }
             ]
