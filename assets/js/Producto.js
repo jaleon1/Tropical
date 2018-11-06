@@ -256,14 +256,13 @@ class Producto {
     // Muestra información en ventana
     showInfo() {
         //$(".modal").css({ display: "none" });          
-        // swal({            
-        //     type: 'success',
-        //     title: 'Listo!',
-        //     // showConfirmButton: false,
-        //     timer: 1000
-        // });
-        $(".close").click();
-        $("body").css({"padding-right":"0px"});
+        swal({            
+            type: 'success',
+            title: 'Listo!',
+            showConfirmButton: false,
+            timer: 1000
+        });
+        $(".close").click();        
     };
 
     // Muestra errores en ventana
