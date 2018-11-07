@@ -678,7 +678,7 @@ class ClienteFE {
         this.password = $("#password").val();
         $.ajax({
             type: "POST",
-            url: "class/clienteFE.php",
+            url: "class/ClienteFE.php",
             data: {
                 action: miAccion,
                 username: this.username,

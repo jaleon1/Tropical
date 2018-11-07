@@ -16,7 +16,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>TropicalSNO | Merma</title>
+    <title>TropicalSNO | Merma Agencia</title>
 
     <!-- Bootstrap -->
     <link href="assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -24,16 +24,10 @@
     <link href="assets/css/font-awesome/css/font-awesome.min.css" rel="stylesheet">
     <!-- NProgress -->
     <link href="assets/css/nprogress/nprogress.css" rel="stylesheet">
-    <!-- bootstrap-datetimepicker -->
-    <link href="assets/css/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css"/>
     <!-- iCheck -->
     <link href="assets/css/iCheck/skins/flat/green.css" rel="stylesheet">
     <!-- SweetAlert -->
     <link rel="stylesheet" href="assets/css/sweetalert2.min.css">
-
-    <!-- Datatables Export-->
-    <link href="assets/css/datatables.net-bs/css/buttons.dataTables.min.css" rel="stylesheet">
 
     <!-- Datatables -->
     <link href="../vendors/datatables.net-bs/css/dataTables.bootstrap.min.css" rel="stylesheet">
@@ -54,7 +48,7 @@
                 <div class="left_col scroll-view">
                     <div class="navbar nav_title" style="border: 0;">
                         <a href="index.html" class="site_title">
-
+                            
                             <span>TropicalSNO</span>
                         </a>
                     </div>
@@ -139,15 +133,15 @@
             <div class="right_col" role="main">
                 <div class="">
                     <div class="page-title">
-                        <div class="title_left">
-                            <h3>LISTA DE MERMA</h3>
-                        </div>
-
+ 
                         <div class="title_right">
-                            <h3 id="fecha" style="float:right"></h3>
-                            <div id="dp_rangoListaMerma" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 70%; float:right">
-                                <i class="fa fa-calendar"></i>&nbsp;
-                                <span></span> <i class="fa fa-caret-down"></i>
+                            <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
+                                <div class="input-group">
+
+                                    <span class="input-group-btn">
+
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -155,32 +149,61 @@
                     <div class="clearfix"></div>
 
                     <div class="row">
+
                         <div class="col-md-12 col-sm-12 col-xs-12">
                             <div class="x_panel">
                                 <div class="x_title">
-
+                                    <h2>Merma Agencia</h2>
                                     <div class="clearfix"></div>
                                 </div>
-
                                 <!--  CONTENIDO DE LA PAGINA -->
                                 <div class="x_content">
-                                    <!-- TABLE -->
-                                    <div class="row">
-                                        <div class="col-md-12 col-sm-12 col-xs-12">
-                                            <table id="tMerma" class="table display responsive table-striped jambo_table no-wrap"
-                                                width="100%" role="grid" aria-describedby="datatable_info">
-                                                <tbody id="tbodyMerma">
-                                                </tbody>
-                                            </table>
+                                    <!-- MATERIA PRIMA -->
+                                    <div class="col-md-12 col-sm-12 col-xs-9">
+                                        <div class="x_panel">
+                                            <div class="title_right">
+                                                <div class="col-md-12 col-sm-12 col-xs-12 form-group pull-right top_search">
+                                                    <div class="input-group">
+                                                        <input autofocus type="text" class="form-control" id="p_searhProducto"
+                                                            placeholder="Ingresar código de producto.">
+                                                        <span class="input-group-btn">
+                                                            <button class="btn btn-default" type="button">Buscar</button>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="x_content">
+                                                <!-- TABLE -->
+                                                <div class="row">
+                                                    <div class="col-md-12 col-sm-12 col-xs-12">
+                                                        <table id="tProducto" class="table display responsive table-striped jambo_table no-wrap"
+                                                            width="100%" role="grid" aria-describedby="datatable_info">
+                                                            <tbody id="tbodyProducto">
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                                <!-- /TABLE -->
+                                            </div>
                                         </div>
                                     </div>
-                                    <!-- /TABLE -->
-
+                                    <!-- /MATERIA PRIMA -->
+                                    
                                 </div>
-                                <!--  /CONTENIDO DE LA PAGINA -->
 
+                                <!--  /CONTENIDO DE LA PAGINA -->
+                            </div>
+
+                        </div>                      
+
+                        <div class="form-group">
+                            <div class="col-xs-12 col-xs-offset-6 col-md-12 col-md-offset-6 col-lg-12 col-lg-offset-6">
+                                <button type="reset" class="btn btn-primary" id="reload">Limpiar</button>
+                                <button id="btnMerma" type="submit" class="btn btn-success">Aceptar</button>
                             </div>
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -204,37 +227,27 @@
     <script src="assets/js/fastclick/lib/fastclick.js"></script>
     <!-- NProgress -->
     <script src="assets/js/nprogress/nprogress.js"></script>
+    <!-- iCheck -->
+    <!-- <script src="assets/js/iCheck/icheck.min.js"></script> -->
     <!-- Moment -->
     <script src="assets/js/moment.min.js"></script>
     <script src="assets/js/moment-timezone.js"></script>
     <!-- bootstrap-datetimepicker -->
-    <script src="assets/js/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <!-- <script src="assets/js/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js"></script> -->
     <!-- Validator -->
     <script src="assets/js/validator.min.js"></script>
     <!-- Input mask -->
     <script src="assets/js/jquery.inputmask/jquery.inputmask.bundle.min.js"></script>
+
     <!-- JS Scripts -->
-    <script src="assets/js/Producto.min.js"></script>
     <script src="assets/js/Insumo.min.js"></script>
-    <script src="assets/js/merma.min.js"></script>
+    <script src="assets/js/Producto.min.js"></script>
+    <script src="assets/js/mermaAgencia.js"></script>
     <!-- Sweet Alert -->
     <script src="assets/js/sweetalert2.min.js"></script>
-    <!-- JS dataTables -->
-    <script src="assets/js/jquery.dataTables.min.js"></script>
-    <script src="assets/jquery.dataTables/dataTables.buttons.min.js"></script>
-    <script src="assets/jquery.dataTables/buttons.flash.min.js"></script>
-    <script src="assets/jquery.dataTables/jszip.min.js"></script>
-    <script src="assets/jquery.dataTables/pdfmake.min.js"></script>
-    <script src="assets/jquery.dataTables/vfs_fonts.js"></script>
-    <script src="assets/jquery.dataTables/buttons.html5.min.js"></script>
-    <script src="assets/jquery.dataTables/buttons.print.min.js"></script>
-    <!-- FastClick -->
-    <script src="../vendors/fastclick/lib/fastclick.js"></script>
-    <!-- NProgress -->
-    <script src="../vendors/nprogress/nprogress.js"></script>
-    <!-- iCheck -->
-    <script src="../vendors/iCheck/icheck.min.js"></script>
+
+    <!-- Datatables -->
+    <script src="../vendors/datatables.net/js/jquery.dataTables.min.js"></script>
     <!-- Custom Theme Scripts -->
     <script src="assets/js/custom.min.js"></script>
 
@@ -244,75 +257,19 @@
 
 <script>
     $(document).ready(function () {
-        merma.setTable();
-        //merma.Init();
-        // merma.Read;
-        $(function () {
-            var start = moment().subtract(29, 'days');
-            var end = moment();
-
-            function cb(start, end) {
-                $('#dp_rangoListaMerma span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
-            }
-
-            $('#dp_rangoListaMerma').daterangepicker({
-                "opens": "left",
-                "locale": {
-                    "format": "DD/MM/YYYY",
-                    "separator": " - ",
-                    "applyLabel": "Aplicar",
-                    "cancelLabel": "Cancelar",
-                    "fromLabel": "From",
-                    "toLabel": "To",
-                    "customRangeLabel": "Manual",
-                    "daysOfWeek": [
-                        "DO",
-                        "Lu",
-                        "Ma",
-                        "Mi",
-                        "Ju",
-                        "Vi",
-                        "Sa"
-                    ],
-                    "monthNames": [
-                        "Enero",
-                        "Febrero",
-                        "Marzo",
-                        "Abril",
-                        "Mayo",
-                        "Junio",
-                        "Julio",
-                        "Agosto",
-                        "Setiembre",
-                        "Octubre",
-                        "Noviembre",
-                        "Diciembre"
-                    ],
-                    "firstDay": 1
-                },
-                startDate: start,
-                endDate: end,
-                ranges: {
-                    'Hoy': [moment(), moment()],
-                    'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-                    'Ultimos 7 Días': [moment().subtract(6, 'days'), moment()],
-                    'Ultimos 30 Días': [moment().subtract(29, 'days'), moment()],
-                    'Este Mes': [moment().startOf('month'), moment().endOf('month')],
-                    'Ultimo Mes': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-                }
-            }, cb);
-
-            cb(start, end);
-
-            merma.fechaInicial = start.format('YYYY-MM-DD') + ' 00:00';
-            merma.fechaFinal = end.format('YYYY-MM-DD') + ' 23:59';
-            merma.CargaListaMermaRango();
-        });
-
-        $('#dp_rangoListaMerma').on('apply.daterangepicker', function (ev, picker) {
-            merma.fechaInicial = picker.startDate.format('YYYY-MM-DD') + ' 00:00';
-            merma.fechaFinal = picker.endDate.format('YYYY-MM-DD') + ' 23:59';
-            merma.CargaListaMermaRango();
-        });
+        producto.setTableMerma();
     });
+    $("#p_searhProducto").keyup(function (e) {
+        if (e.which == 13)
+            producto.ReadbyCode($('#p_searhProducto').val());
+    });
+    $('#btnMerma').click(function () {
+        merma.crear();
+    });
+    // Recarga la página para limpiar todo
+    $('#reload').click(function () {
+        location.reload();
+    });
+    //
+    //
 </script>

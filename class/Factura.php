@@ -25,8 +25,8 @@ if(isset($_POST["action"])){
     // Instance
     $factura= new Factura();
     switch($opt){
-        case "ReadAll":
-            echo json_encode($factura->ReadAll());
+        case "ReadAllbyRange":
+            echo json_encode($factura->ReadAllbyRange());
             break;
         case "ReadAllById":
             echo json_encode($factura->ReadAllById());
@@ -153,6 +153,10 @@ class Factura{
             $this->totalComprobante= $obj["totalComprobante"];
             $this->montoEfectivo= $obj["montoEfectivo"] ?? null;
             $this->montoTarjeta= $obj["montoTarjeta"] ?? null;
+
+            $this->fechaInicial= $obj["fechaInicial"] ?? null;
+            $this->fechaFinal= $obj["fechaFinal"] ?? null;
+
             // d. Informacion de referencia
             $this->idDocumento = $obj["idDocumento"] ?? 1;//$_SESSION["userSession"]->idDocumento; // Documento de Referencia.
             $this->fechaEmision= $obj["fechaEmision"] ?? null; // emision del comprobante electronico.
@@ -224,14 +228,21 @@ class Factura{
         }
     }
 
-    function ReadAll(){
+    function ReadAllbyRange(){
         try {
-            $sql='SELECT f.id, f.consecutivo, f.fechaCreacion, f.totalComprobante, f.montoEfectivo, f.montoTarjeta, b.nombre, u.userName, f.idEstadoComprobante
-                FROM factura f
-                INNER JOIN bodega b on f.idBodega = b.id
-                INNER JOIN usuario u on u.id = f.idusuario   
-                ORDER BY f.consecutivo asc';
-            $data= DATA::Ejecutar($sql);
+            $sql='SELECT fac.id, fac.idBodega, bod.nombre bodega, fac.fechaCreacion, fac.consecutivo, fac.totalComprobante, fac.idUsuario, usr.nombre vendedor, fac.montoEfectivo, fac.montoTarjeta, fac.idEstadoComprobante, fac.totalComprobante
+                FROM factura fac
+                INNER JOIN bodega bod on bod.id = fac.idBodega
+                INNER JOIN usuario usr on usr.id = fac.idUsuario
+                INNER JOIN (SELECT idBodega
+                            FROM usuariosXBodega
+                            WHERE idUsuario = :idUsuario) bodegas on bodegas.idBodega = fac.idBodega
+                AND
+                fac.fechaCreacion Between :fechaInicial and :fechaFinal
+                ORDER BY fac.consecutivo DESC'; 
+                
+            $param= array(':idUsuario'=>$_SESSION["userSession"]->id, ':fechaInicial'=>$this->fechaInicial, ':fechaFinal'=>$this->fechaFinal);
+            $data = DATA::Ejecutar($sql,$param);
             return $data;
         }     
         catch(Exception $e) { 

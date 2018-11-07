@@ -26,14 +26,10 @@
     <link href="assets/css/nprogress/nprogress.css" rel="stylesheet">
     <!-- bootstrap-datetimepicker -->
     <link href="assets/css/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css"/>
     <!-- iCheck -->
     <link href="assets/css/iCheck/skins/flat/green.css" rel="stylesheet">
     <!-- SweetAlert -->
     <link rel="stylesheet" href="assets/css/sweetalert2.min.css">
-
-    <!-- Datatables Export-->
-    <link href="assets/css/datatables.net-bs/css/buttons.dataTables.min.css" rel="stylesheet">
 
     <!-- Datatables -->
     <link href="../vendors/datatables.net-bs/css/dataTables.bootstrap.min.css" rel="stylesheet">
@@ -42,6 +38,10 @@
     <link href="../vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css" rel="stylesheet">
     <link href="../vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css" rel="stylesheet">
 
+    <!-- Bootstrap Colorpicker -->
+    <link href="assets/bootstrap/css/bootstrap-colorpicker.min.css" rel="stylesheet">
+    <!-- Select -->
+    <link href="assets/css/bootstrap-select.css" rel="stylesheet">
     <!-- Custom Theme Style -->
     <link href="assets/css/custom.css" rel="stylesheet">
 
@@ -139,15 +139,18 @@
             <div class="right_col" role="main">
                 <div class="">
                     <div class="page-title">
-                        <div class="title_left">
-                            <h3>LISTA DE MERMA</h3>
+                        <div>
+                            <h3>LISTA DE MERMA AGENCIA</h3>
                         </div>
 
                         <div class="title_right">
-                            <h3 id="fecha" style="float:right"></h3>
-                            <div id="dp_rangoListaMerma" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 70%; float:right">
-                                <i class="fa fa-calendar"></i>&nbsp;
-                                <span></span> <i class="fa fa-caret-down"></i>
+                            <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
+                                <div class="input-group">
+                                    <!-- <input type="text" class="form-control" placeholder="Search for...">
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button">Go!</button>
+                                    </span> -->
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -209,32 +212,28 @@
     <script src="assets/js/moment-timezone.js"></script>
     <!-- bootstrap-datetimepicker -->
     <script src="assets/js/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <!-- Validator -->
     <script src="assets/js/validator.min.js"></script>
     <!-- Input mask -->
     <script src="assets/js/jquery.inputmask/jquery.inputmask.bundle.min.js"></script>
-    <!-- JS Scripts -->
-    <script src="assets/js/Producto.min.js"></script>
-    <script src="assets/js/Insumo.min.js"></script>
-    <script src="assets/js/merma.min.js"></script>
     <!-- Sweet Alert -->
     <script src="assets/js/sweetalert2.min.js"></script>
-    <!-- JS dataTables -->
-    <script src="assets/js/jquery.dataTables.min.js"></script>
-    <script src="assets/jquery.dataTables/dataTables.buttons.min.js"></script>
-    <script src="assets/jquery.dataTables/buttons.flash.min.js"></script>
-    <script src="assets/jquery.dataTables/jszip.min.js"></script>
-    <script src="assets/jquery.dataTables/pdfmake.min.js"></script>
-    <script src="assets/jquery.dataTables/vfs_fonts.js"></script>
-    <script src="assets/jquery.dataTables/buttons.html5.min.js"></script>
-    <script src="assets/jquery.dataTables/buttons.print.min.js"></script>
-    <!-- FastClick -->
-    <script src="../vendors/fastclick/lib/fastclick.js"></script>
-    <!-- NProgress -->
-    <script src="../vendors/nprogress/nprogress.js"></script>
+    <!-- Datatables -->
+    <script src="../vendors/datatables.net/js/jquery.dataTables.min.js"></script>
     <!-- iCheck -->
-    <script src="../vendors/iCheck/icheck.min.js"></script>
+    <script src="assets/js/iCheck/icheck.min.js"></script>
+    <!-- FastClick -->
+    <!-- <script src="../vendors/fastclick/lib/fastclick.js"></script> -->
+    <!-- NProgress -->
+    <!-- <script src="../vendors/nprogress/nprogress.js"></script> -->
+    <!-- Bootstrap Colorpicker -->
+    <script src="assets/bootstrap/js/bootstrap-colorpicker.min.js"></script>
+    <!-- Select -->
+    <script src="assets/js/bootstrap-select.js"></script>
+    <!--   js   -->
+    <script src="assets/js/Insumo.min.js"></script>
+    <script src="assets/js/Producto.min.js"></script>
+    <script src="assets/js/mermaAgencia.js"></script>
     <!-- Custom Theme Scripts -->
     <script src="assets/js/custom.min.js"></script>
 
@@ -246,73 +245,6 @@
     $(document).ready(function () {
         merma.setTable();
         //merma.Init();
-        // merma.Read;
-        $(function () {
-            var start = moment().subtract(29, 'days');
-            var end = moment();
-
-            function cb(start, end) {
-                $('#dp_rangoListaMerma span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
-            }
-
-            $('#dp_rangoListaMerma').daterangepicker({
-                "opens": "left",
-                "locale": {
-                    "format": "DD/MM/YYYY",
-                    "separator": " - ",
-                    "applyLabel": "Aplicar",
-                    "cancelLabel": "Cancelar",
-                    "fromLabel": "From",
-                    "toLabel": "To",
-                    "customRangeLabel": "Manual",
-                    "daysOfWeek": [
-                        "DO",
-                        "Lu",
-                        "Ma",
-                        "Mi",
-                        "Ju",
-                        "Vi",
-                        "Sa"
-                    ],
-                    "monthNames": [
-                        "Enero",
-                        "Febrero",
-                        "Marzo",
-                        "Abril",
-                        "Mayo",
-                        "Junio",
-                        "Julio",
-                        "Agosto",
-                        "Setiembre",
-                        "Octubre",
-                        "Noviembre",
-                        "Diciembre"
-                    ],
-                    "firstDay": 1
-                },
-                startDate: start,
-                endDate: end,
-                ranges: {
-                    'Hoy': [moment(), moment()],
-                    'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-                    'Ultimos 7 Días': [moment().subtract(6, 'days'), moment()],
-                    'Ultimos 30 Días': [moment().subtract(29, 'days'), moment()],
-                    'Este Mes': [moment().startOf('month'), moment().endOf('month')],
-                    'Ultimo Mes': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-                }
-            }, cb);
-
-            cb(start, end);
-
-            merma.fechaInicial = start.format('YYYY-MM-DD') + ' 00:00';
-            merma.fechaFinal = end.format('YYYY-MM-DD') + ' 23:59';
-            merma.CargaListaMermaRango();
-        });
-
-        $('#dp_rangoListaMerma').on('apply.daterangepicker', function (ev, picker) {
-            merma.fechaInicial = picker.startDate.format('YYYY-MM-DD') + ' 00:00';
-            merma.fechaFinal = picker.endDate.format('YYYY-MM-DD') + ' 23:59';
-            merma.CargaListaMermaRango();
-        });
+        merma.Read;
     });
 </script>
