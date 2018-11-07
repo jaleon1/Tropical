@@ -46,7 +46,13 @@ if(isset($_POST["action"])){
             break;  
         case "ValidarCajaCierreDiario":
             echo json_encode($cajaXBodega->ValidarCajaCierreDiario());
-            break; 
+            break;
+        case "ReadAllbyRange":
+            echo json_encode($cajaXBodega->ReadAllbyRange());
+            break;
+        case "ReadAllbyRangeUser":
+            echo json_encode($cajaXBodega->ReadAllbyRangeUser());
+            break;
     }
     
 }
@@ -62,6 +68,8 @@ class CajaXBodega{
     public $montoCierre=null;
     public $totalVentasEfectivo=null; 
     public $totalVentasTarjeta=null;
+    public $fechaInicial='';
+    public $fechaFinal='';
 
     function __construct(){
         // identificador único
@@ -81,7 +89,8 @@ class CajaXBodega{
             $this->montoCierre= $obj["montoCierre"] ?? 0;
             $this->totalVentasEfectivo= $obj["totalVentasEfectivo"] ?? 0;
             $this->totalVentasTarjeta= $obj["totalVentasTarjeta"] ?? 0;
-
+            $this->fechaInicial= $obj["fechaInicial"] ?? '';
+            $this->fechaFinal= $obj["fechaFinal"] ?? '';
         }
     }
 
@@ -93,7 +102,8 @@ class CajaXBodega{
             // ORDER BY fechaApertura DESC;';
 
             $sql='SELECT ca.id, ca.idBodega, bo.nombre as nombreBodega, ca.idUsuarioCajero, us.nombre as cajero, ca.estado, ca.montoApertura, 
-            ca.montoCierre,ca.totalVentasEfectivo, ca.totalVentasTarjeta, ca.fechaApertura, ca.fechaCierre
+            ca.montoCierre,ca.totalVentasEfectivo, ca.totalVentasTarjeta, ca.fechaApertura, ca.fechaCierre,
+            (IFNULL(ca.totalVentasEfectivo,0) + IFNULL(ca.totalVentasTarjeta,0) + ca.montoApertura) as totalNeto
             FROM tropical.cajasXBodega ca
             INNER JOIN bodega bo on ca.idBodega = bo.id
             INNER JOIN usuario us on ca.idUsuarioCajero = us.id
@@ -110,10 +120,34 @@ class CajaXBodega{
         }
     }
 
+    function ReadAllbyRange(){
+        try {
+            $sql='SELECT ca.id, ca.idBodega, bo.nombre as nombreBodega, ca.idUsuarioCajero, us.nombre as cajero, ca.estado, ca.montoApertura, 
+            ca.montoCierre,ca.totalVentasEfectivo, ca.totalVentasTarjeta, ca.fechaApertura, ca.fechaCierre,
+            (IFNULL(ca.totalVentasEfectivo,0) + IFNULL(ca.totalVentasTarjeta,0) + ca.montoApertura) as totalNeto
+            FROM tropical.cajasXBodega ca
+            INNER JOIN bodega bo on ca.idBodega = bo.id
+            INNER JOIN usuario us on ca.idUsuarioCajero = us.id
+            WHERE ca.fechaApertura Between :fechaInicial and :fechaFinal  
+            ORDER BY ca.fechaApertura DESC';
+            $param= array(':fechaInicial'=>$this->fechaInicial, ':fechaFinal'=>$this->fechaFinal);            
+            $data= DATA::Ejecutar($sql, $param);
+            return $data;
+        }     
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar la lista'))
+            );
+        }
+    }
+
     function ReadByUser(){
         try {
             $sql='SELECT ca.id, ca.idBodega, bo.nombre as nombreBodega, ca.idUsuarioCajero, us.nombre as cajero, ca.estado, ca.montoApertura, 
-                ca.montoCierre,ca.totalVentasEfectivo, ca.totalVentasTarjeta, ca.fechaApertura, ca.fechaCierre
+                ca.montoCierre,ca.totalVentasEfectivo, ca.totalVentasTarjeta, ca.fechaApertura, ca.fechaCierre,
+                (IFNULL(ca.totalVentasEfectivo,0) + IFNULL(ca.totalVentasTarjeta,0) + ca.montoApertura) as totalNeto
                 FROM tropical.cajasXBodega ca
                 INNER JOIN bodega bo on ca.idBodega = bo.id
                 INNER JOIN usuario us on ca.idUsuarioCajero = us.id                
@@ -121,6 +155,29 @@ class CajaXBodega{
                 ORDER BY fechaApertura DESC;';
             $param= array(':idUsuario'=>$_SESSION["userSession"]->id);
             $data = DATA::Ejecutar($sql,$param);
+            return $data;
+        }     
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar la lista'))
+            );
+        }
+    }
+
+    function ReadAllbyRangeUser(){
+        try {
+            $sql='SELECT ca.id, ca.idBodega, bo.nombre as nombreBodega, ca.idUsuarioCajero, us.nombre as cajero, ca.estado, ca.montoApertura, 
+                ca.montoCierre,ca.totalVentasEfectivo, ca.totalVentasTarjeta, ca.fechaApertura, ca.fechaCierre,
+                (IFNULL(ca.totalVentasEfectivo,0) + IFNULL(ca.totalVentasTarjeta,0) + ca.montoApertura) as totalNeto
+                FROM tropical.cajasXBodega ca
+                INNER JOIN bodega bo on ca.idBodega = bo.id
+                INNER JOIN usuario us on ca.idUsuarioCajero = us.id                
+                WHERE idUsuarioCajero =:idUsuario AND ca.fechaApertura Between :fechaInicial and :fechaFinal
+                ORDER BY ca.fechaApertura DESC;';
+            $param= array(':idUsuario'=>$_SESSION["userSession"]->id, ':fechaInicial'=>$this->fechaInicial, ':fechaFinal'=>$this->fechaFinal);            
+            $data= DATA::Ejecutar($sql, $param);
             return $data;
         }     
         catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());

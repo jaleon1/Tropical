@@ -1,6 +1,6 @@
 class InventarioFacturas {
     // Constructor
-    constructor(facturas, tb_facturas, factDetalle, tb_prdXFact,fechaInicial, fechaFinal) {
+    constructor(facturas, tb_facturas, factDetalle, tb_prdXFact, fechaInicial, fechaFinal) {
         this.facturas = facturas || new Array();
         this.factDetalle = factDetalle || new Array();
         this.tb_facturas = tb_facturas || null;
@@ -63,21 +63,36 @@ class InventarioFacturas {
     drawFac(e) {
         var facturas = JSON.parse(e);
         this.tb_facturas = $('#tb_facturas').DataTable({
-            data: facturas,      
-            destroy: true,                         
-            "language": {
-                "infoEmpty":  "Sin Facturas",
-                "emptyTable": "Sin Facturas",
-                "search":     "Buscar",
+            responsive: true,
+            destroy: true,
+            dom: 'Bfrtip',
+            buttons: [
+                {
+                    extend: 'excelHtml5',
+                    exportOptions: {columns: [ 1, 2, 3, 4, 5, 6]},
+                    messageTop:'Lista de facturas'
+                },
+                {
+                    extend: 'pdfHtml5',
+                    exportOptions: {
+                        columns: [ 1, 2, 3, 4, 5, 6]
+                    }
+                }
+            ],
+            language: {
+                "infoEmpty": "Sin Usuarios Registrados",
+                "emptyTable": "Sin Usuarios Registrados",
+                "search": "Buscar",
                 "zeroRecords": "No hay resultados",
-                "lengthMenu":  "Mostar _MENU_ registros",
+                "lengthMenu": "Mostrar _MENU_ registros",
                 "paginate": {
-                    "first":   "Primera",
-                    "last":    "Ultima",
-                    "next":    "Siguiente",
-                    "previous":"Anterior"
+                    "first": "Primera",
+                    "last": "Ultima",
+                    "next": "Siguiente",
+                    "previous": "Anterior"
                 }
             },
+            data: facturas,                               
             "order": [[1, "desc"]],
             columns: [
                 {
@@ -136,7 +151,7 @@ class InventarioFacturas {
                         if (e==null) 
                             return '¢0'; 
                         else
-                            return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+                            return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                     }
                 },
                 {
@@ -147,14 +162,14 @@ class InventarioFacturas {
                         if (e==null) 
                             return '¢0'; 
                         else
-                            return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+                            return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                     }
                 },
                 {
                     title: "TOTAL",
                     data: "totalComprobante",
                     mRender: function ( e ) {
-                        return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+                        return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                     }
                 },
                 {
@@ -210,6 +225,40 @@ class InventarioFacturas {
         })
             .done(function (e) {
                 inventarioFacturas.drawFactDetail(e);
+            });
+    };
+
+    CargaListaFacturasRango(){
+        var referenciaCircular = inventarioFacturas.tb_facturas;
+        inventarioFacturas.tb_facturas = [];
+        $.ajax({
+            type: "POST",
+            url: "class/Factura.php",
+            data: {
+                action: "ReadAllbyRange",
+                obj: JSON.stringify(inventarioFacturas)
+            }
+        })
+            .done(function (e) {
+                inventarioFacturas.tb_facturas = referenciaCircular;        
+                inventarioFacturas.drawFac(e); 
+            });
+    };
+
+    CargaMisFacturasRango(){
+        var referenciaCircular = inventarioFacturas.tb_facturas;
+        inventarioFacturas.tb_facturas = [];
+        $.ajax({
+            type: "POST",
+            url: "class/Factura.php",
+            data: {
+                action: "ReadAllbyRangeUser",
+                obj: JSON.stringify(inventarioFacturas)
+            }
+        })
+            .done(function (e) {
+                inventarioFacturas.tb_facturas = referenciaCircular;        
+                inventarioFacturas.drawFac(e); 
             });
     };
 

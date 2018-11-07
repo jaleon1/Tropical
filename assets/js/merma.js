@@ -1,11 +1,13 @@
 class Merma {
     // Constructor
-    constructor(id, idItem, cantidad, descripcion, fecha) {
+    constructor(id, idItem, cantidad, descripcion, fecha, fechaInicial, fechaFinal) {
         this.id = id || null;
         this.idItem = idItem || null;
         this.cantidad = cantidad || 0;
         this.descripcion = descripcion || '';
         this.fecha = fecha || null;
+        this.fechaInicial = fechaInicial || "";
+        this.fechaFinal = fechaFinal || "";        
     }
 
     get Read() {
@@ -28,6 +30,23 @@ class Merma {
                 merma.showError(e);
             })
             .always(NProgress.done()); 
+    };
+
+    CargaListaMermaRango(){
+        // var referenciaCircular = ordenSalida.tb_OrdenProduccion;
+        // ordenSalida.tb_OrdenProduccion = [];
+        $.ajax({
+            type: "POST",
+            url: "class/merma.php",
+            data: {
+                action: "ReadAllbyRange",
+                obj: JSON.stringify(merma)
+            }
+        })
+            .done(function (e) {
+                // ordenSalida.tb_OrdenProduccion = referenciaCircular;        
+                merma.ShowAll(e); 
+            });
     };
 
     ReadbyCodeConsumible(cod) {
@@ -65,23 +84,36 @@ class Merma {
     setTable(buttons=true, nPaging=10){
         $('#tMerma').DataTable({
             responsive: true,
-            info: false,
-            iDisplayLength: nPaging,
-            paging: false,
-            order: [2, "desc"],
-            "language": {
-                "infoEmpty": "Sin Registros Ingresados",
-                "emptyTable": "Sin Registros Ingresados",
+            destroy: true,
+            order: [[6, "desc"]],
+            dom: 'Bfrtip',
+            buttons: [
+                {
+                    extend: 'excelHtml5',
+                    exportOptions: {columns: [ 1, 2, 3, 4, 5, 6, 7]},
+                    messageTop:'Lista de Mermas'
+                },
+                {
+                    extend: 'pdfHtml5',
+                    exportOptions: {
+                        columns: [ 1, 2, 3, 4, 5, 6, 7]
+                    }
+                }
+            ],
+            language: {
+                "infoEmpty": "Sin Mermas Registradas",
+                "emptyTable": "Sin Mermas Registradas",
                 "search": "Buscar",
-                "zeroRecords":    "No hay resultados",
-                "lengthMenu":     "Mostrar _MENU_ registros",
+                "zeroRecords": "No hay resultados",
+                "lengthMenu": "Mostrar _MENU_ registros",
                 "paginate": {
-                    "first":      "Primera",
-                    "last":       "Ultima",
-                    "next":       "Siguiente",
-                    "previous":   "Anterior"
+                    "first": "Primera",
+                    "last": "Ultima",
+                    "next": "Siguiente",
+                    "previous": "Anterior"
                 }
             },
+            columnDefs: [{ className: "text-right", "targets": [5] }],
             columns: [
                 {
                     title: "ID",

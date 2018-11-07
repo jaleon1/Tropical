@@ -1,12 +1,15 @@
 class OrdenCompra {
     // Constructor
-    constructor(id, orden, fecha, idProdveedor, idUsuario, lista) {        
+    constructor(id, orden, fecha, idProdveedor, idUsuario, lista, tablaOrdenCompra, fechaInicial, fechaFinal) {        
         this.id = id || null;        
         this.orden = orden || '';
         this.fecha = fecha || '';
         this.idProdveedor = idProdveedor || '';
         this.idUsuario = idUsuario || '';
         this.lista = lista || [];
+        this.tablaOrdenCompra = tablaOrdenCompra || [];
+        this.fechaInicial = fechaInicial || "";
+        this.fechaFinal = fechaFinal || "";
     }
 
     //Getter
@@ -134,6 +137,19 @@ class OrdenCompra {
     };
 
     setTableOrdenCompra() {
+        jQuery.extend( jQuery.fn.dataTableExt.oSort, {
+            "formatted-num-pre": function ( a ) {
+                a = (a === "-" || a === "") ? 0 : a.replace( /[^\d\-\.]/g, "" );
+                return parseFloat( a );
+            }, 
+            "formatted-num-asc": function ( a, b ) {
+                return a - b;
+            },
+            "formatted-num-desc": function ( a, b ) {
+                return b - a;
+            }
+        } );
+
         this.tablaOrdenCompra = $('#dsOrdenCompra').DataTable({
             responsive: true,
             destroy: true,
@@ -155,8 +171,8 @@ class OrdenCompra {
                 }
             ],
             language: {
-                "infoEmpty": "Sin Usuarios Registrados",
-                "emptyTable": "Sin Usuarios Registrados",
+                "infoEmpty": "Sin Ordenes de Compra",
+                "emptyTable": "Sin Ordenes de Compra",
                 "search": "Buscar",
                 "zeroRecords": "No hay resultados",
                 "lengthMenu": "Mostrar _MENU_ registros",
@@ -185,7 +201,7 @@ class OrdenCompra {
                 {
                     title: "USUARIO",
                     data: "usuario"
-               }
+                }
             ]
         });
     };
@@ -535,7 +551,24 @@ class OrdenCompra {
         t.row( $(e).parents('tr') )
         .remove()
         .draw();  
-    }
+    };
+
+    CargaOrdenCompraRango(){
+        var referenciaCircular = ordenCompra.tablaOrdenCompra;
+        ordenCompra.tablaOrdenCompra = [];
+        $.ajax({
+            type: "POST",
+            url: "class/OrdenCompra.php",
+            data: {
+                action: "ReadAllbyRange",
+                obj: JSON.stringify(ordenCompra)
+            }
+        })
+            .done(function (e) {
+                ordenCompra.tablaOrdenCompra = referenciaCircular;        
+                ordenCompra.ShowAll(e); 
+            });
+    };
 
     Init() {
         // validator.js
