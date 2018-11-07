@@ -91,7 +91,7 @@ class Merma {
                 {
                     extend: 'excelHtml5',
                     exportOptions: {columns: [ 1, 2, 3, 4, 5, 6, 7]},
-                    messageTop:'Lista de facturas'
+                    messageTop:'Lista de Mermas'
                 },
                 {
                     extend: 'pdfHtml5',
