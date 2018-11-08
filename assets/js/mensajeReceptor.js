@@ -66,16 +66,16 @@ class MensajeReceptor {
 
     Init() {
         // validator.js
-        var validator = new FormValidator({ "events": ['blur', 'input', 'change'] }, document.forms["frm"]);
+        var validator = new FormValidator({ "events": ['blur', 'input', 'change'] }, document.forms["frmXml"]);
         $('#frm').submit(function (e) {
             e.preventDefault();
             var validatorResult = validator.checkAll(this);
-            if (validatorResult.valid)
-                mr.Save;
+            // if (validatorResult.valid)
+            //     mr.Save;
             return false;
         });
         // on form "reset" event
-        document.forms["frm"].onreset = function (e) {
+        document.forms["frmXml"].onreset = function (e) {
             validator.reset();
         }
         //NProgress

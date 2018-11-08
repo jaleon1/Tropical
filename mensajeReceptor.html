@@ -165,12 +165,12 @@
                                             <input type="file" required id="file" name="file" class="dz-hidden-input"
                                                 style="visibility: hidden; position: absolute; top: 0px; left: 0px; height: 0px; width: 0px;">
                                         </div>
+
+                                        
                                       
                                     </form>
 
-                                    <form class="form-horizontal form-label-left" id="frm" novalidate>
-
-                                           
+                                    <form class="form-horizontal form-label-left" id="frm" novalidate>                                           
     
                                             <div class="title_left">
                                                 <h3>Respuesta</h3>
@@ -181,7 +181,7 @@
                                             <div class="item form-group">
                                                 <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tipoMensaje">Tipo </label>
                                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                                        <select class="selectpicker show-menu-arrow form-control" type="select" required="required" id="tipoMensaje" name="tipoMensaje">
+                                                        <select class="selectpicker show-menu-arrow form-control"  form="frmXml" type="select" required="required" id="tipoMensaje" name="tipoMensaje">
                                                             <option value=1>Aceptar</option>
                                                             <option value=2>Aceptar Parcialmente</option>
                                                             <option value=3>Rechazar</option>
@@ -193,7 +193,7 @@
                                                 <label class="control-label col-md-3 col-sm-3 col-xs-12" for="detalle">Detalle
                                                 </label>
                                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                                    <input id="detalle" class="form-control col-md-7 col-xs-12" data-validate-length-range="0,80" optional name="detalle" placeholder="Observaciones del mensaje" >
+                                                    <input id="detalle" class="form-control col-md-7 col-xs-12" form="frmXml" data-validate-length-range="0,80" optional name="detalle" placeholder="Observaciones del mensaje" >
                                                 </div>
                                             </div>
     

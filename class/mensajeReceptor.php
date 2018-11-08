@@ -41,7 +41,7 @@ if(isset($_POST["action"])){
             echo json_encode($mensaje->Read());
             break;
         case "Create":
-            echo json_encode($mensaje->Create());
+            //echo json_encode($mensaje->Create());
             break;
         case "uploadxml":
             echo json_encode($mensaje->uploadxml());
@@ -92,8 +92,23 @@ class mensajeReceptor{
                     $uploadfile = $uploaddir . $value;
                     if (move_uploaded_file($_FILES['file']['tmp_name'][$key], $uploadfile)) {
                         // lectura del xml.
-                        // guarda datos en bd.
-                        // envia MR.
+                        $xml=simplexml_load_file($uploadfile)or die(json_encode(array(
+                            'code' => '645' ,
+                            'msg' => 'Error al leer archivo xml.'))
+                        );
+                        // guarda datos en bd. y envía MR.
+                        $this->clave = $xml->Clave;
+                        // $this->consecutivoFE = $xml->consecutivoFE;
+                        //$this->fechaEmision = $xml->fechaEmision;
+                        $this->mensaje = $this->mensaje;
+                        $this->detalle = $this->detalle ?? null;
+                        $this->totalImpuesto = $xml->MontoTotalImpuesto;
+                        $this->totalComprobante = $xml->TotalFactura;
+                        $this->idEmisor = $this->idEmisor ?? null;
+                        $this->identificacionEmisor = $xml->NumeroCedulaEmisor;
+                        $this->identificacionReceptor = $xml->NumeroCedulaReceptor;
+                        if($this->Create())
+                            FacturacionElectronica::iniciar($this);
                     }
                 }
             }
@@ -111,17 +126,24 @@ class mensajeReceptor{
 
     function Create(){
         try {
-            $sql="INSERT INTO mensajeReceptor   (id, mensaje, detalle, idReceptor)
-                VALUES  (:id, :mensaje, :detalle, :idReceptor)";
+            $sql="INSERT INTO mensajeReceptor   (id,  clave, consecutivoFE, fechaEmision, mensaje, detalle, totalImpuesto, totalComprobante, idEmisor, identificacionEmisor, idReceptor, identificacionReceptor)
+                VALUES  (:id, :clave, :consecutivoFE, :fechaEmision, :mensaje, :detalle, :totalImpuesto, :totalComprobante, :idEmisor, :identificacionEmisor,: idReceptor,: identificacionReceptor)";
             $param= array(':id'=>$this->id,
+                ':clave'=>$this->clave,
+                ':consecutivoFE'=>$this->consecutivoFE,
+                ':fechaEmision'=>$this->fechaEmision,
                 ':mensaje'=>$this->mensaje,
                 ':detalle'=>$this->detalle,
-                ':idReceptor'=>$this->idReceptor
+                ':totalImpuesto'=>$this->totalImpuesto,
+                ':totalComprobante'=>$this->totalComprobante,
+                ':idEmisor'=>$this->idEmisor,
+                ':identificacionEmisor'=>$this->identificacionEmisor,
+                ':idReceptor'=>$this->idReceptor,
+                ':identificacionReceptor'=>$this->identificacionReceptor
             );
             $data = DATA::Ejecutar($sql,$param, false);
-            if($data){        
-                return $this;
-            }
+            if($data)
+                return true;
             else throw new Exception('No es posible guardar el mensaje receptor.', 98);            
         }     
         catch(Exception $e) {
