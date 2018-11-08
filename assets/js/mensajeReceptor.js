@@ -15,7 +15,7 @@ class MensajeReceptor {
     get Save() {
         // NProgress.start();        
         var miAccion = this.id == null ? 'Create' : 'Update';
-        this.mensaje = $("#nombre").val();
+        this.mensaje = $('#tipoMensaje option:selected').val();
         this.detalle = $("#detalle").val();
         $('#btnSubmit').attr("disabled", "disabled");
         $.ajax({
@@ -23,11 +23,10 @@ class MensajeReceptor {
             url: "class/mensajeReceptor.php",
             data: {
                 action: miAccion,
-                objC: JSON.stringify(this)
+                obj: JSON.stringify(this)
             }
         })
             .done(function(){
-                // Sube el certificado y crea/actualiza cliente.
                 if(dz!=undefined)
                     dz.processQueue();
                 else // No hay cola para subir.
@@ -132,6 +131,8 @@ class MensajeReceptor {
             autoProcessQueue: false,
             acceptedFiles: "text/xml",
             // maxFiles: 1,
+            parallelUploads : 100,
+            uploadMultiple: true,
             addRemoveLinks: true,
             autoDiscover: false
         };

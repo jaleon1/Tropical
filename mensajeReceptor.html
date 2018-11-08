@@ -159,7 +159,7 @@
 
                                     <div class="form-group col-md-12 col-sm-12 col-xs-12" id="filelist"></div>
                                     <br>
-                                    <form action="class/mrUpload.php" method="post" enctype="multipart/form-data" class="dropzone dz-clickable" id="frmXml">
+                                    <form action="class/mensajeReceptor.php?action=uploadxml" method="post" enctype="multipart/form-data" class="dropzone dz-clickable" id="frmXml">
                                         <div class="dz-default dz-message">
                                             <span>Arrastre los archivos xml aquí.</span>
                                             <input type="file" required id="file" name="file" class="dz-hidden-input"
@@ -193,7 +193,7 @@
                                                 <label class="control-label col-md-3 col-sm-3 col-xs-12" for="detalle">Detalle
                                                 </label>
                                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                                    <input id="detalle" class="form-control col-md-7 col-xs-12" name="detalle" placeholder="Observaciones del mensaje" >
+                                                    <input id="detalle" class="form-control col-md-7 col-xs-12" data-validate-length-range="0,80" optional name="detalle" placeholder="Observaciones del mensaje" >
                                                 </div>
                                             </div>
     
