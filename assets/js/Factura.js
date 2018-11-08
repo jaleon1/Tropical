@@ -383,7 +383,7 @@ function CreateFact(){
             producto.showError(e);
         })
         .always(function () {
-            setTimeout('$("#btnProducto").removeAttr("disabled")', 1000);
+            $("#btnProducto").removeAttr("disabled");
             producto = new Producto();
             producto.ClearCtls();
             producto.Read;
@@ -639,7 +639,7 @@ function CleanCtls() {
 //         showError(e);
 //     })
 //     .always(function() {
-//         setTimeout('$("#btnProducto").removeAttr("disabled")', 1500);
+//         $("#btnProducto").removeAttr("disabled");
 //         LoadAll();   
 //     });
 // }; 

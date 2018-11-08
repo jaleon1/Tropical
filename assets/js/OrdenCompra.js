@@ -84,7 +84,7 @@ class OrdenCompra {
                 ordenCompra.showError(e);
             })
             .always(function () {
-                setTimeout('$("#btnOrdenCompra").removeAttr("disabled")', 1000);
+                $("#btnOrdenCompra").removeAttr("disabled");
                 ordenCompra = new OrdenCompra();
                 ordenCompra.CleanCtls();
                 $("#p_searh").focus();

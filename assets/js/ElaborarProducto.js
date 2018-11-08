@@ -68,7 +68,7 @@ constructor(numeroOrden, p, idOrdenSalida) {
                 elaborarProducto.showError(e);
             })
             .always(function () {
-                setTimeout('$("#btnProductoTemporal").removeAttr("disabled")', 1000);
+                $("#btnProductoTemporal").removeAttr("disabled");
                 // elaborarProducto = new ElaborarProducto();
                 elaborarProducto.ClearCtls();
                 // elaborarProducto.Read;
