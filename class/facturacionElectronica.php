@@ -99,11 +99,9 @@ class FacturacionElectronica{
                             $resCreaXml = self::APICrearNCXML();
                             break;
                         case 5: // CCE
-                            $resCreaXml = self::APICrearMRXML();
-                        break;
                         case 6: // CPCE
-                        break;
                         case 7: // RCE
+                            $resCreaXml = self::APICrearMRXML();
                         break;
                     }
                     //
@@ -828,7 +826,7 @@ class FacturacionElectronica{
                 'r' => 'gen_xml_mr',
                 'clave'=>self::$transaccion->clave, // clave original del documento.
                 'numero_cedula_emisor'=> self::$transaccion->identificacionEmisor, // entidad emisora. En caso MR, la entidad es el vendedor que nos emite la FE.
-                'fecha_emision_doc'=> self::$transaccion->fechaEmision,
+                'fecha_emision_doc'=> self::$fechaEmision->format("c"),
                 'mensaje'=> self::$transaccion->mensaje, // 1= acepta. 2= parcial. 3= rechazo.
                 'detalle_mensaje'=> self::$transaccion->detalleMensaje ?? 'Sin detalle', 
                 'monto_total_impuesto' => self::$transaccion->totalImpuesto,
