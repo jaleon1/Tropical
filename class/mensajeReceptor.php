@@ -1,30 +1,14 @@
 <?php
-//date_default_timezone_set('America/Costa_Rica');
-error_reporting(0);
-if(isset($_GET["action"])){
-    $opt= $_GET["action"];
-    // Session
-    if (!isset($_SESSION))
-        session_start();
-    // Instance
-    $mensaje= new mensajeReceptor();
-    $mensaje->uploadxml();
-}
 if(isset($_POST["action"])){
     $opt= $_POST["action"];
     unset($_POST['action']);
     // Classes    
     require_once("Conexion.php");
     require_once("Usuario.php");
-    require_once("ClienteFE.php");    
-    // require_once("facturacionElectronica.php");
-    // require_once("encdes.php");    
-    // require_once("consumible.php");
-    // require_once("InventarioInsumoXBodega.php");
-    // require_once("OrdenXFactura.php");    
-    // require_once("Receptor.php");
-    // require_once("Bodega.php");
-    // require_once("productoXFactura.php");    
+    require_once("ClienteFE.php");
+    require_once("facturacionElectronica.php");
+    require_once("Factura.php");
+    require_once("encdes.php");
     // Session
     if (!isset($_SESSION))
         session_start();
@@ -44,6 +28,10 @@ if(isset($_POST["action"])){
             //echo json_encode($mensaje->Create());
             break;
         case "uploadxml":
+            require_once("UUID.php");
+            $mensaje->id= $obj["id"] ?? UUID::v4();
+            $mensaje->mensaje = $_POST['mensaje'];
+            $mensaje->detalle = $_POST['detalle'];
             echo json_encode($mensaje->uploadxml());
             break;
     }    
@@ -97,18 +85,28 @@ class mensajeReceptor{
                             'msg' => 'Error al leer archivo xml.'))
                         );
                         // guarda datos en bd. y envía MR.
-                        $this->clave = $xml->Clave;
-                        // $this->consecutivoFE = $xml->consecutivoFE;
+                        $this->clave = (string)$xml->Clave;
+                        //$this->consecutivoFE = $xml->Clave;
                         //$this->fechaEmision = $xml->fechaEmision;
                         $this->mensaje = $this->mensaje;
                         $this->detalle = $this->detalle ?? null;
-                        $this->totalImpuesto = $xml->MontoTotalImpuesto;
-                        $this->totalComprobante = $xml->TotalFactura;
+                        $this->totalImpuesto = (string)$xml->MontoTotalImpuesto ?? null;
+                        $this->totalComprobante = (string)$xml->TotalFactura;
+                        // emisor del comprobane = proveedor
                         $this->idEmisor = $this->idEmisor ?? null;
-                        $this->identificacionEmisor = $xml->NumeroCedulaEmisor;
-                        $this->identificacionReceptor = $xml->NumeroCedulaReceptor;
-                        if($this->Create())
+                        $this->identificacionEmisor = (string)$xml->NumeroCedulaEmisor;
+                        $this->TipoIdentificacionEmisor = (string)$xml->TipoIdentificacionEmisor;
+                        // receptor del comprobante = entidad registrada en el sistema.
+                        $this->idReceptor = $_SESSION['userSession']->idBodega;
+                        $this->identificacionReceptor = (string)$xml->NumeroCedulaReceptor;
+                        $this->TipoIdentificacionReceptor = (string)$xml->TipoIdentificacionReceptor;
+                        if($this->Create()){
+                            $this->idSituacionComprobante = 1; // normal.
+                            $entidad = new ClienteFE();
+                            $entidad->idBodega = $this->idReceptor;
+                            $this->datosEntidad = $entidad->read();
                             FacturacionElectronica::iniciar($this);
+                        }
                     }
                 }
             }
@@ -124,14 +122,48 @@ class mensajeReceptor{
         }
     }
 
+    function Read(){
+        try {
+            $sql='SELECT id, consecutivo, clave, consecutivoFE, mensaje, detalle, totalImpuesto, totalComprobante, idEmisor, identificacionEmisor, idReceptor, identificacionReceptor
+                FROM mensajeReceptor
+                WHERE id=:id';
+            $param= array(':id'=>$this->id);
+            $data= DATA::Ejecutar($sql,$param);     
+            foreach ($data as $key => $value){
+                $this->idBodega = $value['idBodega'];
+                //$this->bodega =  // nombre de la bodega.
+                $this->fechaCreacion = $value['fechaCreacion'];
+                $this->consecutivo = $value['consecutivo'];
+                $this->clave = $value['clave'] ?? null;
+                $this->consecutivoFE = $value['consecutivoFE'] ?? null;
+                $this->mensaje = $value['mensaje'];
+                $this->detalle = $value['detalle'];
+                $this->totalImpuesto = $value['totalImpuesto'];
+                $this->totalComprobante = $value['totalComprobante'];
+                //$this->idEstadoComprobante = $value['idEstadoComprobante'];
+                $this->idEmisor = $value['idEmisor'];
+                $this->identificacionEmisor = $value['identificacionEmisor'];
+                $this->idReceptor = $value['idReceptor'];
+                $this->identificacionReceptor = $value['identificacionReceptor'];
+            }
+            return $this;
+        }     
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar el factura'))
+            );
+        }
+    }
+
     function Create(){
         try {
-            $sql="INSERT INTO mensajeReceptor   (id,  clave, consecutivoFE, fechaEmision, mensaje, detalle, totalImpuesto, totalComprobante, idEmisor, identificacionEmisor, idReceptor, identificacionReceptor)
-                VALUES  (:id, :clave, :consecutivoFE, :fechaEmision, :mensaje, :detalle, :totalImpuesto, :totalComprobante, :idEmisor, :identificacionEmisor,: idReceptor,: identificacionReceptor)";
+            $sql="INSERT INTO mensajeReceptor   (id, clave, consecutivoFE, mensaje, detalle, totalImpuesto, totalComprobante, idEmisor, identificacionEmisor, idReceptor, identificacionReceptor)
+                VALUES  (:id, :clave, :consecutivoFE, :mensaje, :detalle, :totalImpuesto, :totalComprobante, :idEmisor, :identificacionEmisor, :idReceptor, :identificacionReceptor)";
             $param= array(':id'=>$this->id,
                 ':clave'=>$this->clave,
                 ':consecutivoFE'=>$this->consecutivoFE,
-                ':fechaEmision'=>$this->fechaEmision,
                 ':mensaje'=>$this->mensaje,
                 ':detalle'=>$this->detalle,
                 ':totalImpuesto'=>$this->totalImpuesto,

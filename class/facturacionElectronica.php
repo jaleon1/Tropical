@@ -826,15 +826,15 @@ class FacturacionElectronica{
             $post = [
                 'w' => 'genXML',
                 'r' => 'gen_xml_mr',
-                'clave'=> self::$clave,
-                'numero_cedula_emisor'=> self::$transaccion->datosEntidad->identificacion, // entidad emisora. En caso MR, la entidad es el vendedor que nos emite la FE.
+                'clave'=>self::$transaccion->clave, // clave original del documento.
+                'numero_cedula_emisor'=> self::$transaccion->identificacionEmisor, // entidad emisora. En caso MR, la entidad es el vendedor que nos emite la FE.
                 'fecha_emision_doc'=> self::$transaccion->fechaEmision,
                 'mensaje'=> self::$transaccion->mensaje, // 1= acepta. 2= parcial. 3= rechazo.
                 'detalle_mensaje'=> self::$transaccion->detalleMensaje ?? 'Sin detalle', 
                 'monto_total_impuesto' => self::$transaccion->totalImpuesto,
                 'total_factura' => self::$transaccion->totalComprobante,
-                'numero_cedula_receptor' => self::$transaccion->datosReceptor->identificacion,
-                'numero_consecutivo_receptor'=> self::$transaccion->consecutivoFE
+                'numero_cedula_receptor' => self::$transaccion->identificacionReceptor,
+                'numero_consecutivo_receptor'=> self::$consecutivoFE
             ];            
             //            
             curl_setopt_array($ch, array(

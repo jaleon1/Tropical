@@ -12,33 +12,33 @@ class MensajeReceptor {
         this.detalle = detalle || null;
     }
 
-    get Save() {
-        // NProgress.start();        
-        var miAccion = this.id == null ? 'Create' : 'Update';
-        this.mensaje = $('#tipoMensaje option:selected').val();
-        this.detalle = $("#detalle").val();
-        $('#btnSubmit').attr("disabled", "disabled");
-        $.ajax({
-            type: "POST",
-            url: "class/mensajeReceptor.php",
-            data: {
-                action: miAccion,
-                obj: JSON.stringify(this)
-            }
-        })
-            .done(function(){
-                if(dz!=undefined)
-                    dz.processQueue();
-                else // No hay cola para subir.
-                    mr.showInfo();
-            })
-            .fail(function (e) {
-                mr.showError(e);
-            })
-            .always(function () {
-                $("#btnSubmit").removeAttr("disabled");
-            });
-    }
+    // get Save() {
+    //     // NProgress.start();        
+    //     var miAccion = this.id == null ? 'Create' : 'Update';
+    //     this.mensaje = $('#tipoMensaje option:selected').val();
+    //     this.detalle = $("#detalle").val();
+    //     $('#btnSubmit').attr("disabled", "disabled");
+    //     $.ajax({
+    //         type: "POST",
+    //         url: "class/mensajeReceptor.php",
+    //         data: {
+    //             action: miAccion,
+    //             obj: JSON.stringify(this)
+    //         }
+    //     })
+    //         .done(function(){
+    //             if(dz!=undefined)
+    //                 dz.processQueue();
+    //             else // No hay cola para subir.
+    //                 mr.showInfo();
+    //         })
+    //         .fail(function (e) {
+    //             mr.showError(e);
+    //         })
+    //         .always(function () {
+    //             $("#btnSubmit").removeAttr("disabled");
+    //         });
+    // }
 
     // Muestra información en ventana
     showInfo() {
@@ -67,10 +67,12 @@ class MensajeReceptor {
     Init() {
         // validator.js
         var validator = new FormValidator({ "events": ['blur', 'input', 'change'] }, document.forms["frmXml"]);
-        $('#frm').submit(function (e) {
+        $('#frmXml').submit(function (e) {
             e.preventDefault();
             var validatorResult = validator.checkAll(this);
-            // if (validatorResult.valid)
+            if (validatorResult.valid)
+                if (dz != undefined)
+                    dz.processQueue();
             //     mr.Save;
             return false;
         });
@@ -86,9 +88,9 @@ class MensajeReceptor {
         });
         // submit
         $('#btnSubmit').click(function () {
-            $('#frm').submit();
-            // if (dz != undefined)
-            //     dz.processQueue();
+            $('#m').val( $('#tipoMensaje option:selected').val());
+            $('#d').val( $('#detalleMensaje').val());
+            $('#frmXml').submit();            
         });
         // dropzone        
         Dropzone.options.frmXml = {
