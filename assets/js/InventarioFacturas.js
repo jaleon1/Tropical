@@ -171,11 +171,6 @@ class InventarioFacturas {
                     mRender: function ( e ) {
                         return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                     }
-                },
-                {
-                    title: "ESTADO COMPROBANTE",
-                    width: '5%',
-                    data: "idEstadoComprobante"
                 }
             ]
         });
