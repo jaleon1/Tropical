@@ -25,9 +25,9 @@ if(isset($_POST["action"])){
     // Instance
     $factura= new Factura();
     switch($opt){
-        case "ReadAllbyRange":
-            echo json_encode($factura->ReadAllbyRange());
-            break;
+        // case "ReadAllbyRange":
+        //     echo json_encode($factura->ReadAllbyRange());
+        //     break;
         case "ReadAllById":
             echo json_encode($factura->ReadAllById());
             break;
@@ -255,27 +255,27 @@ class Factura{
         }
     }
 
-    function ReadAllbyRange(){
-        try {
-            $sql='SELECT f.id, f.consecutivo, f.fechaCreacion, f.totalComprobante, f.montoEfectivo, f.montoTarjeta, b.nombre, u.userName, f.idEstadoComprobante
-                FROM factura f
-                INNER JOIN bodega b on f.idBodega = b.id
-                INNER JOIN usuario u on u.id = f.idusuario  
-                WHERE f.fechaCreacion Between :fechaInicial and :fechaFinal  
-                ORDER BY f.consecutivo desc';
-            $param= array(':fechaInicial'=>$this->fechaInicial, ':fechaFinal'=>$this->fechaFinal);            
-            $data= DATA::Ejecutar($sql, $param);
-            return $data;
-        }     
-        catch(Exception $e) { 
-            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
-            header('HTTP/1.0 400 Bad error');
-            die(json_encode(array(
-                'code' => $e->getCode() ,
-                'msg' => 'Error al cargar la lista'))
-            );
-        }
-    }
+    // function ReadAllbyRange(){
+    //     try {
+    //         $sql='SELECT f.id, f.consecutivo, f.fechaCreacion, f.totalComprobante, f.montoEfectivo, f.montoTarjeta, b.nombre, u.userName, f.idEstadoComprobante
+    //             FROM factura f
+    //             INNER JOIN bodega b on f.idBodega = b.id
+    //             INNER JOIN usuario u on u.id = f.idusuario  
+    //             WHERE f.fechaCreacion Between :fechaInicial and :fechaFinal  
+    //             ORDER BY f.consecutivo desc';
+    //         $param= array(':fechaInicial'=>$this->fechaInicial, ':fechaFinal'=>$this->fechaFinal);            
+    //         $data= DATA::Ejecutar($sql, $param);
+    //         return $data;
+    //     }     
+    //     catch(Exception $e) { 
+    //         error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+    //         header('HTTP/1.0 400 Bad error');
+    //         die(json_encode(array(
+    //             'code' => $e->getCode() ,
+    //             'msg' => 'Error al cargar la lista'))
+    //         );
+    //     }
+    // }
 
     function ReadAllById(){
         try {
@@ -633,61 +633,61 @@ class Factura{
         };
     }
 
-    function TicketPrint($data){
-        try {
+    // function TicketPrint($data){
+    //     try {
             
-            // $connector = new WindowsPrintConnector('/dev/usb/lp0');
-            $connector = new FilePrintConnector("/dev/usb/lp0");
-            $printer = new Printer($connector);
-            $total=0;
-            $printer->setJustification(Printer::JUSTIFY_CENTER);
-            $printer->text("\n------------------------------------------------");
-            $printer->text("\n"."TROPICAL SNO".$data->bodega);
-            $printer->text("\n------------------------------------------------");
-            $printer->text("\n"."3-102-655700,  S.R.L.");
-            $printer->text("\n"."Tel.2245-0515, Fax: 2297-0998");
-            $printer->text("\n"."Factura #:". $data->consecutivo);
-            $printer->text("\n"."Fecha :". $data->fechaCreacion);
-            $printer->text("\n"."Usuario :". $data->usuario."\n");
-            $printer->text("\n------------------------------------------------");
-            $printer->text("\n"."CN    "."DETALLE                "."PRECIO    "."TOTAL     ");
-            $printer->text("\n------------------------------------------------");
-            for ($i=0; $i < count($data->detalleFactura); $i++) { 
-                $printer->text("\n"."1         ".$data->detalleFactura[$i]->detalle."  ".$data->detalleFactura[$i]->precioUnitario);
-                $total = $total +  $data->detalleFactura[$i]->precioUnitario;
-            }
-            $printer->text("\n------------------------------------------------");
-            $printer->text("\n"."Total I.V.I                            ". $total.".00"); 
-            $printer->text("\n"."Tipo de Pago:------------------------------------");
-            $printer->text("\n"."      Efectivo:                        ". $total.".00");
-            $printer->text("\n"."      Vuelto:                          ". $total.".00");
-            $printer->text("\n"."      Dif:                             ". $total.".00");
-            $printer->text("\n"."Tarjeta de Credito:                    ". $total.".00\n");
-            $printer->text("\n------------------------------------------------");
-            $printer->text("\n"."Gracias por su Compra                        ");
-            $printer->text("\n"."Una vez facturado no se aceptan cambios o    ");
-            $printer->text("\n"."devoluciones.                                \n");
-            $printer->text("\n"."Autorizado para impresión mediante           ");
-            $printer->text("\n"."Resolución 48-2016 de DGTD                   \n");
-            $printer->text("\n"."Autorizado para impresión mediante           ");
-            $printer->text("\n"."Resolución 48-2016 de DGTD                   ");
-            $printer->text("\n"."Visitenos en Facebook:  TSCR y déjenos sus   ");
-            $printer->text("\n"."comentarios.                                 ");
-            $printer->feed(3);
-            $printer->cut();            
-            $printer->pulse();
-            $printer->close();
+    //         // $connector = new WindowsPrintConnector('/dev/usb/lp0');
+    //         $connector = new FilePrintConnector("/dev/usb/lp0");
+    //         $printer = new Printer($connector);
+    //         $total=0;
+    //         $printer->setJustification(Printer::JUSTIFY_CENTER);
+    //         $printer->text("\n------------------------------------------------");
+    //         $printer->text("\n"."TROPICAL SNO".$data->bodega);
+    //         $printer->text("\n------------------------------------------------");
+    //         $printer->text("\n"."3-102-655700,  S.R.L.");
+    //         $printer->text("\n"."Tel.2245-0515, Fax: 2297-0998");
+    //         $printer->text("\n"."Factura #:". $data->consecutivo);
+    //         $printer->text("\n"."Fecha :". $data->fechaCreacion);
+    //         $printer->text("\n"."Usuario :". $data->usuario."\n");
+    //         $printer->text("\n------------------------------------------------");
+    //         $printer->text("\n"."CN    "."DETALLE                "."PRECIO    "."TOTAL     ");
+    //         $printer->text("\n------------------------------------------------");
+    //         for ($i=0; $i < count($data->detalleFactura); $i++) { 
+    //             $printer->text("\n"."1         ".$data->detalleFactura[$i]->detalle."  ".$data->detalleFactura[$i]->precioUnitario);
+    //             $total = $total +  $data->detalleFactura[$i]->precioUnitario;
+    //         }
+    //         $printer->text("\n------------------------------------------------");
+    //         $printer->text("\n"."Total I.V.I                            ". $total.".00"); 
+    //         $printer->text("\n"."Tipo de Pago:------------------------------------");
+    //         $printer->text("\n"."      Efectivo:                        ". $total.".00");
+    //         $printer->text("\n"."      Vuelto:                          ". $total.".00");
+    //         $printer->text("\n"."      Dif:                             ". $total.".00");
+    //         $printer->text("\n"."Tarjeta de Credito:                    ". $total.".00\n");
+    //         $printer->text("\n------------------------------------------------");
+    //         $printer->text("\n"."Gracias por su Compra                        ");
+    //         $printer->text("\n"."Una vez facturado no se aceptan cambios o    ");
+    //         $printer->text("\n"."devoluciones.                                \n");
+    //         $printer->text("\n"."Autorizado para impresión mediante           ");
+    //         $printer->text("\n"."Resolución 48-2016 de DGTD                   \n");
+    //         $printer->text("\n"."Autorizado para impresión mediante           ");
+    //         $printer->text("\n"."Resolución 48-2016 de DGTD                   ");
+    //         $printer->text("\n"."Visitenos en Facebook:  TSCR y déjenos sus   ");
+    //         $printer->text("\n"."comentarios.                                 ");
+    //         $printer->feed(3);
+    //         $printer->cut();            
+    //         $printer->pulse();
+    //         $printer->close();
 
-            return true;
-            }     
-            catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
-                header('HTTP/1.0 777 Bad error');
-                die(json_encode(array(
-                    'code' => $e->getCode() ,
-                    'msg' => 'Error al imprimir factura'))
-                );
-            }
-    }
+    //         return true;
+    //         }     
+    //         catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+    //             header('HTTP/1.0 777 Bad error');
+    //             die(json_encode(array(
+    //                 'code' => $e->getCode() ,
+    //                 'msg' => 'Error al imprimir factura'))
+    //             );
+    //         }
+    // }
 
     function Update(){
         try {

@@ -274,7 +274,8 @@ class CajaXBodega{
                             FROM cajasXBodega ca
                             WHERE idusuarioCajero = :idusuarioCajero and estado = 1
                         )
-                        and CURRENT_TIMESTAMP();";            
+                        and CURRENT_TIMESTAMP() and
+                        idusuario = :idusuarioCajero;";            
                 $param= array(':idusuarioCajero'=>$_SESSION["userSession"]->id);
                 $this->totalVentasEfectivo= DATA::Ejecutar($sql, $param);
                 if($this->totalVentasEfectivo){
@@ -286,7 +287,8 @@ class CajaXBodega{
                         FROM cajasXBodega ca
                         WHERE idusuarioCajero = :idusuarioCajero and estado = 1
                     )
-                    and CURRENT_TIMESTAMP()";            
+                    and CURRENT_TIMESTAMP() and
+                    idusuario = :idusuarioCajero;";            
                     $param= array(':idusuarioCajero'=>$_SESSION["userSession"]->id);
                     $this->totalVentasTarjeta= DATA::Ejecutar($sql, $param);
                     if($this->totalVentasEfectivo){

@@ -104,8 +104,8 @@ class InventarioVentas {
                 }
             ],
             language: {
-                "infoEmpty":  "Sin Facturas",
-                "emptyTable": "Sin Facturas",
+                "infoEmpty":  "Sin Ventas",
+                "emptyTable": "Sin Ventas",
                 "search":     "Buscar",
                 "zeroRecords": "No hay resultados",
                 "lengthMenu":  "Mostar _MENU_ registros",

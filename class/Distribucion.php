@@ -54,6 +54,9 @@ if(isset($_POST["action"])){
         case "Aceptar":
             $distribucion->Aceptar();
             break;   
+        case "ReadAllbyRange":
+            echo json_encode($distribucion->ReadAllbyRange());
+            break;
     }
 }
 
@@ -72,6 +75,8 @@ class Distribucion{
     public $detalleFactura= []; 
     public $datosReceptor = [];
     public $datosEntidad = [];
+    public $fechaInicial='';
+    public $fechaFinal='';
 
     function __construct(){
         // identificador único
@@ -122,6 +127,8 @@ class Distribucion{
             //
             $this->idReceptor = $obj['idReceptor'] ?? Receptor::default()->id; // si es null, utiliza el Receptor por defecto.            
             $this->idUsuario=  $_SESSION["userSession"]->id;
+            $this->fechaInicial= $obj["fechaInicial"] ?? null;
+            $this->fechaFinal= $obj["fechaFinal"] ?? null;
             // si la bodega es externa, tiene que estar el ClienteFE (receptor) registrado.
             $central = new Bodega();
             $central->readCentral();
@@ -193,6 +200,35 @@ class Distribucion{
                 GROUP BY orden
                 ORDER BY fecha desc';
             $data= DATA::Ejecutar($sql);
+            return $data;
+        }     
+        catch(Exception $e) { 
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar la lista'))
+            );
+        }
+    }
+
+    function ReadAllbyRange(){
+        try {
+            // $sql='SELECT id, fecha, idBodega, orden, idUsuario
+            //     FROM     distribucion       
+            //     ORDER BY fecha asc';
+            $sql= 'SELECT d.id, fecha, orden, u.userName, b.nombre as bodega, e.nombre as estado, 
+                    (sum(cantidad*valor) + sum(cantidad*valor)*0.13) as total, idEstadoComprobante
+                FROM tropical.distribucion d
+                    INNER JOIN usuario u on u.id=d.idUsuario
+                    INNER JOIN bodega b on b.id=d.idBodega
+                    INNER JOIN estado e on e.id=d.idEstado
+                    INNER JOIN productosXDistribucion p on p.idDistribucion=d.id
+                WHERE fecha Between :fechaInicial and :fechaFinal
+                GROUP BY orden
+                ORDER BY fecha desc';
+            $param= array(':fechaInicial'=>$this->fechaInicial, ':fechaFinal'=>$this->fechaFinal);            
+            $data= DATA::Ejecutar($sql, $param);
             return $data;
         }     
         catch(Exception $e) { 

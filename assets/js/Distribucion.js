@@ -1,6 +1,6 @@
 class Distribucion {
     // Constructor
-    constructor(id, orden, fecha, idUsuario, idBodega, porcentajeDescuento, porcentajeIva, lista, bodega) {
+    constructor(id, orden, fecha, idUsuario, idBodega, porcentajeDescuento, porcentajeIva, lista, bodega, fechaInicial, fechaFinal) {
         this.id = id || null;
         this.orden = orden || '';
         this.fecha = fecha || '';
@@ -10,6 +10,8 @@ class Distribucion {
         this.porcentajeDescuento = porcentajeDescuento || 0;
         this.porcentajeIva = porcentajeIva || 0;
         this.lista = lista || [];
+        this.fechaInicial = fechaInicial || "";
+        this.fechaFinal = fechaFinal || "";
     }
 
     get tUpdate() {
@@ -263,7 +265,7 @@ class Distribucion {
         //$( "#tDistribucion tbody tr" ).live("click", distr.viewType==undefined || distr.viewType==distr.tUpdate ? distr.UpdateEventHandler : distr.SelectEventHandler);
         //
         //$( document ).on( 'click', '.update', distr.UpdateEventHandler);
-        $(document).on('click', '#tDistribucion tbody tr td:not(.buttons)', distr.viewType == undefined || distr.viewType == distr.tUpdate ? distr.UpdateEventHandler : distr.SelectEventHandler);
+        // $(document).on('click', '#tDistribucion tbody tr td:not(.buttons)', distr.viewType == undefined || distr.viewType == distr.tUpdate ? distr.UpdateEventHandler : distr.SelectEventHandler);
         // $( document ).on( 'click', '.delete', distr.DeleteEventHandler);
         // $( document ).on( 'click', '.open', distr.OpenEventHandler);
     };
@@ -375,7 +377,7 @@ class Distribucion {
             ]
         });
 
-        $('#modal').modal('toggle');
+        $('#modalDistribucion').modal('toggle');
 
     }
 
@@ -687,11 +689,25 @@ class Distribucion {
     setTableVista(buttons = true) {
         $('#tDistribucion').DataTable({
             responsive: true,
-            info: false,
-            iDisplayLength: 10,
+            destroy: true,
+            order: [[1, "desc"]],
+            dom: 'Bfrtip',
+            buttons: [
+                {
+                    extend: 'excelHtml5',
+                    exportOptions: {columns: [ 1, 2, 3, 4, 5, 6, 7]},
+                    messageTop:'Traslados y facturación'
+                },
+                {
+                    extend: 'pdfHtml5',
+                    exportOptions: {
+                        columns: [ 1, 2, 3, 4, 5, 6, 7]
+                    }
+                }
+            ],
             "language": {
-                "infoEmpty": "Sin Productos Ingresados",
-                "emptyTable": "Sin Productos Ingresados",
+                "infoEmpty": "Sin Traslados Registrados",
+                "emptyTable": "Sin Traslados Registrados",
                 "search": "Buscar",
                 "zeroRecords": "No hay resultados",
                 "lengthMenu": "Mostrar _MENU_ registros",
@@ -757,6 +773,22 @@ class Distribucion {
         });
     };
 
+    CargaTrasladosRango() {
+        // var referenciaCircular = inventarioVentas.tb_ventas;
+        // inventarioVentas.tb_ventas = [];
+        $.ajax({
+            type: "POST",
+            url: "class/Distribucion.php",
+            data: {
+                action: "ReadAllbyRange",
+                obj: JSON.stringify(distr)
+            }
+        })
+            .done(function (e) {
+                // inventarioVentas.tb_ventas = referenciaCircular;        
+                distr.ShowAll(e); 
+            });
+    };
 }
 
 
