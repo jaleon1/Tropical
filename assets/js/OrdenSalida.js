@@ -1,6 +1,6 @@
 class OrdenSalida {
     // Constructor
-constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiquida, estado, i, ic, tabla) {
+constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiquida, estado, i, ic, tb_OrdenProduccion, fechaInicial, fechaFinal) {
         this.id = id || null;
         this.numeroOrden = numeroOrden || '';
         this.fecha = fecha || '';
@@ -10,7 +10,9 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
         this.estado = estado || 0;
         this.listaInsumo = i || [];
         this.listaInsumoCantidad = ic || [];
-        this.tabla;
+        this.tb_OrdenProduccion = tb_OrdenProduccion || [];
+        this.fechaInicial = fechaInicial || "";
+        this.fechaFinal = fechaFinal || "";
     }
 
     //Getter
@@ -59,6 +61,8 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
             objInsumo.costoPromedio= $(this).find('td:eq(6)').html();
             ordenSalida.listaInsumo.push(objInsumo);
         });
+        var referenciaCircular = ordenSalida.tb_OrdenProduccion;
+        ordenSalida.tb_OrdenProduccion = [];
         $.ajax({
             type: "POST",
             url: "class/OrdenSalida.php",
@@ -68,7 +72,8 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
             }
         })
             .done(function (e) {        
-            ordenSalida.showInfo(e);
+                ordenSalida.tb_OrdenProduccion = referenciaCircular;
+                ordenSalida.showInfo(e);
             
             })
             .fail(function (e) {
@@ -210,6 +215,23 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
     }
 
     // Methods
+
+    CargaOrdenProduccionRango(){
+        var referenciaCircular = ordenSalida.tb_OrdenProduccion;
+        ordenSalida.tb_OrdenProduccion = [];
+        $.ajax({
+            type: "POST",
+            url: "class/OrdenSalida.php",
+            data: {
+                action: "ReadAllbyRange",
+                obj: JSON.stringify(ordenSalida)
+            }
+        })
+            .done(function (e) {
+                ordenSalida.tb_OrdenProduccion = referenciaCircular;        
+                ordenSalida.ShowAll(e); 
+            });
+    };
     
     UpdateCantidadProducto(){
         productobodega.idProducto = $(this).parents("tr").find("td:eq(1)").html();
@@ -290,13 +312,27 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
     };
 
     setTableOrdenSalida(){
-        this.tabla = $('#dsOrdenSalida').DataTable( {
+        this.tb_OrdenProduccion = $('#dsOrdenSalida').DataTable( {
             responsive: true,
             destroy: true,
-            order: [[ 0, "desc" ]],                  
+            order: [[ 0, "desc" ]],                    
+            dom: 'Bfrtip',
+            buttons: [
+                {
+                    extend: 'excelHtml5',
+                    exportOptions: {columns: [ 0, 4, 5, 6, 7, 8]},
+                    messageTop:'Orden de Producción'
+                },
+                {
+                    extend: 'pdfHtml5',
+                    exportOptions: {
+                        columns: [ 0, 4, 5, 6, 7, 8]
+                    }
+                }
+            ],
             "language": {
-                "infoEmpty": "Sin Ordenes Ingresadas",
-                "emptyTable": "Sin Ordenes Ingresadas",
+                "infoEmpty": "Sin Ordenes de Producción",
+                "emptyTable": "Sin Ordenes de Producción",
                 "search": "Buscar",
                 "zeroRecords":    "No hay resultados",
                 "lengthMenu":     "Mostrar _MENU_ registros",
@@ -306,7 +342,7 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
                     "next":       "Siguiente",
                     "previous":   "Anterior"
                 }
-            },  
+            },
             columns: [
                 {
                     title:"Orden",

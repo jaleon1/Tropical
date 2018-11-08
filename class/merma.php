@@ -20,6 +20,9 @@ if(isset($_POST["action"])){
         case "Create":
             echo json_encode($merma->Create());
             break;
+        case "ReadAllbyRange":
+            echo json_encode($merma->ReadAllbyRange());
+            break;
     }
 }
 
@@ -30,6 +33,8 @@ class Merma{
     public $descripcion='';
     public $cantidad=0;
     public $fecha;
+    public $fechaInicial='';
+    public $fechaFinal='';
 
     function __construct(){
         // identificador único
@@ -40,6 +45,8 @@ class Merma{
             $obj= json_decode($_POST["obj"],true);
             require_once("UUID.php");
             $this->id= $obj["id"] ?? UUID::v4();
+            $this->fechaInicial= $obj["fechaInicial"] ?? '';
+            $this->fechaFinal= $obj["fechaFinal"] ?? '';
             // merma
             if(isset($obj["listaInsumo"] )){
                 $this->listaInsumo= [];
@@ -72,6 +79,27 @@ class Merma{
                 SELECT m.id, p.codigo, m.consecutivo, p.nombre, p.descripcion, m.cantidad, m.descripcion, m.fecha
                 FROM mermaProducto m inner join producto p on p.id = m.idProducto';
             $data= DATA::Ejecutar($sql);
+            return $data;
+        }     
+        catch(Exception $e) {
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar la lista'))
+            );
+        }
+    }
+
+    function ReadAllbyRange(){
+        try {
+        $sql = 'SELECT m.id, i.codigo, m.consecutivo, i.nombre, i.descripcion, m.cantidad, m.descripcion, m.fecha
+                FROM mermaInsumo m inner join insumo i on i.id = m.idInsumo WHERE m.fecha Between :fechaInicial and :fechaFinal
+                UNION 
+                SELECT m.id, p.codigo, m.consecutivo, p.nombre, p.descripcion, m.cantidad, m.descripcion, m.fecha
+                FROM mermaProducto m inner join producto p on p.id = m.idProducto WHERE m.fecha Between :fechaInicial and :fechaFinal';
+            $param= array(':fechaInicial'=>$this->fechaInicial, ':fechaFinal'=>$this->fechaFinal);            
+            $data= DATA::Ejecutar($sql, $param);
             return $data;
         }     
         catch(Exception $e) {

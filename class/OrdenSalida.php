@@ -33,6 +33,9 @@ if(isset($_POST["action"])){
         case "Delete":
             echo json_encode($ordenSalida->Delete());
             break;   
+        case "ReadAllbyRange":
+            echo json_encode($ordenSalida->ReadAllbyRange());
+            break;
     }
 }
 
@@ -48,6 +51,8 @@ class OrdenSalida{
     public $idEstado='';
     public $listaInsumo=[];
     public $listaInsumoCantidad=[];
+    public $fechaInicial='';
+    public $fechaFinal='';
 
     function __construct(){
         // identificador único
@@ -64,6 +69,8 @@ class OrdenSalida{
             $this->idUsuarioEntrega= $_SESSION['userSession']->id;
             $this->idUsuarioRecibe= $obj["usuarioRecibe"] ?? '';
             $this->idEstado= $obj["estado"] ?? 0;
+            $this->fechaInicial= $obj["fechaInicial"] ?? '';
+            $this->fechaFinal= $obj["fechaFinal"] ?? '';
             //Insumos de la orden
             if (isset($obj["listaInsumo"] )) {
                 require_once("InsumosxOrdenSalida.php");    
@@ -97,6 +104,25 @@ class OrdenSalida{
                 FROM     ordenSalida       
                 ORDER BY numeroOrden asc';
             $data= DATA::Ejecutar($sql);
+            return $data;
+        }     
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar la lista'))
+            );
+        }
+    }
+
+    function ReadAllbyRange(){
+        try {
+            $sql='SELECT `id`,`fecha`,`numeroOrden`,`idUsuarioEntrega`, (SELECT nombre FROM usuario WHERE id=idUsuarioEntrega) as usuarioEntrega,
+            `idUsuarioRecibe`, (SELECT nombre FROM usuario WHERE id=idUsuarioRecibe) as usuarioRecibe, `fechaLiquida`, `idEstado`
+            FROM ordenSalida WHERE fecha Between :fechaInicial and :fechaFinal  
+            ORDER BY numeroOrden DESC;';
+            $param= array(':fechaInicial'=>$this->fechaInicial, ':fechaFinal'=>$this->fechaFinal);            
+            $data= DATA::Ejecutar($sql, $param);
             return $data;
         }     
         catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());

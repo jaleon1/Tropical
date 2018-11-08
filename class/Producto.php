@@ -59,6 +59,9 @@ if(isset($_POST["action"])){
         case "ReadAllInventario":
             echo json_encode($producto->ReadAllInventario());
             break;
+        case "ReadAllbyRange":
+            echo json_encode($producto->ReadAllbyRange());
+            break;
     }
 }
 
@@ -76,6 +79,8 @@ class Producto{
     public $precioVenta='';
     public $esVenta=0; // tipo de producto.
     public $lista= [];
+    public $fechaInicial='';
+    public $fechaFinal='';
 
     function __construct(){
         // identificador único
@@ -96,6 +101,8 @@ class Producto{
             $this->costoPromedio= $obj["costoPromedio"] ?? '';
             $this->precioVenta= $obj["precioVenta"] ?? '';
             $this->esVenta= $obj["tipoProducto"] ?? 0;
+            $this->fechaInicial= $obj["fechaInicial"] ?? '';
+            $this->fechaFinal= $obj["fechaFinal"] ?? '';
         }
     }
 
@@ -411,6 +418,46 @@ class Producto{
             );
         }    
     }
+
+    function ReadAllbyRange(){
+        try {
+            $sql='SELECT i.id,            
+            COALESCE(o.orden, CONCAT("Orden: ", s.numeroOrden)) as idOrdenEntrada,
+            COALESCE(CONCAT("Traslado: ", d.orden), CONCAT("Merma:", m.consecutivo), CONCAT("Ord Cancel:", os.numeroOrden)) as idOrdenSalida,            
+            p.codigo AS producto,
+            entrada,
+            salida,
+            saldo,
+            costoAdquisicion,
+            valorEntrada,
+            valorSalida,
+            valorSaldo,
+            i.costoPromedio,
+            i.fecha
+            FROM  inventarioProducto i inner join producto p on p.id = i.idProducto
+                left join ordenCompra o on i.idOrdenEntrada = o.id 
+                left join ordenSalida s on i.idOrdenEntrada = s.id
+                left join distribucion d on i.idOrdenSalida = d.id
+                left join mermaProducto m on i.idOrdenSalida = m.id
+                left join ordenSalida os on i.idOrdenSalida = os.id
+            WHERE i.fecha Between :fechaInicial and :fechaFinal               
+            ORDER BY i.fecha desc;';
+            
+            $param= array(':fechaInicial'=>$this->fechaInicial, ':fechaFinal'=>$this->fechaFinal);            
+            $data= DATA::Ejecutar($sql, $param);
+            return $data;
+        }     
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar la lista'))
+            );
+        }    
+    }
+
+
 }
 
 ?>
