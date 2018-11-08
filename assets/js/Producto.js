@@ -1,6 +1,6 @@
 class Producto {
     // Constructor
-    constructor(id, codigo, nombre, txtColor, bgColor, nombreAbreviado, descripcion, saldoCantidad, saldoCosto, costoPromedio, precioVenta, tipoProducto, lista, tablaproducto) {
+    constructor(id, codigo, nombre, txtColor, bgColor, nombreAbreviado, descripcion, saldoCantidad, saldoCosto, costoPromedio, precioVenta, tipoProducto, lista, tablaproducto, fechaInicial, fechaFinal) {
         this.id = id || null;        
         this.codigo = codigo || '';
         this.nombre = nombre || '';
@@ -14,7 +14,9 @@ class Producto {
         this.precioVenta = precioVenta || 0;
         this.tipoProducto = tipoProducto || 0; //1: producto para vender, 0 articulo no vendible.
         this.lista = lista || [];
-        this.tablaproducto;
+        this.tablaproducto = tablaproducto || [];
+        this.fechaInicial = fechaInicial || "";
+        this.fechaFinal = fechaFinal || "";
     }
 
     //Getter
@@ -132,7 +134,7 @@ class Producto {
                 producto.showError(e);
             })
             .always(function () {
-                setTimeout('$("#btnProducto").removeAttr("disabled")', 1000);
+                $("#btnProducto").removeAttr("disabled");
                 producto = new Producto();
                 producto.ClearCtls();
                 producto.Read;
@@ -177,7 +179,7 @@ class Producto {
                 producto.showError(e);
             })
             .always(function () {
-                setTimeout('$("#btnArticulo").removeAttr("disabled")', 1000);
+                $("#btnArticulo").removeAttr("disabled");
                 producto = new Producto();
                 // limpia el ds
                 $('#tableBody-ArticuloBodega').html("");
@@ -255,15 +257,14 @@ class Producto {
 
     // Muestra información en ventana
     showInfo() {
-        //$(".modal").css({ display: "none" });  
-        $(".close").click();
-        swal({
-            
+        //$(".modal").css({ display: "none" });          
+        swal({            
             type: 'success',
             title: 'Listo!',
             showConfirmButton: false,
             timer: 1000
         });
+        $(".close").click();        
     };
 
     // Muestra errores en ventana
@@ -944,7 +945,7 @@ class Producto {
                 producto.showError(e);
             })
             .always(function () {
-                setTimeout('$("#btnSubmit").removeAttr("disabled")', 1000);
+                $("#btnSubmit").removeAttr("disabled");
                 producto = new Producto();
                 //producto.CleanCtls();
                 $("#p_searh").focus();
@@ -965,6 +966,23 @@ class Producto {
         }
     };
 
+    CargaProductoRango() {
+        var referenciaCircular = producto.tablainsumo;
+        producto.tablainsumo = [];
+        $.ajax({
+            type: "POST",
+            url: "class/Producto.php",
+            data: {
+                action: "ReadAllbyRange",
+                obj: JSON.stringify(producto)
+            }
+        })
+            .done(function (e) {
+                producto.tablainsumo = referenciaCircular;        
+                producto.ShowAllInventario(e); 
+            });
+    };
+
     setTableInventarioProductoReporte(){
         jQuery.extend( jQuery.fn.dataTableExt.oSort, {
             "formatted-num-pre": function ( a ) {
@@ -982,7 +1000,7 @@ class Producto {
         this.tablainsumo = $('#dsProductoReporte').DataTable( {
             responsive: true,
             destroy: true,
-            order: [3, "desc"],
+            order: [1, "desc"],
             dom: 'Bfrtip',
             buttons: [
                 {
@@ -1001,8 +1019,8 @@ class Producto {
                 }
             ],
             language: {
-                "infoEmpty": "Sin Usuarios Registrados",
-                "emptyTable": "Sin Usuarios Registrados",
+                "infoEmpty": "Sin Movimientos de Productos Registrados",
+                "emptyTable": "Sin Movimientos de Productos Registrados",
                 "search": "Buscar",
                 "zeroRecords": "No hay resultados",
                 "lengthMenu": "Mostrar _MENU_ registros",

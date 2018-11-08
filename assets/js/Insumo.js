@@ -1,6 +1,6 @@
 class Insumo {
     // Constructor
-    constructor(id, codigo, nombre, descripcion, saldoCantidad, saldoCosto, costoPromedio, tablainsumo) {
+    constructor(id, codigo, nombre, descripcion, saldoCantidad, saldoCosto, costoPromedio, tablainsumo, fechaInicial, fechaFinal) {
         this.id = id || null;
         this.codigo = codigo || '';
         this.nombre = nombre || '';
@@ -8,7 +8,9 @@ class Insumo {
         this.saldoCantidad = saldoCantidad || 0;
         this.saldoCosto = saldoCosto || 0;
         this.costoPromedio = costoPromedio || 0;
-        this.tablainsumo;
+        this.tablainsumo = tablainsumo || [];
+        this.fechaInicial = fechaInicial || "";
+        this.fechaFinal = fechaFinal || "";
     }
 
     //Getter
@@ -63,7 +65,7 @@ class Insumo {
                 insumo.showError(e);
             })
             .always(function () {
-                setTimeout('$("#btnInsumo").removeAttr("disabled")', 1000);
+                $("#btnInsumo").removeAttr("disabled");
                 insumo = new Insumo();
                 insumo.ClearCtls();
                 insumo.Read;
@@ -135,6 +137,23 @@ class Insumo {
                 insumo.showError(e);
             });
     }
+
+    CargaInsumoRango(){
+        var referenciaCircular = insumo.tablainsumo;
+        insumo.tablainsumo = [];
+        $.ajax({
+            type: "POST",
+            url: "class/Insumo.php",
+            data: {
+                action: "ReadAllbyRange",
+                obj: JSON.stringify(insumo)
+            }
+        })
+            .done(function (e) {
+                insumo.tablainsumo = referenciaCircular;        
+                insumo.ShowAllInventario(e); 
+            });
+    };
 
     // Methods    
     Reload(e) {
@@ -397,8 +416,8 @@ class Insumo {
                 }
             ],
             language: {
-                "infoEmpty": "Sin Usuarios Registrados",
-                "emptyTable": "Sin Usuarios Registrados",
+                "infoEmpty": "Sin Insumos Registrados",
+                "emptyTable": "Sin Insumos Registrados",
                 "search": "Buscar",
                 "zeroRecords": "No hay resultados",
                 "lengthMenu": "Mostrar _MENU_ registros",

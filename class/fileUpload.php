@@ -31,7 +31,7 @@ if (!empty($_FILES)) {
             unlink($file);
     }
     // mueve nuevo certificado.
-    if (move_uploaded_file($_FILES['file']['tmp_name'], $uploadfile)) {        
+    if (move_uploaded_file($_FILES['file']['tmp_name'], $uploadfile)) {
         $sql="UPDATE clienteFE 
                 SET cpath=:cpath, nkey=:nkey
                 WHERE idBodega=:idBodega";

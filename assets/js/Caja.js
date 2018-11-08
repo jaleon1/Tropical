@@ -1,6 +1,6 @@
 class MovimientosCaja {
     // Constructor
-    constructor(estado, tb_movimientosCaja, montoAperturaDefault, montoApertura, montoCierre, cierreEfectivo, cierreTarjeta) {
+    constructor(estado, tb_movimientosCaja, montoAperturaDefault, montoApertura, montoCierre, cierreEfectivo, cierreTarjeta, fechaInicial, fechaFinal) {
         this.estado = estado || "";
         this.tb_movimientosCaja = tb_movimientosCaja || null;
         this.montoAperturaDefault = montoAperturaDefault || 0;
@@ -8,6 +8,8 @@ class MovimientosCaja {
         this.montoCierre = montoCierre || 0;
         this.cierreEfectivo = cierreEfectivo || 0;
         this.cierreTarjeta = cierreTarjeta || 0;
+        this.fechaInicial = fechaInicial || "";
+        this.fechaFinal = fechaFinal || "";
     };
 
     CargaMovimientosCaja() {
@@ -36,7 +38,39 @@ class MovimientosCaja {
             });
     };
 
+    CargaMoviminetosCajasRango() {
+        var referenciaCircular = movimientosCaja.tb_movimientosCaja;
+        movimientosCaja.tb_movimientosCaja = [];
+        $.ajax({
+            type: "POST",
+            url: "class/CajaXBodega.php",
+            data: {
+                action: "ReadAllbyRange",
+                obj: JSON.stringify(movimientosCaja)
+            }
+        })
+            .done(function (e) {
+                movimientosCaja.tb_movimientosCaja = referenciaCircular;        
+                movimientosCaja.drawMovimientosCaja(e); 
+            });
+    };
 
+    CargaMoviminetosCajasUsuarioRango() {
+        var referenciaCircular = movimientosCaja.tb_movimientosCaja;
+        movimientosCaja.tb_movimientosCaja = [];
+        $.ajax({
+            type: "POST",
+            url: "class/CajaXBodega.php",
+            data: {
+                action: "ReadAllbyRangeUser",
+                obj: JSON.stringify(movimientosCaja)
+            }
+        })
+            .done(function (e) {
+                movimientosCaja.tb_movimientosCaja = referenciaCircular;        
+                movimientosCaja.drawMovimientosCaja(e); 
+            });
+    };
 
     drawMovimientosCaja(e) {
         var movimientos = JSON.parse(e);
@@ -44,30 +78,34 @@ class MovimientosCaja {
         var pageTotal=0;
 
         this.tb_movimientosCaja = $('#tb_movimientosCaja').DataTable({
-            dom: 'Blfrtip',
+            responsive: true,
+            destroy: true,
+            order: [10, "desc"],
+            dom: 'Bfrtip',
+            bLengthChange : false,
             buttons: [
                 {
-                    extend: 'pdf',
+                    extend: 'excelHtml5',
                     footer: false,
                     exportOptions: {
-                        columns: [2, 4, 5, 6, 7, 8, 9, 10, 11]
+                        columns: [2, 4, 5, 6, 7, 8, 9, 10, 11, 12]
                     }
                 },
                 {
-                    extend: 'print',
+                    extend: 'pdfHtml5',
                     footer: false,
                     exportOptions: {
-                        columns: [2, 4, 5, 6, 7, 8, 9, 10, 11]
-                    }
-
-                },
-                {
-                    extend: 'excel',
-                    footer: false,
-                    exportOptions: {
-                        columns: [2, 4, 5, 6, 7, 8, 9, 10, 11]
+                        columns: [2, 4, 5, 6, 7, 8, 9, 10, 11, 12]
                     }
                 }
+                // {
+                //     extend: 'print',
+                //     footer: false,
+                //     exportOptions: {
+                //         columns: [2, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+                //     }
+
+                // }
             ],
             ///////////////// 
             data: movimientos,
@@ -85,7 +123,6 @@ class MovimientosCaja {
                 }
             },
             footer: true,
-            "order": [[11, "desc"]],
             columnDefs: [{ className: "text-right", "targets": [9] }, { className: "text-right", "targets": [8] }, { className: "text-right", "targets": [7] }],
             columns: [
                 {
@@ -154,6 +191,13 @@ class MovimientosCaja {
                 {
                     title: "FECHA CIERRE",
                     data: "fechaCierre"
+                },
+                {
+                    title: "TOTAL NETO",
+                    data: "totalNeto",
+                    mRender: function (e) {
+                        return '¢' + parseFloat(Number(e)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                    }
                 }
             ]
         });

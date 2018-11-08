@@ -59,7 +59,15 @@ if(isset($_POST["action"])){
             $factura->razon= $_POST["razon"]; // Referencia a otro documento.
             $factura->notaCredito();
             break;
-
+        case "ReadAllbyRange":
+            echo json_encode($factura->ReadAllbyRange());
+            break;
+        case "ReadAllbyRangeInvVentas":
+            echo json_encode($factura->ReadAllbyRangeInvVentas());
+            break;
+        case "ReadAllbyRangeUser":
+            echo json_encode($factura->ReadAllbyRangeUser());
+            break;
     }    
 }
 
@@ -105,8 +113,8 @@ class Factura{
     public $fechaEmisionNC = null;
     public $razon=null;
     //
-    public $fechaInicial = "";
-    public $fechaFinal = "";
+    public $fechaInicial='';
+    public $fechaFinal='';
     function __construct(){
         // identificador único
         if(isset($_POST["id"])){
@@ -166,6 +174,8 @@ class Factura{
             //
             $this->idUsuario=  $_SESSION["userSession"]->id;  
             //
+            $this->fechaInicial= $obj["fechaInicial"] ?? '';
+            $this->fechaFinal= $obj["fechaFinal"] ?? '';
             if(isset($obj["detalleFactura"] )){
                 foreach ($obj["detalleFactura"] as $itemDetalle) {
                     // b. Detalle de la mercancía o servicio prestado
@@ -245,6 +255,28 @@ class Factura{
         }
     }
 
+    function ReadAllbyRange(){
+        try {
+            $sql='SELECT f.id, f.consecutivo, f.fechaCreacion, f.totalComprobante, f.montoEfectivo, f.montoTarjeta, b.nombre, u.userName, f.idEstadoComprobante
+                FROM factura f
+                INNER JOIN bodega b on f.idBodega = b.id
+                INNER JOIN usuario u on u.id = f.idusuario  
+                WHERE f.fechaCreacion Between :fechaInicial and :fechaFinal  
+                ORDER BY f.consecutivo desc';
+            $param= array(':fechaInicial'=>$this->fechaInicial, ':fechaFinal'=>$this->fechaFinal);            
+            $data= DATA::Ejecutar($sql, $param);
+            return $data;
+        }     
+        catch(Exception $e) { 
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar la lista'))
+            );
+        }
+    }
+
     function ReadAllById(){
         try {
             $sql='SELECT f.id, f.consecutivo, f.fechaCreacion, f.totalComprobante, f.montoEfectivo, f.montoTarjeta, b.nombre, u.userName, f.idEstadoComprobante
@@ -254,6 +286,27 @@ class Factura{
                 WHERE f.idUsuario =:idUsuario
                 ORDER BY f.consecutivo asc';
             $param= array(':idUsuario'=>$_SESSION["userSession"]->id);
+            $data = DATA::Ejecutar($sql,$param);
+            return $data;
+        }     
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar la lista'))
+            );
+        }
+    }
+
+    function ReadAllbyRangeUser(){
+        try {
+            $sql='SELECT f.id, f.consecutivo, f.fechaCreacion, f.totalComprobante, f.montoEfectivo, f.montoTarjeta, b.nombre, u.userName, f.idEstadoComprobante
+                FROM factura f
+                INNER JOIN bodega b on f.idBodega = b.id
+                INNER JOIN usuario u on u.id = f.idusuario
+                WHERE f.idUsuario =:idUsuario AND f.fechaCreacion Between :fechaInicial and :fechaFinal
+                ORDER BY f.consecutivo asc';
+            $param= array(':idUsuario'=>$_SESSION["userSession"]->id, ':fechaInicial'=>$this->fechaInicial, ':fechaFinal'=>$this->fechaFinal);
             $data = DATA::Ejecutar($sql,$param);
             return $data;
         }     
@@ -341,6 +394,26 @@ class Factura{
             (SELECT count(pxf.codigo) FROM tropical.productosXFactura pxf WHERE pxf.codigo="08oz" AND pxf.idFactura=f.id) AS _08oz 
             FROM tropical.factura f ORDER BY f.fechaCreacion DESC;';
             $data= DATA::Ejecutar($sql);
+            return $data;
+        }     
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar la lista'))
+            );
+        }
+    }
+
+    function ReadAllbyRangeInvVentas(){
+        try {
+            $sql='SELECT f.id, f.fechaCreacion, f.consecutivo, f.totalComprobante,
+            (SELECT count(pxf.codigo) FROM tropical.productosXFactura pxf WHERE pxf.codigo="12oz" AND pxf.idFactura=f.id) AS _12oz, 
+            (SELECT count(pxf.codigo) FROM tropical.productosXFactura pxf WHERE pxf.codigo="08oz" AND pxf.idFactura=f.id) AS _08oz 
+            FROM tropical.factura f WHERE f.fechaCreacion Between :fechaInicial and :fechaFinal  
+            ORDER BY f.consecutivo desc';
+            $param= array(':fechaInicial'=>$this->fechaInicial, ':fechaFinal'=>$this->fechaFinal);            
+            $data= DATA::Ejecutar($sql, $param);
             return $data;
         }     
         catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
@@ -445,6 +518,14 @@ class Factura{
                         WHERE id=:idFactura";
                     $param= array(':idFactura'=>$idFactura, ':claveNC'=>$clave);
                 break;
+                case 5: // CCE 
+                case 6: // CPCE 
+                case 7: // RCE 
+                    $sql="UPDATE mensajeReceptor
+                        SET consecutivoFE=:consecutivoFE
+                        WHERE id=:id";
+                    $param= array(':id'=>$idFactura, ':consecutivoFE'=>$consecutivoFE);
+                break;
             }
             //
             $data = DATA::Ejecutar($sql,$param, false);
@@ -465,7 +546,7 @@ class Factura{
             switch($documento){
                 case 1: //fe
                 case 4: //te
-                case 8: //contingencia                
+                case 8: //contingencia
                     $sql="UPDATE factura
                         SET idEstadoComprobante=:idEstadoComprobante, fechaEmision=:fechaEmision
                         WHERE id=:idFactura";
@@ -476,6 +557,14 @@ class Factura{
                         SET idEstadoNC=:idEstadoNC, fechaEmisionNC=:fechaEmisionNC
                         WHERE id=:idFactura";
                     $param= array(':idFactura'=>$idFactura, ':idEstadoNC'=>$idEstadoComprobante, ':fechaEmisionNC'=>$fechaEmision);
+                break;
+                case 5: // CCE 
+                case 6: // CPCE 
+                case 7: // RCE 
+                    $sql="UPDATE mensajeReceptor
+                        SET idEstadoComprobante=:idEstadoComprobante, fechaEmision=:fechaEmision
+                        WHERE id=:id";
+                    $param= array(':id'=>$idFactura, ':idEstadoComprobante'=>$idEstadoComprobante, ':fechaEmision'=>$fechaEmision);
                 break;
             }
             //
@@ -497,7 +586,7 @@ class Factura{
             switch($documento){
                 case 1: //fe
                 case 4: //te
-                case 8: //contingencia                
+                case 8: //contingencia
                     $sql="UPDATE factura
                         SET idEstadoComprobante=:idEstadoComprobante
                         WHERE id=:idFactura";
@@ -508,6 +597,14 @@ class Factura{
                         SET idEstadoNC=:idEstadoNC
                         WHERE id=:idFactura";
                     $param= array(':idFactura'=>$idFactura, ':idEstadoNC'=>$idEstadoComprobante);
+                break;
+                case 5: // CCE 
+                case 6: // CPCE 
+                case 7: // RCE 
+                    $sql="UPDATE mensajeReceptor
+                        SET idEstadoComprobante=:idEstadoComprobante
+                        WHERE id=:id";
+                    $param= array(':id'=>$idFactura, ':idEstadoComprobante'=>$idEstadoComprobante);
                 break;
             }
             //
