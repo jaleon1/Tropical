@@ -65,7 +65,7 @@ class Insumo {
                 insumo.showError(e);
             })
             .always(function () {
-                setTimeout('$("#btnInsumo").removeAttr("disabled")', 1000);
+                $("#btnInsumo").removeAttr("disabled");
                 insumo = new Insumo();
                 insumo.ClearCtls();
                 insumo.Read;

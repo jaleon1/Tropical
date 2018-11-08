@@ -60,7 +60,7 @@ class Producto {
                 producto.showError(e);
             })
             .always(function () {
-                setTimeout('$("#btnProducto").removeAttr("disabled")', 1000);
+                $("#btnProducto").removeAttr("disabled");
                 producto = new Producto();
                 producto.ClearCtls();
                 producto.Read;
