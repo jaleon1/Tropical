@@ -194,11 +194,11 @@ class InventarioFacturas {
             <div class="row">
                 <div class="col-md-6 col-sm-6 col-xs-6">
                     <label>Cajero:</label>
-                    <label id='cajero'>${id.userName}</label>
+                    <label id='cajero'>${id.vendedor}</label>
                 </div>
                 <div class="col-md-6 col-sm-6 col-xs-6">
                     <label>Bodega:</label>
-                    <label id='bodega'>${id.nombre}</label>
+                    <label id='bodega'>${id.bodega}</label>
                 </div>
             </div>`;
         $("#detalleFac").append(detalleFac);
