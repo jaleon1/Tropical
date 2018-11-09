@@ -56,7 +56,7 @@
             $entidad = new ClienteFE();
             $entidad->idBodega = $factura->idReceptor;
             $factura->datosReceptor = $entidad->read();
-            //$factura->clave = $factura->clave.'-'.$factura->consecutivoFE;
+            $factura->clave = $factura->clave.'-'.$factura->consecutivoFE;
             FacturacionElectronica::APIConsultaComprobante($factura);
             error_log("[INFO] Finaliza Consulta MR");
         }

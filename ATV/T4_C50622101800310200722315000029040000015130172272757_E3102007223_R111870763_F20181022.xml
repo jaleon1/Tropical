@@ -1,0 +1,189 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TiqueteElectronico xsi:schemaLocation="https://tribunet.hacienda.go.cr/docs/esquemas/2017/v4.2/tiqueteElectronico https://tribunet.hacienda.go.cr/docs/esquemas/2016/v4.2/TiqueteElectronico_V4.2.xsd" xmlns="https://tribunet.hacienda.go.cr/docs/esquemas/2017/v4.2/tiqueteElectronico" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<Clave>50622101800310200722315000029040000015130172272757</Clave>
+	<NumeroConsecutivo>15000029040000015130</NumeroConsecutivo>
+	<FechaEmision>2018-10-22T14:05:57</FechaEmision>
+	<Emisor>
+		<Nombre>Corporacion de Supermercados Unidos S.R.L.</Nombre>
+		<Identificacion>
+			<Tipo>02</Tipo>
+			<Numero>3102007223</Numero>
+		</Identificacion>
+		<Ubicacion>
+			<Provincia>1</Provincia>
+			<Canton>09</Canton>
+			<Distrito>03</Distrito>
+			<OtrasSenas>Parque Empresarial Forum II</OtrasSenas>
+		</Ubicacion>
+		<Telefono>
+			<CodigoPais>506</CodigoPais>
+			<NumTelefono>25828400</NumTelefono>
+		</Telefono>
+		<Fax>
+			<CodigoPais>506</CodigoPais>
+			<NumTelefono>25828815</NumTelefono>
+		</Fax>
+		<CorreoElectronico>SAC@Wal-mart.com</CorreoElectronico>
+	</Emisor>
+	<Receptor>
+		<Nombre>CARLOS CHACON CALVO</Nombre>
+		<Identificacion>
+			<Tipo>01</Tipo>
+			<Numero>111870763</Numero>
+		</Identificacion>
+		<NombreComercial>CARLOS CHACON CALVO</NombreComercial>
+		<CorreoElectronico>CARLOS.ECHC11@GMAIL.COM</CorreoElectronico>
+	</Receptor>
+	<CondicionVenta>01</CondicionVenta>
+	<MedioPago>01</MedioPago>
+	<DetalleServicio>
+		<LineaDetalle>
+			<NumeroLinea>1</NumeroLinea>
+			<Codigo>
+				<Tipo>04</Tipo>
+				<Codigo>744300086722</Codigo>
+			</Codigo>
+			<Cantidad>1.00000</Cantidad>
+			<UnidadMedida>Unid</UnidadMedida>
+			<Detalle>MERMEL MARAC</Detalle>
+			<PrecioUnitario>2212.38938</PrecioUnitario>
+			<MontoTotal>2212.38938</MontoTotal>
+			<SubTotal>2212.38938</SubTotal>
+			<Impuesto>
+				<Codigo>01</Codigo>
+				<Tarifa>13.00</Tarifa>
+				<Monto>287.61062</Monto>
+			</Impuesto>
+			<MontoTotalLinea>2500.00000</MontoTotalLinea>
+		</LineaDetalle>
+		<LineaDetalle>
+			<NumeroLinea>2</NumeroLinea>
+			<Codigo>
+				<Tipo>04</Tipo>
+				<Codigo>744107412715</Codigo>
+			</Codigo>
+			<Cantidad>2.00000</Cantidad>
+			<UnidadMedida>Unid</UnidadMedida>
+			<Detalle>UVAGLOBO500G</Detalle>
+			<PrecioUnitario>1349.55752</PrecioUnitario>
+			<MontoTotal>2699.11504</MontoTotal>
+			<SubTotal>2699.11504</SubTotal>
+			<Impuesto>
+				<Codigo>01</Codigo>
+				<Tarifa>13.00</Tarifa>
+				<Monto>350.88496</Monto>
+			</Impuesto>
+			<MontoTotalLinea>3050.00000</MontoTotalLinea>
+		</LineaDetalle>
+		<LineaDetalle>
+			<NumeroLinea>3</NumeroLinea>
+			<Codigo>
+				<Tipo>04</Tipo>
+				<Codigo>001224500182</Codigo>
+			</Codigo>
+			<Cantidad>1.00000</Cantidad>
+			<UnidadMedida>Unid</UnidadMedida>
+			<Detalle>PAN ZANAHORI</Detalle>
+			<PrecioUnitario>1750.00000</PrecioUnitario>
+			<MontoTotal>1750.00000</MontoTotal>
+			<SubTotal>1750.00000</SubTotal>
+			<MontoTotalLinea>1750.00000</MontoTotalLinea>
+		</LineaDetalle>
+	</DetalleServicio>
+	<ResumenFactura>
+		<CodigoMoneda>CRC</CodigoMoneda>
+		<TipoCambio>0</TipoCambio>
+		<TotalServGravados>0.00</TotalServGravados>
+		<TotalServExentos>0.00</TotalServExentos>
+		<TotalMercanciasGravadas>4911.50442</TotalMercanciasGravadas>
+		<TotalMercanciasExentas>1750.00000</TotalMercanciasExentas>
+		<TotalGravado>4911.50442</TotalGravado>
+		<TotalExento>1750.00000</TotalExento>
+		<TotalVenta>6661.50442</TotalVenta>
+		<TotalDescuentos>0.00000</TotalDescuentos>
+		<TotalVentaNeta>6661.50442</TotalVentaNeta>
+		<TotalImpuesto>638.49558</TotalImpuesto>
+		<TotalComprobante>7300.00000</TotalComprobante>
+	</ResumenFactura>
+	<Normativa>
+		<NumeroResolucion>DGT-R-48-2016</NumeroResolucion>
+		<FechaResolucion>07-10-2016 08:00:00</FechaResolucion>
+	</Normativa>
+	<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" Id="Signature-7b58c0c4-3ed9-4468-b8f3-4e076bad2345">
+		<ds:SignedInfo>
+			<ds:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315" />
+			<ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256" />
+			<ds:Reference Id="Reference-5ebe9c79-e708-49ef-9ef3-7538e2c666fa" URI="">
+				<ds:Transforms>
+					<ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" />
+				</ds:Transforms>
+				<ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256" />
+				<ds:DigestValue>QqXh1Sa5ZBGnwzDqqs0IqIHpnP8WNlrM2t3uqYVjTxs=</ds:DigestValue>
+			</ds:Reference>
+			<ds:Reference Id="ReferenceKeyInfo" URI="#KeyInfoId-Signature-7b58c0c4-3ed9-4468-b8f3-4e076bad2345">
+				<ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256" />
+				<ds:DigestValue>48Ob2m5tLW/ywrvbUM9yz7O0VEZizu0RM8TsCZB/c4o=</ds:DigestValue>
+			</ds:Reference>
+			<ds:Reference Type="http://uri.etsi.org/01903#SignedProperties" URI="#SignedProperties-Signature-7b58c0c4-3ed9-4468-b8f3-4e076bad2345">
+				<ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256" />
+				<ds:DigestValue>mQAtvk+McuAjMsd8hKErukxOBKUhcr8Q8TDItTtsg9U=</ds:DigestValue>
+			</ds:Reference>
+		</ds:SignedInfo>
+		<ds:SignatureValue Id="SignatureValue-7b58c0c4-3ed9-4468-b8f3-4e076bad2345">aJiCx147JPU6b8xvjXefyzyRjr+DzdTmX3yb42eTmf2IdhdhLYB+TmDDuchsoklvr9lRvInMO/b6kGqloHmmC+yxyG5BzyZCb7qdge9FZejybaE9qeIoetkYescQNHkle6dirR+3GtEwfs0CY6LJDrCRbiV1zY55bsF2hGm5T/F4/MjxjVeWMY+KnmwjlTUz+O/EbCLMnu0JID2gVJVAS7cbO+18E+5FQtlK7yt/kbUJsII4bDEPCdAStz6yk6w1HVId09CxtrJAmqOCnVG4V4lAGCrd8aO8KgBgVL/bKE1DcLF1yRCZ5XY5hsSpuYXD236VxSFLnI5394UHv4E+5w==</ds:SignatureValue>
+		<ds:KeyInfo Id="KeyInfoId-Signature-7b58c0c4-3ed9-4468-b8f3-4e076bad2345">
+			<ds:X509Data>
+				<ds:X509Certificate>MIIFSjCCAzKgAwIBAgIGAWP6+X2vMA0GCSqGSIb3DQEBCwUAMFoxCzAJBgNVBAYTAkNSMR8wHQYDVQQKDBZNSU5JU1RFUklPIERFIEhBQ0lFTkRBMQwwCgYDVQQLDANER1QxHDAaBgNVBAMME0NBIFBFUlNPTkEgSlVSSURJQ0EwHhcNMTgwNjEzMjEwNzI0WhcNMjAwNjEyMjEwNzI0WjCBpDEZMBcGA1UEBRMQQ1BKLTMtMTAyLTAwNzIyMzELMAkGA1UEBhMCQ1IxGTAXBgNVBAoMEFBFUlNPTkEgSlVSSURJQ0ExDDAKBgNVBAsMA0NQSjFRME8GA1UEAwxIQ09SUE9SQUNJT04gREUgU1VQRVJNRVJDQURPUyBVTklET1MgU09DSUVEQUQgREUgUkVTUE9OU0FCSUxJREFEIExJTUlUQURBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAulibeidYOGTM/l3y4+7fg4MXQzkIYtRwk7s8HARmE8U4LlVooTcQn9s0BeW7WOkIU/H6F55DHd0Hoi0QDhvMFRE4GS33/Okr0PQ9Ixq1CM5i3DdmWcSfG6yvmzeg93y6aHEJN4+Y2uRXyQTWdGJTPWBMfomR+xEUW+S6sjd1zVpBsVhjJoEqAUJqhZjQhLzPXcWoasKhKg53lGo09s5dL5NFeosDLKIbEEsGGm/M+189/EqO1/PCv8Xk/6x+r6T2KJwRWZFVCD+4fP8IqRKJy46IqQRDcm5JNQgrEe+asvllPKBM7o6qmFxbSb91M3yg748yb4LAn95l+ONW1AW2oQIDAQABo4HKMIHHMB8GA1UdIwQYMBaAFDttV/XWfOmeEAIgQeO9GszPs06VMB0GA1UdDgQWBBQFOD/GrjvkPP3WXOmV1w+rBYYGtjALBgNVHQ8EBAMCBsAwEwYDVR0lBAwwCgYIKwYBBQUHAwQwYwYIKwYBBQUHAQEEVzBVMFMGCCsGAQUFBzAChkdodHRwczovL3BraS5jb21wcm9iYW50ZXNlbGVjdHJvbmljb3MuZ28uY3IvcHJvZC9pbnRlcm1lZGlhdGUtcGotcGVtLmNydDANBgkqhkiG9w0BAQsFAAOCAgEAcKw1gddQXlQsbczT/LjtpZYf+hsp/2Bu1wRXrFIAUDmadOkz5ZHRIzE+0OJqaaQO9uabE56KaMaMj0+pLXn/RiZkGnL4TM7MWpF7V4kDbASFTwIgHaWjAmKTAI8TOCjf1Y1xmjO9/8KtAsiAQoIU0PASHAfEHPaHCkes2+dAZRZD4ejl5plazcaOcOMFH6IYTstacb6eBKWn3IRz7OW+YMxkDw6IhZTXf0VOd1Uq2Pbb8TeafJF3HUTIrEWr9uMVDYQE2WMjrvZPl3Z5DjJqJxVOC2mGDw7Crn/hn/UD9OA8HNi4tp3C9keB7B7qeAsYHCq8z1u/JYOOEFYhQqmKIGQrK4WEEQTRmLZSzaqxNjcfijuAc7yPTloPeYyksFiJyqjQT/WBdIOX7BN/6HbQxU2XBy5EE79QjHB/XTtNzonpyh48g1Oh3/ueWP1L4JxPZZLxtAlBEK2r841CmFJ1oFI40oFTBm/HENL1aENpXTQT91jmxYx0iAJHxRT2h2B+hZ9ohrvI8cbS13ww/1Glg6RPYUw1AtiQ8R5DNErnRj1UWz3VFMMQRLtTZs6+e5xIUiyp6PVm4TPX4rSQj++B9HBm8D+ej+pdf3WxMQjolDn96NqiSZ+hylgJDDns6BfjEV4gzlTm/bGL5oIIRbrmZ+oZQ2vHRKNhGSivKqOLeuQ=</ds:X509Certificate>
+			</ds:X509Data>
+			<ds:KeyValue>
+				<ds:RSAKeyValue>
+					<ds:Modulus>ulibeidYOGTM/l3y4+7fg4MXQzkIYtRwk7s8HARmE8U4LlVooTcQn9s0BeW7WOkIU/H6F55DHd0Hoi0QDhvMFRE4GS33/Okr0PQ9Ixq1CM5i3DdmWcSfG6yvmzeg93y6aHEJN4+Y2uRXyQTWdGJTPWBMfomR+xEUW+S6sjd1zVpBsVhjJoEqAUJqhZjQhLzPXcWoasKhKg53lGo09s5dL5NFeosDLKIbEEsGGm/M+189/EqO1/PCv8Xk/6x+r6T2KJwRWZFVCD+4fP8IqRKJy46IqQRDcm5JNQgrEe+asvllPKBM7o6qmFxbSb91M3yg748yb4LAn95l+ONW1AW2oQ==</ds:Modulus>
+					<ds:Exponent>AQAB</ds:Exponent>
+				</ds:RSAKeyValue>
+			</ds:KeyValue>
+		</ds:KeyInfo>
+		<ds:Object Id="XadesObjectId-f849e892-c40a-4651-9876-f3ff1f574a13">
+			<xades:QualifyingProperties xmlns:xades="http://uri.etsi.org/01903/v1.3.2#" Id="QualifyingProperties-20a4a4f1-efac-4e5e-bfbb-fe58beaad292" Target="#Signature-7b58c0c4-3ed9-4468-b8f3-4e076bad2345">
+				<xades:SignedProperties Id="SignedProperties-Signature-7b58c0c4-3ed9-4468-b8f3-4e076bad2345">
+					<xades:SignedSignatureProperties>
+						<xades:SigningTime>2018-10-22T20:06:03+00:00</xades:SigningTime>
+						<xades:SigningCertificate>
+							<xades:Cert>
+								<xades:CertDigest>
+									<ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256" />
+									<ds:DigestValue>LqDbVWwaOIoApxLDMj2CWDrNVWA9pJMacQJVY4wGC4k=</ds:DigestValue>
+								</xades:CertDigest>
+								<xades:IssuerSerial>
+									<ds:X509IssuerName>CN=CA PERSONA JURIDICA, OU=DGT, O=MINISTERIO DE HACIENDA, C=CR</ds:X509IssuerName>
+									<ds:X509SerialNumber>1528924044719</ds:X509SerialNumber>
+								</xades:IssuerSerial>
+							</xades:Cert>
+						</xades:SigningCertificate>
+						<xades:SignaturePolicyIdentifier>
+							<xades:SignaturePolicyId>
+								<xades:SigPolicyId>
+									<xades:Identifier>https://tribunet.hacienda.go.cr/docs/esquemas/2016/v4/Resolucion%20Comprobantes%20Electronicos%20%20DGT-R-48-2016.pdf</xades:Identifier>
+									<xades:Description />
+								</xades:SigPolicyId>
+								<xades:SigPolicyHash>
+									<ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+									<ds:DigestValue>Ohixl6upD6av8N7pEvDABhEL6hM=</ds:DigestValue>
+								</xades:SigPolicyHash>
+							</xades:SignaturePolicyId>
+						</xades:SignaturePolicyIdentifier>
+						<xades:SignerRole>
+							<xades:ClaimedRoles>
+								<xades:ClaimedRole>emisor</xades:ClaimedRole>
+							</xades:ClaimedRoles>
+						</xades:SignerRole>
+					</xades:SignedSignatureProperties>
+					<xades:SignedDataObjectProperties>
+						<xades:DataObjectFormat ObjectReference="#Reference-5ebe9c79-e708-49ef-9ef3-7538e2c666fa">
+							<xades:MimeType>text/xml</xades:MimeType>
+							<xades:Encoding>UTF-8</xades:Encoding>
+						</xades:DataObjectFormat>
+					</xades:SignedDataObjectProperties>
+				</xades:SignedProperties>
+			</xades:QualifyingProperties>
+		</ds:Object>
+	</ds:Signature>
+</TiqueteElectronico>
