@@ -821,6 +821,7 @@ class FacturacionElectronica{
             error_log("[INFO] INICIO API CREAR MR XML");
             $ch = curl_init();
             //
+            self::$clave = self::$transaccion->clave; // para MR se utiliza la clave original del documento.
             $post = [
                 'w' => 'genXML',
                 'r' => 'gen_xml_mr',
@@ -880,7 +881,7 @@ class FacturacionElectronica{
 
     public static function APICifrarXml(){
         try{
-            error_log("[INFO] INICIO API CIFRAR XML: ");
+            error_log("[INFO] INICIO API CIFRAR XML: ");            
             $ch = curl_init();
             $post = [
                 'w' => 'signXML',

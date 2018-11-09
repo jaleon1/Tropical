@@ -8,6 +8,7 @@ if(isset($_POST["action"])){
     require_once("ClienteFE.php");
     require_once("facturacionElectronica.php");
     require_once("Factura.php");
+    require_once("Receptor.php");
     require_once("encdes.php");
     // Session
     if (!isset($_SESSION))
@@ -94,11 +95,11 @@ class mensajeReceptor{
                         // emisor del comprobante = proveedor
                         $this->idEmisor = $this->idEmisor ?? null;
                         $this->identificacionEmisor = (string)$this->xml->NumeroCedulaEmisor;
-                        $this->TipoIdentificacionEmisor = (string)$this->xml->TipoIdentificacionEmisor;
+                        $this->idTipoIdentificacionEmisor = (string)$this->xml->TipoIdentificacionEmisor;
                         // receptor del comprobante = entidad registrada en el sistema.
                         $this->idReceptor = $_SESSION['userSession']->idBodega;
                         $this->identificacionReceptor = (string)$this->xml->NumeroCedulaReceptor;
-                        $this->TipoIdentificacionReceptor = (string)$this->xml->TipoIdentificacionReceptor;
+                        $this->idTipoIdentificacionReceptor = (string)$this->xml->TipoIdentificacionReceptor;
                         $this->Create();
                     }
                 }
@@ -117,7 +118,7 @@ class mensajeReceptor{
 
     function Read(){
         try {
-            $sql='SELECT id, fechaCreacion, fechaEmision, consecutivo, clave, consecutivoFE, mensaje, detalle, totalImpuesto, totalComprobante, idEmisor, identificacionEmisor, idReceptor, identificacionReceptor
+            $sql='SELECT id, fechaCreacion, fechaEmision, consecutivo, clave, consecutivoFE, mensaje, detalle, totalImpuesto, totalComprobante, idEmisor, idTipoIdentificacionEmisor, identificacionEmisor, idReceptor, idTipoIdentificacionReceptor, identificacionReceptor
                 FROM mensajeReceptor
                 WHERE id=:id';
             $param= array(':id'=>$this->id);
@@ -135,8 +136,10 @@ class mensajeReceptor{
                 $this->totalComprobante = $value['totalComprobante'];
                 //$this->idEstadoComprobante = $value['idEstadoComprobante'];
                 $this->idEmisor = $value['idEmisor'];
+                $this->idTipoIdentificacionEmisor = $value['idTipoIdentificacionEmisor'];
                 $this->identificacionEmisor = $value['identificacionEmisor'];
                 $this->idReceptor = $value['idReceptor'];
+                $this->idTipoIdentificacionReceptor = $value['idTipoIdentificacionReceptor'];
                 $this->identificacionReceptor = $value['identificacionReceptor'];
             }
             return $this;
@@ -152,8 +155,8 @@ class mensajeReceptor{
 
     function Create(){
         try {
-            $sql="INSERT INTO mensajeReceptor   (id, clave, consecutivoFE, mensaje, detalle, totalImpuesto, totalComprobante, idEmisor, identificacionEmisor, idReceptor, identificacionReceptor, xml)
-                VALUES  (:id, :clave, :consecutivoFE, :mensaje, :detalle, :totalImpuesto, :totalComprobante, :idEmisor, :identificacionEmisor, :idReceptor, :identificacionReceptor, :xml)";
+            $sql="INSERT INTO mensajeReceptor   (id, clave, consecutivoFE, mensaje, detalle, totalImpuesto, totalComprobante, idEmisor, idTipoIdentificacionEmisor, identificacionEmisor, idReceptor, idTipoIdentificacionReceptor, identificacionReceptor, xml)
+                VALUES  (:id, :clave, :consecutivoFE, :mensaje, :detalle, :totalImpuesto, :totalComprobante, :idEmisor, :idTipoIdentificacionEmisor,:identificacionEmisor, :idReceptor, :idTipoIdentificacionReceptor, :identificacionReceptor, :xml)";
             $param= array(':id'=>$this->id,
                 ':clave'=>$this->clave,
                 ':consecutivoFE'=>$this->consecutivoFE,
@@ -162,8 +165,10 @@ class mensajeReceptor{
                 ':totalImpuesto'=>$this->totalImpuesto,
                 ':totalComprobante'=>$this->totalComprobante,
                 ':idEmisor'=>$this->idEmisor,
+                ':idTipoIdentificacionEmisor'=>$this->idTipoIdentificacionEmisor,
                 ':identificacionEmisor'=>$this->identificacionEmisor,
                 ':idReceptor'=>$this->idReceptor,
+                ':idTipoIdentificacionReceptor'=>$this->idTipoIdentificacionReceptor,
                 ':identificacionReceptor'=>$this->identificacionReceptor,
                 ':xml'=>$this->xml->asXML()
             );
@@ -204,7 +209,11 @@ class mensajeReceptor{
             }
             $entidad = new ClienteFE();
             $entidad->idBodega = $this->idReceptor;
-            $this->datosEntidad = $entidad->read();
+            $this->datosReceptor = $entidad->read(); // receptor es la entidad que compra.
+            $this->datosEntidad =   new ClienteFE();         // vendedor
+            $this->datosEntidad->idTipoIdentificacion = $this->idTipoIdentificacionEmisor;
+            $this->datosEntidad->identificacion = $this->identificacionEmisor;
+            $this->datosEntidad->codigoSeguridad = $this->datosReceptor->codigoSeguridad;
             FacturacionElectronica::iniciar($this);
         }
         catch(Exception $e) {
