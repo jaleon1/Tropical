@@ -410,6 +410,7 @@ class Insumo {
                 },
                 {
                     extend: 'pdfHtml5',
+                    messageTop:'Inventario Materia Prima',
                     exportOptions: {
                         columns: [ 1, 2, 3, 4, 5, 6]
                     }

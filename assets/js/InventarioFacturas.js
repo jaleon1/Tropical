@@ -74,6 +74,7 @@ class InventarioFacturas {
                 },
                 {
                     extend: 'pdfHtml5',
+                    messageTop:'Lista de facturas',
                     exportOptions: {
                         columns: [ 1, 2, 3, 4, 5, 6]
                     }
