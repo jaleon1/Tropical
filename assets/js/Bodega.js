@@ -346,8 +346,8 @@ class Bodega {
             pageLength: 10,
             "order": [[ 1, "asc" ]],
             "language": {
-                "infoEmpty": "Sin Usuarios Registrados",
-                "emptyTable": "Sin Usuarios Registrados",
+                "infoEmpty": "Sin Bodegas Registradas",
+                "emptyTable": "Sin Bodegas Registradas",
                 "search": "Buscar",
                 "zeroRecords":    "No hay resultados",
                 "lengthMenu":     "Mostrar _MENU_ registros",

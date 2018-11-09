@@ -455,8 +455,8 @@ class Producto {
             destroy: true,
             order: [[ 1, "asc" ]],
             language: {
-                "infoEmpty": "Sin Usuarios Registrados",
-                "emptyTable": "Sin Usuarios Registrados",
+                "infoEmpty": "Sin Productos Registrados",
+                "emptyTable": "Sin Productos Registrados",
                 "search": "Buscar",
                 "zeroRecords":    "No hay resultados",
                 "lengthMenu":     "Mostrar _MENU_ registros",

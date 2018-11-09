@@ -492,8 +492,8 @@ class Insumo {
             destroy: true,
             order: [[1, "asc"]],
             language: {
-                "infoEmpty": "Sin Usuarios Registrados",
-                "emptyTable": "Sin Usuarios Registrados",
+                "infoEmpty": "Sin Ordenes de Producción Registradas",
+                "emptyTable": "Sin Ordenes de Producción Registradas",
                 "search": "Buscar",
                 "zeroRecords": "No hay resultados",
                 "lengthMenu": "Mostrar _MENU_ registros",
