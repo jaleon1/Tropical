@@ -435,7 +435,24 @@ class FacturacionElectronica{
 
     public static function APIGetToken(){
         try{
-            $username = self::$transaccion->datosEntidad->username;
+            $username = '';
+            $password = '';
+            switch (self::$transaccion->idDocumento){
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                case 8:
+                    $username = self::$transaccion->datosEntidad->username;
+                    $password = self::$transaccion->datosEntidad->password;
+                    break;
+                case 5:
+                case 6:
+                case 7:
+                    $username = self::$transaccion->datosReceptor->username;
+                    $password = self::$transaccion->datosReceptor->password;
+                    break;
+            }
             self::$apiMode = strpos($username, 'prod');
             if (self::$apiMode === false) 
                 self::$apiMode = 'api-stag';
@@ -447,7 +464,7 @@ class FacturacionElectronica{
                 'grant_type'=>'password', 
                 'client_id'=>  self::$apiMode,
                 'username' => $username,
-                'password'=>  self::$transaccion->datosEntidad->password
+                'password'=>  $password
             ];
             curl_setopt_array($ch, array(
                 CURLOPT_URL => self::$apiUrl,
@@ -821,6 +838,7 @@ class FacturacionElectronica{
             error_log("[INFO] INICIO API CREAR MR XML");
             $ch = curl_init();
             //
+            self::$clave = self::$transaccion->clave; // para MR se utiliza la clave original del documento.
             $post = [
                 'w' => 'genXML',
                 'r' => 'gen_xml_mr',
@@ -880,14 +898,32 @@ class FacturacionElectronica{
 
     public static function APICifrarXml(){
         try{
-            error_log("[INFO] INICIO API CIFRAR XML: ");
+            error_log("[INFO] INICIO API CIFRAR XML: ");            
             $ch = curl_init();
+            $downloadCode='';
+            $pinp12='';
+            switch (self::$transaccion->idDocumento){
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                case 8:
+                    $downloadCode= self::$transaccion->datosEntidad->downloadCode;
+                    $pinp12= self::$transaccion->datosEntidad->pinp12;
+                    break;
+                case 5:
+                case 6:
+                case 7:
+                $downloadCode= self::$transaccion->datosReceptor->downloadCode;
+                $pinp12= self::$transaccion->datosReceptor->pinp12;
+                    break;
+            }
             $post = [
                 'w' => 'signXML',
                 'r' => 'signFE',
-                'p12Url'=> self::$transaccion->datosEntidad->downloadCode,
+                'p12Url'=> $downloadCode,
                 'inXml'=> self::$xml,
-                'pinP12' => self::$transaccion->datosEntidad->pinp12,
+                'pinP12' => $pinp12,
                 'tipodoc'=> self::getDocumentoReferencia(self::$transaccion->idDocumento)
             ];
             curl_setopt_array($ch, array(
@@ -963,8 +999,7 @@ class FacturacionElectronica{
                 'recp_numeroIdentificacion'=> self::$transaccion->datosReceptor->identificacion,
                 'comprobanteXml'=>	self::$xmlFirmado,
                 'client_id'=> self::$apiMode,
-                'consecutivoReceptor'=> self::$transaccion->consecutivoFE ?? null
-
+                'consecutivoReceptor'=> self::$consecutivoFE ?? null
             ];
             curl_setopt_array($ch, array(
                 CURLOPT_URL => self::$apiUrl,

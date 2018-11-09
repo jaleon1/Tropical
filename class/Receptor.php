@@ -81,7 +81,6 @@ class Receptor{
             $receptor->idCodigoPaisFax= $data[0]['idCodigoPaisFax'];
             $receptor->numTelefonoFax= $data[0]['numTelefonoFax'];
             $receptor->correoElectronico= $data[0]['correoElectronico'];
-            //return new self();
             return $receptor;
         }
         else return null;

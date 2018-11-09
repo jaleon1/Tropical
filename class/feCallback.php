@@ -9,9 +9,10 @@
     include_once("Factura.php");
     include_once("encdes.php");
     require_once("productoXFactura.php");
+    require_once("mensajeReceptor.php");
     try{
-        // Comprobantes 1-4-8.
-        $sql='SELECT id
+        // Documentos 1-4-8.
+        /*$sql='SELECT id
             from factura
             where idEstadoComprobante = 2
             order by idBodega';
@@ -24,7 +25,7 @@
             FacturacionElectronica::APIConsultaComprobante($factura);
             error_log("[INFO] Finaliza Consulta de Comprobantes");
         }
-        // Notas de crédito.
+        // Notas de crédito. Documento 3
         $sql='SELECT id
             from factura
             where idEstadoNC = 2
@@ -40,9 +41,27 @@
             $factura->idDocumento = $factura->idDocumentoNC;
             FacturacionElectronica::APIConsultaComprobante($factura);
             error_log("[INFO] Finaliza Consulta NC");
+        }*/
+        // Mensaje Receptor Documentos 5-6-7.
+        $sql='SELECT id
+            from mensajeReceptor
+            where idEstadoComprobante = 2
+            order by idReceptor';
+        $data= DATA::Ejecutar($sql);
+        foreach ($data as $key => $transaccion){
+            error_log("[INFO] Iniciando Consulta MR");
+            $factura = new mensajeReceptor();
+            $factura->id = $transaccion['id'];
+            $factura = $factura->Read();
+            $entidad = new ClienteFE();
+            $entidad->idBodega = $factura->idReceptor;
+            $factura->datosReceptor = $entidad->read();
+            //$factura->clave = $factura->clave.'-'.$factura->consecutivoFE;
+            FacturacionElectronica::APIConsultaComprobante($factura);
+            error_log("[INFO] Finaliza Consulta MR");
         }
         // Distribuciones.
-        $sql='SELECT id
+        /*$sql='SELECT id
             from distribucion
             where idEstadoComprobante = 2
             order by idBodega';
@@ -68,7 +87,7 @@
             FacturacionElectronica::$distr= true;
             facturacionElectronica::APIConsultaComprobante($distr);
             error_log("[INFO] Finaliza Consulta de Distribucion");
-        }
+        }*/
     }
     catch(Exception $e){ 
         error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
