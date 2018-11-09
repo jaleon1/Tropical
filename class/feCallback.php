@@ -12,7 +12,7 @@
     require_once("mensajeReceptor.php");
     try{
         // Documentos 1-4-8.
-        /*$sql='SELECT id
+        $sql='SELECT id
             from factura
             where idEstadoComprobante = 2
             order by idBodega';
@@ -41,7 +41,7 @@
             $factura->idDocumento = $factura->idDocumentoNC;
             FacturacionElectronica::APIConsultaComprobante($factura);
             error_log("[INFO] Finaliza Consulta NC");
-        }*/
+        }
         // Mensaje Receptor Documentos 5-6-7.
         $sql='SELECT id
             from mensajeReceptor
@@ -61,7 +61,7 @@
             error_log("[INFO] Finaliza Consulta MR");
         }
         // Distribuciones.
-        /*$sql='SELECT id
+        $sql='SELECT id
             from distribucion
             where idEstadoComprobante = 2
             order by idBodega';
@@ -87,7 +87,7 @@
             FacturacionElectronica::$distr= true;
             facturacionElectronica::APIConsultaComprobante($distr);
             error_log("[INFO] Finaliza Consulta de Distribucion");
-        }*/
+        }
     }
     catch(Exception $e){ 
         error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
