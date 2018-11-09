@@ -33,7 +33,7 @@ if(isset($_POST["action"])){
             $mensaje->id= $obj["id"] ?? UUID::v4();
             $mensaje->mensaje = $_POST['mensaje'];
             $mensaje->detalle = $_POST['detalle'];
-            echo json_encode($mensaje->uploadxml());
+            $mensaje->uploadxml();
             break;
     }    
 }
