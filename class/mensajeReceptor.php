@@ -191,7 +191,8 @@ class mensajeReceptor{
             $data = DATA::Ejecutar($sql,$param, false);
             if($data){
                 $this->enviar();
-                echo 'UPLOADED';
+                error_log("[INFO] Certificado OK");
+                echo "UPLOADED";
                 return true;
             }
             else throw new Exception('No es posible guardar el mensaje receptor.', 98);            
