@@ -314,8 +314,8 @@ $('#tb_facturas tbody').on('click', 'tr', function () {
     var dtTable = $('#tb_facturas').DataTable();
     var efectivo=0;
     var total=0;
-    efectivo = parseFloat(dtTable.row(this).data()[4]);
-    total = parseFloat(dtTable.row(this).data()[3]);
+    efectivo = parseFloat(dtTable.row(this).data()[8]);
+    total = parseFloat(dtTable.row(this).data()[11]);
     if (dtTable.cells().data()[5]==null) 
         efectivo = 0;
     if (dtTable.cells().data()[6]==null) 
