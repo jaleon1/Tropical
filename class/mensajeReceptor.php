@@ -46,6 +46,7 @@ class mensajeReceptor{
     public $clave;
     public $consecutivoFE;
     public $fechaEmision;
+    public $idDocumento;
     public $mensaje;
     public $detalle;
     public $totalImpuesto;
@@ -190,6 +191,7 @@ class mensajeReceptor{
             $data = DATA::Ejecutar($sql,$param, false);
             if($data){
                 $this->enviar();
+                echo 'UPLOADED';
                 return true;
             }
             else throw new Exception('No es posible guardar el mensaje receptor.', 98);            
