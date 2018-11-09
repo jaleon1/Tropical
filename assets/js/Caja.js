@@ -86,6 +86,7 @@ class MovimientosCaja {
             buttons: [
                 {
                     extend: 'excelHtml5',
+                    messageTop:'Movimientos de Cajas',
                     footer: false,
                     exportOptions: {
                         columns: [2, 4, 5, 6, 7, 8, 9, 10, 11, 12]
@@ -93,6 +94,8 @@ class MovimientosCaja {
                 },
                 {
                     extend: 'pdfHtml5',
+                    messageTop:'Movimientos de Cajas',
+                    orientation : 'landscape',
                     footer: false,
                     exportOptions: {
                         columns: [2, 4, 5, 6, 7, 8, 9, 10, 11, 12]
@@ -542,4 +545,3 @@ $("#btnMontoCajas").click(function () {
                 // }
 
                 // })()
-

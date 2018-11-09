@@ -95,6 +95,7 @@ class Merma {
                 },
                 {
                     extend: 'pdfHtml5',
+                    messageTop:'Lista de Mermas',
                     exportOptions: {
                         columns: [ 1, 2, 3, 4, 5, 6, 7]
                     }

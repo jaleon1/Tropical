@@ -349,6 +349,8 @@ class Producto {
                 },
                 {
                     extend: 'pdfHtml5',
+                    orientation : 'landscape',
+                    messageTop:'Inventario Producto Terminado',
                     exportOptions: {
                         columns: [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ]
                     }
@@ -453,8 +455,8 @@ class Producto {
             destroy: true,
             order: [[ 1, "asc" ]],
             language: {
-                "infoEmpty": "Sin Usuarios Registrados",
-                "emptyTable": "Sin Usuarios Registrados",
+                "infoEmpty": "Sin Productos Registrados",
+                "emptyTable": "Sin Productos Registrados",
                 "search": "Buscar",
                 "zeroRecords":    "No hay resultados",
                 "lengthMenu":     "Mostrar _MENU_ registros",

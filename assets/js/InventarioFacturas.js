@@ -74,14 +74,15 @@ class InventarioFacturas {
                 },
                 {
                     extend: 'pdfHtml5',
+                    messageTop:'Lista de facturas',
                     exportOptions: {
                         columns: [ 1, 2, 3, 4, 5, 6]
                     }
                 }
             ],
             language: {
-                "infoEmpty": "Sin Usuarios Registrados",
-                "emptyTable": "Sin Usuarios Registrados",
+                "infoEmpty": "Sin Facturas Registradas",
+                "emptyTable": "Sin Facturas Registradas",
                 "search": "Buscar",
                 "zeroRecords": "No hay resultados",
                 "lengthMenu": "Mostrar _MENU_ registros",
@@ -193,11 +194,11 @@ class InventarioFacturas {
             <div class="row">
                 <div class="col-md-6 col-sm-6 col-xs-6">
                     <label>Cajero:</label>
-                    <label id='cajero'>${id.userName}</label>
+                    <label id='cajero'>${id.vendedor}</label>
                 </div>
                 <div class="col-md-6 col-sm-6 col-xs-6">
                     <label>Bodega:</label>
-                    <label id='bodega'>${id.nombre}</label>
+                    <label id='bodega'>${id.bodega}</label>
                 </div>
             </div>`;
         $("#detalleFac").append(detalleFac);

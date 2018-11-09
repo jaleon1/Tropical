@@ -274,7 +274,7 @@
 
 <script>
 $(document).ready(function () {
-    inventarioFacturas.CargaFacturasXUsuario();
+    // inventarioFacturas.CargaFacturasXUsuario();
 
         $(function () {
             var start = moment().subtract(29, 'days');
@@ -342,9 +342,10 @@ $(document).ready(function () {
             inventarioFacturas.fechaInicial = picker.startDate.format('YYYY-MM-DD') + ' 00:00';
             inventarioFacturas.fechaFinal = picker.endDate.format('YYYY-MM-DD') + ' 23:59';
             inventarioFacturas.CargaMisFacturasRango();
-        });    
-});
-$(document).on('click', '#btnReimprimeFactura', function (event) {
-    inventarioFacturas.ticketPrint();
+        });
+        
+        $(document).on('click', '#btnReimprimeFactura', function (event) {
+            inventarioFacturas.ticketPrint();
+        });
 });
 </script>

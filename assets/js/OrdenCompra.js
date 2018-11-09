@@ -164,6 +164,7 @@ class OrdenCompra {
                 {
                     extend: 'pdfHtml5',
                     exportOptions: {columns: [1, 2, 3]},
+                    messageTop:'Reporte Orden de Compra',
                     customize: function(doc) {
                         doc.defaultStyle.alignment = 'right';
                         doc.styles.tableHeader.alignment = 'right';
