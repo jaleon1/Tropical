@@ -118,13 +118,13 @@ class mensajeReceptor{
 
     function Read(){
         try {
-            $sql='SELECT id, fechaCreacion, fechaEmision, consecutivo, clave, consecutivoFE, mensaje, detalle, totalImpuesto, totalComprobante, idEmisor, idTipoIdentificacionEmisor, identificacionEmisor, idReceptor, idTipoIdentificacionReceptor, identificacionReceptor
+            $sql='SELECT id, idDocumento, fechaCreacion, fechaEmision, consecutivo, clave, consecutivoFE, mensaje, detalle, totalImpuesto, totalComprobante, idEmisor, idTipoIdentificacionEmisor, identificacionEmisor, idReceptor, idTipoIdentificacionReceptor, identificacionReceptor, idEstadoComprobante, idSituacionComprobante
                 FROM mensajeReceptor
                 WHERE id=:id';
             $param= array(':id'=>$this->id);
             $data= DATA::Ejecutar($sql,$param);     
             foreach ($data as $key => $value){
-                //$this->bodega =  // nombre de la bodega.
+                $this->idDocumento = $value['idDocumento'];
                 $this->fechaCreacion = $value['fechaCreacion'];
                 $this->fechaEmision = $value['fechaEmision'];
                 $this->consecutivo = $value['consecutivo'];
@@ -134,7 +134,8 @@ class mensajeReceptor{
                 $this->detalle = $value['detalle'];
                 $this->totalImpuesto = $value['totalImpuesto'];
                 $this->totalComprobante = $value['totalComprobante'];
-                //$this->idEstadoComprobante = $value['idEstadoComprobante'];
+                $this->idEstadoComprobante = $value['idEstadoComprobante'];
+                $this->idSituacionComprobante = $value['idSituacionComprobante'];
                 $this->idEmisor = $value['idEmisor'];
                 $this->idTipoIdentificacionEmisor = $value['idTipoIdentificacionEmisor'];
                 $this->identificacionEmisor = $value['identificacionEmisor'];
@@ -148,16 +149,29 @@ class mensajeReceptor{
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
-                'msg' => 'Error al cargar el factura'))
+                'msg' => 'Error al cargar el mensaje receptor'))
             );
         }
     }
 
     function Create(){
         try {
-            $sql="INSERT INTO mensajeReceptor   (id, clave, consecutivoFE, mensaje, detalle, totalImpuesto, totalComprobante, idEmisor, idTipoIdentificacionEmisor, identificacionEmisor, idReceptor, idTipoIdentificacionReceptor, identificacionReceptor, xml)
+            // id Documento.
+            switch($this->mensaje){
+                case 1:
+                    $this->idDocumento = 5; // CCE.
+                    break;
+                case 2:
+                    $this->idDocumento = 6; // CPCE.
+                    break;
+                case 3:
+                    $this->idDocumento = 7; // RCE.
+                    break;
+            }
+            $sql="INSERT INTO mensajeReceptor   (id, idDocumento, clave, consecutivoFE, mensaje, detalle, totalImpuesto, totalComprobante, idEmisor, idTipoIdentificacionEmisor, identificacionEmisor, idReceptor, idTipoIdentificacionReceptor, identificacionReceptor, xml)
                 VALUES  (:id, :clave, :consecutivoFE, :mensaje, :detalle, :totalImpuesto, :totalComprobante, :idEmisor, :idTipoIdentificacionEmisor,:identificacionEmisor, :idReceptor, :idTipoIdentificacionReceptor, :identificacionReceptor, :xml)";
             $param= array(':id'=>$this->id,
+                ':idDocumento'=>$this->idDocumento,
                 ':clave'=>$this->clave,
                 ':consecutivoFE'=>$this->consecutivoFE,
                 ':mensaje'=>$this->mensaje,
@@ -194,19 +208,7 @@ class mensajeReceptor{
             $this->Read();
             $this->idSituacionComprobante = 1; // normal.
             $this->terminal = '00001'; // normal.
-            $this->local = '001'; // normal.
-            // id Documento.
-            switch($this->mensaje){
-                case 1:
-                    $this->idDocumento = 5; // CCE.
-                    break;
-                case 2:
-                    $this->idDocumento = 6; // CPCE.
-                    break;
-                case 3:
-                    $this->idDocumento = 7; // RCE.
-                    break;
-            }
+            $this->local = '001'; // normal.            
             $entidad = new ClienteFE();
             $entidad->idBodega = $this->idReceptor;
             $this->datosReceptor = $entidad->read(); // receptor es la entidad que compra.
