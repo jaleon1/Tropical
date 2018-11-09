@@ -145,7 +145,8 @@ class mensajeReceptor{
             }
             return $this;
         }     
-        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+        catch(Exception $e) { 
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
@@ -169,7 +170,7 @@ class mensajeReceptor{
                     break;
             }
             $sql="INSERT INTO mensajeReceptor   (id, idDocumento, clave, consecutivoFE, mensaje, detalle, totalImpuesto, totalComprobante, idEmisor, idTipoIdentificacionEmisor, identificacionEmisor, idReceptor, idTipoIdentificacionReceptor, identificacionReceptor, xml)
-                VALUES  (:id, :clave, :consecutivoFE, :mensaje, :detalle, :totalImpuesto, :totalComprobante, :idEmisor, :idTipoIdentificacionEmisor,:identificacionEmisor, :idReceptor, :idTipoIdentificacionReceptor, :identificacionReceptor, :xml)";
+                VALUES  (:id, :idDocumento, :clave, :consecutivoFE, :mensaje, :detalle, :totalImpuesto, :totalComprobante, :idEmisor, :idTipoIdentificacionEmisor,:identificacionEmisor, :idReceptor, :idTipoIdentificacionReceptor, :identificacionReceptor, :xml)";
             $param= array(':id'=>$this->id,
                 ':idDocumento'=>$this->idDocumento,
                 ':clave'=>$this->clave,
