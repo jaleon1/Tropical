@@ -18,7 +18,6 @@
     <table style="width:91%;">
       <tbody>
         <tr style="line-height:10px;"><td><label>-------------------------------------------------------</label></td></tr>
-
         <tr style="line-height:10px;font-family:Uroob; text-align: center;"><td>
           TROPICAL SNO. <label id="bodega"></label>
         </td></tr>
@@ -27,7 +26,7 @@
         <tr style="line-height:10px;font-family:Uroob; text-align: center;"><td>Tel.2241-0515, Fax: 2297-0998</td></tr>
         <tr style="line-height:10px;font-family:Uroob; text-align: center;"><td>FACTURA # <label id=factura></label></td></tr>
         <tr style="line-height:10px;font-family:Uroob; text-align: center;"><td>Fecha: <label id="fecha"></label></td></tr>
-        <tr style="line-height:10px;font-family:Uroob; text-align: center;"><td>Usuario: <label id="usuario"></label></td></tr>
+        <tr style="line-height:10px;font-family:Uroob; text-align: center;"><td>Usuario: Cajero</label></td></tr>
         <tr style="line-height:10px;font-family:Uroob; text-align: center;"><td>Factura Electrónica<label id=factura></label></td></tr>
       </tbody>
     </table>
@@ -71,7 +70,7 @@
       $("#factura").text(localStorage.getItem("lsFactura"));
       $("#fecha").text(localStorage.getItem("lsFecha"));  
       $("#bodega").text(localStorage.getItem("lsBodega"));
-      $("#usuario").text(localStorage.getItem("lsUsuario"));
+      // $("#usuario").text(localStorage.getItem("lsUsuario"));
       $("#tarjetaCredito").text(localStorage.getItem("lsTarjetaCredito"));  
       $("#efectivo").text(localStorage.getItem("lsEfectivo"));
       $("#vuelto").text(localStorage.getItem("lsVuelto"));
