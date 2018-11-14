@@ -410,6 +410,7 @@ class Insumo {
                 },
                 {
                     extend: 'pdfHtml5',
+                    messageTop:'Inventario Materia Prima',
                     exportOptions: {
                         columns: [ 1, 2, 3, 4, 5, 6]
                     }
@@ -491,8 +492,8 @@ class Insumo {
             destroy: true,
             order: [[1, "asc"]],
             language: {
-                "infoEmpty": "Sin Usuarios Registrados",
-                "emptyTable": "Sin Usuarios Registrados",
+                "infoEmpty": "Sin Ordenes de Producción Registradas",
+                "emptyTable": "Sin Ordenes de Producción Registradas",
                 "search": "Buscar",
                 "zeroRecords": "No hay resultados",
                 "lengthMenu": "Mostrar _MENU_ registros",

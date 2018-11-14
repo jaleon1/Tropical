@@ -695,13 +695,14 @@ class Distribucion {
             buttons: [
                 {
                     extend: 'excelHtml5',
-                    exportOptions: {columns: [ 1, 2, 3, 4, 5, 6, 7]},
+                    exportOptions: {columns: [ 1, 2, 3, 4, 5, 6]},
                     messageTop:'Traslados y facturación'
                 },
                 {
                     extend: 'pdfHtml5',
+                    messageTop:'Traslados y facturación',
                     exportOptions: {
-                        columns: [ 1, 2, 3, 4, 5, 6, 7]
+                        columns: [ 1, 2, 3, 4, 5, 6]
                     }
                 }
             ],
@@ -752,11 +753,6 @@ class Distribucion {
                 {
                     title: "ESTADO",
                     data: "estado"
-                },
-                {
-                    title: "ESTADO COMPROBANTE",
-                    data: "idEstadoComprobante",
-                    width: '5%'
                 },
                 {
                     title: "ACCION",

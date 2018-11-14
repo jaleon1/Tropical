@@ -325,6 +325,7 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
                 },
                 {
                     extend: 'pdfHtml5',
+                    messageTop:'Orden de Producción',
                     exportOptions: {
                         columns: [ 0, 4, 5, 6, 7, 8]
                     }

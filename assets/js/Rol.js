@@ -245,8 +245,8 @@ class Rol {
             info: false,
             "order": [[ 1, "asc" ]],
             "language": {
-                "infoEmpty": "Sin Usuarios Registrados",
-                "emptyTable": "Sin Usuarios Registrados",
+                "infoEmpty": "Sin Roles Registrados",
+                "emptyTable": "Sin Roles Registrados",
                 "search": "Buscar",
                 "zeroRecords":    "No hay resultados",
                 "lengthMenu":     "Mostrar _MENU_ registros",

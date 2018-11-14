@@ -18,7 +18,6 @@
     <table style="width:91%;">
       <tbody>
         <tr style="line-height:10px;"><td><label>-------------------------------------------------------</label></td></tr>
-
         <tr style="line-height:10px;font-family:Uroob; text-align: center;"><td>
           TROPICAL SNO. <label id="bodega"></label>
         </td></tr>
@@ -27,7 +26,8 @@
         <tr style="line-height:10px;font-family:Uroob; text-align: center;"><td>Tel.2241-0515, Fax: 2297-0998</td></tr>
         <tr style="line-height:10px;font-family:Uroob; text-align: center;"><td>FACTURA # <label id=factura></label></td></tr>
         <tr style="line-height:10px;font-family:Uroob; text-align: center;"><td>Fecha: <label id="fecha"></label></td></tr>
-        <tr style="line-height:10px;font-family:Uroob; text-align: center;"><td>Usuario: <label id="usuario"></label></td></tr>
+        <tr style="line-height:10px;font-family:Uroob; text-align: center;"><td>Usuario: Cajero</label></td></tr>
+        <tr style="line-height:10px;font-family:Uroob; text-align: center;"><td>Factura Electrónica<label id=factura></label></td></tr>
       </tbody>
     </table>
     <table style="width:91%;">
@@ -54,16 +54,6 @@
       Autorizado para impresión mediante la resolución 48-2016</br> de DGTD.
       Visitenos en Facebook: como TSCR y déjenos</br> sus comentarios.
     </p>
-    <!-- <table style="width:91%;">
-      <tbody>
-          <tr style="line-height:10px;font-family:Uroob; text-align: center;"><td>Gracias por su Compra!</td></tr>
-          <tr style="line-height:10px;font-family:Uroob; text-align: left;"><td>Una vez facturado no se aceptan cambios o devoluciones</td></tr>
-          <tr style="line-height:10px;font-family:Uroob; text-align: left;"><td>Autorizado para impresión mediante la</td></tr>
-          <tr style="line-height:10px;font-family:Uroob; text-align: left;"><td>Resolución 48-2016 de DGTD</td></tr>
-          <tr style="line-height:10px;font-family:Uroob; text-align: left;"><td>Visitenos en Facebook: como TSCR y déjenos</td></tr>
-          <tr style="line-height:10px;font-family:Uroob; text-align: left;"><td> sus comentarios.</td></tr>
-      </tbody>
-    </table> -->
     <label style="line-height:10px;">--------------------------------------------------------</label>
   </div>
   <script src="assets/js/Caja.min.js"></script>
@@ -80,7 +70,7 @@
       $("#factura").text(localStorage.getItem("lsFactura"));
       $("#fecha").text(localStorage.getItem("lsFecha"));  
       $("#bodega").text(localStorage.getItem("lsBodega"));
-      $("#usuario").text(localStorage.getItem("lsUsuario"));
+      // $("#usuario").text(localStorage.getItem("lsUsuario"));
       $("#tarjetaCredito").text(localStorage.getItem("lsTarjetaCredito"));  
       $("#efectivo").text(localStorage.getItem("lsEfectivo"));
       $("#vuelto").text(localStorage.getItem("lsVuelto"));
@@ -88,6 +78,7 @@
       
       var listaProducto = localStorage.getItem("lsListaProducto");
       listaProducto = JSON.parse(listaProducto);
+      var totalSinI=0;
       $.each(listaProducto, function (i, item) {
         $('#tableBody-TicketFactura').append(`
               <tr> 
@@ -95,16 +86,18 @@
                   <td style="line-height:10px;font-family:Uroob; width:60%; text-align:left;">${item.detalle}</td>
                   <td style="line-height:10px;font-family:Uroob; width:30%; text-align:right;">¢${parseFloat(item.precioUnitario).toFixed(2)}</td>
               </tr>
-          `);
+        `);
+        totalSinI = totalSinI + parseFloat(item.precioUnitario);
       }) 
+      iV = parseFloat(localStorage.getItem("lsTotal")) - totalSinI;
       $('#tableBody-TicketTotal').append(`
-        <tr style="line-height:10px;"><td colspan="4"><label>---------------------------------------------------------</label></td></tr>
-        <tr><td><label style="line-height:10px;font-family:Uroob; width:65%; text-align:left;">Total I.V.I.</label></td><td style="line-height:10px;font-family:Uroob; width:35%; text-align:right;">¢${parseFloat(localStorage.getItem("lsTotal")).toFixed(2)}</td></tr>
+        <tr style="line-height:10px;"><td colspan="4"><label>-------------------------------------------------------</label></td></tr>
         <tr><td><label style="line-height:10px;font-family:Uroob; width:65%; text-align:left;">Tipo de Pago:</labe></td><td style="line-height:10px;font-family:Uroob; width:35%; text-align:right;">----------</td></tr>
         <tr><td><label style="line-height:10px;font-family:Uroob; width:65%; text-align:left;">Efectivo:</label></td><td id="efectivo" style="line-height:10px;font-family:Uroob; width:35%; text-align:right;">¢${parseFloat(localStorage.getItem("lsEfectivo")).toFixed(2)}</td></tr>
         <tr><td><label style="line-height:10px;font-family:Uroob; width:65%; text-align:left;">Vuelto:</label></td><td id="vuelto" style="line-height:10px;font-family:Uroob; width:35%; text-align:right;">¢${parseFloat(localStorage.getItem("lsVuelto")).toFixed(2)}</td></tr>
-        <tr><td><label style="line-height:10px;font-family:Uroob; width:65%; text-align:left;">Dif:</label></td><td id="dif" style="line-height:10px;font-family:Uroob; width:35%; text-align:right;">¢${parseFloat(localStorage.getItem("lsDif")).toFixed(2)}</td></tr>
         <tr><td><label style="line-height:10px;font-family:Uroob; width:65%; text-align:left;">Tarjeta Crédito/Débito:</label></td><td id="tarjetaCredito" style="line-height:10px;font-family:Uroob; width:35%; text-align:right;">¢${parseFloat(localStorage.getItem("lsTarjetaCredito")).toFixed(2)}</td></tr>
+        <tr><td><label style="line-height:10px;font-family:Uroob; width:65%; text-align:left;">I.V:</label></td><td id="dif" style="line-height:10px;font-family:Uroob; width:35%; text-align:right;">¢${iV.toFixed(2)}</td></tr>
+        <tr><td><label style="line-height:10px;font-family:Uroob; width:65%; text-align:left;">Total I.V.I.</label></td><td style="line-height:10px;font-family:Uroob; width:35%; text-align:right;">¢${parseFloat(localStorage.getItem("lsTotal")).toFixed(2)}</td></tr>
       `);
       window.print();
       localStorage.setItem("lsEfectivo","0");
