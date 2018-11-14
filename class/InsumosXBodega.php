@@ -29,9 +29,10 @@ if(isset($_POST["action"])){
         case "Delete":
             echo json_encode($productosxbodega->Delete());
             break;   
-        // case "ActualizaPrecios":
-        //     $productosxbodega->ActualizaPrecios();
-        //     break;
+        case "ReadByCode":
+            $productosxbodega->codigo = $_POST['codigo'];
+            echo json_encode($productosxbodega->ReadByCode());
+            break;
     }
 }
 
@@ -243,6 +244,26 @@ class InsumosXBodega{
                 throw new Exception('Error al actualizar precios, REVISAR manualmente.', 666);
             else return true;
             // 
+        }
+        catch(Exception $e){
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }
+    }
+
+    function ReadByCode(){
+        try{
+            $sql="SELECT i.id, idProducto, p.nombre, p.codigo, p.descripcion, i.saldoCosto, i.costoPromedio, i.saldoCantidad
+                FROM insumosXBodega i inner join producto p on p.id = i.idProducto
+                WHERE codigo like :codigo and idBodega = :idBodega";
+            $param= array(':codigo'=>'%'.$this->codigo.'%', 'idBodega'=>$this->idBodega);
+            $data= DATA::Ejecutar($sql,$param);            
+            if(count($data))
+                return $data;
+            else return false;
         }
         catch(Exception $e){
             header('HTTP/1.0 400 Bad error');

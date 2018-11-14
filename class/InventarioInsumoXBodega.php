@@ -79,12 +79,12 @@ class InventarioInsumoXBodega{
         }
     }
 
-    public static function mermaAgenciaSalida($idProducto, $outOrden, $outCantidad){
+    public static function mermaAgenciaSalida($id, $outOrden, $outCantidad){
         try {
             $sql="SELECT saldoCantidad, costoPromedio 
                 FROM insumosXBodega 
-                WHERE idProducto=:idProducto and idBodega =:idBodega;";
-            $param = array(':idProducto'=>$idProducto, ':idBodega'=>$_SESSION['userSession']->idBodega);
+                WHERE id=:id and idBodega =:idBodega;";
+            $param = array(':id'=>$id, ':idBodega'=>$_SESSION['userSession']->idBodega);
             $data = DATA::Ejecutar($sql,$param);
             if($data){
                 // calculo de saldos. 
@@ -99,15 +99,15 @@ class InventarioInsumoXBodega{
                 // actualiza saldos.
                 $sql = 'UPDATE insumosXBodega
                     SET saldoCantidad=:saldoCantidad, saldoCosto=:saldoCosto
-                    WHERE idProducto=:idProducto and idBodega =:idBodega;';
-                $param = array(':idProducto'=>$idProducto, ':idBodega'=>$_SESSION['userSession']->idBodega, ':saldoCantidad'=>self::$saldoCantidad, ':saldoCosto'=>self::$saldoCosto);
+                    WHERE id=:id and idBodega =:idBodega;';
+                $param = array(':id'=>$id, ':idBodega'=>$_SESSION['userSession']->idBodega, ':saldoCantidad'=>self::$saldoCantidad, ':saldoCosto'=>self::$saldoCosto);
                 $data = DATA::Ejecutar($sql, $param, false);
                 if($data) {
                     return true;
                 }                
-                else throw new Exception('Error al consultar actualizar los saldos de insumo x bodega ('.$idProducto.')' , ERROR_SALIDA_INVENTARIO_INSUMOXBODEGA);
+                else throw new Exception('Error al consultar actualizar los saldos de insumo x bodega ('.$id.')' , ERROR_SALIDA_INVENTARIO_INSUMOXBODEGA);
             }
-            else throw new Exception('Error al consultar el codigo del insumo para actualizar inventario ('.$idProducto.')' , ERROR_SALIDA_INVENTARIO_INSUMOXBODEGA);
+            else throw new Exception('Error al consultar el codigo del insumo para actualizar inventario ('.$id.')' , ERROR_SALIDA_INVENTARIO_INSUMOXBODEGA);
 
         }
         catch(Exception $e) {

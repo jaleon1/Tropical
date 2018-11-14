@@ -65,8 +65,10 @@ class MermaAgencia{
     function ReadAll(){
         try {
             $sql='SELECT m.id, p.codigo, m.consecutivo, p.nombre, p.descripcion, m.cantidad, m.descripcion, m.fecha
-                FROM mermaAgencia m inner join producto p on p.id = m.idInsumo
-                WHERE idBodega =:idBodega';
+                FROM mermaAgencia m 
+                inner join insumosXBodega x on x.id = m.idInsumo
+                inner join producto p on p.id = x.idProducto
+                WHERE m.idBodega =:idBodega';
             $param= array(':idBodega'=> $_SESSION['userSession']->idBodega);
             $data = DATA::Ejecutar($sql,$param);
             return $data;
@@ -88,6 +90,20 @@ class MermaAgencia{
             foreach ($this->listaProducto as $item) {
                 require_once("UUID.php");
                 $id= UUID::v4();
+                // porcion
+                $sql="SELECT esVenta 
+                    FROM tropical.insumosXBodega x inner join producto p on p.id = x.idProducto
+                    where x.id = :id;";
+                $param= array(':id'=> $item->id);
+                $data = DATA::Ejecutar($sql,$param);
+                $porcion = 1;
+                if($data[0]['esVenta']=='0')
+                    $porcion = 1;
+                else if($data[0]['esVenta']=='1')
+                    $porcion = 20;
+                else if($data[0]['esVenta']=='2')
+                    $porcion = 40;
+                $item->cantidad = $item->cantidad * $porcion;
                 // historico merma
                 $sql="INSERT INTO mermaAgencia (id, idInsumo, cantidad, descripcion, idBodega)
                     VALUES (:id, :idInsumo, :cantidad, :descripcion, :idBodega)";
@@ -95,8 +111,14 @@ class MermaAgencia{
                 $data = DATA::Ejecutar($sql,$param,false);
                 if(!$data)
                     $created= false;
+                // consecutivo.
+                // $sql="SELECT consecutivo 
+                //     FROM tropical.mermaAgencia
+                //     order by consecutivo desc limit 1";
+                // //$param= array(':id'=> $item->id);
+                // $data = DATA::Ejecutar($sql);
                 // actualiza item.
-                InventarioInsumoXBodega::mermaAgenciaSalida( $item->id, 'OrdenXX', $item->cantidad);
+                InventarioInsumoXBodega::mermaAgenciaSalida( $item->id, 'porcionXX', $item->cantidad);
                 // ***************** imprimir. ***************************
                 // ***************** imprimir. ***************************
                 // ***************** imprimir. ***************************

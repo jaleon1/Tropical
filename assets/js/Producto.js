@@ -764,10 +764,31 @@ class Producto {
         }
     };
 
+    ReadbyCodeAgencia(cod) {
+        if (cod != ""){
+            producto.codigo = cod;  //Columna 0 de la fila seleccionda= ID.
+            //
+            $.ajax({
+                type: "POST",
+                url: "class/InsumosXBodega.php",
+                data: {
+                    action: "ReadByCode",
+                    codigo: producto.codigo
+                }
+            })
+            .done(function (e) {
+                producto.ValidatePrdMerma(e);
+            })
+            .fail(function (e) {
+                producto.showError(e);
+            });
+        }
+    };
+
     ValidatePrdMerma(e){
         //compara si el articulo ya existe
         // carga lista con datos.
-        if(e == "[]"){
+        if(e == "[]" || e == "false" ){
             swal({
                 type: 'warning',
                 title: 'Orden de Compra',
