@@ -69,11 +69,13 @@ class InventarioFacturas {
             buttons: [
                 {
                     extend: 'excelHtml5',
+                    footer: true,
                     exportOptions: {columns: [ 1, 2, 3, 4, 5, 6]},
                     messageTop:'Lista de facturas'
                 },
                 {
                     extend: 'pdfHtml5',
+                    footer: true,
                     messageTop:'Lista de facturas',
                     exportOptions: {
                         columns: [ 1, 2, 3, 4, 5, 6]
@@ -94,7 +96,7 @@ class InventarioFacturas {
                 }
             },
             data: facturas,                               
-            "order": [[1, "desc"]],
+            order: [[1, "desc"]],
             columns: [
                 {
                     title: "ID FACTURA",
@@ -173,7 +175,23 @@ class InventarioFacturas {
                         return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                     }
                 }
-            ]
+            ],
+            footerCallback: function ( row, data, start, end, display ) {
+                var api = this.api();
+                // Remueve el formato de la columna
+                var intVal = function ( i ) {
+                    return typeof i === 'string' ?
+                        parseFloat(i.replace(/[\¢,]/g, '')) :
+                        typeof i === 'number' ?
+                        i : 0;
+                };
+                // Total de todas las paginas filtradas
+                var subTotal = display.map(el => data[el]['totalComprobante']).reduce((a, b) => intVal(a) + intVal(b), 0 );
+                
+                // Actualiza el footer
+                $( api.column( 1 ).footer() ).html("TOTALES");
+                $( api.column( 5 ).footer() ).html('¢' + parseFloat(Number(subTotal)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+            }
         });
     };
 

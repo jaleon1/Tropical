@@ -265,7 +265,7 @@
     <script src="assets/js/jquery.inputmask/jquery.inputmask.bundle.min.js"></script>
     <!-- JS Scripts -->
     <script src="assets/js/Insumo.min.js"></script>
-    <script src="assets/js/OrdenCompra.min.js"></script>
+    <script src="assets/js/OrdenCompra.js"></script>
     <!-- Sweet Alert -->
     <script src="assets/js/sweetalert2.min.js"></script>
     <!-- JS dataTables -->
@@ -366,6 +366,8 @@
             ordenCompra.fechaFinal = picker.endDate.format('YYYY-MM-DD') + ' 23:59';
             ordenCompra.CargaOrdenCompraRango();
         });
+
+        $("#dsInsumoOrdenCompra").append("<tfoot><tr><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th></tr></tfoot>");
     });
 
 </script>

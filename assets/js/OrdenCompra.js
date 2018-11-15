@@ -229,12 +229,14 @@ class OrdenCompra {
             buttons: [
                 {
                     extend: 'excelHtml5',
+                    footer: true,
                     exportOptions: {columns: [1, 2, 3, 4, 5, 6, 7, 8]},
                     messageTop:'FECHA:  '+ fecha + '  ORDEN:  '+ orden,
                     messageBottom:'USUARIO:  ' + usuario,
                 },
                 {
                     extend: 'pdfHtml5',
+                    footer: true,
                     exportOptions: {columns: [1, 2, 3, 4, 5, 6, 7, 8]},
                     messageTop:'FECHA:  '+ fecha + '  ORDEN:  '+ orden,
                     messageBottom:'USUARIO:  ' + usuario,
@@ -313,7 +315,31 @@ class OrdenCompra {
                     mRender: function ( e ) {
                         return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                 }
-            ]
+            ],
+            footerCallback: function ( row, data, start, end, display ) {
+                var api = this.api();
+                // Remueve el formato de la columna
+                var intVal = function ( i ) {
+                    return typeof i === 'string' ?
+                        parseFloat(i.replace(/[\¢,]/g, '')) :
+                        typeof i === 'number' ?
+                        i : 0;
+                };
+                // Total de todas las paginas filtradas
+                var totalCantidadBueno = display.map(el => data[el][5]).reduce((a, b) => intVal(a) + intVal(b), 0 );
+                var totalCantidadMalo = display.map(el => data[el][6]).reduce((a, b) => intVal(a) + intVal(b), 0 );
+                var totalBueno = display.map(el => data[el][7]).reduce((a, b) => intVal(a) + intVal(b), 0 );
+                var totalMalo = display.map(el => data[el][8]).reduce((a, b) => intVal(a) + intVal(b), 0 );
+                var subTotal = display.map(el => data[el]['subtotal']).reduce((a, b) => intVal(a) + intVal(b), 0 );
+                
+                // Actualiza el footer
+                $( api.column( 1 ).footer() ).html("TOTALES");
+                $( api.column( 4 ).footer() ).html(totalCantidadBueno);
+                $( api.column( 5 ).footer() ).html(totalCantidadMalo);
+                $( api.column( 6 ).footer() ).html('¢' + parseFloat(Number(totalBueno)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+                $( api.column( 7 ).footer() ).html('¢' + parseFloat(Number(totalMalo)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+                $( api.column( 8 ).footer() ).html('¢' + parseFloat(Number(subTotal)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+            }
         });
     };
 
