@@ -332,7 +332,9 @@
             movimientosCaja.fechaInicial = picker.startDate.format('YYYY-MM-DD') + ' 00:00';
             movimientosCaja.fechaFinal = picker.endDate.format('YYYY-MM-DD') + ' 23:59';
             movimientosCaja.CargaMoviminetosCajasUsuarioRango();
-        });         
+        });    
+        
+        $("#tb_movimientosCaja").append("<tfoot><tr><th>TOTALES</th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th></tr></tfoot>");
     });
     $('#tb_movimientosCaja tbody').on('click', 'tr', function () {
         var table = $('#tb_movimientosCaja').DataTable();

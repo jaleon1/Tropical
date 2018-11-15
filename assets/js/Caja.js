@@ -76,8 +76,31 @@ class MovimientosCaja {
         var movimientos = JSON.parse(e);
         var total=0;
         var pageTotal=0;
-
         this.tb_movimientosCaja = $('#tb_movimientosCaja').DataTable({
+            data: movimientos,
+            footerCallback: function ( row, data, start, end, display ) {
+                var api = this.api();
+                // Remueve el formato de la columna
+                var intVal = function ( i ) {
+                    return typeof i === 'string' ?
+                        i.replace(/[\¢,]/g, '')*1 :
+                        typeof i === 'number' ?
+                        i : 0;
+                };
+                // Total de todas las paginas filtradas
+                var totalApertura = display.map(el => data[el][6]).reduce((a, b) => intVal(a) + intVal(b), 0 );
+                var totalCierre = display.map(el => data[el][7]).reduce((a, b) => intVal(a) + intVal(b), 0 );
+                var totalEfectivo = display.map(el => data[el][8]).reduce((a, b) => intVal(a) + intVal(b), 0 );
+                var totalTarjeta = display.map(el => data[el][9]).reduce((a, b) => intVal(a) + intVal(b), 0 );
+                var totalNeto = display.map(el => data[el][12]).reduce((a, b) => intVal(a) + intVal(b), 0 );
+                // Actualiza el footer
+                $( api.column( 2 ).footer() ).html("TOTALES");
+                $( api.column( 6 ).footer() ).html('¢' + parseFloat(Number(totalApertura)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+                $( api.column( 7 ).footer() ).html('¢' + parseFloat(Number(totalCierre)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+                $( api.column( 8 ).footer() ).html('¢' + parseFloat(Number(totalEfectivo)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+                $( api.column( 9 ).footer() ).html('¢' + parseFloat(Number(totalTarjeta)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+                $( api.column( 12 ).footer() ).html('¢' + parseFloat(Number(totalNeto)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+            },
             responsive: true,
             destroy: true,
             order: [10, "desc"],
@@ -87,7 +110,7 @@ class MovimientosCaja {
                 {
                     extend: 'excelHtml5',
                     messageTop:'Movimientos de Cajas',
-                    footer: false,
+                    footer: true,
                     exportOptions: {
                         columns: [2, 4, 5, 6, 7, 8, 9, 10, 11, 12]
                     }
@@ -96,7 +119,7 @@ class MovimientosCaja {
                     extend: 'pdfHtml5',
                     messageTop:'Movimientos de Cajas',
                     orientation : 'landscape',
-                    footer: false,
+                    footer: true,
                     exportOptions: {
                         columns: [2, 4, 5, 6, 7, 8, 9, 10, 11, 12]
                     }
@@ -111,7 +134,6 @@ class MovimientosCaja {
                 // }
             ],
             ///////////////// 
-            data: movimientos,
             language: {
                 "infoEmpty": "Sin Movimientos de Cierres de Caja",
                 "emptyTable": "Sin Movimientos  de Cierres de Caja",
@@ -125,8 +147,11 @@ class MovimientosCaja {
                     "previous": "Anterior"
                 }
             },
-            footer: true,
-            columnDefs: [{ className: "text-right", "targets": [9] }, { className: "text-right", "targets": [8] }, { className: "text-right", "targets": [7] }],
+            columnDefs: [{ className: "text-right", "targets": [6] }, 
+                         { className: "text-right", "targets": [7] }, 
+                         { className: "text-right", "targets": [8] }, 
+                         { className: "text-right", "targets": [9] }, 
+                         { className: "text-right", "targets": [12] }],
             columns: [
                 {
                     title: "ID MOVIMIENTOS CAJA",

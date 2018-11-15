@@ -51,38 +51,6 @@ class InventarioVentas {
 
         var ventas = JSON.parse(e);
         this.tb_ventas = $('#tb_ventas').DataTable({
-            // "footerCallback": function ( row, ventas, start, end, display ) {
-            //     var api = this.api(), ventas;
-     
-            //     // Remove the formatting to get integer data for summation
-            //     var intVal = function ( i ) {
-            //         return typeof i === 'string' ?
-            //             i.replace(/[\$,]/g, '')*1 :
-            //             typeof i === 'number' ?
-            //                 i : 0;
-            //     };
-     
-            //     // Total over all pages
-            //     total = api
-            //         .column( 5 )
-            //         .data()
-            //         .reduce( function (a, b) {
-            //             return intVal(a) + intVal(b);
-            //         }, 0 );
-     
-            //     // Total over this page
-            //     pageTotal = api
-            //         .column( 5, { page: 'current'} )
-            //         .data()
-            //         .reduce( function (a, b) {
-            //             return intVal(a) + intVal(b);
-            //         }, 0 );
-     
-            //     // Update footer
-            //     $( api.column( 5 ).footer() ).html(
-            //         '$'+pageTotal +' ( $'+ total +' total)'
-            //     );
-            // },
             responsive: true,
             destroy: true,
             data: ventas,                               
@@ -91,11 +59,13 @@ class InventarioVentas {
             buttons: [
                 {
                     extend: 'excelHtml5',
+                    footer: true,
                     exportOptions: {columns: [1, 2, 3, 4, 5]},
                     messageTop:'Reporte de Ventas'
                 },
                 {
                     extend: 'pdfHtml5',
+                    footer: true,
                     exportOptions: {columns: [1, 2, 3, 4, 5]},
                     messageTop:'Reporte de Ventas',
                     customize: function(doc) {
@@ -150,7 +120,27 @@ class InventarioVentas {
                             return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                     }
                 }
-            ]
+            ],
+            footerCallback: function ( row, data, start, end, display ) {
+                var api = this.api();
+                // Remueve el formato de la columna
+                var intVal = function ( i ) {
+                    return typeof i === 'string' ?
+                        parseFloat(i.replace(/[\¢,]/g, '')) :
+                        typeof i === 'number' ?
+                        i : 0;
+                };
+                // Total de todas las paginas filtradas
+                var doceOz = display.map(el => data[el]['_12oz']).reduce((a, b) => intVal(a) + intVal(b), 0 );
+                var ochoOz = display.map(el => data[el]['_08oz']).reduce((a, b) => intVal(a) + intVal(b), 0 );
+                var subTotal = display.map(el => data[el]['totalComprobante']).reduce((a, b) => intVal(a) + intVal(b), 0 );
+                
+                // Actualiza el footer
+                $( api.column( 1 ).footer() ).html("TOTALES");
+                $( api.column( 3 ).footer() ).html(doceOz);
+                $( api.column( 4 ).footer() ).html(ochoOz);
+                $( api.column( 5 ).footer() ).html('¢' + parseFloat(Number(subTotal)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+            }
         });
     };
 
