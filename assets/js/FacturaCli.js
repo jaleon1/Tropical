@@ -53,8 +53,6 @@ $(document).ready(function () {
 
     $('#open_modal_fac').attr("disabled", true);
 
-    btnFormaPago();
-
     // Recarga la página para limpiar todo
     $('#btn_limpia').click(function () {
         location.reload();
@@ -136,7 +134,39 @@ $(document).ready(function () {
 
     $('#btnFacturar').attr('disabled', 'disabled');
 
-    $('#btnFacturar').click(function () {
+    $('#btnFacturar').click(function () {        
+
+        
+
+        var modalContent = `<div class="modal-dialog modal-lg">
+        <div class="modal-content modal-factura">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">×</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">Facturar</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div id="formapago">
+                        ok
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div id="btn-formapago">
+
+                </div>
+            </div>
+        </div>`; 
+
+        // $('.factura-modal-lg').empty();        
+        
+        $('.factura-modal-lg').html(modalContent);
+        btnFormaPago();
+        $('.factura-modal-lg').modal('show');
+
+
         $('#total_pagar').empty();
         $('#total_pagar').append("Total a Pagar: " + $("#total")[0].textContent);
     });
