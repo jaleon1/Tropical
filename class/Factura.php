@@ -16,6 +16,7 @@ if(isset($_POST["action"])){
     require_once("OrdenXFactura.php");    
     require_once("Receptor.php");
     require_once("Bodega.php");
+    require_once("wsBCCR.php");
     // require_once("productoXFactura.php");
     
     // Session
@@ -136,7 +137,8 @@ class Factura{
             // c. Resumen de la factura/Total de la Factura 
             // definir si es servicio o mercancia (producto). En caso Tropical, siempre es mercancia
             $this->idCodigoMoneda= $obj["idCodigoMoneda"] ?? 55; // CRC
-            $this->tipoCambio= $obj['tipoCambio'] ?? 582.83; // tipo de cambio dinamico con BCCR
+            $wsBCCR = new TipoCambio();
+            $this->tipoCambio= $obj['tipoCambio'] ?? $wsBCCR->tipo_cambio()["venta"]; // tipo de cambio dinamico con BCCR
             $this->totalServGravados= $obj['totalServGravados'];
             $this->totalServExentos= $obj['totalServExentos'];
             $this->totalMercanciasGravadas= $obj['totalMercanciasGravadas'];
