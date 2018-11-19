@@ -91,19 +91,19 @@ class MermaAgencia{
                 require_once("UUID.php");
                 $id= UUID::v4();
                 // porcion
-                $sql="SELECT esVenta 
-                    FROM tropical.insumosXBodega x inner join producto p on p.id = x.idProducto
-                    where x.id = :id;";
-                $param= array(':id'=> $item->id);
-                $data = DATA::Ejecutar($sql,$param);
-                $porcion = 1;
-                if($data[0]['esVenta']=='0')
-                    $porcion = 1;
-                else if($data[0]['esVenta']=='1')
-                    $porcion = 20;
-                else if($data[0]['esVenta']=='2')
-                    $porcion = 40;
-                $item->cantidad = $item->cantidad * $porcion;
+                // $sql="SELECT esVenta 
+                //     FROM tropical.insumosXBodega x inner join producto p on p.id = x.idProducto
+                //     where x.id = :id;";
+                // $param= array(':id'=> $item->id);
+                // $data = DATA::Ejecutar($sql,$param);
+                // $porcion = 1;
+                // if($data[0]['esVenta']=='0')
+                //     $porcion = 1;
+                // else if($data[0]['esVenta']=='1')
+                //     $porcion = 20;
+                // else if($data[0]['esVenta']=='2')
+                //     $porcion = 40;
+                //$item->cantidad = $item->cantidad * $porcion;
                 // historico merma
                 $sql="INSERT INTO mermaAgencia (id, idInsumo, cantidad, descripcion, idBodega)
                     VALUES (:id, :idInsumo, :cantidad, :descripcion, :idBodega)";
