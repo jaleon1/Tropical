@@ -23,6 +23,9 @@ if(isset($_POST["action"])){
         case "Create":
             echo json_encode($merma->Create());
             break;
+        case "rollback":
+            $merma->rollback();
+            break;
     }
 }
 
@@ -127,6 +130,20 @@ class MermaAgencia{
             if($created)
                 return true;
             else throw new Exception('Error al restar MERMA, debe realizar el procedimiento manualmente.', 666);
+        }     
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }
+    }
+
+    function Rollback(){
+        try {
+            // Entrada a inventario agencia.
+            // delete from mermaAgencia.
         }     
         catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');

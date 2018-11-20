@@ -23,6 +23,9 @@ if(isset($_POST["action"])){
         case "ReadAllbyRange":
             echo json_encode($merma->ReadAllbyRange());
             break;
+        case "rollback":
+            $merma->rollback();
+            break;
     }
 }
 
@@ -147,6 +150,21 @@ class Merma{
             if($created)
                 return true;
             else throw new Exception('Error al restar MERMA, debe realizar el procedimiento manualmente.', 666);
+        }     
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }
+    }
+
+    function Rollback(){
+        try {
+            // es insumo o es producto.
+            // Entrada a inventario.
+            // delete from mermaProducto | mermaInsumo.
         }     
         catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');

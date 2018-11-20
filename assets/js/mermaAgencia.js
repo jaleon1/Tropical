@@ -42,8 +42,29 @@ class MermaAgencia {
         })
     };
 
+    DeleteMerma(e){        
+        swal({
+            title: 'Devolver Merma?',
+            text: "Esta acción es irreversible!",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Si, eliminar!',
+            cancelButtonText: 'No, cancelar!',
+            confirmButtonClass: 'btn btn-success',
+            cancelButtonClass: 'btn btn-danger'
+        }).then((result) => {
+            if (result.value) {
+                t.row( $(e).parents('tr') )
+                    .remove()
+                    .draw();
+            }
+        })
+    };
+
     setTable(buttons=true, nPaging=10){
-        $('#tMerma').DataTable({
+        t= $('#tMerma').DataTable({
             responsive: true,
             info: false,
             iDisplayLength: nPaging,
@@ -84,7 +105,16 @@ class MermaAgencia {
                 { 
                     title: "FECHA", 
                     data: "fecha"
-                }                
+                },
+                {
+                    title: "Acción",
+                    orderable: false,
+                    searchable: false,
+                    mRender: function () {
+                        return '<a class="delete" style="cursor: pointer;" onclick="merma.DeleteMerma(this)" > <i class="glyphicon glyphicon-trash"> </i></a>'
+                    },
+                    visible: true
+                }           
             ]
         });
     };
@@ -180,3 +210,4 @@ class MermaAgencia {
     }
 }
 let merma = new MermaAgencia();
+var t;
