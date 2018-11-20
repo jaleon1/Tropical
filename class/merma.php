@@ -24,6 +24,10 @@ if(isset($_POST["action"])){
             echo json_encode($merma->ReadAllbyRange());
             break;
         case "rollback":
+            $merma->idRel = $_POST["idRel"];
+            $merma->consecutivo = $_POST["consecutivo"];
+            $merma->cantidad = $_POST["cantidad"];
+            $merma->costo = $_POST["costo"]??0;
             $merma->rollback();
             break;
     }
@@ -32,12 +36,14 @@ if(isset($_POST["action"])){
 class Merma{
     public $id=null;
     public $idProducto='';
+    public $consecutivo='';
     public $idInsumo='';
     public $descripcion='';
     public $cantidad=0;
     public $fecha;
     public $fechaInicial='';
     public $fechaFinal='';
+    public $costo=0;
 
     function __construct(){
         // identificador único
@@ -96,10 +102,10 @@ class Merma{
 
     function ReadAllbyRange(){
         try {
-        $sql = 'SELECT m.id, i.codigo, m.consecutivo, i.nombre, i.descripcion, m.cantidad, m.descripcion, m.fecha
+        $sql = 'SELECT m.id, m.idInsumo as idRel, i.codigo, m.consecutivo, i.nombre, i.descripcion, m.cantidad, m.descripcion, m.fecha
                 FROM mermaInsumo m inner join insumo i on i.id = m.idInsumo WHERE m.fecha Between :fechaInicial and :fechaFinal
                 UNION 
-                SELECT m.id, p.codigo, m.consecutivo, p.nombre, p.descripcion, m.cantidad, m.descripcion, m.fecha
+                SELECT m.id, m.idProducto as idRel, p.codigo, m.consecutivo, p.nombre, p.descripcion, m.cantidad, m.descripcion, m.fecha
                 FROM mermaProducto m inner join producto p on p.id = m.idProducto WHERE m.fecha Between :fechaInicial and :fechaFinal';
             $param= array(':fechaInicial'=>$this->fechaInicial, ':fechaFinal'=>$this->fechaFinal);            
             $data= DATA::Ejecutar($sql, $param);
@@ -163,8 +169,39 @@ class Merma{
     function Rollback(){
         try {
             // es insumo o es producto.
-            // Entrada a inventario.
-            // delete from mermaProducto | mermaInsumo.
+            $sql="SELECT saldoCantidad, saldoCosto
+                    FROM producto 
+                    where id = :idRel;";
+            $param= array(':idRel'=> $this->idRel);
+            $data = DATA::Ejecutar($sql,$param);
+            if($data){
+                // es producto.
+                // Entrada a inventario.
+                InventarioProducto::entrada($this->idRel, 'CancelaMerma:'.$this->consecutivo, $this->cantidad, $this->costo);
+                // delete from mermaProducto.
+                $sql="DELETE 
+                    FROM mermaProducto 
+                    where id=:id";
+                $param= array(':id'=>$this->id);
+                DATA::Ejecutar($sql,$param);
+                return true;
+            }
+            else { // es insumo.
+                $sql="SELECT saldoCantidad, saldoCosto
+                    FROM insumo 
+                    where id = :idRel;";
+                $param= array(':idRel'=> $this->idRel);
+                $data = DATA::Ejecutar($sql,$param);
+                // Entrada a inventario.
+                InventarioInsumo::entrada($this->idRel, 'CancelaMerma:'.$this->consecutivo, $this->cantidad, $this->costo);
+                // delete from mermaInsumo.
+                $sql="DELETE 
+                    FROM mermaInsumo 
+                    where id=:id";
+                $param= array(':id'=>$this->id);
+                DATA::Ejecutar($sql,$param);
+                return true;
+            }            
         }     
         catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
@@ -180,7 +217,7 @@ class Merma{
         try {
             $created = true;
             require_once("Insumo.php");
-            foreach ($obj as $item) {          
+            foreach ($obj as $item) {
                 
                 $sql="SELECT saldoCantidad, saldoCosto, costoPromedio FROM insumo WHERE id=:idInsumo;";
                 $param= array(':idInsumo'=>$item->id);

@@ -95,9 +95,37 @@ class Merma {
             cancelButtonClass: 'btn btn-danger'
         }).then((result) => {
             if (result.value) {
-                t.row( $(e).parents('tr') )
-                    .remove()
-                    .draw();
+                merma.id = $(e).parents("tr").find("td:eq(0)").text();
+                merma.idRel = $(e).parents("tr").find("td:eq(1)").text();
+                merma.consecutivo = $(e).parents("tr").find("td:eq(3)").text();
+                merma.cantidad = $(e).parents("tr").find("td:eq(6)").text();
+                // merma.costo = $(e).find('td:eq(7) input').val();
+                $.ajax({
+                    type: "POST",
+                    url: "class/merma.php",
+                    data: {
+                        action: 'rollback',
+                        id: merma.id,
+                        idRel: merma.idRel,
+                        consecutivo: merma.consecutivo,
+                        // costo: merma.costo,
+                        cantidad: merma.cantidad
+                    }
+                })
+                    .done(function () {
+                        merma.showInfo();
+                        // tablas.
+                        t.row( $(e).parents('tr') )
+                            .remove()
+                            .draw();
+                    })
+                    .fail(function (e) {
+                        merma.showError(e);
+                    })
+                    .always(function () {
+                        // $("#btnMerma").removeAttr("disabled");
+                        // $("#p_searhInsumo").focus();
+                    });
             }
         })
     };
@@ -142,6 +170,13 @@ class Merma {
                     data: "id",
                     className: "itemId",
                     searchable: false
+                },
+                {
+                    title: "IdRel",
+                    data: "idRel",
+                    className: "itemId",
+                    searchable: false,
+                    width: "auto"
                 },
                 { title: "CODIGO", data: "codigo" },
                 { title: "CONSECUTIVO", data: "consecutivo" },
