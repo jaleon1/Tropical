@@ -44,7 +44,7 @@ class MermaAgencia {
 
     DeleteMerma(e){        
         swal({
-            title: 'Devolver Merma?',
+            title: 'Devolver Merma de Agencia?',
             text: "Esta acción es irreversible!",
             type: 'warning',
             showCancelButton: true,
