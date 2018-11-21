@@ -336,7 +336,7 @@ class Insumo{
 
     function ReadByCode(){
         try{
-            $sql="SELECT id, nombre, codigo, descripcion, saldoCantidad
+            $sql="SELECT id, nombre, codigo, descripcion, saldoCantidad, costoPromedio
                 FROM insumo
                 WHERE codigo like :codigo ";
             $param= array(':codigo'=>'%'.$this->codigo.'%');

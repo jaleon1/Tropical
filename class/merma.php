@@ -63,6 +63,7 @@ class Merma{
                     $item= new Insumo();
                     $item->id = $itemlist['idInsumo'];
                     $item->cantidad = $itemlist['cantidad'];
+                    $item->costo = $itemlist['costo'];
                     $item->descripcion= $itemlist['descripcion'];
                     array_push ($this->listaInsumo, $item);
                 }
@@ -73,6 +74,7 @@ class Merma{
                     $item= new Producto();
                     $item->id = $itemlist['idProducto'];
                     $item->cantidad = $itemlist['cantidad'];
+                    $item->costo = $itemlist['costo'];
                     $item->descripcion= $itemlist['descripcion'];
                     array_push ($this->listaProducto, $item);
                 }
@@ -129,9 +131,9 @@ class Merma{
                 require_once("UUID.php");
                 $id= UUID::v4();
                 // historico merma
-                $sql="INSERT INTO mermaInsumo (id, idInsumo, cantidad, descripcion)
-                    VALUES (:id, :idInsumo, :cantidad, :descripcion)";
-                $param= array(':id'=> $id,':idInsumo'=> $item->id, ':cantidad'=> $item->cantidad, ':descripcion'=> $item->descripcion);
+                $sql="INSERT INTO mermaInsumo (id, idInsumo, cantidad, descripcion, costo)
+                    VALUES (:id, :idInsumo, :cantidad, :descripcion, :costo)";
+                $param= array(':id'=> $id,':idInsumo'=> $item->id, ':cantidad'=> $item->cantidad, ':descripcion'=> $item->descripcion, ':costo'=> $item->costo);
                 $data = DATA::Ejecutar($sql,$param,false);
                 if(!$data)
                     $created= false;
@@ -143,9 +145,9 @@ class Merma{
                 require_once("UUID.php");
                 $id= UUID::v4();
                 // historico merma
-                $sql="INSERT INTO mermaProducto (id, idProducto, cantidad, descripcion)
-                    VALUES (:id, :idProducto, :cantidad, :descripcion)";
-                $param= array(':id'=> $id, ':idProducto'=> $item->id, ':cantidad'=> $item->cantidad, ':descripcion'=> $item->descripcion);
+                $sql="INSERT INTO mermaProducto (id, idProducto, cantidad, descripcion, costo)
+                    VALUES (:id, :idProducto, :cantidad, :descripcion, :costo)";
+                $param= array(':id'=> $id, ':idProducto'=> $item->id, ':cantidad'=> $item->cantidad, ':descripcion'=> $item->descripcion, ':costo'=> $item->costo);
                 $data = DATA::Ejecutar($sql,$param,false);
                 if(!$data)
                     $created= false;
