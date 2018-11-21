@@ -42,8 +42,57 @@ class MermaAgencia {
         })
     };
 
+    DeleteMerma(e){        
+        swal({
+            title: 'Devolver Merma de Agencia?',
+            text: "Esta acción es irreversible!",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Si, eliminar!',
+            cancelButtonText: 'No, cancelar!',
+            confirmButtonClass: 'btn btn-success',
+            cancelButtonClass: 'btn btn-danger'
+        }).then((result) => {
+            if (result.value) {
+                merma.id = $(e).parents("tr").find("td:eq(0)").text();
+                merma.idInsumo = $(e).parents("tr").find("td:eq(1)").text();
+                merma.consecutivo = $(e).parents("tr").find("td:eq(3)").text();
+                merma.cantidad = $(e).parents("tr").find("td:eq(6)").text();
+                // merma.costo = $(e).find('td:eq(7) input').val();
+                $.ajax({
+                    type: "POST",
+                    url: "class/mermaAgencia.php",
+                    data: {
+                        action: 'rollback',
+                        id: merma.id,
+                        idInsumo: merma.idInsumo,
+                        consecutivo: merma.consecutivo,
+                        // costo: merma.costo,
+                        cantidad: merma.cantidad
+                    }
+                })
+                    .done(function () {
+                        merma.showInfo();
+                        // tablas.
+                        t.row( $(e).parents('tr') )
+                            .remove()
+                            .draw();
+                    })
+                    .fail(function (e) {
+                        merma.showError(e);
+                    })
+                    .always(function () {
+                        // $("#btnMerma").removeAttr("disabled");
+                        // $("#p_searhInsumo").focus();
+                    });
+            }
+        })
+    };
+
     setTable(buttons=true, nPaging=10){
-        $('#tMerma').DataTable({
+        t= $('#tMerma').DataTable({
             responsive: true,
             info: false,
             iDisplayLength: nPaging,
@@ -69,6 +118,13 @@ class MermaAgencia {
                     className: "itemId",
                     searchable: false
                 },
+                {
+                    title: "IdInsumo",
+                    data: "idInsumo",
+                    className: "itemId",
+                    searchable: false,
+                    width: "auto"
+                },
                 { title: "CODIGO", data: "codigo" },
                 { title: "CONSECUTIVO", data: "consecutivo" },
                 { title: "NOMBRE", data: "nombre" },
@@ -84,7 +140,16 @@ class MermaAgencia {
                 { 
                     title: "FECHA", 
                     data: "fecha"
-                }                
+                },
+                {
+                    title: "Acción",
+                    orderable: false,
+                    searchable: false,
+                    mRender: function () {
+                        return '<a class="delete" style="cursor: pointer;" onclick="merma.DeleteMerma(this)" > <i class="glyphicon glyphicon-trash"> </i></a>'
+                    },
+                    visible: true
+                }           
             ]
         });
     };
@@ -128,6 +193,7 @@ class MermaAgencia {
         $('#tProducto tbody tr').each(function (i, item) {
             var objlista = new Object();
             objlista.idProducto = $(item).find('td:eq(0)')[0].textContent;
+            // objlista.costo = $(item).find('td:eq(0)')[0].textContent;
             objlista.cantidad = $(item).find('td:eq(3) input').val();
             if ($(item).find('td:eq(4) input').val() != undefined && $(item).find('td:eq(4) input').val() == '') {
                 swal({
@@ -180,3 +246,4 @@ class MermaAgencia {
     }
 }
 let merma = new MermaAgencia();
+var t;

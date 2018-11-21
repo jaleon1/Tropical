@@ -571,11 +571,12 @@ class Producto {
                     data:"nombre",
                     width:"auto"
                 },
-                // {
-                //     title:"Descripción",
-                //     data:"descripcion",
-                //     width:"auto"
-                // },
+                {
+                    title:"Costo Promedio",
+                    data:"costoPromedio",
+                    className:"itemId",
+                    width:"auto"
+                },
                 {//cant.
                     title:"Cantidad",
                     "width": "15%", 
@@ -807,6 +808,7 @@ class Producto {
             producto.nombre= data.nombre; 
             producto.descripcion= data.descripcion;
             producto.saldoCantidad= data.saldoCantidad;
+            producto.costoPromedio= data.costoPromedio;
             var repetido = false;
             //
             if(document.getElementById("tProducto").rows.length != 0 && producto != null){

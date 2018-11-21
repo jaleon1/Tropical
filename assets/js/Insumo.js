@@ -268,6 +268,7 @@ class Insumo {
             insumo.nombre = data.nombre;
             insumo.descripcion = data.descripcion;
             insumo.saldoCantidad= data.saldoCantidad;
+            insumo.costoPromedio= data.costoPromedio;
             var repetido = false;
             //
             if (document.getElementById("tInsumo").rows.length != 0 && insumo != null) {
@@ -590,7 +591,13 @@ class Insumo {
                     title: "Insumo",
                     data: "nombre",
                     width: "auto"
-                },                
+                },
+                {
+                    title:"Costo Promedio",
+                    data:"costoPromedio",
+                    className:"itemId",
+                    width:"auto"
+                },
                 {//cant.
                     title: "CANTIDAD",
                     "width": "15%",

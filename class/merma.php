@@ -23,18 +23,27 @@ if(isset($_POST["action"])){
         case "ReadAllbyRange":
             echo json_encode($merma->ReadAllbyRange());
             break;
+        case "rollback":
+            $merma->idRel = $_POST["idRel"];
+            $merma->consecutivo = $_POST["consecutivo"];
+            $merma->cantidad = $_POST["cantidad"];
+            $merma->costo = $_POST["costo"]??0;
+            $merma->rollback();
+            break;
     }
 }
 
 class Merma{
     public $id=null;
     public $idProducto='';
+    public $consecutivo='';
     public $idInsumo='';
     public $descripcion='';
     public $cantidad=0;
     public $fecha;
     public $fechaInicial='';
     public $fechaFinal='';
+    public $costo=0;
 
     function __construct(){
         // identificador único
@@ -54,6 +63,7 @@ class Merma{
                     $item= new Insumo();
                     $item->id = $itemlist['idInsumo'];
                     $item->cantidad = $itemlist['cantidad'];
+                    $item->costo = $itemlist['costo'];
                     $item->descripcion= $itemlist['descripcion'];
                     array_push ($this->listaInsumo, $item);
                 }
@@ -64,6 +74,7 @@ class Merma{
                     $item= new Producto();
                     $item->id = $itemlist['idProducto'];
                     $item->cantidad = $itemlist['cantidad'];
+                    $item->costo = $itemlist['costo'];
                     $item->descripcion= $itemlist['descripcion'];
                     array_push ($this->listaProducto, $item);
                 }
@@ -93,10 +104,10 @@ class Merma{
 
     function ReadAllbyRange(){
         try {
-        $sql = 'SELECT m.id, i.codigo, m.consecutivo, i.nombre, i.descripcion, m.cantidad, m.descripcion, m.fecha
+        $sql = 'SELECT m.id, m.idInsumo as idRel, i.codigo, m.consecutivo, i.nombre, i.descripcion, m.cantidad, m.descripcion, m.fecha
                 FROM mermaInsumo m inner join insumo i on i.id = m.idInsumo WHERE m.fecha Between :fechaInicial and :fechaFinal
                 UNION 
-                SELECT m.id, p.codigo, m.consecutivo, p.nombre, p.descripcion, m.cantidad, m.descripcion, m.fecha
+                SELECT m.id, m.idProducto as idRel, p.codigo, m.consecutivo, p.nombre, p.descripcion, m.cantidad, m.descripcion, m.fecha
                 FROM mermaProducto m inner join producto p on p.id = m.idProducto WHERE m.fecha Between :fechaInicial and :fechaFinal';
             $param= array(':fechaInicial'=>$this->fechaInicial, ':fechaFinal'=>$this->fechaFinal);            
             $data= DATA::Ejecutar($sql, $param);
@@ -120,9 +131,9 @@ class Merma{
                 require_once("UUID.php");
                 $id= UUID::v4();
                 // historico merma
-                $sql="INSERT INTO mermaInsumo (id, idInsumo, cantidad, descripcion)
-                    VALUES (:id, :idInsumo, :cantidad, :descripcion)";
-                $param= array(':id'=> $id,':idInsumo'=> $item->id, ':cantidad'=> $item->cantidad, ':descripcion'=> $item->descripcion);
+                $sql="INSERT INTO mermaInsumo (id, idInsumo, cantidad, descripcion, costo)
+                    VALUES (:id, :idInsumo, :cantidad, :descripcion, :costo)";
+                $param= array(':id'=> $id,':idInsumo'=> $item->id, ':cantidad'=> $item->cantidad, ':descripcion'=> $item->descripcion, ':costo'=> $item->costo);
                 $data = DATA::Ejecutar($sql,$param,false);
                 if(!$data)
                     $created= false;
@@ -134,9 +145,9 @@ class Merma{
                 require_once("UUID.php");
                 $id= UUID::v4();
                 // historico merma
-                $sql="INSERT INTO mermaProducto (id, idProducto, cantidad, descripcion)
-                    VALUES (:id, :idProducto, :cantidad, :descripcion)";
-                $param= array(':id'=> $id, ':idProducto'=> $item->id, ':cantidad'=> $item->cantidad, ':descripcion'=> $item->descripcion);
+                $sql="INSERT INTO mermaProducto (id, idProducto, cantidad, descripcion, costo)
+                    VALUES (:id, :idProducto, :cantidad, :descripcion, :costo)";
+                $param= array(':id'=> $id, ':idProducto'=> $item->id, ':cantidad'=> $item->cantidad, ':descripcion'=> $item->descripcion, ':costo'=> $item->costo);
                 $data = DATA::Ejecutar($sql,$param,false);
                 if(!$data)
                     $created= false;
@@ -156,13 +167,59 @@ class Merma{
             );
         }
     }
+
+    function Rollback(){
+        try {
+            // es insumo o es producto.
+            $sql="SELECT saldoCantidad, saldoCosto, costoPromedio
+                    FROM producto 
+                    where id = :idRel;";
+            $param= array(':idRel'=> $this->idRel);
+            $data = DATA::Ejecutar($sql,$param);
+            if($data){
+                // es producto.
+                // Entrada a inventario.
+                InventarioProducto::entrada($this->idRel, 'CancelaMerma:'.$this->consecutivo, $this->cantidad, $data[0]['costoPromedio']);
+                // delete from mermaProducto.
+                $sql="DELETE 
+                    FROM mermaProducto 
+                    where id=:id";
+                $param= array(':id'=>$this->id);
+                DATA::Ejecutar($sql,$param);
+                return true;
+            }
+            else { // es insumo.
+                $sql="SELECT saldoCantidad, saldoCosto, costoPromedio
+                    FROM insumo 
+                    where id = :idRel;";
+                $param= array(':idRel'=> $this->idRel);
+                $data = DATA::Ejecutar($sql,$param);
+                // Entrada a inventario.
+                InventarioInsumo::entrada($this->idRel, 'CancelaMerma:'.$this->consecutivo, $this->cantidad, $data[0]['costoPromedio']);
+                // delete from mermaInsumo.
+                $sql="DELETE 
+                    FROM mermaInsumo 
+                    where id=:id";
+                $param= array(':id'=>$this->id);
+                DATA::Ejecutar($sql,$param);
+                return true;
+            }            
+        }     
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }
+    }
     
     //Merma (SALIDA)
     function CreateInventarioInsumo($obj){
         try {
             $created = true;
             require_once("Insumo.php");
-            foreach ($obj as $item) {          
+            foreach ($obj as $item) {
                 
                 $sql="SELECT saldoCantidad, saldoCosto, costoPromedio FROM insumo WHERE id=:idInsumo;";
                 $param= array(':idInsumo'=>$item->id);

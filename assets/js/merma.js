@@ -81,8 +81,57 @@ class Merma {
         })
     };
 
+    DeleteMerma(e){
+        swal({
+            title: 'Devolver Merma?',
+            text: "Esta acción es irreversible!",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Si, eliminar!',
+            cancelButtonText: 'No, cancelar!',
+            confirmButtonClass: 'btn btn-success',
+            cancelButtonClass: 'btn btn-danger'
+        }).then((result) => {
+            if (result.value) {
+                merma.id = $(e).parents("tr").find("td:eq(0)").text();
+                merma.idRel = $(e).parents("tr").find("td:eq(1)").text();
+                merma.consecutivo = $(e).parents("tr").find("td:eq(3)").text();
+                merma.cantidad = $(e).parents("tr").find("td:eq(6)").text();
+                // merma.costo = $(e).find('td:eq(7) input').val();
+                $.ajax({
+                    type: "POST",
+                    url: "class/merma.php",
+                    data: {
+                        action: 'rollback',
+                        id: merma.id,
+                        idRel: merma.idRel,
+                        consecutivo: merma.consecutivo,
+                        // costo: merma.costo,
+                        cantidad: merma.cantidad
+                    }
+                })
+                    .done(function () {
+                        merma.showInfo();
+                        // tablas.
+                        t.row( $(e).parents('tr') )
+                            .remove()
+                            .draw();
+                    })
+                    .fail(function (e) {
+                        merma.showError(e);
+                    })
+                    .always(function () {
+                        // $("#btnMerma").removeAttr("disabled");
+                        // $("#p_searhInsumo").focus();
+                    });
+            }
+        })
+    };
+
     setTable(buttons=true, nPaging=10){
-        $('#tMerma').DataTable({
+        t= $('#tMerma').DataTable({
             responsive: true,
             destroy: true,
             order: [[6, "desc"]],
@@ -122,6 +171,13 @@ class Merma {
                     className: "itemId",
                     searchable: false
                 },
+                {
+                    title: "IdRel",
+                    data: "idRel",
+                    className: "itemId",
+                    searchable: false,
+                    width: "auto"
+                },
                 { title: "CODIGO", data: "codigo" },
                 { title: "CONSECUTIVO", data: "consecutivo" },
                 { title: "NOMBRE", data: "nombre" },
@@ -137,7 +193,16 @@ class Merma {
                 { 
                     title: "FECHA", 
                     data: "fecha"
-                }                
+                },
+                {
+                    title: "Acción",
+                    orderable: false,
+                    searchable: false,
+                    mRender: function () {
+                        return '<a class="delete" style="cursor: pointer;" onclick="merma.DeleteMerma(this)" > <i class="glyphicon glyphicon-trash"> </i></a>'
+                    },
+                    visible: true
+                }
             ]
         });
     };
@@ -181,8 +246,9 @@ class Merma {
         $('#tInsumo tbody tr').each(function (i, item) {
             var objlista = new Object();
             objlista.idInsumo = $(item).find('td:eq(0)')[0].textContent;
-            objlista.cantidad = $(item).find('td:eq(3) input').val();
-            if ($(item).find('td:eq(4) input').val() != undefined && $(item).find('td:eq(4) input').val() == '') {
+            objlista.costo = $(item).find('td:eq(3)')[0].textContent
+            objlista.cantidad = $(item).find('td:eq(4) input').val();
+            if ($(item).find('td:eq(5) input').val() != undefined && $(item).find('td:eq(5) input').val() == '') {
                 swal({
                     type: 'warning',
                     title: 'Descripción...',
@@ -190,15 +256,16 @@ class Merma {
                 });
                 listaok = false;
             }
-            objlista.descripcion = $(item).find('td:eq(4) input').val();
+            objlista.descripcion = $(item).find('td:eq(5) input').val();
             merma.listaInsumo.push(objlista);
         });
         merma.listaProducto = [];
         $('#tProducto tbody tr').each(function (i, item) {
             var objlista = new Object();
             objlista.idProducto = $(item).find('td:eq(0)')[0].textContent;
-            objlista.cantidad = $(item).find('td:eq(3) input').val();
-            if ($(item).find('td:eq(4) input').val() != undefined && $(item).find('td:eq(4) input').val() == '') {
+            objlista.costo = $(item).find('td:eq(3)')[0].textContent
+            objlista.cantidad = $(item).find('td:eq(4) input').val();
+            if ($(item).find('td:eq(5) input').val() != undefined && $(item).find('td:eq(5) input').val() == '') {
                 swal({
                     type: 'warning',
                     title: 'Descripción...',
@@ -206,7 +273,7 @@ class Merma {
                 });
                 listaok = false;
             }
-            objlista.descripcion = $(item).find('td:eq(4) input').val();
+            objlista.descripcion = $(item).find('td:eq(5) input').val();
             merma.listaProducto.push(objlista);
         });
         if (!listaok)
@@ -252,3 +319,4 @@ class Merma {
     }
 }
 let merma = new Merma();
+var t;
