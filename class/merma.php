@@ -171,7 +171,7 @@ class Merma{
     function Rollback(){
         try {
             // es insumo o es producto.
-            $sql="SELECT saldoCantidad, saldoCosto
+            $sql="SELECT saldoCantidad, saldoCosto, costoPromedio
                     FROM producto 
                     where id = :idRel;";
             $param= array(':idRel'=> $this->idRel);
@@ -179,7 +179,7 @@ class Merma{
             if($data){
                 // es producto.
                 // Entrada a inventario.
-                InventarioProducto::entrada($this->idRel, 'CancelaMerma:'.$this->consecutivo, $this->cantidad, $this->costo);
+                InventarioProducto::entrada($this->idRel, 'CancelaMerma:'.$this->consecutivo, $this->cantidad, $data[0]['costoPromedio']);
                 // delete from mermaProducto.
                 $sql="DELETE 
                     FROM mermaProducto 
@@ -189,13 +189,13 @@ class Merma{
                 return true;
             }
             else { // es insumo.
-                $sql="SELECT saldoCantidad, saldoCosto
+                $sql="SELECT saldoCantidad, saldoCosto, costoPromedio
                     FROM insumo 
                     where id = :idRel;";
                 $param= array(':idRel'=> $this->idRel);
                 $data = DATA::Ejecutar($sql,$param);
                 // Entrada a inventario.
-                InventarioInsumo::entrada($this->idRel, 'CancelaMerma:'.$this->consecutivo, $this->cantidad, $this->costo);
+                InventarioInsumo::entrada($this->idRel, 'CancelaMerma:'.$this->consecutivo, $this->cantidad, $data[0]['costoPromedio']);
                 // delete from mermaInsumo.
                 $sql="DELETE 
                     FROM mermaInsumo 

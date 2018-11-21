@@ -24,6 +24,10 @@ if(isset($_POST["action"])){
             echo json_encode($merma->Create());
             break;
         case "rollback":
+            $merma->idInsumo = $_POST["idInsumo"];
+            $merma->consecutivo = $_POST["consecutivo"];
+            $merma->cantidad = $_POST["cantidad"];
+            // $merma->costo = $_POST["costo"]??0;
             $merma->rollback();
             break;
     }
@@ -67,7 +71,7 @@ class MermaAgencia{
 
     function ReadAll(){
         try {
-            $sql='SELECT m.id, p.codigo, m.consecutivo, p.nombre, p.descripcion, m.cantidad, m.descripcion, m.fecha
+            $sql='SELECT m.id, m.idInsumo, p.codigo, m.consecutivo, p.nombre, p.descripcion, m.cantidad, m.descripcion, m.fecha
                 FROM mermaAgencia m 
                 inner join insumosXBodega x on x.id = m.idInsumo
                 inner join producto p on p.id = x.idProducto
@@ -142,8 +146,22 @@ class MermaAgencia{
 
     function Rollback(){
         try {
-            // Entrada a inventario agencia.
-            // delete from mermaAgencia.
+            $sql="SELECT saldoCantidad, saldoCosto, costoPromedio
+                    FROM insumosXBodega 
+                    where id = :idInsumo;";
+            $param= array(':idInsumo'=> $this->idInsumo);
+            $data = DATA::Ejecutar($sql,$param);
+            if($data){
+                // Entrada a inventario agencia.
+                InventarioInsumoXBodega::entrada($this->idInsumo, 'CancelaMerma:'.$this->consecutivo, $this->cantidad, $data[0]['costoPromedio']);
+                // delete from mermaAgencia.
+                $sql="DELETE 
+                    FROM mermaAgencia
+                    where id=:id";
+                $param= array(':id'=>$this->id);
+                DATA::Ejecutar($sql,$param);
+                return true;
+            }
         }     
         catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');

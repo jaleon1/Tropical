@@ -56,9 +56,37 @@ class MermaAgencia {
             cancelButtonClass: 'btn btn-danger'
         }).then((result) => {
             if (result.value) {
-                t.row( $(e).parents('tr') )
-                    .remove()
-                    .draw();
+                merma.id = $(e).parents("tr").find("td:eq(0)").text();
+                merma.idInsumo = $(e).parents("tr").find("td:eq(1)").text();
+                merma.consecutivo = $(e).parents("tr").find("td:eq(3)").text();
+                merma.cantidad = $(e).parents("tr").find("td:eq(6)").text();
+                // merma.costo = $(e).find('td:eq(7) input').val();
+                $.ajax({
+                    type: "POST",
+                    url: "class/mermaAgencia.php",
+                    data: {
+                        action: 'rollback',
+                        id: merma.id,
+                        idInsumo: merma.idInsumo,
+                        consecutivo: merma.consecutivo,
+                        // costo: merma.costo,
+                        cantidad: merma.cantidad
+                    }
+                })
+                    .done(function () {
+                        merma.showInfo();
+                        // tablas.
+                        t.row( $(e).parents('tr') )
+                            .remove()
+                            .draw();
+                    })
+                    .fail(function (e) {
+                        merma.showError(e);
+                    })
+                    .always(function () {
+                        // $("#btnMerma").removeAttr("disabled");
+                        // $("#p_searhInsumo").focus();
+                    });
             }
         })
     };
@@ -89,6 +117,13 @@ class MermaAgencia {
                     data: "id",
                     className: "itemId",
                     searchable: false
+                },
+                {
+                    title: "IdInsumo",
+                    data: "idInsumo",
+                    className: "itemId",
+                    searchable: false,
+                    width: "auto"
                 },
                 { title: "CODIGO", data: "codigo" },
                 { title: "CONSECUTIVO", data: "consecutivo" },
@@ -158,6 +193,7 @@ class MermaAgencia {
         $('#tProducto tbody tr').each(function (i, item) {
             var objlista = new Object();
             objlista.idProducto = $(item).find('td:eq(0)')[0].textContent;
+            // objlista.costo = $(item).find('td:eq(0)')[0].textContent;
             objlista.cantidad = $(item).find('td:eq(3) input').val();
             if ($(item).find('td:eq(4) input').val() != undefined && $(item).find('td:eq(4) input').val() == '') {
                 swal({

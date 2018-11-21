@@ -1,7 +1,7 @@
 <?php 
 require_once("Conexion.php");
 require_once("Insumo.php");
-define('ERROR_ENTRADA_INVENTARIO_INSUMOXBODEGA', '-850');
+define('ERROR_ENTRADA_INVENTARIO_INSUMOXBODEGAXBODEGA', '-850');
 define('ERROR_SALIDA_INVENTARIO_INSUMOXBODEGA', '-851');
 
 class InventarioInsumoXBodega{
@@ -22,9 +22,30 @@ class InventarioInsumoXBodega{
     public static $saldoCantidad; // valor actual.
     public static $saldoCosto; // valor actual.
     //
-    public static function entrada($idProducto, $inOrden, $inCantidad, $inCostoUnitario){
+    public static function entrada($idInsumo, $inOrden, $inCantidad, $inCostoUnitario){
         try {          
-                    
+            $sql="SELECT saldoCantidad, saldoCosto 
+                FROM insumosXBodega 
+                WHERE id=:idInsumo;";
+            $param = array(':idInsumo'=>$idInsumo);
+            $data = DATA::Ejecutar($sql,$param);
+            if($data){
+                // calculo de saldos.
+                self::$saldoCantidad = $data[0]['saldoCantidad'] + $inCantidad;
+                self::$saldoCosto = $data[0]['saldoCosto'] + floatval($inCostoUnitario * $inCantidad);
+                self::$costoPromedio = self::$saldoCosto / self::$saldoCantidad;
+                // agrega ENTRADA histórico inventario. *** NO IMPLEMENTADO ***                
+                // actualiza saldos.
+                $sql = 'UPDATE insumosXBodega
+                    SET saldoCantidad=:saldoCantidad, saldoCosto=:saldoCosto, costoPromedio=:costoPromedio
+                    WHERE id=:idInsumo;';
+                $param = array(':idInsumo'=>$idInsumo, ':saldoCantidad'=>self::$saldoCantidad, ':saldoCosto'=>self::$saldoCosto, ':costoPromedio'=>self::$costoPromedio);
+                $data = DATA::Ejecutar($sql, $param, false);
+                if($data) 
+                    return true;
+                else throw new Exception('Error al consultar actualizar los saldos de insumo ('.$idInsumo.')' , ERROR_ENTRADA_INVENTARIO_INSUMOXBODEGA);
+            } 
+            else throw new Exception('Error al consultar el codigo del insumo para actualizar inventario ('.$idInsumo.')' , ERROR_ENTRADA_INVENTARIO_INSUMOXBODEGA);
         }
         catch(Exception $e) {
             error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
@@ -54,7 +75,7 @@ class InventarioInsumoXBodega{
                     self::$saldoCantidad = 0;
                     self::$saldoCosto = 0;
                 }
-                // agrega ENTRADA histórico inventario. *** NO IMPLEMENTADO **
+                // agrega ENTRADA histórico inventario. *** NO IMPLEMENTADO ***
                 // actualiza saldos.
                 $sql = 'UPDATE insumosXBodega
                     SET saldoCantidad=:saldoCantidad, saldoCosto=:saldoCosto
@@ -95,7 +116,7 @@ class InventarioInsumoXBodega{
                     self::$saldoCantidad = 0;
                     self::$saldoCosto = 0;
                 }
-                // agrega ENTRADA histórico inventario. *** NO IMPLEMENTADO **
+                // agrega ENTRADA histórico inventario. *** NO IMPLEMENTADO ***
                 // actualiza saldos.
                 $sql = 'UPDATE insumosXBodega
                     SET saldoCantidad=:saldoCantidad, saldoCosto=:saldoCosto
@@ -108,7 +129,6 @@ class InventarioInsumoXBodega{
                 else throw new Exception('Error al consultar actualizar los saldos de insumo x bodega ('.$id.')' , ERROR_SALIDA_INVENTARIO_INSUMOXBODEGA);
             }
             else throw new Exception('Error al consultar el codigo del insumo para actualizar inventario ('.$id.')' , ERROR_SALIDA_INVENTARIO_INSUMOXBODEGA);
-
         }
         catch(Exception $e) {
             error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());

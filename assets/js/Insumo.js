@@ -595,7 +595,7 @@ class Insumo {
                 {
                     title:"Costo Promedio",
                     data:"costoPromedio",
-                    //className:"itemId",
+                    className:"itemId",
                     width:"auto"
                 },
                 {//cant.
