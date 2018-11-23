@@ -120,30 +120,10 @@ class InventarioFacturas {
                     data: "vendedor"
                 },
                 {
-                    title: "ESTADO",
-                    data: "idEstadoComprobante",
+                    title: "TOTAL",
+                    data: "totalComprobante",
                     mRender: function ( e ) {
-                        switch (e) {
-                            case "1":
-                                return '<i class="fa fa-paper-plane" aria-hidden="true" style="color:red"> Sin Enviar</i>';
-                                break;
-                            case "2":
-                                return '<i class="fa fa-paper-plane" aria-hidden="true" style="color:green"> Enviado</i>';
-                                break;
-                            case "3":
-                                return '<i class="fa fa-check-square-o" aria-hidden="true" style="color:green"> Aceptado</i>';
-                                break;
-                            case "4":
-                                return '<i class="fa fa-times-circle" aria-hidden="true" style="color:red"> Rechazado</i>';
-                                break;
-                            case "5":
-                                return '<i class="fa fa-exclamation-triangle" aria-hidden="true" style="color:#FF6F00"> Otro</i>';
-                                break;
-                            default:
-                                return 'Desconocido';
-                                break;
-
-                        }
+                        return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                     }
                 },
                 {
@@ -169,10 +149,54 @@ class InventarioFacturas {
                     }
                 },
                 {
-                    title: "TOTAL",
-                    data: "totalComprobante",
+                    title: "ESTADO",
+                    data: "idEstadoComprobante",
                     mRender: function ( e ) {
-                        return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                        switch (e) {
+                            case "1":
+                                return '<i class="fa fa-paper-plane" aria-hidden="true" style="color:red"> Sin Enviar</i>';
+                                break;
+                            case "2":
+                                return '<i class="fa fa-paper-plane" aria-hidden="true" style="color:green"> Enviado</i>';
+                                break;
+                            case "3":
+                                return '<i class="fa fa-check-square-o" aria-hidden="true" style="color:green"> Aceptado</i>';
+                                break;
+                            case "4":
+                                return '<i class="fa fa-times-circle" aria-hidden="true" style="color:red"> Rechazado</i>';
+                                break;
+                            case "5":
+                                return '<i class="fa fa-exclamation-triangle" aria-hidden="true" style="color:#FF6F00"> Otro</i>';
+                                break;
+                            case "99":
+                                return '<i class="fa fa-exclamation-triangle" aria-hidden="true" style="color:green"> Reportado</i>';
+                                break;
+                            default:
+                                return 'Desconocido';
+                                break;
+
+                        }
+                    }
+                },
+                {
+                    title: "ACCION",
+                    data: "idEstadoComprobante",
+                    className: "buttons",
+                    mRender: function ( e) {
+                        switch (e) {
+                            case "1":
+                                return '<button>CONTACTAR A SOPORTE</button>';
+                                break;
+                            case "4":
+                                return '<button>CONTACTAR A SOPORTE</button>';
+                                break;
+                            case "5":
+                                return '<button>CONTACTAR A SOPORTE</button>';
+                                break;
+                            default:
+                                return '';
+                                break;
+                        }
                     }
                 }
             ],
@@ -327,7 +351,9 @@ class InventarioFacturas {
 //Class Instance
 let inventarioFacturas = new InventarioFacturas();
 
-$('#tb_facturas tbody').on('click', 'tr', function () {
+$('#tb_facturas tbody').on('click', 'td', function () {
+    if (this.textContent == ("CONTACTAR A SOPORTE"))
+        return false;
     inventarioFacturas.ReadbyID(inventarioFacturas.tb_facturas.row(this).data());
     var dtTable = $('#tb_facturas').DataTable();
     var efectivo=0;
@@ -354,4 +380,104 @@ $('#tb_facturas tbody').on('click', 'tr', function () {
     localStorage.setItem("lsReimpresion","OK");
 });
 
+$('#tb_facturas tbody').on( 'click', 'button', function () {
+    var data = inventarioFacturas.tb_facturas.row( $(this).parents('tr') ).data();
+    var id = data['id'];
+    var numeroFactura = data['consecutivo'];
+    var fecha = data['fechaCreacion'];
+    var almacen = data['bodega'];
+    var vendedor = data['vendedor'];
+    var total = '¢'+ parseFloat(data['totalComprobante']).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    var est = data['idEstadoComprobante'];
+    
+    var estado ='';
+    switch (est) {
+        case "1": estado="Sin Enviar"; 
+        break;
+        case "4": estado="Rechazada";
+        break;
+        case "5": estado="Otro";
+        break; 
+    }
+    var object = [id, numeroFactura, fecha, almacen, vendedor, total, estado];
+    $.ajax({
+        type: "POST",
+        url: "class/Factura.php",
+        data: {
+            action: "mailSoporte",
+            facturaMailSoporte: object
+        }
+    })
+    .done(function (e) {
+        var start = moment().subtract(29, 'days');
+        var end = moment();
+
+        function cb(start, end) {
+            $('#dp_rangoListaFacturas span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+        }
+
+        $('#dp_rangoListaFacturas').daterangepicker({
+            "opens": "left",
+            "locale": {
+                "format": "DD/MM/YYYY",
+                "separator": " - ",
+                "applyLabel": "Aplicar",
+                "cancelLabel": "Cancelar",
+                "fromLabel": "From",
+                "toLabel": "To",
+                "customRangeLabel": "Manual",
+                "daysOfWeek": [
+                    "DO",
+                    "Lu",
+                    "Ma",
+                    "Mi",
+                    "Ju",
+                    "Vi",
+                    "Sa"
+                ],
+                "monthNames": [
+                    "Enero",
+                    "Febrero",
+                    "Marzo",
+                    "Abril",
+                    "Mayo",
+                    "Junio",
+                    "Julio",
+                    "Agosto",
+                    "Setiembre",
+                    "Octubre",
+                    "Noviembre",
+                    "Diciembre"
+                ],
+                "firstDay": 1
+            },
+            startDate: start,
+            endDate: end,
+            ranges: {
+                'Hoy': [moment(), moment()],
+                'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                'Ultimos 7 Días': [moment().subtract(6, 'days'), moment()],
+                'Ultimos 30 Días': [moment().subtract(29, 'days'), moment()],
+                'Este Mes': [moment().startOf('month'), moment().endOf('month')],
+                'Ultimo Mes': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            }
+        }, cb);
+
+        cb(start, end);
+
+        inventarioFacturas.fechaInicial = start.format('YYYY-MM-DD') + ' 00:00';
+        inventarioFacturas.fechaFinal = end.format('YYYY-MM-DD') + ' 23:59';
+        inventarioFacturas.CargaListaFacturasRango();
+
+        swal({
+            type: 'success',
+            title: 'La factura con problemas fue notificada a SOPORTE!',
+            showConfirmButton: false,
+            timer: 2000
+        });
+    })
+    .always(function () {
+        
+    });
+});
 

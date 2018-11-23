@@ -264,6 +264,7 @@ class Distribucion {
         //$('.delete').click(distr.DeleteEventHandler);
         //$( "#tDistribucion tbody tr" ).live("click", distr.viewType==undefined || distr.viewType==distr.tUpdate ? distr.UpdateEventHandler : distr.SelectEventHandler);
         //
+        
         //$( document ).on( 'click', '.update', distr.UpdateEventHandler);
         // $(document).on('click', '#tDistribucion tbody tr td:not(.buttons)', distr.viewType == undefined || distr.viewType == distr.tUpdate ? distr.UpdateEventHandler : distr.SelectEventHandler);
         // $( document ).on( 'click', '.delete', distr.DeleteEventHandler);

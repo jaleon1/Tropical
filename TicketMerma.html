@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script src="assets/js/jquery.min.js"></script>
+  <script src="assets/js/Session.min.js"></script>         
+  <!-- JS Moments -->
+  <script src="assets/js/moment.min.js"></script>
+  <!-- JS dataTables -->
+  <script src="assets/js/jquery.dataTables.min.js"></script>
+  <script src="assets/js/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+  <link href="assets/css/print.css" rel="stylesheet">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+</head>
+
+<body>
+  <div id="ticket" style="width:88mm;">
+    <table style="width:91%;">
+      <tbody>
+        <tr style="line-height:10px;"><td><label>-------------------------------------------------------</label></td></tr>
+        <tr style="line-height:10px;font-family:Uroob; text-align: center;"><td>
+          TROPICAL SNO. <label id="bodega"></label>
+        </td></tr>
+        <tr style="line-height:10px;"><td><label>-------------------------------------------------------</label></td></tr>
+        <tr style="line-height:10px;font-family:Uroob; text-align: center;"><td>MERMA CONSECUTIVO: <label id="consecutivo"></label></td></tr>
+        <tr style="line-height:10px;font-family:Uroob; text-align: center;"><td>Fecha: <label id="fecha"></label></td></tr>
+        <tr style="line-height:10px;font-family:Uroob; text-align: center;"><td>Usuario: <label id="usuario"></label></td></tr>
+        
+      </tbody>
+    </table>
+    <table style="width:91%;">
+      <tbody id="tableBody-TicketMerma">
+        <tr style="line-height:10px;"><td colspan="2"><label>-------------------------------------------------------</label></td></tr>
+        <tr>
+            <td style="line-height:10px;font-family:Uroob; width:50%; text-align:left;">Codigo</td>
+            <td style="line-height:10px;font-family:Uroob; width:50%; text-align:left;">Cantidad</td>
+        </tr>
+        <tr style="line-height:10px;"><td colspan="2"><label>-------------------------------------------------------</label></td></tr>
+      </tbody>
+    </table>
+    <table style="line-height:10px;font-family:Uroob; width:91%;">
+      <tbody id="tableBody-TicketTotal">
+      </tbody>
+    </table>
+    <label style="line-height:10px;">--------------------------------------------------------</label>
+  </div>
+  <script src="assets/js/merma.min.js"></script>
+  <script src="assets/js/virtualNumPad/virtualNumPad.js"></script>
+</body>
+
+</html>
+
+<script>
+    $(document).ready(function () {
+
+      $("#bodega").text(localStorage.getItem("lsBodega"));
+      $("#usuario").text(localStorage.getItem("lsUsuario"));
+      $("#consecutivo").text(localStorage.getItem("lsConsecutivo"));
+      var listaProducto = localStorage.getItem("lsListaProducto");
+      listaProducto = JSON.parse(listaProducto);
+      var totalSinI=0;
+      $.each(listaProducto, function (i, item) {
+        $('#tableBody-TicketMerma').append(`
+              <tr> 
+                  <td style="line-height:10px;font-family:Uroob; width:60%; text-align:left;">${item.detalle}</td>
+                  <td style="line-height:10px;font-family:Uroob; width:30%; text-align:right;">¢${parseFloat(item.precioUnitario).toFixed(2)}</td>
+              </tr>
+        `);
+      }) 
+      window.print();
+      localStorage.setItem("lsPrintOK","NOT");
+      // location.href ="/misFacturas.html";
+      location.href ="/Tropical/FacturaCli.html";
+  });  
+</script>

@@ -17,7 +17,7 @@ if(isset($_POST["action"])){
     require_once("Receptor.php");
     require_once("Bodega.php");
     // require_once("productoXFactura.php");
-    
+    require "mail/mail.php";
     // Session
     if (!isset($_SESSION))
         session_start();
@@ -64,6 +64,9 @@ if(isset($_POST["action"])){
             break;
         case "ReadAllbyRangeUser":
             echo json_encode($factura->ReadAllbyRangeUser());
+            break;
+        case "mailSoporte":
+            $factura->mailSoporte();
             break;
     }    
 }
@@ -811,6 +814,46 @@ class Factura{
         }
     }
 
+    function mailSoporte(){
+        try {
+            $facturaMailSoporte = $_POST["facturaMailSoporte"];
+            $this->id=$facturaMailSoporte[0];
+            $mail = new Send_Mail();
+            $mail->email_array_address_to = array("soporte@storylabscr.com");
+            $mail->email_address_to = "soporte@storylabscr.com";
+            $mail->email_subject = "TROPICAL FACTURA # ". $facturaMailSoporte[1] . " CON ESTADO : " . $facturaMailSoporte[6];
+            $mail->email_user = "soporte@storylabscr.com";
+            $mail->email_password = "Story2018+";
+            $mail->email_from_name = "StoryLabs FE";
+            $mail->email_SMTPSecure = "none";
+            $mail->email_Host = "smtpout.secureserver.net";
+            $mail->email_SMTPAuth = true;
+            $mail->email_Port = 80;
+            $mail->email_body = "<p># FACTURA : ". $facturaMailSoporte[1] ."</br>
+                                    ESTADO    : ". $facturaMailSoporte[6] ."</br>                    
+                                    TOTAL     : ". $facturaMailSoporte[5] ."</br>                     
+                                    VENDEDOR  : ". $facturaMailSoporte[4] ."</br>
+                                    FECHA     : ". $facturaMailSoporte[2] ."</br>
+                                    ALMACEN   : ". $facturaMailSoporte[3] ."</br>
+                                    UUID      : ". $facturaMailSoporte[0] ."</P>";
+            // $mail->email_addAttachment = $path_fecha;
+            $mail->send();
+
+            $sql="UPDATE factura SET idEstadoComprobante=:idEstadoComprobante WHERE id=:id";
+            $param= array(':id'=>$this->id, ':idEstadoComprobante'=>99);
+            $data = DATA::Ejecutar($sql,$param, false);
+            if($data)
+                return true;
+            else throw new Exception('Error al actualizar el estado de la factura.', 666);          
+        }     
+        catch(Exception $e) {
+            header('HTTP/1.0 400 Error al generar la factura');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }        
+    }
 }
 
 
