@@ -11,7 +11,7 @@ class MermaAgencia {
 
     get Read() {
         NProgress.start();
-        var miAccion = this.id == null ?  'ReadAll'  : 'Read';
+        var miAccion = this.id == null ?  'ReadCompleto'  : 'Read';
         if(miAccion=='ReadAll' && $('#tMerma tbody').length==0 )
             return;
         $.ajax({
@@ -136,7 +136,7 @@ class MermaAgencia {
             info: false,
             iDisplayLength: nPaging,
             paging: false,
-            order: [2, "desc"],
+            order: [9, "desc"],
             "language": {
                 "infoEmpty": "Sin Registros Ingresados",
                 "emptyTable": "Sin Registros Ingresados",
@@ -162,6 +162,11 @@ class MermaAgencia {
                     data: "idInsumo",
                     className: "itemId",
                     searchable: false,
+                    width: "auto"
+                },
+                {
+                    title: "AGENCIA",
+                    data: "agencia",
                     width: "auto"
                 },
                 { title: "CODIGO", data: "codigo" },
@@ -225,7 +230,7 @@ class MermaAgencia {
     };
 
     crear() {
-        var miAccion = "Create";
+        var miAccion = "CreateInterno";
         //
         var listaok = true;
         merma.listaProducto = [];
