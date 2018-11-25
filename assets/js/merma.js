@@ -244,46 +244,50 @@ class Merma {
         var listaok = true;
         merma.listaInsumo = [];
         $('#tInsumo tbody tr').each(function (i, item) {
-            var objlista = new Object();
-            objlista.idInsumo = $(item).find('td:eq(0)')[0].textContent;
-            objlista.costo = $(item).find('td:eq(3)')[0].textContent
-            objlista.cantidad = $(item).find('td:eq(4) input').val();
-            if ($(item).find('td:eq(5) input').val() != undefined && $(item).find('td:eq(5) input').val() == '') {
-                swal({
-                    type: 'warning',
-                    title: 'Descripción...',
-                    text: 'Debe digitar la descripción de la merma'
-                });
-                listaok = false;
+            if($(item).find('td:eq(0)')[0].textContent!='Sin Registros'){
+                var objlista = new Object();
+                objlista.idInsumo = $(item).find('td:eq(0)')[0].textContent;
+                objlista.costo = $(item).find('td:eq(3)')[0].textContent;
+                objlista.cantidad = $(item).find('td:eq(4) input').val();
+                if ($(item).find('td:eq(5) input').val() != undefined && $(item).find('td:eq(5) input').val() == '') {
+                    swal({
+                        type: 'warning',
+                        title: 'Descripción...',
+                        text: 'Debe digitar la descripción de la merma'
+                    });
+                    listaok = false;
+                }
+                objlista.descripcion = $(item).find('td:eq(5) input').val();
+                merma.listaInsumo.push(objlista);
             }
-            objlista.descripcion = $(item).find('td:eq(5) input').val();
-            merma.listaInsumo.push(objlista);
         });
         merma.listaProducto = [];
         $('#tProducto tbody tr').each(function (i, item) {
-            var objlista = new Object();
-            objlista.idProducto = $(item).find('td:eq(0)')[0].textContent;
-            objlista.costo = $(item).find('td:eq(3)')[0].textContent
-            objlista.cantidad = $(item).find('td:eq(4) input').val();
-            if ($(item).find('td:eq(5) input').val() != undefined && $(item).find('td:eq(5) input').val() == '') {
-                swal({
-                    type: 'warning',
-                    title: 'Descripción...',
-                    text: 'Debe digitar la descripción de la merma'
-                });
-                listaok = false;
+            if($(item).find('td:eq(0)')[0].textContent!='Sin Registros'){
+                var objlista = new Object();
+                objlista.idProducto = $(item).find('td:eq(0)')[0].textContent;
+                objlista.costo = $(item).find('td:eq(3)')[0].textContent
+                objlista.cantidad = $(item).find('td:eq(4) input').val();
+                if ($(item).find('td:eq(5) input').val() != undefined && $(item).find('td:eq(5) input').val() == '') {
+                    swal({
+                        type: 'warning',
+                        title: 'Descripción...',
+                        text: 'Debe digitar la descripción de la merma'
+                    });
+                    listaok = false;
+                }
+                objlista.descripcion = $(item).find('td:eq(5) input').val();
+                merma.listaProducto.push(objlista);
             }
-            objlista.descripcion = $(item).find('td:eq(5) input').val();
-            merma.listaProducto.push(objlista);
         });
         if (!listaok)
             return false;
-        if (merma.listaInsumo[0].idInsumo == 'Sin Registros') {
-            merma.listaInsumo = [];
-        }
-        if (merma.listaProducto[0].idProducto == 'Sin Registros') {
-            merma.listaProducto = [];
-        }
+        // if (merma.listaInsumo[0].idInsumo == 'Sin Registros') {
+        //     merma.listaInsumo = [];
+        // }
+        // if (merma.listaProducto[0].idProducto == 'Sin Registros') {
+        //     merma.listaProducto = [];
+        // }
         if (merma.listaInsumo.length == 0 && merma.listaProducto.length == 0) {
             swal({
                 type: 'warning',
