@@ -465,7 +465,6 @@ class ClienteFE {
         if(e!='[]'){
             // carga lista con datos.
             var data = JSON.parse(e);
-            //selector.html('<option value=null >Sin seleccionar </option>');
             // Recorre arreglo.
             selector.html('');
             $.each(data, function (i, item) {
@@ -479,8 +478,7 @@ class ClienteFE {
             swal({
                 type: 'error',
                 title: 'Oops...',
-                text: 'Algo no está bien, La lista no puede ser cargada',
-                footer: '<a href>Contacte a Soporte Técnico</a>',
+                text: 'Algo no está bien, La lista no puede ser cargada'
             })
         }
     };

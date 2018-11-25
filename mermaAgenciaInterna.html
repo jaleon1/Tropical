@@ -28,7 +28,8 @@
     <link href="assets/css/iCheck/skins/flat/green.css" rel="stylesheet">
     <!-- SweetAlert -->
     <link rel="stylesheet" href="assets/css/sweetalert2.min.css">
-
+    <!-- select -->
+    <link href="assets/css/bootstrap-select.css" rel="stylesheet">
     <!-- Datatables -->
     <link href="../vendors/datatables.net-bs/css/dataTables.bootstrap.min.css" rel="stylesheet">
     <link href="../vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css" rel="stylesheet">
@@ -48,7 +49,7 @@
                 <div class="left_col scroll-view">
                     <div class="navbar nav_title" style="border: 0;">
                         <a href="index.html" class="site_title">
-                            
+
                             <span>TropicalSNO</span>
                         </a>
                     </div>
@@ -133,7 +134,7 @@
             <div class="right_col" role="main">
                 <div class="">
                     <div class="page-title">
- 
+
                         <div class="title_right">
                             <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
                                 <div class="input-group">
@@ -153,7 +154,7 @@
                         <div class="col-md-12 col-sm-12 col-xs-12">
                             <div class="x_panel">
                                 <div class="x_title">
-                                    <h2>Merma Agencia</h2>
+                                    <h2>Merma Agencia Interna</h2>
                                     <div class="clearfix"></div>
                                 </div>
                                 <!--  CONTENIDO DE LA PAGINA -->
@@ -161,11 +162,25 @@
                                     <!-- MATERIA PRIMA -->
                                     <div class="col-md-12 col-sm-12 col-xs-9">
                                         <div class="x_panel">
+
+                                            <div class="item form-group">
+                                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="idBodega">Agencia
+                                                    <span class="required">*</span>
+                                                </label>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <select class="selectpicker show-menu-arrow form-control" type="select"
+                                                        required="required" id="idBodega" name="idBodega"></select>
+                                                </div>
+                                            </div>
+
+                                            <br>
+                                            <br>
+
                                             <div class="title_right">
                                                 <div class="col-md-12 col-sm-12 col-xs-12 form-group pull-right top_search">
                                                     <div class="input-group">
                                                         <input autofocus type="text" class="form-control" id="p_searhProducto"
-                                                            placeholder="Ingresar código de producto.">
+                                                            placeholder="Ingresar código.">
                                                         <span class="input-group-btn">
                                                             <button class="btn btn-default" type="button">Buscar</button>
                                                         </span>
@@ -189,13 +204,13 @@
                                         </div>
                                     </div>
                                     <!-- /MATERIA PRIMA -->
-                                    
+
                                 </div>
 
                                 <!--  /CONTENIDO DE LA PAGINA -->
                             </div>
 
-                        </div>                      
+                        </div>
 
                         <div class="form-group">
                             <div class="col-xs-12 col-xs-offset-6 col-md-12 col-md-offset-6 col-lg-12 col-lg-offset-6">
@@ -241,11 +256,12 @@
 
     <!-- JS Scripts -->
     <script src="assets/js/Insumo.min.js"></script>
-    <script src="assets/js/Producto.min.js"></script>    
-    <script src="assets/js/mermaAgencia.min.js"></script>
+    <script src="assets/js/Producto.min.js"></script>
+    <script src="assets/js/mermaAgenciaInterna.js"></script>
     <!-- Sweet Alert -->
     <script src="assets/js/sweetalert2.min.js"></script>
-
+    <!-- Select -->
+    <script src="assets/js/bootstrap-select.js"></script>
     <!-- Datatables -->
     <script src="../vendors/datatables.net/js/jquery.dataTables.min.js"></script>
     <!-- Custom Theme Scripts -->
@@ -258,10 +274,11 @@
 <script>
     $(document).ready(function () {
         producto.setTableMerma();
+        merma.ReadBodegas;
     });
     $("#p_searhProducto").keyup(function (e) {
         if (e.which == 13)
-            producto.ReadbyCodeAgencia($('#p_searhProducto').val());
+        merma.ReadbyCodeAgencia($('#p_searhProducto').val());
     });
     $('#btnMerma').click(function () {
         merma.crear();
