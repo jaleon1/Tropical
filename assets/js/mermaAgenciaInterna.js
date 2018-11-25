@@ -288,7 +288,7 @@ class MermaAgencia {
         if (cod != ""){    
             producto= new Producto();
             producto.codigo= cod;
-            merma.idBodega= 
+            merma.idBodega= $('#idBodega option:selected').val();
             //
             $.ajax({
                 type: "POST",
@@ -368,7 +368,6 @@ class MermaAgencia {
             .node();     
         //
         $('td:eq(3) input', rowNode).attr({id: (producto.codigo), max:  producto.saldoCantidad, min: "1", step:"1", value:"1" }).change(function(){
-            //producto.checkCantidadMerma($(this).parents('tr').find('td:eq(4)').html());
             if(parseFloat(this.value)>parseFloat(this.max)){
                 swal({
                     type: 'warning',

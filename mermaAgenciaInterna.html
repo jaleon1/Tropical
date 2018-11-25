@@ -275,6 +275,9 @@
     $(document).ready(function () {
         producto.setTableMerma();
         merma.ReadBodegas;
+        $('#idBodega').on('change', function(e){
+            merma.idBodega= $(this).val();
+        });
     });
     $("#p_searhProducto").keyup(function (e) {
         if (e.which == 13)
