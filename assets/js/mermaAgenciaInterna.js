@@ -81,7 +81,7 @@ class MermaAgencia {
         })
     };
 
-    DeleteMerma(e){        
+    DeleteMerma(e){
         swal({
             title: 'Devolver Merma de Agencia?',
             text: "Esta acción es irreversible!",
@@ -97,8 +97,8 @@ class MermaAgencia {
             if (result.value) {
                 merma.id = $(e).parents("tr").find("td:eq(0)").text();
                 merma.idInsumo = $(e).parents("tr").find("td:eq(1)").text();
-                merma.consecutivo = $(e).parents("tr").find("td:eq(3)").text();
-                merma.cantidad = $(e).parents("tr").find("td:eq(6)").text();
+                merma.consecutivo = $(e).parents("tr").find("td:eq(4)").text();
+                merma.cantidad = $(e).parents("tr").find("td:eq(7)").text();
                 // merma.costo = $(e).find('td:eq(7) input').val();
                 $.ajax({
                     type: "POST",
