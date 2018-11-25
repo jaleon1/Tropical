@@ -125,10 +125,15 @@ class MermaAgencia {
                     searchable: false,
                     width: "auto"
                 },
+                {
+                    title: "AGENCIA",
+                    data: "agencia",
+                    width: "auto"
+                },
                 { title: "CODIGO", data: "codigo" },
                 { title: "CONSECUTIVO", data: "consecutivo" },
                 { title: "NOMBRE", data: "nombre" },
-                { title: "DESCRIPCION", data: "descripcion" },
+                // { title: "DESCRIPCION", data: "descripcion" },
                 { 
                     title: "CANTIDAD", 
                     data: "cantidad"

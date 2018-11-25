@@ -16,6 +16,9 @@ if(isset($_POST["action"])){
         case "ReadAll": // todos los insumos de una bodega específica
             echo json_encode($productosxbodega->ReadAll());
             break;
+        case "ReadCompleto": // todas las bodegas
+            echo json_encode($productosxbodega->ReadCompleto());
+            break;
         case "Read":
             echo json_encode($productosxbodega->Read());
             break;
@@ -83,14 +86,34 @@ class InsumosXBodega{
 
     function ReadAll(){
         try {
-            $sql='SELECT p.id, p.codigo, p.nombre, p.descripcion, ib.saldoCantidad, ib.saldoCosto, ib.costoPromedio
+            $sql='SELECT p.id, b.nombre as agencia, p.codigo, p.nombre, p.descripcion, ib.saldoCantidad, ib.saldoCosto, ib.costoPromedio
                 FROM insumosXBodega ib INNER JOIN producto p on p.id = ib.idProducto
+                INNER JOIN bodega b on b.id = ib.idBodega
                 WHERE    idBodega= :idBodega';
             $param= array(':idBodega'=>$this->idBodega);
             $data= DATA::Ejecutar($sql,$param);
             return $data;
         }     
-        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+        catch(Exception $e) { 
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar la lista'))
+            );
+        }
+    }
+
+    function ReadCompleto(){
+        try {
+            $sql='SELECT p.id, b.nombre as agencia, p.codigo, p.nombre, p.descripcion, ib.saldoCantidad, ib.saldoCosto, ib.costoPromedio
+                FROM insumosXBodega ib INNER JOIN producto p on p.id = ib.idProducto
+                    INNER JOIN bodega b on b.id = ib.idBodega';
+            $data= DATA::Ejecutar($sql);
+            return $data;
+        }     
+        catch(Exception $e) { 
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,

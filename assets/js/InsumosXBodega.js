@@ -44,6 +44,27 @@ class InsumoBodega {
             });
     }
 
+    get ReadCompleto() {
+        var miAccion = 'ReadCompleto';
+        if(miAccion=='ReadAll' && $('#tInsumo tbody').length==0 )
+            return;
+        $.ajax({
+            type: "POST",
+            url: "class/InsumosXBodega.php",
+            data: {
+                action: miAccion,
+                id: this.id,
+                // idBodega: this.idBodega no envpia el idBodega, toma el de la sesion.
+            }
+        })
+            .done(function (e) {
+                insumobodega.Reload(e);
+            })
+            .fail(function (e) {
+                insumobodega.showError(e);
+            });
+    }
+
     get ReadByBodega() {
         var miAccion = this.id == null ?  'ReadAll'  : 'Read';
         if(miAccion=='ReadAll' && $('#tInsumo tbody').length==0 )
@@ -182,7 +203,7 @@ class InsumoBodega {
         })
     };
 
-    setTable(buttons=true){
+    setTable(buttons=true, completo=false){
         $('#tInsumo').DataTable({
             responsive: true,
             info: false,
@@ -207,6 +228,11 @@ class InsumoBodega {
                     data: "id",
                     className: "itemId",                    
                     searchable: false
+                },
+                { 
+                    title: "AGENCIA", 
+                    data: "agencia",
+                    visible: completo  
                 },
                 { 
                     title: "CODIGO", 

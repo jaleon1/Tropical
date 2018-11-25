@@ -20,8 +20,14 @@ if(isset($_POST["action"])){
         case "ReadAll":
             echo json_encode($merma->ReadAll());
             break;
+        case "ReadCompleto":
+            echo json_encode($merma->ReadCompleto());
+            break;
         case "Create":
             echo json_encode($merma->Create());
+            break;
+        case "CreateInterno":
+            echo json_encode($merma->CreateInterno());
             break;
         case "rollback":
             $merma->idInsumo = $_POST["idInsumo"];
@@ -48,11 +54,16 @@ class MermaAgencia{
         if(isset($_POST["id"])){
             $this->id= $_POST["id"];
         }
+        if(isset($_POST["idBodega"])){
+            $this->idBodega= $_POST["idBodega"];
+        }
+        else $this->idBodega= $_SESSION['userSession']->idBodega;
+        //
         if(isset($_POST["obj"])){
             $obj= json_decode($_POST["obj"],true);
             require_once("UUID.php");
             $this->id= $obj["id"] ?? UUID::v4();
-            $this->idBodega= $_SESSION['userSession']->idBodega;
+            $this->idBodega= $obj['idBodega']?? $_SESSION['userSession']->idBodega;
             // merma
             if(isset($obj["listaProducto"])){
                 $this->listaProducto= [];
@@ -71,13 +82,34 @@ class MermaAgencia{
 
     function ReadAll(){
         try {
-            $sql='SELECT m.id, m.idInsumo, p.codigo, m.consecutivo, p.nombre, p.descripcion, m.cantidad, m.descripcion, m.fecha
+            $sql='SELECT m.id, m.idInsumo, b.nombre as agencia, p.codigo, m.consecutivo, p.nombre, m.cantidad, m.descripcion, m.fecha
                 FROM mermaAgencia m 
                 inner join insumosXBodega x on x.id = m.idInsumo
                 inner join producto p on p.id = x.idProducto
+                inner join bodega b on b.id = m.idBodega
                 WHERE m.idBodega =:idBodega';
-            $param= array(':idBodega'=> $_SESSION['userSession']->idBodega);
+            $param= array(':idBodega'=> $this->idBodega);
             $data = DATA::Ejecutar($sql,$param);
+            return $data;
+        }     
+        catch(Exception $e) {
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar la lista'))
+            );
+        }
+    }
+
+    function ReadCompleto(){
+        try {
+            $sql='SELECT m.id, m.idInsumo, b.nombre as agencia, p.codigo, m.consecutivo, p.nombre, m.cantidad, m.descripcion, m.fecha
+                FROM mermaAgencia m 
+                inner join insumosXBodega x on x.id = m.idInsumo
+                inner join producto p on p.id = x.idProducto
+                inner join bodega b on b.id = m.idBodega';
+            $data = DATA::Ejecutar($sql);
             return $data;
         }     
         catch(Exception $e) {
@@ -126,6 +158,40 @@ class MermaAgencia{
                 // $data = DATA::Ejecutar($sql);
                 // actualiza item.
                 InventarioInsumoXBodega::mermaAgenciaSalida( $item->id, 'porcionXX', $item->cantidad);
+                // ***************** imprimir. ***************************
+                // ***************** imprimir. ***************************
+                // ***************** imprimir. ***************************
+            }
+            //
+            if($created)
+                return true;
+            else throw new Exception('Error al restar MERMA, debe realizar el procedimiento manualmente.', 666);
+        }     
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }
+    }
+
+    function CreateInterno(){
+        try {
+            $created=true;
+            // insumos
+            foreach ($this->listaProducto as $item) {
+                require_once("UUID.php");
+                $id= UUID::v4();
+                // historico merma
+                $sql="INSERT INTO mermaAgencia (id, idInsumo, cantidad, descripcion, idBodega)
+                    VALUES (:id, :idInsumo, :cantidad, :descripcion, :idBodega)";
+                $param= array(':id'=> $id,':idInsumo'=> $item->id, ':cantidad'=> $item->cantidad, ':descripcion'=> $item->descripcion, ':idBodega'=> $this->idBodega);
+                $data = DATA::Ejecutar($sql,$param,false);
+                if(!$data)
+                    $created= false;
+                // actualiza item.
+                InventarioInsumoXBodega::mermaAgenciaSalidaInterno( $item->id, 'porcionXX', $item->cantidad, $this->idBodega);
                 // ***************** imprimir. ***************************
                 // ***************** imprimir. ***************************
                 // ***************** imprimir. ***************************

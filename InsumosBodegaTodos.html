@@ -131,7 +131,7 @@
                     <div class="page-title">
                         <div class="title_left">
                             
-                            <h3 class='call_Bodega'>Menu</h3>
+                            <h3>INVENTARIO AGENCIA INTERNA</h3>
                         </div>
 
                         <div class="title_right">
@@ -297,7 +297,7 @@
     <!-- Input mask -->
     <script src="assets/js/jquery.inputmask/jquery.inputmask.bundle.min.js"></script>
     <!-- JS Scripts -->
-    <script src="assets/js/InsumosXBodega.min.js"></script>
+    <script src="assets/js/InsumosXBodega.js"></script>
     <script src="assets/js/sweetalert2.min.js"></script>
     <!-- Datatables -->
     <script src="../vendors/datatables.net/js/jquery.dataTables.min.js"></script>
@@ -313,8 +313,8 @@
 <script>
     $(document).ready(function () {
         insumobodega.id = null;
-        insumobodega.setTable();
-        insumobodega.Read;
+        insumobodega.setTable(false, true);
+        insumobodega.ReadCompleto;
         insumobodega.Init();
     });
 </script>
