@@ -184,6 +184,27 @@ class Distribucion {
         location.href = "/TicketDistribucion.html";
     }
 
+    ticketRePrint() {
+        // if (bodega.tipo == "Interna")
+        //     localStorage.setItem("lsTipoBodega", "interna");
+        // else
+        //     localStorage.setItem("lsTipoBodega", "externa");
+
+        // var data = JSON.parse(e);
+        // localStorage.setItem("lsOrden", data.orden);
+        // localStorage.setItem("lsBodega", $("#nombre").val());
+        // localStorage.setItem("lsDescripcion", $("#descripcion").val());
+        // localStorage.setItem("lsSubTotal", $("#subtotal").text());
+        // localStorage.setItem("lsTotal", $("#total").text());
+        // localStorage.setItem("lsFechaDistribucion", data.fecha);
+        // localStorage.setItem("lsPorcentajeDescuento", $("#desc_val").text());
+        // localStorage.setItem("lsPorcentajeIva", $("#iv_val").text());
+        // localStorage.setItem("lsListaProducto", JSON.stringify(data.lista));
+        // localStorage.setItem("lsUsuarioDistribucion", $("#call_username").text());
+        // location.href ="/Tropical/TicketDistribucion.html";
+        // location.href = "/TicketDistribucion.html";
+    }
+
     get ReadbyOrden() {
         $('#orden').attr("disabled", "disabled");
         var miAccion = 'ReadbyOrden';
@@ -264,7 +285,7 @@ class Distribucion {
         //$('.delete').click(distr.DeleteEventHandler);
         //$( "#tDistribucion tbody tr" ).live("click", distr.viewType==undefined || distr.viewType==distr.tUpdate ? distr.UpdateEventHandler : distr.SelectEventHandler);
         //
-        
+
         //$( document ).on( 'click', '.update', distr.UpdateEventHandler);
         // $(document).on('click', '#tDistribucion tbody tr td:not(.buttons)', distr.viewType == undefined || distr.viewType == distr.tUpdate ? distr.UpdateEventHandler : distr.SelectEventHandler);
         // $( document ).on( 'click', '.delete', distr.DeleteEventHandler);

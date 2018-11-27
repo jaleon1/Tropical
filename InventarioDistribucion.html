@@ -228,6 +228,11 @@
 
                     </div>
                     <div class="modal-footer">
+                        <div class="form-group">
+                            <div class="col-md-6 col-md-offset-3">
+                                <button id="btnReimprimeDistribucion" type="submit" class="btn btn-success">Reimprimir</button>
+                            </div>
+                        </div>
                         <div id="totalDistribucion">
 
                         </div>
@@ -256,6 +261,7 @@
     <script src="assets/js/jquery.inputmask/jquery.inputmask.bundle.min.js"></script>
     <!-- JS Scripts -->
     <script src="assets/js/Distribucion.js"></script>
+    <script src="assets/js/aceptarDistribucion.js"></script>
     <script src="assets/js/Producto.min.js"></script>
     <script src="assets/js/Bodega.min.js"></script>
     <script src="assets/js/sweetalert2.min.js"></script>
@@ -358,5 +364,9 @@
         });
 
         $(document).on('click', '#tDistribucion tbody tr td:not(.buttons)', distr.viewType == undefined || distr.viewType == distr.tUpdate ? distr.UpdateEventHandler : distr.SelectEventHandler);
+
+        $(document).on('click', '#btnReimprimeDistribucion', function (event) {
+            distr.ticketRePrint();
+        });
     });
 </script>
