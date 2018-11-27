@@ -181,16 +181,12 @@ class InventarioFacturas {
                 {
                     title: "ACCION",
                     className: "buttons",
-                    data: "cancelada",
+                    data: "claveNC",
                     mRender: function ( e) {
-                        switch (e) {
-                            case "0":
-                                return '<button>Cancelar Factura</button>';
-                                break;
-                            case "1":
-                                return '<i class="fa fa-check-square-o" aria-hidden="true" style="color:green">Facura Cancelada!</i>';
-                                break;
-                        }
+                        if(e==null)
+                            return '<button>Cancelar Factura</button>';
+                        else
+                            return '<i class="fa fa-check-square-o" aria-hidden="true" style="color:green">Facura Cancelada!</i>';
                     }
                 }
             ],

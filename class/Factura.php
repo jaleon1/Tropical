@@ -69,9 +69,6 @@ if(isset($_POST["action"])){
         case "mailSoporte":
             $factura->mailSoporte();
             break;
-        case "facturaCancelada":
-            $factura->facturaCancelada();
-            break;
     }    
 }
 
@@ -235,7 +232,7 @@ class Factura{
 
     function ReadAllbyRange(){
         try {
-            $sql='SELECT fac.id, fac.idBodega, bod.nombre bodega, fac.fechaCreacion, fac.consecutivo, fac.totalComprobante, fac.idUsuario, usr.nombre vendedor, fac.montoEfectivo, fac.montoTarjeta, fac.idEstadoComprobante, fac.totalComprobante, (SELECT count(idFacturaCancelada) FROM facturaCancelada WHERE idFacturaCancelada=fac.id) as cancelada
+            $sql='SELECT fac.id, fac.idBodega, bod.nombre bodega, fac.fechaCreacion, fac.consecutivo, fac.totalComprobante, fac.idUsuario, usr.nombre vendedor, fac.montoEfectivo, fac.montoTarjeta, fac.idEstadoComprobante, fac.totalComprobante, fac.claveNC
                 FROM factura fac
                 INNER JOIN bodega bod on bod.id = fac.idBodega
                 INNER JOIN usuario usr on usr.id = fac.idUsuario
@@ -283,7 +280,7 @@ class Factura{
 
     function ReadAllbyRangeUser(){
         try {
-            $sql='SELECT fac.id, fac.idBodega, bod.nombre bodega, fac.fechaCreacion, fac.consecutivo, fac.totalComprobante, fac.idUsuario, usr.nombre vendedor, fac.montoEfectivo, fac.montoTarjeta, fac.idEstadoComprobante, fac.totalComprobante, (SELECT count(idFacturaCancelada) FROM facturaCancelada WHERE idFacturaCancelada=fac.id) as cancelada
+            $sql='SELECT fac.id, fac.idBodega, bod.nombre bodega, fac.fechaCreacion, fac.consecutivo, fac.totalComprobante, fac.idUsuario, usr.nombre vendedor, fac.montoEfectivo, fac.montoTarjeta, fac.idEstadoComprobante, fac.totalComprobante, fac.claveNC
                 FROM factura fac
                 INNER JOIN bodega bod on bod.id = fac.idBodega
                 INNER JOIN usuario usr on usr.id = fac.idUsuario
@@ -729,7 +726,6 @@ class Factura{
                 $data = DATA::Ejecutar($sql,$param, false);
                 if($data)
                 {
-                    $this->facturaCancelada();
                     $this->read();
                     // envía la factura
                     FacturacionElectronica::iniciarNC($this);
@@ -859,24 +855,6 @@ class Factura{
                 'msg' => $e->getMessage()))
             );
         }        
-    }
-
-    function facturaCancelada(){
-        try {
-            $sql="INSERT INTO facturaCancelada (id,idFacturaCancelada) VALUES (uuid(),:id)";
-            $param= array(':id'=>$this->id);
-            $data = DATA::Ejecutar($sql,$param, false);
-            if($data)
-                return true;
-        }     
-        catch(Exception $e) {
-            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
-            header('HTTP/1.0 400 Bad error');
-            die(json_encode(array(
-                'code' => $e->getCode() ,
-                'msg' => $e->getMessage()))
-            );
-        }
     }
 }
 
