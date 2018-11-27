@@ -237,6 +237,7 @@
                 </div>
             </div>
         </div>
+    </div>
         <!-- modals -->
         <!-- Large modal -->
 
@@ -258,7 +259,7 @@
         <script src="assets/js/jquery.inputmask/jquery.inputmask.bundle.min.js"></script>
         <!-- JS Scripts -->
         <script src="assets/js/Producto.min.js"></script>
-        <script src="assets/js/InventarioFacturas.min.js"></script>
+        <script src="assets/js/InventarioFacturas.js"></script>
         <!-- Sweet Alert -->
         <script src="assets/js/sweetalert2.min.js"></script>
         <!-- Datatables -->
@@ -363,6 +364,44 @@
             inventarioFacturas.ticketPrint();
         });
         $("#tb_facturas").append("<tfoot><tr><th style='visibility:hidden'></th><th></th><th></th><th></th><th></th><th></th><th style='visibility:hidden'></th><th style='visibility:hidden'></th><th></th></tr></tfoot>");
+
+        $('#tb_facturas tbody').on( 'click', 'button', function () {   
+            var data = inventarioFacturas.tb_facturas.row( $(this).parents('tr') ).data();
+            swal({
+                title: 'Desea cancelar la factura ?',
+                input: 'text',
+                inputAttributes: {
+                    autocapitalize: 'off'
+                },
+                showCancelButton: true,
+                confirmButtonText: 'Si, Cancelar!',
+                showLoaderOnConfirm: true,
+                allowOutsideClick: () => !swal.isLoading()
+                }).then((result) => {
+                    if (result.value) {
+                        $.ajax({
+                            type: "POST",
+                            url: "class/Factura.php",
+                            data: {
+                                action: "sendNotaCredito",
+                                id: data['id'],
+                                razon: result.value,
+                            }
+                        })
+                            .done(function (e) {
+                                swal({
+                                    type: 'success',
+                                    title: 'Factura Cancelada!',
+                                    showConfirmButton: false,
+                                    timer: 2000
+                                });
+                            })
+                            .fail(function (e) {
+                                
+                            });
+                    }
+            })
+        });
     });
 
 </script>

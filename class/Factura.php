@@ -18,7 +18,7 @@ if(isset($_POST["action"])){
     require_once("Bodega.php");
     require_once("wsBCCR.php");
     // require_once("productoXFactura.php");
-    
+    require "mail/mail.php";
     // Session
     if (!isset($_SESSION))
         session_start();
@@ -65,6 +65,12 @@ if(isset($_POST["action"])){
             break;
         case "ReadAllbyRangeUser":
             echo json_encode($factura->ReadAllbyRangeUser());
+            break;
+        case "mailSoporte":
+            $factura->mailSoporte();
+            break;
+        case "facturaCancelada":
+            $factura->facturaCancelada();
             break;
     }    
 }
@@ -229,7 +235,7 @@ class Factura{
 
     function ReadAllbyRange(){
         try {
-            $sql='SELECT fac.id, fac.idBodega, bod.nombre bodega, fac.fechaCreacion, fac.consecutivo, fac.totalComprobante, fac.idUsuario, usr.nombre vendedor, fac.montoEfectivo, fac.montoTarjeta, fac.idEstadoComprobante, fac.totalComprobante
+            $sql='SELECT fac.id, fac.idBodega, bod.nombre bodega, fac.fechaCreacion, fac.consecutivo, fac.totalComprobante, fac.idUsuario, usr.nombre vendedor, fac.montoEfectivo, fac.montoTarjeta, fac.idEstadoComprobante, fac.totalComprobante, (SELECT count(idFacturaCancelada) FROM facturaCancelada WHERE idFacturaCancelada=fac.id) as cancelada
                 FROM factura fac
                 INNER JOIN bodega bod on bod.id = fac.idBodega
                 INNER JOIN usuario usr on usr.id = fac.idUsuario
@@ -277,7 +283,7 @@ class Factura{
 
     function ReadAllbyRangeUser(){
         try {
-            $sql='SELECT fac.id, fac.idBodega, bod.nombre bodega, fac.fechaCreacion, fac.consecutivo, fac.totalComprobante, fac.idUsuario, usr.nombre vendedor, fac.montoEfectivo, fac.montoTarjeta, fac.idEstadoComprobante, fac.totalComprobante
+            $sql='SELECT fac.id, fac.idBodega, bod.nombre bodega, fac.fechaCreacion, fac.consecutivo, fac.totalComprobante, fac.idUsuario, usr.nombre vendedor, fac.montoEfectivo, fac.montoTarjeta, fac.idEstadoComprobante, fac.totalComprobante, (SELECT count(idFacturaCancelada) FROM facturaCancelada WHERE idFacturaCancelada=fac.id) as cancelada
                 FROM factura fac
                 INNER JOIN bodega bod on bod.id = fac.idBodega
                 INNER JOIN usuario usr on usr.id = fac.idUsuario
@@ -723,6 +729,7 @@ class Factura{
                 $data = DATA::Ejecutar($sql,$param, false);
                 if($data)
                 {
+                    $this->facturaCancelada();
                     $this->read();
                     // envía la factura
                     FacturacionElectronica::iniciarNC($this);
@@ -813,6 +820,64 @@ class Factura{
         }
     }
 
+    function mailSoporte(){
+        try {
+            $facturaMailSoporte = $_POST["facturaMailSoporte"];
+            $this->id=$facturaMailSoporte[0];
+            $mail = new Send_Mail();
+            $mail->email_array_address_to = array("soporte@storylabscr.com");
+            $mail->email_address_to = "soporte@storylabscr.com";
+            $mail->email_subject = "TROPICAL FACTURA # ". $facturaMailSoporte[1] . " CON ESTADO : " . $facturaMailSoporte[6];
+            $mail->email_user = "soporte@storylabscr.com";
+            $mail->email_password = "Story2018+";
+            $mail->email_from_name = "StoryLabs FE";
+            $mail->email_SMTPSecure = "none";
+            $mail->email_Host = "smtpout.secureserver.net";
+            $mail->email_SMTPAuth = true;
+            $mail->email_Port = 80;
+            $mail->email_body = "<p># FACTURA : ". $facturaMailSoporte[1] ."</br>
+                                    ESTADO    : ". $facturaMailSoporte[6] ."</br>                    
+                                    TOTAL     : ". $facturaMailSoporte[5] ."</br>                     
+                                    VENDEDOR  : ". $facturaMailSoporte[4] ."</br>
+                                    FECHA     : ". $facturaMailSoporte[2] ."</br>
+                                    ALMACEN   : ". $facturaMailSoporte[3] ."</br>
+                                    UUID      : ". $facturaMailSoporte[0] ."</P>";
+            // $mail->email_addAttachment = $path_fecha;
+            $mail->send();
+
+            $sql="UPDATE factura SET idEstadoComprobante=:idEstadoComprobante WHERE id=:id";
+            $param= array(':id'=>$this->id, ':idEstadoComprobante'=>99);
+            $data = DATA::Ejecutar($sql,$param, false);
+            if($data)
+                return true;
+            else throw new Exception('Error al actualizar el estado de la factura.', 666);          
+        }     
+        catch(Exception $e) {
+            header('HTTP/1.0 400 Error al generar la factura');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }        
+    }
+
+    function facturaCancelada(){
+        try {
+            $sql="INSERT INTO facturaCancelada (id,idFacturaCancelada) VALUES (uuid(),:id)";
+            $param= array(':id'=>$this->id);
+            $data = DATA::Ejecutar($sql,$param, false);
+            if($data)
+                return true;
+        }     
+        catch(Exception $e) {
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }
+    }
 }
 
 
