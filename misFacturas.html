@@ -353,7 +353,7 @@ $(document).ready(function () {
         $('#tb_facturas tbody').on( 'click', 'button', function () {   
             var data = inventarioFacturas.tb_facturas.row( $(this).parents('tr') ).data();
             swal({
-                title: 'Desea cancelar la factura ?',
+                title: 'Desea cancelar la factura ? Escriba una razón:',
                 input: 'text',
                 inputAttributes: {
                     autocapitalize: 'off'
@@ -374,6 +374,65 @@ $(document).ready(function () {
                             }
                         })
                             .done(function (e) {
+                                var start = moment().subtract(29, 'days');
+                                var end = moment();
+
+                                function cb(start, end) {
+                                    $('#dp_rangoListaFacturas span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+                                }
+
+                                $('#dp_rangoListaFacturas').daterangepicker({
+                                    "opens": "left",
+                                    "locale": {
+                                        "format": "DD/MM/YYYY",
+                                        "separator": " - ",
+                                        "applyLabel": "Aplicar",
+                                        "cancelLabel": "Cancelar",
+                                        "fromLabel": "From",
+                                        "toLabel": "To",
+                                        "customRangeLabel": "Manual",
+                                        "daysOfWeek": [
+                                            "DO",
+                                            "Lu",
+                                            "Ma",
+                                            "Mi",
+                                            "Ju",
+                                            "Vi",
+                                            "Sa"
+                                        ],
+                                        "monthNames": [
+                                            "Enero",
+                                            "Febrero",
+                                            "Marzo",
+                                            "Abril",
+                                            "Mayo",
+                                            "Junio",
+                                            "Julio",
+                                            "Agosto",
+                                            "Setiembre",
+                                            "Octubre",
+                                            "Noviembre",
+                                            "Diciembre"
+                                        ],
+                                        "firstDay": 1
+                                    },
+                                    startDate: start,
+                                    endDate: end,
+                                    ranges: {
+                                        'Hoy': [moment(), moment()],
+                                        'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                                        'Ultimos 7 Días': [moment().subtract(6, 'days'), moment()],
+                                        'Ultimos 30 Días': [moment().subtract(29, 'days'), moment()],
+                                        'Este Mes': [moment().startOf('month'), moment().endOf('month')],
+                                        'Ultimo Mes': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                                    }
+                                }, cb);
+
+                                cb(start, end);
+
+                                inventarioFacturas.fechaInicial = start.format('YYYY-MM-DD') + ' 00:00';
+                                inventarioFacturas.fechaFinal = end.format('YYYY-MM-DD') + ' 23:59';
+                                inventarioFacturas.CargaListaFacturasRango();
                                 swal({
                                     type: 'success',
                                     title: 'Factura Cancelada!',
@@ -385,6 +444,12 @@ $(document).ready(function () {
                                 
                             });
                     }
+                    else
+                        swal({
+                            type: 'error',
+                            title: 'Error al cancelar',
+                            text: 'Debe de digitar una razón'
+                        })
             })
         });
 });
