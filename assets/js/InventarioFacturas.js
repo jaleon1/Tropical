@@ -182,11 +182,30 @@ class InventarioFacturas {
                     title: "ACCION",
                     className: "buttons",
                     data: "claveNC",
-                    mRender: function ( e) {
-                        if(e==null)
-                            return '<button>Cancelar Factura</button>';
-                        else
-                            return '<i class="fa fa-check-square-o" aria-hidden="true" style="color:green">Facura Cancelada!</i>';
+                    render: function ( data, type, row, meta ) {
+                        if(data==null)
+                            switch (row['idEstadoComprobante']) {
+                                case "1":
+                                    return '<button>Enviar</button>';
+                                    break;
+                                case "2":
+                                    return '<button>Consultar</button>';
+                                    break;
+                                case "3":
+                                    return '<button class=btnCancelaFactura>Cancelar Factura</button>';
+                                    break;
+                                case "4":
+                                    return '<button class=btnCancelaFactura>Cancelar Factura</button>';
+                                    break;
+                                case "5":
+                                    return '<button>Contactar a Soporte</button>';
+                                    break;
+                                default:
+                                    return '<button>Contactar a Soporte</button>';
+                                    break;
+                            }    
+                            else
+                                return '<i class="fa fa-check-square-o" aria-hidden="true" style="color:green">Facura Cancelada!</i>';
                     }
                 }
             ],
