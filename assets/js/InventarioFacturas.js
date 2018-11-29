@@ -186,10 +186,10 @@ class InventarioFacturas {
                         if(data==null)
                             switch (row['idEstadoComprobante']) {
                                 case "1":
-                                    return '<button>Enviar</button>';
+                                    return '<button class=btnEnviarFactura>Enviar</button>';
                                     break;
                                 case "2":
-                                    return '<button>Consultar</button>';
+                                    return '<button class=btnConsultafactura>Consultar</button>';
                                     break;
                                 case "3":
                                     return '<button class=btnCancelaFactura>Cancelar Factura</button>';
@@ -198,7 +198,7 @@ class InventarioFacturas {
                                     return '<button class=btnCancelaFactura>Cancelar Factura</button>';
                                     break;
                                 case "5":
-                                    return '<button>Contactar a Soporte</button>';
+                                    return '<button class=btnReenviarFactura>Reenviar</button><button class=btnSoporte>Soporte</button>';
                                     break;
                                 default:
                                     return '<button>Contactar a Soporte</button>';

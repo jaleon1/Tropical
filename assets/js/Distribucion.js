@@ -185,6 +185,19 @@ class Distribucion {
     }
 
     ticketRePrint() {
+
+        var lsListaProducto = [];
+        $("#tb_detalle_distribucion tr").each(function() {
+            var tds = $("td", $(this));
+            lsListaProducto.push({
+            column1: tds[0].text(),
+            column2: tds[1].text(),
+            column2: tds[2].text(),
+            column2: tds[3].text(),
+            column2: tds[4].text()
+            });
+        });
+
         // if (bodega.tipo == "Interna")
         //     localStorage.setItem("lsTipoBodega", "interna");
         // else
