@@ -43,7 +43,10 @@ if(isset($_POST["action"])){
             break;
         case "Delete":
             echo json_encode($factura->Delete());
-            break;   
+            break;
+        case "enviarDocumentoElectronico":
+            echo json_encode($factura->enviarDocumentoElectronico());
+            break;
         case "LoadPreciosTamanos":
             echo json_encode($factura->LoadPreciosTamanos());
             break;
