@@ -44,14 +44,14 @@ if(isset($_POST["action"])){
         case "Delete":
             echo json_encode($factura->Delete());
             break;
-        case "enviarDocumentoElectronico":
-            echo json_encode($factura->enviarDocumentoElectronico());
+        case "sendContingencia":            
+            echo json_encode($factura->contingencia());
             break;
         case "LoadPreciosTamanos":
             echo json_encode($factura->LoadPreciosTamanos());
             break;
-        case "sendContingencia":
-            // $factura->sendContingencia();
+        case "sendContingenciaMasiva":
+            // $factura->sendContingenciaMasiva();
             break;
         case "sendNotaCredito":
             // Nota de Credito.
@@ -655,7 +655,7 @@ class Factura{
         }
     }
 
-    public function sendContingencia(){
+    public function sendContingenciaMasiva(){
         // busca facturas con error (5) y las reenvia con contingencia, para los documentos 1 - 4  (FE - TE)
         error_log("************************************************************");
         error_log("************************************************************");
@@ -677,12 +677,12 @@ class Factura{
             $this->contingencia();                
         }
         error_log("[INFO] Finaliza Contingencia Masiva de Comprobantes");
-    }
+    }  
 
     public function contingencia(){
         try {
             // idDocumento 08 = Comprobante emitido en contingencia.
-            // SituacionComprobante 02 = Contingencia
+            // SituacionComprobante 02 = Envío en Contingencia
             // Estado de Comprobante 01 = Sin enviar.
             $sql="UPDATE factura
                 SET idSituacionComprobante=:idSituacionComprobante , idDocumento=:idDocumento, idEstadoComprobante=:idEstadoComprobante
@@ -691,10 +691,11 @@ class Factura{
             $data = DATA::Ejecutar($sql,$param, false);
             if($data){
                 // lee la transaccion completa y re envia
-                $this->enviarDocumentoElectronico();                
+                //error_log("[INFO] Contingencia Entidad (". $this->idEntidad .") Transaccion (".$this->consecutivo.")");
+                $this->enviarDocumentoElectronico();
                 return true;
             }
-            else throw new Exception('Error al actualizar la situación del comprobante en Contingencia.', 45656);            
+            else throw new Exception('Error al actualizar la situación del comprobante en Contingencia.', 45656);
         }     
         catch(Exception $e) {
             error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
