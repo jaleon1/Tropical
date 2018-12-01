@@ -1,9 +1,9 @@
-class InventarioFacturas {
+class InventarioFacturaCancelada {
     // Constructor
-    constructor(facturas, tb_facturas, factDetalle, tb_prdXFact, fechaInicial, fechaFinal) {
+    constructor(facturas, tb_facturasCanceladas, factDetalle, tb_prdXFact, fechaInicial, fechaFinal) {
         this.facturas = facturas || new Array();
         this.factDetalle = factDetalle || new Array();
-        this.tb_facturas = tb_facturas || null;
+        this.tb_facturasCanceladas = tb_facturasCanceladas || null;
         this.fechaInicial = fechaInicial || "";
         this.fechaFinal = fechaFinal || "";
     };
@@ -14,25 +14,13 @@ class InventarioFacturas {
             type: "POST",
             url: "class/Factura.php",
             data: {
-                action: "ReadAllbyRange",
-                obj: JSON.stringify(inventarioFacturas)
+                action: "ReadCancelada",
+                obj: JSON.stringify(inventarioFacturaCancelada)
             },
             complete: function() {  $("body").removeClass("loading"); }
         })
             .done(function (e) {
-//                 if(JSON.parse(e).msg=='NOCONTRIB'){
-//                 swal({
-//                     type: 'warning',
-//                     title: 'Contribuyente',
-//                     text: 'Contribuyente no registrado para Facturación Electrónica',
-//                     footer: '<a href="clienteFE.html">Agregar Contribuyente</a>',
-//                     }).then((result) => {
-//                         if (result.value) 
-//                             location.href = "Dashboard.html";
-//                     })                
-//                 }
-//                 else 
-                inventarioFacturas.drawFac(e)
+                inventarioFacturaCancelada.drawFac(e)
             });
     };
 
@@ -41,7 +29,7 @@ class InventarioFacturas {
             type: "POST",
             url: "class/Factura.php",
             data: {
-                action: "ReadAllById"
+                action: "ReadCanceladaUsuario"
             }
         })
             .done(function (e) {
@@ -56,13 +44,13 @@ class InventarioFacturas {
                             location.href = "Dashboard.html";
                     })                
                 }
-                else inventarioFacturas.drawFac(e)
+                else inventarioFacturaCancelada.drawFac(e)
             });
     };
 
     drawFac(e) {
         var facturas = JSON.parse(e);
-        this.tb_facturas = $('#tb_facturas').DataTable({
+        this.tb_facturasCanceladas = $('#tb_facturasCanceladas').DataTable({
             responsive: true,
             destroy: true,
             dom: 'Bfrtip',
@@ -71,12 +59,12 @@ class InventarioFacturas {
                     extend: 'excelHtml5',
                     footer: true,
                     exportOptions: {columns: [ 1, 2, 3, 4, 5, 6]},
-                    messageTop:'Lista de facturas'
+                    messageTop:'Lista de facturas Canceladas'
                 },
                 {
                     extend: 'pdfHtml5',
                     footer: true,
-                    messageTop:'Lista de facturas',
+                    messageTop:'Lista de facturas Canceladas',
                     exportOptions: {
                         columns: [ 1, 2, 3, 4, 5, 6]
                     }
@@ -150,7 +138,7 @@ class InventarioFacturas {
                 },
                 {
                     title: "ESTADO",
-                    data: "idEstadoComprobante",
+                    data: "idEstadoNC",
                     mRender: function ( e ) {
                         switch (e) {
                             case "1":
@@ -183,31 +171,28 @@ class InventarioFacturas {
                     className: "buttons",
                     data: "claveNC",
                     render: function ( data, type, row, meta ) {
-                        if(data==null)
-                            switch (row['idEstadoComprobante']) {
-                                case "1":
-                                    return '<button class=btnEnviarFactura>Enviar</button>';
-                                    break;
-                                case "2":
-                                    return '<button class=btnConsultafactura>Consultar</button>';
-                                    break;
-                                case "3":
-                                    return '<button class=btnCancelaFactura>Cancelar Factura</button>';
-                                    break;
-                                case "4":
-                                    return '<button class=btnCancelaFactura>Cancelar Factura</button>';
-                                    break;
-                                case "5":
-                                    return '<button class=btnReenviarFactura>Reenviar</button><button class=btnSoporte>Soporte</button>';
-                                    break;
-                                default:
-                                    return '<button>Soporte</button>';
-                                    break;
-                            }    
-                            else
-                                return '<i class="fa fa-check-square-o" aria-hidden="true" style="color:green">Facura Cancelada!</i>';
+                        switch (row['idEstadoNC']) {
+                            case "1":
+                                return '<button class=btnEnviarNC>Enviar</button>';
+                                break;
+                            case "2":
+                                return '<button class=btnConsultanC>Consultar</button>';
+                                break;
+                            case "3":
+                                return '<button class=btnCancelaNC>Cancelar Factura</button>';
+                                break;
+                            case "4":
+                                return '<button class=btnCancelaNC>Cancelar Factura</button>';
+                                break;
+                            case "5":
+                                return '<button class=btnReenviarNC>Reenviar</button><button class=btnSoporte>Soporte</button>';
+                                break;
+                            default:
+                                return '<i class="fa fa-check-square-o" aria-hidden="true" style="color:green">NC Aceptada!</i>';
+                                break;
                     }
                 }
+            }
             ],
             footerCallback: function ( row, data, start, end, display ) {
                 var api = this.api();
@@ -271,41 +256,41 @@ class InventarioFacturas {
             }
         })
             .done(function (e) {
-                inventarioFacturas.drawFactDetail(e);
+                inventarioFacturaCancelada.drawFactDetail(e);
             });
     };
 
     CargaListaFacturasRango(){
-        var referenciaCircular = inventarioFacturas.tb_facturas;
-        inventarioFacturas.tb_facturas = [];
+        var referenciaCircular = inventarioFacturaCancelada.tb_facturasCanceladas;
+        inventarioFacturaCancelada.tb_facturasCanceladas = [];
         $.ajax({
             type: "POST",
             url: "class/Factura.php",
             data: {
                 action: "ReadAllbyRange",
-                obj: JSON.stringify(inventarioFacturas)
+                obj: JSON.stringify(inventarioFacturaCancelada)
             }
         })
             .done(function (e) {
-                inventarioFacturas.tb_facturas = referenciaCircular;        
-                inventarioFacturas.drawFac(e); 
+                inventarioFacturaCancelada.tb_facturasCanceladas = referenciaCircular;        
+                inventarioFacturaCancelada.drawFac(e); 
             });
     };
 
     CargaMisFacturasRango(){
-        var referenciaCircular = inventarioFacturas.tb_facturas;
-        inventarioFacturas.tb_facturas = [];
+        var referenciaCircular = inventarioFacturaCancelada.tb_facturasCanceladas;
+        inventarioFacturaCancelada.tb_facturasCanceladas = [];
         $.ajax({
             type: "POST",
             url: "class/Factura.php",
             data: {
                 action: "ReadAllbyRangeUser",
-                obj: JSON.stringify(inventarioFacturas)
+                obj: JSON.stringify(inventarioFacturaCancelada)
             }
         })
             .done(function (e) {
-                inventarioFacturas.tb_facturas = referenciaCircular;        
-                inventarioFacturas.drawFac(e); 
+                inventarioFacturaCancelada.tb_facturasCanceladas = referenciaCircular;        
+                inventarioFacturaCancelada.drawFac(e); 
             });
     };
 
@@ -358,13 +343,13 @@ class InventarioFacturas {
     };
 }
 //Class Instance
-let inventarioFacturas = new InventarioFacturas();
+let inventarioFacturaCancelada = new InventarioFacturaCancelada();
 
-$('#tb_facturas tbody').on('click', 'td', function () {
+$('#tb_facturasCanceladas tbody').on('click', 'td', function () {
     if (this.textContent == ("Cancelar Factura"))
         return false;
-    inventarioFacturas.ReadbyID(inventarioFacturas.tb_facturas.row(this).data());
-    var dtTable = $('#tb_facturas').DataTable();
+    inventarioFacturaCancelada.ReadbyID(inventarioFacturaCancelada.tb_facturasCanceladas.row(this).data());
+    var dtTable = $('#tb_facturasCanceladas').DataTable();
     var efectivo=0;
     var total=0;
     efectivo = parseFloat(dtTable.row(this).data()[8]);
@@ -389,8 +374,8 @@ $('#tb_facturas tbody').on('click', 'td', function () {
     localStorage.setItem("lsReimpresion","OK");
 });
 
-// $('#tb_facturas tbody').on( 'click', 'button', function () {
-//     var data = inventarioFacturas.tb_facturas.row( $(this).parents('tr') ).data();
+// $('#tb_facturasCanceladas tbody').on( 'click', 'button', function () {
+//     var data = inventarioFacturaCancelada.tb_facturasCanceladas.row( $(this).parents('tr') ).data();
 //     var id = data['id'];
 //     var numeroFactura = data['consecutivo'];
 //     var fecha = data['fechaCreacion'];
@@ -474,9 +459,9 @@ $('#tb_facturas tbody').on('click', 'td', function () {
 
 //         cb(start, end);
 
-//         inventarioFacturas.fechaInicial = start.format('YYYY-MM-DD') + ' 00:00';
-//         inventarioFacturas.fechaFinal = end.format('YYYY-MM-DD') + ' 23:59';
-//         inventarioFacturas.CargaListaFacturasRango();
+//         inventarioFacturaCancelada.fechaInicial = start.format('YYYY-MM-DD') + ' 00:00';
+//         inventarioFacturaCancelada.fechaFinal = end.format('YYYY-MM-DD') + ' 23:59';
+//         inventarioFacturaCancelada.CargaListaFacturasRango();
 
 //         swal({
 //             type: 'success',

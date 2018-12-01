@@ -170,6 +170,7 @@ class Distribucion {
             localStorage.setItem("lsTipoBodega", "externa");
 
         var data = JSON.parse(e);
+        localStorage.setItem("lsRePrint", false);
         localStorage.setItem("lsOrden", data.orden);
         localStorage.setItem("lsBodega", $("#nombre").val());
         localStorage.setItem("lsDescripcion", $("#descripcion").val());
@@ -177,44 +178,42 @@ class Distribucion {
         localStorage.setItem("lsTotal", $("#total").text());
         localStorage.setItem("lsFechaDistribucion", data.fecha);
         localStorage.setItem("lsPorcentajeDescuento", $("#desc_val").text());
-        localStorage.setItem("lsPorcentajeIva", $("#iv_val").text());
+        localStorage.setItem("lsIV", $("#iv_val").text());
         localStorage.setItem("lsListaProducto", JSON.stringify(data.lista));
         localStorage.setItem("lsUsuarioDistribucion", $("#call_username").text());
-        // location.href ="/Tropical/TicketDistribucion.html";
-        location.href = "/TicketDistribucion.html";
+        location.href ="/Tropical/TicketDistribucion.html";
+        // location.href = "/TicketDistribucion.html";
     }
 
     ticketRePrint() {
+        var listaProducto = [];
+        var subtotal=0;
+        var iv=0;
+        if (bodega.tipo == "Interna")
+            localStorage.setItem("lsTipoBodega", "interna");
+        else
+            localStorage.setItem("lsTipoBodega", "externa");
 
-        var lsListaProducto = [];
-        $("#tb_detalle_distribucion tr").each(function() {
-            var tds = $("td", $(this));
-            lsListaProducto.push({
-            column1: tds[0].text(),
-            column2: tds[1].text(),
-            column2: tds[2].text(),
-            column2: tds[3].text(),
-            column2: tds[4].text()
-            });
+        $('#tb_detalle_distribucion tbody tr').each(function () {
+            var lsListaProducto = new Object();
+            lsListaProducto.cantidad = $(this).find('td:eq(2)').html();
+            lsListaProducto.codigo = $(this).find('td:eq(0)').html();
+            lsListaProducto.precioVenta = parseFloat((($(this).find('td:eq(3)').html()).replace("¢","")).replace(",",""))*lsListaProducto.cantidad;
+            lsListaProducto.precioVenta = '¢' + parseFloat(lsListaProducto.precioVenta).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            subtotal = subtotal + parseFloat((($(this).find('td:eq(3)').html()).replace("¢","")).replace(",",""))*lsListaProducto.cantidad;
+            listaProducto.push(lsListaProducto);
         });
-
-        // if (bodega.tipo == "Interna")
-        //     localStorage.setItem("lsTipoBodega", "interna");
-        // else
-        //     localStorage.setItem("lsTipoBodega", "externa");
-
-        // var data = JSON.parse(e);
-        // localStorage.setItem("lsOrden", data.orden);
-        // localStorage.setItem("lsBodega", $("#nombre").val());
-        // localStorage.setItem("lsDescripcion", $("#descripcion").val());
-        // localStorage.setItem("lsSubTotal", $("#subtotal").text());
-        // localStorage.setItem("lsTotal", $("#total").text());
-        // localStorage.setItem("lsFechaDistribucion", data.fecha);
-        // localStorage.setItem("lsPorcentajeDescuento", $("#desc_val").text());
-        // localStorage.setItem("lsPorcentajeIva", $("#iv_val").text());
-        // localStorage.setItem("lsListaProducto", JSON.stringify(data.lista));
-        // localStorage.setItem("lsUsuarioDistribucion", $("#call_username").text());
-        // location.href ="/Tropical/TicketDistribucion.html";
+        localStorage.setItem("lsListaProducto", JSON.stringify(listaProducto));
+        localStorage.setItem("lsRePrint", true);
+        localStorage.setItem("lsSubTotal", '¢' + parseFloat(subtotal).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+        localStorage.setItem("lsIV", '¢' + parseFloat(subtotal*0.13).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+        localStorage.setItem("lsTotal", $("#total").text());
+        localStorage.setItem("lsFechaDistribucion", $("#fechaDistribucion").text());
+        localStorage.setItem("lsBodega", $("#bodega").text());
+        localStorage.setItem("lsOrden", $("#consecutivo").text());
+        localStorage.setItem("lsUsuarioDistribucion", $("#call_username").text());
+        
+        location.href ="/Tropical/TicketDistribucion.html";        
         // location.href = "/TicketDistribucion.html";
     }
 
@@ -332,21 +331,21 @@ class Distribucion {
             `<button type="button" class="close" data-dismiss="modal">
                 <span aria-hidden="true">X</span>
             </button>
-            <h4 class="modal-title" id="myModalLabel">Traslado #${distr.orden}.</h4>
+            <h4 class="modal-title" id="myModalLabel">Traslado #<label id=consecutivo>${distr.orden}</label></h4>
             <div class="row">
                 
                 <div class="col-md-6 col-sm-6 col-xs-6">
-                    <p>Fecha: ${distr.fecha}</p>
+                    <p>Fecha: <label id=fechaDistribucion>${distr.fecha}</label></p>
                 </div>
             </div>
             <div class="row">                
                 <div class="col-md-6 col-sm-6 col-xs-6">
-                    <p>Destino: ${distr.bodega}</p>
+                    <p>Destino: <label id=bodega>${distr.bodega}</label></p>
                 </div>
             </div>
             <div class="row">                
                 <div class="col-md-6 col-sm-6 col-xs-6">
-                    <p>TOTAL: ${'¢' + parseFloat(distr.total).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ".")}</p>
+                    <p>TOTAL: <label id=total>${'¢' + parseFloat(distr.total).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ".")}</label></p>
                 </div>
             </div>`;
         $("#detalleDistribucion").append(detalleDistribucion);
@@ -385,7 +384,7 @@ class Distribucion {
                     data: "precioVenta",
                     className: "text-right",
                     mRender: function (e) {
-                        return '¢' + parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+                        return '¢' + parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                     }
                 },
                 {
@@ -393,7 +392,7 @@ class Distribucion {
                     data: "impuesto",
                     className: "text-right",
                     mRender: function (e) {
-                        return '¢' + parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+                        return '¢' + parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                     }
                 },
                 {
@@ -401,7 +400,7 @@ class Distribucion {
                     data: "subtotal",
                     className: "text-right",
                     mRender: function (e) {
-                        return '¢' + parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+                        return '¢' + parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                     }
                 }
                 // ,

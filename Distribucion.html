@@ -46,7 +46,7 @@
                 <div class="left_col scroll-view">
                     <div class="navbar nav_title" style="border: 0;">
                         <a href="index.html" class="site_title">
-                            
+
                             <span>TropicalSNO!</span>
                         </a>
                     </div>
@@ -109,7 +109,8 @@
 
                         <ul class="nav navbar-nav navbar-right">
                             <li class="">
-                                <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false" id='call_username'>
+                                <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown"
+                                    aria-expanded="false" id='call_username'>
                                 </a>
                                 <ul class="dropdown-menu dropdown-usermenu pull-right">
                                     <li>
@@ -170,7 +171,8 @@
                                     <!-- TABLE -->
                                     <div class="row">
                                         <div class="col-md-12 col-sm-12 col-xs-12">
-                                            <table id="tDistribucion" class="table display responsive table-striped jambo_table no-wrap" width="100%" role="grid" aria-describedby="datatable_info">
+                                            <table id="tDistribucion" class="table display responsive table-striped jambo_table no-wrap"
+                                                width="100%" role="grid" aria-describedby="datatable_info">
                                                 <tbody id="tbodyDistribucion">
                                                 </tbody>
                                             </table>
@@ -194,7 +196,8 @@
                                     </div>
 
                                     <div class="x_content">
-                                        <form class="form-horizontal form-label-left" id="frmBodega" method="POST" novalidate>
+                                        <form class="form-horizontal form-label-left" id="frmBodega" method="POST"
+                                            novalidate>
                                             <div class="row">
                                                 <div class="col-sm-14">
                                                     <div class="item form-group">
@@ -202,18 +205,21 @@
                                                             <span class="required">*</span>
                                                         </label>
                                                         <div class="col-md-6 col-sm-6 col-xs-12">
-                                                            <input id="nombre" class="form-control col-md-7 col-xs-12" name="nombre" required="required" type="text" placeholder="Nombre de la Bodega"
-                                                                readonly>
+                                                            <input id="nombre" class="form-control col-md-7 col-xs-12"
+                                                                name="nombre" required="required" type="text"
+                                                                placeholder="Nombre de la Bodega" readonly>
                                                         </div>
                                                     </div>
                                                     <div class="item form-group ">
                                                         <label class="control-label col-md-4 col-sm-3 col-xs-12" for="descripcion">Descripción
                                                         </label>
                                                         <div class="col-md-6 col-sm-6 col-xs-12">
-                                                            <input id="descripcion" class="form-control col-md-7 col-xs-12" name="descripcion" readonly>
+                                                            <input id="descripcion" class="form-control col-md-7 col-xs-12"
+                                                                name="descripcion" readonly>
                                                         </div>
-                                                        <div id="reportrange" class="pull-right"  class="col-sm-1">
-                                                            <button id="btnAddBodega" data-toggle="modal" data-target=".bs-bodega-modal-lg" type="button" class="btn btn-info btn-sm">+</button>
+                                                        <div id="reportrange" class="pull-right" class="col-sm-1">
+                                                            <button id="btnAddBodega" data-toggle="modal" data-target=".bs-bodega-modal-lg"
+                                                                type="button" class="btn btn-info btn-sm">+</button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -237,7 +243,8 @@
                                     </div>
 
                                     <div class="x_content">
-                                        <form class="form-horizontal form-label-left" id="frmTotales" method="POST" novalidate>
+                                        <form class="form-horizontal form-label-left" id="frmTotales" method="POST"
+                                            novalidate>
                                             <div class="row">
                                                 <div class="table-responsive">
                                                     <table class="table table-striped jambo_table bulk_action">
@@ -290,7 +297,7 @@
 
                     <div class="ln_solid"></div>
 
-                   
+
 
                 </div>
             </div>
@@ -325,7 +332,8 @@
                         <div id="datatable_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
                             <div class="row">
                                 <div class="col-sm-12">
-                                    <table id="tBodega" class="table display responsive table-striped jambo_table no-wrap" width="100%" role="grid" aria-describedby="datatable_info">
+                                    <table id="tBodega" class="table display responsive table-striped jambo_table no-wrap"
+                                        width="100%" role="grid" aria-describedby="datatable_info">
                                         <tbody id="tbodyBodega">frase
                                         </tbody>
                                     </table>
@@ -360,8 +368,8 @@
                         <div id="datatable_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
                             <div class="row">
                                 <div class="col-sm-12">
-                                    <table id="dsProducto" class="table table-striped jambo_table bulk_action"
-                                        role="grid" aria-describedby="datatable_info">
+                                    <table id="dsProducto" class="table table-striped jambo_table bulk_action" role="grid"
+                                        aria-describedby="datatable_info">
                                         <tbody id="tableBody-Producto">
                                         </tbody>
 
@@ -403,7 +411,7 @@
     <!-- Input mask -->
     <script src="assets/js/jquery.inputmask/jquery.inputmask.bundle.min.js"></script>
     <!-- JS Scripts -->
-    <script src="assets/js/Distribucion.min.js"></script>
+    <script src="assets/js/Distribucion.js"></script>
     <script src="assets/js/Producto.min.js"></script>
     <script src="assets/js/Bodega.min.js"></script>
     <!-- JS dataTables -->
@@ -440,7 +448,7 @@
             });
         }
 
-        distr.setTable(true,100);
+        distr.setTable(true, 100);
         bodega.setTable(false);
         //
         $(document).on('click', '#btnAddBodega', function (event) {
@@ -462,6 +470,19 @@
         //
         $('#btnDistribucion').click(function () {
             $('#frmBodega').submit();
+        });
+
+
+        $('#tDistribucion').on('click', 'input.cantidad', function (e) {
+
+            var t = $('#tDistribucion').DataTable();
+            var fila = t.row($(this).parents('tr')).data();
+            var nuevoImporte = fila.precioVenta * this.value;
+            //t.cell(t.row($(this).parents('tr')), 7).data(nuevoImporte).draw();
+            $(this).parents('tr')["0"].childNodes[7].attributes[1].value = nuevoImporte;
+            $(this).parents('tr')["0"].childNodes[7].textContent= ('¢' + parseFloat(Number(nuevoImporte)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+            // calcTotal();
+            distr.calcTotal();
         });
 
         var validator = new FormValidator({ "events": ['blur', 'input', 'change'] }, document.forms["frmBodega"]);
