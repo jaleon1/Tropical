@@ -54,7 +54,7 @@ if(isset($_POST["action"])){
             echo json_encode($factura->LoadPreciosTamanos());
             break;
         case "sendContingencia":
-            // $factura->sendContingencia();
+            $factura->sendContingencia();
             break;
         case "sendNotaCredito":
             // Nota de Credito.
@@ -314,7 +314,9 @@ class Factura{
 
     function ReadCancelada(){
         try {
-            $sql='SELECT fac.id, fac.idBodega, bod.nombre bodega, fac.fechaCreacion, fac.consecutivo, fac.totalComprobante, fac.idUsuario, usr.nombre vendedor, fac.montoEfectivo, fac.montoTarjeta, fac.idEstadoComprobante, fac.totalComprobante, fac.claveNC, fac.idEstadoNC
+            $sql='SELECT fac.id, fac.idBodega, bod.nombre bodega, fac.fechaCreacion, fac.consecutivo, 
+            fac.totalComprobante, fac.idUsuario, usr.nombre vendedor, fac.montoEfectivo, fac.montoTarjeta, 
+            fac.idEstadoComprobante, fac.totalComprobante, fac.claveNC, fac.idEstadoNC
                 FROM factura fac
                 INNER JOIN bodega bod on bod.id = fac.idBodega
                 INNER JOIN usuario usr on usr.id = fac.idUsuario
@@ -323,8 +325,8 @@ class Factura{
                             WHERE idUsuario = :idUsuario) bodegas on bodegas.idBodega = fac.idBodega
                 AND
                 fac.fechaCreacion Between :fechaInicial and :fechaFinal
-                AND fac.totalComprobante != null
-                ORDER BY fac.consecutivo DESC'; 
+                AND fac.claveNC IS NOT NULL
+                ORDER BY fac.consecutivo DESC';
                 
             $param= array(':idUsuario'=>$_SESSION["userSession"]->id, ':fechaInicial'=>$this->fechaInicial, ':fechaFinal'=>$this->fechaFinal);
             $data = DATA::Ejecutar($sql,$param);

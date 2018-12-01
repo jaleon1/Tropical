@@ -364,7 +364,7 @@
                             type: "POST",
                             url: "class/Factura.php",
                             data: {
-                                action: "enviarDocumentoElectronico",
+                                action: "sendContingencia",
                                 id: data['id']
                             }
                         })
@@ -377,7 +377,14 @@
                                 timer: 2000
                             });
                         })
-                        .fail(function(e){});
+                        .fail(function(e){
+                            swal({
+                                type: 'error',
+                                title: 'Error al reenviar Factura!',
+                                showConfirmButton: false,
+                                timer: 2000
+                            });
+                        });
                 }
             });
             
@@ -400,7 +407,7 @@
                             type: "POST",
                             url: "class/Factura.php",
                             data: {
-                                action: "enviarDocumentoElectronico",
+                                action: "sendContingencia",
                                 id: data['id']
                             }
                         })

@@ -267,7 +267,7 @@ class InventarioFacturaCancelada {
             type: "POST",
             url: "class/Factura.php",
             data: {
-                action: "ReadAllbyRange",
+                action: "ReadCancelada",
                 obj: JSON.stringify(inventarioFacturaCancelada)
             }
         })

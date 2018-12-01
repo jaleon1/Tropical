@@ -361,7 +361,10 @@ class InventarioFacturas {
 let inventarioFacturas = new InventarioFacturas();
 
 $('#tb_facturas tbody').on('click', 'td', function () {
-    if (this.textContent == ("Cancelar Factura"))
+    if (this.textContent == ("Cancelar Factura")
+    ||this.textContent == ("Consultar")
+    ||this.textContent == ("ReenviarSoporte")
+    ||this.textContent == ("Enviar"))
         return false;
     inventarioFacturas.ReadbyID(inventarioFacturas.tb_facturas.row(this).data());
     var dtTable = $('#tb_facturas').DataTable();
