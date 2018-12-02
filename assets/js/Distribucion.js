@@ -532,7 +532,7 @@ class Distribucion {
             min: "1",
             step: "1",
             value: (producto.cantidad || 1)
-        }).on('keyup keypress', function (e) {
+        }).on('keyup keypress mouseup', function (e) {
             var keyCode = e.keyCode || e.which;
             if (keyCode == 109) {
                 e.preventDefault();
@@ -566,6 +566,10 @@ class Distribucion {
             align: "right"
         })[0].textContent = 0;
         t.columns.adjust().draw();
+        //
+        // $(".cantidad").bind('keyup mouseup', function () {
+        //     distr.CalcImporte();
+        // });
         //
         distr.setProducto(producto.id);
         distr.CalcImporte();
