@@ -32,6 +32,9 @@ if(isset($_POST["action"])){
         case "Read":
             echo json_encode($factura->Read());
             break;
+        case "ReadCancelada":
+            echo json_encode($factura->ReadCancelada());
+            break;
         case "ReadVentas":
             echo json_encode($factura->ReadVentas());
             break;
@@ -50,8 +53,8 @@ if(isset($_POST["action"])){
         case "LoadPreciosTamanos":
             echo json_encode($factura->LoadPreciosTamanos());
             break;
-        case "sendContingenciaMasiva":
-            // $factura->sendContingenciaMasiva();
+        case "sendContingencia":
+            $factura->sendContingencia();
             break;
         case "sendNotaCredito":
             // Nota de Credito.
@@ -294,6 +297,36 @@ class Factura{
                 fac.fechaCreacion Between :fechaInicial and :fechaFinal
                 AND fac.idUsuario =:idUsuario
                 ORDER BY fac.consecutivo DESC'; 
+                
+            $param= array(':idUsuario'=>$_SESSION["userSession"]->id, ':fechaInicial'=>$this->fechaInicial, ':fechaFinal'=>$this->fechaFinal);
+            $data = DATA::Ejecutar($sql,$param);
+            return $data;
+        }     
+        catch(Exception $e) { 
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar la lista'))
+            );
+        }
+    }
+
+    function ReadCancelada(){
+        try {
+            $sql='SELECT fac.id, fac.idBodega, bod.nombre bodega, fac.fechaCreacion, fac.consecutivo, 
+            fac.totalComprobante, fac.idUsuario, usr.nombre vendedor, fac.montoEfectivo, fac.montoTarjeta, 
+            fac.idEstadoComprobante, fac.totalComprobante, fac.claveNC, fac.idEstadoNC
+                FROM factura fac
+                INNER JOIN bodega bod on bod.id = fac.idBodega
+                INNER JOIN usuario usr on usr.id = fac.idUsuario
+                INNER JOIN (SELECT idBodega
+                            FROM usuariosXBodega
+                            WHERE idUsuario = :idUsuario) bodegas on bodegas.idBodega = fac.idBodega
+                AND
+                fac.fechaCreacion Between :fechaInicial and :fechaFinal
+                AND fac.claveNC IS NOT NULL
+                ORDER BY fac.consecutivo DESC';
                 
             $param= array(':idUsuario'=>$_SESSION["userSession"]->id, ':fechaInicial'=>$this->fechaInicial, ':fechaFinal'=>$this->fechaFinal);
             $data = DATA::Ejecutar($sql,$param);
