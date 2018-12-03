@@ -326,7 +326,7 @@
                             <div class="row">
                                 <div class="col-sm-12">
                                     <table id="tBodega" class="table display responsive table-striped jambo_table no-wrap" width="100%" role="grid" aria-describedby="datatable_info">
-                                        <tbody id="tbodyBodega">frase
+                                        <tbody id="tbodyBodega">
                                         </tbody>
                                     </table>
                                 </div>
@@ -463,6 +463,8 @@
         $('#btnDistribucion').click(function () {
             $('#frmBodega').submit();
         });
+
+
 
         var validator = new FormValidator({ "events": ['blur', 'input', 'change'] }, document.forms["frmBodega"]);
         $('#frmBodega').submit(function (e) {
