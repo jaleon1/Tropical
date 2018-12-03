@@ -1019,7 +1019,16 @@ class FacturacionElectronica{
             $error_msg = "";
             if (curl_error($ch)) {
                 $error_msg = curl_error($ch);
-                throw new Exception('Error CRITICO al ENVIAR el comprobante. DEBE COMUNICARSE CON SOPORTE TECNICO: '.$error_msg, ERROR_ENVIO_NO_VALID);
+                $timedOut = strpos($error_msg, 'Operation timed out');
+                if($timedOut===false)
+                    throw new Exception('Error CRITICO al ENVIAR el comprobante. DEBE COMUNICARSE CON SOPORTE TECNICO: '.$error_msg, ERROR_ENVIO_NO_VALID);
+                else {
+                    //timed out.
+                    error_log("[ERROR]  (-600): ". $error_msg);
+                    historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 6, $error_msg);
+                    Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 6, self::$fechaEmision->format("c"));
+                    return false;
+                }
             }
             $sArray= json_decode($server_output);       
             if(!isset($sArray->resp->Status)){
@@ -1100,7 +1109,17 @@ class FacturacionElectronica{
             }            
             $sArray=json_decode($server_output);
             if(!isset($sArray->resp->clave)){
-                throw new Exception('Error CRITICO al consultar el comprobante. DEBE COMUNICARSE CON SOPORTE TECNICO: '.$server_output, ERROR_CONSULTA_NO_VALID);
+                $null = strpos($server_output, 'null');
+                if($null===false){
+                    throw new Exception('Error CRITICO al consultar el comprobante. DEBE COMUNICARSE CON SOPORTE TECNICO: '.$server_output, ERROR_CONSULTA_NO_VALID);                    
+                }
+                else {
+                    // clave inválida, no existe en ATV.
+                    Factura::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 5);
+                    historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 5, 'La transacción no fue enviada a los sistemas de ATV.');
+                    throw new Exception('Documento no registrado en ATV: '.$server_output, ERROR_CONSULTA_NO_VALID);                    
+                }
+                
             }
             $respuestaXml='';
             foreach($sArray->resp as $key=> $r){
@@ -1142,7 +1161,7 @@ class FacturacionElectronica{
                     historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, null, "[WARNING]". $fxml->DetalleMensaje, $xml);
                     return true;
                 }
-            }            
+            }
             error_log("[INFO] API CONSULTA, estado de la transaccion(".self::$transaccion->id."): ". $estadoTransaccion);
             curl_close($ch);
         } 

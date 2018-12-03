@@ -11,6 +11,21 @@
     require_once("productoXFactura.php");
     require_once("mensajeReceptor.php");
     try{
+        // timedout
+        // Documentos 1-4-8.
+        $sql='SELECT id
+            from factura
+            where idEstadoComprobante = 6
+            order by idBodega';
+        $data= DATA::Ejecutar($sql);
+        foreach ($data as $key => $transaccion){
+            error_log("[INFO] Iniciando Consulta FE - TimedOut");
+            $factura = new Factura();
+            $factura->id = $transaccion['id'];
+            $factura = $factura->Read();
+            FacturacionElectronica::APIConsultaComprobante($factura);
+            error_log("[INFO] Finaliza Consulta de Comprobantes - TimedOut");
+        }
         // Documentos 1-4-8.
         $sql='SELECT id
             from factura
