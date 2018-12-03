@@ -976,6 +976,7 @@ class FacturacionElectronica{
                 case 1:
                 case 2:
                 case 3:
+                case 8: // Contingencia..
                     $r = 'json';
                     break;
                 case 4:
