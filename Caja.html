@@ -241,8 +241,30 @@
             </div>
         </div>
     </div>
-        <!-- modals -->
-        <!-- Large modal -->
+    <div id="modalCierre" class="modal fade factura-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content modal-factura">
+                <div class="modal-header">
+                    <h4 class="modal-title">Reimprimir Cierre de Caja</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="clearfix"></div>
+                        <div class="row">
+                            <div class="col-md-6 col-md-offset-3">
+                                <button id="btnReimprimeCierre" type="submit" class="btn btn-success">Reimprimir</button>
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- modals -->
+    <!-- Large modal -->
 
     <!-- Bootstrap -->
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
@@ -262,6 +284,7 @@
     <script src="assets/js/jquery.inputmask/jquery.inputmask.bundle.min.js"></script>
     <!-- JS Scripts -->
     <script src="assets/js/Caja.min.js"></script>
+    <script src="assets/js/Bodega.min.js"></script>
     <!-- Sweet Alert -->
     <script src="assets/js/sweetalert2.min.js"></script>
     <!-- JS dataTables -->
@@ -357,6 +380,17 @@ $(document).ready(function () {
         movimientosCaja.CargaMoviminetosCajasRango();
     });    
 
-    $("#tb_movimientosCaja").append("<tfoot><tr><th>TOTALES</th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th></tr></tfoot>");
+    $("#tb_movimientosCaja").append("<tfoot><tr><th>TOTALES</th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th></tr></tfoot>");
+    $('#tb_movimientosCaja tbody').on('click', 'tr', function () {
+        var table = $('#tb_movimientosCaja').DataTable();
+        var rowCierre = table.row(this).data();
+        localStorage.setItem("lsRowCierre",JSON.stringify(rowCierre));
+        bodega.nombre = $(this).find("td:eq(0)").text();
+        $('#modalCierre').modal('toggle');
+    });
+    $("#btnReimprimeCierre").click(function () {
+        movimientosCaja.ticketPrintRePrint(localStorage.getItem("lsRowCierre"));
+        
+    });
 });
 </script>

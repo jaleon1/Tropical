@@ -873,8 +873,8 @@ function ticketPrint(e) {
     localStorage.setItem("lsReimpresion", "NOT");
     localStorage.setItem("lsFactura", data.consecutivo);
     localStorage.setItem("lsFecha", data.fechaCreacion);
-    localStorage.setItem("lsBodega", data.bodega);
-    localStorage.setItem("lsUsuario", data.usuario);
+    localStorage.setItem("lsBodega", $('.call_Bodega').html());
+    localStorage.setItem("lsUsuario", $("#call_name").html());
     localStorage.setItem("lsSubTotal", data.totalComprobante);
     localStorage.setItem("lsTotal", data.totalComprobante);
 
