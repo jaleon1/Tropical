@@ -36,6 +36,9 @@ if(isset($_POST["action"])){
             // $merma->costo = $_POST["costo"]??0;
             $merma->rollback();
             break;
+        case "ReadAllbyRange":
+            echo json_encode($merma->ReadAllbyRange());
+            break;
     }
 }
 

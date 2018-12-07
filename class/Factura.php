@@ -433,7 +433,7 @@ class Factura{
             $sql='SELECT f.id, f.fechaCreacion, f.consecutivo, f.totalComprobante,
             (SELECT count(pxf.codigo) FROM tropical.productosXFactura pxf WHERE pxf.codigo="12oz" AND pxf.idFactura=f.id) AS _12oz, 
             (SELECT count(pxf.codigo) FROM tropical.productosXFactura pxf WHERE pxf.codigo="08oz" AND pxf.idFactura=f.id) AS _08oz 
-            FROM tropical.factura f WHERE f.fechaCreacion Between :fechaInicial and :fechaFinal  
+            FROM tropical.factura f WHERE f.idEstadoNC<3 AND f.idEstadoNC>3 OR f.idEstadoNC IS NULL  
             ORDER BY f.consecutivo desc';
             $param= array(':fechaInicial'=>$this->fechaInicial, ':fechaFinal'=>$this->fechaFinal);            
             $data= DATA::Ejecutar($sql, $param);

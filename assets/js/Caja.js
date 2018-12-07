@@ -443,8 +443,8 @@ class MovimientosCaja {
         localStorage.setItem("lsTarjeta",$('#cierreTarjeta').text());
         localStorage.setItem("lsTotalVentas",$('#lblTotalVentas').text());
         localStorage.setItem("lsTotalNeto",$('#cierreCajaTotal').text());
-        // location.href ="/TicketCierreCaja.html";
-        location.href ="/Tropical/TicketCierreCaja.html";
+        location.href ="/TicketCierreCaja.html";
+        // location.href ="/Tropical/TicketCierreCaja.html";
     }
 
     ticketPrintRePrint(lsRowCierre){
@@ -464,8 +464,8 @@ class MovimientosCaja {
         localStorage.setItem("lsTarjeta",'¢' + parseFloat(Number(tarjeta)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
         localStorage.setItem("lsTotalVentas",'¢' + parseFloat(Number(totalventas)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
         localStorage.setItem("lsTotalNeto",'¢' + parseFloat(Number(totalneto)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
-        // location.href ="/TicketCierreCaja.html";
-        location.href ="/Tropical/TicketCierreCaja.html";
+        location.href ="/TicketCierreCaja.html";
+        // location.href ="/Tropical/TicketCierreCaja.html";
     }
 }
 //Class Instance
