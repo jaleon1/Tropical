@@ -226,19 +226,19 @@ class InsumoBodega {
                 {
                     extend: 'excelHtml5',
                     exportOptions: {columns: [ 1, 2, 3, 4, 5]},                    
-                    messageTop:'Inventario Producto Terminado'
+                    messageTop:'Inventario por Agencia'
                 },
                 {
                     extend: 'pdfHtml5',
                     orientation : 'landscape',
-                    messageTop:'Inventario Producto Terminado',
+                    messageTop:'Inventario por Agencia',
                     exportOptions: {
                         columns: [ 1, 2, 3, 4, 5]}
                 }
             ],
             language: {
-                "infoEmpty": "Sin Productos Agencia Interna",
-                "emptyTable": "Sin Productos Agencia Interna",
+                "infoEmpty": "Sin Productos Agencia",
+                "emptyTable": "Sin Productos Agencia",
                 "search": "Buscar",
                 "zeroRecords":    "No hay resultados",
                 "lengthMenu":     "Mostrar _MENU_ registros",
@@ -249,7 +249,7 @@ class InsumoBodega {
                     "previous":   "Anterior"
                 }
             },
-            columnDefs: [{className: "text-right", "targets": [4,5,6]}],
+            columnDefs: [{className: "text-right", "targets": [4,5]}],
             columns: [
                 {
                     title: "ID",
