@@ -181,7 +181,7 @@ class Distribucion {
         localStorage.setItem("lsIV", $("#iv_val").text());
         localStorage.setItem("lsListaProducto", JSON.stringify(data.lista));
         localStorage.setItem("lsUsuarioDistribucion", $("#call_username").text());
-        // location.href ="/Tropical/TicketDistribucion.html";
+        //location.href ="/Tropical/TicketDistribucion.html";
         location.href = "/TicketDistribucion.html";
     }
 
@@ -213,7 +213,7 @@ class Distribucion {
         localStorage.setItem("lsOrden", $("#consecutivo").text());
         localStorage.setItem("lsUsuarioDistribucion", $("#call_username").text());
         
-        // location.href ="/Tropical/TicketDistribucion.html";        
+        //location.href ="/Tropical/TicketDistribucion.html";
         location.href = "/TicketDistribucion.html";
     }
 

@@ -47,14 +47,14 @@ if(isset($_POST["action"])){
         case "Delete":
             echo json_encode($factura->Delete());
             break;
-        case "sendContingencia":            
+        case "sendContingencia":
             echo json_encode($factura->contingencia());
             break;
         case "LoadPreciosTamanos":
             echo json_encode($factura->LoadPreciosTamanos());
             break;
-        case "sendContingencia":
-            $factura->sendContingencia();
+        case "sendContingenciaMasiva":
+            $factura->sendContingenciaMasiva();
             break;
         case "sendNotaCredito":
             // Nota de Credito.

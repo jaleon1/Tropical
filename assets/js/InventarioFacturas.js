@@ -292,6 +292,19 @@ class InventarioFacturas {
             });
     };
 
+    sendContingenciaMasiva(){
+        $.ajax({
+            type: "POST",
+            url: "class/Factura.php",
+            data: {
+                action: "sendContingenciaMasiva"
+            }
+        })
+            .done(function (e) {
+                inventarioFacturas.CargaListaFacturasRango();
+            });
+    };
+
     CargaMisFacturasRango(){
         var referenciaCircular = inventarioFacturas.tb_facturas;
         inventarioFacturas.tb_facturas = [];
