@@ -74,8 +74,8 @@ class MovimientosCaja {
 
     drawMovimientosCaja(e) {
         var movimientos = JSON.parse(e);
-        var total=0;
-        var pageTotal=0;
+        // var total=0;
+        // var pageTotal=0;
         this.tb_movimientosCaja = $('#tb_movimientosCaja').DataTable({
             data: movimientos,
             footerCallback: function ( row, data, start, end, display ) {
@@ -92,18 +92,21 @@ class MovimientosCaja {
                 var totalCierre = display.map(el => data[el][7]).reduce((a, b) => intVal(a) + intVal(b), 0 );
                 var totalEfectivo = display.map(el => data[el][8]).reduce((a, b) => intVal(a) + intVal(b), 0 );
                 var totalTarjeta = display.map(el => data[el][9]).reduce((a, b) => intVal(a) + intVal(b), 0 );
+                var totalVenta = totalEfectivo+totalTarjeta;
                 var totalNeto = display.map(el => data[el][12]).reduce((a, b) => intVal(a) + intVal(b), 0 );
+
                 // Actualiza el footer
                 $( api.column( 2 ).footer() ).html("TOTALES");
                 $( api.column( 6 ).footer() ).html('¢' + parseFloat(Number(totalApertura)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
                 $( api.column( 7 ).footer() ).html('¢' + parseFloat(Number(totalCierre)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
                 $( api.column( 8 ).footer() ).html('¢' + parseFloat(Number(totalEfectivo)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
                 $( api.column( 9 ).footer() ).html('¢' + parseFloat(Number(totalTarjeta)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
-                $( api.column( 12 ).footer() ).html('¢' + parseFloat(Number(totalNeto)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+                $( api.column( 10 ).footer() ).html('¢' + parseFloat(Number(totalVenta)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+                $( api.column( 13 ).footer() ).html('¢' + parseFloat(Number(totalNeto)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
             },
             responsive: true,
             destroy: true,
-            order: [10, "desc"],
+            order: [11, "desc"],
             dom: 'Bfrtip',
             bLengthChange : false,
             buttons: [
@@ -112,7 +115,7 @@ class MovimientosCaja {
                     messageTop:'Movimientos de Cajas',
                     footer: true,
                     exportOptions: {
-                        columns: [2, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+                        columns: [2, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
                     }
                 },
                 {
@@ -121,17 +124,9 @@ class MovimientosCaja {
                     orientation : 'landscape',
                     footer: true,
                     exportOptions: {
-                        columns: [2, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+                        columns: [2, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
                     }
                 }
-                // {
-                //     extend: 'print',
-                //     footer: false,
-                //     exportOptions: {
-                //         columns: [2, 4, 5, 6, 7, 8, 9, 10, 11, 12]
-                //     }
-
-                // }
             ],
             ///////////////// 
             language: {
@@ -210,6 +205,23 @@ class MovimientosCaja {
                     footer: true,
                     mRender: function (e) {
                         return '¢' + parseFloat(Number(e)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                    }
+                },
+                {
+                    title: "TOTAL VENTAS",
+                    footer: true,
+                    render: function (data, type, row, meta) {
+                        var efectivo = 0;
+                        var tarjeta = 0;
+                        if(row['totalVentasEfectivo']==null)
+                            efectivo = 0;
+                        else
+                            efectivo = parseFloat(row['totalVentasEfectivo']);
+                        if(row['totalVentasTarjeta']==null)
+                            tarjeta=0;
+                        else
+                            tarjeta = parseFloat(row['totalVentasTarjeta']);
+                        return '¢' + parseFloat(Number(efectivo + tarjeta)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                     }
                 },
                 {
@@ -424,6 +436,7 @@ class MovimientosCaja {
     ticketPrint(){
         // var data = JSON.parse(e);
         localStorage.setItem("lsUsuario",$("#call_name").text());
+        localStorage.setItem("lsBodega", $('.call_Bodega').html());
         localStorage.setItem("lsFecha",moment().format("YYYY-MM-DD HH:mm"));
         localStorage.setItem("lsApertura",this.montoApertura);
         localStorage.setItem("lsEfectivo",$('#cierreEfectivo').text());
@@ -444,6 +457,7 @@ class MovimientosCaja {
         var totalventas = parseFloat(efectivo) + parseFloat(tarjeta);
         var totalneto = parseFloat(efectivo) + parseFloat(tarjeta) + parseFloat(apertura);
         localStorage.setItem("lsUsuario",row.cajero);
+        localStorage.setItem("lsBodega", bodega.nombre);
         localStorage.setItem("lsFecha",row.fechaApertura);
         localStorage.setItem("lsApertura",'¢' + parseFloat(Number(apertura)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
         localStorage.setItem("lsEfectivo",'¢' + parseFloat(Number(efectivo)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));

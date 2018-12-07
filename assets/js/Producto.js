@@ -338,7 +338,6 @@ class Producto {
         this.tablaproducto = $('#dsProducto').DataTable( {
             responsive: true,
             destroy: true,
-            // data: data,
             order: [[ 1, "asc" ]],
             dom: 'Bfrtip',
             buttons: [

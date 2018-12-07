@@ -239,6 +239,7 @@
     <script src="assets/js/jquery.inputmask/jquery.inputmask.bundle.min.js"></script>
     <!-- JS Scripts -->
     <script src="assets/js/Caja.min.js"></script>
+    <script src="assets/js/Bodega.min.js"></script>
     <!-- Sweet Alert -->
     <script src="assets/js/sweetalert2.min.js"></script>
     <!-- JS dataTables -->
@@ -334,15 +335,17 @@
             movimientosCaja.CargaMoviminetosCajasUsuarioRango();
         });    
         
-        $("#tb_movimientosCaja").append("<tfoot><tr><th>TOTALES</th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th></tr></tfoot>");
+        $("#tb_movimientosCaja").append("<tfoot><tr><th>TOTALES</th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th></tr></tfoot>");
     });
     $('#tb_movimientosCaja tbody').on('click', 'tr', function () {
         var table = $('#tb_movimientosCaja').DataTable();
         var rowCierre = table.row(this).data();
         localStorage.setItem("lsRowCierre",JSON.stringify(rowCierre));
+        bodega.nombre = $(this).find("td:eq(0)").text();
         $('#modalCierre').modal('toggle');
     });
     $("#btnReimprimeCierre").click(function () {
         movimientosCaja.ticketPrintRePrint(localStorage.getItem("lsRowCierre"));
+        
     });
 </script>

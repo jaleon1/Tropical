@@ -1,12 +1,14 @@
 class MermaAgencia {
     // Constructor
-    constructor(id, idItem, cantidad, descripcion, fecha, idBodega) {
+    constructor(id, idItem, cantidad, descripcion, fecha, idBodega, fechaInicial, fechaFinal) {
         this.id = id || null;
         this.idBodega = idBodega || null;
         this.idItem = idItem || null;
         this.cantidad = cantidad || 0;
         this.descripcion = descripcion || '';
         this.fecha = fecha || null;
+        this.fechaInicial = fechaInicial || "";
+        this.fechaFinal = fechaFinal || "";
     }
 
     get Read() {
@@ -133,13 +135,25 @@ class MermaAgencia {
     setTable(buttons=true, nPaging=10){
         t= $('#tMerma').DataTable({
             responsive: true,
-            info: false,
-            iDisplayLength: nPaging,
-            paging: false,
-            order: [9, "desc"],
+            destroy: true,
+            order: [[ 2, "asc" ]],
+            dom: 'Bfrtip',
+            buttons: [
+                {
+                    extend: 'excelHtml5',
+                    exportOptions: {columns: [2, 3, 4, 5, 6, 7, 8, 9]},                    
+                    messageTop:'Merma Agencia Interna'
+                },
+                {
+                    extend: 'pdfHtml5',
+                    orientation : 'landscape',
+                    messageTop:'Merma Agencia Interna',
+                    exportOptions: {columns: [2, 3, 4, 5, 6, 7, 8, 9]}
+                }
+            ],
             "language": {
-                "infoEmpty": "Sin Registros Ingresados",
-                "emptyTable": "Sin Registros Ingresados",
+                "infoEmpty": "Sin Registros de Mermas",
+                "emptyTable": "Sin Registros de Mermas",
                 "search": "Buscar",
                 "zeroRecords":    "No hay resultados",
                 "lengthMenu":     "Mostrar _MENU_ registros",
@@ -217,6 +231,23 @@ class MermaAgencia {
         //$( document ).on( 'click', '#tMerma tbody tr td:not(.buttons)', merma.viewType==undefined || merma.viewType==merma.tUpdate ? merma.UpdateEventHandler : merma.SelectEventHandler);
         // $( document ).on( 'click', '.delete', merma.DeleteEventHandler);
         // $( document ).on( 'click', '.open', merma.OpenEventHandler);
+    };
+
+    CargaMermaRango() {
+        var referenciaCircular = producto.tablainsumo;
+        producto.tablainsumo = [];
+        $.ajax({
+            type: "POST",
+            url: "class/Producto.php",
+            data: {
+                action: "ReadAllbyRange",
+                obj: JSON.stringify(producto)
+            }
+        })
+            .done(function (e) {
+                producto.tablainsumo = referenciaCircular;        
+                producto.ShowAllInventario(e); 
+            });
     };
 
     showInfo() {
