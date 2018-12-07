@@ -199,7 +199,7 @@ class MermaAgencia {
         // ordenSalida.tb_OrdenProduccion = [];
         $.ajax({
             type: "POST",
-            url: "class/merma.php",
+            url: "class/mermaAgencia.php",
             data: {
                 action: "ReadAllbyRange",
                 obj: JSON.stringify(merma)

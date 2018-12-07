@@ -39,6 +39,9 @@ if(isset($_POST["action"])){
         case "ReadAllbyRange":
             echo json_encode($merma->ReadAllbyRange());
             break;
+        case "ReadAllbyRangeInterna":
+            echo json_encode($merma->ReadAllbyRangeInterna());
+            break;
     }
 }
 
@@ -51,6 +54,8 @@ class MermaAgencia{
     public $cantidad=0;
     public $fecha;
     public $listaProducto= [];
+    public $fechaInicial='';
+    public $fechaFinal='';
 
     function __construct(){
         // identificador único
@@ -67,6 +72,8 @@ class MermaAgencia{
             require_once("UUID.php");
             $this->id= $obj["id"] ?? UUID::v4();
             $this->idBodega= $obj['idBodega']?? $_SESSION['userSession']->idBodega;
+            $this->fechaInicial= $obj["fechaInicial"] ?? '';
+            $this->fechaFinal= $obj["fechaFinal"] ?? '';
             // merma
             if(isset($obj["listaProducto"])){
                 $this->listaProducto= [];
@@ -93,6 +100,48 @@ class MermaAgencia{
                 WHERE m.idBodega =:idBodega';
             $param= array(':idBodega'=> $this->idBodega);
             $data = DATA::Ejecutar($sql,$param);
+            return $data;
+        }     
+        catch(Exception $e) {
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar la lista'))
+            );
+        }
+    }
+
+    function ReadAllbyRange(){
+        try {
+            $sql='SELECT m.id, m.idInsumo, b.nombre as agencia, p.codigo, m.consecutivo, p.nombre, m.cantidad, m.descripcion, m.fecha
+                FROM mermaAgencia m 
+                inner join insumosXBodega x on x.id = m.idInsumo
+                inner join producto p on p.id = x.idProducto
+                inner join bodega b on b.id = m.idBodega
+                WHERE m.idBodega =:idBodega AND m.fecha Between :fechaInicial and :fechaFinal';
+            $param= array(':idBodega'=> $this->idBodega,':fechaInicial'=>$this->fechaInicial, ':fechaFinal'=>$this->fechaFinal);
+            $data = DATA::Ejecutar($sql,$param);
+            return $data;
+        }     
+        catch(Exception $e) {
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar la lista'))
+            );
+        }
+    }
+
+    function ReadAllbyRangeInterna(){
+        try {
+            $sql='SELECT m.id, m.idInsumo, b.nombre as agencia, p.codigo, m.consecutivo, p.nombre, m.cantidad, m.descripcion, m.fecha
+                FROM mermaAgencia m 
+                inner join insumosXBodega x on x.id = m.idInsumo
+                inner join producto p on p.id = x.idProducto
+                inner join bodega b on b.id = m.idBodega';
+            $data = DATA::Ejecutar($sql);
             return $data;
         }     
         catch(Exception $e) {

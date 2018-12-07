@@ -233,6 +233,23 @@ class MermaAgencia {
         // $( document ).on( 'click', '.open', merma.OpenEventHandler);
     };
 
+    CargaListaMermaInternaRango(){
+        // var referenciaCircular = ordenSalida.tb_OrdenProduccion;
+        // ordenSalida.tb_OrdenProduccion = [];
+        $.ajax({
+            type: "POST",
+            url: "class/mermaAgencia.php",
+            data: {
+                action: "ReadAllbyRangeInterna",
+                obj: JSON.stringify(merma)
+            }
+        })
+            .done(function (e) {
+                // ordenSalida.tb_OrdenProduccion = referenciaCircular;        
+                merma.ShowAll(e); 
+            });
+    };
+
     CargaMermaRango() {
         var referenciaCircular = producto.tablainsumo;
         producto.tablainsumo = [];
