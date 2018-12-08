@@ -180,8 +180,8 @@ class Distribucion {
         localStorage.setItem("lsPorcentajeDescuento", $("#desc_val").text());
         localStorage.setItem("lsIV", $("#iv_val").text());
         localStorage.setItem("lsListaProducto", JSON.stringify(data.lista));
-        localStorage.setItem("lsUsuarioDistribucion", $("#call_username").text());
-        //location.href ="/Tropical/TicketDistribucion.html";
+        localStorage.setItem("lsUsuarioDistribucion", $("#call_name").text());
+        // location.href ="/Tropical/TicketDistribucion.html";
         location.href = "/TicketDistribucion.html";
     }
 
@@ -189,10 +189,10 @@ class Distribucion {
         var listaProducto = [];
         var subtotal=0;
         var iv=0;
-        if (bodega.tipo == "Interna")
-            localStorage.setItem("lsTipoBodega", "interna");
-        else
+        if (bodega.tipo == "Externa")
             localStorage.setItem("lsTipoBodega", "externa");
+        else
+            localStorage.setItem("lsTipoBodega", "interna");
 
         $('#tb_detalle_distribucion tbody tr').each(function () {
             var lsListaProducto = new Object();
@@ -211,9 +211,9 @@ class Distribucion {
         localStorage.setItem("lsFechaDistribucion", $("#fechaDistribucion").text());
         localStorage.setItem("lsBodega", $("#bodega").text());
         localStorage.setItem("lsOrden", $("#consecutivo").text());
-        localStorage.setItem("lsUsuarioDistribucion", $("#call_username").text());
+        localStorage.setItem("lsUsuarioDistribucion", $("#call_name").html());
         
-        //location.href ="/Tropical/TicketDistribucion.html";
+        // location.href ="/Tropical/TicketDistribucion.html";
         location.href = "/TicketDistribucion.html";
     }
 
@@ -589,6 +589,10 @@ class Distribucion {
 
     UpdateEventHandler() {
         distr.id = $(this).parents("tr").find(".itemId").text() || $(this).find(".itemId").text();
+        if ($(this).parents("tr").find("td:eq(7)").text()=="Externa") 
+            bodega.tipo = "Externa"
+        else
+            bodega.tipo = "Interna";   
         distr.Read;
     };
 
@@ -649,6 +653,7 @@ class Distribucion {
     };
 
     setTable(buttons = true, nPaging = 10) {
+
         $('#tDistribucion').DataTable({
             responsive: true,
             info: false,
@@ -791,6 +796,10 @@ class Distribucion {
                 {
                     title: "ESTADO",
                     data: "estado"
+                },
+                {
+                    title: "TIPO BODEGA",
+                    data: "tipoBodega"
                 },
                 {
                     title: "ACCION",
