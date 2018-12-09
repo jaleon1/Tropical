@@ -309,7 +309,7 @@ class Insumo {
             .draw() //dibuja la tabla con el nuevo insumo
             .node();
         //
-        $('td:eq(3) input', rowNode).attr({id: ("prec_"+insumo.codigo), max:  insumo.saldoCantidad, min: "1", step:"1", value:"1" }).on('keyup keypress', function(e){
+        $('td:eq(3) input', rowNode).attr({id: ("prec_"+insumo.codigo), max:  insumo.saldoCantidad, min: "1", step:"1", value:"1" }).on('keyup keypress mouseup', function(e){
               if(parseFloat($(this).attr('max')) < parseFloat($(this).val())){
                  swal({
                     type: 'warning',

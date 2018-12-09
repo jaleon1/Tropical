@@ -204,13 +204,41 @@ class InsumoBodega {
     };
 
     setTable(buttons=true, completo=false){
+        jQuery.extend( jQuery.fn.dataTableExt.oSort, {
+            "formatted-num-pre": function ( a ) {
+                a = (a === "-" || a === "") ? 0 : a.replace( /[^\d\-\.]/g, "" );
+                return parseFloat( a );
+            }, 
+            "formatted-num-asc": function ( a, b ) {
+                return a - b;
+            },
+            "formatted-num-desc": function ( a, b ) {
+                return b - a;
+            }
+        } );
+
         $('#tInsumo').DataTable({
             responsive: true,
-            info: false,
-            "order": [[ 1, "asc" ]],
-            "language": {
-                "infoEmpty": "Sin insumos Registrados",
-                "emptyTable": "Sin Insumos Registrados",
+            destroy: true,
+            order: [[ 1, "asc" ]],
+            dom: 'Bfrtip',
+            buttons: [
+                {
+                    extend: 'excelHtml5',
+                    exportOptions: {columns: [ 1, 2, 3, 4, 5]},                    
+                    messageTop:'Inventario por Agencia'
+                },
+                {
+                    extend: 'pdfHtml5',
+                    orientation : 'landscape',
+                    messageTop:'Inventario por Agencia',
+                    exportOptions: {
+                        columns: [ 1, 2, 3, 4, 5]}
+                }
+            ],
+            language: {
+                "infoEmpty": "Sin Productos Agencia",
+                "emptyTable": "Sin Productos Agencia",
                 "search": "Buscar",
                 "zeroRecords":    "No hay resultados",
                 "lengthMenu":     "Mostrar _MENU_ registros",
@@ -221,7 +249,7 @@ class InsumoBodega {
                     "previous":   "Anterior"
                 }
             },
-            columnDefs: [{className: "text-right", "targets": [4,5,6]}],
+            columnDefs: [{className: "text-right", "targets": [4,5]}],
             columns: [
                 {
                     title: "ID",

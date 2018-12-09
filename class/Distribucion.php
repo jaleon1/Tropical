@@ -218,10 +218,11 @@ class Distribucion{
             //     FROM     distribucion       
             //     ORDER BY fecha asc';
             $sql= 'SELECT d.id, fecha, orden, u.userName, b.nombre as bodega, e.nombre as estado, 
-                    (sum(cantidad*valor) + sum(cantidad*valor)*0.13) as total, idEstadoComprobante
+                    (sum(cantidad*valor) + sum(cantidad*valor)*0.13) as total, idEstadoComprobante, t.nombre as tipoBodega
                 FROM tropical.distribucion d
                     INNER JOIN usuario u on u.id=d.idUsuario
                     INNER JOIN bodega b on b.id=d.idBodega
+                    INNER JOIN tipoBodega t on t.id=b.idTipoBodega 
                     INNER JOIN estado e on e.id=d.idEstado
                     INNER JOIN productosXDistribucion p on p.idDistribucion=d.id
                 WHERE fecha Between :fechaInicial and :fechaFinal

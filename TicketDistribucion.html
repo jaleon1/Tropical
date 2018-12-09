@@ -1,7 +1,9 @@
 <!DOCTYPE html>
+
 <html>
 
 <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <!-- <link rel="stylesheet" href="style.css"> -->
   <script src="assets/js/jquery.min.js"></script>
   <script src="assets/js/Session.min.js"></script>
@@ -49,6 +51,7 @@
       $("#descripcion").text(localStorage.getItem("lsDescripcion"));
       $("#usuario").text(localStorage.getItem("lsUsuarioDistribucion"));
       var listaProducto = localStorage.getItem("lsListaProducto");
+      var rePrint = localStorage.getItem("lsRePrint");
       listaProducto = JSON.parse(listaProducto);
       
       if (tipoBodega=="interna") {
@@ -81,32 +84,38 @@
           </tr>
           <tr style="line-height:10px;"><td colspan="3"><label>-------------------------------------------------------</label></td></tr>
         `);
-        $.each(listaProducto, function (i, item) {
-          $('#tableBody-TicketDistribucion').append(`
-                <tr> 
-                    <td style="line-height:10px;font-family:Uroob; width:10%; text-align:left;">${item.cantidad}</td>
-                    <td style="line-height:10px;font-family:Uroob; width:60%; text-align:left;">${item.codigo}</td>
-                    <td style="line-height:10px;font-family:Uroob; width:30%; text-align:right;">
-                    ${parseFloat(item.precioVenta).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</td>
-                  </tr>
-          `);
-        }); 
+        if(rePrint=="true")
+          $.each(listaProducto, function (i, item) {
+            $('#tableBody-TicketDistribucion').append(`
+                  <tr> 
+                      <td style="line-height:10px;font-family:Uroob; width:10%; text-align:left;">${item.cantidad}</td>
+                      <td style="line-height:10px;font-family:Uroob; width:60%; text-align:left;">${item.codigo}</td>
+                      <td style="line-height:10px;font-family:Uroob; width:30%; text-align:right;">${item.precioVenta}</td>
+                    </tr>
+            `);
+          });
+        else
+          $.each(listaProducto, function (i, item) {
+            $('#tableBody-TicketDistribucion').append(`
+                  <tr> 
+                      <td style="line-height:10px;font-family:Uroob; width:10%; text-align:left;">${item.cantidad}</td>
+                      <td style="line-height:10px;font-family:Uroob; width:60%; text-align:left;">${item.codigo}</td>
+                      <td style="line-height:10px;font-family:Uroob; width:30%; text-align:right;">
+                      ${'¢' + parseFloat(item.precioVenta).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</td>
+                    </tr>
+            `);
+          });
         $('#tableBody-TicketTotal').append(`
         <tr style="line-height:10px;"><td colspan="2"><label>-------------------------------------------------------</label></td></tr>
         <tr>
           <td><label style="line-height:10px;font-family:Uroob; width:65%; text-align:left;">Sub Total</label></td>
           <td style="line-height:10px;font-family:Uroob; width:35%; text-align:right;">
-          ${localStorage.getItem("lsSubTotal")}</td>
+            ${localStorage.getItem("lsSubTotal")}</td>
         </tr>
         <tr>
-          <td><label style="line-height:10px;font-family:Uroob; width:65%; text-align:left;">Descuento</labe></td>
-          <td style="line-height:10px;font-family:Uroob; width:35%; text-align:right;">
-          ${localStorage.getItem("lsPorcentajeDescuento")}</td>
-        </tr>
-        <tr>
-          <td><label style="line-height:10px;font-family:Uroob; width:65%; text-align:left;">Impuesto de Ventas</label></td>
+          <td><label style="line-height:10px;font-family:Uroob; width:65%; text-align:left;">I.V</label></td>
           <td id="efectivo" style="line-height:10px;font-family:Uroob; width:35%; text-align:right;">
-          ${localStorage.getItem("lsPorcentajeIva")}</td>
+            ${localStorage.getItem("lsIV")}</td>
         </tr>
         <tr>
           <td><label style="line-height:10px;font-family:Uroob; width:65%; text-align:left;">TOTAL</label></td>

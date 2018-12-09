@@ -32,6 +32,9 @@ if(isset($_POST["action"])){
         case "Read":
             echo json_encode($factura->Read());
             break;
+        case "ReadCancelada":
+            echo json_encode($factura->ReadCancelada());
+            break;
         case "ReadVentas":
             echo json_encode($factura->ReadVentas());
             break;
@@ -43,12 +46,15 @@ if(isset($_POST["action"])){
             break;
         case "Delete":
             echo json_encode($factura->Delete());
-            break;   
+            break;
+        case "sendContingencia":
+            echo json_encode($factura->contingencia());
+            break;
         case "LoadPreciosTamanos":
             echo json_encode($factura->LoadPreciosTamanos());
             break;
-        case "sendContingencia":
-            // $factura->sendContingencia();
+        case "sendContingenciaMasiva":
+            $factura->sendContingenciaMasiva();
             break;
         case "sendNotaCredito":
             // Nota de Credito.
@@ -306,6 +312,36 @@ class Factura{
         }
     }
 
+    function ReadCancelada(){
+        try {
+            $sql='SELECT fac.id, fac.idBodega, bod.nombre bodega, fac.fechaCreacion, fac.consecutivo, 
+            fac.totalComprobante, fac.idUsuario, usr.nombre vendedor, fac.montoEfectivo, fac.montoTarjeta, 
+            fac.idEstadoComprobante, fac.totalComprobante, fac.claveNC, fac.idEstadoNC
+                FROM factura fac
+                INNER JOIN bodega bod on bod.id = fac.idBodega
+                INNER JOIN usuario usr on usr.id = fac.idUsuario
+                INNER JOIN (SELECT idBodega
+                            FROM usuariosXBodega
+                            WHERE idUsuario = :idUsuario) bodegas on bodegas.idBodega = fac.idBodega
+                AND
+                fac.fechaCreacion Between :fechaInicial and :fechaFinal
+                AND fac.claveNC IS NOT NULL
+                ORDER BY fac.consecutivo DESC';
+                
+            $param= array(':idUsuario'=>$_SESSION["userSession"]->id, ':fechaInicial'=>$this->fechaInicial, ':fechaFinal'=>$this->fechaFinal);
+            $data = DATA::Ejecutar($sql,$param);
+            return $data;
+        }     
+        catch(Exception $e) { 
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar la lista'))
+            );
+        }
+    }
+
     function Read(){
         try {
             $sql='SELECT idBodega, fechaCreacion, consecutivo, clave, consecutivoFE, local, terminal, idCondicionVenta, idSituacionComprobante, idEstadoComprobante, plazoCredito, 
@@ -397,7 +433,7 @@ class Factura{
             $sql='SELECT f.id, f.fechaCreacion, f.consecutivo, f.totalComprobante,
             (SELECT count(pxf.codigo) FROM tropical.productosXFactura pxf WHERE pxf.codigo="12oz" AND pxf.idFactura=f.id) AS _12oz, 
             (SELECT count(pxf.codigo) FROM tropical.productosXFactura pxf WHERE pxf.codigo="08oz" AND pxf.idFactura=f.id) AS _08oz 
-            FROM tropical.factura f WHERE f.fechaCreacion Between :fechaInicial and :fechaFinal  
+            FROM tropical.factura f WHERE f.idEstadoNC<3 AND f.idEstadoNC>3 OR f.idEstadoNC IS NULL  
             ORDER BY f.consecutivo desc';
             $param= array(':fechaInicial'=>$this->fechaInicial, ':fechaFinal'=>$this->fechaFinal);            
             $data= DATA::Ejecutar($sql, $param);
@@ -652,7 +688,7 @@ class Factura{
         }
     }
 
-    public function sendContingencia(){
+    public function sendContingenciaMasiva(){
         // busca facturas con error (5) y las reenvia con contingencia, para los documentos 1 - 4  (FE - TE)
         error_log("************************************************************");
         error_log("************************************************************");
@@ -674,12 +710,12 @@ class Factura{
             $this->contingencia();                
         }
         error_log("[INFO] Finaliza Contingencia Masiva de Comprobantes");
-    }
+    }  
 
     public function contingencia(){
         try {
             // idDocumento 08 = Comprobante emitido en contingencia.
-            // SituacionComprobante 02 = Contingencia
+            // SituacionComprobante 02 = Envío en Contingencia
             // Estado de Comprobante 01 = Sin enviar.
             $sql="UPDATE factura
                 SET idSituacionComprobante=:idSituacionComprobante , idDocumento=:idDocumento, idEstadoComprobante=:idEstadoComprobante
@@ -688,10 +724,11 @@ class Factura{
             $data = DATA::Ejecutar($sql,$param, false);
             if($data){
                 // lee la transaccion completa y re envia
-                $this->enviarDocumentoElectronico();                
+                //error_log("[INFO] Contingencia Entidad (". $this->idEntidad .") Transaccion (".$this->consecutivo.")");
+                $this->enviarDocumentoElectronico();
                 return true;
             }
-            else throw new Exception('Error al actualizar la situación del comprobante en Contingencia.', 45656);            
+            else throw new Exception('Error al actualizar la situación del comprobante en Contingencia.', 45656);
         }     
         catch(Exception $e) {
             error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
