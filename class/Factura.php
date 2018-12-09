@@ -18,7 +18,8 @@ if(isset($_POST["action"])){
     require_once("Bodega.php");
     require_once("wsBCCR.php");
     // require_once("productoXFactura.php");
-    require "mail/mail.php";
+    // require "mail/mail.php";
+    require_once("mail/mail.php");
     // Session
     if (!isset($_SESSION))
         session_start();
@@ -148,17 +149,17 @@ class Factura{
             $this->idCodigoMoneda= $obj["idCodigoMoneda"] ?? 55; // CRC
             $wsBCCR = new TipoCambio();
             $this->tipoCambio= $obj['tipoCambio'] ?? $wsBCCR->tipo_cambio()["venta"]; // tipo de cambio dinamico con BCCR
-            $this->totalServGravados= $obj['totalServGravados'];
-            $this->totalServExentos= $obj['totalServExentos'];
-            $this->totalMercanciasGravadas= $obj['totalMercanciasGravadas'];
-            $this->totalMercanciasExentas= $obj['totalMercanciasExentas'];
-            $this->totalGravado= $obj['totalGravado'];
-            $this->totalExento= $obj['totalExento'];
-            $this->totalVenta= $obj["totalVenta"];
-            $this->totalDescuentos= $obj["totalDescuentos"];
-            $this->totalVentaneta= $obj["totalVentaneta"];
-            $this->totalImpuesto= $obj["totalImpuesto"];
-            $this->totalComprobante= $obj["totalComprobante"];
+            $this->totalServGravados= $obj['totalServGravados'] ?? 0;
+            $this->totalServExentos= $obj['totalServExentos'] ?? 0;
+            $this->totalMercanciasGravadas= $obj['totalMercanciasGravadas'] ?? 0;
+            $this->totalMercanciasExentas= $obj['totalMercanciasExentas'] ?? 0;
+            $this->totalGravado= $obj['totalGravado'] ?? 0;
+            $this->totalExento= $obj['totalExento'] ?? 0;
+            $this->totalVenta= $obj["totalVenta"] ?? 0;
+            $this->totalDescuentos= $obj["totalDescuentos"] ?? 0;
+            $this->totalVentaneta= $obj["totalVentaneta"] ?? 0;
+            $this->totalImpuesto= $obj["totalImpuesto"] ?? 0;
+            $this->totalComprobante= $obj["totalComprobante"] ?? 0;
             $this->montoEfectivo= $obj["montoEfectivo"] ?? null;
             $this->montoTarjeta= $obj["montoTarjeta"] ?? null;
 
