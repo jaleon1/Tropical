@@ -16,6 +16,9 @@ if(isset($_POST["action"])){
         case "ReadAll": // todos los insumos de una bodega específica
             echo json_encode($productosxbodega->ReadAll());
             break;
+        case "ReadAllbyRange":
+            echo json_encode($productosxbodega->ReadAllbyRange());
+            break;
         case "ReadCompleto": // todas las bodegas
             echo json_encode($productosxbodega->ReadCompleto());
             break;
@@ -48,6 +51,8 @@ class InsumosXBodega{
     public $saldoCosto=0;
     public $costoPromedio='0';
     public $lista=array();
+    public $fechaInicial='';
+    public $fechaFinal='';
 
     function __construct(){
         // identificador único
@@ -66,6 +71,8 @@ class InsumosXBodega{
             $this->idProducto= $obj["idProducto"] ?? null;
             $this->cantidad= $obj["cantidad"] ?? 0;      
             $this->costo= $obj["costo"] ?? 0;
+            $this->fechaInicial= $obj["fechaInicial"] ?? '';
+            $this->fechaFinal= $obj["fechaFinal"] ?? '';
             unset($_POST['obj']);
             // En caso de ser una lista de articulos para agregar O lista de productos por distribuir.
             if(isset($obj["lista"] )){
@@ -102,6 +109,40 @@ class InsumosXBodega{
                 'msg' => 'Error al cargar la lista'))
             );
         }
+    }
+
+    function ReadAllbyRange(){
+        try {
+            $sql='SELECT id, idOrdenCompra AS ordenEntrada, idOrdenSalida AS ordenSalida,            
+                    idInsumo, (
+                        SELECT codigo 
+                        FROM producto p 
+                        INNER JOIN insumosXBodega x on x.idProducto = p.id
+                        WHERE x.id = inventarioBodega.idInsumo
+                    ) AS insumo,
+                    entrada,
+                    salida,
+                    saldo,
+                    costoAdquisicion,
+                    valorEntrada,
+                    valorSalida,
+                    valorSaldo,
+                    costoPromedio,
+                    fecha
+                FROM  inventarioBodega
+                WHERE fecha Between :fechaInicial and :fechaFinal       
+                ORDER BY fecha desc';
+            $param= array(':fechaInicial'=>$this->fechaInicial, ':fechaFinal'=>$this->fechaFinal);            
+            $data= DATA::Ejecutar($sql, $param);
+            return $data;
+        }     
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar la lista'))
+            );
+        }    
     }
 
     function ReadCompleto(){
