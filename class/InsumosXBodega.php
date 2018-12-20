@@ -114,24 +114,24 @@ class InsumosXBodega{
     function ReadAllbyRange(){
         try {
             $sql='SELECT id, idOrdenCompra AS ordenEntrada, idOrdenSalida AS ordenSalida,            
-                idInsumo, (
-                    SELECT codigo 
-                    FROM producto p 
-                    INNER JOIN insumosXBodega x on x.idProducto = p.id
-                    WHERE x.id = inventarioBodega.idInsumo
-                ) AS insumo,
-                entrada,
-                salida,
-                saldo,
-                costoAdquisicion,
-                valorEntrada,
-                valorSalida,
-                valorSaldo,
-                costoPromedio,
-                fecha
-                    FROM  inventarioBodega
-                    WHERE fecha Between :fechaInicial and :fechaFinal       
-                    ORDER BY fecha desc';
+                    idInsumo, (
+                        SELECT codigo 
+                        FROM producto p 
+                        INNER JOIN insumosXBodega x on x.idProducto = p.id
+                        WHERE x.id = inventarioBodega.idInsumo
+                    ) AS insumo,
+                    entrada,
+                    salida,
+                    saldo,
+                    costoAdquisicion,
+                    valorEntrada,
+                    valorSalida,
+                    valorSaldo,
+                    costoPromedio,
+                    fecha
+                FROM  inventarioBodega
+                WHERE fecha Between :fechaInicial and :fechaFinal       
+                ORDER BY fecha desc';
             $param= array(':fechaInicial'=>$this->fechaInicial, ':fechaFinal'=>$this->fechaFinal);            
             $data= DATA::Ejecutar($sql, $param);
             return $data;
