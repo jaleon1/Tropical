@@ -12,6 +12,7 @@ if(isset($_POST["action"])){
     require_once('Factura.php');
     require_once('Receptor.php');
     require_once('facturacionElectronica.php');
+    require_once('InventarioInsumoXBodega');
     require_once("Bodega.php");
     require_once("ClienteFE.php");
     require_once("encdes.php");
@@ -362,11 +363,11 @@ class Distribucion{
     function Aceptar(){
         try {
             $created=true;
-            include("inventarioBodega.php");
+            //include("inventarioBodega.php");
             if(!isset($this->orden))
                 $this->Read();
             foreach ($this->lista as $item) {
-                $inventarioBodega::entrada($item->idProducto, 'Distribución#'.$this->orden, $item->cantidad, $item->valor);
+                InventarioInsumoXBodega::entrada($item->idProducto, 'Distribución#'.$this->orden, $item->cantidad, $item->valor);
                 if(!$data)
                     $created= false;
                 else {
