@@ -180,7 +180,16 @@ class Consumible{
                     $saldoCantidad = 0;
                     $saldoCosto = 0;
                 }
-                // agrega ENTRADA histórico inventario. *** NO IMPLEMENTADO **
+                // agrega SALIDA histórico inventario.
+                $sql="INSERT INTO inventarioBodega  (id, idOrdenSalida, idInsumo, salida, saldo, valorSalida, valorSaldo)
+                    VALUES (uuid(), :idOrdenSalida, :idInsumo, :salida, :saldo, :valorSalida, :valorSaldo );";
+                $param= array(':idOrdenSalida'=>$outOrden, 
+                    ':idInsumo'=>$idInsumo,
+                    ':salida'=>$outCantidad,
+                    ':saldo'=>self::$saldoCantidad, 
+                    ':valorSalida'=> self::$valorSalida,
+                    ':valorSaldo'=>self::$saldoCosto
+                );
                 // actualiza saldos.
                 $sql = 'UPDATE insumosXBodega
                     SET saldoCantidad=:saldoCantidad, saldoCosto=:saldoCosto
