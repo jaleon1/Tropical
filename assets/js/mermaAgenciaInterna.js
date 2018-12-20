@@ -278,7 +278,7 @@ class MermaAgencia {
     };
 
     crear() {
-        var miAccion = "CreateInterno";
+        var miAccion = "Create";
         //
         var listaok = true;
         merma.listaProducto = [];

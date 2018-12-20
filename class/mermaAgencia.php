@@ -26,9 +26,6 @@ if(isset($_POST["action"])){
         case "Create":
             echo json_encode($merma->Create());
             break;
-        case "CreateInterno":
-            echo json_encode($merma->CreateInterno());
-            break;
         case "rollback":
             $merma->idInsumo = $_POST["idInsumo"];
             $merma->consecutivo = $_POST["consecutivo"];
@@ -175,46 +172,6 @@ class MermaAgencia{
     }
 
     function Create(){
-        try {
-            $created=true;
-            // insumos
-            foreach ($this->listaProducto as $item) {
-                require_once("UUID.php");
-                $id= UUID::v4();
-                // historico merma
-                $sql="INSERT INTO mermaAgencia (id, idInsumo, cantidad, descripcion, idBodega)
-                    VALUES (:id, :idInsumo, :cantidad, :descripcion, :idBodega)";
-                $param= array(':id'=> $id,':idInsumo'=> $item->id, ':cantidad'=> $item->cantidad, ':descripcion'=> $item->descripcion, ':idBodega'=> $this->idBodega);
-                $data = DATA::Ejecutar($sql,$param,false);
-                if(!$data)
-                    $created= false;
-                // consecutivo.
-                $sql="SELECT consecutivo 
-                    FROM mermaAgencia
-                    WHERE id=:id";
-                $param= array(':id'=> $id);
-                $data = DATA::Ejecutar($sql);
-                // actualiza item.
-                InventarioInsumoXBodega::salida( $item->id, $this->idBodega, 'merma#'.$data[0]['consecutivo'], $item->cantidad);
-                // ***************** imprimir. ***************************
-                // ***************** imprimir. ***************************
-                // ***************** imprimir. ***************************
-            }
-            //
-            if($created)
-                return true;
-            else throw new Exception('Error al restar MERMA, debe realizar el procedimiento manualmente.', 666);
-        }     
-        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
-            header('HTTP/1.0 400 Bad error');
-            die(json_encode(array(
-                'code' => $e->getCode() ,
-                'msg' => $e->getMessage()))
-            );
-        }
-    }
-
-    function CreateInterno(){
         try {
             $created=true;
             // insumos
