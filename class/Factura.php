@@ -17,8 +17,7 @@ if(isset($_POST["action"])){
     require_once("Receptor.php");
     require_once("Bodega.php");
     require_once("wsBCCR.php");
-    // require_once("productoXFactura.php");
-    require "mail/mail.php";
+    require_once("mail/mail.php");
     // Session
     if (!isset($_SESSION))
         session_start();
@@ -643,16 +642,18 @@ class Factura{
     }
 
     function actualizaInventario($insumos){
+        if(!isset($this->consecutivo))
+            $this->Read();
         foreach ($insumos as $key => $value){
             // resta inventario sabor y topping.
             if($value->idTamano==0)
                 $porcion= 1;
             else $porcion= 1.4285714;
-            InventarioInsumoXBodega::salida($value->idSabor1, $this->idBodega, 'ordenXX', $porcion);
-            InventarioInsumoXBodega::salida($value->idSabor2, $this->idBodega, 'ordenXX', $porcion);
-            InventarioInsumoXBodega::salida($value->idTopping, $this->idBodega, 'ordenXX', 1);
+            InventarioInsumoXBodega::salida($value->idSabor1, $this->idBodega, 'factura#'.$this->consecutivo, $porcion);
+            InventarioInsumoXBodega::salida($value->idSabor2, $this->idBodega, 'factura#'.$this->consecutivo, $porcion);
+            InventarioInsumoXBodega::salida($value->idTopping, $this->idBodega, 'factura#'.$this->consecutivo, 1);
             // resta inventario consumibles.
-            Consumible::salida($value->idTamano);
+            Consumible::salida($value->idTamano, $this->idBodega, $this->consecutivo);
         };
     }
 

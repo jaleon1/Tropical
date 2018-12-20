@@ -12,7 +12,7 @@ if(isset($_POST["action"])){
     require_once('Factura.php');
     require_once('Receptor.php');
     require_once('facturacionElectronica.php');
-    require_once('InventarioInsumoXBodega');
+    require_once('InventarioInsumoXBodega.php');
     require_once("Bodega.php");
     require_once("ClienteFE.php");
     require_once("encdes.php");
@@ -367,19 +367,17 @@ class Distribucion{
             if(!isset($this->orden))
                 $this->Read();
             foreach ($this->lista as $item) {
-                InventarioInsumoXBodega::entrada($item->idProducto, 'Distribución#'.$this->orden, $item->cantidad, $item->valor);
-                if(!$data)
-                    $created= false;
-                else {
-                    // set idEstado = true.
-                    $sql="UPDATE distribucion
-                        SET idEstado=1, fechaAceptacion= NOW()
-                        WHERE id=:id";
-                    $param= array(':id'=> $this->id);
-                    $data = DATA::Ejecutar($sql,$param,false);
-                    if(!$data)
-                        $created= false;
+                if(InventarioInsumoXBodega::entrada($item->id, $this->idBodega, 'Distribución#'.$this->orden, $item->cantidad, $item->precioVenta)){
+                     // set idEstado = true.
+                     $sql="UPDATE distribucion
+                     SET idEstado=1, fechaAceptacion= NOW()
+                     WHERE id=:id";
+                 $param= array(':id'=> $this->id);
+                 $data = DATA::Ejecutar($sql,$param,false);
+                 if(!$data)
+                     $created= false;
                 }
+                else $created= false;
             }
             if($created)
                 return true;
