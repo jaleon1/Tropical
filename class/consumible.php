@@ -151,8 +151,15 @@ class Consumible{
             $param= array(':tamano'=> $tamano);
             $data= DATA::Ejecutar($sql, $param);
             foreach ($data as $key => $value){
-                // self::salidaBodega($value['idProducto'], 'ordenXX', $value['cantidad']);
-                InventarioInsumoXBodega::salida($value['idProducto'], $idBodega, 'factura#'.$consecutivo, $value['cantidad']);
+                $sql="SELECT id
+                     FROM insumosXBodega 
+                     WHERE idBodega=:idBodega and idProducto=:idProducto;";
+                $param = array(':idProducto'=>$value['idProducto'], ':idBodega'=>$idBodega);
+                $dataInsumo = DATA::Ejecutar($sql,$param);
+                if($dataInsumo){
+                    InventarioInsumoXBodega::salida($dataInsumo[0]['id'], $idBodega, 'factura#'.$consecutivo, $value['cantidad']);
+                }
+                else throw new Exception('Warning, el código de insumo no se encuentra en el inventario, no es posible actualizar por facturacion. ('.$idProducto.')' , ERROR_SALIDA_INVENTARIO_INSUMOXBODEGA);           
             }
         }
         catch(Exception $e) {
