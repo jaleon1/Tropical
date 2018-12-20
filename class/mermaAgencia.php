@@ -190,7 +190,7 @@ class MermaAgencia{
                     FROM mermaAgencia
                     WHERE id=:id";
                 $param= array(':id'=> $id);
-                $data = DATA::Ejecutar($sql);
+                $data = DATA::Ejecutar($sql, $param);
                 // actualiza item.
                 InventarioInsumoXBodega::salida( $item->id, $this->idBodega, 'merma#'.$data[0]['consecutivo'], $item->cantidad);
                 // ***************** imprimir. ***************************
