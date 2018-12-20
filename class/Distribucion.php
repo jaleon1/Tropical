@@ -331,15 +331,15 @@ class Distribucion{
                     $param= array(':idBodega'=>$this->idBodega);
                     $data = DATA::Ejecutar($sql,$param);
                     if(count($data)){
+                        $this->Read();
                         $this->Aceptar();
                         // retorna orden autogenerada.
-                        return $this->Read();
+                        return $this;
                     }
-                    else{ // es externa. Crea comprobante.                       
+                    else{ // es externa. Crea comprobante.
                         
                         $objFactura = $this->Read();
                         $objFactura->consecutivo= $this->orden;
-
                         FacturacionElectronica::$distr= true;
                         FacturacionElectronica::iniciar($objFactura);
                         // retorna orden autogenerada.
@@ -362,22 +362,23 @@ class Distribucion{
     function Aceptar(){
         try {
             $created=true;
-            $sql="UPDATE distribucion
-                SET idEstado=1, fechaAceptacion= NOW()
-                WHERE id=:id";
-            $param= array(':id'=> $this->id);
-            $data = DATA::Ejecutar($sql,$param,false);
-            // if(!$data)
-            //     // $created=false;
+            include("inventarioBodega.php");
+            if(!isset($this->orden))
+                $this->Read();
             foreach ($this->lista as $item) {
-                $sql="CALL spUpdateSaldosPromedioInsumoBodegaEntrada(:nidproducto, :nidbodega, :ncantidad, :ncosto)";
-                $param= array(':nidproducto'=> $item->idProducto, 
-                    ':nidbodega'=> $this->idBodega,
-                    ':ncantidad'=> $item->cantidad,
-                    ':ncosto'=> $item->valor);
-                $data = DATA::Ejecutar($sql,$param,false);
+                $inventarioBodega::entrada($item->idProducto, 'Distribución#'.$this->orden, $item->cantidad, $item->valor);
                 if(!$data)
                     $created= false;
+                else {
+                    // set idEstado = true.
+                    $sql="UPDATE distribucion
+                        SET idEstado=1, fechaAceptacion= NOW()
+                        WHERE id=:id";
+                    $param= array(':id'=> $this->id);
+                    $data = DATA::Ejecutar($sql,$param,false);
+                    if(!$data)
+                        $created= false;
+                }
             }
             if($created)
                 return true;
