@@ -363,7 +363,6 @@ class Distribucion{
     function Aceptar(){
         try {
             $created=true;
-            //include("inventarioBodega.php");
             if(!isset($this->orden))
                 $this->Read();
             foreach ($this->lista as $item) {

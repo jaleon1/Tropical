@@ -171,56 +171,6 @@ class Consumible{
             // );
         }
     }
-
-    // public static function salidaBodega($idProducto, $outOrden, $outCantidad){
-    //     try {
-    //         $sql="SELECT saldoCantidad, costoPromedio 
-    //             FROM insumosXBodega 
-    //             WHERE idBodega=:idBodega and idProducto=:idProducto;";
-    //         $param = array(':idProducto'=>$idProducto, ':idBodega'=>$_SESSION['userSession']->idBodega);
-    //         $data = DATA::Ejecutar($sql,$param);
-    //         if($data){
-    //             // calculo de saldos. 
-    //             // self::$valorSalida = floatval($data[0]['costoPromedio'] * $outCantidad);
-    //             $saldoCantidad = $data[0]['saldoCantidad'] - $outCantidad;
-    //             $saldoCosto = floatval($data[0]['costoPromedio'] * $saldoCantidad);
-    //             if($saldoCantidad < 0){
-    //                 $saldoCantidad = 0;
-    //                 $saldoCosto = 0;
-    //             }
-    //             // agrega SALIDA histórico inventario.
-    //             $sql="INSERT INTO inventarioBodega  (id, idOrdenSalida, idInsumo, salida, saldo, valorSalida, valorSaldo)
-    //                 VALUES (uuid(), :idOrdenSalida, :idInsumo, :salida, :saldo, :valorSalida, :valorSaldo );";
-    //             $param= array(':idOrdenSalida'=>$outOrden, 
-    //                 ':idInsumo'=>$idInsumo,
-    //                 ':salida'=>$outCantidad,
-    //                 ':saldo'=>self::$saldoCantidad, 
-    //                 ':valorSalida'=> self::$valorSalida,
-    //                 ':valorSaldo'=>self::$saldoCosto
-    //             );
-    //             // actualiza saldos.
-    //             $sql = 'UPDATE insumosXBodega
-    //                 SET saldoCantidad=:saldoCantidad, saldoCosto=:saldoCosto
-    //                 WHERE idBodega=:idBodega and idProducto=:idProducto;';
-    //             $param = array(':idProducto'=>$idProducto, ':idBodega'=>$_SESSION['userSession']->idBodega, ':saldoCantidad'=>$saldoCantidad, ':saldoCosto'=>$saldoCosto);
-    //             $data = DATA::Ejecutar($sql, $param, false);
-    //             if($data) {
-    //                 return true;
-    //             }                
-    //             else throw new Exception('Error al consultar actualizar los saldos de insumo x bodega ('.$idProducto.')' , ERROR_SALIDA_INVENTARIO_INSUMOXBODEGA);
-    //         }
-    //         else throw new Exception('Warning, el código de insumo no se encuentra en el inventario, no es posible actualizar por facturacion. ('.$idProducto.')' , ERROR_SALIDA_INVENTARIO_INSUMOXBODEGA);
-
-    //     }
-    //     catch(Exception $e) {
-    //         error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
-    //         // header('HTTP/1.0 400 Bad error');
-    //         // die(json_encode(array(
-    //         //     'code' => $e->getCode() ,
-    //         //     'msg' => $e->getMessage()))
-    //         // );
-    //     }
-    // }
 }
 
 
