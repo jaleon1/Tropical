@@ -139,7 +139,7 @@
                 <div class="">
                     <div class="page-title">
                         <div class="title_left">
-                            <h3>INVENTARIO INSUMO REPORTE</h3>
+                            <h3>INVENTARIO AGENCIA REPORTE</h3>
                         </div>
 
                         <div class="title_right">
@@ -306,7 +306,7 @@
     <!-- Input mask -->
     <script src="assets/js/jquery.inputmask/jquery.inputmask.bundle.min.js"></script>
     <!-- JS Scripts -->
-    <script src="assets/js/Insumo.min.js"></script>
+    <script src="assets/js/InsumosXBodega.js"></script>
     <!-- Sweet Alert -->
     <script src="assets/js/sweetalert2.min.js"></script>
     <!-- JS dataTables -->
@@ -335,10 +335,10 @@
     $(document).ready(function () {
         // if(!Session.state)
         //     return;
-        insumo.id=null;
-        insumo.setTableInventarioInsumoReporte();
+        insumobodega.id=null;
+        insumobodega.setTableInventarioInsumoReporte();
         // insumo.ReadInventarioInsumo;
-        insumo.Init();
+        //insumo.Init();
         //
         $(function () {
             var start = moment().subtract(29, 'days');
@@ -397,15 +397,15 @@
 
             cb(start, end);
 
-            insumo.fechaInicial = start.format('YYYY-MM-DD') + ' 00:00';
-            insumo.fechaFinal = end.format('YYYY-MM-DD') + ' 23:59';
-            insumo.CargaInsumoRango();
+            insumobodega.fechaInicial = start.format('YYYY-MM-DD') + ' 00:00';
+            insumobodega.fechaFinal = end.format('YYYY-MM-DD') + ' 23:59';
+            insumobodega.CargaInsumoRango();
         });
 
         $('#dp_rangoInsumoReporte').on('apply.daterangepicker', function (ev, picker) {
-            insumo.fechaInicial = picker.startDate.format('YYYY-MM-DD') + ' 00:00';
-            insumo.fechaFinal = picker.endDate.format('YYYY-MM-DD') + ' 23:59';
-            insumo.CargaInsumoRango();
+            insumobodega.fechaInicial = picker.startDate.format('YYYY-MM-DD') + ' 00:00';
+            insumobodega.fechaFinal = picker.endDate.format('YYYY-MM-DD') + ' 23:59';
+            insumobodega.CargaInsumoRango();
         });
     });
 

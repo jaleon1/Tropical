@@ -320,6 +320,208 @@ class InsumoBodega {
                 validator.reset();
             }
     };
+
+    setTableInventarioInsumoReporte(){
+        jQuery.extend( jQuery.fn.dataTableExt.oSort, {
+            "formatted-num-pre": function ( a ) {
+                a = (a === "-" || a === "") ? 0 : a.replace( /[^\d\-\.]/g, "" );
+                return parseFloat( a );
+            }, 
+            "formatted-num-asc": function ( a, b ) {
+                return a - b;
+            },
+            "formatted-num-desc": function ( a, b ) {
+                return b - a;
+            }
+        } );
+        
+        this.tablainsumo = $('#dsInsumoReporte').DataTable( {
+            responsive: true,
+            destroy: true,
+            order: [1, "desc"],
+            dom: 'Bfrtip',
+            buttons: [
+                {
+                    extend: 'excelHtml5',
+                    exportOptions: {columns: [ 1, 3, 5, 7, 9, 10, 11, 12, 13, 14, 15 ]},
+                    messageTop:'Movimientos de Materia Prima'
+                },
+                {
+                    extend: 'pdfHtml5',
+                    orientation : 'landscape',
+                    exportOptions: {columns: [ 1, 3, 5, 7, 9, 10, 11, 12, 13, 14, 15 ]}
+                }
+            ],
+            language: {
+                "infoEmpty": "Sin movimientos de Materia Prima",
+                "emptyTable": "Sin movimientos de Materia Prima",
+                "search": "Buscar",
+                "zeroRecords": "No hay resultados",
+                "lengthMenu": "Mostrar _MENU_ registros",
+                "paginate": {
+                    "first": "Primera",
+                    "last": "Ultima",
+                    "next": "Siguiente",
+                    "previous": "Anterior"
+                }
+            },
+            columns: [
+                {
+                    title: "ID",
+                    data: "id",
+                    className: "itemId",
+                    width: "auto",
+                    searchable: false
+                },
+                {
+                    title: "FECHA",
+                    data: "fecha",
+                    width: "auto"
+                },
+                // {
+                //     title: "ORDEN COMPRA",
+                //     data: "idOrdenCompra",
+                //     visible: false
+                // },
+                {
+                    title: "ENTRADA",
+                    data: "ordenEntrada",
+                    width: "auto"
+                },
+                // {
+                //     title: "ORDEN SALIDA",
+                //     data: "idOrdenSalida",
+                //     visible: false
+                // },
+                {
+                    title: "SALIDA",
+                    data: "ordenSalida",
+                    width: "auto"
+                },
+                {
+                    title: "ID INSUMO",
+                    data: "idInsumo",
+                    visible: false
+                },
+                {
+                    title: "INSUMO",
+                    data: "insumo",
+                    width: "auto"
+                },
+                {
+                    title: "ENTRADA",
+                    data: "entrada",
+                    width: "auto",
+                    mRender: function ( e ) {
+                        if (e==null) 
+                            return '0'
+                        else
+                            return e}
+                },
+                {
+                    title: "SALIDA",
+                    data: "salida",
+                    width: "auto",
+                    mRender: function ( e ) {
+                        if (e==null) 
+                            return '0'
+                        else
+                            return e}
+                },
+                {
+                    title: "SALDO",
+                    data: "saldo",
+                    width: "auto"
+                },
+                {
+                    title: "COSTO ADQUISICION",
+                    data: "costoAdquisicion",
+                    width: "auto",
+                    type: 'formatted-num',
+                    mRender: function ( e ) {
+                        if (e==null) 
+                            return '¢0'
+                        else
+                            return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                },
+                {
+                    title:"VALOR ENTRADA",
+                    data:"valorEntrada",
+                    width:"auto",
+                    type: 'formatted-num',
+                    mRender: function ( e ) {
+                        if (e==null) 
+                            return '¢0'
+                        else
+                            return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                },
+                {
+                    title:"VALOR SALIDA",
+                    data:"valorSalida",
+                    width:"auto",
+                    type: 'formatted-num',
+                    mRender: function ( e ) {
+                        if (e==null) 
+                            return '¢0'
+                        else
+                        return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                },
+                {
+                    title:"VALOR SALDO",
+                    data:"valorSaldo",
+                    width:"auto",
+                    type: 'formatted-num',
+                    mRender: function ( e ) {
+                        if (e==null) 
+                            return '¢0'
+                        else
+                        return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                },
+                {
+                    title:"COSTO PROMEDIO",
+                    data:"costoPromedio",
+                    width:"auto",
+                    type: 'formatted-num',
+                    mRender: function ( e ) {
+                        if (e==null) 
+                            return '¢0'
+                        else
+                        return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                }
+            ]
+        });
+    };
+
+    CargaInsumoRango(){
+        var referenciaCircular = insumobodega.tablainsumo;
+        insumobodega.tablainsumo = [];
+        $.ajax({
+            type: "POST",
+            url: "class/InsumosXBodega.php",
+            data: {
+                action: "ReadAllbyRange",
+                obj: JSON.stringify(insumobodega)
+            }
+        })
+            .done(function (e) {
+                insumobodega.tablainsumo = referenciaCircular;        
+                insumobodega.ShowAllInventario(e); 
+            });
+    };
+
+    ShowAllInventario(e) {
+        //Crea los eventos según sea el url
+        var t = $('#dsInsumoReporte').DataTable();
+        if (t.rows().count() == 0) {
+            t.clear();
+            t.rows.add(JSON.parse(e));
+            t.draw();
+        } else {
+            t.clear();
+            t.rows.add(JSON.parse(e));
+            t.draw();
+        }
+    };
 }
 
 //Class Instance
