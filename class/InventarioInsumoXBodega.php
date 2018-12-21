@@ -74,17 +74,19 @@ class InventarioInsumoXBodega{
             self::$saldoCosto = $oldSaldoCosto + floatval($inCostoUnitario * $inCantidad);
             self::$costoPromedio = self::$saldoCosto / self::$saldoCantidad;
             // agrega ENTRADA histórico inventario.
-            $sql="INSERT INTO inventarioBodega  (id, idBodega, idOrdenSalida, idInsumo, salida, saldo, valorSalida, valorSaldo)
-                    VALUES (uuid(), :idBodega, :idOrdenSalida, :idInsumo, :salida, :saldo, :valorSalida, :valorSaldo );";
-                $param= array(
-                    ':idBodega'=>$idBodega,
-                    ':idOrdenSalida'=>$outOrden,
-                    ':idInsumo'=>$idInsumo,
-                    ':salida'=>$outCantidad,
-                    ':saldo'=>self::$saldoCantidad, 
-                    ':valorSalida'=> self::$valorSalida,
-                    ':valorSaldo'=>self::$saldoCosto
-                );
+            $sql="INSERT INTO inventarioBodega  (id, idBodega, idOrdenCompra, idInsumo, entrada, saldo, costoAdquisicion, valorEntrada, valorSaldo, costoPromedio)
+                VALUES (uuid(), :idBodega, :idOrdenCompra, :idInsumo, :entrada, :saldo, :costoAdquisicion, :valorEntrada, :valorSaldo, :costoPromedio);";
+            $param= array(
+                ':idBodega'=>$idBodega,
+                ':idOrdenCompra'=>$inOrden,
+                ':idInsumo'=>$idInsumo,
+                ':entrada'=>($inCantidad*$porcion),
+                ':saldo'=>self::$saldoCantidad, 
+                ':costoAdquisicion'=>$inCostoUnitario,
+                ':valorEntrada'=>floatval($inCostoUnitario * $inCantidad),
+                ':valorSaldo'=>self::$saldoCosto,
+                ':costoPromedio'=>self::$costoPromedio
+            );
             $data = DATA::Ejecutar($sql, $param, false);
             if($data){
                 // actualiza saldos.
