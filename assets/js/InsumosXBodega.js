@@ -378,11 +378,11 @@ class InsumoBodega {
                     data: "fecha",
                     width: "auto"
                 },
-                // {
-                //     title: "ORDEN COMPRA",
-                //     data: "idOrdenCompra",
-                //     visible: false
-                // },
+                {
+                    title: "BODEGA",
+                    data: "agencia",
+                    visible: true
+                },
                 {
                     title: "ENTRADA",
                     data: "ordenEntrada",
