@@ -1,6 +1,6 @@
 class InsumoBodega {
     // Constructor
-    constructor(id, idBodega, codigo, nombre, descripcion, saldoCantidad, saldoCosto, costoPromedio) {
+    constructor(id, idBodega, codigo, nombre, descripcion, saldoCantidad, saldoCosto, costoPromedio, agencia) {
         this.id = id || null;
         this.idBodega = idBodega || null;
         this.codigo = codigo || '';
@@ -9,6 +9,7 @@ class InsumoBodega {
         this.saldoCantidad = saldoCantidad || 0;
         this.saldoCosto = saldoCosto || 0;
         this.costoPromedio = costoPromedio || 0;
+        this.agencia = agencia || '';
     }
 
     get tUpdate()  {
@@ -107,7 +108,7 @@ class InsumoBodega {
                 $("#btnSubmit").removeAttr("disabled");
                 insumobodega = new InsumoBodega();
                 insumobodega.ClearCtls();
-                insumobodega.Read;
+                insumobodega.ReadCompleto;
             });
     }
 
@@ -118,7 +119,7 @@ class InsumoBodega {
     };
 
      // Muestra información en ventana
-     showInfo() {
+    showInfo() {
         //$(".modal").css({ display: "none" });   
         $(".close").click();
         swal({
@@ -143,21 +144,39 @@ class InsumoBodega {
     };
 
     ClearCtls() {
+        $("#codigo").val('');
+        $("#nombre").val('');
+        $("#descripcion").val('');
         $("#producto").val('');
-        $("#cantidad").val('');
-        $("#costo").val('');
+        $("#saldoCantidad").val('');
+        $("#saldoCosto").val('');
+        $("#costoPromedio").val('');
     };
 
     ShowAll(e) {
         var t= $('#tInsumo').DataTable();
-        t.clear();
-        var data = JSON.parse(e);
-        $.each(data, function (i, item) {
-            item.saldoCosto = "¢"+(parseFloat(item.saldoCosto).toFixed(2)).toString();
-            item.costoPromedio = "¢"+(parseFloat(item.costoPromedio).toFixed(2)).toString();
-        });
-        t.rows.add(data);   
-        t.draw();
+        if(t.rows().count()==0){
+            t.clear();
+            var data = JSON.parse(e);
+            $.each(data, function (i, item) {
+                item.saldoCosto = "¢"+(parseFloat(item.saldoCosto).toFixed(2)).toString();
+                item.costoPromedio = "¢"+(parseFloat(item.costoPromedio).toFixed(2)).toString();
+            });
+            t.rows.add(data);   
+            t.draw();
+            $( document ).on( 'click', '#tInsumo tbody tr', document.URL.indexOf("InsumosBodegaTodos.html")!=-1?insumobodega.UpdateEventHandler:null);
+        }
+        else {
+            t.clear();
+            var data = JSON.parse(e);
+            $.each(data, function (i, item) {
+                item.saldoCosto = "¢"+(parseFloat(item.saldoCosto).toFixed(2)).toString();
+                item.costoPromedio = "¢"+(parseFloat(item.costoPromedio).toFixed(2)).toString();
+            });
+            t.rows.add(data);   
+            t.draw();
+        }
+       
     };
 
     UpdateEventHandler() {
@@ -171,7 +190,7 @@ class InsumoBodega {
         this.ClearCtls();
         // carga objeto.
         var data = JSON.parse(e)[0];
-        insumobodega = new InsumoBodega(data.id, data.idBodega, data.codigo, data.nombre, data.descripcion, data.saldoCantidad, data.saldoCosto, data.costoPromedio);
+        insumobodega = new InsumoBodega(data.id, data.idBodega, data.codigo, data.producto, data.descripcion, data.saldoCantidad, data.saldoCosto, data.costoPromedio, data.agencia);
         $("#codigo").val(insumobodega.codigo);
         $("#nombre").val(insumobodega.nombre);
         $("#descripcion").val(insumobodega.descripcion);
@@ -179,7 +198,8 @@ class InsumoBodega {
         $("#saldoCosto").val(insumobodega.saldoCosto);
         $("#costoPromedio").val(insumobodega.costoPromedio);
         //
-        $("#myModalLabel").html('<h1>' + insumobodega.nombre + '<h1>' );
+        $("#myModalLabel").html('<h1>' + insumobodega.agencia + '<h1>' );
+        $(".bs-bodega-modal-lg").modal('toggle');
     };
 
     DeleteEventHandler() {

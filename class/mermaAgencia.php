@@ -135,10 +135,12 @@ class MermaAgencia{
         try {
             $sql='SELECT m.id, m.idInsumo, b.nombre as agencia, p.codigo, m.consecutivo, p.nombre, m.cantidad, m.descripcion, m.fecha
                 FROM mermaAgencia m 
-                inner join insumosXBodega x on x.id = m.idInsumo
-                inner join producto p on p.id = x.idProducto
-                inner join bodega b on b.id = m.idBodega';
-            $data = DATA::Ejecutar($sql);
+                    inner join insumosXBodega x on x.id = m.idInsumo
+                    inner join producto p on p.id = x.idProducto
+                    inner join bodega b on b.id = m.idBodega
+                WHERE m.fecha between :fechaInicial and :fechaFinal';
+            $param= array(':fechaInicial'=>$this->fechaInicial, ':fechaFinal'=>$this->fechaFinal);
+            $data = DATA::Ejecutar($sql, $param);
             return $data;
         }     
         catch(Exception $e) {

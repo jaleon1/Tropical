@@ -430,9 +430,11 @@ class Factura{
     function ReadAllbyRangeInvVentas(){
         try {
             $sql='SELECT f.id, f.fechaCreacion, f.consecutivo, f.totalComprobante,
-            (SELECT count(pxf.codigo) FROM tropical.productosXFactura pxf WHERE pxf.codigo="12oz" AND pxf.idFactura=f.id) AS _12oz, 
-            (SELECT count(pxf.codigo) FROM tropical.productosXFactura pxf WHERE pxf.codigo="08oz" AND pxf.idFactura=f.id) AS _08oz 
-            FROM tropical.factura f WHERE f.idEstadoNC<3 AND f.idEstadoNC>3 OR f.idEstadoNC IS NULL  
+                (SELECT count(pxf.codigo) FROM tropical.productosXFactura pxf WHERE pxf.codigo="12oz" AND pxf.idFactura=f.id) AS _12oz, 
+                (SELECT count(pxf.codigo) FROM tropical.productosXFactura pxf WHERE pxf.codigo="08oz" AND pxf.idFactura=f.id) AS _08oz 
+            FROM tropical.factura f 
+            -- WHERE f.idEstadoNC<3 AND f.idEstadoNC>3 OR f.idEstadoNC IS NULL  
+            WHERE (f.idEstadoNC!=3 OR f.idEstadoNC IS NULL)  and f.fechaCreacion between :fechaInicial and :fechaFinal
             ORDER BY f.consecutivo desc';
             $param= array(':fechaInicial'=>$this->fechaInicial, ':fechaFinal'=>$this->fechaFinal);            
             $data= DATA::Ejecutar($sql, $param);

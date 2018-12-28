@@ -69,8 +69,9 @@ class InsumosXBodega{
             $this->id= $obj["id"] ?? null;
             $this->idBodega= $obj["idBodega"] ?? null;
             $this->idProducto= $obj["idProducto"] ?? null;
-            $this->cantidad= $obj["cantidad"] ?? 0;      
-            $this->costo= $obj["costo"] ?? 0;
+            $this->saldoCantidad= $obj["saldoCantidad"] ?? 0;      
+            $this->saldoCosto= $obj["saldoCosto"] ?? 0;
+            $this->costoPromedio= $obj["costoPromedio"] ?? 0;
             $this->fechaInicial= $obj["fechaInicial"] ?? '';
             $this->fechaFinal= $obj["fechaFinal"] ?? '';
             unset($_POST['obj']);
@@ -147,7 +148,7 @@ class InsumosXBodega{
 
     function ReadCompleto(){
         try {
-            $sql='SELECT p.id, b.nombre as agencia, p.codigo, p.nombre, p.descripcion, ib.saldoCantidad, ib.saldoCosto, ib.costoPromedio
+            $sql='SELECT ib.id, b.nombre as agencia, p.codigo, p.nombre, p.descripcion, ib.saldoCantidad, ib.saldoCosto, ib.costoPromedio
                 FROM insumosXBodega ib INNER JOIN producto p on p.id = ib.idProducto
                     INNER JOIN bodega b on b.id = ib.idBodega';
             $data= DATA::Ejecutar($sql);
@@ -163,11 +164,12 @@ class InsumosXBodega{
         }
     }
 
-
     function Read(){
         try {
-            $sql='SELECT pb.id,pb.idBodega, pb.idProducto, pb.cantidad, pb.costo , p.nombre as producto
-                FROM insumosXBodega pb INNER JOIN producto p on p.id=pb.idProducto
+            $sql='SELECT pb.id, pb.idBodega, b.nombre as agencia, pb.idProducto, pb.saldoCantidad, pb.saldoCosto, pb.costoPromedio, p.nombre as producto, p.descripcion, p.codigo
+                FROM insumosXBodega pb 
+                INNER JOIN producto p on p.id=pb.idProducto
+                INNER JOIN bodega b on b.id = pb.idBodega
                 where pb.id=:id';
             $param= array(':id'=>$this->id);
             $data= DATA::Ejecutar($sql,$param);
