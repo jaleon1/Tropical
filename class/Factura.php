@@ -56,6 +56,9 @@ if(isset($_POST["action"])){
         case "sendContingenciaMasiva":
             $factura->sendContingenciaMasiva();
             break;
+        case "sendMasiva":
+            $factura->sendMasiva();
+            break;
         case "sendNotaCredito":
             // Nota de Credito.
             $factura->idDocumentoNC= $_POST["idDocumentoNC"] ?? 3; // documento tipo 3: NC
@@ -710,7 +713,32 @@ class Factura{
             $this->contingencia();                
         }
         error_log("[INFO] Finaliza Contingencia Masiva de Comprobantes");
-    }  
+    } 
+    
+    public function sendMasiva(){
+        // busca facturas con estado (1) y (5) y las reenvia
+        error_log("************************************************************");
+        error_log("************************************************************");
+        error_log("     [INFO] Iniciando Re-envío masivo de facturas           ");
+        error_log("************************************************************");
+        error_log("************************************************************");
+        
+        $sql="SELECT f.id, b.nombre as entidad, consecutivo
+            from factura f inner join bodega b on b.id = f.idBodega
+            WHERE  f.idEstadoComprobante = 5 and (f.idDocumento = 1 or  f.idDocumento = 4 or  f.idDocumento = 8) 
+            ORDER BY consecutivo asc";
+            //idBodega=:idBodega and
+        // $param= array(':idBodega'=>'0cf4f234-9479-4dcb-a8c0-faa4efe82db0');
+        // $param= array(':idBodega'=>'f787b579-8306-4d68-a7ba-9ae328975270'); // carlos.echc11.
+        $data = DATA::Ejecutar($sql);
+        error_log("[INFO] Total de transacciones en Contingencia: ". count($data));
+        foreach ($data as $key => $transaccion){
+            error_log("[INFO] Contingencia Entidad (". $transaccion['entidad'] .") Transaccion (".$transaccion['consecutivo'].")");
+            $this->id = $transaccion['id'];
+            $this->contingencia();                
+        }
+        error_log("[INFO] Finaliza Contingencia Masiva de Comprobantes");
+    } 
 
     public function contingencia(){
         try {

@@ -217,7 +217,7 @@ class Distribucion{
             // $sql='SELECT id, fecha, idBodega, orden, idUsuario
             //     FROM     distribucion       
             //     ORDER BY fecha asc';
-            $sql= 'SELECT d.id, fecha, orden, u.userName, b.nombre as bodega, e.nombre as estado, 
+            $sql= 'SELECT d.id, fecha, orden, u.userName, b.nombre as bodega, e.nombre as estado, d.idEstadocomprobante, d.claveNC,
                     (sum(cantidad*valor) + sum(cantidad*valor)*0.13) as total, idEstadoComprobante, t.nombre as tipoBodega
                 FROM tropical.distribucion d
                     INNER JOIN usuario u on u.id=d.idUsuario

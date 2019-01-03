@@ -158,6 +158,7 @@
                             </div>
                             <div>
                                 <button type="button" class="btn btn-primary" id="sendContingenciaMasiva">Enviar Contingencia</button>
+                                <!-- <button type="button" class="btn btn-primary" id="sendMasiva">Re-enviar</button> -->
                             </div>
                         </div>
                     </div>
@@ -298,6 +299,10 @@
 
         $('#sendContingenciaMasiva').click(function(){
             inventarioFacturas.sendContingenciaMasiva();
+        });
+
+        $('#sendMasiva').click(function(){
+            inventarioFacturas.sendMasiva();
         });
 
         $('#dp_rangoListaFacturas').on('apply.daterangepicker', function (ev, picker) {
