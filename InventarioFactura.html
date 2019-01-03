@@ -296,9 +296,10 @@
     $(document).ready(function () {
         // inventarioFacturas.CargaFacturas();
         CargaListaFactura();
-
+      
         $('#sendContingenciaMasiva').click(function(){
             inventarioFacturas.sendContingenciaMasiva();
+
         });
 
         $('#sendMasiva').click(function(){
@@ -491,7 +492,8 @@
                 'Ultimos 7 Días': [moment().subtract(6, 'days'), moment()],
                 'Ultimos 30 Días': [moment().subtract(29, 'days'), moment()],
                 'Este Mes': [moment().startOf('month'), moment().endOf('month')],
-                'Ultimo Mes': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                'Ultimo Mes': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+                'Todo': [moment("1970-01-01 00:00:00"), moment()]
             }
         }, cb);
 

@@ -1,6 +1,6 @@
 <?php
 include_once('historico.php');
-//require_once("invoice.php");
+require_once("invoice.php");
 //
 define('ERROR_USERS_NO_VALID', '-500');
 define('ERROR_TOKEN_NO_VALID', '-501');
@@ -1141,9 +1141,9 @@ class FacturacionElectronica{
                     Factura::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 3);
                 else Distribucion::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 3);
                 //AQUI VA ENVIAR EMAIL
-                // if(Invoice::create(self::$transaccion)){
-                //     return true;
-                // }    
+                if(Invoice::create(self::$transaccion)){
+                    return true;
+                }    
             }
             else if($estadoTransaccion=='rechazado'){
                 // genera informe con los datos del rechazo. y pone estado de la transaccion pendiente para ser enviada cuando sea corregida.

@@ -54,7 +54,7 @@ class InventarioVentas {
             responsive: true,
             destroy: true,
             data: ventas,                               
-            order: [[1, "desc"]],
+            order: [[2, "desc"]],
             dom: 'Bfrtip',
             buttons: [
                 {

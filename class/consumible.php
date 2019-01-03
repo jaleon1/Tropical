@@ -143,7 +143,7 @@ class Consumible{
         }
     }
 
-    public static function salida($tamano){
+    public static function salida($tamano, $idBodega, $consecutivo){
         try {                  
             $sql='SELECT idProducto, cantidad 
                 FROM consumible
@@ -151,49 +151,16 @@ class Consumible{
             $param= array(':tamano'=> $tamano);
             $data= DATA::Ejecutar($sql, $param);
             foreach ($data as $key => $value){
-                self::salidaBodega($value['idProducto'], 'ordenXX', $value['cantidad']);
-            }
-        }
-        catch(Exception $e) {
-            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
-            // header('HTTP/1.0 400 Bad error');
-            // die(json_encode(array(
-            //     'code' => $e->getCode() ,
-            //     'msg' => $e->getMessage()))
-            // );
-        }
-    }
-
-    public static function salidaBodega($idProducto, $outOrden, $outCantidad){
-        try {
-            $sql="SELECT saldoCantidad, costoPromedio 
-                FROM insumosXBodega 
-                WHERE idBodega=:idBodega and idProducto=:idProducto;";
-            $param = array(':idProducto'=>$idProducto, ':idBodega'=>$_SESSION['userSession']->idBodega);
-            $data = DATA::Ejecutar($sql,$param);
-            if($data){
-                // calculo de saldos. 
-                // self::$valorSalida = floatval($data[0]['costoPromedio'] * $outCantidad);
-                $saldoCantidad = $data[0]['saldoCantidad'] - $outCantidad;
-                $saldoCosto = floatval($data[0]['costoPromedio'] * $saldoCantidad);
-                if($saldoCantidad < 0){
-                    $saldoCantidad = 0;
-                    $saldoCosto = 0;
+                $sql="SELECT id
+                     FROM insumosXBodega 
+                     WHERE idBodega=:idBodega and idProducto=:idProducto;";
+                $param = array(':idProducto'=>$value['idProducto'], ':idBodega'=>$idBodega);
+                $dataInsumo = DATA::Ejecutar($sql,$param);
+                if($dataInsumo){
+                    InventarioInsumoXBodega::salida($dataInsumo[0]['id'], $idBodega, 'factura#'.$consecutivo, $value['cantidad']);
                 }
-                // agrega ENTRADA histórico inventario. *** NO IMPLEMENTADO **
-                // actualiza saldos.
-                $sql = 'UPDATE insumosXBodega
-                    SET saldoCantidad=:saldoCantidad, saldoCosto=:saldoCosto
-                    WHERE idBodega=:idBodega and idProducto=:idProducto;';
-                $param = array(':idProducto'=>$idProducto, ':idBodega'=>$_SESSION['userSession']->idBodega, ':saldoCantidad'=>$saldoCantidad, ':saldoCosto'=>$saldoCosto);
-                $data = DATA::Ejecutar($sql, $param, false);
-                if($data) {
-                    return true;
-                }                
-                else throw new Exception('Error al consultar actualizar los saldos de insumo x bodega ('.$idProducto.')' , ERROR_SALIDA_INVENTARIO_INSUMOXBODEGA);
+                else throw new Exception('Warning, el código de insumo no se encuentra en el inventario, no es posible actualizar por facturacion. ('.$idProducto.')' , ERROR_SALIDA_INVENTARIO_INSUMOXBODEGA);           
             }
-            else throw new Exception('Warning, el código de insumo no se encuentra en el inventario, no es posible actualizar por facturacion. ('.$idProducto.')' , ERROR_SALIDA_INVENTARIO_INSUMOXBODEGA);
-
         }
         catch(Exception $e) {
             error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());

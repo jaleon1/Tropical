@@ -17,8 +17,7 @@ if(isset($_POST["action"])){
     require_once("Receptor.php");
     require_once("Bodega.php");
     require_once("wsBCCR.php");
-    // require_once("productoXFactura.php");
-    require "mail/mail.php";
+    require_once("mail/mail.php");
     // Session
     if (!isset($_SESSION))
         session_start();
@@ -434,9 +433,11 @@ class Factura{
     function ReadAllbyRangeInvVentas(){
         try {
             $sql='SELECT f.id, f.fechaCreacion, f.consecutivo, f.totalComprobante,
-            (SELECT count(pxf.codigo) FROM tropical.productosXFactura pxf WHERE pxf.codigo="12oz" AND pxf.idFactura=f.id) AS _12oz, 
-            (SELECT count(pxf.codigo) FROM tropical.productosXFactura pxf WHERE pxf.codigo="08oz" AND pxf.idFactura=f.id) AS _08oz 
-            FROM tropical.factura f WHERE f.idEstadoNC<3 AND f.idEstadoNC>3 OR f.idEstadoNC IS NULL  
+                (SELECT count(pxf.codigo) FROM tropical.productosXFactura pxf WHERE pxf.codigo="12oz" AND pxf.idFactura=f.id) AS _12oz, 
+                (SELECT count(pxf.codigo) FROM tropical.productosXFactura pxf WHERE pxf.codigo="08oz" AND pxf.idFactura=f.id) AS _08oz 
+            FROM tropical.factura f 
+            -- WHERE f.idEstadoNC<3 AND f.idEstadoNC>3 OR f.idEstadoNC IS NULL  
+            WHERE (f.idEstadoNC!=3 OR f.idEstadoNC IS NULL)  and f.fechaCreacion between :fechaInicial and :fechaFinal
             ORDER BY f.consecutivo desc';
             $param= array(':fechaInicial'=>$this->fechaInicial, ':fechaFinal'=>$this->fechaFinal);            
             $data= DATA::Ejecutar($sql, $param);
@@ -646,16 +647,18 @@ class Factura{
     }
 
     function actualizaInventario($insumos){
+        if(!isset($this->consecutivo))
+            $this->Read();
         foreach ($insumos as $key => $value){
-            // resta inventario sabor y topping.             
+            // resta inventario sabor y topping.
             if($value->idTamano==0)
                 $porcion= 1;
             else $porcion= 1.4285714;
-            InventarioInsumoXBodega::salida($value->idSabor1, 'ordenXX', $porcion);
-            InventarioInsumoXBodega::salida($value->idSabor2, 'ordenXX', $porcion);
-            InventarioInsumoXBodega::salida($value->idTopping, 'ordenXX', 1);
+            InventarioInsumoXBodega::salida($value->idSabor1, $this->idBodega, 'factura#'.$this->consecutivo, $porcion);
+            InventarioInsumoXBodega::salida($value->idSabor2, $this->idBodega, 'factura#'.$this->consecutivo, $porcion);
+            InventarioInsumoXBodega::salida($value->idTopping, $this->idBodega, 'factura#'.$this->consecutivo, 1);
             // resta inventario consumibles.
-            Consumible::salida($value->idTamano);
+            Consumible::salida($value->idTamano, $this->idBodega, $this->consecutivo);
         };
     }
 

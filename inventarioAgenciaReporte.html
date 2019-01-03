@@ -16,7 +16,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>TropicalSNO | Merma</title>
+    <title>TropicalSNO | Inventario Agencia</title>
 
     <!-- Bootstrap -->
     <link href="assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -54,7 +54,7 @@
                 <div class="left_col scroll-view">
                     <div class="navbar nav_title" style="border: 0;">
                         <a href="index.html" class="site_title">
-
+                            
                             <span>TropicalSNO</span>
                         </a>
                     </div>
@@ -118,8 +118,7 @@
 
                         <ul class="nav navbar-nav navbar-right">
                             <li class="">
-                                <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown"
-                                    aria-expanded="false" id='call_username'>
+                                <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false" id='call_username'>
                                 </a>
                                 <ul class="dropdown-menu dropdown-usermenu pull-right">
                                     <li>
@@ -140,12 +139,12 @@
                 <div class="">
                     <div class="page-title">
                         <div class="title_left">
-                            <h3>LISTA DE MERMA AGENCIA-</h3>  <h3 class='call_Bodega'></h3>
+                            <h3>INVENTARIO AGENCIA REPORTE</h3>
                         </div>
 
                         <div class="title_right">
                             <h3 id="fecha" style="float:right"></h3>
-                            <div id="dp_rangoMerma" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 70%; float:right">
+                            <div id="dp_rangoInsumoReporte" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 70%; float:right">
                                 <i class="fa fa-calendar"></i>&nbsp;
                                 <span></span> <i class="fa fa-caret-down"></i>
                             </div>
@@ -157,24 +156,116 @@
                     <div class="row">
                         <div class="col-md-12 col-sm-12 col-xs-12">
                             <div class="x_panel">
-                                <div class="x_title">
-
+                                <div class="x_title">         
                                     <div class="clearfix"></div>
                                 </div>
 
                                 <!--  CONTENIDO DE LA PAGINA -->
                                 <div class="x_content">
                                     <!-- TABLE -->
-                                    <div class="row">
-                                        <div class="col-md-12 col-sm-12 col-xs-12">
-                                            <table id="tMerma" class="table display responsive table-striped jambo_table no-wrap"
-                                                width="100%" role="grid" aria-describedby="datatable_info">
-                                                <tbody id="tbodyMerma">
-                                                </tbody>
-                                            </table>
+                                    <div id="datatable_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
+                                        <div class="row">
+                                            <div class="col-md-12 col-sm-12 col-xs-12">
+                                                <table id="dsInsumoReporte" class="table display responsive table-striped jambo_table no-wrap" width="100%" role="grid" aria-describedby="datatable_info">
+                                                    <tbody id="tableBody-InsumoReporte">
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                         </div>
                                     </div>
                                     <!-- /TABLE -->
+
+                                    <!-- MODAL -->
+                                    <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
+                                        <div class="modal-dialog modal-lg">
+                                            <div class="modal-content">
+
+                                                <div class="modal-header">
+                                                    <button type="button" class="close" data-dismiss="modal">
+                                                        <span aria-hidden="true">×</span>
+                                                    </button>
+                                                    <h4 class="modal-title" id="myModalLabel">Editar Insumo</h4>
+                                                </div>
+
+                                                <div class="modal-body">
+                                                    <form class="form-horizontal form-label-left" id="frmInsumo" novalidate>
+
+                                                        
+
+                                                        <div class="item form-group">
+                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="codigo">Codigo
+                                                                <span class="required">*</span>
+                                                            </label>
+                                                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                                                <input id="codigo" class="form-control col-md-7 col-xs-12" name="codigo" required="required" type="text">
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="item form-group">
+                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="nombre">Nombre
+                                                                <span class="required">*</span>
+                                                            </label>
+                                                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                                                <input id="nombre" class="form-control col-md-7 col-xs-12" name="nombre" required="required" type="text">
+                                                            </div>
+                                                        </div>
+                
+                                                        <div class="item form-group">
+                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="descripcion">Descripción
+                                                                <span class="required">*</span>
+                                                            </label>
+                                                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                                                <input id="descripcion" class="form-control col-md-7 col-xs-12" name="descripcion" required="required" type="text">
+                                                            </div>
+                                                        </div>
+                
+                                                        <div class="item form-group">
+                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="saldoCantidad">Saldo Cantidad
+                                                                <span class="required">*</span>
+                                                            </label>
+                                                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                                                <input id="saldoCantidad" class="form-control col-md-7 col-xs-12" name="saldoCantidad" required="required" type="text"
+                                                                value ="0">
+                                                            </div>
+                                                        </div>
+                
+                                                        <div class="item form-group">
+                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="saldoCosto">Saldo Costo
+                                                                <span class="required">*</span>
+                                                            </label>
+                                                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                                                <input id="saldoCosto" class="form-control col-md-7 col-xs-12" name="saldoCosto" required="required" type="text"
+                                                                value ="0">
+                                                            </div>
+                                                        </div>
+                
+                                                        <div class="item form-group">
+                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="costoPromedio">Costo Promedio
+                                                                <span class="required">*</span>
+                                                            </label>
+                                                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                                                <input id="costoPromedio" class="form-control col-md-7 col-xs-12" name="costoPromedio" required="required" type="text"
+                                                                value ="0">
+                                                            </div>
+                                                        </div>
+                
+                                                        <div class="ln_solid"></div>
+                                                        <div class="form-group">
+                                                            <div class="col-md-6 col-md-offset-3">
+                                                                <button type="button" class="btn btn-default" data-dismiss="modal" id="reload">Limpiar</button>
+                                                                <button id="btnInsumo" type="submit" class="btn btn-success">Aceptar</button>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+
+                                                <div class="modal-footer">
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- /modal -->
 
                                 </div>
                                 <!--  /CONTENIDO DE LA PAGINA -->
@@ -210,15 +301,12 @@
     <!-- bootstrap-datetimepicker -->
     <script src="assets/js/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-
     <!-- Validator -->
     <script src="assets/js/validator.min.js"></script>
     <!-- Input mask -->
     <script src="assets/js/jquery.inputmask/jquery.inputmask.bundle.min.js"></script>
     <!-- JS Scripts -->
-    <script src="assets/js/Insumo.min.js"></script>
-    <script src="assets/js/Producto.min.js"></script>
-    <script src="assets/js/mermaAgencia.js"></script>
+    <script src="assets/js/InsumosXBodega.js"></script>
     <!-- Sweet Alert -->
     <script src="assets/js/sweetalert2.min.js"></script>
     <!-- JS dataTables -->
@@ -245,19 +333,22 @@
 
 <script>
     $(document).ready(function () {
-        merma.setTable();
-        //merma.Init();
-        // merma.Read;
-
+        // if(!Session.state)
+        //     return;
+        insumobodega.id=null;
+        insumobodega.setTableInventarioInsumoReporte();
+        // insumo.ReadInventarioInsumo;
+        //insumo.Init();
+        //
         $(function () {
             var start = moment().subtract(29, 'days');
             var end = moment();
 
             function cb(start, end) {
-                $('#dp_rangoMerma span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+                $('#dp_rangoInsumoReporte span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
             }
 
-            $('#dp_rangoMerma').daterangepicker({
+            $('#dp_rangoInsumoReporte').daterangepicker({
                 "opens": "left",
                 "locale": {
                     "format": "DD/MM/YYYY",
@@ -306,16 +397,18 @@
 
             cb(start, end);
 
-            merma.fechaInicial = start.format('YYYY-MM-DD') + ' 00:00';
-            merma.fechaFinal = end.format('YYYY-MM-DD') + ' 23:59';
-            merma.CargaListaMermaRango();
+            insumobodega.fechaInicial = start.format('YYYY-MM-DD') + ' 00:00';
+            insumobodega.fechaFinal = end.format('YYYY-MM-DD') + ' 23:59';
+            insumobodega.CargaInsumoRango();
         });
 
-        $('#dp_rangoMerma').on('apply.daterangepicker', function (ev, picker) {
-            merma.fechaInicial = picker.startDate.format('YYYY-MM-DD') + ' 00:00';
-            merma.fechaFinal = picker.endDate.format('YYYY-MM-DD') + ' 23:59';
-            merma.CargaListaMermaRango();
+        $('#dp_rangoInsumoReporte').on('apply.daterangepicker', function (ev, picker) {
+            insumobodega.fechaInicial = picker.startDate.format('YYYY-MM-DD') + ' 00:00';
+            insumobodega.fechaFinal = picker.endDate.format('YYYY-MM-DD') + ' 23:59';
+            insumobodega.CargaInsumoRango();
         });
-        
     });
+
+
+
 </script>
