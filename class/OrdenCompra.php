@@ -253,12 +253,6 @@ class OrdenCompra{
 
     function Delete(){
         try {
-            // if($this->CheckRelatedItems()){
-            //     //$sessiondata array que devuelve si hay relaciones del objeto con otras tablas.
-            //     $sessiondata['status']=1; 
-            //     $sessiondata['msg']='Registro en uso'; 
-            //     return $sessiondata;           
-            // }      
             // recorre insumos y reversa.
             $sql='SELECT *  
                 FROM insumosXOrdenCompra  
@@ -281,7 +275,7 @@ class OrdenCompra{
             // elimina orden de compra: la modifica..
             // $sql='DELETE FROM ordenCompra  
             // WHERE id= :id';
-             $sql='UPDATE ordenCompra  
+            $sql='UPDATE ordenCompra  
                 set orden =:orden
                 WHERE id= :id';
             $param= array(':id'=>$this->id, ':orden'=> 'Reversa Orden Compra: ' . $this->orden);

@@ -16,6 +16,8 @@ if(isset($_POST["action"])){
     require_once("Bodega.php");
     require_once("ClienteFE.php");
     require_once("encdes.php");
+    require_once("InventarioProducto.php");
+    require_once("InventarioInsumoXBodega.php");
     // Session
     if (!isset($_SESSION))
         session_start();
@@ -50,6 +52,7 @@ if(isset($_POST["action"])){
             $distribucion->Update();
             break;
         case "Delete":
+            $distribucion->orden= $_POST["orden"];
             $distribucion->Delete();
             break;  
         case "Aceptar":
@@ -433,21 +436,38 @@ class Distribucion{
 
     function Delete(){
         try {
-            // if($this->CheckRelatedItems()){
-            //     //$sessiondata array que devuelve si hay relaciones del objeto con otras tablas.
-            //     $sessiondata['status']=1; 
-            //     $sessiondata['msg']='Registro en uso'; 
-            //     return $sessiondata;           
-            // }                    
-            $sql='DELETE FROM distribucion  
-            WHERE id= :id';
+            // recorre insumos y reversa.
+            $sql='SELECT idProducto, cantidad, valor, idBodega 
+                FROM productosXDistribucion x INNER JOIN distribucion d on d.id = x.idDistribucion
+                WHERE idDistribucion= :id';
             $param= array(':id'=>$this->id);
+            $data= DATA::Ejecutar($sql, $param);
+            if($data){
+                // ROLLBACK.
+                foreach ($data as $key => $value){
+                    InventarioProducto::entrada( $value['idProducto'], $this->id, $value['cantidad'], $value['valor']);
+                    // busca el id del insumo en la agencia.
+                    $sql='SELECT id 
+                        FROM insumosXBodega  
+                        WHERE idProducto= :idProducto and idBodega =:idBodega';
+                    $param= array(':idProducto'=>$value['idProducto'], ':idBodega'=>$value['idBodega']);
+                    $insumo= DATA::Ejecutar($sql, $param);
+                    if($data){
+                        InventarioInsumoXBodega::salida($insumo[0]['id'], $value['idBodega'], 'Reversa Distribucion: '. $this->orden, $value['cantidad']);
+                    }                    
+                }
+            }
+            $sql='UPDATE distribucion  
+                set razon =:razon, idEstado=2
+                WHERE id= :id';
+            $param= array(':id'=>$this->id, ':razon'=> 'Reversa Orden Distribucion: ' . $this->orden);
             $data= DATA::Ejecutar($sql, $param, false);
             if($data)
-                return $sessiondata['status']=0; 
-            else throw new Exception('Error al eliminar.', 978);
+                return true; 
+            else throw new Exception('Error al eliminar la orden de compra. Los insumos SI fueron eliminados.', 978);
         }
-        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+        catch(Exception $e) { 
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
