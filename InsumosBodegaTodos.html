@@ -26,7 +26,7 @@
     <link href="assets/css/nprogress/nprogress.css" rel="stylesheet">
     <!-- bootstrap-datetimepicker -->
     <link href="assets/css/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css"/>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
     <!-- iCheck -->
     <link href="assets/css/iCheck/skins/flat/green.css" rel="stylesheet">
     <!-- SweetAlert -->
@@ -55,7 +55,7 @@
                 <div class="left_col scroll-view">
                     <div class="navbar nav_title" style="border: 0;">
                         <a href="index.html" class="site_title">
-                            
+
                             <span>TropicalSNO!</span>
                         </a>
                     </div>
@@ -119,7 +119,8 @@
 
                         <ul class="nav navbar-nav navbar-right">
                             <li class="">
-                                <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false" id='call_username'>
+                                <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown"
+                                    aria-expanded="false" id='call_username'>
                                 </a>
                                 <ul class="dropdown-menu dropdown-usermenu pull-right">
                                     <li>
@@ -140,7 +141,7 @@
                 <div class="">
                     <div class="page-title">
                         <div class="title_left">
-                            
+
                             <h3>INVENTARIO AGENCIA INTERNA</h3>
                         </div>
 
@@ -170,7 +171,8 @@
                                     <!-- TABLE -->
                                     <div class="row">
                                         <div class="col-md-12 col-sm-12 col-xs-12">
-                                            <table id="tInsumo" class="table display responsive table-striped jambo_table no-wrap" width="100%" role="grid" aria-describedby="datatable_info">
+                                            <table id="tInsumo" class="table display responsive table-striped jambo_table no-wrap"
+                                                width="100%" role="grid" aria-describedby="datatable_info">
                                                 <tbody id="tbodyInsumo">
                                                 </tbody>
                                             </table>
@@ -179,7 +181,8 @@
                                     <!-- /TABLE -->
 
                                     <!-- MODAL BODEGA -->
-                                    <div class="modal fade bs-bodega-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
+                                    <div class="modal fade bs-bodega-modal-lg" id="modalInsumo" tabindex="-1" role="dialog"
+                                        aria-hidden="true" data-focus-on="input:first">
                                         <div class="modal-dialog modal-lg">
                                             <div class="modal-content">
 
@@ -191,60 +194,81 @@
                                                 </div>
 
                                                 <div class="modal-body">
-                                                    <form class="form-horizontal form-label-left" id="frmInsumo" novalidate>
+                                                    <form class="form-horizontal form-label-left" id="frmInsumo"
+                                                        novalidate>
 
                                                         <div class="item form-group">
-                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="codigo">Código
+                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12"
+                                                                for="codigo">Código
                                                                 <span class="required">*</span>
                                                             </label>
                                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <input id="codigo" readonly class="form-control col-md-7 col-xs-12" name="codigo" required="required" type="text" placeholder="código Del producto">
-                                                            </div>
-                                                        </div>                                                        
-
-                                                        <div class="item form-group">
-                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="nombre">Nombre
-                                                                <span class="required">*</span>
-                                                            </label>
-                                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <input id="nombre" readonly class="form-control col-md-7 col-xs-12" name="nombre" required="required" type="text" placeholder="Nombre completo Del producto">
+                                                                <input id="codigo" readonly class="form-control col-md-7 col-xs-12"
+                                                                    name="codigo" required="required" type="text"
+                                                                    placeholder="código Del producto">
                                                             </div>
                                                         </div>
 
                                                         <div class="item form-group">
-                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="textarea">Descripción </label>
+                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12"
+                                                                for="nombre">Nombre
+                                                                <span class="required">*</span>
+                                                            </label>
                                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <textarea id="descripcion" readonly name="descripcion" class="form-control col-md-7 col-xs-12"></textarea>
+                                                                <input id="nombre" readonly class="form-control col-md-7 col-xs-12"
+                                                                    name="nombre" required="required" type="text"
+                                                                    placeholder="Nombre completo Del producto">
                                                             </div>
                                                         </div>
 
                                                         <div class="item form-group">
-                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="saldoCantidad">Saldo Cantidad
-                                                                <span class="required">*</span>
-                                                            </label>
+                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12"
+                                                                for="textarea">Descripción </label>
                                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <input id="saldoCantidad" class="form-control col-md-7 col-xs-12" name="saldoCantidad" required="required" type="text" placeholder="Saldo Cantidad"
-                                                                value ="0">
+                                                                <textarea id="descripcion" readonly name="descripcion"
+                                                                    class="form-control col-md-7 col-xs-12"></textarea>
                                                             </div>
                                                         </div>
-                
+
                                                         <div class="item form-group">
-                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="saldoCosto">Saldo Costo
+                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12"
+                                                                for="saldoCantidad">Saldo Cantidad
                                                                 <span class="required">*</span>
                                                             </label>
                                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <input id="saldoCosto" class="form-control col-md-7 col-xs-12" name="saldoCosto" required="required" type="text" placeholder="Saldo Costo"
-                                                                value ="0" autofocus>
+                                                                <input id="saldoCantidad" class="form-control col-md-7 col-xs-12"
+                                                                    name="saldoCantidad" required="required" type="text"
+                                                                    placeholder="Saldo Cantidad" readonly value="0">
+                                                                <button type="button" id="btnRestar" class="btn btn-danger"
+                                                                    data-toggle="modal" href="#modalCantidad">-</button>
+                                                                <button type="button" id="btnSumar" class="btn btn-success"
+                                                                    data-toggle="modal" href="#modalCantidad">+</button>
+
+
                                                             </div>
                                                         </div>
-                
+
                                                         <div class="item form-group">
-                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="costoPromedio">Costo Promedio
+                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12"
+                                                                for="saldoCosto">Saldo Costo
                                                                 <span class="required">*</span>
                                                             </label>
                                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <input id="costoPromedio" class="form-control col-md-7 col-xs-12" name="costoPromedio" required="required" type="text" placeholder="Costo Promedio"
-                                                                value ="0" >
+                                                                <input id="saldoCosto" class="form-control col-md-7 col-xs-12"
+                                                                    name="saldoCosto" required="required" type="text" readonly
+                                                                    placeholder="Saldo Costo" value="0" autofocus>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="item form-group">
+                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12"
+                                                                for="costoPromedio">Costo Promedio
+                                                                <span class="required">*</span>
+                                                            </label>
+                                                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                                                <input id="costoPromedio" class="form-control col-md-7 col-xs-12"
+                                                                    name="costoPromedio" required="required" type="text" readonly
+                                                                    placeholder="Costo Promedio" value="0">
                                                             </div>
                                                         </div>
 
@@ -265,7 +289,49 @@
                                             </div>
                                         </div>
                                     </div>
+
+                                    <!-- MODAL CANTIDAD -->
+                                    <div class="modal fade modal-cantidad-sm" id="modalCantidad" data-focus-on="input:first">
+                                        <div class="modal-dialog modal-sm">
+                                            <div class="modal-content">
+
+                                                <div class="modal-header">
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                                            aria-hidden="true">×</span>
+                                                    </button>
+                                                    <h4 class="modal-title" id="tipoCantidad">Modificar Manualmente</h4>
+                                                </div>
+
+                                                <div class="modal-body">
+
+                                                    <div class="item form-group">
+                                                        <label class="control-label col-md-12 col-sm-12 col-xs-12" for="cantidadMod">Cantidad
+                                                            <span class="required">*</span>
+                                                        </label>
+                                                        <div class="col-md-12 col-sm-12 col-xs-12">
+                                                            <input id="cantidadMod" class="form-control col-md-12 col-sm-12 col-xs-12"
+                                                                name="cantidadMod" type="number" placeholder="Saldo Cantidad"
+                                                                value="1">
+                                                        </div>
+                                                    </div>
+                                                    <br>
+                                                    <br>
+                                                    <br>
+                                                </div>
+
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                                                    <button type="button" id="btnCantidad" class="btn btn-primary">Continuar</button>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
                                     <!-- /modal -->
+
+                                    <!-- /modal -->
+
+
 
                                 </div>
                                 <!--  /CONTENIDO DE LA PAGINA -->
@@ -332,10 +398,37 @@
 </html>
 
 <script>
+    var arrInventario= new Array();
     $(document).ready(function () {
+        var tipoCantidad;
+        var nuevaCantidad;        
         insumobodega.id = null;
         insumobodega.setTable(false, true);
         insumobodega.ReadCompleto;
         insumobodega.Init();
+        $("#btnRestar").click(function () {
+            //$(".modal-cantidad-sm").modal('toggle');
+            $("#tipoCantidad").html('<h4>Salida<h4>' );
+            tipoCantidad = "salida";
+        });
+        $("#btnSumar").click(function () {
+            //$(".modal-cantidad-sm").modal('toggle');
+            $("#tipoCantidad").html('<h4>Entrada<h4>' );
+            tipoCantidad = "entrada";
+        });
+        $("#btnCantidad").click(function () {            
+            insumobodega.saldoCantidad = $("#saldoCantidad").val();
+            nuevaCantidad = $("#cantidadMod").val();
+            if(tipoCantidad == 'entrada')
+                $("#saldoCantidad").val(parseFloat(insumobodega.saldoCantidad) + parseFloat(nuevaCantidad));
+            else $("#saldoCantidad").val(parseFloat(insumobodega.saldoCantidad) - parseFloat(nuevaCantidad));
+            //arreglo Inventario.
+            var objDetalle = new Object();
+            objDetalle.tipo = tipoCantidad;
+            objDetalle.cantidad = nuevaCantidad;
+            arrInventario.push(objDetalle);
+            $(".modal-cantidad-sm").modal('toggle');
+        });
+
     });
 </script>
