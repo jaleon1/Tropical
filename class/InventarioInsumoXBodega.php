@@ -130,7 +130,7 @@ class InventarioInsumoXBodega{
                     self::$saldoCantidad = 0;
                     self::$saldoCosto = 0;
                 }
-                // agrega ENTRADA histórico inventario.
+                // agrega SALIDA histórico inventario.
                 $sql="INSERT INTO inventarioBodega  (id, idBodega, idOrdenSalida, idInsumo, salida, saldo, valorSalida, valorSaldo)
                     VALUES (uuid(), :idBodega, :idOrdenSalida, :idInsumo, :salida, :saldo, :valorSalida, :valorSaldo );";
                 $param= array(
