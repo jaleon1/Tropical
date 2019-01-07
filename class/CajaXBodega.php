@@ -380,7 +380,8 @@ class CajaXBodega{
                                             where idMedioPago = 1 and
                                             fechaCreacion Between apertura.fechaApertura 
                                             and CURRENT_TIMESTAMP() and
-                                            idusuario = :idusuarioCajero
+                                            idusuario = :idusuarioCajero and
+                                            idDocumentoNC IS NULL;  
                                         ),
                 totalVentasTarjeta = 	(
                                             Select sum(totalComprobante)
@@ -388,7 +389,8 @@ class CajaXBodega{
                                             where idMedioPago = 2 and
                                             fechaCreacion Between apertura.fechaApertura 
                                             and CURRENT_TIMESTAMP() and
-                                            idusuario = :idusuarioCajero
+                                            idusuario = :idusuarioCajeroand
+                                            idDocumentoNC IS NULL;
                                         )
             WHERE idusuarioCajero = :idusuarioCajero and
             estado ='1';";
