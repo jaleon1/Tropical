@@ -8,6 +8,7 @@ if(isset($_POST["action"])){
     // Classes
     require_once("Conexion.php");
     require_once("Usuario.php");
+    require_once("InventarioInsumo.php");
     // Session
     if (!isset($_SESSION))
         session_start();
@@ -30,6 +31,7 @@ if(isset($_POST["action"])){
             $ordenCompra->Update();
             break;
         case "Delete":
+            $ordenCompra->orden= $_POST["orden"];
             $ordenCompra->Delete();
             break;   
         case "ReadAllbyRange":
@@ -251,21 +253,39 @@ class OrdenCompra{
 
     function Delete(){
         try {
-            // if($this->CheckRelatedItems()){
-            //     //$sessiondata array que devuelve si hay relaciones del objeto con otras tablas.
-            //     $sessiondata['status']=1; 
-            //     $sessiondata['msg']='Registro en uso'; 
-            //     return $sessiondata;           
-            // }                    
-            $sql='DELETE FROM ordenCompra  
-            WHERE id= :id';
+            // recorre insumos y reversa.
+            $sql='SELECT *  
+                FROM insumosXOrdenCompra  
+                WHERE idOrdenCompra= :id';
             $param= array(':id'=>$this->id);
+            $data= DATA::Ejecutar($sql, $param);
+            if($data){
+                // ROLLBACK.
+                foreach ($data as $key => $value){
+                    InventarioInsumo::salida( $value['idInsumo'], $this->id , $value['cantidadBueno']);
+                }
+            }
+            // elimina insumos.
+            // $sql='DELETE FROM insumosXOrdenCompra  
+            //     WHERE idOrdenCompra= :id';
+            // $param= array(':id'=>$this->id);
+            // $data= DATA::Ejecutar($sql, $param, false);
+            // if(!$data)
+            //     throw new Exception('Error al eliminar la lista de insumos de la orden de compra.', 977);
+            // elimina orden de compra: la modifica..
+            // $sql='DELETE FROM ordenCompra  
+            // WHERE id= :id';
+            $sql='UPDATE ordenCompra  
+                set orden =:orden
+                WHERE id= :id';
+            $param= array(':id'=>$this->id, ':orden'=> 'Reversa Orden Compra: ' . $this->orden);
             $data= DATA::Ejecutar($sql, $param, false);
             if($data)
-                return $sessiondata['status']=0; 
-            else throw new Exception('Error al eliminar.', 978);
+                return true; 
+            else throw new Exception('Error al eliminar la orden de compra. Los insumos SI fueron eliminados.', 978);
         }
-        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+        catch(Exception $e) { 
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,

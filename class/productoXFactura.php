@@ -5,6 +5,7 @@ if(isset($_POST["action"])){
     unset($_POST['action']);
     // Classes        
     require_once("Usuario.php");
+    require_once("InventarioInsumoXBodega.php");
     // Session
     if (!isset($_SESSION))
         session_start();            
@@ -13,6 +14,9 @@ if(isset($_POST["action"])){
     switch($opt){
         case "ReadByIdFactura":
             echo json_encode($productoXFactura->ReadByIdFactura($_POST['id']));
+            break;
+        case "reintegrarProductoByIdFactura":
+            $productoXFactura->reintegrarProductoByIdFactura($_POST['id']);
             break;
     }        
 }
@@ -38,6 +42,93 @@ class ProductoXFactura{
             return false;
         }
     }
+    
+
+    public static function reintegrarProductoByIdFactura($idFactura){
+        
+        try {   
+            $sql="SELECT consecutivo, idMedioPago, totalComprobante, fechaCreacion 
+                FROM tropical.factura
+                WHERE id =:id;";
+            $param= array(':id'=>$idFactura);
+            $factura = DATA::Ejecutar($sql,$param);  
+
+            $datoFactura = ProductoXFactura::ReadByIdFactura($idFactura);
+
+            $sql="SELECT idBodega FROM factura
+            where id =:id;";
+            $param= array(':id'=>$idFactura);
+            $idBodega = DATA::Ejecutar($sql,$param);
+
+            $sql='SELECT id FROM cajasXBodega
+                WHERE idBodega= :idBodega AND
+                :fechaCreacion BETWEEN fechaApertura AND fechaCierre;';
+            $param= array(':fechaCreacion'=>$factura[0]["fechaCreacion"], ':idBodega'=>$idBodega[0]["idBodega"]);
+            $idCaja = DATA::Ejecutar($sql,$param);
+
+            if (isset($idCaja[0]["id"])){
+                switch($factura[0]["idMedioPago"]){
+                    case "1":
+                        $sql='UPDATE cajasXBodega 
+                            SET totalVentasEfectivo = totalVentasEfectivo - :totalComprobante 
+                            WHERE id = :id';                        
+                        break;
+                    case "2":
+                        $sql='UPDATE cajasXBodega 
+                        SET totalVentasTarjeta = totalVentasTarjeta - :totalComprobante 
+                        WHERE id = :id';  
+                        break;
+                }       
+                $param= array(':id'=>$idCaja[0]["id"], ':totalComprobante'=>$factura[0]["totalComprobante"]);
+                $idCaja = DATA::Ejecutar($sql,$param); 
+            }
+        
+            foreach ($datoFactura as $key => $value){
+                $value->detalle = str_replace(' ','',$value->detalle);
+                $producto_x_linea = explode(",",$value->detalle);
+                
+                $productos=[];
+
+                foreach ($producto_x_linea as $item => $lineaValue){
+                    $sql="SELECT id FROM producto
+                    where nombreAbreviado = :nombreAbreviado;";
+                    $param= array(':nombreAbreviado'=>$lineaValue);
+                    $data = DATA::Ejecutar($sql,$param);
+                    if ($data){
+                        array_push($productos,$data[0]["id"]);
+                    }
+                    // $productos = DATA::Ejecutar($sql,$param);
+                }
+            }
+            if($productos){
+                foreach ($productos as $item => $idProducto){
+
+                    $sql="SELECT id, saldoCosto 
+                    FROM insumosXBodega 
+                    WHERE idProducto= :idProducto
+                    AND idBodega = :idBodega;";
+                    $param= array(':idProducto'=>$idProducto, ':idBodega'=>$idBodega[0]["idBodega"]);
+                    $insumoXBodega = DATA::Ejecutar($sql,$param);
+
+                    // array_push($insumoXBodega,$data[0]["id"]);
+
+                    if($producto_x_linea[0]=="08oz")
+                        $porcion= 1;
+                    else $porcion= 1.4285714;
+                    // Entrada a inventario agencia.
+                    InventarioInsumoXBodega::entrada($insumoXBodega[0]["id"], 'Nota Credito Fac#: ' . $factura[0]["consecutivo"], $porcion, $insumoXBodega[0]["saldoCosto"], false);
+                }
+            }
+        }     
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }
+    }
+
 
     public static function ReadByIdFactura($idFactura){
         try{

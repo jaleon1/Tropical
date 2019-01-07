@@ -1070,11 +1070,11 @@ class Producto {
                     width: "auto"
                 },
                 {
-                    title: "ORDEN COMPRA",
+                    title: "ENTRADA",
                     data: "idOrdenEntrada"
                 },
                 {
-                    title: "ORDEN SALIDA",
+                    title: "SALIDA",
                     data: "idOrdenSalida"
                 },
                 {
@@ -1182,6 +1182,20 @@ class Producto {
             document.forms["frmProducto"].onreset = function (e) {
                 validator.reset();
         } 
+    };
+
+    reintegrarProductoByIdFactura() {
+        $.ajax({
+            type: "POST",
+            url: "class/productoXFactura.php",
+            data: {
+                action: "reintegrarProductoByIdFactura",
+                id: factura.id
+            }
+        })
+            .done(function (e) {
+                // alert("OK");
+            });
     };
 
 }

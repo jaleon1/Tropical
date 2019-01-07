@@ -398,6 +398,8 @@ class InventarioFacturas {
         // var totalFact =
         //     `<h4>Total: ¢${Math.round(id.totalVenta)}</h4>`;
         // $("#totalFact").append(totalFact);
+        // onclick="myFunction()"
+        // $('#btnReenviaFactura').attr('onclick','inventarioFacturas.test("'+  id.id + '" )');
 
 
         $.ajax({
@@ -412,6 +414,12 @@ class InventarioFacturas {
                 inventarioFacturas.drawFactDetail(e);
             });
     };
+
+ 
+    // test(idFactura){
+    //     alert("Test: "+ idFactura);
+    // };
+
 
     CargaListaFacturasRango(){
         var referenciaCircular = inventarioFacturas.tb_facturas;
@@ -547,6 +555,7 @@ $('#tb_facturas tbody').on('click', 'td', function () {
     ||this.textContent == ("ReenviarSoporte")
     ||this.textContent == ("Enviar"))
         return false;
+
     inventarioFacturas.ReadbyID(inventarioFacturas.tb_facturas.row(this).data());
     var dtTable = $('#tb_facturas').DataTable();
     var efectivo=0;

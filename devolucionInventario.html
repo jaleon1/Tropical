@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Reintegro Inventario</title>
+
+    <!-- Datatables -->
+    <link href="../vendors/datatables.net-bs/css/dataTables.bootstrap.min.css" rel="stylesheet">
+    <link href="../vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css" rel="stylesheet">
+    <link href="../vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css" rel="stylesheet">
+    <link href="../vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css" rel="stylesheet">
+    <link href="../vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <input type="text" class="form-control" id="inpIdFactura">
+
+    <button id="btnReintegrar" type="button" class="btn btn-danger">Reintegrar Productos</button>
+
+    <div class="table-responsive">
+        <table id="prd" class="table table-striped jambo_table bulk_action">
+            <tbody id="productos"> </tbody>
+        </table>
+    </div>
+
+    <!-- check User session -->
+    <script src="assets/js/jquery.min.js"></script>
+    <!-- JS dataTables -->
+    <script src="assets/js/jquery.dataTables.min.js"></script>
+    <script src="assets/jquery.dataTables/dataTables.buttons.min.js"></script>
+    <script src="assets/jquery.dataTables/buttons.flash.min.js"></script>
+    <script src="assets/jquery.dataTables/jszip.min.js"></script>
+    <script src="assets/jquery.dataTables/pdfmake.min.js"></script>
+    <script src="assets/jquery.dataTables/vfs_fonts.js"></script>
+    <script src="assets/jquery.dataTables/buttons.html5.min.js"></script>
+    <script src="assets/jquery.dataTables/buttons.print.min.js"></script>
+    <!-- JS Moments -->
+    <script src="assets/js/moment.min.js"></script>
+    <!-- Propio -->
+    <script src="assets/js/Producto.js"></script>
+    <script src="assets/js/Factura.js"></script>
+    <script src="assets/js/InventarioFacturas.js"></script>
+    <!-- Select -->
+    <script src="assets/js/bootstrap-select.js"></script>
+    <!-- Bootstrap -->
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+</body>
+
+
+<script>
+
+    $(document).ready(function () {
+        factura.id = "8c86eef9-435c-4102-9a11-fd39560a9ba4";
+        var a = producto.reintegrarProductoByIdFactura();
+    });
+</script>
+
+</html>
