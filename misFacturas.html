@@ -36,11 +36,11 @@
     <link href="assets/css/datatables.net-bs/css/buttons.dataTables.min.css" rel="stylesheet">
 
     <!-- Datatables -->
-    <link href="../vendors/datatables.net-bs/css/dataTables.bootstrap.min.css" rel="stylesheet">
+    <!-- <link href="../vendors/datatables.net-bs/css/dataTables.bootstrap.min.css" rel="stylesheet">
     <link href="../vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css" rel="stylesheet">
     <link href="../vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css" rel="stylesheet">
     <link href="../vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css" rel="stylesheet">
-    <link href="../vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css" rel="stylesheet">
+    <link href="../vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css" rel="stylesheet"> -->
 
     <!-- Custom Theme Style -->
     <link href="assets/css/custom.css" rel="stylesheet">
@@ -218,7 +218,10 @@
                         <div class="form-group">
                             <div class="col-md-6 col-md-offset-3">
                                 <button id="btnReimprimeFactura" type="submit" class="btn btn-success">Reimprimir</button>
-                            </div>
+                            </div>                            
+                            <!-- <div class="col-md-2">
+                                <button id="btnReenviaFactura" type="submit" class="btn btn-success">Enviar Correo</button>
+                            </div> -->
                         </div>
                         <div id="totalFact">
                         </div>
@@ -247,7 +250,7 @@
     <!-- Input mask -->
     <script src="assets/js/jquery.inputmask/jquery.inputmask.bundle.min.js"></script>
     <!-- JS Scripts -->
-    <script src="assets/js/InventarioFacturas.min.js"></script>
+    <script src="assets/js/InventarioFacturas.js"></script>
     <!-- Sweet Alert -->
     <script src="assets/js/sweetalert2.min.js"></script>
     <!-- JS dataTables -->
@@ -260,11 +263,11 @@
     <script src="assets/jquery.dataTables/buttons.html5.min.js"></script>
     <script src="assets/jquery.dataTables/buttons.print.min.js"></script>
     <!-- FastClick -->
-    <script src="../vendors/fastclick/lib/fastclick.js"></script>
+    <!-- <script src="../vendors/fastclick/lib/fastclick.js"></script> -->
     <!-- NProgress -->
-    <script src="../vendors/nprogress/nprogress.js"></script>
+    <!-- <script src="../vendors/nprogress/nprogress.js"></script> -->
     <!-- iCheck -->
-    <script src="../vendors/iCheck/icheck.min.js"></script>
+    <!-- <script src="../vendors/iCheck/icheck.min.js"></script> -->
     <!-- Custom Theme Scripts -->
     <script src="assets/js/custom.min.js"></script>
 
@@ -275,7 +278,6 @@
 <script>
 $(document).ready(function () {
     // inventarioFacturas.CargaFacturasXUsuario();
-
         $(function () {
             var start = moment().subtract(29, 'days');
             var end = moment();
@@ -452,5 +454,12 @@ $(document).ready(function () {
                         })
             })
         });
+
+        // $( "#btnReenviaFactura" ).click(function() {
+        //     alert("ok");
+        // });
+        // $('#tb_facturas tbody tr').removeClass('selected');
+        // var el = $(this);
+        // el.addClass('selected');
 });
 </script>

@@ -5,6 +5,7 @@ if(isset($_POST["action"])){
     unset($_POST['action']);
     // Classes        
     require_once("Usuario.php");
+    require_once("InventarioInsumoXBodega.php");
     // Session
     if (!isset($_SESSION))
         session_start();            
@@ -13,6 +14,9 @@ if(isset($_POST["action"])){
     switch($opt){
         case "ReadByIdFactura":
             echo json_encode($productoXFactura->ReadByIdFactura($_POST['id']));
+            break;
+        case "reintegrarProductoByIdFactura":
+            $productoXFactura->reintegrarProductoByIdFactura($_POST['id']);
             break;
     }        
 }
@@ -38,6 +42,65 @@ class ProductoXFactura{
             return false;
         }
     }
+    
+
+    public static function reintegrarProductoByIdFactura($idFactura){
+        
+        try {    
+            $datoFactura = ProductoXFactura::ReadByIdFactura($idFactura);
+
+            $sql="SELECT idBodega FROM tropical.factura
+            where id =:id;";
+            $param= array(':id'=>$idFactura);
+            $idBodega = DATA::Ejecutar($sql,$param);
+
+        
+            foreach ($datoFactura as $key => $value){
+                $value->detalle = str_replace(' ','',$value->detalle);
+                $producto_x_linea = explode(",",$value->detalle);
+                
+                $productos=[];
+
+                foreach ($producto_x_linea as $item => $lineaValue){
+                    $sql="SELECT id FROM producto
+                    where nombreAbreviado = :nombreAbreviado;";
+                    $param= array(':nombreAbreviado'=>$lineaValue);
+                    $data = DATA::Ejecutar($sql,$param);
+                    if ($data){
+                        array_push($productos,$data[0]["id"]);
+                    }
+                    // $productos = DATA::Ejecutar($sql,$param);
+                }
+            }
+            if($productos){
+                foreach ($productos as $item => $idProducto){
+
+                    $sql="SELECT id, saldoCosto 
+                    FROM insumosXBodega 
+                    WHERE idProducto= :idProducto
+                    AND idBodega = :idBodega;";
+                    $param= array(':idProducto'=>$idProducto, ':idBodega'=>$idBodega[0]["idBodega"]);
+                    $insumoXBodega = DATA::Ejecutar($sql,$param);
+
+                    // array_push($insumoXBodega,$data[0]["id"]);
+
+                    if($producto_x_linea[0]=="08oz")
+                        $porcion= 1;
+                    else $porcion= 1.4285714;
+                    // Entrada a inventario agencia.
+                    InventarioInsumoXBodega::entrada($insumoXBodega[0]["id"], 'Nota Credito', $porcion, $insumoXBodega[0]["saldoCosto"], false);
+                }
+            }
+        }     
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }
+    }
+
 
     public static function ReadByIdFactura($idFactura){
         try{

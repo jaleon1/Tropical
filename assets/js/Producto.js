@@ -1184,6 +1184,20 @@ class Producto {
         } 
     };
 
+    reintegrarProductoByIdFactura() {
+        $.ajax({
+            type: "POST",
+            url: "class/productoXFactura.php",
+            data: {
+                action: "reintegrarProductoByIdFactura",
+                id: factura.id
+            }
+        })
+            .done(function (e) {
+                // alert("OK");
+            });
+    };
+
 }
 
 //Class Instance
