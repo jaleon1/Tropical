@@ -368,5 +368,30 @@
         $(document).on('click', '#btnReimprimeDistribucion', function (event) {
             distr.ticketRePrint();
         });
+
+        $(document).on('click', '.btnConsultafactura', function (event) {
+            swal({
+            title: 'Consultar Estado de las facturas',
+            text: "desea continuar, este proceso puede tardar varios minutos!",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Si!',
+            cancelButtonText: 'No, cancelar!',
+            confirmButtonClass: 'btn btn-success',
+            cancelButtonClass: 'btn btn-danger'
+            }).then((result) => {
+                if (result.value) {
+                    $.ajax({
+                    type: "POST",
+                    url: "class/feCallback.php",
+                })
+                .done(alert("Prueba"))
+                .fail(function () {})
+                .always(function () {});
+                }
+            })
+        });
     });
 </script>

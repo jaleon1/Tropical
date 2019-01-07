@@ -874,7 +874,7 @@ function ticketPrint(e) {
     localStorage.setItem("lsFactura", data.consecutivo);
     localStorage.setItem("lsFecha", data.fechaCreacion);
     localStorage.setItem("lsBodega", $('.call_Bodega').html());
-    localStorage.setItem("lsUsuario", $("#call_name").html());
+    localStorage.setItem("lsUsuario", $("#call_username").text());
     localStorage.setItem("lsSubTotal", data.totalComprobante);
     localStorage.setItem("lsTotal", data.totalComprobante);
 
@@ -896,8 +896,8 @@ function ticketPrint(e) {
 
     localStorage.setItem("lsListaProducto", JSON.stringify(data.detalleFactura));
 
-    // location.href ="/Tropical/TicketFacturacion.html";
-    location.href = "/TicketFacturacion.html";
+    location.href ="/Tropical/TicketFacturacion.html";
+    // location.href = "/TicketFacturacion.html";
 
 
 
