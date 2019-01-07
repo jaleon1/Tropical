@@ -447,13 +447,30 @@ class Distribucion{
                 foreach ($data as $key => $value){
                     InventarioProducto::entrada( $value['idProducto'], $this->id, $value['cantidad'], $value['valor']);
                     // busca el id del insumo en la agencia.
-                    $sql='SELECT id 
+                    $sql='SELECT id
                         FROM insumosXBodega  
                         WHERE idProducto= :idProducto and idBodega =:idBodega';
                     $param= array(':idProducto'=>$value['idProducto'], ':idBodega'=>$value['idBodega']);
                     $insumo= DATA::Ejecutar($sql, $param);
                     if($data){
-                        InventarioInsumoXBodega::salida($insumo[0]['id'], $value['idBodega'], 'Reversa Distribucion: '. $this->orden, $value['cantidad']);
+                        // porcion del insumo de la agencia.
+                        // busca si es artículo o producto (TOPPING - SABOR).
+                        $sql='SELECT esVenta
+                        FROM insumosXBodega x INNER JOIN producto p 
+                        WHERE p.id= :idProducto';
+                        $param= array(':idProducto'=>$value['idProducto']);
+                        $porcion= DATA::Ejecutar($sql, $param);
+                        //
+                        if ($porcion[0]['esVenta']==0){        // artículo.
+                            $porcion= 1;
+                        }
+                        else if ($porcion[0]['esVenta']==1){   // botella de sabor.
+                            $porcion= 20;
+                        }
+                        else if ($porcion[0]['esVenta']==2){   // topping.
+                            $porcion= 40;
+                        }
+                        InventarioInsumoXBodega::salida($insumo[0]['id'], $value['idBodega'], 'Reversa Distribucion: '. $this->orden, floatval($value['cantidad']*$porcion));
                     }                    
                 }
             }

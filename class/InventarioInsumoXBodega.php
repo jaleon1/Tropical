@@ -22,7 +22,7 @@ class InventarioInsumoXBodega{
     public static $saldoCantidad; // valor actual.
     public static $saldoCosto; // valor actual.
     //
-    public static function entrada($idProducto, $idBodega, $inOrden, $inCantidad, $inCostoUnitario){
+    public static function entrada($idProducto, $idBodega, $inOrden, $inCantidad, $inCostoUnitario, $esPorcion = true){
         try {
             $sql="SELECT id, saldoCantidad, saldoCosto 
                 FROM insumosXBodega 
@@ -60,7 +60,9 @@ class InventarioInsumoXBodega{
             $param = array(':idProducto'=>$idProducto); // el insumo de la bodega es un producto en la Central.
             $data = DATA::Ejecutar($sql,$param);
             $porcion=0;
-            if ($data[0]['esVenta']==0){        // artículo.
+            if (!$esPorcion)
+                $porcion = 1;                
+            else if ($data[0]['esVenta']==0){    // artículo.
                 $porcion= 1;
             }
             else if ($data[0]['esVenta']==1){   // botella de sabor.

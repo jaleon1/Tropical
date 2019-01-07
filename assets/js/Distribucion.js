@@ -537,7 +537,7 @@ class Distribucion {
                 value: producto.saldoCantidad,
                 align: "right"
             })[0]
-            .textContent = (parseFloat(producto.saldoCantidad).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+            .textContent = (parseFloat(producto.saldoCantidad).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
         $('td:eq(5) input', rowNode).attr({
             id: ("cantidad" + producto.id),
             max: producto.saldoCantidad,
