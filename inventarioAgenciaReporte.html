@@ -16,7 +16,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>TropicalSNO | Inventario</title>
+    <title>TropicalSNO | Inventario Agencia</title>
 
     <!-- Bootstrap -->
     <link href="assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -26,7 +26,7 @@
     <link href="assets/css/nprogress/nprogress.css" rel="stylesheet">
     <!-- bootstrap-datetimepicker -->
     <link href="assets/css/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css"/>
     <!-- iCheck -->
     <link href="assets/css/iCheck/skins/flat/green.css" rel="stylesheet">
     <!-- SweetAlert -->
@@ -45,7 +45,6 @@
     <!-- Custom Theme Style -->
     <link href="assets/css/custom.css" rel="stylesheet">
 
-
 </head>
 
 <body class="nav-md">
@@ -55,8 +54,8 @@
                 <div class="left_col scroll-view">
                     <div class="navbar nav_title" style="border: 0;">
                         <a href="index.html" class="site_title">
-
-                            <span>TropicalSNO!</span>
+                            
+                            <span>TropicalSNO</span>
                         </a>
                     </div>
 
@@ -119,8 +118,7 @@
 
                         <ul class="nav navbar-nav navbar-right">
                             <li class="">
-                                <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown"
-                                    aria-expanded="false" id='call_username'>
+                                <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false" id='call_username'>
                                 </a>
                                 <ul class="dropdown-menu dropdown-usermenu pull-right">
                                     <li>
@@ -141,18 +139,14 @@
                 <div class="">
                     <div class="page-title">
                         <div class="title_left">
-
-                            <h3>INVENTARIO AGENCIA INTERNA</h3>
+                            <h3>INVENTARIO AGENCIA REPORTE</h3>
                         </div>
 
                         <div class="title_right">
-                            <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
-                                <div class="input-group">
-                                    <!-- <input type="text" class="form-control" placeholder="Search for...">
-                                    <span class="input-group-btn">
-                                        <button class="btn btn-default" type="button">Go!</button>
-                                    </span> -->
-                                </div>
+                            <h3 id="fecha" style="float:right"></h3>
+                            <div id="dp_rangoInsumoReporte" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 70%; float:right">
+                                <i class="fa fa-calendar"></i>&nbsp;
+                                <span></span> <i class="fa fa-caret-down"></i>
                             </div>
                         </div>
                     </div>
@@ -162,27 +156,27 @@
                     <div class="row">
                         <div class="col-md-12 col-sm-12 col-xs-12">
                             <div class="x_panel">
-                                <div class="x_title">
+                                <div class="x_title">         
                                     <div class="clearfix"></div>
                                 </div>
 
                                 <!--  CONTENIDO DE LA PAGINA -->
                                 <div class="x_content">
                                     <!-- TABLE -->
-                                    <div class="row">
-                                        <div class="col-md-12 col-sm-12 col-xs-12">
-                                            <table id="tInsumo" class="table display responsive table-striped jambo_table no-wrap"
-                                                width="100%" role="grid" aria-describedby="datatable_info">
-                                                <tbody id="tbodyInsumo">
-                                                </tbody>
-                                            </table>
+                                    <div id="datatable_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
+                                        <div class="row">
+                                            <div class="col-md-12 col-sm-12 col-xs-12">
+                                                <table id="dsInsumoReporte" class="table display responsive table-striped jambo_table no-wrap" width="100%" role="grid" aria-describedby="datatable_info">
+                                                    <tbody id="tableBody-InsumoReporte">
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                         </div>
                                     </div>
                                     <!-- /TABLE -->
 
-                                    <!-- MODAL BODEGA -->
-                                    <div class="modal fade bs-bodega-modal-lg" id="modalInsumo" tabindex="-1" role="dialog"
-                                        aria-hidden="true" data-focus-on="input:first">
+                                    <!-- MODAL -->
+                                    <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
                                         <div class="modal-dialog modal-lg">
                                             <div class="modal-content">
 
@@ -194,90 +188,72 @@
                                                 </div>
 
                                                 <div class="modal-body">
-                                                    <form class="form-horizontal form-label-left" id="frmInsumo"
-                                                        novalidate>
+                                                    <form class="form-horizontal form-label-left" id="frmInsumo" novalidate>
+
+                                                        
 
                                                         <div class="item form-group">
-                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12"
-                                                                for="codigo">Código
+                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="codigo">Codigo
                                                                 <span class="required">*</span>
                                                             </label>
                                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <input id="codigo" readonly class="form-control col-md-7 col-xs-12"
-                                                                    name="codigo" required="required" type="text"
-                                                                    placeholder="código Del producto">
+                                                                <input id="codigo" class="form-control col-md-7 col-xs-12" name="codigo" required="required" type="text">
                                                             </div>
                                                         </div>
 
                                                         <div class="item form-group">
-                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12"
-                                                                for="nombre">Nombre
+                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="nombre">Nombre
                                                                 <span class="required">*</span>
                                                             </label>
                                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <input id="nombre" readonly class="form-control col-md-7 col-xs-12"
-                                                                    name="nombre" required="required" type="text"
-                                                                    placeholder="Nombre completo Del producto">
+                                                                <input id="nombre" class="form-control col-md-7 col-xs-12" name="nombre" required="required" type="text">
                                                             </div>
                                                         </div>
-
+                
                                                         <div class="item form-group">
-                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12"
-                                                                for="textarea">Descripción </label>
-                                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <textarea id="descripcion" readonly name="descripcion"
-                                                                    class="form-control col-md-7 col-xs-12"></textarea>
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="item form-group">
-                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12"
-                                                                for="saldoCantidad">Saldo Cantidad
+                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="descripcion">Descripción
                                                                 <span class="required">*</span>
                                                             </label>
                                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <input id="saldoCantidad" class="form-control col-md-7 col-xs-12"
-                                                                    name="saldoCantidad" required="required" type="text"
-                                                                    placeholder="Saldo Cantidad" readonly value="0">
-                                                                <button type="button" id="btnRestar" class="btn btn-danger"
-                                                                    data-toggle="modal" href="#modalCantidad">-</button>
-                                                                <button type="button" id="btnSumar" class="btn btn-success"
-                                                                    data-toggle="modal" href="#modalCantidad">+</button>
-
-
+                                                                <input id="descripcion" class="form-control col-md-7 col-xs-12" name="descripcion" required="required" type="text">
                                                             </div>
                                                         </div>
-
+                
                                                         <div class="item form-group">
-                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12"
-                                                                for="saldoCosto">Saldo Costo
+                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="saldoCantidad">Saldo Cantidad
                                                                 <span class="required">*</span>
                                                             </label>
                                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <input id="saldoCosto" class="form-control col-md-7 col-xs-12"
-                                                                    name="saldoCosto" required="required" type="text" readonly
-                                                                    placeholder="Saldo Costo" value="0" autofocus>
+                                                                <input id="saldoCantidad" class="form-control col-md-7 col-xs-12" name="saldoCantidad" required="required" type="text"
+                                                                value ="0">
                                                             </div>
                                                         </div>
-
+                
                                                         <div class="item form-group">
-                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12"
-                                                                for="costoPromedio">Costo Promedio
+                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="saldoCosto">Saldo Costo
                                                                 <span class="required">*</span>
                                                             </label>
                                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <input id="costoPromedio" class="form-control col-md-7 col-xs-12"
-                                                                    name="costoPromedio" required="required" type="text" readonly
-                                                                    placeholder="Costo Promedio" value="0">
+                                                                <input id="saldoCosto" class="form-control col-md-7 col-xs-12" name="saldoCosto" required="required" type="text"
+                                                                value ="0">
                                                             </div>
                                                         </div>
-
+                
+                                                        <div class="item form-group">
+                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="costoPromedio">Costo Promedio
+                                                                <span class="required">*</span>
+                                                            </label>
+                                                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                                                <input id="costoPromedio" class="form-control col-md-7 col-xs-12" name="costoPromedio" required="required" type="text"
+                                                                value ="0">
+                                                            </div>
+                                                        </div>
+                
                                                         <div class="ln_solid"></div>
-
                                                         <div class="form-group">
                                                             <div class="col-md-6 col-md-offset-3">
-                                                                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                                                                <button id="btnSubmit" type="submit" class="btn btn-success">Aceptar</button>
+                                                                <button type="button" class="btn btn-default" data-dismiss="modal" id="reload">Limpiar</button>
+                                                                <button id="btnInsumo" type="submit" class="btn btn-success">Aceptar</button>
                                                             </div>
                                                         </div>
                                                     </form>
@@ -289,49 +265,7 @@
                                             </div>
                                         </div>
                                     </div>
-
-                                    <!-- MODAL CANTIDAD -->
-                                    <div class="modal fade modal-cantidad-sm" id="modalCantidad" data-focus-on="input:first">
-                                        <div class="modal-dialog modal-sm">
-                                            <div class="modal-content">
-
-                                                <div class="modal-header">
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                                                            aria-hidden="true">×</span>
-                                                    </button>
-                                                    <h4 class="modal-title" id="tipoCantidad">Modificar Manualmente</h4>
-                                                </div>
-
-                                                <div class="modal-body">
-
-                                                    <div class="item form-group">
-                                                        <label class="control-label col-md-12 col-sm-12 col-xs-12" for="cantidadMod">Cantidad
-                                                            <span class="required">*</span>
-                                                        </label>
-                                                        <div class="col-md-12 col-sm-12 col-xs-12">
-                                                            <input id="cantidadMod" class="form-control col-md-12 col-sm-12 col-xs-12"
-                                                                name="cantidadMod" type="number" placeholder="Saldo Cantidad"
-                                                                value="1">
-                                                        </div>
-                                                    </div>
-                                                    <br>
-                                                    <br>
-                                                    <br>
-                                                </div>
-
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                                                    <button type="button" id="btnCantidad" class="btn btn-primary">Continuar</button>
-                                                </div>
-
-                                            </div>
-                                        </div>
-                                    </div>
                                     <!-- /modal -->
-
-                                    <!-- /modal -->
-
-
 
                                 </div>
                                 <!--  /CONTENIDO DE LA PAGINA -->
@@ -346,7 +280,7 @@
             <!-- footer content -->
             <footer>
                 <div class="pull-right">
-                    Sistema de Administración
+                    TropicalSNO
                     <a href="http://storylabscr.com">powered by Story Labs</a>
                 </div>
                 <div class="clearfix"></div>
@@ -367,7 +301,6 @@
     <!-- bootstrap-datetimepicker -->
     <script src="assets/js/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-
     <!-- Validator -->
     <script src="assets/js/validator.min.js"></script>
     <!-- Input mask -->
@@ -393,42 +326,89 @@
     <script src="../vendors/iCheck/icheck.min.js"></script>
     <!-- Custom Theme Scripts -->
     <script src="assets/js/custom.min.js"></script>
+
 </body>
 
 </html>
 
 <script>
-    var arrInventario= new Array();
     $(document).ready(function () {
-        var tipoCantidad;
-        var nuevaCantidad;        
-        insumobodega.id = null;
-        insumobodega.setTable(false, true);
-        insumobodega.ReadCompleto;
-        insumobodega.Init();
-        $("#btnRestar").click(function () {
-            //$(".modal-cantidad-sm").modal('toggle');
-            $("#tipoCantidad").html('<h4>Salida<h4>' );
-            tipoCantidad = "salida";
-        });
-        $("#btnSumar").click(function () {
-            //$(".modal-cantidad-sm").modal('toggle');
-            $("#tipoCantidad").html('<h4>Entrada<h4>' );
-            tipoCantidad = "entrada";
-        });
-        $("#btnCantidad").click(function () {            
-            insumobodega.saldoCantidad = $("#saldoCantidad").val();
-            nuevaCantidad = $("#cantidadMod").val();
-            if(tipoCantidad == 'entrada')
-                $("#saldoCantidad").val(parseFloat(insumobodega.saldoCantidad) + parseFloat(nuevaCantidad));
-            else $("#saldoCantidad").val(parseFloat(insumobodega.saldoCantidad) - parseFloat(nuevaCantidad));
-            //arreglo Inventario.
-            var objDetalle = new Object();
-            objDetalle.tipo = tipoCantidad;
-            objDetalle.cantidad = nuevaCantidad;
-            arrInventario.push(objDetalle);
-            $(".modal-cantidad-sm").modal('toggle');
+        // if(!Session.state)
+        //     return;
+        insumobodega.id=null;
+        insumobodega.setTableInventarioInsumoReporte();
+        // insumo.ReadInventarioInsumo;
+        //insumo.Init();
+        //
+        $(function () {
+            var start = moment().subtract(29, 'days');
+            var end = moment();
+
+            function cb(start, end) {
+                $('#dp_rangoInsumoReporte span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+            }
+
+            $('#dp_rangoInsumoReporte').daterangepicker({
+                "opens": "left",
+                "locale": {
+                    "format": "DD/MM/YYYY",
+                    "separator": " - ",
+                    "applyLabel": "Aplicar",
+                    "cancelLabel": "Cancelar",
+                    "fromLabel": "From",
+                    "toLabel": "To",
+                    "customRangeLabel": "Manual",
+                    "daysOfWeek": [
+                        "DO",
+                        "Lu",
+                        "Ma",
+                        "Mi",
+                        "Ju",
+                        "Vi",
+                        "Sa"
+                    ],
+                    "monthNames": [
+                        "Enero",
+                        "Febrero",
+                        "Marzo",
+                        "Abril",
+                        "Mayo",
+                        "Junio",
+                        "Julio",
+                        "Agosto",
+                        "Setiembre",
+                        "Octubre",
+                        "Noviembre",
+                        "Diciembre"
+                    ],
+                    "firstDay": 1
+                },
+                startDate: start,
+                endDate: end,
+                ranges: {
+                    'Hoy': [moment(), moment()],
+                    'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                    'Ultimos 7 Días': [moment().subtract(6, 'days'), moment()],
+                    'Ultimos 30 Días': [moment().subtract(29, 'days'), moment()],
+                    'Este Mes': [moment().startOf('month'), moment().endOf('month')],
+                    'Ultimo Mes': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                }
+            }, cb);
+
+            cb(start, end);
+
+            insumobodega.fechaInicial = start.format('YYYY-MM-DD') + ' 00:00';
+            insumobodega.fechaFinal = end.format('YYYY-MM-DD') + ' 23:59';
+            insumobodega.CargaInsumoRango();
         });
 
+        $('#dp_rangoInsumoReporte').on('apply.daterangepicker', function (ev, picker) {
+            insumobodega.fechaInicial = picker.startDate.format('YYYY-MM-DD') + ' 00:00';
+            insumobodega.fechaFinal = picker.endDate.format('YYYY-MM-DD') + ' 23:59';
+            insumobodega.CargaInsumoRango();
+        });
     });
+
+
+
 </script>

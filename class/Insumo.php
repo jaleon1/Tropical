@@ -144,7 +144,8 @@ class Insumo{
             ) AS ordenEntrada,
             COALESCE(
                 CONCAT("Ord Prod: ",ordenGuardada),
-                CONCAT("Merma: ",(SELECT consecutivo FROM mermaInsumo WHERE id=inventarioInsumo.idOrdenSalida))
+                CONCAT("Merma: ",(SELECT consecutivo FROM mermaInsumo WHERE id=inventarioInsumo.idOrdenSalida)),
+                (SELECT orden FROM ordenCompra WHERE id=inventarioInsumo.idOrdenSalida) /*REVERSA ORDEN COMPRA - SALIDA*/
             ) AS ordenSalida,
             `inventarioInsumo`.`idInsumo`,
             (SELECT codigo FROM insumo WHERE id=inventarioInsumo.idInsumo) AS insumo,
@@ -164,7 +165,8 @@ class Insumo{
             $data= DATA::Ejecutar($sql, $param);
             return $data;
         }     
-        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+        catch(Exception $e) { 
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,

@@ -12,6 +12,7 @@ if(isset($_POST["action"])){
     require_once('Factura.php');
     require_once('Receptor.php');
     require_once('facturacionElectronica.php');
+    require_once('InventarioInsumoXBodega.php');
     require_once("Bodega.php");
     require_once("ClienteFE.php");
     require_once("encdes.php");
@@ -331,15 +332,15 @@ class Distribucion{
                     $param= array(':idBodega'=>$this->idBodega);
                     $data = DATA::Ejecutar($sql,$param);
                     if(count($data)){
+                        $this->Read();
                         $this->Aceptar();
                         // retorna orden autogenerada.
-                        return $this->Read();
+                        return $this;
                     }
-                    else{ // es externa. Crea comprobante.                       
+                    else{ // es externa. Crea comprobante.
                         
                         $objFactura = $this->Read();
                         $objFactura->consecutivo= $this->orden;
-
                         FacturacionElectronica::$distr= true;
                         FacturacionElectronica::iniciar($objFactura);
                         // retorna orden autogenerada.
@@ -362,22 +363,20 @@ class Distribucion{
     function Aceptar(){
         try {
             $created=true;
-            $sql="UPDATE distribucion
-                SET idEstado=1, fechaAceptacion= NOW()
-                WHERE id=:id";
-            $param= array(':id'=> $this->id);
-            $data = DATA::Ejecutar($sql,$param,false);
-            // if(!$data)
-            //     // $created=false;
+            if(!isset($this->orden))
+                $this->Read();
             foreach ($this->lista as $item) {
-                $sql="CALL spUpdateSaldosPromedioInsumoBodegaEntrada(:nidproducto, :nidbodega, :ncantidad, :ncosto)";
-                $param= array(':nidproducto'=> $item->idProducto, 
-                    ':nidbodega'=> $this->idBodega,
-                    ':ncantidad'=> $item->cantidad,
-                    ':ncosto'=> $item->valor);
-                $data = DATA::Ejecutar($sql,$param,false);
-                if(!$data)
-                    $created= false;
+                if(InventarioInsumoXBodega::entrada($item->id, $this->idBodega, 'Distribución#'.$this->orden, $item->cantidad, $item->precioVenta)){
+                     // set idEstado = true.
+                     $sql="UPDATE distribucion
+                     SET idEstado=1, fechaAceptacion= NOW()
+                     WHERE id=:id";
+                 $param= array(':id'=> $this->id);
+                 $data = DATA::Ejecutar($sql,$param,false);
+                 if(!$data)
+                     $created= false;
+                }
+                else $created= false;
             }
             if($created)
                 return true;

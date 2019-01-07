@@ -85,6 +85,10 @@ class InventarioProducto{
                 self::$valorSalida = floatval($data[0]['costoPromedio'] * $outCantidad);
                 self::$saldoCantidad = $data[0]['saldoCantidad'] - $outCantidad;
                 self::$saldoCosto = floatval($data[0]['costoPromedio'] * self::$saldoCantidad);
+                if(self::$saldoCantidad < 0){
+                    self::$saldoCantidad = 0;
+                    self::$saldoCosto = 0;
+                }
                 // agrega ENTRADA histórico inventario.
                 $sql="INSERT INTO inventarioProducto  (id, idOrdenSalida, idProducto, salida, saldo, valorSalida, valorSaldo)
                     VALUES (uuid(), :idOrdenSalida, :idProducto, :salida, :saldo, :valorSalida, :valorSaldo );";

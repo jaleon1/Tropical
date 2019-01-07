@@ -7,6 +7,7 @@ if(isset($_POST["action"])){
     // Classes
     require_once("Conexion.php");
     require_once("Usuario.php");
+    require_once("InventarioInsumoXBodega.php");
     // Session
     if (!isset($_SESSION))
         session_start();
@@ -15,6 +16,9 @@ if(isset($_POST["action"])){
     switch($opt){
         case "ReadAll": // todos los insumos de una bodega específica
             echo json_encode($productosxbodega->ReadAll());
+            break;
+        case "ReadAllbyRange":
+            echo json_encode($productosxbodega->ReadAllbyRange());
             break;
         case "ReadCompleto": // todas las bodegas
             echo json_encode($productosxbodega->ReadCompleto());
@@ -48,6 +52,9 @@ class InsumosXBodega{
     public $saldoCosto=0;
     public $costoPromedio='0';
     public $lista=array();
+    public $fechaInicial='';
+    public $fechaFinal='';
+    public $inventario=array();
 
     function __construct(){
         // identificador único
@@ -64,8 +71,19 @@ class InsumosXBodega{
             $this->id= $obj["id"] ?? null;
             $this->idBodega= $obj["idBodega"] ?? null;
             $this->idProducto= $obj["idProducto"] ?? null;
-            $this->cantidad= $obj["cantidad"] ?? 0;      
-            $this->costo= $obj["costo"] ?? 0;
+            $this->saldoCantidad= $obj["saldoCantidad"] ?? 0;      
+            $this->saldoCosto= $obj["saldoCosto"] ?? 0;
+            $this->costoPromedio= $obj["costoPromedio"] ?? 0;
+            $this->fechaInicial= $obj["fechaInicial"] ?? '';
+            $this->fechaFinal= $obj["fechaFinal"] ?? '';
+            if(isset($obj["arrInventario"])){
+                foreach ($obj["arrInventario"] as $i) {
+                    $inventarioTemp =  new InventarioInsumoXBodega();
+                    $inventarioTemp->tipo= $i['tipo'];
+                    $inventarioTemp->cantidad= $i['cantidad'];
+                    array_push ($this->inventario, $inventarioTemp);
+                }
+            }
             unset($_POST['obj']);
             // En caso de ser una lista de articulos para agregar O lista de productos por distribuir.
             if(isset($obj["lista"] )){
@@ -104,9 +122,43 @@ class InsumosXBodega{
         }
     }
 
+    function ReadAllbyRange(){
+        try {
+            $sql='SELECT i.id, b.nombre as agencia, idOrdenCompra AS ordenEntrada, idOrdenSalida AS ordenSalida,            
+                    idInsumo, (
+                        SELECT codigo 
+                        FROM producto p 
+                        INNER JOIN insumosXBodega x on x.idProducto = p.id
+                        WHERE x.id = i.idInsumo
+                    ) AS insumo,
+                    entrada,
+                    salida,
+                    saldo,
+                    costoAdquisicion,
+                    valorEntrada,
+                    valorSalida,
+                    valorSaldo,
+                    costoPromedio,
+                    fecha
+                FROM  inventarioBodega i INNER JOIN bodega b on b.id = i.idBodega
+                WHERE fecha Between :fechaInicial and :fechaFinal       
+                ORDER BY fecha desc';
+            $param= array(':fechaInicial'=>$this->fechaInicial, ':fechaFinal'=>$this->fechaFinal);            
+            $data= DATA::Ejecutar($sql, $param);
+            return $data;
+        }     
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar la lista'))
+            );
+        }    
+    }
+
     function ReadCompleto(){
         try {
-            $sql='SELECT p.id, b.nombre as agencia, p.codigo, p.nombre, p.descripcion, ib.saldoCantidad, ib.saldoCosto, ib.costoPromedio
+            $sql='SELECT ib.id, b.nombre as agencia, p.codigo, p.nombre, p.descripcion, ib.saldoCantidad, ib.saldoCosto, ib.costoPromedio
                 FROM insumosXBodega ib INNER JOIN producto p on p.id = ib.idProducto
                     INNER JOIN bodega b on b.id = ib.idBodega';
             $data= DATA::Ejecutar($sql);
@@ -122,11 +174,12 @@ class InsumosXBodega{
         }
     }
 
-
     function Read(){
         try {
-            $sql='SELECT pb.id,pb.idBodega, pb.idProducto, pb.cantidad, pb.costo , p.nombre as producto
-                FROM insumosXBodega pb INNER JOIN producto p on p.id=pb.idProducto
+            $sql='SELECT pb.id, pb.idBodega, b.nombre as agencia, pb.idProducto, pb.saldoCantidad, pb.saldoCosto, pb.costoPromedio, p.nombre as producto, p.descripcion, p.codigo
+                FROM insumosXBodega pb 
+                INNER JOIN producto p on p.id=pb.idProducto
+                INNER JOIN bodega b on b.id = pb.idBodega
                 where pb.id=:id';
             $param= array(':id'=>$this->id);
             $data= DATA::Ejecutar($sql,$param);
@@ -170,16 +223,65 @@ class InsumosXBodega{
 
     function Update(){
         try {
+            // calculo del saldo costo.
+            $this->saldoCosto = floatval($this->saldoCantidad) * floatval($this->costoPromedio);
+            //
             $sql="UPDATE insumosXBodega 
                 SET saldoCantidad=:saldoCantidad, saldoCosto=:saldoCosto, costoPromedio=:costoPromedio
                 WHERE id=:id";
             $param= array(':id'=>$this->id, ':saldoCantidad'=>$this->saldoCantidad, ':saldoCosto'=>$this->saldoCosto, ':costoPromedio'=>$this->costoPromedio);
             $data = DATA::Ejecutar($sql,$param,false);
-            if($data)
-                return true;
+            if($data){
+                // recorre el arreglo de inventario y guarda el historico.
+                // busca la bodega del insumo modificado.
+                $resultado=true;
+                $sql="SELECT idBodega
+                    FROM insumosXBodega
+                    WHERE id=:id";
+                $param= array(':id'=>$this->id);
+                $idBodega = DATA::Ejecutar($sql,$param);
+                //
+                foreach ($this->inventario as $item) {
+                    if($item->tipo=='entrada'){
+                        $sql="INSERT INTO inventarioBodega  (id, idBodega, idOrdenCompra, idInsumo, entrada, saldo, costoAdquisicion, valorEntrada, valorSaldo, costoPromedio)
+                            VALUES (uuid(), :idBodega, :idOrdenCompra, :idInsumo, :entrada, :saldo, :costoAdquisicion, :valorEntrada, :valorSaldo, :costoPromedio);";
+                        $param= array(
+                            ':idBodega'=>$idBodega[0]['idBodega'],
+                            'idOrdenCompra' => 'Entrada Manual: ' . $_SESSION["userSession"]->username,
+                            ':idInsumo'=>$this->id,
+                            ':entrada'=>$item->cantidad,
+                            ':saldo'=>$this->saldoCantidad, 
+                            ':costoAdquisicion'=> $this->costoPromedio,
+                            ':valorEntrada'=> floatval($this->costoPromedio * floatval($item->cantidad)),
+                            ':valorSaldo'=> $this->saldoCosto,
+                            ':costoPromedio'=>$this->costoPromedio
+                        );
+                        $data = DATA::Ejecutar($sql, $param, false);
+                        if(!$data)
+                            $resultado=false;
+                    } else{ // salida.
+                        $sql="INSERT INTO inventarioBodega  (id, idBodega, idOrdenSalida, idInsumo, salida, saldo, valorSalida, valorSaldo)
+                            VALUES (uuid(), :idBodega, :idOrdenSalida, :idInsumo, :salida, :saldo, :valorSalida, :valorSaldo );";
+                        $param= array(
+                            ':idBodega'=>$idBodega[0]['idBodega'],
+                            'idOrdenSalida' => 'Salida Manual: ' . $_SESSION["userSession"]->username,
+                            ':idInsumo'=>$this->id,
+                            ':salida'=>$item->cantidad,
+                            ':saldo'=>$this->saldoCantidad, 
+                            ':valorSalida'=> floatval($this->costoPromedio * floatval($item->cantidad)),
+                            ':valorSaldo'=> $this->saldoCosto
+                        );
+                        $data = DATA::Ejecutar($sql, $param, false);
+                        if(!$data)
+                            $resultado=false;
+                    }
+                }
+                return $resultado;
+            }                
             else throw new Exception('Error al guardar.', 123);
         }     
-        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+        catch(Exception $e) { 
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
