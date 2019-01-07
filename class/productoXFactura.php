@@ -46,14 +46,42 @@ class ProductoXFactura{
 
     public static function reintegrarProductoByIdFactura($idFactura){
         
-        try {    
+        try {   
+            $sql="SELECT consecutivo, idMedioPago, totalComprobante, fechaCreacion 
+                FROM tropical.factura
+                WHERE id =:id;";
+            $param= array(':id'=>$idFactura);
+            $factura = DATA::Ejecutar($sql,$param);  
+
             $datoFactura = ProductoXFactura::ReadByIdFactura($idFactura);
 
-            $sql="SELECT idBodega FROM tropical.factura
+            $sql="SELECT idBodega FROM factura
             where id =:id;";
             $param= array(':id'=>$idFactura);
             $idBodega = DATA::Ejecutar($sql,$param);
 
+            $sql='SELECT id FROM cajasXBodega
+                WHERE idBodega= :idBodega AND
+                :fechaCreacion BETWEEN fechaApertura AND fechaCierre;';
+            $param= array(':fechaCreacion'=>$factura[0]["fechaCreacion"], ':idBodega'=>$idBodega[0]["idBodega"]);
+            $idCaja = DATA::Ejecutar($sql,$param);
+
+            if (isset($idCaja[0]["id"])){
+                switch($factura[0]["idMedioPago"]){
+                    case "1":
+                        $sql='UPDATE cajasXBodega 
+                            SET totalVentasEfectivo = totalVentasEfectivo - :totalComprobante 
+                            WHERE id = :id';                        
+                        break;
+                    case "2":
+                        $sql='UPDATE cajasXBodega 
+                        SET totalVentasTarjeta = totalVentasTarjeta - :totalComprobante 
+                        WHERE id = :id';  
+                        break;
+                }       
+                $param= array(':id'=>$idCaja[0]["id"], ':totalComprobante'=>$factura[0]["totalComprobante"]);
+                $idCaja = DATA::Ejecutar($sql,$param); 
+            }
         
             foreach ($datoFactura as $key => $value){
                 $value->detalle = str_replace(' ','',$value->detalle);
@@ -88,7 +116,7 @@ class ProductoXFactura{
                         $porcion= 1;
                     else $porcion= 1.4285714;
                     // Entrada a inventario agencia.
-                    InventarioInsumoXBodega::entrada($insumoXBodega[0]["id"], 'Nota Credito', $porcion, $insumoXBodega[0]["saldoCosto"], false);
+                    InventarioInsumoXBodega::entrada($insumoXBodega[0]["id"], 'Nota Credito Fac#: ' . $factura[0]["consecutivo"], $porcion, $insumoXBodega[0]["saldoCosto"], false);
                 }
             }
         }     
