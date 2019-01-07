@@ -179,7 +179,7 @@ class InventarioFacturaCancelada {
                                 return '<button class=btnConsultanC>Consultar</button>';
                                 break;
                             case "3":
-                                return '<button class=btnCancelaNC>Cancelar Factura</button>';
+                                return '<i class="fa fa-check-square-o" aria-hidden="true" style="color:green">NC Aceptada!</i>';
                                 break;
                             case "4":
                                 return '<button class=btnCancelaNC>Cancelar Factura</button>';
