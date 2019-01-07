@@ -215,14 +215,14 @@ class MermaAgencia{
 
     function Rollback(){
         try {
-            $sql="SELECT saldoCantidad, saldoCosto, costoPromedio
+            $sql="SELECT idProducto, idBodega, saldoCantidad, saldoCosto, costoPromedio
                     FROM insumosXBodega 
                     where id = :idInsumo;";
             $param= array(':idInsumo'=> $this->idInsumo);
             $data = DATA::Ejecutar($sql,$param);
             if($data){
                 // Entrada a inventario agencia.
-                InventarioInsumoXBodega::entrada($this->idInsumo, 'CancelaMerma:'.$this->consecutivo, $this->cantidad, $data[0]['costoPromedio']);
+                InventarioInsumoXBodega::entrada($data[0]['idProducto'], $data[0]['idBodega'], 'CancelaMerma:'.$this->consecutivo, $this->cantidad, $data[0]['costoPromedio'], false);
                 // delete from mermaAgencia.
                 $sql="DELETE 
                     FROM mermaAgencia

@@ -1070,11 +1070,11 @@ class Producto {
                     width: "auto"
                 },
                 {
-                    title: "ORDEN COMPRA",
+                    title: "ENTRADA",
                     data: "idOrdenEntrada"
                 },
                 {
-                    title: "ORDEN SALIDA",
+                    title: "SALIDA",
                     data: "idOrdenSalida"
                 },
                 {

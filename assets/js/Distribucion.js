@@ -537,7 +537,7 @@ class Distribucion {
                 value: producto.saldoCantidad,
                 align: "right"
             })[0]
-            .textContent = (parseFloat(producto.saldoCantidad).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+            .textContent = (parseFloat(producto.saldoCantidad).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
         $('td:eq(5) input', rowNode).attr({
             id: ("cantidad" + producto.id),
             max: producto.saldoCantidad,
@@ -604,6 +604,60 @@ class Distribucion {
         // recalcula
         distr.setProducto($(btn).parents('tr').find('td:eq(0)').html());
         distr.calcTotal();
+    }
+
+    DeleteDistr(e) {
+        distr.estado = $(e).parents('tr').find("td:eq(6)").text();
+        if(distr.estado != 'LIQUIDADO'){
+            swal({
+                type: 'warning',
+                title: 'Distribución',
+                text: 'No es posible Eliminar una orden de Distribución sin ACEPTAR o CANCELADA.',
+                allowOutsideClick: false
+            });
+        }
+        else{
+            swal({
+                title: 'Eliminar?',
+                text: "Esta acción es irreversible!",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Si, eliminar!',
+                cancelButtonText: 'No, cancelar!',
+                confirmButtonClass: 'btn btn-success',
+                cancelButtonClass: 'btn btn-danger'
+            }).then((result) => {
+                if (result.value) {
+                    distr.id= $(e).parents('tr').find(".itemId").text();
+                    distr.orden= $(e).parents('tr').find("td:eq(2)").text();
+                    $.ajax({
+                            type: "POST",
+                            url: "class/Distribucion.php",
+                            data: {
+                                action: 'Delete',
+                                id: distr.id,
+                                orden: distr.orden
+                            }
+                        })
+                        .done(distr.showInfo)
+                        .fail(function (e) {
+                            distr.showError(e);
+                        })
+                        .always(function () {
+                            //$("#btndistr").removeAttr("disabled");
+                            distr = new Distribucion();
+                            //distr.CleanCtls();
+                            //$("#p_searh").focus();
+                            distr.CargaTrasladosRango();
+                        });
+                }
+            })
+            // t.row( $(e).parents('tr') )
+            // .remove()
+            // .draw();  
+        }
     }
 
     setProducto(idp) {
@@ -805,12 +859,10 @@ class Distribucion {
                     title: "ACCION",
                     orderable: false,
                     searchable: false,
-                    visible: buttons,
-                    className: "buttons",
-                    width: '5%',
                     mRender: function () {
-                        return '<a class="delete" style="cursor: pointer;"> <i class="glyphicon glyphicon-trash delete"> </i>  </a>'
-                    }
+                        return '<a class="delete buttons" style="cursor: pointer;" onclick="distr.DeleteDistr(this)" > <i class="glyphicon glyphicon-trash"> </i></a>'
+                    },
+                    visible: true
                 }
             ]
         });

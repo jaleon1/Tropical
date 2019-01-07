@@ -422,7 +422,11 @@ class Producto{
     function ReadAllbyRange(){
         try {
             $sql='SELECT i.id,            
-            COALESCE(o.orden, CONCAT("Orden: ", s.numeroOrden)) as idOrdenEntrada,
+            COALESCE(
+              o.orden, 
+              CONCAT("Orden: ", s.numeroOrden),
+              CONCAT("Revierte Traslado: ",dE.orden)
+            ) as idOrdenEntrada,
             COALESCE(CONCAT("Traslado: ", d.orden), CONCAT("Merma:", m.consecutivo), CONCAT("Ord Cancel:", os.numeroOrden)) as idOrdenSalida,            
             p.codigo AS producto,
             entrada,
@@ -438,6 +442,7 @@ class Producto{
                 left join ordenCompra o on i.idOrdenEntrada = o.id 
                 left join ordenSalida s on i.idOrdenEntrada = s.id
                 left join distribucion d on i.idOrdenSalida = d.id
+                left join distribucion dE on i.idOrdenEntrada = dE.id
                 left join mermaProducto m on i.idOrdenSalida = m.id
                 left join ordenSalida os on i.idOrdenSalida = os.id
             WHERE i.fecha Between :fechaInicial and :fechaFinal               
