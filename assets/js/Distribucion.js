@@ -858,7 +858,7 @@ class Distribucion {
                                         break;
                                 }    
                                 else
-                                    return '<i class="fa fa-check-square-o" aria-hidden="true" style="color:green">Facura Cancelada!</i>';
+                                    return '<i class="fa fa-check-square-o" aria-hidden="true" style="color:green">Factura Cancelada!</i>';
                         else
                             return ''
                     }

@@ -56,7 +56,7 @@ class InventarioFacturas {
                             location.href = "Dashboard.html";
                     })                
                 }
-                else inventarioFacturas.drawFac(e)
+                else inventarioFacturas.drawFacUser(e)
             });
     };
 
@@ -205,7 +205,145 @@ class InventarioFacturas {
                                     break;
                             }    
                             else
-                                return '<i class="fa fa-check-square-o" aria-hidden="true" style="color:green">Facura Cancelada!</i>';
+                                return '<i class="fa fa-check-square-o" aria-hidden="true" style="color:green">Factura Cancelada!</i>';
+                    }
+                }
+            ],
+            footerCallback: function ( row, data, start, end, display ) {
+                var api = this.api();
+                // Remueve el formato de la columna
+                var intVal = function ( i ) {
+                    return typeof i === 'string' ?
+                        parseFloat(i.replace(/[\¢,]/g, '')) :
+                        typeof i === 'number' ?
+                        i : 0;
+                };
+                // Total de todas las paginas filtradas
+                var subTotal = display.map(el => data[el]['totalComprobante']).reduce((a, b) => intVal(a) + intVal(b), 0 );
+                
+                // Actualiza el footer
+                $( api.column( 1 ).footer() ).html("TOTALES");
+                $( api.column( 5 ).footer() ).html('¢' + parseFloat(Number(subTotal)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+            }
+        });
+    };
+
+    drawFacUser(e) {
+        var facturas = JSON.parse(e);
+        this.tb_facturas = $('#tb_facturas').DataTable({
+            responsive: true,
+            destroy: true,
+            dom: 'Bfrtip',
+            buttons: [
+                {
+                    extend: 'excelHtml5',
+                    footer: true,
+                    exportOptions: {columns: [ 1, 2, 3, 4, 5, 6]},
+                    messageTop:'Lista de facturas'
+                },
+                {
+                    extend: 'pdfHtml5',
+                    footer: true,
+                    messageTop:'Lista de facturas',
+                    exportOptions: {
+                        columns: [ 1, 2, 3, 4, 5, 6]
+                    }
+                }
+            ],
+            language: {
+                "infoEmpty": "Sin Facturas Registradas",
+                "emptyTable": "Sin Facturas Registradas",
+                "search": "Buscar",
+                "zeroRecords": "No hay resultados",
+                "lengthMenu": "Mostrar _MENU_ registros",
+                "paginate": {
+                    "first": "Primera",
+                    "last": "Ultima",
+                    "next": "Siguiente",
+                    "previous": "Anterior"
+                }
+            },
+            data: facturas,                               
+            order: [[1, "desc"]],
+            columns: [
+                {
+                    title: "ID FACTURA",
+                    data: "id",
+                    visible: false
+                },
+                {
+                    title: "#FACTURA",
+                    data: "consecutivo"
+                },
+                {
+                    title: "FECHA",
+                    data: "fechaCreacion"
+                },
+                {
+                    title: "ALMACEN",
+                    data: "bodega"
+                },
+                {
+                    title: "VENDEDOR",
+                    data: "vendedor"
+                },
+                {
+                    title: "TOTAL",
+                    data: "totalComprobante",
+                    mRender: function ( e ) {
+                        return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                    }
+                },
+                {
+                    title: "MONTO EFECTIVO",
+                    data: "montoEfectivo",
+                    visible: false,
+                    mRender: function ( e ) {
+                        if (e==null) 
+                            return '¢0'; 
+                        else
+                            return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                    }
+                },
+                {
+                    title: "MONTO TARJETA",
+                    data: "montoTarjeta",
+                    visible: false,
+                    mRender: function ( e ) {
+                        if (e==null) 
+                            return '¢0'; 
+                        else
+                            return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                    }
+                },
+                {
+                    title: "ESTADO",
+                    data: "idEstadoComprobante",
+                    mRender: function ( e ) {
+                        switch (e) {
+                            case "1":
+                                return '<i class="fa fa-paper-plane" aria-hidden="true" style="color:red"> Sin Enviar</i>';
+                                break;
+                            case "2":
+                                return '<i class="fa fa-paper-plane" aria-hidden="true" style="color:green"> Enviado</i>';
+                                break;
+                            case "3":
+                                return '<i class="fa fa-check-square-o" aria-hidden="true" style="color:green"> Aceptado</i>';
+                                break;
+                            case "4":
+                                return '<i class="fa fa-times-circle" aria-hidden="true" style="color:red"> Rechazado</i>';
+                                break;
+                            case "5":
+                                return '<i class="fa fa-exclamation-triangle" aria-hidden="true" style="color:#FF6F00"> Otro</i>';
+                                break;
+                            case "99":
+                                return '<i class="fa fa-exclamation-triangle" aria-hidden="true" style="color:green"> Reportado</i>';
+                                break;
+                            default:
+                                return 'Desconocido';
+                                break;
+
+                        }
                     }
                 }
             ],
@@ -292,6 +430,23 @@ class InventarioFacturas {
             });
     };
 
+    CargaListaFacturasRangoUser(){
+        var referenciaCircular = inventarioFacturas.tb_facturas;
+        inventarioFacturas.tb_facturas = [];
+        $.ajax({
+            type: "POST",
+            url: "class/Factura.php",
+            data: {
+                action: "ReadAllbyRange",
+                obj: JSON.stringify(inventarioFacturas)
+            }
+        })
+            .done(function (e) {
+                inventarioFacturas.tb_facturas = referenciaCircular;        
+                inventarioFacturas.drawFac(e); 
+            });
+    };
+
     sendContingenciaMasiva(){
         $.ajax({
             type: "POST",
@@ -331,7 +486,7 @@ class InventarioFacturas {
         })
             .done(function (e) {
                 inventarioFacturas.tb_facturas = referenciaCircular;        
-                inventarioFacturas.drawFac(e); 
+                inventarioFacturas.drawFacUser(e); 
             });
     };
 
