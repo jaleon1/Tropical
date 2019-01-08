@@ -398,9 +398,8 @@ class InventarioFacturas {
         // var totalFact =
         //     `<h4>Total: ¢${Math.round(id.totalVenta)}</h4>`;
         // $("#totalFact").append(totalFact);
-        // onclick="myFunction()"
-        // $('#btnReenviaFactura').attr('onclick','inventarioFacturas.test("'+  id.id + '" )');
-
+        // 
+        
 
         $.ajax({
             type: "POST",
@@ -414,12 +413,6 @@ class InventarioFacturas {
                 inventarioFacturas.drawFactDetail(e);
             });
     };
-
- 
-    // test(idFactura){
-    //     alert("Test: "+ idFactura);
-    // };
-
 
     CargaListaFacturasRango(){
         var referenciaCircular = inventarioFacturas.tb_facturas;
