@@ -171,6 +171,39 @@ class Consumible{
             // );
         }
     }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    public static function entrada($tamano, $idBodega, $consecutivo){
+        try {                  
+            /*
+            servilletas - 2
+            */
+            $sql='SELECT idProducto, cantidad 
+                FROM consumible
+                WHERE  tamano=:tamano';
+            $param= array(':tamano'=> $tamano);
+            $data= DATA::Ejecutar($sql, $param);
+            foreach ($data as $key => $value){
+                $sql="SELECT id
+                     FROM insumosXBodega 
+                     WHERE idBodega=:idBodega and idProducto=:idProducto;";
+                $param = array(':idProducto'=>$value['idProducto'], ':idBodega'=>$idBodega);
+                $dataInsumo = DATA::Ejecutar($sql,$param);
+                if($dataInsumo){
+                    InventarioInsumoXBodega::entrada($dataInsumo[0]['id'], $idBodega, 'factura#'. $consecutivo, $value['cantidad'], 0, false);
+                }
+                else throw new Exception('Warning, el código de insumo no se encuentra en el inventario, no es posible actualizar por facturacion. ('.$idProducto.')' , ERROR_SALIDA_INVENTARIO_INSUMOXBODEGA);           
+            }
+        }
+        catch(Exception $e) {
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            // header('HTTP/1.0 400 Bad error');
+            // die(json_encode(array(
+            //     'code' => $e->getCode() ,
+            //     'msg' => $e->getMessage()))
+            // );
+        }
+    }
 }
 
 

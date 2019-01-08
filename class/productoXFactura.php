@@ -6,6 +6,12 @@ if(isset($_POST["action"])){
     // Classes        
     require_once("Usuario.php");
     require_once("InventarioInsumoXBodega.php");
+    require_once("consumible.php");
+    require_once("Factura.php"); 
+    require_once("Receptor.php");
+    require_once("ClienteFE.php");   
+    require_once("encdes.php");
+    require_once("facturacionElectronica.php");
     // Session
     if (!isset($_SESSION))
         session_start();            
@@ -16,7 +22,7 @@ if(isset($_POST["action"])){
             echo json_encode($productoXFactura->ReadByIdFactura($_POST['id']));
             break;
         case "reintegrarProductoByIdFactura":
-            $productoXFactura->reintegrarProductoByIdFactura($_POST['id']);
+            $productoXFactura->reintegrarProductoByIdFactura($_POST['id'], $_POST['razon']);
             break;
     }        
 }
@@ -44,27 +50,25 @@ class ProductoXFactura{
     }
     
 
-    public static function reintegrarProductoByIdFactura($idFactura){
+    public static function reintegrarProductoByIdFactura($idFactura, $razon){
         
         try {   
-            $sql="SELECT consecutivo, idMedioPago, totalComprobante, fechaCreacion 
+            //Master
+            $sql="SELECT consecutivo, idMedioPago, totalComprobante, fechaCreacion, idBodega
                 FROM tropical.factura
                 WHERE id =:id;";
             $param= array(':id'=>$idFactura);
             $factura = DATA::Ejecutar($sql,$param);  
-
+            //Detalle
             $datoFactura = ProductoXFactura::ReadByIdFactura($idFactura);
-
-            $sql="SELECT idBodega FROM factura
-            where id =:id;";
-            $param= array(':id'=>$idFactura);
-            $idBodega = DATA::Ejecutar($sql,$param);
-
+            
+            //ID Caja
             $sql='SELECT id FROM cajasXBodega
                 WHERE idBodega= :idBodega AND
                 :fechaCreacion BETWEEN fechaApertura AND fechaCierre;';
-            $param= array(':fechaCreacion'=>$factura[0]["fechaCreacion"], ':idBodega'=>$idBodega[0]["idBodega"]);
+            $param= array(':fechaCreacion'=>$factura[0]["fechaCreacion"], ':idBodega'=>$factura[0]["idBodega"]);
             $idCaja = DATA::Ejecutar($sql,$param);
+            // 153f802a-049f-11e9-a864-0800279cc012
 
             if (isset($idCaja[0]["id"])){
                 switch($factura[0]["idMedioPago"]){
@@ -97,17 +101,16 @@ class ProductoXFactura{
                     if ($data){
                         array_push($productos,$data[0]["id"]);
                     }
-                    // $productos = DATA::Ejecutar($sql,$param);
                 }
             }
             if($productos){
                 foreach ($productos as $item => $idProducto){
 
-                    $sql="SELECT id, saldoCosto 
+                    $sql="SELECT id, costoPromedio 
                     FROM insumosXBodega 
                     WHERE idProducto= :idProducto
                     AND idBodega = :idBodega;";
-                    $param= array(':idProducto'=>$idProducto, ':idBodega'=>$idBodega[0]["idBodega"]);
+                    $param= array(':idProducto'=>$idProducto, ':idBodega'=>$factura[0]["idBodega"]);
                     $insumoXBodega = DATA::Ejecutar($sql,$param);
 
                     // array_push($insumoXBodega,$data[0]["id"]);
@@ -116,9 +119,27 @@ class ProductoXFactura{
                         $porcion= 1;
                     else $porcion= 1.4285714;
                     // Entrada a inventario agencia.
-                    InventarioInsumoXBodega::entrada($insumoXBodega[0]["id"], 'Nota Credito Fac#: ' . $factura[0]["consecutivo"], $porcion, $insumoXBodega[0]["saldoCosto"], false);
+                    InventarioInsumoXBodega::entrada($idProducto, $factura[0]["idBodega"], 'Nota Credito Fac#: ' . $factura[0]["consecutivo"], $porcion, $insumoXBodega[0]["costoPromedio"], false);
+                    
+                    switch($producto_x_linea[0]){
+                        case "12oz":
+                            $tamano = 1;                       
+                            break;
+                        case "08oz":
+                            $tamano = 0;  
+                            break;
+                    }     
+
+                    Consumible::entrada($tamano, $factura[0]["idBodega"], $factura[0]["consecutivo"]);
                 }
             }
+
+            $objFactura = new Factura();
+            $objFactura->id = $idFactura;
+            $objFactura->idDocumentoNC = 3;
+            $objFactura->idReferencia = 1;
+            $objFactura->razon = $razon;
+            $objFactura->notaCredito();
         }     
         catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');

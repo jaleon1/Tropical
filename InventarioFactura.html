@@ -328,9 +328,9 @@
                     if (result.value) {
                         $.ajax({
                             type: "POST",
-                            url: "class/Factura.php",
+                            url: "class/productoXFactura.php",
                             data: {
-                                action: "sendNotaCredito",
+                                action: "reintegrarProductoByIdFactura",
                                 id: data['id'],
                                 razon: result.value,
                             }

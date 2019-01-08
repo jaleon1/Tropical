@@ -1190,7 +1190,8 @@ class Producto {
             url: "class/productoXFactura.php",
             data: {
                 action: "reintegrarProductoByIdFactura",
-                id: factura.id
+                id: factura.id,
+                razon: factura.razon
             }
         })
             .done(function (e) {
