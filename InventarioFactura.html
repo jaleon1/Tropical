@@ -368,8 +368,8 @@
         $('#tb_facturas tbody').on('click', '.btnNC_CreateFact_Ref', function () {
             var data = inventarioFacturas.tb_facturas.row($(this).parents('tr')).data();
             swal({
-                title: 'Desea cancelar la factura ?',
-                // input: 'text',
+                title: 'Desea cancelar la factura ? Escriba una razón:',
+                input: 'text',
                 inputAttributes: {
                     autocapitalize: 'off'
                 },
@@ -384,8 +384,8 @@
                         url: "class/productoXFactura.php",
                         data: {
                             action: "reintegrarProductoByIdFactura",
-                            id: data['id']
-                            // razon: result.value,
+                            id: data['id'],
+                            razon: result.value,
                         }
                     })
                         .done(function (e) {
