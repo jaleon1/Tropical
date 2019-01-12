@@ -157,7 +157,8 @@
                                 <i class="fa fa-caret-down"></i>
                             </div>
                             <div>
-                                <button type="button" class="btn btn-primary" id="sendContingenciaMasiva">Enviar Contingencia</button>
+                                <button type="button" class="btn btn-primary" id="sendContingenciaMasiva">Enviar
+                                    Contingencia</button>
                                 <!-- <button type="button" class="btn btn-primary" id="sendMasiva">Re-enviar</button> -->
                             </div>
                         </div>
@@ -242,51 +243,51 @@
             </div>
         </div>
     </div>
-        <!-- modals -->
-        <!-- Large modal -->
+    <!-- modals -->
+    <!-- Large modal -->
 
-        <!-- Bootstrap -->
-        <script src="assets/bootstrap/js/bootstrap.min.js"></script>
-        <!-- FastClick -->
-        <script src="assets/js/fastclick/lib/fastclick.js"></script>
-        <!-- NProgress -->
-        <script src="assets/js/nprogress/nprogress.js"></script>
-        <!-- Moment -->
-        <script src="assets/js/moment.min.js"></script>
-        <script src="assets/js/moment-timezone.js"></script>
-        <!-- bootstrap-datetimepicker -->
-        <script src="assets/js/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js"></script>
-        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-        <!-- Validator -->
-        <script src="assets/js/validator.min.js"></script>
-        <!-- Input mask -->
-        <script src="assets/js/jquery.inputmask/jquery.inputmask.bundle.min.js"></script>
-        <!-- JS Scripts -->
-        <script src="assets/js/Producto.min.js"></script>
-        <script src="assets/js/InventarioFacturas.js"></script>
-        <!-- Sweet Alert -->
-        <script src="assets/js/sweetalert2.min.js"></script>
-        <!-- Datatables -->
-        <script src="../vendors/datatables.net/js/jquery.dataTables.min.js"></script>
-        <!-- iCheck -->
-        <script src="assets/js/iCheck/icheck.min.js"></script>
-        <!-- JS dataTables -->
-        <script src="assets/js/jquery.dataTables.min.js"></script>
-        <script src="assets/jquery.dataTables/dataTables.buttons.min.js"></script>
-        <script src="assets/jquery.dataTables/buttons.flash.min.js"></script>
-        <script src="assets/jquery.dataTables/jszip.min.js"></script>
-        <script src="assets/jquery.dataTables/pdfmake.min.js"></script>
-        <script src="assets/jquery.dataTables/vfs_fonts.js"></script>
-        <script src="assets/jquery.dataTables/buttons.html5.min.js"></script>
-        <script src="assets/jquery.dataTables/buttons.print.min.js"></script>
-        <!-- Bootstrap Colorpicker -->
-        <script src="assets/bootstrap/js/bootstrap-colorpicker.min.js"></script>
-        <!-- Custom Theme Scripts -->
-        <script src="assets/js/custom.min.js"></script>
-        <!-- Select -->
-        <script src="assets/js/bootstrap-select.js"></script>
-        <!-- JS Moments -->
-        <script src="assets/js/moment.min.js"></script>
+    <!-- Bootstrap -->
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <!-- FastClick -->
+    <script src="assets/js/fastclick/lib/fastclick.js"></script>
+    <!-- NProgress -->
+    <script src="assets/js/nprogress/nprogress.js"></script>
+    <!-- Moment -->
+    <script src="assets/js/moment.min.js"></script>
+    <script src="assets/js/moment-timezone.js"></script>
+    <!-- bootstrap-datetimepicker -->
+    <script src="assets/js/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <!-- Validator -->
+    <script src="assets/js/validator.min.js"></script>
+    <!-- Input mask -->
+    <script src="assets/js/jquery.inputmask/jquery.inputmask.bundle.min.js"></script>
+    <!-- JS Scripts -->
+    <script src="assets/js/Producto.min.js"></script>
+    <script src="assets/js/InventarioFacturas.js"></script>
+    <!-- Sweet Alert -->
+    <script src="assets/js/sweetalert2.min.js"></script>
+    <!-- Datatables -->
+    <script src="../vendors/datatables.net/js/jquery.dataTables.min.js"></script>
+    <!-- iCheck -->
+    <script src="assets/js/iCheck/icheck.min.js"></script>
+    <!-- JS dataTables -->
+    <script src="assets/js/jquery.dataTables.min.js"></script>
+    <script src="assets/jquery.dataTables/dataTables.buttons.min.js"></script>
+    <script src="assets/jquery.dataTables/buttons.flash.min.js"></script>
+    <script src="assets/jquery.dataTables/jszip.min.js"></script>
+    <script src="assets/jquery.dataTables/pdfmake.min.js"></script>
+    <script src="assets/jquery.dataTables/vfs_fonts.js"></script>
+    <script src="assets/jquery.dataTables/buttons.html5.min.js"></script>
+    <script src="assets/jquery.dataTables/buttons.print.min.js"></script>
+    <!-- Bootstrap Colorpicker -->
+    <script src="assets/bootstrap/js/bootstrap-colorpicker.min.js"></script>
+    <!-- Custom Theme Scripts -->
+    <script src="assets/js/custom.min.js"></script>
+    <!-- Select -->
+    <script src="assets/js/bootstrap-select.js"></script>
+    <!-- JS Moments -->
+    <script src="assets/js/moment.min.js"></script>
 
 </body>
 
@@ -296,13 +297,13 @@
     $(document).ready(function () {
         // inventarioFacturas.CargaFacturas();
         CargaListaFactura();
-      
-        $('#sendContingenciaMasiva').click(function(){
+
+        $('#sendContingenciaMasiva').click(function () {
             inventarioFacturas.sendContingenciaMasiva();
 
         });
 
-        $('#sendMasiva').click(function(){
+        $('#sendMasiva').click(function () {
             inventarioFacturas.sendMasiva();
         });
 
@@ -315,10 +316,11 @@
         $(document).on('click', '#btnReimprimeFactura', function (event) {
             inventarioFacturas.ticketPrint();
         });
+
         $("#tb_facturas").append("<tfoot><tr><th style='visibility:hidden'></th><th></th><th></th><th></th><th></th><th></th><th style='visibility:hidden'></th><th style='visibility:hidden'></th><th></th></tr></tfoot>");
 
-        $('#tb_facturas tbody').on( 'click', '.btnCancelaFactura', function () {   
-            var data = inventarioFacturas.tb_facturas.row( $(this).parents('tr') ).data();
+        $('#tb_facturas tbody').on('click', '.btnCancelaFactura', function () {
+            var data = inventarioFacturas.tb_facturas.row($(this).parents('tr')).data();
             swal({
                 title: 'Desea cancelar la factura ? Escriba una razón:',
                 input: 'text',
@@ -329,40 +331,106 @@
                 confirmButtonText: 'Si, Cancelar!',
                 showLoaderOnConfirm: true,
                 allowOutsideClick: () => !swal.isLoading()
-                }).then((result) => {
-                    if (result.value) {
-                        $.ajax({
-                            type: "POST",
-                            url: "class/productoXFactura.php",
-                            data: {
-                                action: "reintegrarProductoByIdFactura",
-                                id: data['id'],
-                                razon: result.value,
-                            }
+            }).then((result) => {
+                if (result.value) {
+                    $.ajax({
+                        type: "POST",
+                        url: "class/productoXFactura.php",
+                        data: {
+                            action: "reintegrarProductoByIdFactura",
+                            id: data['id'],
+                            razon: result.value,
+                        }
+                    })
+                        .done(function (e) {
+                            CargaListaFactura();
+                            swal({
+                                type: 'success',
+                                title: 'Factura Cancelada!',
+                                showConfirmButton: false,
+                                timer: 2000
+                            });
                         })
-                            .done(function (e) {
-                                CargaListaFactura();
-                                swal({
-                                    type: 'success',
-                                    title: 'Factura Cancelada!',
-                                    showConfirmButton: false,
-                                    timer: 2000
-                                });
-                            })
-                            .fail(function(e){});
-                    }
-                    else
-                        swal({
-                            type: 'error',
-                            title: 'Error al cancelar',
-                            text: 'Debe de digitar una razón'
-                        })
+                        .fail(function (e) { });
+                }
+                else
+                    swal({
+                        type: 'error',
+                        title: 'Error al cancelar',
+                        text: 'Debe de digitar una razón'
+                    })
             })
         });
 
-        $('#tb_facturas tbody').on( 'click', '.btnEnviarFactura', function () {   
-            var data = inventarioFacturas.tb_facturas.row( $(this).parents('tr') ).data();
-            
+
+
+
+        $('#tb_facturas tbody').on('click', '.btnNC_CreateFact_Ref', function () {
+            var data = inventarioFacturas.tb_facturas.row($(this).parents('tr')).data();
+            swal({
+                title: 'Desea cancelar la factura ?',
+                // input: 'text',
+                inputAttributes: {
+                    autocapitalize: 'off'
+                },
+                showCancelButton: true,
+                confirmButtonText: 'Si, Cancelar!',
+                showLoaderOnConfirm: true,
+                allowOutsideClick: () => !swal.isLoading()
+            }).then((result) => {
+                if (result.value) {
+                    $.ajax({
+                        type: "POST",
+                        url: "class/productoXFactura.php",
+                        data: {
+                            action: "reintegrarProductoByIdFactura",
+                            id: data['id']
+                            // razon: result.value,
+                        }
+                    })
+                        .done(function (e) {
+                            swal({
+                                type: 'success',
+                                title: 'Factura Cancelada!',
+                                showConfirmButton: false,
+                                timer: 2000
+                            });
+                            $.ajax({
+                                type: "POST",
+                                url: "class/Factura.php",
+                                data: {
+                                    action: "reGenerarFactura",
+                                    id: data['id']
+                                }
+                            })
+                                .done(function (e) {
+                                    swal({
+                                        type: 'success',
+                                        title: 'Nueva Factura Creada!',
+                                        showConfirmButton: false,
+                                        timer: 2000
+                                    });
+                                    CargaListaFactura();
+                                })
+                                .fail(function (e) { });
+                        })
+                        .fail(function (e) { });
+                }
+                else
+                    swal({
+                        type: 'error',
+                        title: 'Factura no Cancelada',
+                        text: 'Operación abortada por el Usuario'
+                    })
+            })
+        });
+
+
+
+
+        $('#tb_facturas tbody').on('click', '.btnEnviarFactura', function () {
+            var data = inventarioFacturas.tb_facturas.row($(this).parents('tr')).data();
+
             swal({
                 title: 'Envío de factura',
                 text: "Desea enviar la factura?",
@@ -371,16 +439,16 @@
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
                 confirmButtonText: 'Si, enviar!'
-                }).then((result) => {
+            }).then((result) => {
                 if (result.value) {
                     $.ajax({
-                            type: "POST",
-                            url: "class/Factura.php",
-                            data: {
-                                action: "sendContingencia",
-                                id: data['id']
-                            }
-                        })
+                        type: "POST",
+                        url: "class/Factura.php",
+                        data: {
+                            action: "sendContingencia",
+                            id: data['id']
+                        }
+                    })
                         .done(function (e) {
                             CargaListaFactura();
                             swal({
@@ -390,7 +458,7 @@
                                 timer: 2000
                             });
                         })
-                        .fail(function(e){
+                        .fail(function (e) {
                             swal({
                                 type: 'error',
                                 title: 'Error al reenviar Factura!',
@@ -400,12 +468,12 @@
                         });
                 }
             });
-            
+
         });
 
-        $('#tb_facturas tbody').on( 'click', '.btnReenviarFactura', function () {   
-            var data = inventarioFacturas.tb_facturas.row( $(this).parents('tr') ).data();
-            
+        $('#tb_facturas tbody').on('click', '.btnReenviarFactura', function () {
+            var data = inventarioFacturas.tb_facturas.row($(this).parents('tr')).data();
+
             swal({
                 title: 'Reenvío de factura',
                 text: "Desea reenviar la factura?",
@@ -414,16 +482,16 @@
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
                 confirmButtonText: 'Si, reenviar!'
-                }).then((result) => {
+            }).then((result) => {
                 if (result.value) {
                     $.ajax({
-                            type: "POST",
-                            url: "class/Factura.php",
-                            data: {
-                                action: "sendContingencia",
-                                id: data['id']
-                            }
-                        })
+                        type: "POST",
+                        url: "class/Factura.php",
+                        data: {
+                            action: "sendContingencia",
+                            id: data['id']
+                        }
+                    })
                         .done(function (e) {
                             CargaListaFactura();
                             swal({
@@ -433,15 +501,15 @@
                                 timer: 2000
                             });
                         })
-                        .fail(function(e){});
+                        .fail(function (e) { });
                 }
             });
-            
+
         });
 
     });
 
-    function CargaListaFactura () {
+    function CargaListaFactura() {
         var start = moment().subtract(29, 'days');
         var end = moment();
 

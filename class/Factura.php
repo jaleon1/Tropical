@@ -31,6 +31,9 @@ if(isset($_POST["action"])){
         case "Read":
             echo json_encode($factura->Read());
             break;
+        case "reGenerarFactura":
+            echo json_encode($factura->reGenerarFactura());
+            break;
         case "ReadCancelada":
             echo json_encode($factura->ReadCancelada());
             break;
@@ -121,6 +124,8 @@ class Factura{
     public $idReferencia = null;
     public $fechaEmisionNC = null;
     public $razon=null;
+    public $reenvio=false;
+    
     //
     public $fechaInicial='';
     public $fechaFinal='';
@@ -232,7 +237,7 @@ class Factura{
                 foreach ($obj["ref"] as $ref) {
                     $factura->idDocumentoNC= $ref["idDocumentoNC"]; // documento al que se hace referencia.
                     $factura->idReferencia= $ref["idReferencia"]; // código de referencia: 4 : Referencia a otro documento.
-                    $factura->razon= $ref["razon"]; // Referencia a otro documento.
+                    $factura->razon= $ref["razon"]; // Referencia a otro documento. //Cancelacion documento electronico
                 }                
             }
         }
@@ -249,11 +254,37 @@ class Factura{
                             WHERE idUsuario = :idUsuario) bodegas on bodegas.idBodega = fac.idBodega
                 AND
                 fac.fechaCreacion Between :fechaInicial and :fechaFinal
-                ORDER BY fac.consecutivo DESC'; 
+                ORDER BY fac.fechaCreacion DESC'; 
                 
             $param= array(':idUsuario'=>$_SESSION["userSession"]->id, ':fechaInicial'=>$this->fechaInicial, ':fechaFinal'=>$this->fechaFinal);
             $data = DATA::Ejecutar($sql,$param);
             return $data;
+        }     
+        catch(Exception $e) { 
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar la lista'))
+            );
+        }
+    }
+    
+    function reGenerarFactura(){
+        try {
+            $nueva_factura = $this->Read();
+            $sql="SELECT claveNC
+                FROM factura
+                WHERE id=:id";
+            $param= array(':id'=>$this->id);
+            $idNC = DATA::Ejecutar($sql,$param);
+
+            $this->id= UUID::v4();
+            $this->idDocumentoNC= $idNC[0]["claveNC"]; //Falta jalar este dato// documento al que se hace referencia.
+            $this->idReferencia= 4; // código de referencia: 4 : Referencia a otro documento.
+            $this->razon= "Cancelacion documento electronico"; // Referencia a otro documento.
+            $this->reenvio = true;
+            $this->Create();
         }     
         catch(Exception $e) { 
             error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
@@ -468,10 +499,10 @@ class Factura{
         try {
             $sql="INSERT INTO factura   (id, idBodega, local, terminal, idCondicionVenta, idSituacionComprobante, idEstadoComprobante, plazoCredito, 
                 idMedioPago, idCodigoMoneda, tipoCambio, totalServGravados, totalServExentos, totalMercanciasGravadas, totalMercanciasExentas, totalGravado, totalExento, idDocumento, 
-                totalVenta, totalDescuentos, totalVentaneta, totalImpuesto, totalComprobante, idReceptor, idEmisor, idUsuario, montoEfectivo)
+                totalVenta, totalDescuentos, totalVentaneta, totalImpuesto, totalComprobante, idReceptor, idEmisor, idUsuario, montoEfectivo, idReferencia, idDocumentoNC, razon)
             VALUES  (:uuid, :idBodega, :local, :terminal, :idCondicionVenta, :idSituacionComprobante, :idEstadoComprobante, :plazoCredito,
                 :idMedioPago, :idCodigoMoneda, :tipoCambio, :totalServGravados, :totalServExentos, :totalMercanciasGravadas, :totalMercanciasExentas, :totalGravado, :totalExento, :idDocumento, 
-                :totalVenta, :totalDescuentos, :totalVentaneta, :totalImpuesto, :totalComprobante, :idReceptor, :idEmisor, :idUsuario, :montoEfectivo)";
+                :totalVenta, :totalDescuentos, :totalVentaneta, :totalImpuesto, :totalComprobante, :idReceptor, :idEmisor, :idUsuario, :montoEfectivo, :idReferencia, :idDocumentoNC, :razon)";
             $param= array(':uuid'=>$this->id,
                 ':idBodega'=>$this->idBodega,
                 ':local'=>$this->local,
@@ -498,6 +529,9 @@ class Factura{
                 ':idReceptor'=>$this->idReceptor,
                 ':idEmisor'=>$this->idEmisor,
                 ':idUsuario'=>$this->idUsuario,
+                ':idReferencia'=>$this->idReferencia,
+                ':idDocumentoNC'=>$this->idDocumentoNC,
+                ':razon'=>$this->razon,
                 ':montoEfectivo'=>$this->montoEfectivo);
             $data = DATA::Ejecutar($sql,$param, false);
             if($data)
@@ -507,7 +541,9 @@ class Factura{
                     $this->actualizaInventario($this->detalleOrden);
                     // orden de factura para mostrar en despacho.
                     OrdenXFactura::$id=$this->id;
-                    OrdenXFactura::Create($this->detalleOrden);
+                    if($this->reenvio != true){
+                        OrdenXFactura::Create($this->detalleOrden);
+                    }
                     // envio de comprobantes en tiempo real.
                     $this->enviarDocumentoElectronico();         
                     return $this;
