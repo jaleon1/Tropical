@@ -31,9 +31,9 @@ if(isset($_POST["action"])){
         case "Read":
             echo json_encode($factura->Read());
             break;
-        case "reGenerarFactura":
-            echo json_encode($factura->reGenerarFactura());
-            break;
+        // case "reGenerarFactura":
+        //     echo json_encode($factura->reGenerarFactura());
+        //     break;
         case "ReadCancelada":
             echo json_encode($factura->ReadCancelada());
             break;
@@ -125,6 +125,7 @@ class Factura{
     public $fechaEmisionNC = null;
     public $razon=null;
     public $reenvio=false;
+    public $facturaRelacionada=false;
     
     //
     public $fechaInicial='';
@@ -133,6 +134,10 @@ class Factura{
         // identificador único
         if(isset($_POST["id"])){
             $this->id= $_POST["id"];
+        }
+        
+        if(isset($_POST["facturaRelacionada"])){
+            $this->facturaRelacionada= $_POST["facturaRelacionada"];
         }
         if(isset($_POST["obj"])){
             $obj= json_decode($_POST["obj"],true);
@@ -273,6 +278,7 @@ class Factura{
     function reGenerarFactura(){
         try {
             $nueva_factura = $this->Read();
+
             $sql="SELECT claveNC
                 FROM factura
                 WHERE id=:id";
@@ -280,9 +286,14 @@ class Factura{
             $idNC = DATA::Ejecutar($sql,$param);
 
             $this->id= UUID::v4();
-            $this->idDocumentoNC= $idNC[0]["claveNC"]; //Falta jalar este dato// documento al que se hace referencia.
-            $this->idReferencia= 4; // código de referencia: 4 : Referencia a otro documento.
-            $this->razon= "Cancelacion documento electronico"; // Referencia a otro documento.
+
+            foreach ($this->detalleFactura as $key=>$item) {
+                $this->detalleFactura[$key]->idFactura = $this->id;
+            }
+
+            // $this->idDocumentoNC= $idNC[0]["claveNC"]; //Falta jalar este dato// documento al que se hace referencia.
+            // $this->idReferencia= 4; // código de referencia: 4 : Referencia a otro documento.
+            // $this->razon= "Cancelacion documento electronico"; // Referencia a otro documento.
             $this->reenvio = true;
             $this->Create();
         }     
@@ -832,7 +843,11 @@ class Factura{
                 {
                     $this->read();
                     // envía la factura
-                    FacturacionElectronica::iniciarNC($this);
+                    //FacturacionElectronica::iniciarNC($this);
+
+                    if ($this->facturaRelacionada == true){
+                        $this->reGenerarFactura();
+                    }
                     return true;
                 }
                 else throw new Exception('Error al guardar.', 02);
