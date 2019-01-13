@@ -843,7 +843,7 @@ class Factura{
                 {
                     $this->read();
                     // envía la factura
-                    //FacturacionElectronica::iniciarNC($this);
+                    FacturacionElectronica::iniciarNC($this);
 
                     if ($this->facturaRelacionada == true){
                         $this->reGenerarFactura();
