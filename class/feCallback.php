@@ -26,7 +26,7 @@
             FacturacionElectronica::APIConsultaComprobante($factura);
             error_log("[INFO] Finaliza Consulta de Comprobantes - TimedOut");
         }
-        // Documentos 1-4-8.
+        // Consulta Documentos 1-4-8.
         $sql='SELECT id
             from factura
             where idEstadoComprobante = 2

@@ -54,6 +54,7 @@ class mensajeReceptor{
     public $identificacionEmisor;
     public $identificacionReceptor;
     public $xml;
+    public $respuesta = array();
 
     function __construct(){
         // identificador único
@@ -75,7 +76,7 @@ class mensajeReceptor{
     function uploadxml(){
         try {
             // sube xml
-            $uploaddir= '../../xmlmr/';
+            $uploaddir= '../../xmlmr/'. $_SESSION['userSession']->idBodega . "/";
             if (!file_exists($uploaddir)) 
                 mkdir($uploaddir, 0755, true);
             if (!empty($_FILES)) {
@@ -88,24 +89,51 @@ class mensajeReceptor{
                             'msg' => 'Error al leer archivo xml.'))
                         );
                         // guarda datos en bd. y envía MR.
-                        $this->clave = (string)$this->xml->Clave;
+                        $this->clave = (string)$this->xml->Clave ?? null;
                         $this->mensaje = $this->mensaje;
                         $this->detalle = $this->detalle ?? null;
                         $this->totalImpuesto = (string)$this->xml->MontoTotalImpuesto ?? null;
-                        $this->totalComprobante = (string)$this->xml->TotalFactura;
+                        $this->totalComprobante = (string)$this->xml->TotalFactura ?? null;
                         // emisor del comprobante = proveedor
-                        $this->idEmisor = $this->idEmisor ?? null;
-                        $this->identificacionEmisor = (string)$this->xml->NumeroCedulaEmisor;
+                        $this->idEmisor = $this->idEmisor ?? null; // el id del proveedor aun no se maneja en bd.
+                        $this->identificacionEmisor = (string)$this->xml->NumeroCedulaEmisor ?? null;
                         $this->idTipoIdentificacionEmisor = (string)$this->xml->TipoIdentificacionEmisor;
                         // receptor del comprobante = entidad registrada en el sistema.
-                        $this->idReceptor = $_SESSION['userSession']->idBodega;
-                        $this->identificacionReceptor = (string)$this->xml->NumeroCedulaReceptor;
+                        $this->idReceptor = $_SESSION['userSession']->idEntidad;
+                        $this->identificacionReceptor = (string)$this->xml->NumeroCedulaReceptor ?? null;
                         $this->idTipoIdentificacionReceptor = (string)$this->xml->TipoIdentificacionReceptor;
-                        $this->Create();
+                        // valida que el archivo tenga el formato correcto.
+                        if($this->clave==null || $this->totalImpuesto==null || $this->totalComprobante==null || $this->identificacionEmisor==null || $this->identificacionReceptor==null){
+                            $r = new Respuesta();
+                            $r->clave = $this->clave;
+                            $r->estado = 'Archivo Invalido';
+                            array_push($this->respuesta, $r);
+                            continue;
+                        }
+                        // valida que el archivo no esté en bd.
+                        $sql="SELECT id 
+                            FROM mensajeReceptor 
+                            WHERE clave =:clave and idEstadoComprobante<=3";
+                        $param= array(':clave'=>$this->clave);
+                        $data = DATA::Ejecutar($sql,$param);
+                        if(!count($data)){
+                            // la clave no está repetida o no ha sido aceptada.
+                            $r = new Respuesta();
+                            $r->clave = $this->clave;
+                            $r->estado = $this->Create();
+                            array_push($this->respuesta, $r);
+                        }
+                        else {
+                            // la clave ya fue subida.
+                            $r = new Respuesta();
+                            $r->clave = $this->clave;
+                            $r->estado = 'Repetida';
+                            array_push($this->respuesta, $r);
+                        }
                     }
                 }
             }
-
+            return $this->respuesta;
         }
         catch(Exception $e) {
             error_log("[ERROR]: ". $e->getMessage());
@@ -195,15 +223,10 @@ class mensajeReceptor{
                 echo "UPLOADED";
                 return true;
             }
-            else throw new Exception('No es posible guardar el mensaje receptor.', 98);            
+            else return 'Error (1015) al crear en base de datos.';         
         }     
         catch(Exception $e) {
-            error_log("[ERROR]: ". $e->getMessage());
-            header('HTTP/1.0 400 Bad error');
-            die(json_encode(array(
-                'code' => $e->getCode() ,
-                'msg' => $e->getMessage()))
-            );
+            return 'Error (1016) al crear en base de datos.';
         }
     }
 
@@ -220,15 +243,10 @@ class mensajeReceptor{
             $this->datosEntidad->idTipoIdentificacion = $this->idTipoIdentificacionEmisor;
             $this->datosEntidad->identificacion = $this->identificacionEmisor;
             $this->datosEntidad->codigoSeguridad = $this->datosReceptor->codigoSeguridad;
-            FacturacionElectronica::iniciar($this);
+            return FacturacionElectronica::iniciar($this);
         }
         catch(Exception $e) {
-            error_log("[ERROR]: ". $e->getMessage());
-            header('HTTP/1.0 400 Bad error');
-            die(json_encode(array(
-                'code' => $e->getCode() ,
-                'msg' => $e->getMessage()))
-            );
+            return 'Error (1017) al leer el xml.';
         }
     }
 }
