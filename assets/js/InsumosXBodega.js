@@ -92,6 +92,10 @@ class InsumoBodega {
         this.saldoCantidad = $("#saldoCantidad").val();
         this.saldoCosto = $("#saldoCosto").val();
         this.costoPromedio = $("#costoPromedio").val();
+        if(arrInventario!=null){
+            this.arrInventario= new Array();
+            this.arrInventario= arrInventario;
+        }
         $.ajax({
             type: "POST",
             url: "class/InsumosXBodega.php",
@@ -151,6 +155,8 @@ class InsumoBodega {
         $("#saldoCantidad").val('');
         $("#saldoCosto").val('');
         $("#costoPromedio").val('');
+        $("#cantidadMod").val('0');
+        arrInventario= new Array();
     };
 
     ShowAll(e) {

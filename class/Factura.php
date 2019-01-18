@@ -31,6 +31,9 @@ if(isset($_POST["action"])){
         case "Read":
             echo json_encode($factura->Read());
             break;
+        // case "reGenerarFactura":
+        //     echo json_encode($factura->reGenerarFactura());
+        //     break;
         case "ReadCancelada":
             echo json_encode($factura->ReadCancelada());
             break;
@@ -121,6 +124,9 @@ class Factura{
     public $idReferencia = null;
     public $fechaEmisionNC = null;
     public $razon=null;
+    public $reenvio=false;
+    public $facturaRelacionada=false;
+    
     //
     public $fechaInicial='';
     public $fechaFinal='';
@@ -128,6 +134,10 @@ class Factura{
         // identificador único
         if(isset($_POST["id"])){
             $this->id= $_POST["id"];
+        }
+        
+        if(isset($_POST["facturaRelacionada"])){
+            $this->facturaRelacionada= $_POST["facturaRelacionada"];
         }
         if(isset($_POST["obj"])){
             $obj= json_decode($_POST["obj"],true);
@@ -150,17 +160,17 @@ class Factura{
             $this->idCodigoMoneda= $obj["idCodigoMoneda"] ?? 55; // CRC
             $wsBCCR = new TipoCambio();
             $this->tipoCambio= $obj['tipoCambio'] ?? $wsBCCR->tipo_cambio()["venta"]; // tipo de cambio dinamico con BCCR
-            $this->totalServGravados= $obj['totalServGravados'];
-            $this->totalServExentos= $obj['totalServExentos'];
-            $this->totalMercanciasGravadas= $obj['totalMercanciasGravadas'];
-            $this->totalMercanciasExentas= $obj['totalMercanciasExentas'];
-            $this->totalGravado= $obj['totalGravado'];
-            $this->totalExento= $obj['totalExento'];
-            $this->totalVenta= $obj["totalVenta"];
-            $this->totalDescuentos= $obj["totalDescuentos"];
-            $this->totalVentaneta= $obj["totalVentaneta"];
-            $this->totalImpuesto= $obj["totalImpuesto"];
-            $this->totalComprobante= $obj["totalComprobante"];
+            $this->totalServGravados= $obj['totalServGravados'] ?? 0;
+            $this->totalServExentos= $obj['totalServExentos'] ?? 0;
+            $this->totalMercanciasGravadas= $obj['totalMercanciasGravadas'] ?? 0;
+            $this->totalMercanciasExentas= $obj['totalMercanciasExentas'] ?? 0;
+            $this->totalGravado= $obj['totalGravado'] ?? 0;
+            $this->totalExento= $obj['totalExento'] ?? 0;
+            $this->totalVenta= $obj["totalVenta"] ?? 0;
+            $this->totalDescuentos= $obj["totalDescuentos"] ?? 0;
+            $this->totalVentaneta= $obj["totalVentaneta"] ?? 0;
+            $this->totalImpuesto= $obj["totalImpuesto"] ?? 0;
+            $this->totalComprobante= $obj["totalComprobante"] ?? 0;
             $this->montoEfectivo= $obj["montoEfectivo"] ?? null;
             $this->montoTarjeta= $obj["montoTarjeta"] ?? null;
 
@@ -232,7 +242,7 @@ class Factura{
                 foreach ($obj["ref"] as $ref) {
                     $factura->idDocumentoNC= $ref["idDocumentoNC"]; // documento al que se hace referencia.
                     $factura->idReferencia= $ref["idReferencia"]; // código de referencia: 4 : Referencia a otro documento.
-                    $factura->razon= $ref["razon"]; // Referencia a otro documento.
+                    $factura->razon= $ref["razon"]; // Referencia a otro documento. //Cancelacion documento electronico
                 }                
             }
         }
@@ -249,11 +259,43 @@ class Factura{
                             WHERE idUsuario = :idUsuario) bodegas on bodegas.idBodega = fac.idBodega
                 AND
                 fac.fechaCreacion Between :fechaInicial and :fechaFinal
-                ORDER BY fac.consecutivo DESC'; 
+                ORDER BY fac.fechaCreacion DESC'; 
                 
             $param= array(':idUsuario'=>$_SESSION["userSession"]->id, ':fechaInicial'=>$this->fechaInicial, ':fechaFinal'=>$this->fechaFinal);
             $data = DATA::Ejecutar($sql,$param);
             return $data;
+        }     
+        catch(Exception $e) { 
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar la lista'))
+            );
+        }
+    }
+    
+    function reGenerarFactura(){
+        try {
+            $nueva_factura = $this->Read();
+
+            $sql="SELECT claveNC
+                FROM factura
+                WHERE id=:id";
+            $param= array(':id'=>$this->id);
+            $idNC = DATA::Ejecutar($sql,$param);
+
+            $this->id= UUID::v4();
+
+            foreach ($this->detalleFactura as $key=>$item) {
+                $this->detalleFactura[$key]->idFactura = $this->id;
+            }
+
+            // $this->idDocumentoNC= $idNC[0]["claveNC"]; //Falta jalar este dato// documento al que se hace referencia.
+            // $this->idReferencia= 4; // código de referencia: 4 : Referencia a otro documento.
+            // $this->razon= "Cancelacion documento electronico"; // Referencia a otro documento.
+            $this->reenvio = true;
+            $this->Create();
         }     
         catch(Exception $e) { 
             error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
@@ -468,10 +510,10 @@ class Factura{
         try {
             $sql="INSERT INTO factura   (id, idBodega, local, terminal, idCondicionVenta, idSituacionComprobante, idEstadoComprobante, plazoCredito, 
                 idMedioPago, idCodigoMoneda, tipoCambio, totalServGravados, totalServExentos, totalMercanciasGravadas, totalMercanciasExentas, totalGravado, totalExento, idDocumento, 
-                totalVenta, totalDescuentos, totalVentaneta, totalImpuesto, totalComprobante, idReceptor, idEmisor, idUsuario, montoEfectivo)
+                totalVenta, totalDescuentos, totalVentaneta, totalImpuesto, totalComprobante, idReceptor, idEmisor, idUsuario, montoEfectivo, idReferencia, idDocumentoNC, razon)
             VALUES  (:uuid, :idBodega, :local, :terminal, :idCondicionVenta, :idSituacionComprobante, :idEstadoComprobante, :plazoCredito,
                 :idMedioPago, :idCodigoMoneda, :tipoCambio, :totalServGravados, :totalServExentos, :totalMercanciasGravadas, :totalMercanciasExentas, :totalGravado, :totalExento, :idDocumento, 
-                :totalVenta, :totalDescuentos, :totalVentaneta, :totalImpuesto, :totalComprobante, :idReceptor, :idEmisor, :idUsuario, :montoEfectivo)";
+                :totalVenta, :totalDescuentos, :totalVentaneta, :totalImpuesto, :totalComprobante, :idReceptor, :idEmisor, :idUsuario, :montoEfectivo, :idReferencia, :idDocumentoNC, :razon)";
             $param= array(':uuid'=>$this->id,
                 ':idBodega'=>$this->idBodega,
                 ':local'=>$this->local,
@@ -498,6 +540,9 @@ class Factura{
                 ':idReceptor'=>$this->idReceptor,
                 ':idEmisor'=>$this->idEmisor,
                 ':idUsuario'=>$this->idUsuario,
+                ':idReferencia'=>$this->idReferencia,
+                ':idDocumentoNC'=>$this->idDocumentoNC,
+                ':razon'=>$this->razon,
                 ':montoEfectivo'=>$this->montoEfectivo);
             $data = DATA::Ejecutar($sql,$param, false);
             if($data)
@@ -507,7 +552,9 @@ class Factura{
                     $this->actualizaInventario($this->detalleOrden);
                     // orden de factura para mostrar en despacho.
                     OrdenXFactura::$id=$this->id;
-                    OrdenXFactura::Create($this->detalleOrden);
+                    if($this->reenvio != true){
+                        OrdenXFactura::Create($this->detalleOrden);
+                    }
                     // envio de comprobantes en tiempo real.
                     $this->enviarDocumentoElectronico();         
                     return $this;
@@ -797,6 +844,10 @@ class Factura{
                     $this->read();
                     // envía la factura
                     FacturacionElectronica::iniciarNC($this);
+
+                    if ($this->facturaRelacionada == true){
+                        $this->reGenerarFactura();
+                    }
                     return true;
                 }
                 else throw new Exception('Error al guardar.', 02);
