@@ -914,7 +914,7 @@ class Distribucion {
                                 else
                                     return '<i class="fa fa-check-square-o" aria-hidden="true" style="color:green">Factura Cancelada!</i>';
                         else
-                            return ''
+                            return '<button class=btnCancelaFactura>Cancelar Factura</button>'
                     }
                 }
             ]

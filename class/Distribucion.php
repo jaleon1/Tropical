@@ -61,6 +61,9 @@ if(isset($_POST["action"])){
         case "ReadAllbyRange":
             echo json_encode($distribucion->ReadAllbyRange());
             break;
+        case "ReadCancelada":
+            echo json_encode($distribucion->ReadCancelada());
+            break;
     }
 }
 
@@ -308,6 +311,36 @@ class Distribucion{
             die(json_encode(array(
                 'code' => $e->getCode() ,
                 'msg' => 'Error al cargar el distribucion'))
+            );
+        }
+    }
+
+    function ReadCancelada(){
+        try {
+            $sql='SELECT d.id, fecha, orden, u.userName, b.nombre as bodega, e.nombre as estado, d.idEstadocomprobante, d.claveNC,
+                (sum(cantidad*valor) + sum(cantidad*valor)*0.13) as total, idEstadoComprobante, t.nombre as tipoBodega
+            FROM tropical.distribucion d
+                INNER JOIN usuario u on u.id=d.idUsuario
+                INNER JOIN bodega b on b.id=d.idBodega
+                INNER JOIN tipoBodega t on t.id=b.idTipoBodega 
+                INNER JOIN estado e on e.id=d.idEstado
+                INNER JOIN productosXDistribucion p on p.idDistribucion=d.id
+            WHERE fecha Between :fechaInicial 
+            AND :fechaFinal
+            AND d.claveNC IS NOT NULL
+            GROUP BY orden
+            ORDER BY fecha desc';
+
+            $param= array(':fechaInicial'=>$this->fechaInicial, ':fechaFinal'=>$this->fechaFinal);
+            $data = DATA::Ejecutar($sql,$param);
+            return $data;
+        }     
+        catch(Exception $e) { 
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar la lista'))
             );
         }
     }
