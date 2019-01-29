@@ -19,7 +19,7 @@
         error_log("**************************************************************************");
         error_log("**************************************************************************");
         $sql="SELECT f.id, b.nombre as bodega, consecutivo
-            from factura f inner join bodega b on e.id = f.idBodega
+            from factura f inner join bodega b on b.id = f.idBodega
             WHERE  f.idEstadoComprobante = 5 or f.idEstadoComprobante = 1 and (f.idDocumento = 1 or  f.idDocumento = 4 or  f.idDocumento = 8) 
             ORDER BY consecutivo asc";
         $data = DATA::Ejecutar($sql);
