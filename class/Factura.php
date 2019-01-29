@@ -745,7 +745,7 @@ class Factura{
         // busca facturas con error (5) y las reenvia con contingencia, para los documentos 1 - 4  (FE - TE)
         error_log("************************************************************");
         error_log("************************************************************");
-        error_log("     [INFO] Iniciando Ejecucíon masiva de contingencia      ");
+        error_log("     [INFO] Iniciando Ejecución masiva de contingencia      ");
         error_log("************************************************************");
         error_log("************************************************************");
         $sql="SELECT f.id, b.nombre as entidad, consecutivo
