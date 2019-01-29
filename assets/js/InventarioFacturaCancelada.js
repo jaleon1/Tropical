@@ -165,34 +165,35 @@ class InventarioFacturaCancelada {
 
                         }
                     }
-                },
-                {
-                    title: "ACCION",
-                    className: "buttons",
-                    data: "claveNC",
-                    render: function ( data, type, row, meta ) {
-                        switch (row['idEstadoNC']) {
-                            case "1":
-                                return '<button class=btnEnviarNC>Enviar</button>';
-                                break;
-                            case "2":
-                                return '<button class=btnConsultanC>Consultar</button>';
-                                break;
-                            case "3":
-                                return '<i class="fa fa-check-square-o" aria-hidden="true" style="color:green">NC Aceptada!</i>';
-                                break;
-                            case "4":
-                                return '<button class=btnCancelaNC>Cancelar Factura</button>';
-                                break;
-                            case "5":
-                                return '<button class=btnReenviarNC>Reenviar</button><button class=btnSoporte>Soporte</button>';
-                                break;
-                            default:
-                                return '<i class="fa fa-check-square-o" aria-hidden="true" style="color:green">NC Aceptada!</i>';
-                                break;
-                    }
                 }
-            }
+            //     ,
+            //     {
+            //         title: "ACCION",
+            //         className: "buttons",
+            //         data: "claveNC",
+            //         render: function ( data, type, row, meta ) {
+            //             switch (row['idEstadoNC']) {
+            //                 case "1":
+            //                     return '<button class=btnEnviarNC>Enviar</button>';
+            //                     break;
+            //                 case "2":
+            //                     return '<button class=btnConsultanC>Consultar</button>';
+            //                     break;
+            //                 case "3":
+            //                     return '<i class="fa fa-check-square-o" aria-hidden="true" style="color:green"> NC Aceptada!</i>';
+            //                     break;
+            //                 case "4":
+            //                     return '<button class=btnCancelaNC>Cancelar Factura</button>';
+            //                     break;
+            //                 case "5":
+            //                     return '<button class=btnReenviarNC>Reenviar</button><button class=btnSoporte>Soporte</button>';
+            //                     break;
+            //                 default:
+            //                     return '<i class="fa fa-check-square-o" aria-hidden="true" style="color:green"> NC Aceptada!</i>';
+            //                     break;
+            //         }
+            //     }
+            // }
             ],
             footerCallback: function ( row, data, start, end, display ) {
                 var api = this.api();
