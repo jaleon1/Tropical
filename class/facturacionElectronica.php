@@ -111,11 +111,11 @@ class FacturacionElectronica{
                                 //self::APIConsultaComprobante();
                                 //include_once('feCallback.php');
                                 return true;
-                            }
-                        }
-                    }
-                }
-            }
+                            } else return false;
+                        } else return false;
+                    } else return false;
+                } else return false;
+            } else return false;
         }
         catch(Exception $e){
             if(!self::$distr)
@@ -123,6 +123,7 @@ class FacturacionElectronica{
             else Distribucion::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));            
             historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 5, 'ERROR_INICIAL: '. $e->getMessage());
             error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            return false;
         }
     }
 
@@ -495,7 +496,7 @@ class FacturacionElectronica{
             self::$expiresIn=$sArray->resp->expires_in;
             self::$refreshExpiresIn=$sArray->resp->refresh_expires_in;
             self::$refreshToken=$sArray->resp->refresh_token;
-            error_log("[INFO] GET ACCESS TOKEN API MH = " . $server_output);
+            // error_log("[INFO] GET ACCESS TOKEN API MH = " . $server_output);
             curl_close($ch);
             return true;
         } 

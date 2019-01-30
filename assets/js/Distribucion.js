@@ -847,76 +847,77 @@ class Distribucion {
                         return '¢' + parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ".")
                     }
                 },
-                {
-                    title: "ESTADO",
-                    data: "idEstadoComprobante",
-                    render: function ( data, type, row, meta ) {
-                        if(row['tipoBodega']!='Interna')
-                            switch (data) {
-                                case "1":
-                                    return '<i class="fa fa-paper-plane" aria-hidden="true" style="color:red"> Sin Enviar</i>';
-                                    break;
-                                case "2":
-                                    return '<i class="fa fa-paper-plane" aria-hidden="true" style="color:green"> Enviado</i>';
-                                    break;
-                                case "3":
-                                    return '<i class="fa fa-check-square-o" aria-hidden="true" style="color:green"> Aceptado</i>';
-                                    break;
-                                case "4":
-                                    return '<i class="fa fa-times-circle" aria-hidden="true" style="color:red"> Rechazado</i>';
-                                    break;
-                                case "5":
-                                    return '<i class="fa fa-exclamation-triangle" aria-hidden="true" style="color:#FF6F00"> Otro</i>';
-                                    break;
-                                case "99":
-                                    return '<i class="fa fa-exclamation-triangle" aria-hidden="true" style="color:green"> Reportado</i>';
-                                    break;
-                                default:
-                                    return 'Desconocido';
-                                    break;
-                        }
-                        else
-                            return '<i class="fa fa-check-square-o" aria-hidden="true" style="color:green"> Aceptado</i>';
+                // {
+                //     title: "ESTADO",
+                //     data: "idEstadoComprobante",
+                //     render: function ( data, type, row, meta ) {
+                //         if(row['tipoBodega']!='Interna')
+                //             switch (data) {
+                //                 case "1":
+                //                     return '<i class="fa fa-paper-plane" aria-hidden="true" style="color:red"> Sin Enviar</i>';
+                //                     break;
+                //                 case "2":
+                //                     return '<i class="fa fa-paper-plane" aria-hidden="true" style="color:green"> Enviado</i>';
+                //                     break;
+                //                 case "3":
+                //                     return '<i class="fa fa-check-square-o" aria-hidden="true" style="color:green"> Aceptado</i>';
+                //                     break;
+                //                 case "4":
+                //                     return '<i class="fa fa-times-circle" aria-hidden="true" style="color:red"> Rechazado</i>';
+                //                     break;
+                //                 case "5":
+                //                     return '<i class="fa fa-exclamation-triangle" aria-hidden="true" style="color:#FF6F00"> Otro</i>';
+                //                     break;
+                //                 case "99":
+                //                     return '<i class="fa fa-exclamation-triangle" aria-hidden="true" style="color:green"> Reportado</i>';
+                //                     break;
+                //                 default:
+                //                     return 'Desconocido';
+                //                     break;
+                //         }
+                //         else
+                //             return '<i class="fa fa-check-square-o" aria-hidden="true" style="color:green"> Aceptado</i>';
                         
-                    }
-                },
+                //     }
+                // },
                 {
                     title: "TIPO BODEGA",
                     data: "tipoBodega"
-                },
-                {
-                    title: "ACCION",
-                    className: "buttons",
-                    data: "claveNC",
-                    render: function ( data, type, row, meta ) {
-                        if(row['tipoBodega']!='Interna')
-                            if(data==null)
-                                switch (row['idEstadoComprobante']) {
-                                    case "1":
-                                        return '<button class=btnEnviarFactura>Enviar</button>';
-                                        break;
-                                    case "2":
-                                        return '<button class=btnConsultafactura>Consultar</button>';
-                                        break;
-                                    case "3":
-                                        return '<button class=btnCancelaFactura>Cancelar Factura</button>';
-                                        break;
-                                    case "4":
-                                        return '<button class=btnCancelaFactura>Cancelar Factura</button>';
-                                        break;
-                                    case "5":
-                                        return '<button class=btnReenviarFactura>Reenviar</button><button class=btnSoporte>Soporte</button>';
-                                        break;
-                                    default:
-                                        return '<button>Soporte</button>';
-                                        break;
-                                }    
-                                else
-                                    return '<i class="fa fa-check-square-o" aria-hidden="true" style="color:green">Factura Cancelada!</i>';
-                        else
-                            return ''
-                    }
                 }
+                // ,
+                // {
+                //     title: "ACCION",
+                //     className: "buttons",
+                //     data: "claveNC",
+                //     render: function ( data, type, row, meta ) {
+                //         if(row['tipoBodega']!='Interna')
+                //             if(data==null)
+                //                 switch (row['idEstadoComprobante']) {
+                //                     case "1":
+                //                         return '<button class=btnEnviarFactura>Enviar</button>';
+                //                         break;
+                //                     case "2":
+                //                         return '<button class=btnConsultafactura>Consultar</button>';
+                //                         break;
+                //                     case "3":
+                //                         return '<button class=btnCancelaFactura>Cancelar Factura</button>';
+                //                         break;
+                //                     case "4":
+                //                         return '<button class=btnCancelaFactura>Cancelar Factura</button>';
+                //                         break;
+                //                     case "5":
+                //                         return '<button class=btnReenviarFactura>Reenviar</button><button class=btnSoporte>Soporte</button>';
+                //                         break;
+                //                     default:
+                //                         return '<button>Soporte</button>';
+                //                         break;
+                //                 }    
+                //                 else
+                //                     return '<i class="fa fa-check-square-o" aria-hidden="true" style="color:green">Factura Cancelada!</i>';
+                //         else
+                //             return '<button class=btnCancelaFactura>Cancelar Factura</button>'
+                //     }
+                // }
             ]
         });
     };
