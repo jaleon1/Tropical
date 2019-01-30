@@ -389,7 +389,7 @@ class CajaXBodega{
                                             where idMedioPago = 2 and
                                             fechaCreacion Between apertura.fechaApertura 
                                             and CURRENT_TIMESTAMP() and
-                                            idusuario = :idusuarioCajeroand
+                                            idusuario = :idusuarioCajero and
                                             idDocumentoNC IS NULL;
                                         )
             WHERE idusuarioCajero = :idusuarioCajero and

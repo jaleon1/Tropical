@@ -31,9 +31,6 @@ if(isset($_POST["action"])){
         case "Read":
             echo json_encode($factura->Read());
             break;
-        // case "reGenerarFactura":
-        //     echo json_encode($factura->reGenerarFactura());
-        //     break;
         case "ReadCancelada":
             echo json_encode($factura->ReadCancelada());
             break;

@@ -186,7 +186,7 @@ class InventarioFacturas {
                         if(data==null)
                             switch (row['idEstadoComprobante']) {
                                 case "1":
-                                    return '<button class=btnEnviarFactura>&nbsp Enviar</button>'; // Sin enviar // No se envio en el momento No llego a MH //Envio en Contingencia
+                                    return '<button class=btnEnviarFactura>&nbsp Enviar</button>'; // Sin enviar // No se envio en el momento, no salio del sistema local No llego a MH //Envio en Contingencia
                                     break;
                                 case "2":
                                     return '<i class="fa fa-check-square-o">&nbsp Enviada</i>'; // Enviado //Quitar Boton y que diga enviado
