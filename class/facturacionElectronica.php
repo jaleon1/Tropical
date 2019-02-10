@@ -1134,6 +1134,7 @@ class FacturacionElectronica{
             // si el estado es procesando debe consultar de nuevo.
             if($estadoTransaccion=='procesando'){
                 historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 2, $estadoTransaccion );
+                Factura::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 2);
                 //self::APIConsultaComprobante();
             }
             else if($estadoTransaccion=='aceptado'){
