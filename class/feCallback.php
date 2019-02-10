@@ -34,7 +34,7 @@
         // timedout - Duplicadas
         // Documentos 1-4-8.
         $sql='SELECT id
-            from factura
+            from factura f
             where idEstadoComprobante = 6 or f.idEstadoComprobante = 7
             order by idBodega';
         $data= DATA::Ejecutar($sql);
