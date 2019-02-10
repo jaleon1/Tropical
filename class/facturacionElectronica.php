@@ -1151,17 +1151,44 @@ class FacturacionElectronica{
                 $xml= base64_decode($respuestaXml);
                 $fxml = simplexml_load_string($xml);
                 $resp400 = strpos($fxml->DetalleMensaje, 'ya existe en nuestras bases de datos');
-                if ($resp400 === false){
+                $respFirma = strpos($fxml->DetalleMensaje, 'La firma del comprobante electrónico no es válida');
+                if ($resp400){
+                    // ya existe en base de datos de MH. estado 7
+                    error_log("[WARNING] El documento (". self::$transaccion->clave .") Ya fue recibido anteriormente" );
+                    Factura::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 7);
+                    historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 7, "[WARNING]". $fxml->DetalleMensaje, $xml);
+                    return true;
+                }
+                if ($respFirma){
+                    $errorFirma = 8;
+                    if(self::$transaccion->idEstadoComprobante==8)
+                        $errorFirma=9;
+                    if(self::$transaccion->idEstadoComprobante==9)
+                        $errorFirma=10;
+                    if(self::$transaccion->idEstadoComprobante==10)
+                        $errorFirma=4;
+                    error_log("[ERROR] El documento (". self::$transaccion->clave .")  La firma del comprobante electrónico no es válida (".$errorFirma.")." );
+                    historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, $errorFirma, '['.$estadoTransaccion.'] '.$fxml->DetalleMensaje, $xml);
+                    Factura::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, $errorFirma);
+                }
+                else {
+                    error_log("[ERROR] El documento (". self::$transaccion->clave .") Fue rechazado, ver historico. " .  $fxml->DetalleMensaje );
                     historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 4, '['.$estadoTransaccion.'] '.$fxml->DetalleMensaje, $xml);
                     if(!self::$distr)
                         Factura::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 4);
                     else Distribucion::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 4);
                 }
-                else { // ya existe en base de datos de MH. No modifica el estado
-                    error_log("[WARNING] El documento (". self::$transaccion->clave .") Ya fue recibido anteriormente" );
-                    //historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, null, "[WARNING]". $fxml->DetalleMensaje, $xml);
-                    return true;
-                }
+            }
+            else if($estadoTransaccion==" no ha sido recibido.\r"){
+                error_log("[ERROR] El documento (". self::$transaccion->clave .") No ha sido Recibido en ATV. ");
+                historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 1, '['.$estadoTransaccion.'] '. $estadoTransaccion);
+                Factura::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 1);
+            }
+            else {
+                // OTROS 5. hay un error en la respuesta de consulta.
+                error_log("[ERROR] El documento (". self::$transaccion->clave .") ". $estadoTransaccion);
+                historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 5, '['.$estadoTransaccion.'] '. $estadoTransaccion);
+                Factura::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 5);
             }
             error_log("[INFO] API CONSULTA, estado de la transaccion(".self::$transaccion->id."): ". $estadoTransaccion);
             curl_close($ch);

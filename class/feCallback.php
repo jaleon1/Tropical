@@ -46,6 +46,27 @@
             FacturacionElectronica::APIConsultaComprobante($factura);
             error_log("[INFO] Finaliza Consulta de Comprobantes - TimedOut");
         }
+        // firma invalida
+        // Documentos 1-4-8.
+        error_log("**************************************************************************");
+        error_log("**************************************************************************");
+        error_log("              [INFO] Iniciando Consulta FE - Firma Invalida               ");
+        error_log("**************************************************************************");
+        error_log("**************************************************************************");
+        $sql='SELECT f.id, b.nombre as bodega, consecutivo
+            from factura f inner join bodega b on b.id = f.idBodega
+            where f.idEstadoComprobante = 8 or f.idEstadoComprobante = 9 or f.idEstadoComprobante = 10 and (f.idDocumento = 1 or  f.idDocumento = 4 or  f.idDocumento = 8) 
+            order by f.idEntidad';
+        $dataFirma= DATA::Ejecutar($sql);
+        error_log("[INFO] Total de transacciones Firma Invalida: ". count($dataFirma));
+        foreach ($dataFirma as $key => $transaccion){
+            error_log("[INFO] Firma Invalida Entidad (". $transaccion['entidad'] .") Transaccion (".$transaccion['consecutivo'].")");
+            $factura = new Factura();
+            $factura->id = $transaccion['id'];
+            $factura = $factura->Read();
+            FacturacionElectronica::APIConsultaComprobante($factura, true);
+        }
+        error_log("[INFO] Finaliza Consulta de Comprobantes - Firma Invalida");
         // Consulta Documentos 1-4-8.
         $sql='SELECT id
             from factura
