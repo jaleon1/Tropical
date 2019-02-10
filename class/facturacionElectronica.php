@@ -1039,14 +1039,16 @@ class FacturacionElectronica{
             //
             if($sArray->resp->Status==400){
                 $resp400 = strpos($sArray->resp->text[17], 'ya fue recibido anteriormente');
-                if ($resp400 === false)
-                    throw new Exception('Error CRITICO al ENVIAR el comprobante. DEBE COMUNICARSE CON SOPORTE TECNICO, STATUS('.$sArray->resp->Status.'):  '.$sArray->resp->text[17], ERROR_ENVIO_NO_VALID);
-                else {
+                $resp401 = strpos($sArray->resp->text[18], 'ya fue recibido anteriormente');
+                if($resp400 | $resp401){
                     error_log("[WARNING] El documento (". self::$clave .") Ya fue recibido anteriormente" );
-                    historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, null, 'El documento ya fue recibido anteriormente, STATUS('.$sArray->resp->Status.')');
-                    //Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 2, self::$fechaEmision->format("c"));
+                    historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 7, 'El documento ya fue recibido anteriormente, STATUS('.$sArray->resp->Status.')');
+                    Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 7, self::$fechaEmision->format("c"));                    
                     // curl_close($ch);
                     return true;
+                }
+                else {                    
+                    throw new Exception('Error CRITICO al ENVIAR el comprobante. DEBE COMUNICARSE CON SOPORTE TECNICO, STATUS('.$sArray->resp->Status.'):  '.$sArray->resp->text[17], ERROR_ENVIO_NO_VALID);                    
                 }
             }
             if($sArray->resp->Status!=202){
@@ -1155,8 +1157,8 @@ class FacturacionElectronica{
                 if ($resp400){
                     // ya existe en base de datos de MH. estado 7
                     error_log("[WARNING] El documento (". self::$transaccion->clave .") Ya fue recibido anteriormente" );
-                    Factura::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 7);
-                    historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 7, "[WARNING]". $fxml->DetalleMensaje, $xml);
+                    Factura::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 4);
+                    historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 4, "[WARNING]". $fxml->DetalleMensaje, $xml);
                     return true;
                 }
                 if ($respFirma){

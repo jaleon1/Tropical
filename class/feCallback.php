@@ -31,20 +31,20 @@
             $factura->contingencia();                
         }
         error_log("[INFO] Finaliza Contingencia Masiva de Comprobantes"); 
-        // timedout
+        // timedout - Duplicadas
         // Documentos 1-4-8.
         $sql='SELECT id
             from factura
-            where idEstadoComprobante = 6
+            where idEstadoComprobante = 6 or f.idEstadoComprobante = 7
             order by idBodega';
         $data= DATA::Ejecutar($sql);
         foreach ($data as $key => $transaccion){
-            error_log("[INFO] Iniciando Consulta FE - TimedOut");
+            error_log("[INFO] Iniciando Consulta FE - TimedOut | Duplicadas");
             $factura = new Factura();
             $factura->id = $transaccion['id'];
             $factura = $factura->Read();
             FacturacionElectronica::APIConsultaComprobante($factura);
-            error_log("[INFO] Finaliza Consulta de Comprobantes - TimedOut");
+            error_log("[INFO] Finaliza Consulta de Comprobantes - TimedOut | Duplicadas");
         }
         // firma invalida
         // Documentos 1-4-8.
