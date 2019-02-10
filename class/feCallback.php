@@ -33,6 +33,11 @@
         error_log("[INFO] Finaliza Contingencia Masiva de Comprobantes"); 
         // timedout - Duplicadas
         // Documentos 1-4-8.
+        error_log("**************************************************************************");
+        error_log("**************************************************************************");
+        error_log("           [INFO] Iniciando Consulta FE - TimedOut | Duplicadas           ");
+        error_log("**************************************************************************");
+        error_log("**************************************************************************");
         $sql='SELECT id
             from factura f
             where idEstadoComprobante = 6 or f.idEstadoComprobante = 7
@@ -68,6 +73,11 @@
         }
         error_log("[INFO] Finaliza Consulta de Comprobantes - Firma Invalida");
         // Consulta Documentos 1-4-8.
+        error_log("**************************************************************************");
+        error_log("**************************************************************************");
+        error_log("                      [INFO] Iniciando Consulta FE                        ");
+        error_log("**************************************************************************");
+        error_log("**************************************************************************");
         $sql='SELECT id
             from factura
             where idEstadoComprobante = 2
@@ -82,6 +92,11 @@
             error_log("[INFO] Finaliza Consulta de Comprobantes");
         }
         // Notas de crédito. Documento 3
+        error_log("**************************************************************************");
+        error_log("**************************************************************************");
+        error_log("                        [INFO] Iniciando Consulta NC                      ");
+        error_log("**************************************************************************");
+        error_log("**************************************************************************");
         $sql='SELECT id
             from factura
             where idEstadoNC = 2
@@ -99,6 +114,11 @@
             error_log("[INFO] Finaliza Consulta NC");
         }
         // Mensaje Receptor Documentos 5-6-7.
+        error_log("**************************************************************************");
+        error_log("**************************************************************************");
+        error_log("                      [INFO] Iniciando Consulta MR                        ");
+        error_log("**************************************************************************");
+        error_log("**************************************************************************");
         $sql='SELECT id
             from mensajeReceptor
             where idEstadoComprobante = 2
@@ -117,6 +137,11 @@
             error_log("[INFO] Finaliza Consulta MR");
         }
         // Distribuciones.
+        error_log("**************************************************************************");
+        error_log("**************************************************************************");
+        error_log("              [INFO] Iniciando Consulta FE - Distribucion                 ");
+        error_log("**************************************************************************");
+        error_log("**************************************************************************");
         $sql='SELECT id
             from distribucion
             where idEstadoComprobante = 2
@@ -144,6 +169,11 @@
             facturacionElectronica::APIConsultaComprobante($distr);
             error_log("[INFO] Finaliza Consulta de Distribucion");
         }
+        error_log("**************************************************************************");
+        error_log("**************************************************************************");
+        error_log("                         [INFO] FINALIZA CALLBACK  FE                     ");
+        error_log("**************************************************************************");
+        error_log("**************************************************************************");
     }
     catch(Exception $e){ 
         error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
