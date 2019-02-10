@@ -56,7 +56,7 @@
         $sql='SELECT f.id, b.nombre as bodega, consecutivo
             from factura f inner join bodega b on b.id = f.idBodega
             where f.idEstadoComprobante = 8 or f.idEstadoComprobante = 9 or f.idEstadoComprobante = 10 and (f.idDocumento = 1 or  f.idDocumento = 4 or  f.idDocumento = 8) 
-            order by f.idEntidad';
+            order by f.idBodega';
         $dataFirma= DATA::Ejecutar($sql);
         error_log("[INFO] Total de transacciones Firma Invalida: ". count($dataFirma));
         foreach ($dataFirma as $key => $transaccion){
