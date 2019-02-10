@@ -31,9 +31,6 @@ if(isset($_POST["action"])){
         case "Read":
             echo json_encode($factura->Read());
             break;
-        // case "reGenerarFactura":
-        //     echo json_encode($factura->reGenerarFactura());
-        //     break;
         case "ReadCancelada":
             echo json_encode($factura->ReadCancelada());
             break;
@@ -252,13 +249,12 @@ class Factura{
         try {
             $sql='SELECT fac.id, fac.idBodega, bod.nombre bodega, fac.fechaCreacion, fac.consecutivo, fac.totalComprobante, fac.idUsuario, usr.nombre vendedor, fac.montoEfectivo, fac.montoTarjeta, fac.idEstadoComprobante, fac.totalComprobante, fac.claveNC
                 FROM factura fac
-                INNER JOIN bodega bod on bod.id = fac.idBodega
-                INNER JOIN usuario usr on usr.id = fac.idUsuario
-                INNER JOIN (SELECT idBodega
-                            FROM usuariosXBodega
-                            WHERE idUsuario = :idUsuario) bodegas on bodegas.idBodega = fac.idBodega
-                AND
-                fac.fechaCreacion Between :fechaInicial and :fechaFinal
+                INNER JOIN bodega bod ON bod.id = fac.idBodega
+                INNER JOIN usuario usr ON usr.id = fac.idUsuario
+                INNER JOIN (SELECT idBodega FROM usuariosXBodega
+                WHERE idUsuario = :idUsuario) bodegas ON bodegas.idBodega = fac.idBodega
+                AND fac.fechaCreacion Between :fechaInicial AND :fechaFinal
+                WHERE claveNC IS NULL
                 ORDER BY fac.fechaCreacion DESC'; 
                 
             $param= array(':idUsuario'=>$_SESSION["userSession"]->id, ':fechaInicial'=>$this->fechaInicial, ':fechaFinal'=>$this->fechaFinal);

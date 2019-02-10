@@ -147,7 +147,7 @@
 
                     <div class="page-title">
                         <div class="title_left">
-                            <h3>LISTA DE FACTURAS</h3>
+                            <h3>LISTA DE FACTURAS CANCELADAS</h3>
                         </div>
                         <div class="title_right">
                             <h3 id="fecha" style="float:right"></h3>
@@ -155,11 +155,6 @@
                                 <i class="fa fa-calendar"></i>&nbsp;
                                 <span></span>
                                 <i class="fa fa-caret-down"></i>
-                            </div>
-                            <div>
-                                <button type="button" class="btn btn-primary" id="sendContingenciaMasiva">Enviar
-                                    Contingencia</button>
-                                <!-- <button type="button" class="btn btn-primary" id="sendMasiva">Re-enviar</button> -->
                             </div>
                         </div>
                     </div>
@@ -177,7 +172,7 @@
                                     <!-- TABLE -->
                                     <div class="row">
                                         <div class="col-md-12 col-sm-12 col-xs-12">
-                                            <table id="tb_facturas" class="table display responsive table-striped jambo_table no-wrap"
+                                            <table id="tb_facturasCanceladas" class="table display responsive table-striped jambo_table no-wrap"
                                                 width="100%" role="grid" aria-describedby="datatable_info">
                                                 <tbody id="lista_facturas">
                                                 </tbody>
@@ -233,7 +228,7 @@
                     <div class="modal-footer">
                         <div class="form-group">
                             <div class="col-md-6 col-md-offset-3">
-                                <button id="btnReimprimeFactura" type="submit" class="btn btn-success">Reimprimir</button>
+                                <button id="btnReimprimeNC" type="submit" class="btn btn-success">Reimprimir</button>
                             </div>
                         </div>
                         <div id="totalFact">
@@ -264,7 +259,7 @@
     <script src="assets/js/jquery.inputmask/jquery.inputmask.bundle.min.js"></script>
     <!-- JS Scripts -->
     <script src="assets/js/Producto.min.js"></script>
-    <script src="assets/js/InventarioFacturas.js"></script>
+    <script src="assets/js/InventarioFacturaCancelada.js"></script>
     <!-- Sweet Alert -->
     <script src="assets/js/sweetalert2.min.js"></script>
     <!-- Datatables -->
@@ -295,32 +290,22 @@
 
 <script>
     $(document).ready(function () {
-        // inventarioFacturas.CargaFacturas();
-        CargaListaFactura();
-
-        $('#sendContingenciaMasiva').click(function () {
-            inventarioFacturas.sendContingenciaMasiva();
-
-        });
-
-        $('#sendMasiva').click(function () {
-            inventarioFacturas.sendMasiva();
-        });
+        // inventarioFacturaCancelada.CargaFacturas();
+        CargaListaFacturaCancelada();
 
         $('#dp_rangoListaFacturas').on('apply.daterangepicker', function (ev, picker) {
-            inventarioFacturas.fechaInicial = picker.startDate.format('YYYY-MM-DD') + ' 00:00';
-            inventarioFacturas.fechaFinal = picker.endDate.format('YYYY-MM-DD') + ' 23:59';
-            inventarioFacturas.CargaListaFacturasRango();
+            inventarioFacturaCancelada.fechaInicial = picker.startDate.format('YYYY-MM-DD') + ' 00:00';
+            inventarioFacturaCancelada.fechaFinal = picker.endDate.format('YYYY-MM-DD') + ' 23:59';
+            inventarioFacturaCancelada.CargaListaFacturasRango();
         });
 
-        $(document).on('click', '#btnReimprimeFactura', function (event) {
-            inventarioFacturas.ticketPrint();
+        $(document).on('click', '#btnReimprimeNC', function (event) {
+            inventarioFacturaCancelada.ticketPrint();
         });
-
         $("#tb_facturas").append("<tfoot><tr><th style='visibility:hidden'></th><th></th><th></th><th></th><th></th><th></th><th style='visibility:hidden'></th><th style='visibility:hidden'></th><th></th></tr></tfoot>");
 
-        $('#tb_facturas tbody').on('click', '.btnCancelaFactura', function () {
-            var data = inventarioFacturas.tb_facturas.row($(this).parents('tr')).data();
+        $('#tb_facturas tbody').on( 'click', '.btnCancelaNC', function () {   
+            var data = inventarioFacturaCancelada.tb_facturas.row( $(this).parents('tr') ).data();
             swal({
                 title: 'Desea cancelar la factura ? Escriba una razón:',
                 input: 'text',
@@ -331,89 +316,40 @@
                 confirmButtonText: 'Si, Cancelar!',
                 showLoaderOnConfirm: true,
                 allowOutsideClick: () => !swal.isLoading()
-            }).then((result) => {
-                if (result.value) {
-                    $.ajax({
-                        type: "POST",
-                        url: "class/productoXFactura.php",
-                        data: {
-                            action: "reintegrarProductoByIdFactura",
-                            id: data['id'],
-                            razon: result.value,
-                        }
-                    })
-                        .done(function (e) {
-                            CargaListaFactura();
-                            swal({
-                                type: 'success',
-                                title: 'Factura Cancelada!',
-                                showConfirmButton: false,
-                                timer: 2000
-                            });
+                }).then((result) => {
+                    if (result.value) {
+                        $.ajax({
+                            type: "POST",
+                            url: "class/Factura.php",
+                            data: {
+                                action: "sendNotaCredito",
+                                id: data['id'],
+                                razon: result.value,
+                            }
                         })
-                        .fail(function (e) { });
-                }
-                else
-                    swal({
-                        type: 'error',
-                        title: 'Error al cancelar',
-                        text: 'Debe de digitar una razón'
-                    })
+                            .done(function (e) {
+                                CargaListaFacturaCancelada();
+                                swal({
+                                    type: 'success',
+                                    title: 'Factura Cancelada!',
+                                    showConfirmButton: false,
+                                    timer: 2000
+                                });
+                            })
+                            .fail(function(e){});
+                    }
+                    else
+                        swal({
+                            type: 'error',
+                            title: 'Error al cancelar',
+                            text: 'Debe de digitar una razón'
+                        })
             })
         });
 
-
-
-
-        $('#tb_facturas tbody').on('click', '.btnNC_CreateFact_Ref', function () {
-            var data = inventarioFacturas.tb_facturas.row($(this).parents('tr')).data();
-            swal({
-                title: 'Desea cancelar la factura ? Escriba una razón:',
-                input: 'text',
-                inputAttributes: {
-                    autocapitalize: 'off'
-                },
-                showCancelButton: true,
-                confirmButtonText: 'Si, Cancelar!',
-                showLoaderOnConfirm: true,
-                allowOutsideClick: () => !swal.isLoading()
-            }).then((result) => {
-                if (result.value) {
-                    $.ajax({
-                        type: "POST",
-                        url: "class/productoXFactura.php",
-                        data: {
-                            id: data['id'],
-                            facturaRelacionada: true,
-                            action: "reintegrarProductoByIdFactura",
-                            razon: result.value,
-                        }
-                    })
-                        .done(function (e) {
-                            swal({
-                                type: 'success',
-                                title: 'Factura Cancelada!',
-                                showConfirmButton: false,
-                                timer: 2000
-                            });
-                        })
-                        .fail(function (e) { });
-                }
-                else
-                    swal({
-                        type: 'error',
-                        title: 'Factura no Cancelada',
-                        text: 'Operación abortada por el Usuario'
-                    })
-            })
-        });
-
-
-
-
-        $('#tb_facturas tbody').on('click', '.btnEnviarFactura', function () {
-            var data = inventarioFacturas.tb_facturas.row($(this).parents('tr')).data();
-
+        $('#tb_facturas tbody').on( 'click', '.btnEnviarNC', function () {   
+            var data = inventarioFacturaCancelada.tb_facturas.row( $(this).parents('tr') ).data();
+            
             swal({
                 title: 'Envío de factura',
                 text: "Desea enviar la factura?",
@@ -422,18 +358,18 @@
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
                 confirmButtonText: 'Si, enviar!'
-            }).then((result) => {
+                }).then((result) => {
                 if (result.value) {
                     $.ajax({
-                        type: "POST",
-                        url: "class/Factura.php",
-                        data: {
-                            action: "sendContingencia",
-                            id: data['id']
-                        }
-                    })
+                            type: "POST",
+                            url: "class/Factura.php",
+                            data: {
+                                action: "enviarDocumentoElectronico",
+                                id: data['id']
+                            }
+                        })
                         .done(function (e) {
-                            CargaListaFactura();
+                            CargaListaFacturaCancelada();
                             swal({
                                 type: 'success',
                                 title: 'Factura Enviada!',
@@ -441,22 +377,15 @@
                                 timer: 2000
                             });
                         })
-                        .fail(function (e) {
-                            swal({
-                                type: 'error',
-                                title: 'Error al reenviar Factura!',
-                                showConfirmButton: false,
-                                timer: 2000
-                            });
-                        });
+                        .fail(function(e){});
                 }
             });
-
+            
         });
 
-        $('#tb_facturas tbody').on('click', '.btnReenviarFactura', function () {
-            var data = inventarioFacturas.tb_facturas.row($(this).parents('tr')).data();
-
+        $('#tb_facturas tbody').on( 'click', '.btnReenviarNC', function () {   
+            var data = inventarioFacturaCancelada.tb_facturas.row( $(this).parents('tr') ).data();
+            
             swal({
                 title: 'Reenvío de factura',
                 text: "Desea reenviar la factura?",
@@ -465,18 +394,18 @@
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
                 confirmButtonText: 'Si, reenviar!'
-            }).then((result) => {
+                }).then((result) => {
                 if (result.value) {
                     $.ajax({
-                        type: "POST",
-                        url: "class/Factura.php",
-                        data: {
-                            action: "sendContingencia",
-                            id: data['id']
-                        }
-                    })
+                            type: "POST",
+                            url: "class/Factura.php",
+                            data: {
+                                action: "enviarDocumentoElectronico",
+                                id: data['id']
+                            }
+                        })
                         .done(function (e) {
-                            CargaListaFactura();
+                            CargaListaFacturaCancelada();
                             swal({
                                 type: 'success',
                                 title: 'Factura Reenviada!',
@@ -484,15 +413,15 @@
                                 timer: 2000
                             });
                         })
-                        .fail(function (e) { });
+                        .fail(function(e){});
                 }
             });
-
+            
         });
 
     });
 
-    function CargaListaFactura() {
+    function CargaListaFacturaCancelada () {
         var start = moment().subtract(29, 'days');
         var end = moment();
 
@@ -543,16 +472,15 @@
                 'Ultimos 7 Días': [moment().subtract(6, 'days'), moment()],
                 'Ultimos 30 Días': [moment().subtract(29, 'days'), moment()],
                 'Este Mes': [moment().startOf('month'), moment().endOf('month')],
-                'Ultimo Mes': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
-                'Todo': [moment("1970-01-01 00:00:00"), moment()]
+                'Ultimo Mes': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
             }
         }, cb);
 
         cb(start, end);
 
-        inventarioFacturas.fechaInicial = start.format('YYYY-MM-DD') + ' 00:00';
-        inventarioFacturas.fechaFinal = end.format('YYYY-MM-DD') + ' 23:59';
-        inventarioFacturas.CargaListaFacturasRango();
+        inventarioFacturaCancelada.fechaInicial = start.format('YYYY-MM-DD') + ' 00:00';
+        inventarioFacturaCancelada.fechaFinal = end.format('YYYY-MM-DD') + ' 23:59';
+        inventarioFacturaCancelada.CargaListaFacturasRango();
     };
 
 </script>
