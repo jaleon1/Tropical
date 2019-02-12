@@ -281,7 +281,8 @@ class Factura{
             $param= array(':id'=>$this->id);
             $idNC = DATA::Ejecutar($sql,$param);
 
-            $this->id= UUID::v4();
+            $this->id = UUID::v4();
+            $this->idDocumentoNC = NULL;
 
             foreach ($this->detalleFactura as $key=>$item) {
                 $this->detalleFactura[$key]->idFactura = $this->id;
