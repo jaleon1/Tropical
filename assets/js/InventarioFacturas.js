@@ -168,8 +168,20 @@ class InventarioFacturas {
                             case "5":
                                 return '<i class="fa fa-exclamation-triangle" aria-hidden="true" style="color:#FF6F00"> Otro</i>';
                                 break;
-                            case "99":
-                                return '<i class="fa fa-exclamation-triangle" aria-hidden="true" style="color:green"> Reportado</i>';
+                            case "6":
+                                return '<i class="fa fa-stopwatch" aria-hidden="true" style="color:#FF6F00"> TimedOut</i>';
+                                break;
+                            case "7":
+                                return '<i class="fa fa-angle-double-up" aria-hidden="true" style="color:#FF6F00"> Repetido</i>';
+                                break;
+                            case "8":
+                                return '<i class="fa fa-minus-circle" aria-hidden="true" style="color:#FF6F00"> Firma Invalida(1)</i>';
+                                break;
+                            case "9":
+                                return '<i class="fa fa-minus-circle" aria-hidden="true" style="color:#FF6F00"> Firma Invalida(2)</i>';
+                                break;
+                            case "10":
+                                return '<i class="fa fa-minus-circle" aria-hidden="true" style="color:#FF6F00"> Firma Invalida(3)</i>';
                                 break;
                             default:
                                 return 'Desconocido';
