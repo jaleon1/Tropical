@@ -209,8 +209,8 @@ class DistribucionCancelada {
                 }
             ],
             language: {
-                "infoEmpty": "Sin Facturas Registradas",
-                "emptyTable": "Sin Facturas Registradas",
+                "infoEmpty": "Sin Distribuciones Canceladas",
+                "emptyTable": "Sin Distribuciones Canceladas",
                 "search": "Buscar",
                 "zeroRecords": "No hay resultados",
                 "lengthMenu": "Mostrar _MENU_ registros",
@@ -255,6 +255,10 @@ class DistribucionCancelada {
                 }
             },
             {
+                title: "TIPO BODEGA",
+                data: "tipoBodega"
+            },
+            {
                 title: "ESTADO",
                 data: "idEstadoComprobante",
                 render: function ( data, type, row, meta ) {
@@ -288,8 +292,34 @@ class DistribucionCancelada {
                 }
             },
             {
-                title: "TIPO BODEGA",
-                data: "tipoBodega"
+                title: "ACCION",
+                className: "buttons",
+                data: "claveNC",
+                render: function ( data, type, row, meta ) {
+                    if(data==null)
+                        switch (row['idEstadoComprobante']) {
+                            case "1":
+                                return '<button class=btnEnviarFactura>&nbsp Enviar</button>'; // Sin enviar // No se envio en el momento No llego a MH //Envio en Contingencia
+                                break;
+                            case "2":
+                                return '<i class="fa fa-check-square-o">&nbsp Enviada</i>'; // Enviado //Quitar Boton y que diga enviado
+                                break;
+                            case "3":
+                                return '<button class=btnCancelaFactura>&nbsp Cancelar Factura</button>'; // Aceptado  //Solo cancelar // NC 
+                                break;
+                            case "4":
+                                return '<button class=btnNC_CreateFact_Ref>&nbsp Cancelar & Reenviar</button>'; // Rechazado //NC //Nueva con referencia Confeccion de Factura  // BTNCancelar y enviar
+                                break;
+                            case "5":
+                                return '<i class="fa fa-cloud-upload" aria-hidden="true">&nbsp Enviar Contingencia</i>'; // Error (Otros) //Envio en Contingencia
+                                break;
+                            default:
+                                return '<button>Soporte</button>';
+                                break;
+                        }    
+                        else
+                            return '<i class="fa fa-check-square-o" aria-hidden="true" style="color:green">&nbsp Factura Cancelada!</i>';
+                }
             }
         ]
         });

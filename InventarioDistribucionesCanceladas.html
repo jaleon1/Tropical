@@ -172,7 +172,7 @@
                                     <!-- TABLE -->
                                     <div class="row">
                                         <div class="col-md-12 col-sm-12 col-xs-12">
-                                            <table id="tb_facturasCanceladas" class="table display responsive table-striped jambo_table no-wrap"
+                                            <table id="tb_distribucionCanceladas" class="table display responsive table-striped jambo_table no-wrap"
                                                 width="100%" role="grid" aria-describedby="datatable_info">
                                                 <tbody id="lista_facturas">
                                                 </tbody>
@@ -259,7 +259,7 @@
     <script src="assets/js/jquery.inputmask/jquery.inputmask.bundle.min.js"></script>
     <!-- JS Scripts -->
     <script src="assets/js/Producto.min.js"></script>
-    <script src="assets/js/InventarioFacturaCancelada.js"></script>
+    <script src="assets/js/DistribucionCancelada.js"></script>
     <!-- Sweet Alert -->
     <script src="assets/js/sweetalert2.min.js"></script>
     <!-- Datatables -->
@@ -290,22 +290,22 @@
 
 <script>
     $(document).ready(function () {
-        // inventarioFacturaCancelada.CargaFacturas();
+        // distribucionCancelada.CargaFacturas();
         CargaListaFacturaCancelada();
 
         $('#dp_rangoListaFacturas').on('apply.daterangepicker', function (ev, picker) {
-            inventarioFacturaCancelada.fechaInicial = picker.startDate.format('YYYY-MM-DD') + ' 00:00';
-            inventarioFacturaCancelada.fechaFinal = picker.endDate.format('YYYY-MM-DD') + ' 23:59';
-            inventarioFacturaCancelada.CargaListaFacturasRango();
+            distribucionCancelada.fechaInicial = picker.startDate.format('YYYY-MM-DD') + ' 00:00';
+            distribucionCancelada.fechaFinal = picker.endDate.format('YYYY-MM-DD') + ' 23:59';
+            distribucionCancelada.CargaListaDistribucionRango();
         });
 
         $(document).on('click', '#btnReimprimeNC', function (event) {
-            inventarioFacturaCancelada.ticketPrint();
+            distribucionCancelada.ticketPrint();
         });
         $("#tb_facturas").append("<tfoot><tr><th style='visibility:hidden'></th><th></th><th></th><th></th><th></th><th></th><th style='visibility:hidden'></th><th style='visibility:hidden'></th><th></th></tr></tfoot>");
 
         $('#tb_facturas tbody').on( 'click', '.btnCancelaNC', function () {   
-            var data = inventarioFacturaCancelada.tb_facturas.row( $(this).parents('tr') ).data();
+            var data = distribucionCancelada.tb_facturas.row( $(this).parents('tr') ).data();
             swal({
                 title: 'Desea cancelar la factura ? Escriba una razón:',
                 input: 'text',
@@ -348,7 +348,7 @@
         });
 
         $('#tb_facturas tbody').on( 'click', '.btnEnviarNC', function () {   
-            var data = inventarioFacturaCancelada.tb_facturas.row( $(this).parents('tr') ).data();
+            var data = distribucionCancelada.tb_facturas.row( $(this).parents('tr') ).data();
             
             swal({
                 title: 'Envío de factura',
@@ -384,7 +384,7 @@
         });
 
         $('#tb_facturas tbody').on( 'click', '.btnReenviarNC', function () {   
-            var data = inventarioFacturaCancelada.tb_facturas.row( $(this).parents('tr') ).data();
+            var data = distribucionCancelada.tb_facturas.row( $(this).parents('tr') ).data();
             
             swal({
                 title: 'Reenvío de factura',
@@ -478,9 +478,9 @@
 
         cb(start, end);
 
-        inventarioFacturaCancelada.fechaInicial = start.format('YYYY-MM-DD') + ' 00:00';
-        inventarioFacturaCancelada.fechaFinal = end.format('YYYY-MM-DD') + ' 23:59';
-        inventarioFacturaCancelada.CargaListaFacturasRango();
+        distribucionCancelada.fechaInicial = start.format('YYYY-MM-DD') + ' 00:00';
+        distribucionCancelada.fechaFinal = end.format('YYYY-MM-DD') + ' 23:59';
+        distribucionCancelada.CargaListaDistribucionRango();
     };
 
 </script>
