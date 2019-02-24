@@ -327,7 +327,8 @@ class Distribucion{
                 INNER JOIN productosXDistribucion p on p.idDistribucion=d.id
             WHERE fecha Between :fechaInicial 
             AND :fechaFinal
-            AND d.claveNC IS NOT NULL
+            AND d.claveNC IS NULL
+            AND t.nombre="Externa"
             GROUP BY orden
             ORDER BY fecha desc';
 
