@@ -551,7 +551,7 @@ class InventarioFacturas {
 
     ticketPrint() {
         localStorage.setItem("lsFactura",$('#consecutivo').text());
-        localStorage.setItem("lsFecha",moment().format("YYYY-MM-DD HH:mm"));
+        // localStorage.setItem("lsFecha",moment().format("YYYY-MM-DD HH:mm"));
         localStorage.setItem("lsBodega",$('#bodega').text());
         localStorage.setItem("lsUsuario",$("#call_username").text());
         localStorage.setItem("lsListaProducto",JSON.stringify(this.factDetalle));
@@ -575,8 +575,10 @@ $('#tb_facturas tbody').on('click', 'td', function () {
     var dtTable = $('#tb_facturas').DataTable();
     var efectivo=0;
     var total=0;
+    var fecha;
     efectivo = parseFloat(dtTable.row(this).data()[8]);
     total = parseFloat(dtTable.row(this).data()[11]);
+    fecha = dtTable.row(this).data()[3];
     if (dtTable.cells().data()[5]==null) 
         efectivo = 0;
     if (dtTable.cells().data()[6]==null) 
@@ -590,7 +592,7 @@ $('#tb_facturas tbody').on('click', 'td', function () {
         localStorage.setItem("lsVuelto",String(efectivo-total));
         localStorage.setItem("lsTarjetaCredito","0");
     }
-    
+    localStorage.setItem("lsFecha",fecha);
     localStorage.setItem("lsEfectivo",String(efectivo));
     localStorage.setItem("lsTotal",String(total));
     localStorage.setItem("lsDif","0");
