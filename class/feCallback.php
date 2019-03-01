@@ -91,6 +91,49 @@
             FacturacionElectronica::APIConsultaComprobante($factura);
             error_log("[INFO] Finaliza Consulta de Comprobantes");
         }
+        // nota de credito. reenvío.
+        error_log("**************************************************************************");
+        error_log("**************************************************************************");
+        error_log("                        [INFO] Iniciando Reenvío NC                       ");
+        error_log("**************************************************************************");
+        error_log("**************************************************************************");
+        $sql='SELECT id
+            from factura
+            where idEstadoNC = 1 or idEstadoNC = 5
+            order by idBodega';
+        $data= DATA::Ejecutar($sql);
+        foreach ($data as $key => $transaccion){
+            error_log("[INFO] Iniciando Reenvío NC");
+            $factura = new Factura();
+            $factura->id = $transaccion['id'];
+            $factura = $factura->Read();
+            //
+            FacturacionElectronica::iniciarNC($factura);            
+        }
+        error_log("[INFO] Finaliza Reenvio NC");
+        // timedout - Duplicadas NC
+        // Documentos 3 estados 6 - 7
+        error_log("**************************************************************************");
+        error_log("**************************************************************************");
+        error_log("           [INFO] Iniciando Consulta NC - TimedOut | Duplicadas           ");
+        error_log("**************************************************************************");
+        error_log("**************************************************************************");
+        $sql='SELECT id
+            from factura f
+            where idEstadoNC = 6 or f.idEstadoNC = 7
+            order by idBodega';
+        $data= DATA::Ejecutar($sql);
+        foreach ($data as $key => $transaccion){
+            error_log("[INFO] Iniciando Consulta NC - TimedOut | Duplicadas");
+            $factura = new Factura();
+            $factura->id = $transaccion['id'];
+            $factura = $factura->Read();
+            // clave  & idDocumento de NC
+            $factura->clave = $factura->claveNC;
+            $factura->idDocumento = $factura->idDocumentoNC;
+            FacturacionElectronica::APIConsultaComprobante($factura);            
+        }
+        error_log("[INFO] Finaliza Consulta de NC - TimedOut | Duplicadas");
         // Notas de crédito. Documento 3
         error_log("**************************************************************************");
         error_log("**************************************************************************");
@@ -110,9 +153,9 @@
             // clave  & idDocumento de NC
             $factura->clave = $factura->claveNC;
             $factura->idDocumento = $factura->idDocumentoNC;
-            FacturacionElectronica::APIConsultaComprobante($factura);
-            error_log("[INFO] Finaliza Consulta NC");
+            FacturacionElectronica::APIConsultaComprobante($factura);            
         }
+        error_log("[INFO] Finaliza Consulta NC");
         // Mensaje Receptor Documentos 5-6-7.
         error_log("**************************************************************************");
         error_log("**************************************************************************");
