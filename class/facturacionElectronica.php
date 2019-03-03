@@ -687,7 +687,7 @@ class FacturacionElectronica{
                 throw new Exception('Error CRITICO al crear xml de comprobante. DEBE COMUNICARSE CON SOPORTE TECNICO: '. $server_output, ERROR_FEXML_NO_VALID);
             }
             self::$xml= $sArray->resp->xml;
-            // ESTA LINEA ES DE PRUEBAS PARA VALIDAR EL XML A ENVIAR.
+            //
             historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 1, 'XML a enviar', base64_decode($sArray->resp->xml));
             //*******************************************************/
             curl_close($ch);
@@ -881,7 +881,7 @@ class FacturacionElectronica{
             }
             self::$xml= $sArray->resp->xml;
             // ESTA LINEA ES DE PRUEBAS PARA VALIDAR EL XML A ENVIAR.
-            historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 1, 'XML a enviar', base64_decode($sArray->resp->xml));
+            historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 1, 'MR XML a enviar', base64_decode($sArray->resp->xml));
             //*******************************************************/
             curl_close($ch);
             error_log("[INFO] API CREAR XML MR EXITOSO!" );
@@ -1169,7 +1169,7 @@ class FacturacionElectronica{
                     if(self::$transaccion->idEstadoComprobante==9)
                         $errorFirma=10;
                     if(self::$transaccion->idEstadoComprobante==10)
-                        $errorFirma=4;
+                        $errorFirma=4; // Rechazo
                     error_log("[ERROR] El documento (". self::$transaccion->clave .")  La firma del comprobante electrónico no es válida (".$errorFirma.")." );
                     historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, $errorFirma, '['.$estadoTransaccion.'] '.$fxml->DetalleMensaje, $xml);
                     Factura::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, $errorFirma);

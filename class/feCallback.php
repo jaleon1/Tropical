@@ -20,7 +20,7 @@
         error_log("**************************************************************************");
         $sql="SELECT f.id, b.nombre as bodega, consecutivo
             from factura f inner join bodega b on b.id = f.idBodega
-            WHERE  f.idEstadoComprobante = 5 or f.idEstadoComprobante = 1 and (f.idDocumento = 1 or  f.idDocumento = 4 or  f.idDocumento = 8) 
+            WHERE  f.idEstadoComprobante = 5  and (f.idDocumento = 1 or  f.idDocumento = 4 or  f.idDocumento = 8) 
             ORDER BY consecutivo asc";
         $data = DATA::Ejecutar($sql);
         error_log("[INFO] Total de transacciones en Contingencia: ". count($data));
@@ -99,7 +99,7 @@
         error_log("**************************************************************************");
         $sql='SELECT id
             from factura
-            where idEstadoNC = 1 or idEstadoNC = 5
+            where idEstadoNC = 5
             order by idBodega';
         $data= DATA::Ejecutar($sql);
         foreach ($data as $key => $transaccion){
