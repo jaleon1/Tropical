@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
     <!-- check User session -->
@@ -319,6 +319,8 @@
 
         $("#tb_facturas").append("<tfoot><tr><th style='visibility:hidden'></th><th></th><th></th><th></th><th></th><th></th><th style='visibility:hidden'></th><th style='visibility:hidden'></th><th></th></tr></tfoot>");
 
+
+
         $('#tb_facturas tbody').on('click', '.btnCancelaFactura', function () {
             var data = inventarioFacturas.tb_facturas.row($(this).parents('tr')).data();
             swal({
@@ -362,9 +364,6 @@
             })
         });
 
-
-
-
         $('#tb_facturas tbody').on('click', '.btnNC_CreateFact_Ref', function () {
             var data = inventarioFacturas.tb_facturas.row($(this).parents('tr')).data();
             swal({
@@ -407,9 +406,6 @@
                     })
             })
         });
-
-
-
 
         $('#tb_facturas tbody').on('click', '.btnEnviarFactura', function () {
             var data = inventarioFacturas.tb_facturas.row($(this).parents('tr')).data();

@@ -108,6 +108,14 @@ function validarRef() {
 
 
 function enter() {
+    $("#modalFormaPago").attr("disabled","disabled");
+    $(".input_pago").attr("disabled","disabled");
+    $(".close").attr("disabled","disabled");
+    
+    $('.factura-modal-lg').modal({
+        backdrop: 'static',
+        keyboard: false
+    });
     facturar();
 };
 
