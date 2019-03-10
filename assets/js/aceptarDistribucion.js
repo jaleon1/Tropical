@@ -138,7 +138,7 @@ class Distribucion {
                 }
             })
             .done(function (e) {
-                if (e == 'null' || e == '') {
+                if (e == 'null' || e == '' ) {
                     swal({
 
                         type: 'warning',
@@ -224,6 +224,7 @@ class Distribucion {
                 // showConfirmButton: false,
                 timer: 3000
             });
+            return;
         }
         distr = new Distribucion(data.id, data.orden, data.fecha, data.idUsuario, data.idBodega, data.porcentajeDescuento, data.porcentajeIva, data.lista);
         // datos
