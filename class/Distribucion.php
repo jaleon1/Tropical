@@ -270,7 +270,8 @@ class Distribucion{
             }
             else return null;
         }     
-        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+        catch(Exception $e) { 
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
                 'code' => $e->getCode() ,
@@ -403,7 +404,7 @@ class Distribucion{
             if(!isset($this->orden))
                 $this->Read();
             foreach ($this->lista as $item) {
-                if(InventarioInsumoXBodega::entrada($item->id, $this->idBodega, 'Distribución#'.$this->orden, $item->cantidad, $item->precioVenta)){
+                if(InventarioInsumoXBodega::entrada($item->idProducto, $this->idBodega, 'Distribución#'.$this->orden, $item->cantidad, $item->precioVenta)){
                      // set idEstado = true.
                      $sql="UPDATE distribucion
                      SET idEstado=1, fechaAceptacion= NOW()
