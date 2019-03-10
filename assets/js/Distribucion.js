@@ -894,24 +894,24 @@ class Distribucion {
                             if(data==null)
                                 switch (row['idEstadoComprobante']) {
                                     case "1":
-                                        return '<button class=btnEnviarFactura>Enviar</button>';
+                                        return '<button class=btnEnviarFactura>&nbsp Enviar</button>'; // Sin enviar // No se envio en el momento, no salio del sistema local No llego a MH //Envio en Contingencia
                                         break;
                                     case "2":
-                                        return '<button class=btnConsultafactura>Consultar</button>';
+                                        return '<i class="fa fa-check-square-o">&nbsp Enviada</i>'; // Enviado //Quitar Boton y que diga enviado
                                         break;
                                     case "3":
-                                        return '<button class=btnCancelaFactura>Cancelar Factura</button>';
+                                        return '<button class=btnCancelaFactura>&nbsp Cancelar Factura</button>'; // Aceptado  //Solo cancelar // NC 
                                         break;
                                     case "4":
-                                        return '<button class=btnCancelaFactura>Cancelar Factura</button>';
+                                        return '<button class=btnNC_CreateFact_Ref>&nbsp Cancelar & Reenviar</button>'; // Rechazado //NC //Nueva con referencia Confeccion de Factura  // BTNCancelar y enviar
                                         break;
                                     case "5":
-                                        return '<button class=btnReenviarFactura>Reenviar</button><button class=btnSoporte>Soporte</button>';
+                                        return '<i class="fa fa-cloud-upload" aria-hidden="true">&nbsp Enviar Contingencia</i>'; // Error (Otros) //Envio en Contingencia
                                         break;
                                     default:
                                         return '<button>Soporte</button>';
                                         break;
-                                }    
+                                }     
                                 else
                                     return '<i class="fa fa-check-square-o" aria-hidden="true" style="color:green">Factura Cancelada!</i>';
                         else
