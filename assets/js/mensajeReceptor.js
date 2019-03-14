@@ -52,8 +52,6 @@ class MensajeReceptor {
         });
     };
 
-
-
     // Muestra errores en ventana
     showError(e) {
         //$(".modal").css({ display: "none" });  

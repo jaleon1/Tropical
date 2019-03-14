@@ -174,6 +174,54 @@ class mensajeReceptor{
         }
     }
 
+    function aceptar(){
+        try {                   
+            // guarda datos en bd. y envía MR.
+            $this->id= UUID::v4();
+                       
+            // if($this->identificacionReceptor != $this->entidad->identificacion){
+            //     $r = new Respuesta();
+            //     $r->clave = $this->clave;
+            //     $r->estado = 'La Cédula recibida no pertenece a su cuenta';
+            //     array_push($this->respuesta, $r);
+            //     continue;
+            // }
+            //$this->idTipoIdentificacionReceptor = (string)$this->xml->TipoIdentificacionReceptor;
+            
+            // valida que el archivo tenga el formato correcto. NO DEBERIA DE SUCEDER...
+            if($this->clave==null || $this->totalImpuesto==null || $this->totalComprobante==null || $this->identificacionEmisor==null || $this->identificacionReceptor==null){
+                error_log("[ERROR]: error de datos de MR");
+                exit;
+            }
+            
+            // valida que el archivo no esté en bd.
+            $sql="SELECT id 
+                FROM mensajeReceptor 
+                WHERE clave =:clave and idEstadoComprobante<=4";
+            $param= array(':clave'=>$this->clave);
+            $data = DATA::Ejecutar($sql,$param);
+            if(!count($data)){
+                // la clave no está repetida o no ha sido aceptada.
+                $this->Create();
+                error_log("[INFO]: XML ok");
+                return true;
+            }
+            else {
+                error_log("[ERROR]: XML REPETIDO EN BD");
+            }
+        }
+        catch(Exception $e) {
+            error_log("[ERROR]: ". $e->getMessage());
+            if (!headers_sent()) {
+                    header('HTTP/1.0 400 Error al generar al enviar el email');
+                }
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }
+    }
+
     function Read(){
         try {
             $sql='SELECT id, idDocumento, fechaCreacion, fechaEmision, consecutivo, clave, consecutivoFE, mensaje, detalle, totalImpuesto, totalComprobante, idEmisor, idTipoIdentificacionEmisor, identificacionEmisor, idReceptor, idTipoIdentificacionReceptor, identificacionReceptor, idEstadoComprobante, idSituacionComprobante

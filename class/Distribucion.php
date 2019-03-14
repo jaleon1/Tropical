@@ -17,7 +17,8 @@ if(isset($_POST["action"])){
     require_once("ClienteFE.php");
     require_once("encdes.php");
     require_once("InventarioProducto.php");
-    require_once("InventarioInsumoXBodega.php");
+    require_once("mensajeReceptor.php");
+    require_once("Bodega.php");
     // Session
     if (!isset($_SESSION))
         session_start();
@@ -56,7 +57,7 @@ if(isset($_POST["action"])){
             $distribucion->Delete();
             break;  
         case "Aceptar":
-            $distribucion->Aceptar();
+            $distribucion->Aceptar(true);
             break;   
         case "ReadAllbyRange":
             echo json_encode($distribucion->ReadAllbyRange());
@@ -135,7 +136,7 @@ class Distribucion{
             $this->idDocumento = 1; // Documento de Referencia.            
             $this->fechaEmision= $obj["fechaEmision"] ?? null; // emision del comprobante electronico.
             //
-            $this->idReceptor = $obj['idReceptor'] ?? Receptor::default()->id; // si es null, utiliza el Receptor por defecto.            
+            $this->idReceptor = $obj['idReceptor'] ?? Receptor::default()->id; // si es null, utiliza el Receptor por defecto.
             $this->idUsuario=  $_SESSION["userSession"]->id;
             $this->fechaInicial= $obj["fechaInicial"] ?? null;
             $this->fechaFinal= $obj["fechaFinal"] ?? null;
@@ -256,8 +257,6 @@ class Distribucion{
         }
     }
 
-
-
     function ReadAll(){
         try {
             // $sql='SELECT id, fecha, idBodega, orden, idUsuario
@@ -348,7 +347,8 @@ class Distribucion{
 
     function Read(){
         try {
-            $sql='SELECT d.id, d.fecha, d.orden, clave, d.idUsuario, d.idBodega, b.nombre as bodega, d.porcentajeDescuento, d.porcentajeIva,  (sum(cantidad*valor) + sum(cantidad*valor)*0.13) as total
+            $sql='SELECT d.id, d.fecha, d.orden, clave, d.idUsuario, d.idBodega, b.nombre as bodega, d.porcentajeDescuento, d.porcentajeIva,  
+                (sum(cantidad*valor) + sum(cantidad*valor)*0.13) as total
                 FROM distribucion d
                 INNER JOIN bodega b on b.id=d.idBodega
                 INNER JOIN productosXDistribucion p on p.idDistribucion=d.id
@@ -464,7 +464,7 @@ class Distribucion{
         }
     }
 
-    function Aceptar(){
+    function Aceptar($comprobante= false){
         try {
             $created=true;
             if(!isset($this->orden))
@@ -475,12 +475,46 @@ class Distribucion{
                      $sql="UPDATE distribucion
                      SET idEstado=1, fechaAceptacion= NOW()
                      WHERE id=:id";
-                 $param= array(':id'=> $this->id);
-                 $data = DATA::Ejecutar($sql,$param,false);
-                 if(!$data)
-                     $created= false;
+                    $param= array(':id'=> $this->id);
+                    $data = DATA::Ejecutar($sql,$param,false);
+                    if(!$data){
+                        $created= false;
+                    }
+                    else {
+                        $created= true;
+                        // acepta MR.
+                        if($comprobante){
+                            $this->Read();
+                            $mr = new MensajeReceptor();                    
+                            $mr->mensaje = 1;
+                            $mr->detalle = 'Aceptacion por traslado';
+                            $mr->clave = $this->clave;                        
+                            $mr->totalComprobante = $this->total; // totalComprobante;
+                            $mr->totalImpuesto =  $mr->totalComprobante *  1 / $this->porcentajeIva;
+                            // emisor del comprobante = proveedor (Central).
+                            $central = new Bodega();
+                            $central->readCentral();
+                            $emisor = new ClienteFE();
+                            $emisor->idBodega = $central->id;
+                            $emisor->read();
+                            $mr->idEmisor = $emisor->idBodega;
+                            $mr->idTipoIdentificacionEmisor = $emisor->idTipoIdentificacion;
+                            $mr->identificacionEmisor = $emisor->identificacion;
+                            // receptor del comprobante = bodega registrada en el sistema.                        
+                            $mr->idReceptor = $_SESSION['userSession']->idBodega;
+                            $bodega = new ClienteFE();
+                            $bodega->id = $_SESSION['userSession']->idBodega;
+                            $bodega->read();
+                            $mr->identificacionReceptor = $bodega->identificacion;
+                            $mr->idTipoIdentificacionReceptor = $bodega->idTipoIdentificacion;
+                            //
+                            $mr->datosReceptor = $bodega; // receptor es la entidad que compra.
+                            //
+                            $mr->aceptar();
+
+                        }                       
+                    }
                 }
-                else $created= false;
             }
             if($created)
                 return true;

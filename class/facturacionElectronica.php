@@ -26,6 +26,7 @@ define('ERROR_LECTURA_CONFIG', '-520');
 define('ERROR_NDXML_NO_VALID', '-521');
 define('ERROR_NCXML_NO_VALID', '-522');
 define('ERROR_REFERENCIA_NO_VALID', '-523');
+define('SSL_API', '0');
 
 class FacturacionElectronica{
     static $distr = false;
@@ -475,7 +476,9 @@ class FacturacionElectronica{
                 CURLOPT_TIMEOUT => 30,
                 CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
                 CURLOPT_CUSTOMREQUEST => "POST",
-                CURLOPT_POSTFIELDS => $post
+                CURLOPT_POSTFIELDS => $post,
+                CURLOPT_SSL_VERIFYHOST => SSL_API, 
+                CURLOPT_SSL_VERIFYPEER => SSL_API
             ));
             $server_output = curl_exec($ch);
             $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
@@ -535,7 +538,9 @@ class FacturacionElectronica{
                 CURLOPT_TIMEOUT => 30,
                 CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
                 CURLOPT_CUSTOMREQUEST => "POST",
-                CURLOPT_POSTFIELDS => $post
+                CURLOPT_POSTFIELDS => $post,
+                CURLOPT_SSL_VERIFYHOST => SSL_API, 
+                CURLOPT_SSL_VERIFYPEER => SSL_API
             ));
             $server_output = curl_exec($ch);
             $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
@@ -669,7 +674,9 @@ class FacturacionElectronica{
                 CURLOPT_TIMEOUT => 30,
                 CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
                 CURLOPT_CUSTOMREQUEST => "POST",
-                CURLOPT_POSTFIELDS => $post
+                CURLOPT_POSTFIELDS => $post,
+                CURLOPT_SSL_VERIFYHOST => SSL_API, 
+                CURLOPT_SSL_VERIFYPEER => SSL_API
             ));
             $server_output = curl_exec($ch);
             $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
@@ -799,7 +806,9 @@ class FacturacionElectronica{
                 CURLOPT_TIMEOUT => 30,
                 CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
                 CURLOPT_CUSTOMREQUEST => "POST",
-                CURLOPT_POSTFIELDS => $post
+                CURLOPT_POSTFIELDS => $post,
+                CURLOPT_SSL_VERIFYHOST => SSL_API, 
+                CURLOPT_SSL_VERIFYPEER => SSL_API
             ));
             $server_output = curl_exec($ch);
             $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
@@ -862,7 +871,9 @@ class FacturacionElectronica{
                 CURLOPT_TIMEOUT => 30,
                 CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
                 CURLOPT_CUSTOMREQUEST => "POST",
-                CURLOPT_POSTFIELDS => $post
+                CURLOPT_POSTFIELDS => $post,
+                CURLOPT_SSL_VERIFYHOST => SSL_API, 
+                CURLOPT_SSL_VERIFYPEER => SSL_API
             ));
             $server_output = curl_exec($ch);
             $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
@@ -935,7 +946,9 @@ class FacturacionElectronica{
                 CURLOPT_TIMEOUT => 30,
                 CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
                 CURLOPT_CUSTOMREQUEST => "POST",
-                CURLOPT_POSTFIELDS => $post
+                CURLOPT_POSTFIELDS => $post,
+                CURLOPT_SSL_VERIFYHOST => SSL_API, 
+                CURLOPT_SSL_VERIFYPEER => SSL_API
             ));
             $server_output = curl_exec($ch);
             $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
@@ -1011,7 +1024,9 @@ class FacturacionElectronica{
                 CURLOPT_TIMEOUT => 60,
                 CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
                 CURLOPT_CUSTOMREQUEST => "POST",
-                CURLOPT_POSTFIELDS => $post
+                CURLOPT_POSTFIELDS => $post,
+                CURLOPT_SSL_VERIFYHOST => SSL_API, 
+                CURLOPT_SSL_VERIFYPEER => SSL_API
             ));
             $server_output = curl_exec($ch);
             $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
@@ -1099,7 +1114,9 @@ class FacturacionElectronica{
                 CURLOPT_TIMEOUT => 30,
                 CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
                 CURLOPT_CUSTOMREQUEST => "POST",
-                CURLOPT_POSTFIELDS => $post
+                CURLOPT_POSTFIELDS => $post,
+                CURLOPT_SSL_VERIFYHOST => SSL_API, 
+                CURLOPT_SSL_VERIFYPEER => SSL_API
             ));
             $server_output = curl_exec($ch);
             $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
