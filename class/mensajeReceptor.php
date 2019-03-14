@@ -63,6 +63,7 @@ class mensajeReceptor{
     public $identificacionReceptor;
     public $xml;
     public $respuesta = array();
+    public $entidad = null;
 
     function __construct(){
         // identificador único
@@ -113,9 +114,20 @@ class mensajeReceptor{
                         $this->idEmisor = $this->idEmisor ?? null; // el id del proveedor aun no se maneja en bd.
                         $this->identificacionEmisor = (string)$this->xml->NumeroCedulaEmisor ?? null;
                         $this->idTipoIdentificacionEmisor = (string)$this->xml->TipoIdentificacionEmisor;
-                        // receptor del comprobante = entidad registrada en el sistema.
+                        // receptor del comprobante = entidad registrada en el sistema.                        
                         $this->idReceptor = $_SESSION['userSession']->idBodega;
                         $this->identificacionReceptor = (string)$this->xml->NumeroCedulaReceptor ?? null;
+                        //
+                        $this->entidad = new ClienteFE();
+                        $this->entidad->idBodega = $this->idReceptor;
+                        $this->datosReceptor = $this->entidad->read(); // receptor es la entidad que compra.
+                        if($this->identificacionReceptor != $this->entidad->identificacion){
+                            $r = new Respuesta();
+                            $r->clave = $this->clave;
+                            $r->estado = 'La Cédula recibida no pertenece a su cuenta';
+                            array_push($this->respuesta, $r);
+                            continue;
+                        }
                         $this->idTipoIdentificacionReceptor = (string)$this->xml->TipoIdentificacionReceptor;
                         // valida que el archivo tenga el formato correcto.
                         if($this->clave==null || $this->totalImpuesto==null || $this->totalComprobante==null || $this->identificacionEmisor==null || $this->identificacionReceptor==null){
@@ -312,14 +324,13 @@ class mensajeReceptor{
             $this->idSituacionComprobante = 1; // normal.
             $this->terminal = '00001'; // normal.
             $this->local = '001'; // normal.            
-            $entidad = new ClienteFE();
-            $entidad->idBodega = $this->idReceptor;
-            $this->datosReceptor = $entidad->read(); // receptor es la entidad que compra.
+            //
             $this->datosEntidad =   new ClienteFE();         // vendedor
             $this->datosEntidad->idTipoIdentificacion = $this->idTipoIdentificacionEmisor;
             $this->datosEntidad->identificacion = $this->identificacionEmisor;
             $this->datosEntidad->codigoSeguridad = $this->datosReceptor->codigoSeguridad;
-            $this->idBodega = $entidad->id;
+            //
+            $this->idBodega = $this->entidad->id;
             return FacturacionElectronica::iniciar($this);
         }
         catch(Exception $e) {
