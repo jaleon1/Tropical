@@ -1,6 +1,6 @@
 class Distribucion {
     // Constructor
-    constructor(id, orden, fecha, idUsuario, idBodega, porcentajeDescuento, porcentajeIva, lista, bodega, fechaInicial, fechaFinal) {
+    constructor(id, orden, fecha, idUsuario, idBodega, porcentajeDescuento, porcentajeIva, lista, bodega, fechaInicial, fechaFinal, totalImpuesto, totalComprobante) {
         this.id = id || null;
         this.orden = orden || '';
         this.fecha = fecha || '';
@@ -9,6 +9,8 @@ class Distribucion {
         this.bodega = bodega || null;
         this.porcentajeDescuento = porcentajeDescuento || 0;
         this.porcentajeIva = porcentajeIva || 0;
+        this.totalImpuesto = totalImpuesto || 0;
+        this.totalComprobante = totalComprobante || 0;
         this.lista = lista || [];
         this.fechaInicial = fechaInicial || "";
         this.fechaFinal = fechaFinal || "";
@@ -325,7 +327,9 @@ class Distribucion {
     ShowItemData(e) {
         var data = JSON.parse(e);
         distr = new Distribucion(data.id, data.orden, data.fecha, data.idUsuario, data.idBodega, data.porcentajeDescuento, data.porcentajeIva, data.lista, data.bodega);
-        distr.total= data.total;
+        distr.totalComprobante= data.totalComprobante;
+        distr.totalImpuesto= data.totalImpuesto;
+        //
         $("#detalleDistribucion").empty();
         var detalleDistribucion =
             `<button type="button" class="close" data-dismiss="modal">
@@ -345,7 +349,7 @@ class Distribucion {
             </div>
             <div class="row">                
                 <div class="col-md-6 col-sm-6 col-xs-6">
-                    <p>TOTAL: <label id=total>${'¢' + parseFloat(distr.total).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ".")}</label></p>
+                    <p>TOTAL: <label id=total>${'¢' + parseFloat(distr.totalComprobante).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ".")}</label></p>
                 </div>
             </div>`;
         $("#detalleDistribucion").append(detalleDistribucion);
@@ -701,8 +705,8 @@ class Distribucion {
             $("#desc_val")[0].textContent = "¢" + parseFloat(distr.descuento).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
             distr.iva = subtotal * (parseFloat(distr.porcentajeIva) / 100);
             $("#iv_val")[0].textContent = "¢" + parseFloat(distr.iva).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-            distr.total = subtotal - distr.descuento + distr.iva;
-            $("#total")[0].textContent = "¢" + parseFloat(distr.total).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            distr.totalComprobante = subtotal - distr.descuento + distr.iva;
+            $("#total")[0].textContent = "¢" + parseFloat(distr.totalComprobante).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         }
     };
 
@@ -840,7 +844,7 @@ class Distribucion {
                 },
                 {
                     title: "TOTAL",
-                    data: "total",
+                    data: "totalComprobante",
                     className: "text-right",
                     // className: "total",
                     mRender: function (e) {

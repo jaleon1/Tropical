@@ -337,7 +337,7 @@ class mensajeReceptor{
                     $this->idDocumento = 7; // RCE.
                     break;
             }
-            $sql="INSERT INTO mensajeReceptor   (id, idDocumento, clave, consecutivoFE, mensaje, detalle, totalImpuesto, totalComprobante, idEmisor, idTipoIdentificacionEmisor, identificacionEmisor, idReceptor, idTipoIdentificacionReceptor, identificacionReceptor, xml)
+            $sql="INSERT INTO mensajeReceptor  (id, idDocumento, clave, consecutivoFE, mensaje, detalle, totalImpuesto, totalComprobante, idEmisor, idTipoIdentificacionEmisor, identificacionEmisor, idReceptor, idTipoIdentificacionReceptor, identificacionReceptor, xml)
                 VALUES  (:id, :idDocumento, :clave, :consecutivoFE, :mensaje, :detalle, :totalImpuesto, :totalComprobante, :idEmisor, :idTipoIdentificacionEmisor,:identificacionEmisor, :idReceptor, :idTipoIdentificacionReceptor, :identificacionReceptor, :xml)";
             $param= array(':id'=>$this->id,
                 ':idDocumento'=>$this->idDocumento,
@@ -353,7 +353,7 @@ class mensajeReceptor{
                 ':idReceptor'=>$this->idReceptor,
                 ':idTipoIdentificacionReceptor'=>$this->idTipoIdentificacionReceptor,
                 ':identificacionReceptor'=>$this->identificacionReceptor,
-                ':xml'=>$this->xml->asXML()
+                ':xml'=>$this->xml
             );
             $data = DATA::Ejecutar($sql,$param, false);
             if($data){

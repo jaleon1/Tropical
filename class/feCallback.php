@@ -202,6 +202,7 @@
             $entidad = new ClienteFE();
             $entidad->idBodega = $central->id;
             $distr->datosEntidad = $entidad->read();
+            $distr->idEmisor = $central->id;
             // receptor
             $receptor = new ClienteFE();
             $receptor->idBodega = $distr->idBodega;
