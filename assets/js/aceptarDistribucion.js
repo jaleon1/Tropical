@@ -221,7 +221,7 @@ class Distribucion {
                 type: 'warning',
                 title: 'Orden de Traslado',
                 text: 'La orden no existe o ya fue ACEPTADA',
-                // showConfirmButton: false,
+                showConfirmButton: false,
                 timer: 3000
             });
             return;

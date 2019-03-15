@@ -31,6 +31,9 @@
     <link href="assets/css/custom.css" rel="stylesheet">
     <!-- Dropzone.js -->
     <link href="../vendors/dropzone/dist/min/dropzone.min.css" rel="stylesheet">
+    <!-- Datatables -->
+    <link href="../vendors/datatables.net/datatables.min.css" rel="stylesheet">
+    <link href="../vendors/datatables.net/DataTables-1.10.18/css/dataTables.bootstrap.min.css" rel="stylesheet">
 </head>
 
 <body class="nav-md">
@@ -149,7 +152,7 @@
                                 </div>
 
                                 <!--  CONTENIDO DE LA PAGINA -->
-                                <div class="x_content">                                  
+                                <div class="x_content">
 
                                     <div class="title_left">
                                         <h3>Lista de facturas</h3>
@@ -159,7 +162,8 @@
 
                                     <div class="form-group col-md-12 col-sm-12 col-xs-12" id="filelist"></div>
                                     <br>
-                                    <form action="class/mensajeReceptor.php" method="post" enctype="multipart/form-data" class="dropzone dz-clickable" id="frmXml">
+                                    <form action="class/mensajeReceptor.php" method="post" enctype="multipart/form-data"
+                                        class="dropzone dz-clickable" id="frmXml">
                                         <div class="dz-default dz-message">
                                             <span>Arrastre los archivos xml aquí.</span>
                                             <input type="file" required id="file" name="file" class="dz-hidden-input"
@@ -167,45 +171,49 @@
                                         </div>
                                         <input id="action" name="action" value="uploadxml" type="hidden">
                                         <input id="m" name="mensaje" type="hidden">
-                                        <input id="d" name="detalle" type="hidden">                                       
-                                      
+                                        <input id="d" name="detalle" type="hidden">
+
                                     </form>
 
-                                    <form class="form-horizontal form-label-left" id="frm" novalidate>                                           
-    
-                                            <div class="title_left">
-                                                <h3>Respuesta</h3>
+                                    <form class="form-horizontal form-label-left" id="frm" novalidate>
+
+                                        <div class="title_left">
+                                            <h3>Respuesta</h3>
+                                        </div>
+
+                                        <div class="ln_solid"></div>
+
+                                        <div class="item form-group">
+                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tipoMensaje">Tipo
+                                            </label>
+                                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                                <select class="selectpicker show-menu-arrow form-control" type="select"
+                                                    required="required" id="tipoMensaje" name="tipoMensaje">
+                                                    <option value=1>Aceptar</option>
+                                                    <option value=2>Aceptar Parcialmente</option>
+                                                    <option value=3>Rechazar</option>
+                                                </select>
                                             </div>
-    
-                                            <div class="ln_solid"></div>
-    
-                                            <div class="item form-group">
-                                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tipoMensaje">Tipo </label>
-                                                <div class="col-md-6 col-sm-6 col-xs-12">
-                                                        <select class="selectpicker show-menu-arrow form-control"  type="select" required="required" id="tipoMensaje" name="tipoMensaje">
-                                                            <option value=1>Aceptar</option>
-                                                            <option value=2>Aceptar Parcialmente</option>
-                                                            <option value=3>Rechazar</option>
-                                                        </select>
-                                                </div>
+                                        </div>
+
+                                        <div class="item form-group">
+                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="detalle">Detalle
+                                            </label>
+                                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                                <input id="detalleMensaje" class="form-control col-md-7 col-xs-12" form='frmXml'
+                                                    data-validate-length-range="0,80" required type="text" name="detalleMensaje"
+                                                    placeholder="Observaciones del mensaje">
                                             </div>
-    
-                                            <div class="item form-group">
-                                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="detalle">Detalle
-                                                </label>
-                                                <div class="col-md-6 col-sm-6 col-xs-12">
-                                                    <input id="detalleMensaje" class="form-control col-md-7 col-xs-12" form='frmXml' data-validate-length-range="0,80" required  type="text" name="detalleMensaje" placeholder="Observaciones del mensaje" >
-                                                </div>
-                                            </div>
-    
-                                        </form>                                   
+                                        </div>
+
+                                    </form>
 
                                     <div class="ln_solid"></div>
 
                                     <div class="form-group">
                                         <div class="col-md-6">
                                             <button type="reset" class="btn btn-primary" id="reload">Limpiar</button>
-                                            <button id="btnSubmit"  type="submit" class="btn btn-success">Aceptar</button>
+                                            <button id="btnSubmit" type="submit" class="btn btn-success">Aceptar</button>
                                         </div>
                                     </div>
 
@@ -231,6 +239,48 @@
         </div>
     </div>
 
+    <!-- modals -->
+    <!-- Large modal -->
+    <div id="modalRespuesta" class="modal factura-modal-lg" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content modal-factura">
+                <div id="detalleFac" class="modal-header">
+                    <h2>Estado de los acuses de recibo</h2>
+                </div>
+                <div class="modal-body">
+
+                    <div class="row">
+
+                        <div class="clearfix"></div>
+
+                        <div class="row">
+                            <div class="col-md-12 col-sm-12 col-xs-12">
+                                <div class="x_content">
+                                    <div class="table-responsive">
+                                        <table id="tRespuesta" style="width:100%" class="table table-striped jambo_table bulk_action">
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="clearfix"></div>
+
+                    </div>
+                    <div class="modal-footer">
+
+                        <div class="row">
+                            <br>
+                            <button id="continuar" type="button" class="btn btn-primary">Continuar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- modals -->
+    <!-- Large modal -->
+
     <!-- Bootstrap -->
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
     <!-- FastClick -->
@@ -242,7 +292,7 @@
     <!-- Input mask -->
     <!-- <script src="assets/js/jquery.inputmask/jquery.inputmask.bundle.min.js"></script> -->
     <!-- JS Scripts -->
-    <script src="assets/js/mensajeReceptor.js"></script>
+    <script src="assets/js/mensajeReceptor.min.js"></script>
     <!-- Sweet Alert -->
     <script src="assets/js/sweetalert2.min.js"></script>
     <!-- Select -->
@@ -251,6 +301,9 @@
     <script src="../vendors/dropzone/dist/min/dropzone.min.js"></script>
     <!-- Custom Theme Scripts -->
     <script src="assets/js/custom.min.js"></script>
+    <!-- JS dataTables -->
+    <script src="../vendors/datatables.net/DataTables-1.10.18/js/jquery.dataTables.min.js"></script>
+    <script src="../vendors/datatables.net/DataTables-1.10.18/js/dataTables.bootstrap.min.js"></script>
 
 </body>
 
@@ -260,8 +313,19 @@
     $(document).ready(function () {
         mr.Init();
     });
+
+    $(function () {
+        $(document)
+            .ajaxStart(NProgress.start)
+            .ajaxStop(NProgress.done);
+    });
+
     // Recarga la página para limpiar todo
     $('#reload').click(function () {
         location.reload();
-    });    
+    });
+
+    $('#continuar').click(function () {
+        location.reload();
+    });
 </script>

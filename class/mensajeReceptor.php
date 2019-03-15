@@ -25,17 +25,25 @@ if(isset($_POST["action"])){
         case "Read":
             echo json_encode($mensaje->Read());
             break;
+        case "ReadAll":
+            echo json_encode($mensaje->ReadAll());
+            break;
         case "Create":
             //echo json_encode($mensaje->Create());
             break;
         case "uploadxml":
             require_once("UUID.php");
-            $mensaje->id= $obj["id"] ?? UUID::v4();
+            // $mensaje->id= $obj["id"] ?? UUID::v4();
             $mensaje->mensaje = $_POST['mensaje'];
             $mensaje->detalle = $_POST['detalle'];
-            $mensaje->uploadxml();
+            echo json_encode($mensaje->uploadxml());
             break;
     }    
+}
+
+class respuesta{
+    public $clave;
+    public $estado;
 }
 
 class mensajeReceptor{
@@ -55,6 +63,7 @@ class mensajeReceptor{
     public $identificacionReceptor;
     public $xml;
     public $respuesta = array();
+    public $entidad = null;
 
     function __construct(){
         // identificador único
@@ -68,8 +77,14 @@ class mensajeReceptor{
             require_once("UUID.php");
             $this->id= $obj["id"] ?? UUID::v4();
             $this->idReceptor= $_SESSION["userSession"]->idBodega;
-            $this->mensaje= $obj["mensaje"];
+            $this->consecutivo= $obj["consecutivo"] ?? null;
+            $this->fechaCreacion= $obj["fechaCreacion"] ?? null;
             $this->detalle= $obj["detalle"] ?? null;
+            $this->mensaje= $obj["mensaje"] ?? null;
+            $this->totalComprobante= $obj["totalComprobante"] ?? null;
+            $this->idEstadoComprobante= $obj["idEstadoComprobante"] ?? null;
+            $this->fechaInicial= $obj["fechaInicial"] ?? null;
+            $this->fechaFinal= $obj["fechaFinal"] ?? null;
         }
     }
 
@@ -89,6 +104,7 @@ class mensajeReceptor{
                             'msg' => 'Error al leer archivo xml.'))
                         );
                         // guarda datos en bd. y envía MR.
+                        $this->id= UUID::v4();
                         $this->clave = (string)$this->xml->Clave ?? null;
                         $this->mensaje = $this->mensaje;
                         $this->detalle = $this->detalle ?? null;
@@ -98,9 +114,20 @@ class mensajeReceptor{
                         $this->idEmisor = $this->idEmisor ?? null; // el id del proveedor aun no se maneja en bd.
                         $this->identificacionEmisor = (string)$this->xml->NumeroCedulaEmisor ?? null;
                         $this->idTipoIdentificacionEmisor = (string)$this->xml->TipoIdentificacionEmisor;
-                        // receptor del comprobante = entidad registrada en el sistema.
-                        $this->idReceptor = $_SESSION['userSession']->idEntidad;
+                        // receptor del comprobante = entidad registrada en el sistema.                        
+                        $this->idReceptor = $_SESSION['userSession']->idBodega;
                         $this->identificacionReceptor = (string)$this->xml->NumeroCedulaReceptor ?? null;
+                        //
+                        $this->entidad = new ClienteFE();
+                        $this->entidad->idBodega = $this->idReceptor;
+                        $this->datosReceptor = $this->entidad->read(); // receptor es la entidad que compra.
+                        if($this->identificacionReceptor != $this->entidad->identificacion){
+                            $r = new Respuesta();
+                            $r->clave = $this->clave;
+                            $r->estado = 'La Cédula recibida no pertenece a su cuenta';
+                            array_push($this->respuesta, $r);
+                            continue;
+                        }
                         $this->idTipoIdentificacionReceptor = (string)$this->xml->TipoIdentificacionReceptor;
                         // valida que el archivo tenga el formato correcto.
                         if($this->clave==null || $this->totalImpuesto==null || $this->totalComprobante==null || $this->identificacionEmisor==null || $this->identificacionReceptor==null){
@@ -113,7 +140,7 @@ class mensajeReceptor{
                         // valida que el archivo no esté en bd.
                         $sql="SELECT id 
                             FROM mensajeReceptor 
-                            WHERE clave =:clave and idEstadoComprobante<=3";
+                            WHERE clave =:clave and idEstadoComprobante<=4";
                         $param= array(':clave'=>$this->clave);
                         $data = DATA::Ejecutar($sql,$param);
                         if(!count($data)){
@@ -137,7 +164,57 @@ class mensajeReceptor{
         }
         catch(Exception $e) {
             error_log("[ERROR]: ". $e->getMessage());
-            header('HTTP/1.0 400 Bad error');
+            if (!headers_sent()) {
+                    header('HTTP/1.0 400 Error al generar al enviar el email');
+                }
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }
+    }
+
+    function aceptar(){
+        try {                   
+            // guarda datos en bd. y envía MR.
+            $this->id= UUID::v4();
+                       
+            // if($this->identificacionReceptor != $this->entidad->identificacion){
+            //     $r = new Respuesta();
+            //     $r->clave = $this->clave;
+            //     $r->estado = 'La Cédula recibida no pertenece a su cuenta';
+            //     array_push($this->respuesta, $r);
+            //     continue;
+            // }
+            //$this->idTipoIdentificacionReceptor = (string)$this->xml->TipoIdentificacionReceptor;
+            
+            // valida que el archivo tenga el formato correcto. NO DEBERIA DE SUCEDER...
+            if($this->clave==null || $this->totalImpuesto==null || $this->totalComprobante==null || $this->identificacionEmisor==null || $this->identificacionReceptor==null){
+                error_log("[ERROR]: error de datos de MR");
+                exit;
+            }
+            
+            // valida que el archivo no esté en bd.
+            $sql="SELECT id 
+                FROM mensajeReceptor 
+                WHERE clave =:clave and idEstadoComprobante<=4";
+            $param= array(':clave'=>$this->clave);
+            $data = DATA::Ejecutar($sql,$param);
+            if(!count($data)){
+                // la clave no está repetida o no ha sido aceptada.
+                $this->Create();
+                error_log("[INFO]: XML ok");
+                return true;
+            }
+            else {
+                error_log("[ERROR]: XML REPETIDO EN BD");
+            }
+        }
+        catch(Exception $e) {
+            error_log("[ERROR]: ". $e->getMessage());
+            if (!headers_sent()) {
+                    header('HTTP/1.0 400 Error al generar al enviar el email');
+                }
             die(json_encode(array(
                 'code' => $e->getCode() ,
                 'msg' => $e->getMessage()))
@@ -176,7 +253,69 @@ class mensajeReceptor{
         }     
         catch(Exception $e) { 
             error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
-            header('HTTP/1.0 400 Bad error');
+            if (!headers_sent()) {
+                header('HTTP/1.0 400 Error al generar al enviar el email');
+            }
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar el mensaje receptor'))
+            );
+        }
+    }
+
+    function ReadAllbyRange(){
+        try {
+            $sql='SELECT id, consecutivo, fechaCreacion, detalle, mensaje, totalComprobante, idEmisor, 
+            idEstadoComprobante FROM mensajeReceptor 
+            WHERE fechaCreacion Between :fechaInicial and :fechaFinal
+            ORDER BY consecutivo DESC;';
+            $param= array(':fechaInicial'=>$this->fechaInicial, ':fechaFinal'=>$this->fechaFinal);            
+            $data= DATA::Ejecutar($sql, $param);   
+            // foreach ($data as $key => $value){
+            //     $this->consecutivo = $value['consecutivo'];
+            //     $this->fechaCreacion = $value['fechaCreacion'];
+            //     $this->mensaje = $value['mensaje'];
+            //     $this->detalle = $value['detalle'];
+            //     $this->totalComprobante = $value['totalComprobante'];
+            //     $this->idEstadoComprobante = $value['idEstadoComprobante'];
+            //     $this->idEmisor = $value['idEmisor'];
+            // }
+            return $data;
+        }     
+        catch(Exception $e) { 
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            if (!headers_sent()) {
+                    header('HTTP/1.0 400 Error al generar al enviar el email');
+                }
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar el mensaje receptor'))
+            );
+        }
+    }
+
+    function ReadAll(){
+        try {
+            $sql='select id, consecutivo, fechaCreacion, detalle, mensaje, totalComprobante, idEmisor, 
+            idEstadoComprobante from mensajeReceptor;';
+            $data= DATA::Ejecutar($sql);     
+            foreach ($data as $key => $value){
+                $this->id = $value['idDocumento'];
+                $this->consecutivo = $value['consecutivo'];
+                $this->fechaCreacion = $value['fechaCreacion'];
+                $this->mensaje = $value['mensaje'];
+                $this->detalle = $value['detalle'];
+                $this->totalComprobante = $value['totalComprobante'];
+                $this->idEstadoComprobante = $value['idEstadoComprobante'];
+                $this->idEmisor = $value['idEmisor'];
+            }
+            return $this;
+        }     
+        catch(Exception $e) { 
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            if (!headers_sent()) {
+                    header('HTTP/1.0 400 Error al generar al enviar el email');
+                }
             die(json_encode(array(
                 'code' => $e->getCode() ,
                 'msg' => 'Error al cargar el mensaje receptor'))
@@ -198,7 +337,7 @@ class mensajeReceptor{
                     $this->idDocumento = 7; // RCE.
                     break;
             }
-            $sql="INSERT INTO mensajeReceptor   (id, idDocumento, clave, consecutivoFE, mensaje, detalle, totalImpuesto, totalComprobante, idEmisor, idTipoIdentificacionEmisor, identificacionEmisor, idReceptor, idTipoIdentificacionReceptor, identificacionReceptor, xml)
+            $sql="INSERT INTO mensajeReceptor  (id, idDocumento, clave, consecutivoFE, mensaje, detalle, totalImpuesto, totalComprobante, idEmisor, idTipoIdentificacionEmisor, identificacionEmisor, idReceptor, idTipoIdentificacionReceptor, identificacionReceptor, xml)
                 VALUES  (:id, :idDocumento, :clave, :consecutivoFE, :mensaje, :detalle, :totalImpuesto, :totalComprobante, :idEmisor, :idTipoIdentificacionEmisor,:identificacionEmisor, :idReceptor, :idTipoIdentificacionReceptor, :identificacionReceptor, :xml)";
             $param= array(':id'=>$this->id,
                 ':idDocumento'=>$this->idDocumento,
@@ -214,14 +353,11 @@ class mensajeReceptor{
                 ':idReceptor'=>$this->idReceptor,
                 ':idTipoIdentificacionReceptor'=>$this->idTipoIdentificacionReceptor,
                 ':identificacionReceptor'=>$this->identificacionReceptor,
-                ':xml'=>$this->xml->asXML()
+                ':xml'=>$this->xml
             );
             $data = DATA::Ejecutar($sql,$param, false);
             if($data){
-                $this->enviar();
-                error_log("[INFO] Certificado OK");
-                echo "UPLOADED";
-                return true;
+                return $this->enviar();
             }
             else return 'Error (1015) al crear en base de datos.';         
         }     
@@ -236,13 +372,13 @@ class mensajeReceptor{
             $this->idSituacionComprobante = 1; // normal.
             $this->terminal = '00001'; // normal.
             $this->local = '001'; // normal.            
-            $entidad = new ClienteFE();
-            $entidad->idBodega = $this->idReceptor;
-            $this->datosReceptor = $entidad->read(); // receptor es la entidad que compra.
+            //
             $this->datosEntidad =   new ClienteFE();         // vendedor
             $this->datosEntidad->idTipoIdentificacion = $this->idTipoIdentificacionEmisor;
             $this->datosEntidad->identificacion = $this->identificacionEmisor;
             $this->datosEntidad->codigoSeguridad = $this->datosReceptor->codigoSeguridad;
+            //
+            $this->idBodega = $this->entidad->id;
             return FacturacionElectronica::iniciar($this);
         }
         catch(Exception $e) {

@@ -17,7 +17,8 @@ if(isset($_POST["action"])){
     require_once("ClienteFE.php");
     require_once("encdes.php");
     require_once("InventarioProducto.php");
-    require_once("InventarioInsumoXBodega.php");
+    require_once("mensajeReceptor.php");
+    require_once("Bodega.php");
     // Session
     if (!isset($_SESSION))
         session_start();
@@ -56,7 +57,7 @@ if(isset($_POST["action"])){
             $distribucion->Delete();
             break;  
         case "Aceptar":
-            $distribucion->Aceptar();
+            $distribucion->Aceptar(true);
             break;   
         case "ReadAllbyRange":
             echo json_encode($distribucion->ReadAllbyRange());
@@ -118,24 +119,24 @@ class Distribucion{
             // definir si es servicio o mercancia (producto).
             $this->idCodigoMoneda= 55; // CRC
             $this->tipoCambio= 595.00; // tipo de cambio dinamico con BCCR
-            $this->totalServGravados= $obj['totalServGravados'];
-            $this->totalServExentos= $obj['totalServExentos'];
-            $this->totalMercanciasGravadas= $obj['totalMercanciasGravadas'];
-            $this->totalMercanciasExentas= $obj['totalMercanciasExentas'];
-            $this->totalGravado= $obj['totalGravado'];
-            $this->totalExento= $obj['totalExento'];
-            $this->totalVenta= $obj["totalVenta"];
-            $this->totalDescuentos= $obj["totalDescuentos"];
-            $this->totalVentaneta= $obj["totalVentaneta"];
-            $this->totalImpuesto= $obj["totalImpuesto"];
-            $this->totalComprobante= $obj["totalComprobante"];
+            $this->totalServGravados= number_format((float)$obj['totalServGravados'],5,'.','' ) ;
+            $this->totalServExentos= number_format((float)$obj['totalServExentos'],5,'.','' ) ;
+            $this->totalMercanciasGravadas= number_format((float)$obj['totalMercanciasGravadas'],5,'.','' ) ;
+            $this->totalMercanciasExentas= number_format((float)$obj['totalMercanciasExentas'],5,'.','' ) ;
+            $this->totalGravado= number_format((float)$obj['totalGravado'],5,'.','' ) ;
+            $this->totalExento= number_format((float)$obj['totalExento'],5,'.','' ) ;
+            $this->totalVenta= number_format((float)$obj['totalVenta'],5,'.','' ) ;
+            $this->totalDescuentos= number_format((float)$obj['totalDescuentos'],5,'.','' ) ;
+            $this->totalVentaneta= number_format((float)$obj['totalVentaneta'],5,'.','' ) ;
+            $this->totalImpuesto= number_format((float)$obj['totalImpuesto'],5,'.','' ) ;
+            $this->totalComprobante= number_format((float)$obj['totalComprobante'],5,'.','' ) ;
             // $this->montoEfectivo= $obj["montoEfectivo"]; //Jason: Lo comente temporalmente
             // $this->montoTarjeta= $obj["montoTarjeta"];   //Jason: Lo comente temporalmente
             // d. Informacion de referencia
             $this->idDocumento = 1; // Documento de Referencia.            
             $this->fechaEmision= $obj["fechaEmision"] ?? null; // emision del comprobante electronico.
             //
-            $this->idReceptor = $obj['idReceptor'] ?? Receptor::default()->id; // si es null, utiliza el Receptor por defecto.            
+            $this->idReceptor = $obj['idReceptor'] ?? Receptor::default()->id; // si es null, utiliza el Receptor por defecto.
             $this->idUsuario=  $_SESSION["userSession"]->id;
             $this->fechaInicial= $obj["fechaInicial"] ?? null;
             $this->fechaFinal= $obj["fechaFinal"] ?? null;
@@ -256,20 +257,18 @@ class Distribucion{
         }
     }
 
-
-
     function ReadAll(){
         try {
             // $sql='SELECT id, fecha, idBodega, orden, idUsuario
             //     FROM     distribucion       
             //     ORDER BY fecha asc';
             $sql= 'SELECT d.id, fecha, orden, u.userName, b.nombre as bodega, e.nombre as estado, 
-                    (sum(cantidad*valor) + sum(cantidad*valor)*0.13) as total, idEstadoComprobante
+                    totalImpuesto, TotalComprobante, idEstadoComprobante
                 FROM tropical.distribucion d
                     INNER JOIN usuario u on u.id=d.idUsuario
                     INNER JOIN bodega b on b.id=d.idBodega
                     INNER JOIN estado e on e.id=d.idEstado
-                    INNER JOIN productosXDistribucion p on p.idDistribucion=d.id
+                    
                 GROUP BY orden
                 ORDER BY fecha desc';
             $data= DATA::Ejecutar($sql);
@@ -291,13 +290,13 @@ class Distribucion{
             //     FROM     distribucion       
             //     ORDER BY fecha asc';
             $sql= 'SELECT d.id, fecha, orden, u.userName, b.nombre as bodega, e.nombre as estado, d.idEstadocomprobante, d.claveNC,
-                    (sum(cantidad*valor) + sum(cantidad*valor)*0.13) as total, idEstadoComprobante, t.nombre as tipoBodega
+                    totalImpuesto, totalComprobante, idEstadoComprobante, t.nombre as tipoBodega
                 FROM tropical.distribucion d
                     INNER JOIN usuario u on u.id=d.idUsuario
                     INNER JOIN bodega b on b.id=d.idBodega
                     INNER JOIN tipoBodega t on t.id=b.idTipoBodega 
                     INNER JOIN estado e on e.id=d.idEstado
-                    INNER JOIN productosXDistribucion p on p.idDistribucion=d.id
+                    
                 WHERE fecha Between :fechaInicial and :fechaFinal
                 GROUP BY orden
                 ORDER BY fecha desc';
@@ -317,7 +316,7 @@ class Distribucion{
 
     function ReadbyOrden(){
         try {
-            $sql='SELECT id, fecha, orden, idUsuario, idBodega, porcentajeDescuento, porcentajeIva
+            $sql='SELECT id, fecha, orden, idUsuario, idBodega, porcentajeDescuento, porcentajeIva, totalImpuesto, totalComprobante
                 FROM distribucion
                 WHERE orden=:orden AND idBodega=:idBodega AND idEstado=0';
             $param= array(':orden'=>$this->orden, ':idBodega'=>$this->idBodega);
@@ -329,6 +328,8 @@ class Distribucion{
                 $this->idBodega = $data[0]['idBodega'];
                 $this->porcentajeDescuento = $data[0]['porcentajeDescuento'];
                 $this->porcentajeIva = $data[0]['porcentajeIva'];
+                $this->totalImpuesto = $data[0]['totalImpuesto'];
+                $this->totalComprobante = $data[0]['totalComprobante'];
                 // productos x distribucion.
                 $this->lista= ProductosXDistribucion::Read($this->id);
                 //
@@ -348,10 +349,10 @@ class Distribucion{
 
     function Read(){
         try {
-            $sql='SELECT d.id, d.fecha, d.orden, clave, d.idUsuario, d.idBodega, b.nombre as bodega, d.porcentajeDescuento, d.porcentajeIva,  (sum(cantidad*valor) + sum(cantidad*valor)*0.13) as total
+            $sql='SELECT d.id, d.fecha, d.orden, clave, d.consecutivoFE, d.fechaEmision, d.idUsuario, d.idBodega, b.nombre as bodega, 
+                d.porcentajeDescuento, d.porcentajeIva,  d.totalImpuesto, d.totalComprobante                
                 FROM distribucion d
                 INNER JOIN bodega b on b.id=d.idBodega
-                INNER JOIN productosXDistribucion p on p.idDistribucion=d.id
                 where d.id=:id';
             $param= array(':id'=>$this->id);
             $data= DATA::Ejecutar($sql,$param);     
@@ -360,12 +361,15 @@ class Distribucion{
                 $this->fecha = $data[0]['fecha'];
                 $this->orden = $data[0]['orden'];
                 $this->clave = $data[0]['clave'];
+                $this->consecutivoFE = $data[0]['consecutivoFE'] ?? null;
+                $this->fechaEmision = $data[0]['fechaEmision'] ?? null;
                 $this->idUsuario = $data[0]['idUsuario'];
                 $this->idBodega = $data[0]['idBodega'];
                 $this->bodega = $data[0]['bodega'];
                 $this->porcentajeDescuento = $data[0]['porcentajeDescuento'];
                 $this->porcentajeIva = $data[0]['porcentajeIva'];
-                $this->total = $data[0]['total'];
+                $this->totalComprobante = $data[0]['totalComprobante'];
+                $this->totalImpuesto = $data[0]['totalImpuesto'];
                 // productos x distribucion.
                 $this->lista= ProductosXDistribucion::Read($this->id);
                 //
@@ -385,13 +389,12 @@ class Distribucion{
     function ReadCancelada(){
         try {
             $sql='SELECT d.id, fecha, orden, u.userName, b.nombre as bodega, e.nombre as estado, d.idEstadocomprobante, d.claveNC,
-                (sum(cantidad*valor) + sum(cantidad*valor)*0.13) as total, idEstadoComprobante, t.nombre as tipoBodega
+                totalImpuesto, totalComprobante, idEstadoComprobante, t.nombre as tipoBodega
             FROM tropical.distribucion d
                 INNER JOIN usuario u on u.id=d.idUsuario
                 INNER JOIN bodega b on b.id=d.idBodega
                 INNER JOIN tipoBodega t on t.id=b.idTipoBodega 
-                INNER JOIN estado e on e.id=d.idEstado
-                INNER JOIN productosXDistribucion p on p.idDistribucion=d.id
+                INNER JOIN estado e on e.id=d.idEstado                
             WHERE fecha Between :fechaInicial 
             AND :fechaFinal
             AND d.claveNC IS NULL
@@ -415,13 +418,15 @@ class Distribucion{
 
     function Create(){
         try {
-            $sql="INSERT INTO distribucion  (id, idBodega, idUsuario, porcentajeDescuento, porcentajeIva) 
-                VALUES (:id, :idBodega, :idUsuario, :porcentajeDescuento, :porcentajeIva);";
+            $sql="INSERT INTO distribucion  (id, idBodega, idUsuario, porcentajeDescuento, porcentajeIva, totalImpuesto, totalComprobante) 
+                VALUES (:id, :idBodega, :idUsuario, :porcentajeDescuento, :porcentajeIva, :totalImpuesto, :totalComprobante);";
             $param= array(':id'=>$this->id ,
                 ':idBodega'=>$this->idBodega, 
                 ':idUsuario'=>$_SESSION['userSession']->id,
                 ':porcentajeDescuento'=>$this->porcentajeDescuento,
                 ':porcentajeIva'=>$this->porcentajeIva,
+                ':totalImpuesto'=>$this->totalImpuesto,
+                ':totalComprobante'=>$this->totalComprobante
             );
             $data = DATA::Ejecutar($sql,$param,false);
             if($data)
@@ -464,7 +469,7 @@ class Distribucion{
         }
     }
 
-    function Aceptar(){
+    function Aceptar($comprobante= false){
         try {
             $created=true;
             if(!isset($this->orden))
@@ -475,13 +480,63 @@ class Distribucion{
                      $sql="UPDATE distribucion
                      SET idEstado=1, fechaAceptacion= NOW()
                      WHERE id=:id";
-                 $param= array(':id'=> $this->id);
-                 $data = DATA::Ejecutar($sql,$param,false);
-                 if(!$data)
-                     $created= false;
+                    $param= array(':id'=> $this->id);
+                    $data = DATA::Ejecutar($sql,$param,false);
+                    if(!$data){
+                        $created= false;
+                    }
+                    else {
+                        $created= true;
+                        // acepta MR.
+                        if($comprobante){
+                            $this->Read();
+                            $mr = new MensajeReceptor();                    
+                            $mr->mensaje = 1;
+                            $mr->detalle = 'Aceptacion por traslado';
+                            $mr->clave = $this->clave;          
+                            $mr->consecutivoFE =    $this->consecutivoFE;
+                            $mr->fechaEmision =     $this->fechaEmision;
+                            $mr->totalComprobante = $this->totalComprobante; //$this->total = number_format((float)$this->total,5,'.','' );  // totalComprobante;
+                            $mr->totalImpuesto =   $this->totalImpuesto; //number_format((float)($mr->totalComprobante *  1 / $this->porcentajeIva), 5, '.', '');
+                            // emisor del comprobante = proveedor (Central).
+                            $central = new Bodega();
+                            $central->readCentral();
+                            $emisor = new ClienteFE();
+                            $emisor->idBodega = $central->id;
+                            $emisor->read();
+                            $mr->idEmisor = $emisor->idBodega;
+                            $mr->idTipoIdentificacionEmisor = $emisor->idTipoIdentificacion;
+                            $mr->identificacionEmisor = $emisor->identificacion;
+                            // receptor del comprobante = bodega registrada en el sistema.                        
+                            $mr->idReceptor = $_SESSION['userSession']->idBodega;
+                            $bodega = new ClienteFE();
+                            $bodega->id = $_SESSION['userSession']->idBodega;
+                            $bodega->read();
+                            $mr->identificacionReceptor = $bodega->identificacion;
+                            $mr->idTipoIdentificacionReceptor = $bodega->idTipoIdentificacion;
+                            //
+                            $mr->datosReceptor = $bodega; // receptor es la entidad que compra.
+                            // busca el xml en bd.
+                            $sql="SELECT xml 
+                                from historicoComprobante
+                                WHERE idFactura = :idFactura and xml is not null and idEstadoComprobante = 3
+                                LIMIT 1";
+                            $param= array(':idFactura'=> $this->id);
+                            $data = DATA::Ejecutar($sql,$param);
+                            if($data){
+                                $mr->xml = $data[0]['xml'];
+                                $mr->aceptar();
+                            }
+                            // else {
+                            //     // el xml de acuse no existe o no fue ACEPTADO.
+
+                            // }
+                            //
+                        }                       
+                    }
                 }
-                else $created= false;
             }
+
             if($created)
                 return true;
             else throw new Exception('Error al calcular SALDOS Y PROMEDIOS, debe realizar el cálculo manualmente.', 666);
