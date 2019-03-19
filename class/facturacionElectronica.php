@@ -74,7 +74,6 @@ class FacturacionElectronica{
         }
     }
 
-
     public static function iniciar($t){
         try{
             //date_default_timezone_set('America/Costa_Rica');
@@ -1135,11 +1134,12 @@ class FacturacionElectronica{
                 }
                 else {
                     // clave inválida, no existe en ATV.
-                    Factura::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 5);
+                    if(!self::$distr)
+                        Factura::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 5);
+                    else Distribucion::updateIdEstadoComprobante(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
                     historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 5, 'La transacción no fue enviada a los sistemas de ATV.');
                     throw new Exception('Documento no registrado en ATV: '.$server_output, ERROR_CONSULTA_NO_VALID);                    
-                }
-                
+                }                
             }
             $respuestaXml='';
             foreach($sArray->resp as $key=> $r){
@@ -1151,7 +1151,9 @@ class FacturacionElectronica{
             // si el estado es procesando debe consultar de nuevo.
             if($estadoTransaccion=='procesando'){
                 historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 2, $estadoTransaccion );
-                Factura::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 2);
+                if(!self::$distr)
+                    Factura::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 2);
+                else Distribucion::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 2);
                 //self::APIConsultaComprobante();
             }
             else if($estadoTransaccion=='aceptado'){
@@ -1174,7 +1176,9 @@ class FacturacionElectronica{
                 if ($resp400){
                     // ya existe en base de datos de MH. estado 7
                     error_log("[WARNING] El documento (". self::$transaccion->clave .") Ya fue recibido anteriormente" );
-                    Factura::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 4);
+                    if(!self::$distr)
+                        Factura::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 4);
+                    else Distribucion::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 4);
                     historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 4, "[WARNING]". $fxml->DetalleMensaje, $xml);
                     return true;
                 }
@@ -1188,7 +1192,9 @@ class FacturacionElectronica{
                         $errorFirma=4; // Rechazo
                     error_log("[ERROR] El documento (". self::$transaccion->clave .")  La firma del comprobante electrónico no es válida (".$errorFirma.")." );
                     historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, $errorFirma, '['.$estadoTransaccion.'] '.$fxml->DetalleMensaje, $xml);
-                    Factura::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, $errorFirma);
+                    if(!self::$distr)
+                        Factura::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, $errorFirma);
+                    else Distribucion::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, $errorFirma);
                 }
                 else {
                     error_log("[ERROR] El documento (". self::$transaccion->clave .") Fue rechazado, ver historico. " .  $fxml->DetalleMensaje );
@@ -1201,13 +1207,17 @@ class FacturacionElectronica{
             else if($estadoTransaccion==" no ha sido recibido.\r"){
                 error_log("[ERROR] El documento (". self::$transaccion->clave .") No ha sido Recibido en ATV. ");
                 historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 1, '['.$estadoTransaccion.'] '. $estadoTransaccion);
-                Factura::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 1);
+                if(!self::$distr)
+                    Factura::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 1);
+                else Distribucion::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 1);
             }
             else {
                 // OTROS 5. hay un error en la respuesta de consulta.
                 error_log("[ERROR] El documento (". self::$transaccion->clave .") ". $estadoTransaccion);
                 historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 5, '['.$estadoTransaccion.'] '. $estadoTransaccion);
-                Factura::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 5);
+                if(!self::$distr)
+                    Factura::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 5);
+                else Distribucion::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 5);
             }
             error_log("[INFO] API CONSULTA, estado de la transaccion(".self::$transaccion->id."): ". $estadoTransaccion);
             curl_close($ch);

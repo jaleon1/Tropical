@@ -350,7 +350,7 @@ class Distribucion{
     function Read(){
         try {
             $sql='SELECT d.id, d.fecha, d.orden, clave, d.consecutivoFE, d.fechaEmision, d.idUsuario, d.idBodega, b.nombre as bodega, 
-                d.porcentajeDescuento, d.porcentajeIva,  d.totalImpuesto, d.totalComprobante                
+                d.porcentajeDescuento, d.porcentajeIva,  d.totalImpuesto, d.totalComprobante, d.idSituacionComprobante, d.idDocumento
                 FROM distribucion d
                 INNER JOIN bodega b on b.id=d.idBodega
                 where d.id=:id';
@@ -370,6 +370,8 @@ class Distribucion{
                 $this->porcentajeIva = $data[0]['porcentajeIva'];
                 $this->totalComprobante = $data[0]['totalComprobante'];
                 $this->totalImpuesto = $data[0]['totalImpuesto'];
+                $this->idSituacionComprobante = $data[0]['idSituacionComprobante'];
+                $this->idDocumento = $data[0]['idDocumento'];
                 // productos x distribucion.
                 $this->lista= ProductosXDistribucion::Read($this->id);
                 //
@@ -763,6 +765,58 @@ class Distribucion{
         catch(Exception $e) {
             error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             // debe notificar que no se esta actualizando el historico de comprobantes.
+        }
+    }
+
+    public function contingencia(){
+        try {
+            // idDocumento 08 = Comprobante emitido en contingencia.
+            // SituacionComprobante 02 = Envío en Contingencia
+            // Estado de Comprobante 01 = Sin enviar.
+            $sql="UPDATE distribucion
+                SET idSituacionComprobante=:idSituacionComprobante , idDocumento=:idDocumento, idEstadoComprobante=:idEstadoComprobante
+                WHERE id=:id";
+            $param= array(':id'=>$this->id, ':idSituacionComprobante'=>2 , ':idDocumento'=>8, ':idEstadoComprobante'=>1);
+            $data = DATA::Ejecutar($sql,$param, false);
+            if($data){
+                // lee la transaccion completa y re envia
+                //error_log("[INFO] Contingencia Entidad (". $this->idEntidad .") Transaccion (".$this->consecutivo.")");
+                $this->enviarDocumentoElectronico();
+                return true;
+            }
+            else throw new Exception('Error al actualizar la situación del distribucion - comprobante en Contingencia.', 45656);
+        }     
+        catch(Exception $e) {
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }
+    }
+
+    function enviarDocumentoElectronico(){
+        try {
+            // consulta datos de factura en bd.
+            $this->Read();
+            // receptor - Bodega externa.
+            $receptor = new ClienteFE();
+            $receptor->idBodega = $this->idBodega;
+            $this->datosReceptor = $receptor->read();
+            // emisor - Central.
+            $central = new Bodega();
+            $central->readCentral();
+            $entidad = new ClienteFE();
+            $entidad->idBodega = $central->id;
+            $this->datosEntidad = $entidad->read();
+            // envía la factura
+            $this->consecutivo= $this->orden;
+            FacturacionElectronica::$distr= true;
+            FacturacionElectronica::iniciar($this);
+        }
+        catch(Exception $e){
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
         }
     }
 }

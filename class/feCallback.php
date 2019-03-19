@@ -65,7 +65,7 @@
         $dataFirma= DATA::Ejecutar($sql);
         error_log("[INFO] Total de transacciones Firma Invalida: ". count($dataFirma));
         foreach ($dataFirma as $key => $transaccion){
-            error_log("[INFO] Firma Invalida Entidad (". $transaccion['entidad'] .") Transaccion (".$transaccion['consecutivo'].")");
+            error_log("[INFO] Firma Invalida Bodega (". $transaccion['bodega'] .") Transaccion (".$transaccion['consecutivo'].")");
             $factura = new Factura();
             $factura->id = $transaccion['id'];
             $factura = $factura->Read();
@@ -179,7 +179,101 @@
             FacturacionElectronica::APIConsultaComprobante($factura);
             error_log("[INFO] Finaliza Consulta MR");
         }
-        // Distribuciones.
+        // ******************************************************************************************* /
+        // ******************************************************************************************* /
+        // ******************************************************************************************* /
+        // ************************************ Distribucion *****************************************
+        // ******************************************************************************************* /
+        // ******************************************************************************************* /
+        // ******************************************************************************************* /
+        // enviar en contingencia DISTRIBUCION
+        // Documentos 1-4-8.
+        // datos de bodega central.
+        $central = new Bodega();
+        $central->readCentral();
+        $entidad = new ClienteFE();
+        $entidad->idBodega = $central->id;
+        $emisorCentral = $entidad->read();
+        //
+        error_log("**************************************************************************");
+        error_log("**************************************************************************");
+        error_log("     [INFO] Iniciando Ejecución AUTOMATICA DE DISTRIBUCION     ");
+        error_log("**************************************************************************");
+        error_log("**************************************************************************");
+        $sql="SELECT d.id, b.nombre as bodega, orden
+            from distribucion d inner join bodega b on b.id = d.idBodega
+            WHERE  d.idEstadoComprobante = 5
+            ORDER BY orden asc";
+        $data = DATA::Ejecutar($sql);
+        error_log("[INFO] Total de Distribuciones en Contingencia: ". count($data));
+        foreach ($data as $key => $transaccion){
+            error_log("[INFO] Distribucion - Contingencia Bodega (". $transaccion['bodega'] .") Orden (".$transaccion['orden'].")");
+            $distr = new Distribucion();
+            $distr->id = $transaccion['id'];
+            $distr->contingencia();         
+        }
+        error_log("[INFO] Finaliza Contingencia Masiva de Distribucion - Comprobantes"); 
+        // distribucion timedout - Duplicadas
+        // Documentos 1-4-8.
+        error_log("**************************************************************************");
+        error_log("**************************************************************************");
+        error_log("   [INFO] Iniciando Consulta Distribucion - TimedOut | Duplicadas         ");
+        error_log("**************************************************************************");
+        error_log("**************************************************************************");
+        $sql='SELECT id
+            from distribucion d
+            where idEstadoComprobante = 6 or f.idEstadoComprobante = 7
+            order by idBodega';
+        $data= DATA::Ejecutar($sql);
+        foreach ($data as $key => $transaccion){
+            error_log("[INFO] Iniciando Consulta Distribucion - TimedOut | Duplicadas");
+            $distr = new Distribucion();
+            $distr->id = $transaccion['id'];
+            $distr = $distr->Read();
+            // emisor Central
+            $distr->datosEntidad = $emisorCentral;
+            $distr->idEmisor = $central->id;
+            // receptor bodega externa
+            $receptor = new ClienteFE();
+            $receptor->idBodega = $distr->idBodega; // idBodega = bodega externa.
+            $distr->datosReceptor = $receptor->read();
+            // idDocumento.
+            // $distr->idDocumento = 1;
+            FacturacionElectronica::$distr= true;
+            FacturacionElectronica::APIConsultaComprobante($distr);
+            error_log("[INFO] Finaliza Consulta de Disctribucion - Comprobantes - TimedOut | Duplicadas");
+        }
+        // Distribucion firma invalida
+        // Documentos 1-4-8.
+        error_log("**************************************************************************");
+        error_log("**************************************************************************");
+        error_log("          [INFO] Iniciando Consulta Distribucion - Firma Invalida         ");
+        error_log("**************************************************************************");
+        error_log("**************************************************************************");
+        $sql='SELECT d.id, b.nombre as bodega, orden
+            from distribucion d inner join bodega b on b.id = d.idBodega
+            where d.idEstadoComprobante = 8 or d.idEstadoComprobante = 9 or d.idEstadoComprobante = 10 
+            order by d.idBodega';
+        $dataFirma= DATA::Ejecutar($sql);
+        error_log("[INFO] Total de distribucion -  Firma Invalida: ". count($dataFirma));
+        foreach ($dataFirma as $key => $transaccion){
+            error_log("[INFO] Firma Invalida Bodega (". $transaccion['bodega'] .") Transaccion (".$transaccion['orden'].")");
+            $distr = new Distribucion();
+            $distr->id = $transaccion['id'];
+            $distr = $distr->Read();
+            // emisor Central
+            $distr->datosEntidad = $emisorCentral;
+            $distr->idEmisor = $central->id;
+            // receptor bodega externa
+            $receptor = new ClienteFE();
+            $receptor->idBodega = $distr->idBodega; // idBodega = bodega externa.
+            $distr->datosReceptor = $receptor->read();
+            // idDocumento.
+            // $distr->idDocumento = 1;
+            FacturacionElectronica::$distr= true;
+            FacturacionElectronica::APIConsultaComprobante($distr); // debe envíar email.
+        }
+        error_log("[INFO] Finaliza Consulta de Distribucion - Comprobantes - Firma Invalida");
         error_log("**************************************************************************");
         error_log("**************************************************************************");
         error_log("              [INFO] Iniciando Consulta FE - Distribucion                 ");
@@ -195,13 +289,8 @@
             $distr = new Distribucion();
             $distr->id = $transaccion['id'];
             $distr = $distr->Read();
-            //
-            $central = new Bodega();
-            $central->readCentral();
-            // emisor - Central.
-            $entidad = new ClienteFE();
-            $entidad->idBodega = $central->id;
-            $distr->datosEntidad = $entidad->read();
+            // emisor - Central.         
+            $distr->datosEntidad = $emisorCentral;
             $distr->idEmisor = $central->id;
             // receptor
             $receptor = new ClienteFE();
@@ -210,7 +299,7 @@
             // idDocumento.
             $distr->idDocumento = 1;
             FacturacionElectronica::$distr= true;
-            facturacionElectronica::APIConsultaComprobante($distr);
+            facturacionElectronica::APIConsultaComprobante($distr); // debe envíar email.
             error_log("[INFO] Finaliza Consulta de Distribucion");
         }
         error_log("**************************************************************************");
