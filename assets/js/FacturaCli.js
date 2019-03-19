@@ -141,9 +141,6 @@ $(document).ready(function () {
         var modalContent = `<div class="modal-dialog modal-lg">
         <div class="modal-content modal-factura">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">
-                    <span aria-hidden="true">×</span>
-                </button>
                 <h4 class="modal-title" id="myModalLabel">Facturar</h4>
             </div>
             <div class="modal-body">
@@ -532,7 +529,7 @@ function facCash() {
                     </div>
     
                     <div class="row">
-                        <input id="txt_pagoCash" class="input-lg valPago" type="number" placeholder="Ingrese Monto en Efectivo"
+                        <input id="txt_pagoCash" class="input-lg valPago input_pago" type="number" placeholder="Ingrese Monto en Efectivo"
                             required="" minlength="5" autofocus="">
                     </div>
                     <div class="row">
@@ -592,7 +589,7 @@ function facCard() {
                     </div>
 
                     <div class="row">
-                        <input id="txt_pagoCard" class="input-lg valRef" type="text" placeholder="Ingrese referencia"
+                        <input id="txt_pagoCard" class="input-lg valRef input_pago" type="text" placeholder="Ingrese referencia"
                             required="" minlength="5" autofocus="">
                     </div>
                     <div class="row">

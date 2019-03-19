@@ -56,12 +56,36 @@ class MensajeReceptor {
     showError(e) {
         //$(".modal").css({ display: "none" });  
         var data = JSON.parse(e.responseText);
+        session.in(data);
         swal({
             type: 'error',
             title: 'Oops...',
             text: 'Algo no está bien (' + data.code + '): ' + data.msg,
-            footer: '<a href>Contacte a Soporte Técnico</a>',
-        })
+            // // footer: '<a href>Contacte a Soporte Técnico</a>',
+        });
+    };
+
+    drawRespuesta(e) {
+        var tRespuesta = $('#tRespuesta').DataTable({
+            data: e,
+            destroy: true,
+            "searching": false,
+            "paging": false,
+            "info": false,
+            "ordering": false,
+            // "retrieve": true,
+            "order": [[0, "desc"]],
+            columns: [
+                {
+                    title: "CLAVE",
+                    data: "clave"
+                },
+                {
+                    title: "ESTADO",
+                    data: "estado"
+                }
+            ]
+        });
     };
 
     Init() {
@@ -100,24 +124,37 @@ class MensajeReceptor {
                     // mr.certificado= dz.files[0].name;
                 });
                 this.on("complete", function (file) {
-                    if (file.xhr.response != 'UPLOADED') {
-                        swal({
-                            type: 'error',
-                            title: 'Oops...',
-                            text: 'Ha ocurrido un error al subir los xml.',
-                            footer: '<a href>Contacte a Soporte Técnico</a>',
-                        });
-                        $(file.previewElement).addClass('dz-error-message');
-                        $('#filelist').html('');
-                        // mr.certificado= null;
-                    } else mr.showInfo();
+                    // estado de los envios.
+                    var data= JSON.parse(file.xhr.response);
+                    mr.drawRespuesta(data);                    
+                    $('#modalRespuesta').show();      
+                    return true;
+                    //mr.showInfo();   <option value=${d.id} ${n == 0 ? `selected` : ``}> ${d.value}</option>
+                    // if (file.xhr.response != 'UPLOADED') {
+                    //     //JSON.parse(file.xhr.response);
+                    //     swal({
+                    //         type: 'error',
+                    //         title: 'Oops...',
+                    //         text: 'Ha ocurrido un error al subir los xml.',
+                    //         // // footer: '<a href>Contacte a Soporte Técnico</a>',
+                    //     });
+                    //     $(file.previewElement).addClass('dz-error-message');
+                    //     $('#filelist').html('');
+                    //     // mr.certificado= null;
+                    // } else {
+                    //     // var data= JSON.parse(file.xhr.response)
+                    //     // sesion.in(data);
+                    //     mr.showInfo();
+                    // }
                 });
                 this.on("error", function (file) {
+                    var data= JSON.parse(file.xhr.response);
+                    sesion.in(data);
                     swal({
                         type: 'error',
                         title: 'Oops...',
                         text: 'Archivo no válido.',
-                        footer: '<a href>Contacte a Soporte Técnico</a>',
+                        // // footer: '<a href>Contacte a Soporte Técnico</a>',
                     })
                     this.removeFile(file);
                 });
@@ -126,7 +163,7 @@ class MensajeReceptor {
                         type: 'error',
                         title: 'Oops...',
                         text: 'Certificado cancelado',
-                        footer: '<a href>Contacte a Soporte Técnico</a>',
+                        // // footer: '<a href>Contacte a Soporte Técnico</a>',
                     })
                 });
             },

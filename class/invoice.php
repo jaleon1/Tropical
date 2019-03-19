@@ -17,7 +17,7 @@ class Invoice{
             $sql='SELECT s.email_name, s.email_subject, s.email_SMTPSecure, s.email_Host, s.email_SMTPAuth, s.email_user, s.email_password, s.email_ssl, 
             s.email_smtpout, s.email_port, s.email_body, s.email_logo, e.numTelefono, e.identificacion
             FROM smtpXEntidad s
-            INNER JOIN entidad e ON s.idEntidad = e.id
+            INNER JOIN bodega e ON s.idEntidad = e.id
             WHERE idEntidad=:idEntidad
             AND activa = "1";';
 

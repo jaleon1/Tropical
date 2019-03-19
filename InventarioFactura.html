@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
     <!-- check User session -->
@@ -264,7 +264,7 @@
     <script src="assets/js/jquery.inputmask/jquery.inputmask.bundle.min.js"></script>
     <!-- JS Scripts -->
     <script src="assets/js/Producto.min.js"></script>
-    <script src="assets/js/InventarioFacturas.js"></script>
+    <script src="assets/js/InventarioFacturas.min.js"></script>
     <!-- Sweet Alert -->
     <script src="assets/js/sweetalert2.min.js"></script>
     <!-- Datatables -->
@@ -319,6 +319,8 @@
 
         $("#tb_facturas").append("<tfoot><tr><th style='visibility:hidden'></th><th></th><th></th><th></th><th></th><th></th><th style='visibility:hidden'></th><th style='visibility:hidden'></th><th></th></tr></tfoot>");
 
+
+
         $('#tb_facturas tbody').on('click', '.btnCancelaFactura', function () {
             var data = inventarioFacturas.tb_facturas.row($(this).parents('tr')).data();
             swal({
@@ -362,9 +364,6 @@
             })
         });
 
-
-
-
         $('#tb_facturas tbody').on('click', '.btnNC_CreateFact_Ref', function () {
             var data = inventarioFacturas.tb_facturas.row($(this).parents('tr')).data();
             swal({
@@ -396,24 +395,6 @@
                                 showConfirmButton: false,
                                 timer: 2000
                             });
-                            // $.ajax({
-                            //     type: "POST",
-                            //     url: "class/Factura.php",
-                            //     data: {
-                            //         action: "reGenerarFactura",
-                            //         id: data['id']
-                            //     }
-                            // })
-                            //     .done(function (e) {
-                            //         swal({
-                            //             type: 'success',
-                            //             title: 'Nueva Factura Creada!',
-                            //             showConfirmButton: false,
-                            //             timer: 2000
-                            //         });
-                            //         CargaListaFactura();
-                            //     })
-                            //     .fail(function (e) { });
                         })
                         .fail(function (e) { });
                 }
@@ -425,9 +406,6 @@
                     })
             })
         });
-
-
-
 
         $('#tb_facturas tbody').on('click', '.btnEnviarFactura', function () {
             var data = inventarioFacturas.tb_facturas.row($(this).parents('tr')).data();

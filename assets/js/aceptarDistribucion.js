@@ -138,7 +138,7 @@ class Distribucion {
                 }
             })
             .done(function (e) {
-                if (e == 'null' || e == '') {
+                if (e == 'null' || e == '' ) {
                     swal({
                         
                         type: 'warning',
@@ -216,6 +216,16 @@ class Distribucion {
         this.CleanCtls();
         // carga objeto.
         var data = JSON.parse(e);
+        if(data==null){
+            swal({
+                type: 'warning',
+                title: 'Orden de Traslado',
+                text: 'La orden no existe o ya fue ACEPTADA',
+                showConfirmButton: false,
+                timer: 3000
+            });
+            return;
+        }
         distr = new Distribucion(data.id, data.orden, data.fecha, data.idUsuario, data.idBodega, data.porcentajeDescuento, data.porcentajeIva, data.lista);
         // datos
         $('#orden').val(distr.orden);

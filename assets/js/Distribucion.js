@@ -1,6 +1,6 @@
 class Distribucion {
     // Constructor
-    constructor(id, orden, fecha, idUsuario, idBodega, porcentajeDescuento, porcentajeIva, lista, bodega, fechaInicial, fechaFinal) {
+    constructor(id, orden, fecha, idUsuario, idBodega, porcentajeDescuento, porcentajeIva, lista, bodega, fechaInicial, fechaFinal, totalImpuesto, totalComprobante) {
         this.id = id || null;
         this.orden = orden || '';
         this.fecha = fecha || '';
@@ -9,6 +9,8 @@ class Distribucion {
         this.bodega = bodega || null;
         this.porcentajeDescuento = porcentajeDescuento || 0;
         this.porcentajeIva = porcentajeIva || 0;
+        this.totalImpuesto = totalImpuesto || 0;
+        this.totalComprobante = totalComprobante || 0;
         this.lista = lista || [];
         this.fechaInicial = fechaInicial || "";
         this.fechaFinal = fechaFinal || "";
@@ -325,7 +327,9 @@ class Distribucion {
     ShowItemData(e) {
         var data = JSON.parse(e);
         distr = new Distribucion(data.id, data.orden, data.fecha, data.idUsuario, data.idBodega, data.porcentajeDescuento, data.porcentajeIva, data.lista, data.bodega);
-        distr.total= data.total;
+        distr.totalComprobante= data.totalComprobante;
+        distr.totalImpuesto= data.totalImpuesto;
+        //
         $("#detalleDistribucion").empty();
         var detalleDistribucion =
             `<button type="button" class="close" data-dismiss="modal">
@@ -345,7 +349,7 @@ class Distribucion {
             </div>
             <div class="row">                
                 <div class="col-md-6 col-sm-6 col-xs-6">
-                    <p>TOTAL: <label id=total>${'¢' + parseFloat(distr.total).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ".")}</label></p>
+                    <p>TOTAL: <label id=total>${'¢' + parseFloat(distr.totalComprobante).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ".")}</label></p>
                 </div>
             </div>`;
         $("#detalleDistribucion").append(detalleDistribucion);
@@ -701,8 +705,8 @@ class Distribucion {
             $("#desc_val")[0].textContent = "¢" + parseFloat(distr.descuento).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
             distr.iva = subtotal * (parseFloat(distr.porcentajeIva) / 100);
             $("#iv_val")[0].textContent = "¢" + parseFloat(distr.iva).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-            distr.total = subtotal - distr.descuento + distr.iva;
-            $("#total")[0].textContent = "¢" + parseFloat(distr.total).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            distr.totalComprobante = subtotal - distr.descuento + distr.iva;
+            $("#total")[0].textContent = "¢" + parseFloat(distr.totalComprobante).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         }
     };
 
@@ -840,84 +844,84 @@ class Distribucion {
                 },
                 {
                     title: "TOTAL",
-                    data: "total",
+                    data: "totalComprobante",
                     className: "text-right",
                     // className: "total",
                     mRender: function (e) {
                         return '¢' + parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ".")
                     }
                 },
-                // {
-                //     title: "ESTADO",
-                //     data: "idEstadoComprobante",
-                //     render: function ( data, type, row, meta ) {
-                //         if(row['tipoBodega']!='Interna')
-                //             switch (data) {
-                //                 case "1":
-                //                     return '<i class="fa fa-paper-plane" aria-hidden="true" style="color:red"> Sin Enviar</i>';
-                //                     break;
-                //                 case "2":
-                //                     return '<i class="fa fa-paper-plane" aria-hidden="true" style="color:green"> Enviado</i>';
-                //                     break;
-                //                 case "3":
-                //                     return '<i class="fa fa-check-square-o" aria-hidden="true" style="color:green"> Aceptado</i>';
-                //                     break;
-                //                 case "4":
-                //                     return '<i class="fa fa-times-circle" aria-hidden="true" style="color:red"> Rechazado</i>';
-                //                     break;
-                //                 case "5":
-                //                     return '<i class="fa fa-exclamation-triangle" aria-hidden="true" style="color:#FF6F00"> Otro</i>';
-                //                     break;
-                //                 case "99":
-                //                     return '<i class="fa fa-exclamation-triangle" aria-hidden="true" style="color:green"> Reportado</i>';
-                //                     break;
-                //                 default:
-                //                     return 'Desconocido';
-                //                     break;
-                //         }
-                //         else
-                //             return '<i class="fa fa-check-square-o" aria-hidden="true" style="color:green"> Aceptado</i>';
+                {
+                    title: "ESTADO",
+                    data: "idEstadoComprobante",
+                    render: function ( data, type, row, meta ) {
+                        if(row['tipoBodega']!='Interna')
+                            switch (data) {
+                                case "1":
+                                    return '<i class="fa fa-paper-plane" aria-hidden="true" style="color:red"> Sin Enviar</i>';
+                                    break;
+                                case "2":
+                                    return '<i class="fa fa-paper-plane" aria-hidden="true" style="color:green"> Enviado</i>';
+                                    break;
+                                case "3":
+                                    return '<i class="fa fa-check-square-o" aria-hidden="true" style="color:green"> Aceptado</i>';
+                                    break;
+                                case "4":
+                                    return '<i class="fa fa-times-circle" aria-hidden="true" style="color:red"> Rechazado</i>';
+                                    break;
+                                case "5":
+                                    return '<i class="fa fa-exclamation-triangle" aria-hidden="true" style="color:#FF6F00"> Otro</i>';
+                                    break;
+                                case "99":
+                                    return '<i class="fa fa-exclamation-triangle" aria-hidden="true" style="color:green"> Reportado</i>';
+                                    break;
+                                default:
+                                    return 'Desconocido';
+                                    break;
+                        }
+                        else
+                            return '<i class="fa fa-check-square-o" aria-hidden="true" style="color:green"> Interna</i>';
                         
-                //     }
-                // },
+                    }
+                },
                 {
                     title: "TIPO BODEGA",
                     data: "tipoBodega"
                 }
-                // ,
-                // {
-                //     title: "ACCION",
-                //     className: "buttons",
-                //     data: "claveNC",
-                //     render: function ( data, type, row, meta ) {
-                //         if(row['tipoBodega']!='Interna')
-                //             if(data==null)
-                //                 switch (row['idEstadoComprobante']) {
-                //                     case "1":
-                //                         return '<button class=btnEnviarFactura>Enviar</button>';
-                //                         break;
-                //                     case "2":
-                //                         return '<button class=btnConsultafactura>Consultar</button>';
-                //                         break;
-                //                     case "3":
-                //                         return '<button class=btnCancelaFactura>Cancelar Factura</button>';
-                //                         break;
-                //                     case "4":
-                //                         return '<button class=btnCancelaFactura>Cancelar Factura</button>';
-                //                         break;
-                //                     case "5":
-                //                         return '<button class=btnReenviarFactura>Reenviar</button><button class=btnSoporte>Soporte</button>';
-                //                         break;
-                //                     default:
-                //                         return '<button>Soporte</button>';
-                //                         break;
-                //                 }    
-                //                 else
-                //                     return '<i class="fa fa-check-square-o" aria-hidden="true" style="color:green">Factura Cancelada!</i>';
-                //         else
-                //             return '<button class=btnCancelaFactura>Cancelar Factura</button>'
-                //     }
-                // }
+                ,
+                {
+                    title: "ACCION",
+                    className: "buttons",
+                    data: "claveNC",
+                    render: function ( data, type, row, meta ) {
+                        if(row['tipoBodega']!='Interna')
+                            if(data==null)
+                                switch (row['idEstadoComprobante']) {
+                                    case "1":
+                                        return '<button class=btnEnviarFactura>&nbsp Enviar</button>'; // Sin enviar // No se envio en el momento, no salio del sistema local No llego a MH //Envio en Contingencia
+                                        break;
+                                    case "2":
+                                        return '<i class="fa fa-check-square-o">&nbsp Enviada</i>'; // Enviado //Quitar Boton y que diga enviado
+                                        break;
+                                    case "3":
+                                        return '<button class=btnCancelaFactura>&nbsp Cancelar Factura</button>'; // Aceptado  //Solo cancelar // NC 
+                                        break;
+                                    case "4":
+                                        return '<button class=btnNC_CreateFact_Ref>&nbsp Cancelar & Reenviar</button>'; // Rechazado //NC //Nueva con referencia Confeccion de Factura  // BTNCancelar y enviar
+                                        break;
+                                    case "5":
+                                        return '<i class="fa fa-cloud-upload" aria-hidden="true">&nbsp Enviar Contingencia</i>'; // Error (Otros) //Envio en Contingencia
+                                        break;
+                                    default:
+                                        return '<button>Soporte</button>';
+                                        break;
+                                }     
+                                else
+                                    return '<i class="fa fa-check-square-o" aria-hidden="true" style="color:green">Factura Cancelada!</i>';
+                        else
+                            return '<i class="fa fa-check-square-o" aria-hidden="true" style="color:green"> Interna</i>'
+                    }
+                }
             ]
         });
     };
