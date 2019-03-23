@@ -1,6 +1,6 @@
 class Distribucion {
     // Constructor
-    constructor(id, orden, fecha, idUsuario, idBodega, porcentajeDescuento, porcentajeIva, lista, bodega) {
+    constructor(id, orden, fecha, idUsuario, idBodega, porcentajeDescuento, porcentajeIva, detalleFactura, bodega) {
         this.id = id || null;
         this.orden = orden || '';
         this.fecha = fecha || '';
@@ -9,7 +9,7 @@ class Distribucion {
         this.bodega = bodega || null;
         this.porcentajeDescuento = porcentajeDescuento || 0;
         this.porcentajeIva = porcentajeIva || 0;
-        this.lista = lista || [];
+        this.detalleFactura = detalleFactura || [];
     }
 
     get tUpdate() {
@@ -65,14 +65,14 @@ class Distribucion {
         distr.porcentajeDescuento = $("#desc_100").val();
         distr.porcentajeIva = $("#iv_100").val();
         //
-        distr.lista = [];
+        distr.detalleFactura = [];
         $('#tDistribucion tbody tr').each(function (i, item) {
             var objlista = new Object();
             objlista.idProducto = $(item).find('td:eq(0)')[0].textContent; // id del item.
             objlista.codigo = $(this).find('td:eq(1)').html();
             objlista.cantidad = $(item).find('td:eq(5) input').val();
             objlista.valor = $(item).find('td:eq(6)').attr('value'); // valor: precio de venta para distribucion bodega externa...
-            distr.lista.push(objlista);
+            distr.detalleFactura.push(objlista);
         });
         $.ajax({
                 type: "POST",
@@ -119,7 +119,7 @@ class Distribucion {
         localStorage.setItem("lsFechaDistribucion", data.fecha);
         localStorage.setItem("lsPorcentajeDescuento", $("#desc_val").text());
         localStorage.setItem("lsPorcentajeIva", $("#iv_val").text());
-        localStorage.setItem("lsListaProducto", JSON.stringify(data.lista));
+        localStorage.setItem("lsListaProducto", JSON.stringify(data.detalleFactura));
         localStorage.setItem("lsUsuarioDistribucion", $("#call_username").text());
         // location.href ="/Tropical/TicketDistribucion.html";
         location.href = "/TicketDistribucion.html";
@@ -160,14 +160,14 @@ class Distribucion {
     Aceptar() {
         $('#btnDistribucion').attr("disabled", "disabled");
         var miAccion = "Aceptar";
-        distr.lista = [];
+        distr.detalleFactura = [];
         $('#tDistribucion tbody tr').each(function (i, item) {
             var objlista = new Object();
             objlista.idProducto = $(item).find('td:eq(0)')[0].textContent;
             objlista.cantidad = $(item).find('td:eq(4) input').val();
             objlista.costo = $(item).find('td:eq(5)').attr('value'); // costo: precio de venta para distrcion bodega externa. 
             objlista.valor = parseFloat(parseInt(objlista.cantidad) * parseFloat(objlista.costo)); // valor. costo*cantidad.
-            distr.lista.push(objlista);
+            distr.detalleFactura.push(objlista);
         });
         $.ajax({
                 type: "POST",
@@ -226,14 +226,14 @@ class Distribucion {
             });
             return;
         }
-        distr = new Distribucion(data.id, data.orden, data.fecha, data.idUsuario, data.idBodega, data.porcentajeDescuento, data.porcentajeIva, data.lista);
+        distr = new Distribucion(data.id, data.orden, data.fecha, data.idUsuario, data.idBodega, data.porcentajeDescuento, data.porcentajeIva, data.detalleFactura);
         // datos
         $('#orden').val(distr.orden);
         $('#fecha').val(distr.fecha);
         bodega.id = distr.idBodega;
         bodega.Read;
         // carga lista.
-        $.each(distr.lista, function (i, item) {
+        $.each(distr.detalleFactura, function (i, item) {
             producto = item;
             distr.AgregaProductoOrden();
         });
@@ -241,7 +241,7 @@ class Distribucion {
 
     ShowItemData(e) {
         var data = JSON.parse(e);
-        distr = new Distribucion(data.id, data.orden, data.fecha, data.idUsuario, data.idBodega, data.porcentajeDescuento, data.porcentajeIva, data.lista, data.bodega);
+        distr = new Distribucion(data.id, data.orden, data.fecha, data.idUsuario, data.idBodega, data.porcentajeDescuento, data.porcentajeIva, data.detalleFactura, data.bodega);
         $("#detalleDistribucion").empty();
         var detalleDistribucion =
             `<button type="button" class="close" data-dismiss="modal">
@@ -268,7 +268,7 @@ class Distribucion {
         // $("#totalDistribucion").append(totalDistribucion);
         // detalle
         this.tb_prdXFact = $('#tb_detalle_distribucion').DataTable({
-            data: distr.lista,
+            data: distr.detalleFactura,
             destroy: true,
             "searching": false,
             "paging": false,
@@ -292,7 +292,7 @@ class Distribucion {
                 },
                 {
                     title: "Precio Venta",
-                    data: "precioVenta"
+                    data: "precioUnitario"
                 }
                 // ,
                 // {
@@ -435,10 +435,10 @@ class Distribucion {
         // Precio Venta
         $('td:eq(5)', rowNode).attr({
                 id: ("precioVenta" + producto.id),
-                value: producto.precioVenta,
+                value: producto.precioUnitario,
                 align: "right"
             })[0]
-            .textContent = ("¢" + parseFloat(producto.precioVenta).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+            .textContent = ("¢" + parseFloat(producto.precioUnitario).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
         // subtotal
         $('td:eq(6)', rowNode).attr({
             id: ("subtotal" + producto.id),
@@ -492,10 +492,10 @@ class Distribucion {
         // Precio Venta
         $('td:eq(6)', rowNode).attr({
                 id: ("precioVenta" + producto.id),
-                value: producto.precioVenta,
+                value: producto.precioUnitario,
                 align: "right"
             })[0]
-            .textContent = ("¢" + parseFloat(producto.precioVenta).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+            .textContent = ("¢" + parseFloat(producto.precioUnitario).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
         // subtotal
         $('td:eq(7)', rowNode).attr({
             id: ("subtotal" + producto.id),
@@ -526,8 +526,8 @@ class Distribucion {
     setProducto(idp) {
         producto.id = idp;
         producto.cantidad = $(`#cantidad${idp}`).val();
-        producto.precioVenta = parseFloat($(`#precioVenta${idp}`).attr('value'));
-        producto.subtotal = (producto.cantidad * producto.precioVenta).toFixed(10);
+        producto.precioUnitario = parseFloat($(`#precioVenta${idp}`).attr('value'));
+        producto.subtotal = (producto.cantidad * producto.precioUnitario).toFixed(10);
     }
 
     CalcImporte() {
@@ -623,7 +623,7 @@ class Distribucion {
                 },
                 {
                     title: "Precio Venta",
-                    data: "precioVenta"
+                    data: "precioUnitario"
                 },
                 {
                     title: "Subtotal",
@@ -695,7 +695,7 @@ class Distribucion {
                 },
                 {
                     title: "Precio Venta",
-                    data: "precioVenta"
+                    data: "precioUnitario"
                 },
                 {
                     title: "Subtotal",

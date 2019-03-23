@@ -925,8 +925,8 @@ class FacturacionElectronica{
                 case 5:
                 case 6:
                 case 7:
-                $downloadCode= self::$transaccion->datosReceptor->downloadCode;
-                $pinp12= self::$transaccion->datosReceptor->pinp12;
+                    $downloadCode= self::$transaccion->datosReceptor->downloadCode;
+                    $pinp12= self::$transaccion->datosReceptor->pinp12;
                     break;
             }
             $post = [
@@ -1061,7 +1061,7 @@ class FacturacionElectronica{
                     // curl_close($ch);
                     return true;
                 }
-                else {                    
+                else {
                     throw new Exception('Error CRITICO al ENVIAR el comprobante. DEBE COMUNICARSE CON SOPORTE TECNICO, STATUS('.$sArray->resp->Status.'):  '.$sArray->resp->text[17], ERROR_ENVIO_NO_VALID);                    
                 }
             }

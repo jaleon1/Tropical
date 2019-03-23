@@ -159,18 +159,18 @@ class Distribucion{
             }
             //
             // lista.
-            if(isset($obj["lista"] )){
+            if(isset($obj["detalleFactura"] )){
                 require_once("ProductosXDistribucion.php");
                 require_once("productoXFactura.php");
                 //
-                foreach ($obj["lista"] as $itemlist) {
+                foreach ($obj["detalleFactura"] as $itemlist) {
                     // b. Detalle de la mercancía o servicio prestado
                     $item= new ProductosXDistribucion();
                     $item->idDistribucion= $this->id;
                     $item->idProducto= $itemlist['idProducto'];                    
                     $item->cantidad= $itemlist['cantidad'];
                     $item->valor= $itemlist['valor'];
-                    //array_push ($this->lista, $item);                    
+                    //array_push ($this->lista, $item);
                     //$item= new ProductoXFactura();
                     $item->numeroLinea= $itemlist['numeroLinea'];
                     $item->idTipoCodigo= $itemlist['idTipoCodigo']?? 1;
@@ -193,7 +193,6 @@ class Distribucion{
             }
         }
     }
-
 
     public static function cancelaDistribucion($idDistribucion, $razon){
         
@@ -498,10 +497,10 @@ class Distribucion{
     function Aceptar($comprobante= false){
         try {
             $created=true;
-            if(!isset($this->orden))
-                $this->Read();
+            //if(!isset($this->orden))
+            $this->Read();
             foreach ($this->detalleFactura as $item) {
-                if(InventarioInsumoXBodega::entrada($item->idProducto, $this->idBodega, 'Distribución#'.$this->orden, $item->cantidad, $item->precioVenta)){
+                if(InventarioInsumoXBodega::entrada($item->idProducto, $this->idBodega, 'Distribución#'.$this->orden, $item->cantidad, $item->precioUnitario)){
                      // set idEstado = true.
                      $sql="UPDATE distribucion
                      SET idEstado=1, fechaAceptacion= NOW()
@@ -515,7 +514,7 @@ class Distribucion{
                         $created= true;
                         // acepta MR.
                         if($comprobante){
-                            $this->Read();
+                            //$this->Read();
                             $mr = new MensajeReceptor();                    
                             $mr->mensaje = 1;
                             $mr->detalle = 'Aceptacion por traslado';

@@ -10,10 +10,11 @@ class ProductosXDistribucion{
     //
     public static function Read($id){
         try{
-            $sql="SELECT pd.id, pd.idDistribucion, pd.idProducto, numeroLinea, idTipoCodigo, codigo, cantidad, 
-                    idUnidadMedida, unidadMedidaComercial, detalle, precioUnitario, montoTotal, montoDescuento, naturalezaDescuento, 
-                    subTotal, codigoImpuesto, tarifaImpuesto, montoImpuesto, idExoneracionImpuesto, montoTotalLinea
-                FROM productosXDistribucion pd
+            $sql="SELECT pd.id, pd.idDistribucion, pd.idProducto, pd.numeroLinea, pd.idTipoCodigo, pd.codigo, pd.cantidad, 
+                    pd.idUnidadMedida, pd.unidadMedidaComercial, pd.detalle, pd.precioUnitario, pd.montoTotal, pd.montoDescuento, pd.naturalezaDescuento, 
+                    pd.subTotal, pd.codigoImpuesto, pd.tarifaImpuesto, pd.montoImpuesto, pd.idExoneracionImpuesto, pd.montoTotalLinea,
+                    p.nombre, p.descripcion
+                FROM productosXDistribucion pd inner join producto p on p.id = pd.idProducto
                 WHERE pd.idDistribucion= :idDistribucion";
             $param= array(':idDistribucion'=>$id);
             $data = DATA::Ejecutar($sql,$param);            
@@ -42,6 +43,9 @@ class ProductosXDistribucion{
                 $producto->montoImpuesto = $value['montoImpuesto'];
                 $producto->idExoneracionImpuesto = $value['idExoneracionImpuesto'];
                 $producto->montoTotalLinea = $value['montoTotalLinea'];
+                //
+                $producto->nombre = $value['nombre'];
+                $producto->descripcion = $value['descripcion'];
                 array_push ($detalleFactura, $producto);
                 //$i++;
             }
