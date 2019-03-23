@@ -298,6 +298,7 @@
             $distr->datosReceptor = $receptor->read();
             // idDocumento.
             $distr->idDocumento = 1;
+            $distr->consecutivo = $distr->orden;
             FacturacionElectronica::$distr= true;
             facturacionElectronica::APIConsultaComprobante($distr); // debe envíar email.
             error_log("[INFO] Finaliza Consulta de Distribucion");
