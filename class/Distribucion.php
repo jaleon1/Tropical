@@ -455,7 +455,7 @@ class Distribucion{
                         $objFactura = $this->Read();
                         $objFactura->consecutivo= $this->orden;
                         FacturacionElectronica::$distr= true;
-                        FacturacionElectronica::iniciar($objFactura);
+                        //FacturacionElectronica::iniciar($objFactura);
                         // retorna orden autogenerada.
                         return $this;
                     }
