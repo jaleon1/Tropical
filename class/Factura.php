@@ -388,7 +388,7 @@ class Factura{
             $sql='SELECT idBodega, fechaCreacion, consecutivo, clave, consecutivoFE, local, terminal, idCondicionVenta, idSituacionComprobante, idEstadoComprobante, plazoCredito, 
                 idMedioPago, idCodigoMoneda, tipoCambio, totalServGravados, totalServExentos, totalMercanciasGravadas, totalMercanciasExentas, totalGravado, totalExento, fechaEmision, idDocumento, 
                 totalVenta, totalDescuentos, totalVentaneta, totalImpuesto, totalComprobante, idReceptor, idEmisor, idUsuario, idDocumentoNC, claveNC, fechaEmisionNC,
-                    idReferencia, razon, idEstadoNC
+                idReferencia, razon, idEstadoNC
                 from factura
                 where id=:id';
             $param= array(':id'=>$this->id);

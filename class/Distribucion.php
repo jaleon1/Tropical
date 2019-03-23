@@ -178,7 +178,7 @@ class Distribucion{
                     $item->cantidad= $itemlist['cantidad'] ?? 1;
                     $item->idUnidadMedida= $itemlist['idUnidadMedida'] ?? 78;
                     $item->detalle= $itemlist['detalle'];
-                    $item->precioUnitario= $itemlist['precioUnitario'];                    
+                    $item->precioUnitario= $itemlist['precioUnitario'];
                     $item->montoTotal= $itemlist['montoTotal'];
                     $item->montoDescuento= $itemlist['montoDescuento'];
                     $item->naturalezaDescuento= $itemlist['naturalezaDescuento']??'No aplican descuentos'; // en Tropical no se manejan descuentos
@@ -348,7 +348,9 @@ class Distribucion{
     function Read(){
         try {
             $sql='SELECT d.id, d.fecha, d.orden, clave, d.consecutivoFE, d.fechaEmision, d.idUsuario, d.idBodega, b.nombre as bodega, 
-                d.porcentajeDescuento, d.porcentajeIva,  d.totalImpuesto, d.totalComprobante, d.idSituacionComprobante, d.idDocumento, d.idEstadoComprobante
+                d.porcentajeDescuento, d.porcentajeIva,  d.totalImpuesto, d.totalComprobante, d.idSituacionComprobante, d.idDocumento, d.idEstadoComprobante,
+                totalServGravados, totalServExentos, totalMercanciasGravadas, totalMercanciasExentas, totalGravado, totalExento,
+                totalVenta, totalDescuentos, totalVentaneta
                 FROM distribucion d
                 INNER JOIN bodega b on b.id=d.idBodega
                 where d.id=:id';
@@ -371,6 +373,15 @@ class Distribucion{
                 $this->idSituacionComprobante = $data[0]['idSituacionComprobante'];
                 $this->idDocumento = $data[0]['idDocumento'];
                 $this->idEstadoComprobante = $data[0]['idEstadoComprobante'];
+                $this->totalServGravados = $data[0]['totalServGravados'];
+                $this->totalServExentos = $data[0]['totalServExentos'];
+                $this->totalMercanciasGravadas = $data[0]['totalMercanciasGravadas'];
+                $this->totalMercanciasExentas = $data[0]['totalMercanciasExentas'];
+                $this->totalGravado = $data[0]['totalGravado'];
+                $this->totalExento = $data[0]['totalExento'];
+                $this->totalVenta = $data[0]['totalVenta'];
+                $this->totalDescuentos = $data[0]['totalDescuentos'];
+                $this->totalVentaneta = $data[0]['totalVentaneta'];
                 // productos x distribucion.
                 $this->detalleFactura= ProductosXDistribucion::Read($this->id);
                 //
@@ -419,8 +430,10 @@ class Distribucion{
 
     function Create(){
         try {
-            $sql="INSERT INTO distribucion  (id, idBodega, idUsuario, porcentajeDescuento, porcentajeIva, totalImpuesto, totalComprobante, idDocumento, idSituacionComprobante, idEstadoComprobante) 
-                VALUES (:id, :idBodega, :idUsuario, :porcentajeDescuento, :porcentajeIva, :totalImpuesto, :totalComprobante , :idDocumento, :idSituacionComprobante, :idEstadoComprobante);";
+            $sql="INSERT INTO distribucion  (id, idBodega, idUsuario, porcentajeDescuento, porcentajeIva, totalImpuesto, totalComprobante, idDocumento, idSituacionComprobante, idEstadoComprobante,
+                    totalServGravados, totalServExentos, totalMercanciasGravadas, totalMercanciasExentas, totalGravado, totalExento, totalVenta, totalDescuentos, totalVentaneta) 
+                VALUES (:id, :idBodega, :idUsuario, :porcentajeDescuento, :porcentajeIva, :totalImpuesto, :totalComprobante , :idDocumento, :idSituacionComprobante, :idEstadoComprobante,
+                    :totalServGravados, :totalServExentos, :totalMercanciasGravadas, :totalMercanciasExentas, :totalGravado, :totalExento, :totalVenta, :totalDescuentos, :totalVentaneta);";
             $param= array(':id'=>$this->id ,
                 ':idBodega'=>$this->idBodega, 
                 ':idUsuario'=>$_SESSION['userSession']->id,
@@ -430,7 +443,16 @@ class Distribucion{
                 ':totalComprobante'=>$this->totalComprobante,
                 ':idDocumento'=>$this->idDocumento,
                 ':idSituacionComprobante'=>$this->idSituacionComprobante,
-                ':idEstadoComprobante'=>$this->idEstadoComprobante
+                ':idEstadoComprobante'=>$this->idEstadoComprobante,
+                ':totalServGravados'=> $this->totalServGravados,
+                ':totalServExentos'=> $this->totalServExentos,
+                ':totalMercanciasGravadas'=> $this->totalMercanciasGravadas,
+                ':totalMercanciasExentas'=> $this->totalMercanciasExentas,
+                ':totalGravado'=> $this->totalGravado,
+                ':totalExento'=> $this->totalExento,
+                ':totalVenta'=>$this->totalVenta,
+                ':totalDescuentos'=>$this->totalDescuentos,
+                ':totalVentaneta'=>$this->totalVentaneta
             );
             $data = DATA::Ejecutar($sql,$param,false);
             if($data)
@@ -455,7 +477,7 @@ class Distribucion{
                         $objFactura = $this->Read();
                         $objFactura->consecutivo= $this->orden;
                         FacturacionElectronica::$distr= true;
-                        //FacturacionElectronica::iniciar($objFactura);
+                        FacturacionElectronica::iniciar($objFactura);
                         // retorna orden autogenerada.
                         return $this;
                     }
