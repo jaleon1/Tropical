@@ -164,16 +164,14 @@ class Distribucion{
                 require_once("productoXFactura.php");
                 //
                 foreach ($obj["lista"] as $itemlist) {
+                    // b. Detalle de la mercancía o servicio prestado
                     $item= new ProductosXDistribucion();
                     $item->idDistribucion= $this->id;
                     $item->idProducto= $itemlist['idProducto'];                    
                     $item->cantidad= $itemlist['cantidad'];
                     $item->valor= $itemlist['valor'];
-                    array_push ($this->lista, $item);
-                    // b. Detalle de la mercancía o servicio prestado
-                    $item= new ProductoXFactura();
-                    $item->idFactura = $this->id;
-                    //$item->idPrecio= $itemlist['idPrecio'];
+                    //array_push ($this->lista, $item);                    
+                    //$item= new ProductoXFactura();
                     $item->numeroLinea= $itemlist['numeroLinea'];
                     $item->idTipoCodigo= $itemlist['idTipoCodigo']?? 1;
                     $item->codigo= $itemlist['codigo'] ?? 999;
@@ -331,7 +329,7 @@ class Distribucion{
                 $this->totalImpuesto = $data[0]['totalImpuesto'];
                 $this->totalComprobante = $data[0]['totalComprobante'];
                 // productos x distribucion.
-                $this->lista= ProductosXDistribucion::Read($this->id);
+                $this->detalleFactura= ProductosXDistribucion::Read($this->id);
                 //
                 return $this;
             }
@@ -350,7 +348,7 @@ class Distribucion{
     function Read(){
         try {
             $sql='SELECT d.id, d.fecha, d.orden, clave, d.consecutivoFE, d.fechaEmision, d.idUsuario, d.idBodega, b.nombre as bodega, 
-                d.porcentajeDescuento, d.porcentajeIva,  d.totalImpuesto, d.totalComprobante, d.idSituacionComprobante, d.idDocumento
+                d.porcentajeDescuento, d.porcentajeIva,  d.totalImpuesto, d.totalComprobante, d.idSituacionComprobante, d.idDocumento, d.idEstadoComprobante
                 FROM distribucion d
                 INNER JOIN bodega b on b.id=d.idBodega
                 where d.id=:id';
@@ -372,8 +370,9 @@ class Distribucion{
                 $this->totalImpuesto = $data[0]['totalImpuesto'];
                 $this->idSituacionComprobante = $data[0]['idSituacionComprobante'];
                 $this->idDocumento = $data[0]['idDocumento'];
+                $this->idEstadoComprobante = $data[0]['idEstadoComprobante'];
                 // productos x distribucion.
-                $this->lista= ProductosXDistribucion::Read($this->id);
+                $this->detalleFactura= ProductosXDistribucion::Read($this->id);
                 //
                 return $this;
             }
@@ -420,21 +419,24 @@ class Distribucion{
 
     function Create(){
         try {
-            $sql="INSERT INTO distribucion  (id, idBodega, idUsuario, porcentajeDescuento, porcentajeIva, totalImpuesto, totalComprobante) 
-                VALUES (:id, :idBodega, :idUsuario, :porcentajeDescuento, :porcentajeIva, :totalImpuesto, :totalComprobante);";
+            $sql="INSERT INTO distribucion  (id, idBodega, idUsuario, porcentajeDescuento, porcentajeIva, totalImpuesto, totalComprobante, idDocumento, idSituacionComprobante, idEstadoComprobante) 
+                VALUES (:id, :idBodega, :idUsuario, :porcentajeDescuento, :porcentajeIva, :totalImpuesto, :totalComprobante , :idDocumento, :idSituacionComprobante, :idEstadoComprobante);";
             $param= array(':id'=>$this->id ,
                 ':idBodega'=>$this->idBodega, 
                 ':idUsuario'=>$_SESSION['userSession']->id,
                 ':porcentajeDescuento'=>$this->porcentajeDescuento,
                 ':porcentajeIva'=>$this->porcentajeIva,
                 ':totalImpuesto'=>$this->totalImpuesto,
-                ':totalComprobante'=>$this->totalComprobante
+                ':totalComprobante'=>$this->totalComprobante,
+                ':idDocumento'=>$this->idDocumento,
+                ':idSituacionComprobante'=>$this->idSituacionComprobante,
+                ':idEstadoComprobante'=>$this->idEstadoComprobante
             );
             $data = DATA::Ejecutar($sql,$param,false);
             if($data)
             {
                 //save array obj
-                if(ProductosXDistribucion::Create($this->lista)){
+                if(ProductosXDistribucion::Create($this->detalleFactura)){
                     // si es una bodega interna, acepta la distribución. Si es externa, crea el comprobante electrónico.
                     $sql="SELECT t.nombre
                         FROM tropical.bodega b
@@ -476,7 +478,7 @@ class Distribucion{
             $created=true;
             if(!isset($this->orden))
                 $this->Read();
-            foreach ($this->lista as $item) {
+            foreach ($this->detalleFactura as $item) {
                 if(InventarioInsumoXBodega::entrada($item->idProducto, $this->idBodega, 'Distribución#'.$this->orden, $item->cantidad, $item->precioVenta)){
                      // set idEstado = true.
                      $sql="UPDATE distribucion
@@ -781,6 +783,15 @@ class Distribucion{
             if($data){
                 // lee la transaccion completa y re envia
                 //error_log("[INFO] Contingencia Entidad (". $this->idEntidad .") Transaccion (".$this->consecutivo.")");
+                // Valores del envio.
+                $this->local= '001';//$obj["local"] ?? $_SESSION["userSession"]->local;
+                $this->terminal= '00001'; //$obj["terminal"] ?? $_SESSION["userSession"]->terminal;
+                $this->idCondicionVenta= 1;
+                $this->idSituacionComprobante= 2;                
+                $this->plazoCredito= 0;
+                $this->idMedioPago= 1;
+                $this->idCodigoMoneda = 55; // CRC
+                $this->tipoCambio= 601.00; // tipo de cambio dinamico con BCCR                
                 $this->enviarDocumentoElectronico();
                 return true;
             }

@@ -222,7 +222,7 @@
         error_log("**************************************************************************");
         $sql='SELECT id
             from distribucion d
-            where idEstadoComprobante = 6 or f.idEstadoComprobante = 7
+            where idEstadoComprobante = 6 or d.idEstadoComprobante = 7
             order by idBodega';
         $data= DATA::Ejecutar($sql);
         foreach ($data as $key => $transaccion){

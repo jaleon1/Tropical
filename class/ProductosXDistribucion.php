@@ -6,33 +6,46 @@ class ProductosXDistribucion{
     public $id;
     public $idDistribucion;
     public $idProducto;
-    public $cantidad;
-    public $valor;
+    public $cantidad;    
     //
     public static function Read($id){
         try{
-            $sql="SELECT pd.idProducto as id, pd.cantidad, pd.valor,
-                    p.codigo, p.nombre, p.descripcion, ((pd.valor*1.13)*pd.cantidad) as subtotal, (pd.valor*1.13) - pd.valor as impuesto
-                FROM productosXDistribucion pd INNER JOIN producto p on p.id = pd.idProducto	
+            $sql="SELECT pd.id, pd.idDistribucion, pd.idProducto, numeroLinea, idTipoCodigo, codigo, cantidad, 
+                    idUnidadMedida, unidadMedidaComercial, detalle, precioUnitario, montoTotal, montoDescuento, naturalezaDescuento, 
+                    subTotal, codigoImpuesto, tarifaImpuesto, montoImpuesto, idExoneracionImpuesto, montoTotalLinea
+                FROM productosXDistribucion pd
                 WHERE pd.idDistribucion= :idDistribucion";
             $param= array(':idDistribucion'=>$id);
             $data = DATA::Ejecutar($sql,$param);            
-            $lista = [];
+            $detalleFactura = [];
+            //$i=1;
             foreach ($data as $key => $value){
                 $producto = new ProductosXDistribucion();
-                $producto->id = $value['id']; //id del producto.
-                //$producto->idProducto = $value['idProducto'];
-                $producto->cantidad = $value['cantidad'];
-                $producto->precioVenta = $value['valor'];
-                //
+                $producto->id = $value['id'];
+                $producto->idDistribucion = $value['idDistribucion'];
+                $producto->idProducto = $value['idProducto']; //id del producto.
+                //                
+                $producto->numeroLinea = $value['numeroLinea'];
+                $producto->idTipoCodigo = $value['idTipoCodigo'];
                 $producto->codigo = $value['codigo'];
-                $producto->nombre = $value['nombre'];
-                $producto->descripcion = $value['descripcion'];     
-                $producto->impuesto = $value['impuesto'];
-                $producto->subtotal = $value['subtotal'];
-                array_push ($lista, $producto);
+                $producto->cantidad = $value['cantidad'];
+                $producto->idUnidadMedida = $value['idUnidadMedida'];
+                $producto->unidadMedidaComercial = $value['unidadMedidaComercial'];
+                $producto->detalle = $value['detalle'];
+                $producto->precioUnitario = $value['precioUnitario'];
+                $producto->montoTotal = $value['montoTotal'];
+                $producto->montoDescuento = $value['montoDescuento'];
+                $producto->naturalezaDescuento = $value['naturalezaDescuento'];
+                $producto->subTotal = $value['subTotal'];
+                $producto->codigoImpuesto = $value['codigoImpuesto'];
+                $producto->tarifaImpuesto = $value['tarifaImpuesto'];
+                $producto->montoImpuesto = $value['montoImpuesto'];
+                $producto->idExoneracionImpuesto = $value['idExoneracionImpuesto'];
+                $producto->montoTotalLinea = $value['montoTotalLinea'];
+                array_push ($detalleFactura, $producto);
+                //$i++;
             }
-            return $lista;
+            return $detalleFactura;
         }
         catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             return false;
@@ -44,12 +57,30 @@ class ProductosXDistribucion{
             $created = true;
             require_once("Producto.php");
             foreach ($obj as $item) {             
-                $sql="INSERT INTO productosXDistribucion   (id, idDistribucion, idProducto, cantidad, valor)
-                    VALUES (uuid(), :idDistribucion, :idProducto, :cantidad, :valor)";
-                $param= array(':idDistribucion'=>$item->idDistribucion, 
+                $sql="INSERT INTO productosXDistribucion   (id, idDistribucion, idProducto, numeroLinea, idTipoCodigo, codigo, cantidad, idUnidadMedida, detalle, precioUnitario, montoTotal, montoDescuento, naturalezaDescuento,
+                subTotal, codigoImpuesto, tarifaImpuesto, montoImpuesto, idExoneracionImpuesto, montoTotalLinea)
+            VALUES (uuid(), :idDistribucion, :idProducto, :numeroLinea, :idTipoCodigo, :codigo, :cantidad, :idUnidadMedida, :detalle, :precioUnitario, :montoTotal, :montoDescuento, :naturalezaDescuento,                
+                :subTotal, :codigoImpuesto, :tarifaImpuesto, :montoImpuesto, :idExoneracionImpuesto, :montoTotalLinea)";
+                //
+                $param= array(
+                    ':idDistribucion'=>$item->idDistribucion,
                     ':idProducto'=>$item->idProducto,
-                    ':cantidad'=>$item->cantidad, 
-                    ':valor'=>$item->valor
+                    ':numeroLinea'=>$item->numeroLinea,
+                    ':idTipoCodigo'=> $item->idTipoCodigo,
+                    ':codigo'=> $item->codigo,                    
+                    ':cantidad'=>$item->cantidad,
+                    ':idUnidadMedida'=>$item->idUnidadMedida,
+                    ':detalle'=>$item->detalle,
+                    ':precioUnitario'=>$item->precioUnitario,
+                    ':montoTotal'=>$item->montoTotal,
+                    ':montoDescuento'=>$item->montoDescuento,
+                    ':naturalezaDescuento'=>$item->naturalezaDescuento,                    
+                    ':subTotal'=>$item->subTotal,                    
+                    ':codigoImpuesto'=>$item->codigoImpuesto,
+                    ':tarifaImpuesto'=>$item->tarifaImpuesto,
+                    ':montoImpuesto'=>$item->montoImpuesto,
+                    ':idExoneracionImpuesto'=>$item->idExoneracionImpuesto,
+                    ':montoTotalLinea'=>$item->montoTotalLinea
                 );
                 $data = DATA::Ejecutar($sql,$param,false);                
                 if($data){                    
