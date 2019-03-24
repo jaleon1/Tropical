@@ -102,22 +102,40 @@ class mensajeReceptor{
                         $this->xml=simplexml_load_file($uploadfile)or die(json_encode(array(
                             'code' => '645' ,
                             'msg' => 'Error al leer archivo xml.'))
-                        );
+                        );                        
+                        // captura info del archivo.
+                        $this->detalleMensaje = (string)$this->xml->DetalleMensaje ?? null;
+                        if($this->detalleMensaje == "" || $this->detalleMensaje == null){
+                            // es un xml de envio.
+                            $this->totalImpuesto = (string)$this->xml->ResumenFactura->TotalImpuesto ?? null;
+                            $this->totalComprobante = (string)$this->xml->ResumenFactura->TotalComprobante ?? null;
+                            // emisor del comprobante = proveedor
+                            $this->idEmisor = $this->idEmisor ?? null; // el id del proveedor aun no se maneja en bd.
+                            $this->identificacionEmisor = (string)$this->xml->Emisor->Identificacion->Numero ?? null;
+                            $this->idTipoIdentificacionEmisor = (string)$this->xml->Emisor->Identificacion->Tipo;
+                            // receptor del comprobante = entidad registrada en el sistema.                            
+                            $this->identificacionReceptor = (string)$this->xml->Receptor->Identificacion->Numero ?? null;
+                            $this->idTipoIdentificacionReceptor = (string)$this->xml->Receptor->Identificacion->Tipo;
+                            
+                        } else{
+                            // es un xml de acuse.
+                            $this->totalImpuesto = (string)$this->xml->MontoTotalImpuesto ?? null;
+                            $this->totalComprobante = (string)$this->xml->TotalFactura ?? null;
+                            // emisor del comprobante = proveedor
+                            $this->idEmisor = $this->idEmisor ?? null; // el id del proveedor aun no se maneja en bd.
+                            $this->identificacionEmisor = (string)$this->xml->NumeroCedulaEmisor ?? null;
+                            $this->idTipoIdentificacionEmisor = (string)$this->xml->TipoIdentificacionEmisor;
+                            // receptor del comprobante = entidad registrada en el sistema.
+                            $this->identificacionReceptor = (string)$this->xml->NumeroCedulaReceptor ?? null;
+                            $this->idTipoIdentificacionReceptor = (string)$this->xml->TipoIdentificacionReceptor;
+                        }
                         // guarda datos en bd. y envía MR.
                         $this->id= UUID::v4();
+                        $this->idReceptor = $_SESSION['userSession']->idBodega;
                         $this->clave = (string)$this->xml->Clave ?? null;
                         $this->mensaje = $this->mensaje;
                         $this->detalle = $this->detalle ?? null;
-                        $this->totalImpuesto = (string)$this->xml->MontoTotalImpuesto ?? null;
-                        $this->totalComprobante = (string)$this->xml->TotalFactura ?? null;
-                        // emisor del comprobante = proveedor
-                        $this->idEmisor = $this->idEmisor ?? null; // el id del proveedor aun no se maneja en bd.
-                        $this->identificacionEmisor = (string)$this->xml->NumeroCedulaEmisor ?? null;
-                        $this->idTipoIdentificacionEmisor = (string)$this->xml->TipoIdentificacionEmisor;
-                        // receptor del comprobante = entidad registrada en el sistema.                        
-                        $this->idReceptor = $_SESSION['userSession']->idBodega;
-                        $this->identificacionReceptor = (string)$this->xml->NumeroCedulaReceptor ?? null;
-                        //
+                        // valida cedula.
                         $this->entidad = new ClienteFE();
                         $this->entidad->idBodega = $this->idReceptor;
                         $this->datosReceptor = $this->entidad->read(); // receptor es la entidad que compra.
@@ -128,7 +146,6 @@ class mensajeReceptor{
                             array_push($this->respuesta, $r);
                             continue;
                         }
-                        $this->idTipoIdentificacionReceptor = (string)$this->xml->TipoIdentificacionReceptor;
                         // valida que el archivo tenga el formato correcto.
                         if($this->clave==null || $this->totalImpuesto==null || $this->totalComprobante==null || $this->identificacionEmisor==null || $this->identificacionReceptor==null){
                             $r = new Respuesta();
@@ -353,7 +370,7 @@ class mensajeReceptor{
                 ':idReceptor'=>$this->idReceptor,
                 ':idTipoIdentificacionReceptor'=>$this->idTipoIdentificacionReceptor,
                 ':identificacionReceptor'=>$this->identificacionReceptor,
-                ':xml'=>$this->xml
+                ':xml'=>$this->xml->asXML()
             );
             $data = DATA::Ejecutar($sql,$param, false);
             if($data){

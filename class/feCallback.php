@@ -156,6 +156,29 @@
             FacturacionElectronica::APIConsultaComprobante($factura);            
         }
         error_log("[INFO] Finaliza Consulta NC");
+        // Reenvio de MR en estado 5
+        // Documentos 5-6-7.
+        error_log("**************************************************************************");
+        error_log("**************************************************************************");
+        error_log("                    [INFO] Iniciando REENVIO DE MR                        ");
+        error_log("**************************************************************************");
+        error_log("**************************************************************************");
+        $sql="SELECT f.id, b.nombre as bodega, consecutivo, idReceptor
+            from mensajeReceptor f inner join bodega b on b.id = f.idReceptor
+            WHERE  f.idEstadoComprobante = 5
+            ORDER BY consecutivo asc";
+        $data = DATA::Ejecutar($sql);
+        error_log("[INFO] Total de MR a Reenviar: ". count($data));
+        foreach ($data as $key => $transaccion){
+            error_log("[INFO] Reenvío MR (". $transaccion['bodega'] .") Transaccion (".$transaccion['consecutivo'].")");
+            $mr = new mensajeReceptor();
+            $mr->id = $transaccion['id'];
+            $mr->entidad = new ClienteFE();
+            $mr->entidad->idBodega = $transaccion['idReceptor'];;
+            $mr->datosReceptor = $mr->entidad->read();
+            $mr->enviar();
+        }
+        error_log("[INFO] Finaliza Contingencia Masiva de Comprobantes"); 
         // Mensaje Receptor Documentos 5-6-7.
         error_log("**************************************************************************");
         error_log("**************************************************************************");
