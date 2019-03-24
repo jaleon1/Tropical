@@ -587,7 +587,7 @@ class Producto {
                     "width": "30%", 
                     "data": null,
                     "defaultContent": '<input class="cantidad form-control" required type="text">'
-                },
+                },                
                 {
                     title:"Acción",
                     orderable: false,
@@ -596,6 +596,13 @@ class Producto {
                         return '<a class="delete" style="cursor: pointer;" onclick="producto.DeleteproductoMerma(this)" > <i class="glyphicon glyphicon-trash"> </i></a>' 
                     },
                     visible:true
+                },
+                {
+                    title:"idProducto",
+                    data:"idProducto",
+                    className:"itemId",
+                    searchable: false,                    
+                    width:"auto"
                 }
             ]
         });

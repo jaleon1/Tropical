@@ -10,7 +10,7 @@ if(isset($_POST["action"])){
     require_once("Evento.php");
     require_once("Rol.php");
     require_once("InventarioInsumoXBodega.php");
-    //require_once("InventarioProducto.php");
+    require_once("InventarioProducto.php");
     // Session
     if (!isset($_SESSION))
         session_start();
@@ -76,9 +76,11 @@ class MermaAgencia{
                 $this->listaProducto= [];
                 foreach ($obj["listaProducto"] as $itemlist) {
                     $item= new Insumo();
-                    $item->id = $itemlist['idProducto'];
+                    $item->id = $itemlist['id'];
+                    $item->idProducto= $itemlist['idProducto'];
                     $item->cantidad = $itemlist['cantidad'];
                     $item->descripcion= $itemlist['descripcion'];
+                    $item->costoPromedio= $itemlist['costoPromedio'];
                     array_push ($this->listaProducto, $item);
                 }
             }
@@ -195,6 +197,12 @@ class MermaAgencia{
                 $data = DATA::Ejecutar($sql, $param);
                 // actualiza item.
                 InventarioInsumoXBodega::salida( $item->id, $this->idBodega, 'merma#'.$data[0]['consecutivo'], $item->cantidad);
+                // agrega a central
+                if(isset($_POST['cargaCentral'])){
+                    if($_POST['cargaCentral']== "true"){
+                        InventarioProducto::entrada($item->idProducto, "ReversaMerma", $item->cantidad, false);
+                    }
+                }
                 // ***************** imprimir. ***************************
                 // ***************** imprimir. ***************************
                 // ***************** imprimir. ***************************

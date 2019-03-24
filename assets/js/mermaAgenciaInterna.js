@@ -278,13 +278,31 @@ class MermaAgencia {
     };
 
     crear() {
+        // cargar a central.        
+        swal({
+            title: 'Reversar a Central',
+            text: "Desea Ingresar los productos a la Agencia Central despuúes de Aplicar la Merma?",
+            type: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Solo aplicar merma',
+            cancelButtonText: 'Si, Cargar Inventario' 
+        }).then((result) => {
+            if (result.value) {
+                this.sendMerma(false);
+            } else this.sendMerma(true);
+        })
+    }
+
+    sendMerma(cargaCentral){
         var miAccion = "Create";
         //
         var listaok = true;
         merma.listaProducto = [];
         $('#tProducto tbody tr').each(function (i, item) {
             var objlista = new Object();
-            objlista.idProducto = $(item).find('td:eq(0)')[0].textContent;
+            objlista.id = $(item).find('td:eq(0)')[0].textContent;
             // objlista.costo = $(item).find('td:eq(0)')[0].textContent;
             objlista.cantidad = $(item).find('td:eq(4) input').val();
             if ($(item).find('td:eq(5) input').val() != undefined && $(item).find('td:eq(5) input').val() == '') {
@@ -296,6 +314,8 @@ class MermaAgencia {
                 listaok = false;
             }
             objlista.descripcion = $(item).find('td:eq(5) input').val();
+            objlista.costoPromedio = $(item).find('td:eq(3)').html();
+            objlista.idProducto = $(item).find('td:eq(7)').html();
             merma.listaProducto.push(objlista);
         });
         if (!listaok)
@@ -308,7 +328,7 @@ class MermaAgencia {
             swal({
                 type: 'warning',
                 title: 'Seleccionar...',
-                text: 'Debe seleccionar la materia prima.'
+                text: 'Debe seleccionar los productos.'
             });
             return false;
         }
@@ -319,7 +339,8 @@ class MermaAgencia {
             url: "class/mermaAgencia.php",
             data: {
                 action: miAccion,
-                obj: JSON.stringify(this)
+                obj: JSON.stringify(this),
+                cargaCentral: cargaCentral
             }
         })
             .done(function () {
@@ -334,7 +355,6 @@ class MermaAgencia {
                 $("#btnMerma").removeAttr("disabled");
                 $("#p_searhProducto").focus();
             });
-
     }
 
     ReadbyCodeAgencia(cod) {
@@ -377,6 +397,7 @@ class MermaAgencia {
         if(e != "false" && e != ''){
             var data = JSON.parse(e)[0];
             producto.id= data.id; 
+            producto.idProducto= data.idProducto; 
             producto.codigo= data.codigo; 
             producto.nombre= data.nombre; 
             producto.descripcion= data.descripcion;

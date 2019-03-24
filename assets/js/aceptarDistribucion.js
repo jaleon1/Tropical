@@ -220,9 +220,9 @@ class Distribucion {
             swal({
                 type: 'warning',
                 title: 'Orden de Traslado',
-                text: 'La orden no existe o ya fue ACEPTADA',
+                text: 'La orden no existe | Previamente ACEPTADA | NO aceptada por Hacienda',
                 showConfirmButton: false,
-                timer: 3000
+                timer: 5000
             });
             return;
         }

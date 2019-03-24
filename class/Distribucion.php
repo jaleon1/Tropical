@@ -315,7 +315,7 @@ class Distribucion{
         try {
             $sql='SELECT id, fecha, orden, idUsuario, idBodega, porcentajeDescuento, porcentajeIva, totalImpuesto, totalComprobante
                 FROM distribucion
-                WHERE orden=:orden AND idBodega=:idBodega AND idEstado=0';
+                WHERE orden=:orden AND idBodega=:idBodega AND idEstado=0 AND idEstadoComprobante = 3';
             $param= array(':orden'=>$this->orden, ':idBodega'=>$this->idBodega);
             $data= DATA::Ejecutar($sql,$param);     
             if(count($data)){
