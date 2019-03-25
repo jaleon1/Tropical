@@ -1,4 +1,6 @@
 <?php    
+    if (!isset($_SESSION))
+        session_start();
     include_once("Conexion.php");
     include_once("facturacionElectronica.php");
     include_once("ClienteFE.php");
@@ -10,6 +12,7 @@
     include_once("encdes.php");
     require_once("productoXFactura.php");
     require_once("mensajeReceptor.php");
+    require_once("referencia.php");
     try{
         // enviar en contingencia
         // Documentos 1-4-8.
@@ -20,7 +23,7 @@
         error_log("**************************************************************************");
         $sql="SELECT f.id, b.nombre as bodega, consecutivo
             from factura f inner join bodega b on b.id = f.idBodega
-            WHERE  f.idEstadoComprobante = 5  and (f.idDocumento = 1 or  f.idDocumento = 4 or  f.idDocumento = 8) 
+            WHERE  f.idEstadoComprobante = 5  and  (f.idDocumento = 1 or  f.idDocumento = 4 or  f.idDocumento = 8) 
             ORDER BY consecutivo asc";
         $data = DATA::Ejecutar($sql);
         error_log("[INFO] Total de transacciones en Contingencia: ". count($data));
@@ -28,7 +31,7 @@
             error_log("[INFO] Contingencia Bodega (". $transaccion['bodega'] .") Transaccion (".$transaccion['consecutivo'].")");
             $factura = new Factura();
             $factura->id = $transaccion['id'];
-            $factura->contingencia();                
+            $factura->contingencia();
         }
         error_log("[INFO] Finaliza Contingencia Masiva de Comprobantes"); 
         // timedout - Duplicadas
