@@ -156,8 +156,20 @@ class InventarioFacturaCancelada {
                             case "5":
                                 return '<i class="fa fa-exclamation-triangle" aria-hidden="true" style="color:#FF6F00"> Otro</i>';
                                 break;
-                            case "99":
-                                return '<i class="fa fa-exclamation-triangle" aria-hidden="true" style="color:green"> Reportado</i>';
+                            case "6":
+                                return '<i class="fa fa-stopwatch" aria-hidden="true" style="color:#FF6F00"> TimedOut</i>';
+                                break;
+                            case "7":
+                                return '<i class="fa fa-angle-double-up" aria-hidden="true" style="color:#FF6F00"> Repetido</i>';
+                                break;
+                            case "8":
+                                return '<i class="fa fa-minus-circle" aria-hidden="true" style="color:#FF6F00"> Firma Invalida(1)</i>';
+                                break;
+                            case "9":
+                                return '<i class="fa fa-minus-circle" aria-hidden="true" style="color:#FF6F00"> Firma Invalida(2)</i>';
+                                break;
+                            case "10":
+                                return '<i class="fa fa-minus-circle" aria-hidden="true" style="color:#FF6F00"> Firma Invalida(3)</i>';
                                 break;
                             default:
                                 return 'Desconocido';
@@ -166,33 +178,49 @@ class InventarioFacturaCancelada {
                         }
                     }
                 }
-            //     ,
-            //     {
-            //         title: "ACCION",
-            //         className: "buttons",
-            //         data: "claveNC",
-            //         render: function ( data, type, row, meta ) {
-            //             switch (row['idEstadoNC']) {
-            //                 case "1":
-            //                     return '<button class=btnEnviarNC>Enviar</button>';
-            //                     break;
-            //                 case "2":
-            //                     return '<button class=btnConsultanC>Consultar</button>';
-            //                     break;
-            //                 case "3":
-            //                     return '<i class="fa fa-check-square-o" aria-hidden="true" style="color:green"> NC Aceptada!</i>';
-            //                     break;
-            //                 case "4":
-            //                     return '<button class=btnCancelaNC>Cancelar Factura</button>';
-            //                     break;
-            //                 case "5":
-            //                     return '<button class=btnReenviarNC>Reenviar</button><button class=btnSoporte>Soporte</button>';
-            //                     break;
-            //                 default:
-            //                     return '<i class="fa fa-check-square-o" aria-hidden="true" style="color:green"> NC Aceptada!</i>';
-            //                     break;
-            //         }
-            //     }
+            //     // ,
+            //     // {
+            //     //     title: "ACCION",
+            //     //     className: "buttons",
+            //     //     data: "claveNC",
+            //     //     render: function ( data, type, row, meta ) {
+            //     //         switch (row['idEstadoNC']) {
+            //     //             case "1":
+            //     //                 return '<i class="fa fa-paper-plane" aria-hidden="true" style="color:red"> Sin Enviar</i>';
+            //     //                 break;
+            //     //             case "2":
+            //     //                 return '<i class="fa fa-paper-plane" aria-hidden="true" style="color:green"> Enviado</i>';
+            //     //                 break;
+            //     //             case "3":
+            //     //                 return '<i class="fa fa-check-square-o" aria-hidden="true" style="color:green"> Aceptado</i>';
+            //     //                 break;
+            //     //             case "4":
+            //     //                 return '<i class="fa fa-times-circle" aria-hidden="true" style="color:red"> Rechazado</i>';
+            //     //                 break;
+            //     //             case "5":
+            //     //                 return '<i class="fa fa-exclamation-triangle" aria-hidden="true" style="color:#FF6F00"> Otro</i>';
+            //     //                 break;
+            //     //             case "6":
+            //     //                 return '<i class="fa fa-stopwatch" aria-hidden="true" style="color:#FF6F00"> TimedOut</i>';
+            //     //                 break;
+            //     //             case "7":
+            //     //                 return '<i class="fa fa-angle-double-up" aria-hidden="true" style="color:#FF6F00"> Repetido</i>';
+            //     //                 break;
+            //     //             case "8":
+            //     //                 return '<i class="fa fa-minus-circle" aria-hidden="true" style="color:#FF6F00"> Firma Invalida(1)</i>';
+            //     //                 break;
+            //     //             case "9":
+            //     //                 return '<i class="fa fa-minus-circle" aria-hidden="true" style="color:#FF6F00"> Firma Invalida(2)</i>';
+            //     //                 break;
+            //     //             case "10":
+            //     //                 return '<i class="fa fa-minus-circle" aria-hidden="true" style="color:#FF6F00"> Firma Invalida(3)</i>';
+            //     //                 break;
+            //     //             default:
+            //     //                 return 'Desconocido';
+            //     //                 break;
+
+            //     //         }
+            //     // }
             // }
             ],
             footerCallback: function ( row, data, start, end, display ) {
