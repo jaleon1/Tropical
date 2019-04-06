@@ -1,7 +1,9 @@
 Generar contraseñapara comprobanteselectronicos: 
 
 
+https://api.comprobanteselectronicos.go.cr/recepcion-sandbox/v1/comprobantes?emisor=024000042139&offset=555&limit=50
 
+https://api.comprobanteselectronicos.go.cr/recepcion-sandbox/v1/recepcion/50607121800310150717600100001010000000367153257218
 
 Datos de Usuario
 Su usuario de ingreso es: 
@@ -31,12 +33,13 @@ PINP12 0011
 
 /*********************** produccion *************************/
 
+   
 Datos de Usuario
 Su usuario de ingreso es: 
- 	cpf-01-1187-0763@prod.comprobanteselectronicos.go.cr 
+ 	cpf-01-1187-0763@prod.comprobanteselectronicos.go.cr
 
 Su contraseña de ingreso es: 
- 	V$[0.fH!Rs(@H}=7-P=V
+ 	p=DJqL%>5**|Lr#2M{^-
 
 == PRODUCCION ==
 
