@@ -245,51 +245,65 @@ class MensajeReceptor {
                     searchable: false
                 },
                 {
-                    title:"ESTADO",
-                    data:"idEstadoComprobante",
-                    width:"auto",
+                    title: "ESTADO",
+                    data: "idEstadoComprobante",
                     mRender: function ( e ) {
-                        var tipo="1";
-                        if (e=="0") 
-                            tipo="CASO 0";
-                        if (e=="1") 
-                            tipo="CASO 1";
-                        if (e=="2") 
-                            tipo="CASO 2";
-                        if (e=="3") 
-                            tipo="CASO 3";
-                        if (e=="4") 
-                            tipo="CASO 4";
-                        if (e=="5") 
-                            tipo="CASO 5";
-                        return tipo
+                        switch (e) {
+                            case "1":
+                                return '<i class="fa fa-paper-plane" aria-hidden="true" style="color:red"> Sin Enviar</i>';
+                                break;
+                            case "2":
+                                return '<i class="fa fa-paper-plane" aria-hidden="true" style="color:green"> Enviado</i>';
+                                break;
+                            case "3":
+                                return '<i class="fa fa-check-square-o" aria-hidden="true" style="color:green"> Aceptado</i>';
+                                break;
+                            case "4":
+                                return '<i class="fa fa-times-circle" aria-hidden="true" style="color:red"> Rechazado</i>';
+                                break;
+                            case "5":
+                                return '<i class="fa fa-exclamation-triangle" aria-hidden="true" style="color:#FF6F00"> Otro</i>';
+                                break;
+                            case "99":
+                                return '<i class="fa fa-exclamation-triangle" aria-hidden="true" style="color:green"> Reportado</i>';
+                                break;
+                            default:
+                                return 'Desconocido';
+                                break;
+
                         }
+                    }
                 },
                 {
                     title:"ACCION",
                     orderable: false,
                     searchable:false,
                     width:"auto",
-                    render: function (data, type, row, meta) {
-                        var e=row['idEstadoComprobante'];
-                        var opcion=0;
-                        if(e==null)
-                            opcion = 0;
-                        else{
-                            if (e=="0") 
-                                return '<button type="button" class="btn btn-xs btn-default">CASO 0</button>';
-                            if (e=="1") 
-                                return '<button type="button" class="btn btn-xs btn-primary">CASO 1</button>';
-                            if (e=="2") 
-                                return '<button type="button" class="btn btn-xs btn-success">CASO 2</button>';
-                            if (e=="3") 
-                                return '<button type="button" class="btn btn-xs btn-info">CASO 3</button>';
-                            if (e=="4") 
-                                return '<button type="button" class="btn btn-xs btn-warning">CASO 4</button>';
-                            if (e=="5") 
-                                return '<button type="button" class="btn btn-xs btn-danger">CASO 5</button>';
-                            }
-                        }
+                    render: function ( data, type, row, meta ) {
+                        if(data==null)
+                            switch (row['idEstadoComprobante']) {
+                                case "1":
+                                    return '<button class=btnEnviarFactura>&nbsp Enviar</button>'; // Sin enviar // No se envio en el momento, no salio del sistema local No llego a MH //Envio en Contingencia
+                                    break;
+                                case "2":
+                                    return '<i class="fa fa-check-square-o">&nbsp Enviada</i>'; // Enviado //Quitar Boton y que diga enviado
+                                    break;
+                                case "3":
+                                    return '<button class=btnCancelaFactura>&nbsp Cancelar Factura</button>'; // Aceptado  //Solo cancelar // NC 
+                                    break;
+                                case "4":
+                                    return '<button class=btnNC_CreateFact_Ref>&nbsp Cancelar & Reenviar</button>'; // Rechazado //NC //Nueva con referencia Confeccion de Factura  // BTNCancelar y enviar
+                                    break;
+                                case "5":
+                                    return '<i class="fa fa-cloud-upload" aria-hidden="true">&nbsp Enviar Contingencia</i>'; // Error (Otros) //Envio en Contingencia
+                                    break;
+                                default:
+                                    return '<button>Soporte</button>';
+                                    break;
+                            }    
+                            else
+                                return '<i class="fa fa-check-square-o" aria-hidden="true" style="color:green">&nbsp Factura Cancelada!</i>';
+                    }
                 }
             ]
         });
