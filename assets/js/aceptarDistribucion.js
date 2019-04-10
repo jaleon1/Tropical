@@ -140,7 +140,7 @@ class Distribucion {
             .done(function (e) {
                 if (e == 'null' || e == '' ) {
                     swal({
-
+                        
                         type: 'warning',
                         title: 'Orden no encontrada!',
                         title: 'La Orden no existe o no se encuentra disponible para esta bodega.',
