@@ -159,28 +159,26 @@ class Distribucion{
             }
             //
             // lista.
-            if(isset($obj["lista"] )){
+            if(isset($obj["detalleFactura"] )){
                 require_once("ProductosXDistribucion.php");
                 require_once("productoXFactura.php");
                 //
-                foreach ($obj["lista"] as $itemlist) {
+                foreach ($obj["detalleFactura"] as $itemlist) {
+                    // b. Detalle de la mercancía o servicio prestado
                     $item= new ProductosXDistribucion();
                     $item->idDistribucion= $this->id;
                     $item->idProducto= $itemlist['idProducto'];                    
                     $item->cantidad= $itemlist['cantidad'];
                     $item->valor= $itemlist['valor'];
-                    array_push ($this->lista, $item);
-                    // b. Detalle de la mercancía o servicio prestado
-                    $item= new ProductoXFactura();
-                    $item->idFactura = $this->id;
-                    //$item->idPrecio= $itemlist['idPrecio'];
+                    //array_push ($this->lista, $item);
+                    //$item= new ProductoXFactura();
                     $item->numeroLinea= $itemlist['numeroLinea'];
                     $item->idTipoCodigo= $itemlist['idTipoCodigo']?? 1;
                     $item->codigo= $itemlist['codigo'] ?? 999;
                     $item->cantidad= $itemlist['cantidad'] ?? 1;
                     $item->idUnidadMedida= $itemlist['idUnidadMedida'] ?? 78;
                     $item->detalle= $itemlist['detalle'];
-                    $item->precioUnitario= $itemlist['precioUnitario'];                    
+                    $item->precioUnitario= $itemlist['precioUnitario'];
                     $item->montoTotal= $itemlist['montoTotal'];
                     $item->montoDescuento= $itemlist['montoDescuento'];
                     $item->naturalezaDescuento= $itemlist['naturalezaDescuento']??'No aplican descuentos'; // en Tropical no se manejan descuentos
@@ -195,7 +193,6 @@ class Distribucion{
             }
         }
     }
-
 
     public static function cancelaDistribucion($idDistribucion, $razon){
         
@@ -318,7 +315,7 @@ class Distribucion{
         try {
             $sql='SELECT id, fecha, orden, idUsuario, idBodega, porcentajeDescuento, porcentajeIva, totalImpuesto, totalComprobante
                 FROM distribucion
-                WHERE orden=:orden AND idBodega=:idBodega AND idEstado=0';
+                WHERE orden=:orden AND idBodega=:idBodega AND idEstado=0 AND idEstadoComprobante = 3';
             $param= array(':orden'=>$this->orden, ':idBodega'=>$this->idBodega);
             $data= DATA::Ejecutar($sql,$param);     
             if(count($data)){
@@ -331,7 +328,7 @@ class Distribucion{
                 $this->totalImpuesto = $data[0]['totalImpuesto'];
                 $this->totalComprobante = $data[0]['totalComprobante'];
                 // productos x distribucion.
-                $this->lista= ProductosXDistribucion::Read($this->id);
+                $this->detalleFactura= ProductosXDistribucion::Read($this->id);
                 //
                 return $this;
             }
@@ -350,7 +347,9 @@ class Distribucion{
     function Read(){
         try {
             $sql='SELECT d.id, d.fecha, d.orden, clave, d.consecutivoFE, d.fechaEmision, d.idUsuario, d.idBodega, b.nombre as bodega, 
-                d.porcentajeDescuento, d.porcentajeIva,  d.totalImpuesto, d.totalComprobante, d.idSituacionComprobante, d.idDocumento
+                d.porcentajeDescuento, d.porcentajeIva,  d.totalImpuesto, d.totalComprobante, d.idSituacionComprobante, d.idDocumento, d.idEstadoComprobante,
+                totalServGravados, totalServExentos, totalMercanciasGravadas, totalMercanciasExentas, totalGravado, totalExento,
+                totalVenta, totalDescuentos, totalVentaneta
                 FROM distribucion d
                 INNER JOIN bodega b on b.id=d.idBodega
                 where d.id=:id';
@@ -372,8 +371,18 @@ class Distribucion{
                 $this->totalImpuesto = $data[0]['totalImpuesto'];
                 $this->idSituacionComprobante = $data[0]['idSituacionComprobante'];
                 $this->idDocumento = $data[0]['idDocumento'];
+                $this->idEstadoComprobante = $data[0]['idEstadoComprobante'];
+                $this->totalServGravados = $data[0]['totalServGravados'];
+                $this->totalServExentos = $data[0]['totalServExentos'];
+                $this->totalMercanciasGravadas = $data[0]['totalMercanciasGravadas'];
+                $this->totalMercanciasExentas = $data[0]['totalMercanciasExentas'];
+                $this->totalGravado = $data[0]['totalGravado'];
+                $this->totalExento = $data[0]['totalExento'];
+                $this->totalVenta = $data[0]['totalVenta'];
+                $this->totalDescuentos = $data[0]['totalDescuentos'];
+                $this->totalVentaneta = $data[0]['totalVentaneta'];
                 // productos x distribucion.
-                $this->lista= ProductosXDistribucion::Read($this->id);
+                $this->detalleFactura= ProductosXDistribucion::Read($this->id);
                 //
                 return $this;
             }
@@ -420,21 +429,35 @@ class Distribucion{
 
     function Create(){
         try {
-            $sql="INSERT INTO distribucion  (id, idBodega, idUsuario, porcentajeDescuento, porcentajeIva, totalImpuesto, totalComprobante) 
-                VALUES (:id, :idBodega, :idUsuario, :porcentajeDescuento, :porcentajeIva, :totalImpuesto, :totalComprobante);";
+            $sql="INSERT INTO distribucion  (id, idBodega, idUsuario, porcentajeDescuento, porcentajeIva, totalImpuesto, totalComprobante, idDocumento, idSituacionComprobante, idEstadoComprobante,
+                    totalServGravados, totalServExentos, totalMercanciasGravadas, totalMercanciasExentas, totalGravado, totalExento, totalVenta, totalDescuentos, totalVentaneta) 
+                VALUES (:id, :idBodega, :idUsuario, :porcentajeDescuento, :porcentajeIva, :totalImpuesto, :totalComprobante , :idDocumento, :idSituacionComprobante, :idEstadoComprobante,
+                    :totalServGravados, :totalServExentos, :totalMercanciasGravadas, :totalMercanciasExentas, :totalGravado, :totalExento, :totalVenta, :totalDescuentos, :totalVentaneta);";
             $param= array(':id'=>$this->id ,
                 ':idBodega'=>$this->idBodega, 
                 ':idUsuario'=>$_SESSION['userSession']->id,
                 ':porcentajeDescuento'=>$this->porcentajeDescuento,
                 ':porcentajeIva'=>$this->porcentajeIva,
                 ':totalImpuesto'=>$this->totalImpuesto,
-                ':totalComprobante'=>$this->totalComprobante
+                ':totalComprobante'=>$this->totalComprobante,
+                ':idDocumento'=>$this->idDocumento,
+                ':idSituacionComprobante'=>$this->idSituacionComprobante,
+                ':idEstadoComprobante'=>$this->idEstadoComprobante,
+                ':totalServGravados'=> $this->totalServGravados,
+                ':totalServExentos'=> $this->totalServExentos,
+                ':totalMercanciasGravadas'=> $this->totalMercanciasGravadas,
+                ':totalMercanciasExentas'=> $this->totalMercanciasExentas,
+                ':totalGravado'=> $this->totalGravado,
+                ':totalExento'=> $this->totalExento,
+                ':totalVenta'=>$this->totalVenta,
+                ':totalDescuentos'=>$this->totalDescuentos,
+                ':totalVentaneta'=>$this->totalVentaneta
             );
             $data = DATA::Ejecutar($sql,$param,false);
             if($data)
             {
                 //save array obj
-                if(ProductosXDistribucion::Create($this->lista)){
+                if(ProductosXDistribucion::Create($this->detalleFactura)){
                     // si es una bodega interna, acepta la distribución. Si es externa, crea el comprobante electrónico.
                     $sql="SELECT t.nombre
                         FROM tropical.bodega b
@@ -474,10 +497,10 @@ class Distribucion{
     function Aceptar($comprobante= false){
         try {
             $created=true;
-            if(!isset($this->orden))
-                $this->Read();
-            foreach ($this->lista as $item) {
-                if(InventarioInsumoXBodega::entrada($item->idProducto, $this->idBodega, 'Distribución#'.$this->orden, $item->cantidad, $item->precioVenta)){
+            //if(!isset($this->orden))
+            $this->Read();
+            foreach ($this->detalleFactura as $item) {
+                if(InventarioInsumoXBodega::entrada($item->idProducto, $this->idBodega, 'Distribución#'.$this->orden, $item->cantidad, $item->precioUnitario)){
                      // set idEstado = true.
                      $sql="UPDATE distribucion
                      SET idEstado=1, fechaAceptacion= NOW()
@@ -491,7 +514,7 @@ class Distribucion{
                         $created= true;
                         // acepta MR.
                         if($comprobante){
-                            $this->Read();
+                            //$this->Read();
                             $mr = new MensajeReceptor();                    
                             $mr->mensaje = 1;
                             $mr->detalle = 'Aceptacion por traslado';
@@ -781,6 +804,15 @@ class Distribucion{
             if($data){
                 // lee la transaccion completa y re envia
                 //error_log("[INFO] Contingencia Entidad (". $this->idEntidad .") Transaccion (".$this->consecutivo.")");
+                // Valores del envio.
+                $this->local= '001';//$obj["local"] ?? $_SESSION["userSession"]->local;
+                $this->terminal= '00001'; //$obj["terminal"] ?? $_SESSION["userSession"]->terminal;
+                $this->idCondicionVenta= 1;
+                $this->idSituacionComprobante= 2;                
+                $this->plazoCredito= 0;
+                $this->idMedioPago= 1;
+                $this->idCodigoMoneda = 55; // CRC
+                $this->tipoCambio= 601.00; // tipo de cambio dinamico con BCCR                
                 $this->enviarDocumentoElectronico();
                 return true;
             }

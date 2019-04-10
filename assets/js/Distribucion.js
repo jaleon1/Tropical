@@ -1,6 +1,6 @@
 class Distribucion {
     // Constructor
-    constructor(id, orden, fecha, idUsuario, idBodega, porcentajeDescuento, porcentajeIva, lista, bodega, fechaInicial, fechaFinal, totalImpuesto, totalComprobante) {
+    constructor(id, orden, fecha, idUsuario, idBodega, porcentajeDescuento, porcentajeIva, detalleFactura, bodega, fechaInicial, fechaFinal, totalImpuesto, totalComprobante) {
         this.id = id || null;
         this.orden = orden || '';
         this.fecha = fecha || '';
@@ -11,7 +11,7 @@ class Distribucion {
         this.porcentajeIva = porcentajeIva || 0;
         this.totalImpuesto = totalImpuesto || 0;
         this.totalComprobante = totalComprobante || 0;
-        this.lista = lista || [];
+        this.detalleFactura = detalleFactura || [];
         this.fechaInicial = fechaInicial || "";
         this.fechaFinal = fechaFinal || "";
     }
@@ -70,7 +70,7 @@ class Distribucion {
         distr.totalVentaneta = 0;    
         distr.totalImpuesto = 0;
         distr.totalComprobante=0;
-        distr.lista = [];
+        distr.detalleFactura = [];
         $('#tDistribucion tbody tr').each(function (i, item) {
             var objlista = new Object();
             objlista.idProducto = $(item).find('td:eq(0)')[0].textContent; // id del item.
@@ -99,7 +99,7 @@ class Distribucion {
             distr.totalDescuentos = parseFloat((distr.totalDescuentos + objlista.montoDescuento).toFixed(5));
             distr.totalImpuesto = parseFloat((distr.totalImpuesto + objlista.montoImpuesto).toFixed(5));
             //
-            distr.lista.push(objlista);
+            distr.detalleFactura.push(objlista);
         });
         //
         distr.totalServGravados = 0;
@@ -181,7 +181,7 @@ class Distribucion {
         localStorage.setItem("lsFechaDistribucion", data.fecha);
         localStorage.setItem("lsPorcentajeDescuento", $("#desc_val").text());
         localStorage.setItem("lsIV", $("#iv_val").text());
-        localStorage.setItem("lsListaProducto", JSON.stringify(data.lista));
+        localStorage.setItem("lsListaProducto", JSON.stringify(data.detalleFactura));
         localStorage.setItem("lsUsuarioDistribucion", $("#call_name").text());
         location.href ="/Tropical/TicketDistribucion.html";
         // location.href = "/TicketDistribucion.html";
@@ -254,14 +254,14 @@ class Distribucion {
     Aceptar() {
         $('#btnDistribucion').attr("disabled", "disabled");
         var miAccion = "Aceptar";
-        distr.lista = [];
+        distr.detalleFactura = [];
         $('#tDistribucion tbody tr').each(function (i, item) {
             var objlista = new Object();
             objlista.idProducto = $(item).find('td:eq(0)')[0].textContent;
             objlista.cantidad = $(item).find('td:eq(5) input').val();
             objlista.costo = $(item).find('td:eq(6)').attr('value'); // costo: precio de venta para distrcion bodega externa. 
             objlista.valor = parseFloat(parseInt(objlista.cantidad) * parseFloat(objlista.costo)); // valor. costo*cantidad.
-            distr.lista.push(objlista);
+            distr.detalleFactura.push(objlista);
         });
         $.ajax({
                 type: "POST",
@@ -311,14 +311,14 @@ class Distribucion {
         this.CleanCtls();
         // carga objeto.
         var data = JSON.parse(e);
-        distr = new Distribucion(data.id, data.orden, data.fecha, data.idUsuario, data.idBodega, data.porcentajeDescuento, data.porcentajeIva, data.lista);
+        distr = new Distribucion(data.id, data.orden, data.fecha, data.idUsuario, data.idBodega, data.porcentajeDescuento, data.porcentajeIva, data.detalleFactura);
         // datos
         $('#orden').val(distr.orden);
         $('#fecha').val(distr.fecha);
         bodega.id = distr.idBodega;
         bodega.Read;
         // carga lista.
-        $.each(distr.lista, function (i, item) {
+        $.each(distr.detalleFactura, function (i, item) {
             producto = item;
             distr.AgregaProducto();
         });
@@ -326,7 +326,7 @@ class Distribucion {
 
     ShowItemData(e) {
         var data = JSON.parse(e);
-        distr = new Distribucion(data.id, data.orden, data.fecha, data.idUsuario, data.idBodega, data.porcentajeDescuento, data.porcentajeIva, data.lista, data.bodega);
+        distr = new Distribucion(data.id, data.orden, data.fecha, data.idUsuario, data.idBodega, data.porcentajeDescuento, data.porcentajeIva, data.detalleFactura, data.bodega);
         distr.totalComprobante= data.totalComprobante;
         distr.totalImpuesto= data.totalImpuesto;
         //
@@ -361,7 +361,7 @@ class Distribucion {
         // $("#totalDistribucion").append(totalDistribucion);
         // detalle
         this.tb_prdXFact = $('#tb_detalle_distribucion').DataTable({
-            data: distr.lista,
+            data: distr.detalleFactura,
             destroy: true,
             "searching": false,
             "paging": false,

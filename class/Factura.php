@@ -18,6 +18,7 @@ if(isset($_POST["action"])){
     require_once("Bodega.php");
     require_once("wsBCCR.php");
     require_once("mail/mail.php");
+    require_once("referencia.php");
     // Session
     if (!isset($_SESSION))
         session_start();
@@ -80,6 +81,9 @@ if(isset($_POST["action"])){
     }    
 }
 
+
+
+
 class Factura{
     //Factura
     public $local="";
@@ -98,6 +102,7 @@ class Factura{
     public $totalImpuesto=null;
     public $totalComprobante=null;
     public $idEmisor=null;
+    public $informacionReferencia = [];
     public $detalleFactura = [];
     public $detalleOrden = [];
     public $datosReceptor = [];
@@ -235,13 +240,25 @@ class Factura{
                 $this->datosReceptor = json_decode($_POST["dataReceptor"],true);
             }
             // Referencias.
-            if(isset($obj["ref"] )){
+            if(isset($obj["informacionReferencia"] )){
+                foreach ($obj["informacionReferencia"] as $ref) {
+                    $item = new Referencia();
+                    $item->tipodoc= $ref["tipodoc"]; 
+                    $item->numero= $ref["numero"]; 
+                    $item->razon= ($ref["razon"]==''?null:$ref["razon"]) ?? 'informacion de referencia'; 
+                    $item->fechaEmision= $ref["fechaEmision"] ?? date_create(); 
+                    $item->codigo= $ref["codigo"];
+                    array_push ($this->informacionReferencia, $item);
+                }                
+            }
+
+            /*if(isset($obj["ref"] )){
                 foreach ($obj["ref"] as $ref) {
                     $factura->idDocumentoNC= $ref["idDocumentoNC"]; // documento al que se hace referencia.
                     $factura->idReferencia= $ref["idReferencia"]; // código de referencia: 4 : Referencia a otro documento.
                     $factura->razon= $ref["razon"]; // Referencia a otro documento. //Cancelacion documento electronico
                 }                
-            }
+            }*/
         }
     }
 
@@ -274,7 +291,15 @@ class Factura{
     function reGenerarFactura(){
         try {
             $nueva_factura = $this->Read();
-
+            // referencia a la fatura cancelada.
+            $item = new Referencia();
+            $item->tipodoc= '01';  // factura electronica.
+            $item->numero= $this->clave;
+            $item->razon= 'Sustituye comprobante rechazado.'; 
+            $item->fechaEmision= $this->fechaEmision ?? date_create(); 
+            $item->codigo= '04';  // Referencia a otro documento. Al documento que se rechazó.
+            array_push ($this->informacionReferencia, $item);
+            //
             $sql="SELECT claveNC
                 FROM factura
                 WHERE id=:id";
@@ -388,7 +413,7 @@ class Factura{
             $sql='SELECT idBodega, fechaCreacion, consecutivo, clave, consecutivoFE, local, terminal, idCondicionVenta, idSituacionComprobante, idEstadoComprobante, plazoCredito, 
                 idMedioPago, idCodigoMoneda, tipoCambio, totalServGravados, totalServExentos, totalMercanciasGravadas, totalMercanciasExentas, totalGravado, totalExento, fechaEmision, idDocumento, 
                 totalVenta, totalDescuentos, totalVentaneta, totalImpuesto, totalComprobante, idReceptor, idEmisor, idUsuario, idDocumentoNC, claveNC, fechaEmisionNC,
-                    idReferencia, razon, idEstadoNC
+                idReferencia, razon, idEstadoNC
                 from factura
                 where id=:id';
             $param= array(':id'=>$this->id);
@@ -836,9 +861,16 @@ class Factura{
                     ':razon'=>$this->razon,
                     ':idEstadoNC'=>1);
                 $data = DATA::Ejecutar($sql,$param, false);
-                if($data)
-                {
+                if($data){
                     $this->read();
+                     // referencia a la fatura cancelada.
+                    $item = new Referencia();
+                    $item->tipodoc= '01'; // factura electronica
+                    $item->numero= $this->clave;  // clave del documento en referencia.
+                    $item->razon= 'Aplica Nota de credito';  // nc por rechazo? | cual es la razon de hacer la referencia.
+                    $item->fechaEmision= $this->fechaEmision ?? date_create()->format('c'); // fecha de la emisión del documento al que hace referencia.
+                    $item->codigo= '01';  // Anula Documento de Referencia. ;
+                    array_push ($this->informacionReferencia, $item);
                     // envía la factura
                     FacturacionElectronica::iniciarNC($this);
 

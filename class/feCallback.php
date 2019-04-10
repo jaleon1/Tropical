@@ -1,4 +1,6 @@
 <?php    
+    if (!isset($_SESSION))
+        session_start();
     include_once("Conexion.php");
     include_once("facturacionElectronica.php");
     include_once("ClienteFE.php");
@@ -10,6 +12,7 @@
     include_once("encdes.php");
     require_once("productoXFactura.php");
     require_once("mensajeReceptor.php");
+    require_once("referencia.php");
     try{
         // enviar en contingencia
         // Documentos 1-4-8.
@@ -20,7 +23,7 @@
         error_log("**************************************************************************");
         $sql="SELECT f.id, b.nombre as bodega, consecutivo
             from factura f inner join bodega b on b.id = f.idBodega
-            WHERE  f.idEstadoComprobante = 5  and (f.idDocumento = 1 or  f.idDocumento = 4 or  f.idDocumento = 8) 
+            WHERE  f.idEstadoComprobante = 5  and  (f.idDocumento = 1 or  f.idDocumento = 4 or  f.idDocumento = 8) 
             ORDER BY consecutivo asc";
         $data = DATA::Ejecutar($sql);
         error_log("[INFO] Total de transacciones en Contingencia: ". count($data));
@@ -28,7 +31,7 @@
             error_log("[INFO] Contingencia Bodega (". $transaccion['bodega'] .") Transaccion (".$transaccion['consecutivo'].")");
             $factura = new Factura();
             $factura->id = $transaccion['id'];
-            $factura->contingencia();                
+            $factura->contingencia();
         }
         error_log("[INFO] Finaliza Contingencia Masiva de Comprobantes"); 
         // timedout - Duplicadas
@@ -156,6 +159,29 @@
             FacturacionElectronica::APIConsultaComprobante($factura);            
         }
         error_log("[INFO] Finaliza Consulta NC");
+        // Reenvio de MR en estado 5
+        // Documentos 5-6-7.
+        error_log("**************************************************************************");
+        error_log("**************************************************************************");
+        error_log("                    [INFO] Iniciando REENVIO DE MR                        ");
+        error_log("**************************************************************************");
+        error_log("**************************************************************************");
+        $sql="SELECT f.id, b.nombre as bodega, consecutivo, idReceptor
+            from mensajeReceptor f inner join bodega b on b.id = f.idReceptor
+            WHERE  f.idEstadoComprobante = 5
+            ORDER BY consecutivo asc";
+        $data = DATA::Ejecutar($sql);
+        error_log("[INFO] Total de MR a Reenviar: ". count($data));
+        foreach ($data as $key => $transaccion){
+            error_log("[INFO] Reenvío MR (". $transaccion['bodega'] .") Transaccion (".$transaccion['consecutivo'].")");
+            $mr = new mensajeReceptor();
+            $mr->id = $transaccion['id'];
+            $mr->entidad = new ClienteFE();
+            $mr->entidad->idBodega = $transaccion['idReceptor'];;
+            $mr->datosReceptor = $mr->entidad->read();
+            $mr->enviar();
+        }
+        error_log("[INFO] Finaliza Contingencia Masiva de Comprobantes"); 
         // Mensaje Receptor Documentos 5-6-7.
         error_log("**************************************************************************");
         error_log("**************************************************************************");
@@ -222,7 +248,7 @@
         error_log("**************************************************************************");
         $sql='SELECT id
             from distribucion d
-            where idEstadoComprobante = 6 or f.idEstadoComprobante = 7
+            where idEstadoComprobante = 6 or d.idEstadoComprobante = 7
             order by idBodega';
         $data= DATA::Ejecutar($sql);
         foreach ($data as $key => $transaccion){
@@ -298,6 +324,7 @@
             $distr->datosReceptor = $receptor->read();
             // idDocumento.
             $distr->idDocumento = 1;
+            $distr->consecutivo = $distr->orden;
             FacturacionElectronica::$distr= true;
             facturacionElectronica::APIConsultaComprobante($distr); // debe envíar email.
             error_log("[INFO] Finaliza Consulta de Distribucion");

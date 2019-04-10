@@ -599,8 +599,23 @@ class FacturacionElectronica{
             }
             // codigo ubicacion
             $ubicacionEntidadCod= self::getUbicacionCod(self::$transaccion->datosEntidad->idProvincia, self::$transaccion->datosEntidad->idCanton, self::$transaccion->datosEntidad->idDistrito, self::$transaccion->datosEntidad->idBarrio);
-            $ubicacionReceptorCod= self::getUbicacionCod(self::$transaccion->datosReceptor->idProvincia, self::$transaccion->datosReceptor->idCanton, self::$transaccion->datosReceptor->idDistrito, self::$transaccion->datosReceptor->idBarrio);
-            //
+            //$ubicacionReceptorCod= self::getUbicacionCod(self::$transaccion->datosReceptor->idProvincia, self::$transaccion->datosReceptor->idCanton, self::$transaccion->datosReceptor->idDistrito, self::$transaccion->datosReceptor->idBarrio);
+            // tiene receptor.
+            $receptor_nombre = '';
+            $receptor_tipo_identif = '';
+            $receptor_num_identif = '';
+            $receptor_email = '';
+            if(self::$transaccion->datosReceptor->nombre == 'default'){
+                $omitir_receptor = true;                
+            }
+            else {
+                $omitir_receptor = false; 
+                $receptor_nombre = self::$transaccion->datosReceptor->nombre;
+                //$receptor_tipo_identif =
+                //$receptor_num_identif =
+                //$receptor_email =
+            }
+            // tipo de documento a crear siempre gen_xml_fe
             $post = [
                 'w' => 'genXML',
                 'r' => 'gen_xml_fe',  // self::$transaccion->idDocumento == 1 ? 'gen_xml_fe' : 'gen_xml_te', // define si es FE - TE.
@@ -617,24 +632,25 @@ class FacturacionElectronica{
                 'emisor_distrito'=> $ubicacionEntidadCod[0]->distrito,
                 'emisor_barrio'=> $ubicacionEntidadCod[0]->barrio,
                 'emisor_otras_senas'=> self::$transaccion->datosEntidad->otrasSenas,
+                'emisor_email'=> self::$transaccion->datosEntidad->correoElectronico,
                 // 'emisor_cod_pais_tel'=> '506',
                 // 'emisor_tel'=> self::$transaccion->datosEntidad->numTelefono,
                 // 'emisor_cod_pais_fax'=> '506',
                 // 'emisor_fax'=> '00000000',
-                'emisor_email'=> self::$transaccion->datosEntidad->correoElectronico,
                 /** Receptor **/  
+                'omitir_receptor'=> $omitir_receptor,
                 'receptor_nombre'=>  self::$transaccion->datosReceptor->nombre,
                 'receptor_tipo_identif'=> self::getIdentificacionCod(self::$transaccion->datosReceptor->idTipoIdentificacion),
                 'receptor_num_identif'=>  self::$transaccion->datosReceptor->identificacion,
-                'receptor_provincia'=> $ubicacionReceptorCod[0]->provincia,
-                'receptor_canton'=> $ubicacionReceptorCod[0]->canton,
-                'receptor_distrito'=> $ubicacionReceptorCod[0]->distrito,
-                'receptor_barrio'=> $ubicacionReceptorCod[0]->barrio,
+                //'receptor_email'=> self::$transaccion->datosReceptor->correoElectronico,
+                // 'receptor_provincia'=> $ubicacionReceptorCod[0]->provincia,
+                // 'receptor_canton'=> $ubicacionReceptorCod[0]->canton,
+                // 'receptor_distrito'=> $ubicacionReceptorCod[0]->distrito,
+                // 'receptor_barrio'=> $ubicacionReceptorCod[0]->barrio,
                 //'receptor_cod_pais_tel'=> '506',
                 //'receptor_tel'=> self::$transaccion->datosReceptor->numTelefono,
                 // 'receptor_cod_pais_fax'=> '506',
-                // 'receptor_fax'=> '00000000',
-                'receptor_email'=> self::$transaccion->datosReceptor->correoElectronico,
+                // 'receptor_fax'=> '00000000',                
                 /** Datos de la venta **/
                 'condicion_venta'=> self::getCondicionVentaCod(self::$transaccion->idCondicionVenta),
                 // 'plazo_credito'=> self::$transaccion->plazoCredito, 
@@ -657,12 +673,20 @@ class FacturacionElectronica{
                 'detalles'=>  json_encode($detalles, JSON_FORCE_OBJECT)
             ];
             /** Referencia PROBAR CUANDO ES UN COMPROBANTE EMITIDO DESPUES DE UNA NC **/
-            if(isset(self::$transaccion->idDocumentoReferencia)){
+            /*if(isset(self::$transaccion->idDocumentoReferencia)){
                 array_push($post['infoRefeTipoDoc']=  self::getDocumentoReferenciaCod(self::$transaccion->idDocumentoReferencia),
                     $post['infoRefeNumero']=  self::$transaccion->claveReferencia,
                     $post['infoRefeFechaEmision']=  self::$transaccion->fechaEmisionReferencia->format("c"),
                     $post['infoRefeCodigo']=  self::getReferenciaCod(self::$transaccion->idReferencia),
                     $post['infoRefeRazon']=  self::$transaccion->razon);
+            }*/
+            foreach(self::$transaccion->informacionReferencia as $ref){
+                array_push(
+                    $post['infoRefeTipoDoc']=  self::getDocumentoReferenciaCod($ref->tipodoc),
+                    $post['infoRefeNumero']=  $ref->numero,
+                    $post['infoRefeFechaEmision']=  $ref->fechaEmision,
+                    $post['infoRefeCodigo']=  self::getReferenciaCod($ref->codigo),
+                    $post['infoRefeRazon']=  $ref->razon);
             }
             //            
             curl_setopt_array($ch, array(
@@ -693,9 +717,7 @@ class FacturacionElectronica{
                 throw new Exception('Error CRITICO al crear xml de comprobante. DEBE COMUNICARSE CON SOPORTE TECNICO: '. $server_output, ERROR_FEXML_NO_VALID);
             }
             self::$xml= $sArray->resp->xml;
-            //
-            historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 1, 'XML a enviar', base64_decode($sArray->resp->xml));
-            //*******************************************************/
+            historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 1, 'XML a enviar', base64_decode($sArray->resp->xml));            
             curl_close($ch);
             error_log("[INFO] API CREAR XML EXITOSO!" );
             return true;
@@ -925,8 +947,8 @@ class FacturacionElectronica{
                 case 5:
                 case 6:
                 case 7:
-                $downloadCode= self::$transaccion->datosReceptor->downloadCode;
-                $pinp12= self::$transaccion->datosReceptor->pinp12;
+                    $downloadCode= self::$transaccion->datosReceptor->downloadCode;
+                    $pinp12= self::$transaccion->datosReceptor->pinp12;
                     break;
             }
             $post = [
@@ -1061,7 +1083,7 @@ class FacturacionElectronica{
                     // curl_close($ch);
                     return true;
                 }
-                else {                    
+                else {
                     throw new Exception('Error CRITICO al ENVIAR el comprobante. DEBE COMUNICARSE CON SOPORTE TECNICO, STATUS('.$sArray->resp->Status.'):  '.$sArray->resp->text[17], ERROR_ENVIO_NO_VALID);                    
                 }
             }

@@ -25,11 +25,13 @@ class InventarioProducto{
     //
     public static function entrada($idProducto, $inOrden, $inCantidad, $inCostoUnitario){
         try {
-            $sql="SELECT saldoCantidad, saldoCosto 
+            $sql="SELECT saldoCantidad, saldoCosto, costoPromedio
                 FROM producto WHERE id=:idProducto;";
             $param = array(':idProducto'=>$idProducto);
             $data = DATA::Ejecutar($sql,$param);
             if($data){
+                if(!$inCostoUnitario)
+                    $inCostoUnitario = $data[0]['costoPromedio'];
                 // calculo de saldos.
                 self::$saldoCantidad = $data[0]['saldoCantidad'] + $inCantidad;
                 self::$saldoCosto = $data[0]['saldoCosto'] + floatval($inCostoUnitario * $inCantidad);
