@@ -149,7 +149,8 @@
                                 <span></span> <i class="fa fa-caret-down"></i>
                             </div>
                             <div>
-                                <!-- <button type="button" class="btn btn-primary" id="sendContingenciaMasiva">Enviar Contingencia</button> -->
+                                <button type="button" class="btn btn-primary" id="sendContingenciaMasiva">Enviar Contingencia
+                                </button>
                                 <!-- <button type="button" class="btn btn-primary" id="sendMasiva">Re-enviar</button> -->
                             </div>
                         </div>
@@ -298,6 +299,10 @@
         distr.id = null;
         distr.setTableVista();
         // distr.Read;
+
+        $('#sendContingenciaMasiva').click(function () {
+            distr.sendContingenciaMasiva();
+        });
 
         $(function () {
             var start = moment().subtract(29, 'days');
@@ -505,7 +510,7 @@
                 if (result.value) {
                     $.ajax({
                         type: "POST",
-                        url: "class/Factura.php",
+                        url: "class/Distribucion.php",
                         data: {
                             action: "sendContingencia",
                             id: data['id']

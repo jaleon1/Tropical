@@ -68,6 +68,12 @@ if(isset($_POST["action"])){
         case "cancelaDistribucion":
             $distribucion->cancelaDistribucion($_POST['id'], $_POST['razon']);
             break;
+        case "sendContingenciaMasiva":
+            $distribucion->sendContingenciaMasiva();
+            break;
+        case "sendContingencia":
+        $distribucion->sendContingencia();
+        break;
     }
 }
 
@@ -88,6 +94,9 @@ class Distribucion{
     public $datosEntidad = [];
     public $fechaInicial='';
     public $fechaFinal='';
+    public $totalServGravados = null;
+    public $razon = null;
+    public $consecutivo = null;
 
     function __construct(){
         // identificador único
@@ -119,17 +128,17 @@ class Distribucion{
             // definir si es servicio o mercancia (producto).
             $this->idCodigoMoneda= 55; // CRC
             $this->tipoCambio= 595.00; // tipo de cambio dinamico con BCCR
-            $this->totalServGravados= number_format((float)$obj['totalServGravados'],5,'.','' ) ;
-            $this->totalServExentos= number_format((float)$obj['totalServExentos'],5,'.','' ) ;
-            $this->totalMercanciasGravadas= number_format((float)$obj['totalMercanciasGravadas'],5,'.','' ) ;
-            $this->totalMercanciasExentas= number_format((float)$obj['totalMercanciasExentas'],5,'.','' ) ;
-            $this->totalGravado= number_format((float)$obj['totalGravado'],5,'.','' ) ;
-            $this->totalExento= number_format((float)$obj['totalExento'],5,'.','' ) ;
-            $this->totalVenta= number_format((float)$obj['totalVenta'],5,'.','' ) ;
-            $this->totalDescuentos= number_format((float)$obj['totalDescuentos'],5,'.','' ) ;
-            $this->totalVentaneta= number_format((float)$obj['totalVentaneta'],5,'.','' ) ;
-            $this->totalImpuesto= number_format((float)$obj['totalImpuesto'],5,'.','' ) ;
-            $this->totalComprobante= number_format((float)$obj['totalComprobante'],5,'.','' ) ;
+            $this->totalServGravados= number_format((float)$obj['totalServGravados'],5,'.','' ) ?? null;
+            $this->totalServExentos= number_format((float)$obj['totalServExentos'],5,'.','' )  ?? null;
+            $this->totalMercanciasGravadas= number_format((float)$obj['totalMercanciasGravadas'],5,'.','' )  ?? null;
+            $this->totalMercanciasExentas= number_format((float)$obj['totalMercanciasExentas'],5,'.','' )  ?? null;
+            $this->totalGravado= number_format((float)$obj['totalGravado'],5,'.','' )  ?? null;
+            $this->totalExento= number_format((float)$obj['totalExento'],5,'.','' )  ?? null;
+            $this->totalVenta= number_format((float)$obj['totalVenta'],5,'.','' )  ?? null;
+            $this->totalDescuentos= number_format((float)$obj['totalDescuentos'],5,'.','' )   ?? null;;
+            $this->totalVentaneta= number_format((float)$obj['totalVentaneta'],5,'.','' )   ?? null;
+            $this->totalImpuesto= number_format((float)$obj['totalImpuesto'],5,'.','' )   ?? null;
+            $this->totalComprobante= number_format((float)$obj['totalComprobante'],5,'.','' )   ?? null;
             // $this->montoEfectivo= $obj["montoEfectivo"]; //Jason: Lo comente temporalmente
             // $this->montoTarjeta= $obj["montoTarjeta"];   //Jason: Lo comente temporalmente
             // d. Informacion de referencia
@@ -194,56 +203,138 @@ class Distribucion{
         }
     }
 
-    public static function cancelaDistribucion($idDistribucion, $razon){
-        
-        try {   
-            //Master
-            $sql="SELECT fecha, orden, idUsuario, idBodega, porcentajeDescuento, porcentajeIva, idEstado, clave, consecutivoFE, idEstadoComprobante
-                FROM tropical.distribucion
-                WHERE id =:id;";
-            $param= array(':id'=>$idDistribucion);
-            $distribucion = DATA::Ejecutar($sql,$param);  
-            //Detalle
-            $detalleDistribucion = ProductosXDistribucion::Read($idDistribucion);
-            
-            
-            if($detalleDistribucion){
-                foreach ($detalleDistribucion as $item => $idProducto){
+    function reGenerarFactura(){
+        try {
+            $nueva_factura = $this->Read();
+            // referencia a la fatura cancelada.
+            $item = new Referencia();
+            $item->tipodoc= '01';  // factura electronica.
+            $item->numero= $this->clave;
+            $item->razon= 'Sustituye comprobante rechazado.'; 
+            $item->fechaEmision= $this->fechaEmision ?? date_create(); 
+            $item->codigo= '04';  // Referencia a otro documento. Al documento que se rechazó.
+            array_push ($this->informacionReferencia, $item);
+            //
+            $sql="SELECT claveNC
+                FROM distribucion
+                WHERE id=:id";
+            $param= array(':id'=>$this->id);
+            $idNC = DATA::Ejecutar($sql,$param);
 
-                    $sql="SELECT id, costoPromedio 
-                    FROM insumosXBodega 
-                    WHERE idProducto= :idProducto
-                    AND idBodega = :idBodega;";
-                    $param= array(':idProducto'=>$idProducto, ':idBodega'=>$factura[0]["idBodega"]);
-                    $insumoXBodega = DATA::Ejecutar($sql,$param);
+            $this->id = UUID::v4();
+            $this->idDocumentoNC = NULL;
 
-                    // array_push($insumoXBodega,$data[0]["id"]);
-
-                    if($producto_x_linea[0]=="08oz")
-                        $porcion= 1;
-                    else $porcion= 1.4285714;
-                    // Entrada a inventario agencia.
-                    InventarioInsumoXBodega::entrada($idProducto, $factura[0]["idBodega"], 'Nota Credito Fac#: ' . $factura[0]["consecutivo"], $porcion, $insumoXBodega[0]["costoPromedio"], false);
-                    
-                    switch($producto_x_linea[0]){
-                        case "12oz":
-                            $tamano = 1;                       
-                            break;
-                        case "08oz":
-                            $tamano = 0;  
-                            break;
-                    }     
-
-                    Consumible::entrada($tamano, $factura[0]["idBodega"], $factura[0]["consecutivo"]);
-                }
+            foreach ($this->detalleFactura as $key=>$item) {
+                $this->detalleFactura[$key]->idFactura = $this->id;
             }
 
-            $objFactura = new Factura();
-            $objFactura->id = $idFactura;
-            $objFactura->idDocumentoNC = 3;
-            $objFactura->idReferencia = 1;
-            $objFactura->razon = $razon;
-            $objFactura->notaCredito();
+            // $this->idDocumentoNC= $idNC[0]["claveNC"]; //Falta jalar este dato// documento al que se hace referencia.
+            // $this->idReferencia= 4; // código de referencia: 4 : Referencia a otro documento.
+            // $this->razon= "Cancelacion documento electronico"; // Referencia a otro documento.
+            $this->reenvio = true;
+            $this->Create();
+        }     
+        catch(Exception $e) { 
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar la lista'))
+            );
+        }
+    }
+
+    public function notaCredito(){
+        try {
+            // check si ya existe la NC.
+            $sql="SELECT id
+                FROM distribucion
+                WHERE id=:id and (idEstadoNC IS NULL OR idEstadoNC = 5 OR idEstadoNC = 1)";
+            $param= array(':id'=>$this->id);
+            $data = DATA::Ejecutar($sql,$param);
+            // si hay comprobante sin NC, continua:
+            if($data){
+                // actualiza estado de comprobante con NC.
+                $sql="UPDATE distribucion
+                    SET idDocumentoNC=:idDocumentoNC, idReferencia=:idReferencia, razon=:razon, idEstadoNC=:idEstadoNC
+                    WHERE id=:id";
+                $param= array(
+                    ':id'=>$this->id,
+                    ':idDocumentoNC'=>$this->idDocumentoNC ?? 3,
+                    ':idReferencia'=>$this->idReferencia ?? 1,
+                    ':razon'=>$this->razon,
+                    ':idEstadoNC'=>1);
+                $data = DATA::Ejecutar($sql,$param, false);
+                if($data){
+                    $this->read();
+                     // referencia a la fatura cancelada.
+                    $item = new Referencia();
+                    $item->tipodoc= '01'; // factura electronica
+                    $item->numero= $this->clave;  // clave del documento en referencia.
+                    $item->razon= 'Aplica Nota de credito';  // nc por rechazo? | cual es la razon de hacer la referencia.
+                    $item->fechaEmision= $this->fechaEmision ?? date_create()->format('c'); // fecha de la emisión del documento al que hace referencia.
+                    $item->codigo= '01';  // Anula Documento de Referencia. ;
+                    array_push ($this->informacionReferencia, $item);
+                    // envía la factura
+                    FacturacionElectronica::iniciarNC($this);
+
+                    if ($this->facturaRelacionada == true){
+                        $this->reGenerarFactura();
+                    }
+                    return true;
+                }
+                else throw new Exception('Error al guardar.', 02);
+            } else throw new Exception('Warning, el comprobante ('. $this->id .') ya tiene una Nota de Crédito asignada.', 0763);
+        }     
+        catch(Exception $e) {
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }
+    }
+
+    function rollbackDistribucion(){
+        $sql="SELECT idProducto, cantidad
+                FROM productosXDistribucion
+                WHERE id =:id;";
+            $param= array(':id'=>$this->id);
+            $productosXDistribucion = DATA::Ejecutar($sql,$param);  
+
+            if($productosXDistribucion){
+                foreach ($productosXDistribucion as $key => $value){
+                    InventarioInsumoXBodega::salida($value['idProducto'], $this->idBodega, 'Distribucion#'.$this->orden, $value['cantidad']);
+                    InventarioProducto::entrada( $value['idProducto'], $this->orden, $value['cantidad']);
+                }
+            }
+    }
+    
+    public static function cancelaDistribucion($idDistribucion, $razon){
+        try {  
+            //Master
+            $sql="SELECT orden, idEstado, idBodega
+                FROM distribucion
+                WHERE id =:id;";
+            $param= array(':id'=>$idDistribucion);
+            $data = DATA::Ejecutar($sql,$param);  
+            
+            $this->razon = $razon;
+            $this->id = $idDistribucion; 
+            $this->orden = $data[0]["orden"];
+            $this->idBodega = $data[0]["idBodega"];
+
+            if($data[0] == 1){
+                rollbackDistribucion();
+            }
+            
+            // $objDistribucion = new Factura();
+            // $objDistribucion->id = $idDistribucion;
+            // $objDistribucion->idDocumentoNC = 3;
+            // $objDistribucion->idReferencia = 1;
+            // $objDistribucion->razon = $razon;
+            $this->notaCredito();
         }     
         catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
@@ -791,6 +882,62 @@ class Distribucion{
         }
     }
 
+    public function sendContingencia(){
+        try {
+            error_log("************************************************************");
+            error_log("************************************************************");
+            error_log("     [INFO] Iniciando Ejecución de contingencia por ID    ");
+            error_log("************************************************************");
+            error_log("************************************************************");
+            // consulta datos de factura en bd.
+            $this->Read();
+            // envía la factura
+            $this->contingencia();
+        }
+        catch(Exception $e){
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+        }
+    } 
+
+    public function sendContingenciaMasiva(){
+        try {
+            // busca facturas con error (5) y las reenvia con contingencia, para los documentos 1 - 4  (FE - TE)
+            error_log("************************************************************");
+            error_log("************************************************************");
+            error_log("     [INFO] Iniciando Ejecución masiva de contingencia      ");
+            error_log("                Para Distribuciones Externas                ");
+            error_log("************************************************************");
+            error_log("************************************************************");
+            $sql="SELECT d.id, b.nombre as entidad, d.orden
+                from distribucion d inner join bodega b on b.id = d.idBodega
+                WHERE  d.idEstadoComprobante = 5
+                ORDER BY orden asc";
+                //idBodega=:idBodega and
+            // $param= array(':idBodega'=>'0cf4f234-9479-4dcb-a8c0-faa4efe82db0');
+            // $param= array(':idBodega'=>'f787b579-8306-4d68-a7ba-9ae328975270'); // carlos.echc11.
+            $data = DATA::Ejecutar($sql);
+            error_log("[INFO] Total de transacciones en Contingencia: ". count($data));
+            if ($data){
+                foreach ($data as $key => $transaccion){
+                    error_log("[INFO] Contingencia Entidad (". $transaccion['entidad'] .") Transaccion (".$transaccion['orden'].")");
+                    $this->id = $transaccion['id'];
+                    $this->contingencia();
+                }
+            }else{                
+                error_log("[INFO] No existen transacciones para el envio de contingencia)");
+            }
+            error_log("[INFO] Finaliza Contingencia Masiva de Comprobantes");
+        }     
+        catch(Exception $e) {
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }
+    }
+
     public function contingencia(){
         try {
             // idDocumento 08 = Comprobante emitido en contingencia.
@@ -812,7 +959,7 @@ class Distribucion{
                 $this->plazoCredito= 0;
                 $this->idMedioPago= 1;
                 $this->idCodigoMoneda = 55; // CRC
-                $this->tipoCambio= 601.00; // tipo de cambio dinamico con BCCR                
+                $this->tipoCambio= 1.00; // tipo de cambio dinamico con BCCR                
                 $this->enviarDocumentoElectronico();
                 return true;
             }
@@ -851,140 +998,8 @@ class Distribucion{
             error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
         }
     }
+     
 }
-
-
-/*$sql="SELECT id
-                            FROM clienteFE
-                            WHERE idBodega = :idBodega";
-                        $param= array(':idBodega'=>$this->idBodega);
-                        $data = DATA::Ejecutar($sql,$param);
-                        
-                        if($data){                            
-                            $this->idReceptor=$data[0]["id"];
-                            $sql="SELECT id
-                                FROM receptor
-                                WHERE id = :id";
-                            $param= array(':id'=>$this->idReceptor);
-                            $data = DATA::Ejecutar($sql,$param);
-                            if($data){
-                                $this->idReceptor=$data[0]["id"];                            
-                            }else{
-                                //Trae los datos de ClienteFE para crear el Receptor
-                                $sql="SELECT id, nombre, idTipoIdentificacion, identificacion, 
-                                nombreComercial, idProvincia, idCanton, idDistrito, idBarrio, 
-                                otrasSenas, idCodigoPaisTel, numTelefono, correoElectronico 
-                                FROM tropical.clienteFE
-                                WHERE id = :id";
-                                $param= array(':id'=>$this->idReceptor);
-                                $data = DATA::Ejecutar($sql,$param);
-
-                                $receptor = new stdClass();
-                                $receptor->id = $data[0]["id"];
-                                $receptor->nombre = $data[0]["nombre"];
-                                $receptor->idTipoIdentificacion = $data[0]["idTipoIdentificacion"];
-                                $receptor->identificacion = $data[0]["identificacion"];
-                                $receptor->nombreComercial = $data[0]["nombreComercial"];
-                                $receptor->idProvincia = $data[0]["idProvincia"];
-                                $receptor->idCanton = $data[0]["idCanton"];
-                                $receptor->idDistrito = $data[0]["idDistrito"];
-                                $receptor->idBarrio = $data[0]["idBarrio"];
-                                $receptor->otrasSenas = $data[0]["otrasSenas"];
-                                $receptor->idCodigoPaisTel = $data[0]["idCodigoPaisTel"];
-                                $receptor->numTelefono = $data[0]["numTelefono"];
-                                $receptor->correoElectronico = $data[0]["correoElectronico"];
-
-                                $sql="INSERT INTO receptor (id, nombre, idTipoIdentificacion, identificacion, identificacionExtranjero, 
-                                    nombreComercial, idProvincia, idCanton, idDistrito, idBarrio, 
-                                    otrasSenas, idCodigoPaisTel, numTelefono, correoElectronico)
-                                    VALUES (:id, :nombre, :idTipoIdentificacion, :identificacion, null, 
-                                    :nombreComercial, :idProvincia, :idCanton, :idDistrito, :idBarrio, :otrasSenas, 
-                                    :idCodigoPaisTel, :numTelefono, :correoElectronico)";
-                                $param= array(
-                                    ':id'=>$receptor->id, 
-                                    ':nombre'=>$receptor->nombre, 
-                                    ':idTipoIdentificacion'=>$receptor->idTipoIdentificacion,
-                                    ':identificacion'=>$receptor->identificacion,
-                                    ':nombreComercial'=>$receptor->nombreComercial,
-                                    ':idProvincia'=>$receptor->idProvincia,
-                                    ':idCanton'=>$receptor->idCanton,
-                                    ':idDistrito'=>$receptor->idDistrito,
-                                    ':idBarrio'=>$receptor->idBarrio,
-                                    ':otrasSenas'=>$receptor->otrasSenas,
-                                    ':idCodigoPaisTel'=>$receptor->idCodigoPaisTel,
-                                    ':numTelefono'=>$receptor->numTelefono,
-                                    ':correoElectronico'=>$receptor->correoElectronico
-                                );
-                                $data = DATA::Ejecutar($sql,$param);
-                            }
-
-                        }
-                        $this->crearFactura();
-                        
-                        
-                        
-    function crearFactura(){
-        try {
-            $sql="INSERT INTO factura   (id, idBodega, local, terminal, idCondicionVenta, idSituacionComprobante, idEstadoComprobante, plazoCredito, 
-                idMedioPago, idCodigoMoneda, tipoCambio, totalServGravados, totalServExentos, totalMercanciasGravadas, totalMercanciasExentas, totalGravado, totalExento, idDocumento, 
-                totalVenta, totalDescuentos, totalVentaneta, totalImpuesto, totalComprobante, idReceptor, idEmisor, idUsuario)
-            VALUES  (:uuid, :idBodega, :local, :terminal, :idCondicionVenta, :idSituacionComprobante, :idEstadoComprobante, :plazoCredito,
-                :idMedioPago, :idCodigoMoneda, :tipoCambio, :totalServGravados, :totalServExentos, :totalMercanciasGravadas, :totalMercanciasExentas, :totalGravado, :totalExento, :idDocumento, 
-                :totalVenta, :totalDescuentos, :totalVentaneta, :totalImpuesto, :totalComprobante, :idReceptor, :idEmisor, :idUsuario)";
-            $param= array(':uuid'=>$this->id,
-                ':idBodega'=>$this->idBodega,
-                ':local'=>$this->local,
-                ':terminal'=>$this->terminal,
-                ':idCondicionVenta'=>$this->idCondicionVenta,
-                ':idSituacionComprobante'=>$this->idSituacionComprobante,
-                ':idEstadoComprobante'=>$this->idEstadoComprobante,
-                ':plazoCredito'=> $this->plazoCredito,                    
-                ':idMedioPago'=>$this->idMedioPago,
-                ':idCodigoMoneda'=>$this->idCodigoMoneda,
-                ':tipoCambio'=>$this->tipoCambio,
-                ':totalServGravados'=> $this->totalServGravados,
-                ':totalServExentos'=> $this->totalServExentos,
-                ':totalMercanciasGravadas'=> $this->totalMercanciasGravadas,
-                ':totalMercanciasExentas'=> $this->totalMercanciasExentas,
-                ':totalGravado'=> $this->totalGravado,
-                ':totalExento'=> $this->totalExento,
-                ':idDocumento'=> $this->idDocumento,
-                ':totalVenta'=>$this->totalVenta,
-                ':totalDescuentos'=>$this->totalDescuentos,
-                ':totalVentaneta'=>$this->totalVentaneta,
-                ':totalImpuesto'=>$this->totalImpuesto,
-                ':totalComprobante'=>$this->totalComprobante,
-                ':idReceptor'=>$this->idReceptor,
-                ':idEmisor'=>$this->idEmisor,
-                ':idUsuario'=>$this->idUsuario);
-            $data = DATA::Ejecutar($sql,$param, false);
-            if($data)
-            {
-                //save array obj
-                if(ProductoXFactura::Create($this->detalleFactura)){
-                    // $this->actualizaInventario($this->detalleOrden);
-                    // orden de factura para mostrar en despacho.
-                    // OrdenXFactura::$id=$this->id;
-                    // OrdenXFactura::Create($this->detalleOrden);
-                    // envio de comprobantes en tiempo real.
-                    // $this->enviarDocumentoElectronico();         
-                    return $this;
-                }
-                else throw new Exception('[ERROR] al guardar los productos.', 03);
-            }
-            else throw new Exception('[ERROR] al guardar.', 02);
-        }     
-        catch(Exception $e) {
-            error_log("[ERROR]: ". $e->getMessage());
-            header('HTTP/1.0 400 Bad error');
-            die(json_encode(array(
-                'code' => $e->getCode() ,
-                'msg' => $e->getMessage()))
-            );
-        }
-
-    }
-    */
 ?>
 
 

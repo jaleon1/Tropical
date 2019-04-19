@@ -786,9 +786,27 @@ class Factura{
         }
         error_log("[INFO] Finaliza Contingencia Masiva de Comprobantes");
     } 
+
+
+    public function sendContingencia(){
+        try {
+            error_log("************************************************************");
+            error_log("************************************************************");
+            error_log("     [INFO] Iniciando Ejecución de contingencia por ID    ");
+            error_log("************************************************************");
+            error_log("************************************************************");
+            // consulta datos de factura en bd.
+            $this->Read();
+            // envía la factura
+            $this->contingencia();
+        }
+        catch(Exception $e){
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+        }
+    } 
     
     public function sendMasiva(){
-        // busca facturas con estado (1) y (5) y las reenvia
+        // busca facturas con estado (1) y (5) y las reenvia 
         error_log("************************************************************");
         error_log("************************************************************");
         error_log("     [INFO] Iniciando Re-envío masivo de facturas           ");
