@@ -162,9 +162,12 @@ class Factura{
             $this->idMedioPago= $obj["idMedioPago"] ?? 1;
             // c. Resumen de la factura/Total de la Factura 
             // definir si es servicio o mercancia (producto). En caso Tropical, siempre es mercancia
-            $this->idCodigoMoneda= $obj["idCodigoMoneda"] ?? 55; // CRC
-            $wsBCCR = new TipoCambio();
-            $this->tipoCambio= $obj['tipoCambio'] ?? $wsBCCR->tipo_cambio()["venta"]; // tipo de cambio dinamico con BCCR
+            if($this->idCodigoMoneda==55)
+                $this->tipoCambio= 1; // 1 en colones.
+            else {
+                $wsBCCR = new TipoCambio();
+                $this->tipoCambio= $obj['tipoCambio'] ?? $wsBCCR->tipo_cambio()["venta"]; // tipo de cambio dinamico con BCCR
+            }
             $this->totalServGravados= $obj['totalServGravados'] ?? 0;
             $this->totalServExentos= $obj['totalServExentos'] ?? 0;
             $this->totalMercanciasGravadas= $obj['totalMercanciasGravadas'] ?? 0;
