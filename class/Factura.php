@@ -69,6 +69,9 @@ if(isset($_POST["action"])){
         case "ReadAllbyRange":
             echo json_encode($factura->ReadAllbyRange());
             break;
+        case "ReadAllbyRangeExterna":
+            echo json_encode($factura->ReadAllbyRangeExterna());
+            break;        
         case "ReadAllbyRangeInvVentas":
             echo json_encode($factura->ReadAllbyRangeInvVentas());
             break;
@@ -275,6 +278,32 @@ class Factura{
                 ORDER BY fac.fechaCreacion DESC'; 
                 
             $param= array(':idUsuario'=>$_SESSION["userSession"]->id, ':fechaInicial'=>$this->fechaInicial, ':fechaFinal'=>$this->fechaFinal);
+            $data = DATA::Ejecutar($sql,$param);
+            return $data;
+        }     
+        catch(Exception $e) { 
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar la lista'))
+            );
+        }
+    }
+
+    function ReadAllbyRangeExterna(){
+        try {
+            $sql='SELECT fac.id, fac.idBodega, bod.nombre bodega, fac.fechaCreacion, fac.consecutivo, fac.totalComprobante, fac.idUsuario, usr.nombre vendedor, fac.montoEfectivo, fac.montoTarjeta, fac.idEstadoComprobante, fac.totalComprobante, fac.claveNC
+                FROM factura fac
+                INNER JOIN bodega bod ON bod.idTipoBodega = :idTipoBodega AND bod.id = fac.idEmisor
+                INNER JOIN usuario usr ON usr.id = fac.idUsuario
+                INNER JOIN (SELECT idBodega FROM usuariosXBodega
+                WHERE idUsuario = :idUsuario) bodegas ON bodegas.idBodega = fac.idBodega
+                AND fac.fechaCreacion Between :fechaInicial AND :fechaFinal
+                WHERE fac.idEmisor = :idEmisor AND claveNC IS NULL
+                ORDER BY fac.fechaCreacion DESC'; 
+                
+            $param= array(':idUsuario'=>$_SESSION["userSession"]->id, ':fechaInicial'=>$this->fechaInicial, ':fechaFinal'=>$this->fechaFinal, 'idEmisor'=>$this->idEmisor, ':idTipoBodega'=>'22a80c9e-5639-11e8-8242-54ee75873a12');
             $data = DATA::Ejecutar($sql,$param);
             return $data;
         }     

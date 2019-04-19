@@ -19,6 +19,9 @@ if(isset($_POST["action"])){
         case "ReadAllbyRange":
             echo json_encode($mensaje->ReadAllbyRange());
             break;
+        case "ReadAllbyRangeExterna":
+            echo json_encode($mensaje->ReadAllbyRangeExterna());
+            break;
         case "ReadAllById":
             echo json_encode($mensaje->ReadAllById());
             break;
@@ -282,11 +285,45 @@ class mensajeReceptor{
 
     function ReadAllbyRange(){
         try {
+            $sql='SELECT id, consecutivoFe, fechaCreacion, detalle, mensaje, totalComprobante, idEmisor, 
+            idEstadoComprobante FROM tropical.mensajeReceptor 
+            WHERE idReceptor = :idReceptor 
+            and fechaCreacion Between :fechaInicial and :fechaFinal
+            ORDER BY consecutivoFe DESC;';
+            $param= array(':fechaInicial'=>$this->fechaInicial, ':fechaFinal'=>$this->fechaFinal, ':idReceptor'=>$this->idReceptor);            
+            $data= DATA::Ejecutar($sql, $param);   
+            // foreach ($data as $key => $value){
+            //     $this->consecutivo = $value['consecutivo'];
+            //     $this->fechaCreacion = $value['fechaCreacion'];
+            //     $this->mensaje = $value['mensaje'];
+            //     $this->detalle = $value['detalle'];
+            //     $this->totalComprobante = $value['totalComprobante'];
+            //     $this->idEstadoComprobante = $value['idEstadoComprobante'];
+            //     $this->idEmisor = $value['idEmisor'];
+            // }
+            return $data;
+        }     
+        catch(Exception $e) { 
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            if (!headers_sent()) {
+                    header('HTTP/1.0 400 Error al generar al enviar el email');
+                }
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar el mensaje receptor'))
+            );
+        }
+    }
+
+    function ReadAllbyRangeExterna(){
+        try {
             $sql='SELECT id, consecutivo, fechaCreacion, detalle, mensaje, totalComprobante, idEmisor, 
-            idEstadoComprobante FROM mensajeReceptor 
-            WHERE fechaCreacion Between :fechaInicial and :fechaFinal
+            idEstadoComprobante 
+            FROM tropical.mensajeReceptor mr 
+            inner join tropical.bodega b on b.idTipoBodega = :idTipoBodega 
+            WHERE idReceptor = :idReceptor and fechaCreacion Between :fechaInicial and :fechaFinal
             ORDER BY consecutivo DESC;';
-            $param= array(':fechaInicial'=>$this->fechaInicial, ':fechaFinal'=>$this->fechaFinal);            
+            $param= array(':fechaInicial'=>$this->fechaInicial, ':fechaFinal'=>$this->fechaFinal, ':idTipoBodega'=>'22a80c9e-5639-11e8-8242-54ee75873a12');            
             $data= DATA::Ejecutar($sql, $param);   
             // foreach ($data as $key => $value){
             //     $this->consecutivo = $value['consecutivo'];

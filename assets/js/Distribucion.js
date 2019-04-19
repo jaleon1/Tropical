@@ -182,9 +182,9 @@ class Distribucion {
         localStorage.setItem("lsPorcentajeDescuento", $("#desc_val").text());
         localStorage.setItem("lsIV", $("#iv_val").text());
         localStorage.setItem("lsListaProducto", JSON.stringify(data.detalleFactura));
-        localStorage.setItem("lsUsuarioDistribucion", $("#call_name").text());
-        // location.href ="/Tropical/TicketDistribucion.html";
-        location.href = "/TicketDistribucion.html";
+        localStorage.setItem("lsUsuarioDistribucion", $("#call_username").text());
+        location.href ="/Tropical/TicketDistribucion.html";
+        // location.href = "/TicketDistribucion.html";
     }
 
     ticketRePrint() {
@@ -213,10 +213,10 @@ class Distribucion {
         localStorage.setItem("lsFechaDistribucion", $("#fechaDistribucion").text());
         localStorage.setItem("lsBodega", $("#bodega").text());
         localStorage.setItem("lsOrden", $("#consecutivo").text());
-        localStorage.setItem("lsUsuarioDistribucion", $("#call_name").html());
+        localStorage.setItem("lsUsuarioDistribucion", $("#call_username").text());
         
-        // location.href ="/Tropical/TicketDistribucion.html";
-        location.href = "/TicketDistribucion.html";
+        location.href ="/Tropical/TicketDistribucion.html";
+        // location.href = "/TicketDistribucion.html";
     }
 
     get ReadbyOrden() {
