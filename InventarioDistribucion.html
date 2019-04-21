@@ -453,7 +453,8 @@
         });
 
         $('#tDistribucion tbody').on('click', '.btnNC_CreateFact_Ref', function () {
-            var data = inventarioFacturas.tb_facturas.row($(this).parents('tr')).data();
+            var tDistribucion = $('#tDistribucion').DataTable();
+            var data = tDistribucion.row($(this).parents('tr')).data();
             swal({
                 title: 'Desea cancelar la factura ? Escriba una razón:',
                 input: 'text',
@@ -496,8 +497,8 @@
         });
 
         $('#tDistribucion tbody').on('click', '.btnEnviarFactura', function () {
-            var data = inventarioFacturas.tb_facturas.row($(this).parents('tr')).data();
-
+            var tDistribucion = $('#tDistribucion').DataTable();
+            var data = tDistribucion.row($(this).parents('tr')).data();
             swal({
                 title: 'Envío de factura',
                 text: "Desea enviar la factura?",
@@ -539,8 +540,8 @@
         });
 
         $('#tDistribucion tbody').on('click', '.btnReenviarFactura', function () {
-            var data = inventarioFacturas.tb_facturas.row($(this).parents('tr')).data();
-
+            var tDistribucion = $('#tDistribucion').DataTable();
+            var data = tDistribucion.row($(this).parents('tr')).data();
             swal({
                 title: 'Reenvío de factura',
                 text: "Desea reenviar la factura?",
