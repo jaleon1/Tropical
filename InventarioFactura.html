@@ -236,6 +236,11 @@
                                 <button id="btnReimprimeFactura" type="submit" class="btn btn-success">Reimprimir</button>
                             </div>
                         </div>
+                        <div class="form-group">
+                            </br>
+                            </br>
+                            <div id="mensajeRechazo" class="control-label col-md-12 col-sm-3 col-xs-12" style="color:red;text-align: justify;"></div>                            
+                        </div>
                         <div id="totalFact">
                         </div>
                     </div>
@@ -318,8 +323,6 @@
         });
 
         $("#tb_facturas").append("<tfoot><tr><th style='visibility:hidden'></th><th></th><th></th><th></th><th></th><th></th><th style='visibility:hidden'></th><th style='visibility:hidden'></th><th></th></tr></tfoot>");
-
-
 
         $('#tb_facturas tbody').on('click', '.btnCancelaFactura', function () {
             var data = inventarioFacturas.tb_facturas.row($(this).parents('tr')).data();
