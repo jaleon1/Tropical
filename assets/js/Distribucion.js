@@ -1,6 +1,6 @@
 class Distribucion {
     // Constructor
-    constructor(id, orden, fecha, idUsuario, idBodega, porcentajeDescuento, porcentajeIva, detalleFactura, bodega, fechaInicial, fechaFinal, totalImpuesto, totalComprobante) {
+    constructor(id, orden, fecha, idUsuario, idBodega, porcentajeDescuento, porcentajeIva, detalleFactura, bodega, fechaInicial, fechaFinal, totalImpuesto, totalComprobante, tDistribucion) {
         this.id = id || null;
         this.orden = orden || '';
         this.fecha = fecha || '';
@@ -14,6 +14,7 @@ class Distribucion {
         this.detalleFactura = detalleFactura || [];
         this.fechaInicial = fechaInicial || "";
         this.fechaFinal = fechaFinal || "";
+        this.tDistribucion = tDistribucion || null;
     }
 
     get tUpdate() {
@@ -325,6 +326,7 @@ class Distribucion {
     };
 
     ShowItemData(e) {
+        $("#mensajeRechazo").text("");
         var data = JSON.parse(e);
         distr = new Distribucion(data.id, data.orden, data.fecha, data.idUsuario, data.idBodega, data.porcentajeDescuento, data.porcentajeIva, data.detalleFactura, data.bodega);
         distr.totalComprobante= data.totalComprobante;
@@ -414,7 +416,7 @@ class Distribucion {
                 // }
             ]
         });
-
+        distr.ReadRespuestaRachazo(data.id);
         $('#modalDistribucion').modal('toggle');
 
     }
@@ -717,7 +719,7 @@ class Distribucion {
             info: false,
             iDisplayLength: nPaging,
             paging: false,
-            "language": {
+            language: {
                 "infoEmpty": "Sin Productos Ingresados",
                 "emptyTable": "Sin Productos Ingresados",
                 "search": "Buscar",
@@ -787,8 +789,25 @@ class Distribucion {
         });
     };
 
-    setTableVista(buttons = true) {
+    drawDistribucion(e) {
+        var distribuciones = JSON.parse(e);
         $('#tDistribucion').DataTable({
+            footerCallback: function ( row, data, start, end, display ) {
+                var api = this.api();
+                // Remueve el formato de la columna
+                var intVal = function ( i ) {
+                    return typeof i === 'string' ?
+                        parseFloat(i.replace(/[\¢,]/g, '')) :
+                        typeof i === 'number' ?
+                        i : 0;
+                };
+                // Total de todas las paginas filtradas
+                var subTotal = display.map(el => data[el]['totalComprobante']).reduce((a, b) => intVal(a) + intVal(b), 0 );
+                
+                // Actualiza el footer
+                $( api.column( 1 ).footer() ).html("TOTALES");
+                $( api.column( 5 ).footer() ).html('¢' + parseFloat(Number(subTotal)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+            },
             responsive: true,
             destroy: true,
             order: [[1, "desc"]],
@@ -807,7 +826,7 @@ class Distribucion {
                     }
                 }
             ],
-            "language": {
+            language: {
                 "infoEmpty": "Sin Traslados Registrados",
                 "emptyTable": "Sin Traslados Registrados",
                 "search": "Buscar",
@@ -820,6 +839,7 @@ class Distribucion {
                     "previous": "Anterior"
                 }
             },
+            data:distribuciones,
             columns: [{
                     title: "ID",
                     data: "id",
@@ -927,8 +947,8 @@ class Distribucion {
     };
 
     CargaTrasladosRango() {
-        // var referenciaCircular = inventarioVentas.tb_ventas;
-        // inventarioVentas.tb_ventas = [];
+        var referenciaCircular = distr.tDistribucion;
+        distr.tDistribucion = [];
         $.ajax({
             type: "POST",
             url: "class/Distribucion.php",
@@ -938,11 +958,35 @@ class Distribucion {
             }
         })
             .done(function (e) {
-                // inventarioVentas.tb_ventas = referenciaCircular;        
-                distr.ShowAll(e); 
+                distr.tDistribucion = referenciaCircular;        
+                distr.drawDistribucion(e); 
             });
     };
 
+<<<<<<< HEAD
+    ReadRespuestaRachazo(idFactura){
+        var resultado="";
+        // var referenciaCircular = inventarioFacturas.tb_facturas;
+        // inventarioFacturas.tb_facturas = [];
+        $.ajax({
+            type: "POST",
+            url: "class/Factura.php",
+            data: {
+                action: "ReadRespuestaRachazo",
+                id: idFactura
+            }
+        })
+            .done(function (e) {
+                // inventarioFacturas.tb_facturas = referenciaCircular; 
+                if (e!=" []") {
+                    resultado = JSON.parse(e);             
+                    $("#mensajeRechazo").text("");
+                    $("#mensajeRechazo").append('</br><label class="control-label">FACTURA RECHAZADA - Respuesta Ministerio de Hacienda</label></br>');
+                    $("#mensajeRechazo").append(resultado[0].respuesta);     
+                } 
+            });
+    }; 
+=======
     sendContingenciaMasiva(){
         $.ajax({
             type: "POST",
@@ -955,6 +999,7 @@ class Distribucion {
                 distr.CargaTrasladosRango();
             });
     };
+>>>>>>> master
 }
 
 

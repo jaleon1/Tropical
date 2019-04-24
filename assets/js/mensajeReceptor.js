@@ -226,7 +226,17 @@ class MensajeReceptor {
                 {
                     title:"MENSAJE",
                     data:"mensaje",
-                    width:"auto"
+                    width:"auto",
+                    mRender: function ( e ) {
+                        switch (e) {
+                            case "1": return '<i class="fa fa-check-square-o" aria-hidden="true" style="color:green"> Aceptado</i>';
+                            break;
+                            case "2": return '<i class="fa fa-exclamation-triangle" aria-hidden="true" style="color:#FF6F00"> Aceptado Parcialmente</i>'; 
+                            break;
+                            case "3": return '<i class="fa fa-times-circle" aria-hidden="true" style="color:red"> Rechazado</i>'; 
+                            break;
+                        }
+                    }
                 },
                 {
                     title:"TOTAL",

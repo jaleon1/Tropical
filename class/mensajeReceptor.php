@@ -323,7 +323,7 @@ class mensajeReceptor{
             inner join tropical.bodega b on b.idTipoBodega = :idTipoBodega 
             WHERE idReceptor = :idReceptor and fechaCreacion Between :fechaInicial and :fechaFinal
             ORDER BY consecutivo DESC;';
-            $param= array(':fechaInicial'=>$this->fechaInicial, ':fechaFinal'=>$this->fechaFinal, ':idTipoBodega'=>'22a80c9e-5639-11e8-8242-54ee75873a12');            
+            $param= array(':fechaInicial'=>$this->fechaInicial, ':fechaFinal'=>$this->fechaFinal, ':idTipoBodega'=>'22a80c9e-5639-11e8-8242-54ee75873a12', ':idReceptor'=>$this->idReceptor);            
             $data= DATA::Ejecutar($sql, $param);   
             // foreach ($data as $key => $value){
             //     $this->consecutivo = $value['consecutivo'];

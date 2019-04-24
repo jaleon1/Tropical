@@ -90,7 +90,7 @@
                   <tr> 
                       <td style="line-height:10px;font-family:Uroob; width:10%; text-align:left;">${item.cantidad}</td>
                       <td style="line-height:10px;font-family:Uroob; width:60%; text-align:left;">${item.codigo}</td>
-                      <td style="line-height:10px;font-family:Uroob; width:30%; text-align:right;">${item.precioVenta}</td>
+                      <td style="line-height:10px;font-family:Uroob; width:30%; text-align:right;">${item.montoTotal}</td>
                     </tr>
             `);
           });
@@ -101,7 +101,7 @@
                       <td style="line-height:10px;font-family:Uroob; width:10%; text-align:left;">${item.cantidad}</td>
                       <td style="line-height:10px;font-family:Uroob; width:60%; text-align:left;">${item.codigo}</td>
                       <td style="line-height:10px;font-family:Uroob; width:30%; text-align:right;">
-                      ${'¢' + parseFloat(item.precioVenta).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</td>
+                      ${'¢' + parseFloat(item.montoTotal).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</td>
                     </tr>
             `);
           });

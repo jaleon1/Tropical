@@ -1,12 +1,13 @@
 class InventarioFacturas {
     // Constructor
-    constructor(facturas, tb_facturas, tb_facturasExternas, factDetalle, tb_prdXFact, fechaInicial, fechaFinal) {
+    constructor(facturas, tb_facturas, tb_facturasExternas, factDetalle, tb_prdXFact, fechaInicial, fechaFinal, respuesta) {
         this.facturas = facturas || new Array();
         this.factDetalle = factDetalle || new Array();
         this.tb_facturas = tb_facturas || null;
         this.tb_facturasExternas = tb_facturasExternas || null;
         this.fechaInicial = fechaInicial || "";
         this.fechaFinal = fechaFinal || "";
+        this.respuesta = respuesta || "";
     };
 
     CargaFacturas() {
@@ -590,6 +591,7 @@ class InventarioFacturas {
     };
 
     ReadbyID(id) {
+        $("#mensajeRechazo").text("");
         $("#detalleFac").empty();
         var detalleFac =
             `<button type="button" class="close" data-dismiss="modal">
@@ -615,14 +617,12 @@ class InventarioFacturas {
             </div>`;
         $("#detalleFac").append(detalleFac);
 
-
         $("#totalFact").empty();
 
         // var totalFact =
         //     `<h4>Total: ¢${Math.round(id.totalVenta)}</h4>`;
         // $("#totalFact").append(totalFact);
         // 
-        
 
         $.ajax({
             type: "POST",
@@ -633,9 +633,32 @@ class InventarioFacturas {
             }
         })
             .done(function (e) {
-                inventarioFacturas.drawFactDetail(e);
+                inventarioFacturas.drawFactDetail(e);  
             });
+        if (id.idEstadoComprobante=="4")
+            inventarioFacturas.ReadRespuestaRachazo(id.id);  
     };
+
+    ReadRespuestaRachazo(idFactura){
+        var resultado="";
+        var referenciaCircular = inventarioFacturas.tb_facturas;
+        inventarioFacturas.tb_facturas = [];
+        $.ajax({
+            type: "POST",
+            url: "class/Factura.php",
+            data: {
+                action: "ReadRespuestaRachazo",
+                id: idFactura
+            }
+        })
+            .done(function (e) {
+                inventarioFacturas.tb_facturas = referenciaCircular;  
+                resultado = JSON.parse(e);             
+                $("#mensajeRechazo").text("");
+                $("#mensajeRechazo").append('</br><label class="control-label">FACTURA RECHAZADA - Respuesta Ministerio de Hacienda</label></br>');
+                $("#mensajeRechazo").append(resultado[0].respuesta); 
+            });
+    };     
 
     CargaListaFacturasRango(){
         var referenciaCircular = inventarioFacturas.tb_facturas;
@@ -815,6 +838,24 @@ class InventarioFacturas {
 }
 //Class Instance
 let inventarioFacturas = new InventarioFacturas();
+// function ReadRespuestaRachazo(idFactura){
+//     var respuesta="";
+//     var referenciaCircular = inventarioFacturas.tb_facturas;
+//     inventarioFacturas.tb_facturas = [];
+//     $.ajax({
+//         type: "POST",
+//         url: "class/Factura.php",
+//         data: {
+//             action: "ReadRespuestaRachazo",
+//             id: idFactura
+//         }
+//     })
+//         .done(function (e) {
+//             inventarioFacturas.tb_facturas = referenciaCircular;  
+//             respuesta = JSON.parse(e);;                 
+//         });
+//     return respuesta;
+// }; 
 
 $('#tb_facturas tbody').on('click', 'td', function () {
     if ($.trim(this.textContent) == ("Enviar")
@@ -824,7 +865,7 @@ $('#tb_facturas tbody').on('click', 'td', function () {
     // ||$.trim(this.textContent) == ("Enviar Contingencia")
     )
         return false;
-
+    
     inventarioFacturas.ReadbyID(inventarioFacturas.tb_facturas.row(this).data());
     var dtTable = $('#tb_facturas').DataTable();
     var efectivo=0;
