@@ -416,7 +416,7 @@ class Distribucion {
                 // }
             ]
         });
-        distr.ReadRespuestaRachazo(data.id)
+        distr.ReadRespuestaRachazo(data.id);
         $('#modalDistribucion').modal('toggle');
 
     }
@@ -976,11 +976,13 @@ class Distribucion {
             }
         })
             .done(function (e) {
-                // inventarioFacturas.tb_facturas = referenciaCircular;  
-                resultado = JSON.parse(e);             
-                $("#mensajeRechazo").text("");
-                $("#mensajeRechazo").append('</br><label class="control-label">FACTURA RECHAZADA - Respuesta Ministerio de Hacienda</label></br>');
-                $("#mensajeRechazo").append(resultado[0].respuesta); 
+                // inventarioFacturas.tb_facturas = referenciaCircular; 
+                if (e!=" []") {
+                    resultado = JSON.parse(e);             
+                    $("#mensajeRechazo").text("");
+                    $("#mensajeRechazo").append('</br><label class="control-label">FACTURA RECHAZADA - Respuesta Ministerio de Hacienda</label></br>');
+                    $("#mensajeRechazo").append(resultado[0].respuesta);     
+                } 
             });
     }; 
 }
