@@ -963,6 +963,7 @@ class Distribucion {
             });
     };
 
+<<<<<<< HEAD
     ReadRespuestaRachazo(idFactura){
         var resultado="";
         // var referenciaCircular = inventarioFacturas.tb_facturas;
@@ -985,6 +986,20 @@ class Distribucion {
                 } 
             });
     }; 
+=======
+    sendContingenciaMasiva(){
+        $.ajax({
+            type: "POST",
+            url: "class/Distribucion.php",
+            data: {
+                action: "sendContingenciaMasiva"
+            }
+        })
+            .done(function (e) {
+                distr.CargaTrasladosRango();
+            });
+    };
+>>>>>>> master
 }
 
 
