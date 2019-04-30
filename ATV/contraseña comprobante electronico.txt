@@ -1,9 +1,11 @@
 Generar contraseñapara comprobanteselectronicos: 
 
 
-https://api.comprobanteselectronicos.go.cr/recepcion-sandbox/v1/comprobantes?emisor=024000042139&offset=555&limit=50
+https://api.comprobanteselectronicos.go.cr/recepcion-sandbox/v1/comprobantes?emisor=01111870763&offset=555&limit=50
 
 https://api.comprobanteselectronicos.go.cr/recepcion-sandbox/v1/recepcion/50607121800310150717600100001010000000367153257218
+
+
 
 Datos de Usuario
 Su usuario de ingreso es: 

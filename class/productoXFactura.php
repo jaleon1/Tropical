@@ -55,7 +55,7 @@ class ProductoXFactura{
         
         try {   
             //Master
-            $sql="SELECT consecutivo, idMedioPago, totalComprobante, fechaCreacion, idBodega
+            $sql="SELECT consecutivo, idMedioPago, totalComprobante, fechaCreacion, idBodega, respuesta 
                 FROM tropical.factura
                 WHERE id =:id;";
             $param= array(':id'=>$idFactura);

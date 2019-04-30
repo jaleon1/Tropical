@@ -81,6 +81,9 @@ if(isset($_POST["action"])){
         case "mailSoporte":
             $factura->mailSoporte();
             break;
+        case "ReadRespuestaRachazo":
+        echo json_encode($factura->ReadRespuestaRachazo());
+            break;
     }    
 }
 
@@ -271,16 +274,34 @@ class Factura{
     function ReadAllbyRange(){
         try {
             $sql='SELECT fac.id, fac.idBodega, bod.nombre bodega, fac.fechaCreacion, fac.consecutivo, fac.totalComprobante, fac.idUsuario, usr.nombre vendedor, fac.montoEfectivo, fac.montoTarjeta, fac.idEstadoComprobante, fac.totalComprobante, fac.claveNC
-                FROM factura fac
-                INNER JOIN bodega bod ON bod.id = fac.idBodega
-                INNER JOIN usuario usr ON usr.id = fac.idUsuario
-                INNER JOIN (SELECT idBodega FROM usuariosXBodega
+                FROM tropical.factura fac
+                INNER JOIN tropical.bodega bod ON bod.id = fac.idBodega
+                INNER JOIN tropical.usuario usr ON usr.id = fac.idUsuario
+                INNER JOIN (SELECT idBodega FROM tropical.usuariosXBodega
                 WHERE idUsuario = :idUsuario) bodegas ON bodegas.idBodega = fac.idBodega
                 AND fac.fechaCreacion Between :fechaInicial AND :fechaFinal
                 WHERE claveNC IS NULL
                 ORDER BY fac.fechaCreacion DESC'; 
                 
             $param= array(':idUsuario'=>$_SESSION["userSession"]->id, ':fechaInicial'=>$this->fechaInicial, ':fechaFinal'=>$this->fechaFinal);
+            $data = DATA::Ejecutar($sql,$param);
+            return $data;
+        }     
+        catch(Exception $e) { 
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar la lista'))
+            );
+        }
+    }
+
+    function ReadRespuestaRachazo(){
+        try {
+            $sql='SELECT respuesta FROM historicoComprobante hc
+            WHERE idFactura= :idFactura AND idEstadoComprobante>=4'; 
+            $param= array(':idFactura'=>$this->id);
             $data = DATA::Ejecutar($sql,$param);
             return $data;
         }     

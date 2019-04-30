@@ -320,10 +320,10 @@ class Distribucion{
             $param= array(':id'=>$idDistribucion);
             $data = DATA::Ejecutar($sql,$param);  
             
-            $this->razon = $razon;
-            $this->id = $idDistribucion; 
-            $this->orden = $data[0]["orden"];
-            $this->idBodega = $data[0]["idBodega"];
+            $self->razon = $razon;
+            $self->id = $idDistribucion; 
+            $self->orden = $data[0]["orden"];
+            $self->idBodega = $data[0]["idBodega"];
 
             if($data[0] == 1){
                 rollbackDistribucion();
@@ -334,7 +334,7 @@ class Distribucion{
             // $objDistribucion->idDocumentoNC = 3;
             // $objDistribucion->idReferencia = 1;
             // $objDistribucion->razon = $razon;
-            $this->notaCredito();
+            $self->notaCredito();
         }     
         catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
