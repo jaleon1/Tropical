@@ -841,7 +841,6 @@ class Factura{
         error_log("[INFO] Finaliza Contingencia Masiva de Comprobantes");
     } 
 
-
     public function sendContingencia(){
         try {
             error_log("************************************************************");
@@ -935,7 +934,8 @@ class Factura{
                 $data = DATA::Ejecutar($sql,$param, false);
                 if($data){
                     $this->read();
-                     // referencia a la fatura cancelada.
+                    // referencia a la fatura cancelada.
+                    require_once("referencia.php");
                     $item = new Referencia();
                     $item->tipodoc= '01'; // factura electronica
                     $item->numero= $this->clave;  // clave del documento en referencia.
