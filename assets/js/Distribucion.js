@@ -387,7 +387,7 @@ class Distribucion {
                 },
                 {
                     title: "PRECIO VENTA",
-                    data: "precioVenta",
+                    data: "montoTotal",
                     className: "text-right",
                     mRender: function (e) {
                         return '¢' + parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
@@ -395,7 +395,7 @@ class Distribucion {
                 },
                 {
                     title: "IV",
-                    data: "impuesto",
+                    data: "montoImpuesto",
                     className: "text-right",
                     mRender: function (e) {
                         return '¢' + parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
@@ -403,7 +403,7 @@ class Distribucion {
                 },
                 {
                     title: "SUBTOTAL",
-                    data: "subtotal",
+                    data: "subTotal",
                     className: "text-right",
                     mRender: function (e) {
                         return '¢' + parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
