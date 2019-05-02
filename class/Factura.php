@@ -165,6 +165,7 @@ class Factura{
             $this->idMedioPago= $obj["idMedioPago"] ?? 1;
             // c. Resumen de la factura/Total de la Factura 
             // definir si es servicio o mercancia (producto). En caso Tropical, siempre es mercancia
+            $this->idCodigoMoneda= $obj["idCodigoMoneda"] ?? 55;
             if($this->idCodigoMoneda==55)
                 $this->tipoCambio= 1; // 1 en colones.
             else {
