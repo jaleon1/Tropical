@@ -303,6 +303,12 @@
         // inventarioFacturas.CargaFacturas();
         CargaListaFactura();
 
+        $(function () {
+            $(document)
+                .ajaxStart(NProgress.start)
+                .ajaxStop(NProgress.done);
+        });
+
         $('#sendContingenciaMasiva').click(function () {
             inventarioFacturas.sendContingenciaMasiva();
         });

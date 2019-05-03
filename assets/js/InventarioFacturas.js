@@ -673,7 +673,7 @@ class InventarioFacturas {
         })
             .done(function (e) {
                 if (e != " "){
-                    inventarioFacturas.tb_facturas = referenciaCircular;        
+                    inventarioFacturas.tb_facturas = referenciaCircular;
                     inventarioFacturas.drawFac(e);
                 }else{
                     swal({
