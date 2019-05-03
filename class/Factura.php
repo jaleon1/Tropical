@@ -166,9 +166,8 @@ class Factura{
             // c. Resumen de la factura/Total de la Factura 
             // definir si es servicio o mercancia (producto). En caso Tropical, siempre es mercancia
             $this->idCodigoMoneda= $obj["idCodigoMoneda"] ?? 55;
-            if($this->idCodigoMoneda==55)
-                $this->tipoCambio= 1; // 1 en colones.
-            else {
+            $this->tipoCambio= $obj["tipoCambio"] ?? 1;  // 1 en colones.
+            if($this->idCodigoMoneda==72){ // tipo dolar.
                 $wsBCCR = new TipoCambio();
                 $this->tipoCambio= $obj['tipoCambio'] ?? $wsBCCR->tipo_cambio()["venta"]; // tipo de cambio dinamico con BCCR
             }

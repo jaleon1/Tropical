@@ -812,11 +812,11 @@ class FacturacionElectronica{
                 /** Detalle **/
                 'detalles'=>  json_encode($detalles, JSON_FORCE_OBJECT),
                 /** Referencia **/
-                /*'infoRefeTipoDoc'=>  self::getDocumentoReferenciaCod(self::$transaccion->idDocumento),
+                'infoRefeTipoDoc'=>  self::getDocumentoReferenciaCod(self::$transaccion->idDocumento),
                 'infoRefeNumero'=>  self::$transaccion->clave,
                 'infoRefeFechaEmision'=>  self::$transaccion->fechaEmision,
                 'infoRefeCodigo'=>  self::getReferenciaCod(self::$transaccion->idReferencia),
-                'infoRefeRazon'=>  self::$transaccion->razon*/
+                'infoRefeRazon'=>  self::$transaccion->razon
             ];
             curl_setopt_array($ch, array(
                 CURLOPT_URL => self::$apiUrl,
