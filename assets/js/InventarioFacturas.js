@@ -827,6 +827,7 @@ class InventarioFacturas {
     };
 
     ticketPrint() {
+        localStorage.setItem("lsFacturaCancelada","OFF");
         localStorage.setItem("lsFactura",$('#consecutivo').text());
         // localStorage.setItem("lsFecha",moment().format("YYYY-MM-DD HH:mm"));
         localStorage.setItem("lsBodega",$('#bodega').text());
