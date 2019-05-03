@@ -292,15 +292,6 @@ class mensajeReceptor{
             ORDER BY consecutivoFe DESC;';
             $param= array(':fechaInicial'=>$this->fechaInicial, ':fechaFinal'=>$this->fechaFinal, ':idReceptor'=>$this->idReceptor);            
             $data= DATA::Ejecutar($sql, $param);   
-            // foreach ($data as $key => $value){
-            //     $this->consecutivo = $value['consecutivo'];
-            //     $this->fechaCreacion = $value['fechaCreacion'];
-            //     $this->mensaje = $value['mensaje'];
-            //     $this->detalle = $value['detalle'];
-            //     $this->totalComprobante = $value['totalComprobante'];
-            //     $this->idEstadoComprobante = $value['idEstadoComprobante'];
-            //     $this->idEmisor = $value['idEmisor'];
-            // }
             return $data;
         }     
         catch(Exception $e) { 
@@ -317,23 +308,15 @@ class mensajeReceptor{
 
     function ReadAllbyRangeExterna(){
         try {
-            $sql='SELECT id, consecutivo, fechaCreacion, detalle, mensaje, totalComprobante, idEmisor, 
+            $sql='SELECT mr.id, mr.consecutivo, mr.fechaCreacion, mr.detalle, mr.mensaje, mr.totalComprobante, mr.idEmisor, 
             idEstadoComprobante 
             FROM tropical.mensajeReceptor mr 
-            inner join tropical.bodega b on b.idTipoBodega = :idTipoBodega 
+            INNER JOIN tropical.bodega b on b.idTipoBodega = :idTipoBodega 
             WHERE idReceptor = :idReceptor and fechaCreacion Between :fechaInicial and :fechaFinal
             ORDER BY consecutivo DESC;';
-            $param= array(':fechaInicial'=>$this->fechaInicial, ':fechaFinal'=>$this->fechaFinal, ':idTipoBodega'=>'22a80c9e-5639-11e8-8242-54ee75873a12', ':idReceptor'=>$this->idReceptor);            
+            $param= array(':fechaInicial'=>$this->fechaInicial, ':fechaFinal'=>$this->fechaFinal, 
+            ':idTipoBodega'=>'22a80c9e-5639-11e8-8242-54ee75873a12', ':idReceptor'=>$this->idReceptor);            
             $data= DATA::Ejecutar($sql, $param);   
-            // foreach ($data as $key => $value){
-            //     $this->consecutivo = $value['consecutivo'];
-            //     $this->fechaCreacion = $value['fechaCreacion'];
-            //     $this->mensaje = $value['mensaje'];
-            //     $this->detalle = $value['detalle'];
-            //     $this->totalComprobante = $value['totalComprobante'];
-            //     $this->idEstadoComprobante = $value['idEstadoComprobante'];
-            //     $this->idEmisor = $value['idEmisor'];
-            // }
             return $data;
         }     
         catch(Exception $e) { 

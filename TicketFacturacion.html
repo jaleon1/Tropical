@@ -28,6 +28,7 @@
         <tr style="line-height:10px;font-family:Uroob; text-align: center;"><td>Fecha: <label id="fecha"></label></td></tr>
         <tr style="line-height:10px;font-family:Uroob; text-align: center;"><td>Usuario: <label id="usuario"></label></td></tr>
         <tr style="line-height:10px;font-family:Uroob; text-align: center;"><td>Factura Electrónica<label id=factura></label></td></tr>
+        <tr style="line-height:10px;font-family:Uroob; text-align: center;"><td><label id=facturaCancelada></label></td></tr>
       </tbody>
     </table>
     <table style="width:91%;">
@@ -66,7 +67,7 @@
 
 <script>
     $(document).ready(function () {
-
+      $("#facturaCancelada").text("");
       $("#factura").text(localStorage.getItem("lsFactura"));
       $("#fecha").text(localStorage.getItem("lsFecha"));  
       $("#bodega").text(localStorage.getItem("lsBodega"));
@@ -75,6 +76,9 @@
       $("#efectivo").text(localStorage.getItem("lsEfectivo"));
       $("#vuelto").text(localStorage.getItem("lsVuelto"));
       $("#dif").text(localStorage.getItem("lsDif"));
+
+      if (localStorage.getItem("lsFacturaCancelada")=="OK") 
+        $("#facturaCancelada").text("Factura Cancelada");
       
       var listaProducto = localStorage.getItem("lsListaProducto");
       listaProducto = JSON.parse(listaProducto);
@@ -112,6 +116,7 @@
         localStorage.setItem("lsPrintOK","OK");
         location.href ="/FacturaCli.html";
       }
+      localStorage.setItem("lsFacturaCancelada","OFF");
       // location.href ="/Tropical/FacturaCli.html";
   });  
 </script>
