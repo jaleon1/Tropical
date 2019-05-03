@@ -61,7 +61,7 @@ if(isset($_POST["action"])){
             break;
         case "sendNotaCredito":
             // Nota de Credito.
-            $factura->idDocumentoNC= $_POST["idDocumentoNC"] ?? 3; // documento tipo 3: NC
+            $factura->idDocumentoNC= $_POST["idDocumentoNC"] ?? 1; // documento tipo 1: FE
             $factura->idReferencia= $_POST["idReferencia"] ?? 1; // código de referencia: 1 : Referencia a otro documento.
             $factura->razon= $_POST["razon"]; // Referencia a otro documento.
             $factura->notaCredito();
