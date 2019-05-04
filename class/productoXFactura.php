@@ -55,7 +55,7 @@ class ProductoXFactura{
         
         try {   
             //Master
-            $sql="SELECT consecutivo, idMedioPago, totalComprobante, fechaCreacion, idBodega, respuesta 
+            $sql="SELECT consecutivo, idMedioPago, totalComprobante, fechaCreacion, idBodega 
                 FROM tropical.factura
                 WHERE id =:id;";
             $param= array(':id'=>$idFactura);
@@ -137,7 +137,7 @@ class ProductoXFactura{
 
             $objFactura = new Factura();
             $objFactura->id = $idFactura;
-            $objFactura->idDocumentoNC = 1;
+            $objFactura->idDocumentoNC = 3;
             $objFactura->idReferencia = 1;
             $objFactura->razon = $razon;
             $objFactura->notaCredito();
