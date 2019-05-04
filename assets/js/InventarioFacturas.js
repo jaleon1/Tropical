@@ -98,7 +98,7 @@ class InventarioFacturas {
                 }
             },
             data: facturas,                               
-            order: [[1, "desc"]],
+            order: [[2, "desc"]],
             columns: [
                 {
                     title: "ID FACTURA",
