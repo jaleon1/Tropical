@@ -344,7 +344,7 @@ class CajaXBodega{
                             )
                         and CURRENT_TIMESTAMP() and
                         idBodega = :idBodega and 
-                        idDocumentoNC IS NULL;;";                 
+                        idDocumentoNC IS NULL;";                 
                     $param= array(':idBodega'=>$_SESSION["userSession"]->idBodega);
                     $this->totalVentasTarjeta= DATA::Ejecutar($sql, $param);
                     if($this->totalVentasTarjeta){
