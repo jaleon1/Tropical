@@ -673,7 +673,7 @@ class InventarioFacturas {
         })
             .done(function (e) {
                 if (e != " "){
-                    inventarioFacturas.tb_facturas = referenciaCircular;        
+                    inventarioFacturas.tb_facturas = referenciaCircular;
                     inventarioFacturas.drawFac(e);
                 }else{
                     swal({
@@ -827,6 +827,7 @@ class InventarioFacturas {
     };
 
     ticketPrint() {
+        localStorage.setItem("lsFacturaCancelada","OFF");
         localStorage.setItem("lsFactura",$('#consecutivo').text());
         // localStorage.setItem("lsFecha",moment().format("YYYY-MM-DD HH:mm"));
         localStorage.setItem("lsBodega",$('#bodega').text());

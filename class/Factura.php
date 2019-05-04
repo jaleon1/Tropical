@@ -61,8 +61,8 @@ if(isset($_POST["action"])){
             break;
         case "sendNotaCredito":
             // Nota de Credito.
-            $factura->idDocumentoNC= $_POST["idDocumentoNC"] ?? 1; // documento tipo 1: FE
-            $factura->idReferencia= $_POST["idReferencia"] ?? 1; // código de referencia: 1 : Referencia a otro documento.
+            $factura->idDocumentoNC= $_POST["idDocumentoNC"] ?? 3; // documento tipo 3: NC
+            $factura->idReferencia= $_POST["idReferencia"] ?? 1; // código de referencia: 1 : Referencia a documento FE.
             $factura->razon= $_POST["razon"]; // Referencia a otro documento.
             $factura->notaCredito();
             break;
@@ -165,9 +165,9 @@ class Factura{
             $this->idMedioPago= $obj["idMedioPago"] ?? 1;
             // c. Resumen de la factura/Total de la Factura 
             // definir si es servicio o mercancia (producto). En caso Tropical, siempre es mercancia
-            if($this->idCodigoMoneda==55)
-                $this->tipoCambio= 1; // 1 en colones.
-            else {
+            $this->idCodigoMoneda= $obj["idCodigoMoneda"] ?? 55;
+            $this->tipoCambio= $obj["tipoCambio"] ?? 1;  // 1 en colones.
+            if($this->idCodigoMoneda==72){ // tipo dolar.
                 $wsBCCR = new TipoCambio();
                 $this->tipoCambio= $obj['tipoCambio'] ?? $wsBCCR->tipo_cambio()["venta"]; // tipo de cambio dinamico con BCCR
             }
@@ -840,7 +840,6 @@ class Factura{
         error_log("[INFO] Finaliza Contingencia Masiva de Comprobantes");
     } 
 
-
     public function sendContingencia(){
         try {
             error_log("************************************************************");
@@ -934,7 +933,8 @@ class Factura{
                 $data = DATA::Ejecutar($sql,$param, false);
                 if($data){
                     $this->read();
-                     // referencia a la fatura cancelada.
+                    // referencia a la fatura cancelada.
+                    require_once("referencia.php");
                     $item = new Referencia();
                     $item->tipodoc= '01'; // factura electronica
                     $item->numero= $this->clave;  // clave del documento en referencia.
