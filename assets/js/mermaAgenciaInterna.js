@@ -281,7 +281,7 @@ class MermaAgencia {
         // cargar a central.        
         swal({
             title: 'Reversar a Central',
-            text: "Desea Ingresar los productos a la Agencia Central despuúes de Aplicar la Merma?",
+            text: "Desea Ingresar los productos a la Agencia Central despúes de Aplicar la Merma?",
             type: 'question',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',

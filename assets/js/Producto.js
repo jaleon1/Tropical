@@ -809,7 +809,7 @@ class Producto {
         }
         if(e != "false" && e != ''){
             var data = JSON.parse(e)[0];
-            producto.id= data.id; 
+            producto.id= producto.idProducto= data.id; 
             producto.codigo= data.codigo; 
             producto.nombre= data.nombre; 
             producto.descripcion= data.descripcion;
