@@ -309,7 +309,7 @@
 
         $('#dp_rangoListaFacturasExternas').on('apply.daterangepicker', function (ev, picker) {
             inventarioFacturas.fechaInicial = picker.startDate.format('YYYY-MM-DD') + ' 00:00';
-            inventarioFacturas.fechaFinal = picker.endDate.format('YYYY-MM-DD') + ' 23:59';
+            inventarioFacturas.fechaFinal = picker.endDate.format('YYYY-MM-DD') + ' 23:59:59';
             inventarioFacturas.CargaListaFacturasRangoExternas();
         });
 
@@ -547,7 +547,7 @@
         cb(start, end);
 
         inventarioFacturas.fechaInicial = start.format('YYYY-MM-DD') + ' 00:00';
-        inventarioFacturas.fechaFinal = end.format('YYYY-MM-DD') + ' 23:59';
+        inventarioFacturas.fechaFinal = end.format('YYYY-MM-DD') + ' 23:59:59';
         inventarioFacturas.CargaListaFacturasRangoExternas();
     };
 

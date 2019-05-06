@@ -307,13 +307,13 @@
             cb(start, end);
 
             merma.fechaInicial = start.format('YYYY-MM-DD') + ' 00:00';
-            merma.fechaFinal = end.format('YYYY-MM-DD') + ' 23:59';
+            merma.fechaFinal = end.format('YYYY-MM-DD') + ' 23:59:59';
             merma.CargaListaMermaRango();
         });
 
         $('#dp_rangoMerma').on('apply.daterangepicker', function (ev, picker) {
             merma.fechaInicial = picker.startDate.format('YYYY-MM-DD') + ' 00:00';
-            merma.fechaFinal = picker.endDate.format('YYYY-MM-DD') + ' 23:59';
+            merma.fechaFinal = picker.endDate.format('YYYY-MM-DD') + ' 23:59:59';
             merma.CargaListaMermaRango();
         });
         

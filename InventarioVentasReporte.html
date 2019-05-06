@@ -294,13 +294,13 @@ $(document).ready(function () {
         cb(start, end);
 
         inventarioVentas.fechaInicial = start.format('YYYY-MM-DD') + ' 00:00';
-        inventarioVentas.fechaFinal = end.format('YYYY-MM-DD') + ' 23:59';
+        inventarioVentas.fechaFinal = end.format('YYYY-MM-DD') + ' 23:59:59';
         inventarioVentas.CargaInventarioVentasRango();
     });
 
     $('#dp_rangoInventarioVentas').on('apply.daterangepicker', function (ev, picker) {
         inventarioVentas.fechaInicial = picker.startDate.format('YYYY-MM-DD') + ' 00:00';
-        inventarioVentas.fechaFinal = picker.endDate.format('YYYY-MM-DD') + ' 23:59';
+        inventarioVentas.fechaFinal = picker.endDate.format('YYYY-MM-DD') + ' 23:59:59';
         inventarioVentas.CargaInventarioVentasRango();
     });
     $("#tb_ventas").append("<tfoot><tr><th></th><th></th><th></th><th></th><th></th><th></th></tr></tfoot>");

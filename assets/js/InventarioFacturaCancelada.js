@@ -476,7 +476,7 @@ $('#tb_facturasCanceladas tbody').on('click', 'td', function () {
 //         cb(start, end);
 
 //         inventarioFacturaCancelada.fechaInicial = start.format('YYYY-MM-DD') + ' 00:00';
-//         inventarioFacturaCancelada.fechaFinal = end.format('YYYY-MM-DD') + ' 23:59';
+//         inventarioFacturaCancelada.fechaFinal = end.format('YYYY-MM-DD') + ' 23:59:59:59';
 //         inventarioFacturaCancelada.CargaListaFacturasRango();
 
 //         swal({

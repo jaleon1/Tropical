@@ -981,7 +981,7 @@ $('#tb_facturas tbody').on('click', 'td', function () {
 //         cb(start, end);
 
 //         inventarioFacturas.fechaInicial = start.format('YYYY-MM-DD') + ' 00:00';
-//         inventarioFacturas.fechaFinal = end.format('YYYY-MM-DD') + ' 23:59';
+//         inventarioFacturas.fechaFinal = end.format('YYYY-MM-DD') + ' 23:59:59';
 //         inventarioFacturas.CargaListaFacturasRango();
 
 //         swal({

@@ -370,13 +370,13 @@ $(document).ready(function () {
         cb(start, end);
 
         movimientosCaja.fechaInicial = start.format('YYYY-MM-DD') + ' 00:00';
-        movimientosCaja.fechaFinal = end.format('YYYY-MM-DD') + ' 23:59';
+        movimientosCaja.fechaFinal = end.format('YYYY-MM-DD') + ' 23:59:59:59';
         movimientosCaja.CargaMoviminetosCajasRango();
     });
 
     $('#dp_rangoGestionCajas').on('apply.daterangepicker', function (ev, picker) {
         movimientosCaja.fechaInicial = picker.startDate.format('YYYY-MM-DD') + ' 00:00';
-        movimientosCaja.fechaFinal = picker.endDate.format('YYYY-MM-DD') + ' 23:59';
+        movimientosCaja.fechaFinal = picker.endDate.format('YYYY-MM-DD') + ' 23:59:59:59';
         movimientosCaja.CargaMoviminetosCajasRango();
     });    
 

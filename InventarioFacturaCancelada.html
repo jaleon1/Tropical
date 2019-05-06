@@ -295,7 +295,7 @@
 
         $('#dp_rangoListaFacturas').on('apply.daterangepicker', function (ev, picker) {
             inventarioFacturaCancelada.fechaInicial = picker.startDate.format('YYYY-MM-DD') + ' 00:00';
-            inventarioFacturaCancelada.fechaFinal = picker.endDate.format('YYYY-MM-DD') + ' 23:59';
+            inventarioFacturaCancelada.fechaFinal = picker.endDate.format('YYYY-MM-DD') + ' 23:59:59';
             inventarioFacturaCancelada.CargaListaFacturasRango();
         });
 
@@ -479,7 +479,7 @@
         cb(start, end);
 
         inventarioFacturaCancelada.fechaInicial = start.format('YYYY-MM-DD') + ' 00:00';
-        inventarioFacturaCancelada.fechaFinal = end.format('YYYY-MM-DD') + ' 23:59';
+        inventarioFacturaCancelada.fechaFinal = end.format('YYYY-MM-DD') + ' 23:59:59';
         inventarioFacturaCancelada.CargaListaFacturasRango();
     };
 

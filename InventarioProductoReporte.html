@@ -310,13 +310,13 @@
             cb(start, end);
 
             producto.fechaInicial = start.format('YYYY-MM-DD') + ' 00:00';
-            producto.fechaFinal = end.format('YYYY-MM-DD') + ' 23:59';
+            producto.fechaFinal = end.format('YYYY-MM-DD') + ' 23:59:59';
             producto.CargaProductoRango();
         });
 
         $('#dp_rangoReporteProducto').on('apply.daterangepicker', function (ev, picker) {
             producto.fechaInicial = picker.startDate.format('YYYY-MM-DD') + ' 00:00';
-            producto.fechaFinal = picker.endDate.format('YYYY-MM-DD') + ' 23:59';
+            producto.fechaFinal = picker.endDate.format('YYYY-MM-DD') + ' 23:59:59';
             producto.CargaProductoRango();
         });
     });

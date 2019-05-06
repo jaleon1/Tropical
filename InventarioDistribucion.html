@@ -367,13 +367,13 @@
             cb(start, end);
 
             distr.fechaInicial = start.format('YYYY-MM-DD') + ' 00:00';
-            distr.fechaFinal = end.format('YYYY-MM-DD') + ' 23:59';
+            distr.fechaFinal = end.format('YYYY-MM-DD') + ' 23:59:59';
             distr.CargaTrasladosRango();
         });
 
         $('#dp_rangoTraslados').on('apply.daterangepicker', function (ev, picker) {
             distr.fechaInicial = picker.startDate.format('YYYY-MM-DD') + ' 00:00';
-            distr.fechaFinal = picker.endDate.format('YYYY-MM-DD') + ' 23:59';
+            distr.fechaFinal = picker.endDate.format('YYYY-MM-DD') + ' 23:59:59';
             distr.CargaTrasladosRango();
         });
 
