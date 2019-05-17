@@ -951,7 +951,7 @@ class Factura{
                     return true;
                 }
                 else throw new Exception('Error al guardar.', 02);
-            } else throw new Exception('Warning, el comprobante ('. $this->id .') ya tiene una Nota de Crédito asignada.', 0763);
+            } else throw new Exception('Warning, el comprobante ('. $this->id .') ya tiene una Nota de Credito asignada.', 0763);
         }     
         catch(Exception $e) {
             error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());

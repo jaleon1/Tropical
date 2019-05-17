@@ -260,7 +260,7 @@ class Distribucion{
                     WHERE id=:id";
                 $param= array(
                     ':id'=>$this->id,
-                    ':idDocumentoNC'=>$this->idDocumentoNC ?? 1,
+                    ':idDocumentoNC'=>$this->idDocumentoNC ?? 3,
                     ':idReferencia'=>$this->idReferencia ?? 1,
                     ':razon'=>$this->razon,
                     ':idEstadoNC'=>1);
