@@ -265,17 +265,41 @@ class Distribucion{
                     ':razon'=>$this->razon,
                     ':idEstadoNC'=>1);
                 $data = DATA::Ejecutar($sql,$param, false);
+                $this->informacionReferencia = [];
                 if($data){
                     $this->read();
-                     // referencia a la fatura cancelada.
+                    // referencia a la fatura cancelada.
+                    require_once("Referencia.php");
                     $item = new Referencia();
                     $item->tipodoc= '01'; // factura electronica
                     $item->numero= $this->clave;  // clave del documento en referencia.
-                    $item->razon= 'Aplica Nota de credito';  // nc por rechazo? | cual es la razon de hacer la referencia.
+                    $item->razon=  $this->razon ?? 'Aplica Nota de credito';  // nc por rechazo? | cual es la razon de hacer la referencia.
                     $item->fechaEmision= $this->fechaEmision ?? date_create()->format('c'); // fecha de la emisión del documento al que hace referencia.
                     $item->codigo= '01';  // Anula Documento de Referencia. ;
                     array_push ($this->informacionReferencia, $item);
+                    // datos entidad bodega central.
+                    $central = new Bodega();
+                    $central->readCentral();
+                    $this->idEmisor =  $this->id;
+                    $entidad = new ClienteFE();
+                    $entidad->idBodega = $central->id;
+                    $this->datosEntidad = $entidad->read();
+                    // datos receptor bodega externa.
+                    $externa = new ClienteFE();
+                    $externa->id = $this->idBodega; // bodega receptor.
+                    $this->datosReceptor = $externa->read();                    
+                    //
+                    $this->terminal = '00001';
+                    $this->local = '001';
+                    $this->consecutivo = $this->orden;
+                    $this->idCondicionVenta= 1;
+                    $this->idSituacionComprobante= 2;                
+                    $this->plazoCredito= 0;
+                    $this->idMedioPago= 1;
+                    $this->idCodigoMoneda = 55; // CRC
+                    $this->tipoCambio= 1.00; // tipo de cambio dinamico con BCCR  
                     // envía la factura
+                    FacturacionElectronica::$distr = true;
                     FacturacionElectronica::iniciarNC($this);
 
                     if ($this->facturaRelacionada == true){
@@ -284,7 +308,7 @@ class Distribucion{
                     return true;
                 }
                 else throw new Exception('Error al guardar.', 02);
-            } else throw new Exception('Warning, el comprobante ('. $this->id .') ya tiene una Nota de Crédito asignada.', 0763);
+            } else throw new Exception('Warning, el comprobante ('. $this->id .') ya tiene una Nota de Credito asignada.', 0763);
         }     
         catch(Exception $e) {
             error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
@@ -311,7 +335,7 @@ class Distribucion{
             }
     }
     
-    public static function cancelaDistribucion($idDistribucion, $razon){
+    public function cancelaDistribucion($idDistribucion, $razon){
         try {  
             //Master
             $sql="SELECT orden, idEstado, idBodega
@@ -320,12 +344,12 @@ class Distribucion{
             $param= array(':id'=>$idDistribucion);
             $data = DATA::Ejecutar($sql,$param);  
             
-            $self->razon = $razon;
-            $self->id = $idDistribucion; 
-            $self->orden = $data[0]["orden"];
-            $self->idBodega = $data[0]["idBodega"];
+            $this->razon = $razon;
+            $this->id = $idDistribucion; 
+            $this->orden = $data[0]["orden"];
+            $this->idBodega = $data[0]["idBodega"];
 
-            if($data[0] == 1){
+            if($data[0]["idEstado"] == 1){
                 rollbackDistribucion();
             }
             
@@ -334,7 +358,7 @@ class Distribucion{
             // $objDistribucion->idDocumentoNC = 3;
             // $objDistribucion->idReferencia = 1;
             // $objDistribucion->razon = $razon;
-            $self->notaCredito();
+            $this->notaCredito();
         }     
         catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');

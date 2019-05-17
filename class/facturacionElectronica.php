@@ -157,7 +157,7 @@ class FacturacionElectronica{
             $data= DATA::Ejecutar($sql,$param);     
             if($data)
                 return $data[0]['codigo'];
-            else throw new Exception('Error al consultar el codigo de tipod de identificacion' , ERROR_TIPO_IDENTIFICACION_NO_VALID);
+            else throw new Exception('Error al consultar el codigo de tipo de identificacion' , ERROR_TIPO_IDENTIFICACION_NO_VALID);
         }
         catch(Exception $e) {
             error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
@@ -812,12 +812,20 @@ class FacturacionElectronica{
                 /** Detalle **/
                 'detalles'=>  json_encode($detalles, JSON_FORCE_OBJECT),
                 /** Referencia **/
-                'infoRefeTipoDoc'=>  self::getDocumentoReferenciaCod(self::$transaccion->idDocumento),
-                'infoRefeNumero'=>  self::$transaccion->clave,
-                'infoRefeFechaEmision'=>  self::$transaccion->fechaEmision,
-                'infoRefeCodigo'=>  self::getReferenciaCod(self::$transaccion->idReferencia),
-                'infoRefeRazon'=>  self::$transaccion->razon
+                // 'infoRefeTipoDoc'=>  self::getDocumentoReferenciaCod(self::$transaccion->idDocumento),
+                // 'infoRefeNumero'=>  self::$transaccion->clave,
+                // 'infoRefeFechaEmision'=>  self::$transaccion->fechaEmision,
+                // 'infoRefeCodigo'=>  self::getReferenciaCod(self::$transaccion->idReferencia),
+                // 'infoRefeRazon'=>  self::$transaccion->razon                
             ];
+            foreach(self::$transaccion->informacionReferencia as $ref){
+                array_push(
+                    $post['infoRefeTipoDoc']=  self::getDocumentoReferenciaCod($ref->tipodoc),
+                    $post['infoRefeNumero']=  $ref->numero,
+                    $post['infoRefeFechaEmision']=  $ref->fechaEmision,
+                    $post['infoRefeCodigo']=  self::getReferenciaCod($ref->codigo),
+                    $post['infoRefeRazon']=  $ref->razon);
+            }
             curl_setopt_array($ch, array(
                 CURLOPT_URL => self::$apiUrl,
                 CURLOPT_RETURNTRANSFER => true,   
