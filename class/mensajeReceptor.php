@@ -362,6 +362,8 @@ class mensajeReceptor{
 
     function Create(){
         try {
+            if(gettype($this->xml)=="string")
+                $this->xml = new SimpleXMLElement($this->xml);
             // id Documento.
             switch($this->mensaje){
                 case 1:
