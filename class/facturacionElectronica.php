@@ -1121,9 +1121,6 @@ class FacturacionElectronica{
 
     public static function APIConsultaComprobante($t , $invoice=false){
         try{
-            Invoice::create($t);
-            exit;
-            //
             self::$transaccion= $t;
             error_log("[INFO] API CONSULTA CLAVE: ". self::$transaccion->clave . " Consecutivo: " . self::$transaccion->consecutivo);
             self::getApiUrl();
