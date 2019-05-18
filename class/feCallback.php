@@ -266,7 +266,7 @@
             // idDocumento.
             // $distr->idDocumento = 1;
             FacturacionElectronica::$distr= true;
-            FacturacionElectronica::APIConsultaComprobante($distr);
+            FacturacionElectronica::APIConsultaComprobante($distr, true);
             error_log("[INFO] Finaliza Consulta de Disctribucion - Comprobantes - TimedOut | Duplicadas");
         }
         // Distribucion firma invalida
@@ -297,7 +297,7 @@
             // idDocumento.
             // $distr->idDocumento = 1;
             FacturacionElectronica::$distr= true;
-            FacturacionElectronica::APIConsultaComprobante($distr); // debe envíar email.
+            FacturacionElectronica::APIConsultaComprobante($distr, true); // debe envíar email.
         }
         error_log("[INFO] Finaliza Consulta de Distribucion - Comprobantes - Firma Invalida");
         error_log("**************************************************************************");
@@ -326,7 +326,7 @@
             $distr->idDocumento = 1;
             $distr->consecutivo = $distr->orden;
             FacturacionElectronica::$distr= true;
-            facturacionElectronica::APIConsultaComprobante($distr); // debe envíar email.
+            facturacionElectronica::APIConsultaComprobante($distr, true); // debe envíar email.
             error_log("[INFO] Finaliza Consulta de Distribucion");
         }
         // nota de credito. reenvío. DISTR.

@@ -1,4 +1,7 @@
 <?php
+setlocale(LC_ALL,"es_ES");
+mb_internal_encoding('UTF-8');
+date_default_timezone_set('America/Costa_Rica');
 /**
  * Contains the InvoicePrinter class.
  *
@@ -202,6 +205,8 @@ class InvoicePrinter extends FPDF
         $this->phone = $phone;
     }
 
+
+
     public function setLegal_Document($legal_document)
     {
         $this->legal_document = $legal_document;
@@ -373,7 +378,7 @@ class InvoicePrinter extends FPDF
             $this->Cell(32, $lineheight, iconv("UTF-8", "ISO-8859-1", mb_strtoupper($this->lang['address'], 'UTF-8') . ':'), 0, 0, 'L');
             $this->SetTextColor(50, 50, 50);
             $this->SetFont($this->font, '', 9);
-            $this->Cell(0, $lineheight, $this->address, 0, 1, 'R');
+            $this->Cell(0, $lineheight, iconv("UTF-8", "ISO-8859-1", $this->address), 0, 1, 'R');
         }
         //Phone
         if (!empty($this->legal_document)) {
@@ -383,7 +388,7 @@ class InvoicePrinter extends FPDF
             $this->Cell(32, $lineheight, iconv("UTF-8", "ISO-8859-1", mb_strtoupper($this->lang['phone'], 'UTF-8')) . ':', 0, 0, 'L');
             $this->SetTextColor(50, 50, 50);
             $this->SetFont($this->font, '', 9);
-            $this->Cell(0, $lineheight, $this->phone, 0, 1, 'R');
+            $this->Cell(0, $lineheight, iconv("UTF-8", "ISO-8859-1", $this->phone), 0, 1, 'R');
         }
 
         //legalDocument
@@ -394,7 +399,7 @@ class InvoicePrinter extends FPDF
             $this->Cell(32, $lineheight, iconv("UTF-8", "ISO-8859-1", mb_strtoupper($this->lang['legal_document'], 'UTF-8')) . ':', 0, 0, 'L');
             $this->SetTextColor(50, 50, 50);
             $this->SetFont($this->font, '', 9);
-            $this->Cell(0, $lineheight, $this->legal_document, 0, 1, 'R');
+            $this->Cell(0, $lineheight, iconv("UTF-8", "ISO-8859-1", $this->legal_document), 0, 1, 'R');
         }
         //Email
         if (!empty($this->email)) {
@@ -404,7 +409,17 @@ class InvoicePrinter extends FPDF
             $this->Cell(32, $lineheight, iconv("UTF-8", "ISO-8859-1", mb_strtoupper($this->lang['email'], 'UTF-8')) . ':', 0, 0, 'L');
             $this->SetTextColor(50, 50, 50);
             $this->SetFont($this->font, '', 9);
-            $this->Cell(0, $lineheight, $this->email, 0, 1, 'R');
+            $this->Cell(0, $lineheight, iconv("UTF-8", "ISO-8859-1", $this->email), 0, 1, 'R');
+        }
+        //Date
+        if (!empty($this->date)) {
+            $this->Cell($positionX, $lineheight);
+            $this->SetFont($this->font, 'B', 9);
+            $this->SetTextColor($this->color[0], $this->color[1], $this->color[2]);
+            $this->Cell(32, $lineheight, iconv("UTF-8", "ISO-8859-1", mb_strtoupper($this->lang['date'], 'UTF-8')) . ':', 0, 0, 'L');
+            $this->SetTextColor(50, 50, 50);
+            $this->SetFont($this->font, '', 9);
+            $this->Cell(0, $lineheight, $this->date, 0, 1, 'R');
         }
 
         //First page

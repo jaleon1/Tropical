@@ -43,7 +43,6 @@ class FacturacionElectronica{
     static $xmlFirmado;
     static $apiMode;
 
-
     public static function iniciarNC($t){
         try{
             //date_default_timezone_set('America/Costa_Rica');
@@ -1122,6 +1121,9 @@ class FacturacionElectronica{
 
     public static function APIConsultaComprobante($t , $invoice=false){
         try{
+            Invoice::create($t);
+            exit;
+            //
             self::$transaccion= $t;
             error_log("[INFO] API CONSULTA CLAVE: ". self::$transaccion->clave . " Consecutivo: " . self::$transaccion->consecutivo);
             self::getApiUrl();

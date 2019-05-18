@@ -436,6 +436,12 @@
         producto.ReadAllPrdVenta;
         producto.Init();
 
+        $(function () {
+            $(document)
+                .ajaxStart(NProgress.start)
+                .ajaxStop(NProgress.done);
+        });
+
         if (localStorage.getItem("lsPrintOK") == "OK") {
             swal({
                 type: 'success',
