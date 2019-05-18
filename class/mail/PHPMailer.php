@@ -1,4 +1,5 @@
 <?php
+
 /**
  * PHPMailer - PHP email creation and transport class.
  * PHP Version 5.5.
@@ -19,7 +20,8 @@
  */
 
 namespace PHPMailer\PHPMailer;
-
+setlocale(LC_ALL,"es_ES");
+mb_internal_encoding('UTF-8');
 /**
  * PHPMailer - PHP email creation and transport class.
  *
@@ -701,7 +703,7 @@ class PHPMailer
      *
      * @var string
      */
-    const VERSION = '6.0.5';
+    const VERSION = '6.0.6';
 
     /**
      * Error severity: message only, continue processing.
@@ -1471,7 +1473,10 @@ class PHPMailer
             if (!empty($this->DKIM_domain)
                 and !empty($this->DKIM_selector)
                 and (!empty($this->DKIM_private_string)
-                    or (!empty($this->DKIM_private) and file_exists($this->DKIM_private))
+                    or (!empty($this->DKIM_private)
+                        and static::isPermittedPath($this->DKIM_private)
+                        and file_exists($this->DKIM_private)
+                    )
                 )
             ) {
                 $header_dkim = $this->DKIM_Add(
@@ -1649,6 +1654,20 @@ class PHPMailer
     }
 
     /**
+     * Check whether a file path is of a permitted type.
+     * Used to reject URLs and phar files from functions that access local file paths,
+     * such as addAttachment.
+     *
+     * @param string $path A relative or absolute path to a file
+     *
+     * @return bool
+     */
+    protected static function isPermittedPath($path)
+    {
+        return !preg_match('#^[a-z]+://#i', $path);
+    }
+
+    /**
      * Send mail using the PHP mail() function.
      *
      * @see    http://www.php.net/manual/en/book.mail.php
@@ -1755,7 +1774,6 @@ class PHPMailer
     {
         $bad_rcpt = [];
         if (!$this->smtpConnect($this->SMTPOptions)) {
-            error_log('smtp_connect_failed');
             throw new Exception($this->lang('smtp_connect_failed'), self::STOP_CRITICAL);
         }
         //Sender already validated in preSend()
@@ -1996,7 +2014,8 @@ class PHPMailer
             'dk' => 'da',
             'no' => 'nb',
             'se' => 'sv',
-            'sr' => 'rs',
+            'rs' => 'sr',
+            'tg' => 'tl',
         ];
 
         if (isset($renamed_langcodes[$langcode])) {
@@ -2038,7 +2057,7 @@ class PHPMailer
         // There is no English translation file
         if ('en' != $langcode) {
             // Make sure language file path is readable
-            if (!file_exists($lang_file)) {
+            if (!static::isPermittedPath($lang_file) || !file_exists($lang_file)) {
                 $foundlang = false;
             } else {
                 // Overwrite language-specific strings.
@@ -2122,7 +2141,7 @@ class PHPMailer
         }
         // If utf-8 encoding is used, we will need to make sure we don't
         // split multibyte characters when we wrap
-        $is_utf8 = 'utf-8' == strtolower($this->CharSet);
+        $is_utf8 = static::CHARSET_UTF8 === strtolower($this->CharSet);
         $lelen = strlen(static::$LE);
         $crlflen = strlen(static::$LE);
 
@@ -2776,6 +2795,8 @@ class PHPMailer
      * Add an attachment from a path on the filesystem.
      * Never use a user-supplied path to a file!
      * Returns false if the file could not be found or read.
+     * Explicitly *does not* support passing URLs; PHPMailer is not an HTTP client.
+     * If you need to do that, fetch the resource yourself and pass it in via a local file or string.
      *
      * @param string $path        Path to the attachment
      * @param string $name        Overrides the attachment name
@@ -2790,7 +2811,7 @@ class PHPMailer
     public function addAttachment($path, $name = '', $encoding = self::ENCODING_BASE64, $type = '', $disposition = 'attachment')
     {
         try {
-            if (!@is_file($path)) {
+            if (!static::isPermittedPath($path) || !@is_file($path)) {
                 throw new Exception($this->lang('file_access') . $path, self::STOP_CONTINUE);
             }
 
@@ -2972,7 +2993,7 @@ class PHPMailer
     protected function encodeFile($path, $encoding = self::ENCODING_BASE64)
     {
         try {
-            if (!file_exists($path)) {
+            if (!static::isPermittedPath($path) || !file_exists($path)) {
                 throw new Exception($this->lang('file_open') . $path, self::STOP_CONTINUE);
             }
             $file_buffer = file_get_contents($path);
@@ -3313,7 +3334,7 @@ class PHPMailer
      */
     public function addEmbeddedImage($path, $cid, $name = '', $encoding = self::ENCODING_BASE64, $type = '', $disposition = 'inline')
     {
-        if (!@is_file($path)) {
+        if (!static::isPermittedPath($path) || !@is_file($path)) {
             $this->setError($this->lang('file_access') . $path);
 
             return false;
@@ -3629,7 +3650,7 @@ class PHPMailer
             //Is it a valid IPv4 address?
             return (bool) filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4);
         }
-        if (filter_var('http://' . $host, FILTER_VALIDATE_URL, FILTER_FLAG_HOST_REQUIRED)) {
+        if (filter_var('http://' . $host, FILTER_VALIDATE_URL)) {
             //Is it a syntactically valid hostname?
             return true;
         }
