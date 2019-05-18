@@ -960,6 +960,9 @@ class Distribucion {
             .done(function (e) {
                 distr.tDistribucion = referenciaCircular;        
                 distr.drawDistribucion(e); 
+            })
+            .fail(function (e) {
+                distr.showError(e);
             });
     };
 
