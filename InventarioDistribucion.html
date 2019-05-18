@@ -305,6 +305,12 @@
         distr.CargaTrasladosRango();
         // distr.Read;
 
+        $(function () {
+            $(document)
+                .ajaxStart(NProgress.start)
+                .ajaxStop(NProgress.done);
+        });
+
         $('#sendContingenciaMasiva').click(function () {
             distr.sendContingenciaMasiva();
         });
