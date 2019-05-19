@@ -120,7 +120,7 @@ class ProductoXFactura{
                         $porcion= 1;
                     else $porcion= 1.4285714;
 
-                    if($item == 3)
+                    if($item == 2)
                         $porcion = 1;
                     // Entrada a inventario agencia.
                     InventarioInsumoXBodega::entrada($idProducto, $factura[0]["idBodega"], 'Nota Credito Fac#: ' . $factura[0]["consecutivo"], $porcion, $insumoXBodega[0]["costoPromedio"], false);
