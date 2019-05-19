@@ -771,6 +771,49 @@ class Factura{
     function actualizaInventario($insumos){
         if(!isset($this->consecutivo))
             $this->Read();
+
+        if ($this->facturaRelacionada){
+            $this->Read();
+            $insumos_tmp=[];
+
+            foreach ($this->detalleFactura as $key => $value){
+                $value->detalle = str_replace(' ','',$value->detalle);
+                $producto_x_linea = explode(",",$value->detalle);  
+
+
+                $item= new OrdenXFactura();
+
+                if ($producto_x_linea[0] == "08oz")
+                    $item->idTamano = 0;
+                else $item->idTamano = 1;
+
+                foreach ($producto_x_linea as $cont => $lineaValue){
+                    $sql="SELECT i.id FROM producto p
+                        INNER JOIN insumosXBodega i
+                        on p.id = i.idProducto
+                        where p.nombreAbreviado = :nombreAbreviado
+                        and i.idBodega = :idBodega;";
+                    $param= array(':nombreAbreviado'=>$lineaValue, ':idBodega'=>$this->idBodega);
+                    $data = DATA::Ejecutar($sql,$param);
+                    if ($data){
+                        switch ($cont) {
+                            case 1:
+                                $item->idSabor1 = $data[0]["id"];
+                                break;
+                            case 2:
+                                $item->idSabor2 = $data[0]["id"];
+                                break;
+                            case 3:
+                                $item->idTopping = $data[0]["id"];
+                                break;
+                        }
+                    }
+                }
+                array_push ($insumos_tmp, $item);
+            }
+            $insumos = $insumos_tmp;
+        }
+            
         foreach ($insumos as $key => $value){
             // resta inventario sabor y topping.
             if($value->idTamano==0)

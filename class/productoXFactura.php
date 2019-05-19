@@ -71,7 +71,7 @@ class ProductoXFactura{
             $idCaja = DATA::Ejecutar($sql,$param);
             // 153f802a-049f-11e9-a864-0800279cc012
 
-            if (isset($idCaja[0]["id"])){
+            if (isset($idCaja[0]["id"])   && !isset($_POST["facturaRelacionada"]) ){
                 switch($factura[0]["idMedioPago"]){
                     case "1":
                         $sql='UPDATE cajasXBodega 
