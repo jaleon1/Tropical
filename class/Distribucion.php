@@ -267,7 +267,7 @@ class Distribucion{
                 $data = DATA::Ejecutar($sql,$param, false);
                 $this->informacionReferencia = [];
                 if($data){
-                    $this->read();
+                    $this->Read();
                     // referencia a la fatura cancelada.
                     require_once("Referencia.php");
                     $item = new Referencia();
