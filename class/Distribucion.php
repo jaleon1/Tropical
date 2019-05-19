@@ -269,7 +269,7 @@ class Distribucion{
                 if($data){
                     $this->Read();
                     // referencia a la fatura cancelada.
-                    require_once("Referencia.php");
+                    require_once("referencia.php");
                     $item = new Referencia();
                     $item->tipodoc= '01'; // factura electronica
                     $item->numero= $this->clave;  // clave del documento en referencia.
