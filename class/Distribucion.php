@@ -321,16 +321,17 @@ class Distribucion{
     }
 
     function rollbackDistribucion(){
-        $sql="SELECT idProducto, cantidad
-                FROM productosXDistribucion
-                WHERE id =:id;";
-            $param= array(':id'=>$this->id);
+        $sql="SELECT pd.idProducto, pd.cantidad, pd.precioUnitario, i.id as idInsumo
+            FROM productosXDistribucion pd 
+            inner join insumosXBodega i on pd.idProducto = i.idProducto
+                WHERE idDistribucion =:idDistribucion and i.idBodega =:idBodega;";
+            $param= array(':idDistribucion'=>$this->id, ':idBodega'=>$this->idBodega);
             $productosXDistribucion = DATA::Ejecutar($sql,$param);  
 
             if($productosXDistribucion){
                 foreach ($productosXDistribucion as $key => $value){
-                    InventarioInsumoXBodega::salida($value['idProducto'], $this->idBodega, 'Distribucion#'.$this->orden, $value['cantidad']);
-                    InventarioProducto::entrada( $value['idProducto'], $this->orden, $value['cantidad']);
+                    InventarioInsumoXBodega::salida($value['idInsumo'], $this->idBodega, 'Distribucion#'.$this->orden, $value['cantidad']);
+                    InventarioProducto::entrada( $value['idProducto'],  'Distribucion#'.$this->orden, $value['cantidad'], $value['precioUnitario']);
                 }
             }
     }
@@ -350,7 +351,7 @@ class Distribucion{
             $this->idBodega = $data[0]["idBodega"];
 
             if($data[0]["idEstado"] == 1){
-                rollbackDistribucion();
+                $this->rollbackDistribucion();
             }
             
             // $objDistribucion = new Factura();
