@@ -76,7 +76,7 @@ class MermaAgencia{
                 $this->listaProducto= [];
                 foreach ($obj["listaProducto"] as $itemlist) {
                     $item= new Insumo();
-                    $item->id = $itemlist['id'];
+                    $item->id = $itemlist['id'] ?? $itemlist['idProducto'];
                     $item->idProducto= $itemlist['idProducto'];
                     $item->cantidad = $itemlist['cantidad'];
                     $item->descripcion= $itemlist['descripcion'];
