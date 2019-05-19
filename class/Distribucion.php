@@ -331,7 +331,24 @@ class Distribucion{
 
             if($productosXDistribucion){
                 foreach ($productosXDistribucion as $key => $value){
-                    InventarioInsumoXBodega::salida($value['idInsumo'], $this->idBodega, 'Cancela Distribucion#'.$this->orden, $value['cantidad']);
+                    // porcion del insumo de la agencia.
+                    // busca si es artículo o producto (TOPPING - SABOR).
+                    $sql='SELECT esVenta
+                        FROM insumosXBodega x INNER JOIN producto p 
+                        WHERE p.id= :idProducto';
+                    $param= array(':idProducto'=>$value['idProducto']);
+                    $porcion= DATA::Ejecutar($sql, $param);
+                    //
+                    if ($porcion[0]['esVenta']==0){        // artículo.
+                        $porcion= 1;
+                    }
+                    else if ($porcion[0]['esVenta']==1){   // botella de sabor.
+                        $porcion= 20;
+                    }
+                    else if ($porcion[0]['esVenta']==2){   // topping.
+                        $porcion= 40;
+                    }
+                    InventarioInsumoXBodega::salida($value['idInsumo'], $this->idBodega, 'Cancela Distribucion#'.$this->orden, $value['cantidad']*$porcion);
                     InventarioProducto::entrada( $value['idProducto'],  'Cancela Distribucion#'.$this->orden, $value['cantidad'], $value['costoPromedio']);
                 }
             }
