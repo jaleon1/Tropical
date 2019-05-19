@@ -321,17 +321,18 @@ class Distribucion{
     }
 
     function rollbackDistribucion(){
-        $sql="SELECT pd.idProducto, pd.cantidad, pd.precioUnitario, i.id as idInsumo
+        $sql="SELECT pd.idProducto, pd.cantidad, p.costoPromedio, i.id as idInsumo
             FROM productosXDistribucion pd 
-            inner join insumosXBodega i on pd.idProducto = i.idProducto
-                WHERE idDistribucion =:idDistribucion and i.idBodega =:idBodega;";
+                inner join insumosXBodega i on pd.idProducto = i.idProducto
+                inner join producto p on p.id = pd.idProducto
+            WHERE idDistribucion =:idDistribucion and i.idBodega =:idBodega;";
             $param= array(':idDistribucion'=>$this->id, ':idBodega'=>$this->idBodega);
             $productosXDistribucion = DATA::Ejecutar($sql,$param);  
 
             if($productosXDistribucion){
                 foreach ($productosXDistribucion as $key => $value){
                     InventarioInsumoXBodega::salida($value['idInsumo'], $this->idBodega, 'Distribucion#'.$this->orden, $value['cantidad']);
-                    InventarioProducto::entrada( $value['idProducto'],  'Distribucion#'.$this->orden, $value['cantidad'], $value['precioUnitario']);
+                    InventarioProducto::entrada( $value['idProducto'],  'Distribucion#'.$this->orden, $value['cantidad'], $value['costoPromedio']);
                 }
             }
     }
