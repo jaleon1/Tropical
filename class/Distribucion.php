@@ -331,8 +331,8 @@ class Distribucion{
 
             if($productosXDistribucion){
                 foreach ($productosXDistribucion as $key => $value){
-                    InventarioInsumoXBodega::salida($value['idInsumo'], $this->idBodega, 'Distribucion#'.$this->orden, $value['cantidad']);
-                    InventarioProducto::entrada( $value['idProducto'],  'Distribucion#'.$this->orden, $value['cantidad'], $value['costoPromedio']);
+                    InventarioInsumoXBodega::salida($value['idInsumo'], $this->idBodega, 'Cancela Distribucion#'.$this->orden, $value['cantidad']);
+                    InventarioProducto::entrada( $value['idProducto'],  'Cancela Distribucion#'.$this->orden, $value['cantidad'], $value['costoPromedio']);
                 }
             }
     }
