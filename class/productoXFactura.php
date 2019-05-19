@@ -114,8 +114,6 @@ class ProductoXFactura{
                     $param= array(':idProducto'=>$idProducto, ':idBodega'=>$factura[0]["idBodega"]);
                     $insumoXBodega = DATA::Ejecutar($sql,$param);
 
-                    // array_push($insumoXBodega,$data[0]["id"]);
-
                     if($producto_x_linea[0]=="08oz")
                         $porcion= 1;
                     else $porcion= 1.4285714;
@@ -123,7 +121,7 @@ class ProductoXFactura{
                     if($item == 2)
                         $porcion = 1;
                     // Entrada a inventario agencia.
-                    InventarioInsumoXBodega::entrada($insumoXBodega[0]["id"], $factura[0]["idBodega"], 'Nota Credito Fac#: ' . $factura[0]["consecutivo"], $porcion, $insumoXBodega[0]["costoPromedio"], false);
+                    InventarioInsumoXBodega::entrada($idProducto, $factura[0]["idBodega"], 'Nota Credito Fac#: ' . $factura[0]["consecutivo"], $porcion, $insumoXBodega[0]["costoPromedio"], false);
                     
                     switch($producto_x_linea[0]){
                         case "12oz":
