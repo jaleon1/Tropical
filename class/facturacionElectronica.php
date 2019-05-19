@@ -605,10 +605,10 @@ class FacturacionElectronica{
             $receptor_num_identif = '';
             $receptor_email = '';
             if(self::$transaccion->datosReceptor->nombre == 'default'){
-                $omitir_receptor = true;                
+                $omitir_receptor = 'true';                
             }
             else {
-                $omitir_receptor = false; 
+                $omitir_receptor = 'false'; 
                 $receptor_nombre = self::$transaccion->datosReceptor->nombre;
                 //$receptor_tipo_identif =
                 //$receptor_num_identif =
@@ -638,7 +638,7 @@ class FacturacionElectronica{
                 // 'emisor_fax'=> '00000000',
                 /** Receptor **/  
                 'omitir_receptor'=> $omitir_receptor,
-                'receptor_nombre'=>  self::$transaccion->datosReceptor->nombre,
+                'receptor_nombre'=>  $receptor_nombre,
                 'receptor_tipo_identif'=> self::getIdentificacionCod(self::$transaccion->datosReceptor->idTipoIdentificacion),
                 'receptor_num_identif'=>  self::$transaccion->datosReceptor->identificacion,
                 //'receptor_email'=> self::$transaccion->datosReceptor->correoElectronico,
