@@ -793,6 +793,7 @@ class FacturacionElectronica{
                 // 'emisor_fax'=> '00000000',
                 'emisor_email'=> self::$transaccion->datosEntidad->correoElectronico,
                 /** Receptor **/  
+                'omitir_receptor'=> $omitir_receptor,
                 'receptor_nombre'=>  $receptor_nombre,
                 'receptor_tipo_identif'=> self::getIdentificacionCod(self::$transaccion->datosReceptor->idTipoIdentificacion),
                 'receptor_num_identif'=>  self::$transaccion->datosReceptor->identificacion,
