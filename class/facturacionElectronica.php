@@ -754,7 +754,22 @@ class FacturacionElectronica{
             }
             // codigo ubicacion
             $ubicacionEntidadCod= self::getUbicacionCod(self::$transaccion->datosEntidad->idProvincia, self::$transaccion->datosEntidad->idCanton, self::$transaccion->datosEntidad->idDistrito, self::$transaccion->datosEntidad->idBarrio);
-            $ubicacionReceptorCod= self::getUbicacionCod(self::$transaccion->datosReceptor->idProvincia, self::$transaccion->datosReceptor->idCanton, self::$transaccion->datosReceptor->idDistrito, self::$transaccion->datosReceptor->idBarrio);
+            //$ubicacionReceptorCod= self::getUbicacionCod(self::$transaccion->datosReceptor->idProvincia, self::$transaccion->datosReceptor->idCanton, self::$transaccion->datosReceptor->idDistrito, self::$transaccion->datosReceptor->idBarrio);
+            // tiene receptor.
+            $receptor_nombre = '';
+            $receptor_tipo_identif = '';
+            $receptor_num_identif = '';
+            $receptor_email = '';
+            if(self::$transaccion->datosReceptor->nombre == 'default'){
+                $omitir_receptor = 'true';                
+            }
+            else {
+                $omitir_receptor = 'false'; 
+                $receptor_nombre = self::$transaccion->datosReceptor->nombre;
+                //$receptor_tipo_identif =
+                //$receptor_num_identif =
+                //$receptor_email =
+            }
             //
             $post = [
                 'w' => 'genXML',
@@ -778,13 +793,13 @@ class FacturacionElectronica{
                 // 'emisor_fax'=> '00000000',
                 'emisor_email'=> self::$transaccion->datosEntidad->correoElectronico,
                 /** Receptor **/  
-                'receptor_nombre'=>  self::$transaccion->datosReceptor->nombre,
+                'receptor_nombre'=>  $receptor_nombre,
                 'receptor_tipo_identif'=> self::getIdentificacionCod(self::$transaccion->datosReceptor->idTipoIdentificacion),
                 'receptor_num_identif'=>  self::$transaccion->datosReceptor->identificacion,
-                'receptor_provincia'=> $ubicacionReceptorCod[0]->provincia,
-                'receptor_canton'=> $ubicacionReceptorCod[0]->canton,
-                'receptor_distrito'=> $ubicacionReceptorCod[0]->distrito,
-                'receptor_barrio'=> $ubicacionReceptorCod[0]->barrio,
+                // 'receptor_provincia'=> $ubicacionReceptorCod[0]->provincia,
+                // 'receptor_canton'=> $ubicacionReceptorCod[0]->canton,
+                // 'receptor_distrito'=> $ubicacionReceptorCod[0]->distrito,
+                // 'receptor_barrio'=> $ubicacionReceptorCod[0]->barrio,
                 //'receptor_cod_pais_tel'=> '506',
                 //'receptor_tel'=> self::$transaccion->datosReceptor->numTelefono,
                 // 'receptor_cod_pais_fax'=> '506',
