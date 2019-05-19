@@ -5,7 +5,7 @@
     //Classes
     include("WebToPDF/InvoicePrinter.php");
     require_once("UUID.php");
-    require_once("globals.php");
+    require_once("Globals.php");
     require "mail/mail.php";
     // Instance        
     $invoice= new Invoice();
