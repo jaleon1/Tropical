@@ -631,7 +631,8 @@ class Factura{
                         OrdenXFactura::Create($this->detalleOrden);
                     }
                     // envio de comprobantes en tiempo real.
-                    $this->enviarDocumentoElectronico();         
+                    $this->enviarDocumentoElectronico();
+                    $this->getClave();
                     return $this;
                 }
                 else throw new Exception('[ERROR] al guardar los productos.', 03);
@@ -681,6 +682,24 @@ class Factura{
             if($data)
                 return true;
             else throw new Exception('Error al guardar el histórico.', 03);            
+        }     
+        catch(Exception $e) {
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            // debe notificar que no se esta actualizando el historico de comprobantes.
+        }
+    }
+
+    public function getClave(){
+        try {
+            $sql="SELECT clave
+                from factura
+                WHERE id=:id";
+            $param= array(':id'=>$this->id);
+            //
+            $data = DATA::Ejecutar($sql,$param, false);
+            if($data)
+                $this->clave = $data[0]['clave'];
+            else $this->clave = null;
         }     
         catch(Exception $e) {
             error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
