@@ -97,7 +97,7 @@
         // nota de credito. reenvío.
         error_log("**************************************************************************");
         error_log("**************************************************************************");
-        error_log("                        [INFO] Iniciando Reenvío NC                       ");
+        error_log("                        [INFO] Iniciando Reenvio NC                       ");
         error_log("**************************************************************************");
         error_log("**************************************************************************");
         $sql='SELECT id
@@ -223,7 +223,7 @@
         //
         error_log("**************************************************************************");
         error_log("**************************************************************************");
-        error_log("     [INFO] Iniciando Ejecución AUTOMATICA DE DISTRIBUCION     ");
+        error_log("           [INFO] Iniciando Ejecución AUTOMATICA DE DISTRIBUCION          ");
         error_log("**************************************************************************");
         error_log("**************************************************************************");
         $sql="SELECT d.id, b.nombre as bodega, orden
@@ -266,7 +266,7 @@
             // idDocumento.
             // $distr->idDocumento = 1;
             FacturacionElectronica::$distr= true;
-            FacturacionElectronica::APIConsultaComprobante($distr);
+            FacturacionElectronica::APIConsultaComprobante($distr, true);
             error_log("[INFO] Finaliza Consulta de Disctribucion - Comprobantes - TimedOut | Duplicadas");
         }
         // Distribucion firma invalida
@@ -297,7 +297,7 @@
             // idDocumento.
             // $distr->idDocumento = 1;
             FacturacionElectronica::$distr= true;
-            FacturacionElectronica::APIConsultaComprobante($distr); // debe envíar email.
+            FacturacionElectronica::APIConsultaComprobante($distr, true); // debe envíar email.
         }
         error_log("[INFO] Finaliza Consulta de Distribucion - Comprobantes - Firma Invalida");
         error_log("**************************************************************************");
@@ -326,9 +326,92 @@
             $distr->idDocumento = 1;
             $distr->consecutivo = $distr->orden;
             FacturacionElectronica::$distr= true;
+            facturacionElectronica::APIConsultaComprobante($distr, true); // debe envíar email.
+            error_log("[INFO] Finaliza Consulta de Distribucion");
+        }
+        // nota de credito. reenvío. DISTR.
+        error_log("**************************************************************************");
+        error_log("**************************************************************************");
+        error_log("                   [INFO] Iniciando Reenvío NC  - DISTRIBUCION            ");
+        error_log("**************************************************************************");
+        error_log("**************************************************************************");
+        $sql="SELECT d.id, b.nombre as bodega, orden
+            from distribucion d inner join bodega b on b.id = d.idBodega
+            WHERE  d.idEstadoNC = 5 
+            ORDER BY orden asc";
+        $data = DATA::Ejecutar($sql);
+        error_log("[INFO] Total de Distribuciones NC en Contingencia: ". count($data));
+        foreach ($data as $key => $transaccion){
+            error_log("[INFO] Distribucion - Contingencia - NC Bodega (". $transaccion['bodega'] .") Orden (".$transaccion['orden'].")");
+            $distr = new Distribucion();
+            $distr->id = $transaccion['id'];
+            // idDocumento.
+            $distr->idDocumento = 3;
+            $distr->contingencia();         
+        }
+        error_log("[INFO] Finaliza Reenvio NC  - DISTRIBUCION");
+        // timedout - Duplicadas NC - DISTR
+        // Documentos 3 estados 6 - 7
+        error_log("**************************************************************************");
+        error_log("**************************************************************************");
+        error_log("   [INFO] Iniciando Consulta Distribucion - TimedOut | Duplicadas - NC    ");
+        error_log("**************************************************************************");
+        error_log("**************************************************************************");
+        $sql='SELECT id
+            from distribucion d
+            where idEstadoNC = 6 or d.idEstadoNC = 7
+            order by idBodega';
+        $data= DATA::Ejecutar($sql);
+        foreach ($data as $key => $transaccion){
+            error_log("[INFO] Iniciando Consulta Distribucion - TimedOut | Duplicadas - NC");
+            $distr = new Distribucion();
+            $distr->id = $transaccion['id'];
+            $distr = $distr->Read();
+            // emisor Central
+            $distr->datosEntidad = $emisorCentral;
+            $distr->idEmisor = $central->id;
+            // receptor bodega externa
+            $receptor = new ClienteFE();
+            $receptor->idBodega = $distr->idBodega; // idBodega = bodega externa.
+            $distr->datosReceptor = $receptor->read();
+            // idDocumento.
+            $distr->idDocumento = 3;
+            FacturacionElectronica::$distr= true;
+            FacturacionElectronica::APIConsultaComprobante($distr);
+            error_log("[INFO] Finaliza Consulta de Disctribucion - Comprobantes - TimedOut | Duplicadas");
+        }
+        error_log("[INFO] Finaliza Consulta de NC - TimedOut | Duplicadas");
+        // Notas de crédito. Documento 3
+        error_log("**************************************************************************");
+        error_log("**************************************************************************");
+        error_log("           [INFO] Iniciando Consulta NC - DISTRIBUCION                    ");
+        error_log("**************************************************************************");
+        error_log("**************************************************************************");
+        $sql='SELECT id
+            from distribucion
+            where idEstadoNC = 2
+            order by idBodega';
+        $data= DATA::Ejecutar($sql);
+        foreach ($data as $key => $transaccion){
+            error_log("[INFO] Iniciando Consulta NC Distribucion");
+            $distr = new Distribucion();
+            $distr->id = $transaccion['id'];
+            $distr = $distr->Read();
+            // emisor - Central.         
+            $distr->datosEntidad = $emisorCentral;
+            $distr->idEmisor = $central->id;
+            // receptor
+            $receptor = new ClienteFE();
+            $receptor->idBodega = $distr->idBodega;
+            $distr->datosReceptor = $receptor->read();
+            // idDocumento.
+            $distr->idDocumento = 3;
+            $distr->consecutivo = $distr->orden;
+            FacturacionElectronica::$distr= true;
             facturacionElectronica::APIConsultaComprobante($distr); // debe envíar email.
             error_log("[INFO] Finaliza Consulta de Distribucion");
         }
+        error_log("[INFO] Finaliza Consulta NC - DISTR");
         error_log("**************************************************************************");
         error_log("**************************************************************************");
         error_log("                         [INFO] FINALIZA CALLBACK  FE                     ");

@@ -357,13 +357,13 @@
             cb(start, end);
 
             ordenCompra.fechaInicial = start.format('YYYY-MM-DD') + ' 00:00';
-            ordenCompra.fechaFinal = end.format('YYYY-MM-DD') + ' 23:59';
+            ordenCompra.fechaFinal = end.format('YYYY-MM-DD') + ' 23:59:59';
             ordenCompra.CargaOrdenCompraRango();
         });
 
         $('#dp_rangoReporteOrdenCompra').on('apply.daterangepicker', function (ev, picker) {
             ordenCompra.fechaInicial = picker.startDate.format('YYYY-MM-DD') + ' 00:00';
-            ordenCompra.fechaFinal = picker.endDate.format('YYYY-MM-DD') + ' 23:59';
+            ordenCompra.fechaFinal = picker.endDate.format('YYYY-MM-DD') + ' 23:59:59';
             ordenCompra.CargaOrdenCompraRango();
         });
 

@@ -16,5 +16,5 @@
   $lang['address']		= 'Direccion';
   $lang['phone']		= 'Tel.';
   $lang['legal_document']		= 'Cedula Juridica';
-  $lang['email']		= 'Correo';
+  $lang['email']		= 'Mail';
 ?>

@@ -71,7 +71,7 @@ class ProductoXFactura{
             $idCaja = DATA::Ejecutar($sql,$param);
             // 153f802a-049f-11e9-a864-0800279cc012
 
-            if (isset($idCaja[0]["id"])){
+            if (isset($idCaja[0]["id"])   && !isset($_POST["facturaRelacionada"]) ){
                 switch($factura[0]["idMedioPago"]){
                     case "1":
                         $sql='UPDATE cajasXBodega 
@@ -114,11 +114,12 @@ class ProductoXFactura{
                     $param= array(':idProducto'=>$idProducto, ':idBodega'=>$factura[0]["idBodega"]);
                     $insumoXBodega = DATA::Ejecutar($sql,$param);
 
-                    // array_push($insumoXBodega,$data[0]["id"]);
-
                     if($producto_x_linea[0]=="08oz")
                         $porcion= 1;
                     else $porcion= 1.4285714;
+
+                    if($item == 2)
+                        $porcion = 1;
                     // Entrada a inventario agencia.
                     InventarioInsumoXBodega::entrada($idProducto, $factura[0]["idBodega"], 'Nota Credito Fac#: ' . $factura[0]["consecutivo"], $porcion, $insumoXBodega[0]["costoPromedio"], false);
                     
@@ -137,7 +138,7 @@ class ProductoXFactura{
 
             $objFactura = new Factura();
             $objFactura->id = $idFactura;
-            $objFactura->idDocumentoNC = 1;
+            $objFactura->idDocumentoNC = 3;
             $objFactura->idReferencia = 1;
             $objFactura->razon = $razon;
             $objFactura->notaCredito();

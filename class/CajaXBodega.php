@@ -275,7 +275,8 @@ class CajaXBodega{
                             WHERE idusuarioCajero = :idusuarioCajero and estado = 1
                         )
                         and CURRENT_TIMESTAMP() and
-                        idusuario = :idusuarioCajero;";            
+                        idusuario = :idusuarioCajero and 
+                        idDocumentoNC IS NULL;";            
                 $param= array(':idusuarioCajero'=>$_SESSION["userSession"]->id);
                 $this->totalVentasEfectivo= DATA::Ejecutar($sql, $param);
                 if($this->totalVentasEfectivo){
@@ -288,7 +289,8 @@ class CajaXBodega{
                         WHERE idusuarioCajero = :idusuarioCajero and estado = 1
                     )
                     and CURRENT_TIMESTAMP() and
-                    idusuario = :idusuarioCajero;";            
+                    idusuario = :idusuarioCajero and 
+                    idDocumentoNC IS NULL;";            
                     $param= array(':idusuarioCajero'=>$_SESSION["userSession"]->id);
                     $this->totalVentasTarjeta= DATA::Ejecutar($sql, $param);
                     if($this->totalVentasEfectivo){
@@ -329,7 +331,8 @@ class CajaXBodega{
                         SELECT date_format(CURRENT_TIMESTAMP(),'%Y-%c-%d 00:00:00') AS Fecha 
                     )
                 and CURRENT_TIMESTAMP() and
-                idBodega = :idBodega;";            
+                idBodega = :idBodega and 
+                idDocumentoNC IS NULL;";            
                 $param= array(':idBodega'=>$_SESSION["userSession"]->idBodega);
                 $this->totalVentasEfectivo= DATA::Ejecutar($sql, $param);
                 if($this->totalVentasEfectivo){
@@ -340,7 +343,8 @@ class CajaXBodega{
                         SELECT date_format(CURRENT_TIMESTAMP(),'%Y-%c-%d 00:00:00') AS Fecha 
                             )
                         and CURRENT_TIMESTAMP() and
-                        idBodega = :idBodega;";                 
+                        idBodega = :idBodega and 
+                        idDocumentoNC IS NULL;";                 
                     $param= array(':idBodega'=>$_SESSION["userSession"]->idBodega);
                     $this->totalVentasTarjeta= DATA::Ejecutar($sql, $param);
                     if($this->totalVentasTarjeta){

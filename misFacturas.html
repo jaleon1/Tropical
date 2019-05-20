@@ -336,13 +336,13 @@ $(document).ready(function () {
             cb(start, end);
 
             inventarioFacturas.fechaInicial = start.format('YYYY-MM-DD') + ' 00:00';
-            inventarioFacturas.fechaFinal = end.format('YYYY-MM-DD') + ' 23:59';
+            inventarioFacturas.fechaFinal = end.format('YYYY-MM-DD') + ' 23:59:59';
             inventarioFacturas.CargaMisFacturasRango();
         });
 
         $('#dp_rangoMisFacturas').on('apply.daterangepicker', function (ev, picker) {
             inventarioFacturas.fechaInicial = picker.startDate.format('YYYY-MM-DD') + ' 00:00';
-            inventarioFacturas.fechaFinal = picker.endDate.format('YYYY-MM-DD') + ' 23:59';
+            inventarioFacturas.fechaFinal = picker.endDate.format('YYYY-MM-DD') + ' 23:59:59';
             inventarioFacturas.CargaMisFacturasRango();
         });
         
@@ -436,7 +436,7 @@ $(document).ready(function () {
                                 cb(start, end);
 
                                 inventarioFacturas.fechaInicial = start.format('YYYY-MM-DD') + ' 00:00';
-                                inventarioFacturas.fechaFinal = end.format('YYYY-MM-DD') + ' 23:59';
+                                inventarioFacturas.fechaFinal = end.format('YYYY-MM-DD') + ' 23:59:59';
                                 inventarioFacturas.CargaListaFacturasRango();
                                 swal({
                                     type: 'success',

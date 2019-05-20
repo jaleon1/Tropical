@@ -61,8 +61,8 @@ if(isset($_POST["action"])){
             break;
         case "sendNotaCredito":
             // Nota de Credito.
-            $factura->idDocumentoNC= $_POST["idDocumentoNC"] ?? 1; // documento tipo 1: FE
-            $factura->idReferencia= $_POST["idReferencia"] ?? 1; // código de referencia: 1 : Referencia a otro documento.
+            $factura->idDocumentoNC= $_POST["idDocumentoNC"] ?? 3; // documento tipo 3: NC
+            $factura->idReferencia= $_POST["idReferencia"] ?? 1; // código de referencia: 1 : Referencia a documento FE.
             $factura->razon= $_POST["razon"]; // Referencia a otro documento.
             $factura->notaCredito();
             break;
@@ -631,7 +631,8 @@ class Factura{
                         OrdenXFactura::Create($this->detalleOrden);
                     }
                     // envio de comprobantes en tiempo real.
-                    $this->enviarDocumentoElectronico();         
+                    $this->enviarDocumentoElectronico();
+                    $this->getClave();
                     return $this;
                 }
                 else throw new Exception('[ERROR] al guardar los productos.', 03);
@@ -681,6 +682,24 @@ class Factura{
             if($data)
                 return true;
             else throw new Exception('Error al guardar el histórico.', 03);            
+        }     
+        catch(Exception $e) {
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            // debe notificar que no se esta actualizando el historico de comprobantes.
+        }
+    }
+
+    public function getClave(){
+        try {
+            $sql="SELECT clave
+                from factura
+                WHERE id=:id";
+            $param= array(':id'=>$this->id);
+            //
+            $data = DATA::Ejecutar($sql,$param, false);
+            if($data)
+                $this->clave = $data[0]['clave'];
+            else $this->clave = null;
         }     
         catch(Exception $e) {
             error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
@@ -771,6 +790,49 @@ class Factura{
     function actualizaInventario($insumos){
         if(!isset($this->consecutivo))
             $this->Read();
+
+        if ($this->facturaRelacionada){
+            $this->Read();
+            $insumos_tmp=[];
+
+            foreach ($this->detalleFactura as $key => $value){
+                $value->detalle = str_replace(' ','',$value->detalle);
+                $producto_x_linea = explode(",",$value->detalle);  
+
+
+                $item= new OrdenXFactura();
+
+                if ($producto_x_linea[0] == "08oz")
+                    $item->idTamano = 0;
+                else $item->idTamano = 1;
+
+                foreach ($producto_x_linea as $cont => $lineaValue){
+                    $sql="SELECT i.id FROM producto p
+                        INNER JOIN insumosXBodega i
+                        on p.id = i.idProducto
+                        where p.nombreAbreviado = :nombreAbreviado
+                        and i.idBodega = :idBodega;";
+                    $param= array(':nombreAbreviado'=>$lineaValue, ':idBodega'=>$this->idBodega);
+                    $data = DATA::Ejecutar($sql,$param);
+                    if ($data){
+                        switch ($cont) {
+                            case 1:
+                                $item->idSabor1 = $data[0]["id"];
+                                break;
+                            case 2:
+                                $item->idSabor2 = $data[0]["id"];
+                                break;
+                            case 3:
+                                $item->idTopping = $data[0]["id"];
+                                break;
+                        }
+                    }
+                }
+                array_push ($insumos_tmp, $item);
+            }
+            $insumos = $insumos_tmp;
+        }
+            
         foreach ($insumos as $key => $value){
             // resta inventario sabor y topping.
             if($value->idTamano==0)
@@ -951,7 +1013,7 @@ class Factura{
                     return true;
                 }
                 else throw new Exception('Error al guardar.', 02);
-            } else throw new Exception('Warning, el comprobante ('. $this->id .') ya tiene una Nota de Crédito asignada.', 0763);
+            } else throw new Exception('Warning, el comprobante ('. $this->id .') ya tiene una Nota de Credito asignada.', 0763);
         }     
         catch(Exception $e) {
             error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());

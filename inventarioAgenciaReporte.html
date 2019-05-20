@@ -398,13 +398,13 @@
             cb(start, end);
 
             insumobodega.fechaInicial = start.format('YYYY-MM-DD') + ' 00:00';
-            insumobodega.fechaFinal = end.format('YYYY-MM-DD') + ' 23:59';
+            insumobodega.fechaFinal = end.format('YYYY-MM-DD') + ' 23:59:59';
             insumobodega.CargaInsumoRango();
         });
 
         $('#dp_rangoInsumoReporte').on('apply.daterangepicker', function (ev, picker) {
             insumobodega.fechaInicial = picker.startDate.format('YYYY-MM-DD') + ' 00:00';
-            insumobodega.fechaFinal = picker.endDate.format('YYYY-MM-DD') + ' 23:59';
+            insumobodega.fechaFinal = picker.endDate.format('YYYY-MM-DD') + ' 23:59:59';
             insumobodega.CargaInsumoRango();
         });
     });

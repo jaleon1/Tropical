@@ -307,13 +307,13 @@
             cb(start, end);
 
             mr.fechaInicial = start.format('YYYY-MM-DD') + ' 00:00';
-            mr.fechaFinal = end.format('YYYY-MM-DD') + ' 23:59';
+            mr.fechaFinal = end.format('YYYY-MM-DD') + ' 23:59:59';
             mr.CargaListaMRExterna();
         });
 
         $('#dp_rangoMRExterna').on('apply.daterangepicker', function (ev, picker) {
             mr.fechaInicial = picker.startDate.format('YYYY-MM-DD') + ' 00:00';
-            mr.fechaFinal = picker.endDate.format('YYYY-MM-DD') + ' 23:59';
+            mr.fechaFinal = picker.endDate.format('YYYY-MM-DD') + ' 23:59:59';
             mr.CargaListaMRExterna();
         });
         

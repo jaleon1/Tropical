@@ -302,8 +302,14 @@
 <script>
     $(document).ready(function () {
         distr.id = null;
-        distr.CargaTrasladosRango();
+        //distr.CargaTrasladosRango();
         // distr.Read;
+
+        $(function () {
+            $(document)
+                .ajaxStart(NProgress.start)
+                .ajaxStop(NProgress.done);
+        });
 
         $('#sendContingenciaMasiva').click(function () {
             distr.sendContingenciaMasiva();
@@ -367,13 +373,13 @@
             cb(start, end);
 
             distr.fechaInicial = start.format('YYYY-MM-DD') + ' 00:00';
-            distr.fechaFinal = end.format('YYYY-MM-DD') + ' 23:59';
+            distr.fechaFinal = end.format('YYYY-MM-DD') + ' 23:59:59';
             distr.CargaTrasladosRango();
         });
 
         $('#dp_rangoTraslados').on('apply.daterangepicker', function (ev, picker) {
             distr.fechaInicial = picker.startDate.format('YYYY-MM-DD') + ' 00:00';
-            distr.fechaFinal = picker.endDate.format('YYYY-MM-DD') + ' 23:59';
+            distr.fechaFinal = picker.endDate.format('YYYY-MM-DD') + ' 23:59:59';
             distr.CargaTrasladosRango();
         });
 
@@ -437,7 +443,8 @@
                         }
                     })
                         .done(function (e) {
-                            CargaListaFactura();
+                            // CargaListaFactura();
+                            distr.CargaTrasladosRango();
                             swal({
                                 type: 'success',
                                 title: 'Factura Cancelada!',
@@ -522,7 +529,8 @@
                         }
                     })
                         .done(function (e) {
-                            CargaListaFactura();
+                            // CargaListaFactura();
+                            distr.CargaTrasladosRango();
                             swal({
                                 type: 'success',
                                 title: 'Factura Enviada!',
@@ -565,7 +573,8 @@
                         }
                     })
                         .done(function (e) {
-                            CargaListaFactura();
+                            // CargaListaFactura();
+                            distr.CargaTrasladosRango();
                             swal({
                                 type: 'success',
                                 title: 'Factura Reenviada!',
@@ -573,7 +582,14 @@
                                 timer: 2000
                             });
                         })
-                        .fail(function (e) { });
+                        .fail(function (e) { 
+                            swal({
+                                type: 'error',
+                                title: 'Error al cancelar!',
+                                showConfirmButton: false,
+                                timer: 4000
+                            });
+                        });
                 }
             });
 

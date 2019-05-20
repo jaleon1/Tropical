@@ -1,6 +1,6 @@
 <?php
 error_reporting(E_ALL);
-ini_set('display_errors', 0);
+ini_set('display_errors', 1);
 
 if(isset($_POST["action"])){
     $opt= $_POST["action"];
@@ -260,22 +260,46 @@ class Distribucion{
                     WHERE id=:id";
                 $param= array(
                     ':id'=>$this->id,
-                    ':idDocumentoNC'=>$this->idDocumentoNC ?? 1,
+                    ':idDocumentoNC'=>$this->idDocumentoNC ?? 3,
                     ':idReferencia'=>$this->idReferencia ?? 1,
                     ':razon'=>$this->razon,
                     ':idEstadoNC'=>1);
                 $data = DATA::Ejecutar($sql,$param, false);
+                $this->informacionReferencia = [];
                 if($data){
-                    $this->read();
-                     // referencia a la fatura cancelada.
+                    $this->Read();
+                    // referencia a la fatura cancelada.
+                    require_once("referencia.php");
                     $item = new Referencia();
                     $item->tipodoc= '01'; // factura electronica
                     $item->numero= $this->clave;  // clave del documento en referencia.
-                    $item->razon= 'Aplica Nota de credito';  // nc por rechazo? | cual es la razon de hacer la referencia.
+                    $item->razon=  $this->razon ?? 'Aplica Nota de credito';  // nc por rechazo? | cual es la razon de hacer la referencia.
                     $item->fechaEmision= $this->fechaEmision ?? date_create()->format('c'); // fecha de la emisión del documento al que hace referencia.
                     $item->codigo= '01';  // Anula Documento de Referencia. ;
                     array_push ($this->informacionReferencia, $item);
+                    // datos entidad bodega central.
+                    $central = new Bodega();
+                    $central->readCentral();
+                    $this->idEmisor =  $this->id;
+                    $entidad = new ClienteFE();
+                    $entidad->idBodega = $central->id;
+                    $this->datosEntidad = $entidad->read();
+                    // datos receptor bodega externa.
+                    $externa = new ClienteFE();
+                    $externa->id = $this->idBodega; // bodega receptor.
+                    $this->datosReceptor = $externa->read();                    
+                    //
+                    $this->terminal = '00001';
+                    $this->local = '001';
+                    $this->consecutivo = $this->orden;
+                    $this->idCondicionVenta= 1;
+                    $this->idSituacionComprobante= 2;                
+                    $this->plazoCredito= 0;
+                    $this->idMedioPago= 1;
+                    $this->idCodigoMoneda = 55; // CRC
+                    $this->tipoCambio= 1.00; // tipo de cambio dinamico con BCCR  
                     // envía la factura
+                    FacturacionElectronica::$distr = true;
                     FacturacionElectronica::iniciarNC($this);
 
                     if ($this->facturaRelacionada == true){
@@ -284,7 +308,7 @@ class Distribucion{
                     return true;
                 }
                 else throw new Exception('Error al guardar.', 02);
-            } else throw new Exception('Warning, el comprobante ('. $this->id .') ya tiene una Nota de Crédito asignada.', 0763);
+            } else throw new Exception('Warning, el comprobante ('. $this->id .') ya tiene una Nota de Credito asignada.', 0763);
         }     
         catch(Exception $e) {
             error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
@@ -297,21 +321,40 @@ class Distribucion{
     }
 
     function rollbackDistribucion(){
-        $sql="SELECT idProducto, cantidad
-                FROM productosXDistribucion
-                WHERE id =:id;";
-            $param= array(':id'=>$this->id);
+        $sql="SELECT pd.idProducto, pd.cantidad, p.costoPromedio, i.id as idInsumo
+            FROM productosXDistribucion pd 
+                inner join insumosXBodega i on pd.idProducto = i.idProducto
+                inner join producto p on p.id = pd.idProducto
+            WHERE idDistribucion =:idDistribucion and i.idBodega =:idBodega;";
+            $param= array(':idDistribucion'=>$this->id, ':idBodega'=>$this->idBodega);
             $productosXDistribucion = DATA::Ejecutar($sql,$param);  
 
             if($productosXDistribucion){
                 foreach ($productosXDistribucion as $key => $value){
-                    InventarioInsumoXBodega::salida($value['idProducto'], $this->idBodega, 'Distribucion#'.$this->orden, $value['cantidad']);
-                    InventarioProducto::entrada( $value['idProducto'], $this->orden, $value['cantidad']);
+                    // porcion del insumo de la agencia.
+                    // busca si es artículo o producto (TOPPING - SABOR).
+                    $sql='SELECT esVenta
+                        FROM insumosXBodega x INNER JOIN producto p 
+                        WHERE p.id= :idProducto';
+                    $param= array(':idProducto'=>$value['idProducto']);
+                    $porcion= DATA::Ejecutar($sql, $param);
+                    //
+                    if ($porcion[0]['esVenta']==0){        // artículo.
+                        $porcion= 1;
+                    }
+                    else if ($porcion[0]['esVenta']==1){   // botella de sabor.
+                        $porcion= 20;
+                    }
+                    else if ($porcion[0]['esVenta']==2){   // topping.
+                        $porcion= 40;
+                    }
+                    InventarioInsumoXBodega::salida($value['idInsumo'], $this->idBodega, 'Cancela Distribucion#'.$this->orden, $value['cantidad']*$porcion);
+                    InventarioProducto::entrada( $value['idProducto'],  'Cancela Distribucion#'.$this->orden, $value['cantidad'], $value['costoPromedio']);
                 }
             }
     }
     
-    public static function cancelaDistribucion($idDistribucion, $razon){
+    public function cancelaDistribucion($idDistribucion, $razon){
         try {  
             //Master
             $sql="SELECT orden, idEstado, idBodega
@@ -320,13 +363,13 @@ class Distribucion{
             $param= array(':id'=>$idDistribucion);
             $data = DATA::Ejecutar($sql,$param);  
             
-            $self->razon = $razon;
-            $self->id = $idDistribucion; 
-            $self->orden = $data[0]["orden"];
-            $self->idBodega = $data[0]["idBodega"];
+            $this->razon = $razon;
+            $this->id = $idDistribucion; 
+            $this->orden = $data[0]["orden"];
+            $this->idBodega = $data[0]["idBodega"];
 
-            if($data[0] == 1){
-                rollbackDistribucion();
+            if($data[0]["idEstado"] == 1){
+                $this->rollbackDistribucion();
             }
             
             // $objDistribucion = new Factura();
@@ -334,7 +377,7 @@ class Distribucion{
             // $objDistribucion->idDocumentoNC = 3;
             // $objDistribucion->idReferencia = 1;
             // $objDistribucion->razon = $razon;
-            $self->notaCredito();
+            $this->notaCredito();
         }     
         catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');

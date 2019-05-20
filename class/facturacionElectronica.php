@@ -43,7 +43,6 @@ class FacturacionElectronica{
     static $xmlFirmado;
     static $apiMode;
 
-
     public static function iniciarNC($t){
         try{
             //date_default_timezone_set('America/Costa_Rica');
@@ -157,7 +156,7 @@ class FacturacionElectronica{
             $data= DATA::Ejecutar($sql,$param);     
             if($data)
                 return $data[0]['codigo'];
-            else throw new Exception('Error al consultar el codigo de tipod de identificacion' , ERROR_TIPO_IDENTIFICACION_NO_VALID);
+            else throw new Exception('Error al consultar el codigo de tipo de identificacion' , ERROR_TIPO_IDENTIFICACION_NO_VALID);
         }
         catch(Exception $e) {
             error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
@@ -606,10 +605,10 @@ class FacturacionElectronica{
             $receptor_num_identif = '';
             $receptor_email = '';
             if(self::$transaccion->datosReceptor->nombre == 'default'){
-                $omitir_receptor = true;                
+                $omitir_receptor = 'true';                
             }
             else {
-                $omitir_receptor = false; 
+                $omitir_receptor = 'false'; 
                 $receptor_nombre = self::$transaccion->datosReceptor->nombre;
                 //$receptor_tipo_identif =
                 //$receptor_num_identif =
@@ -639,7 +638,7 @@ class FacturacionElectronica{
                 // 'emisor_fax'=> '00000000',
                 /** Receptor **/  
                 'omitir_receptor'=> $omitir_receptor,
-                'receptor_nombre'=>  self::$transaccion->datosReceptor->nombre,
+                'receptor_nombre'=>  $receptor_nombre,
                 'receptor_tipo_identif'=> self::getIdentificacionCod(self::$transaccion->datosReceptor->idTipoIdentificacion),
                 'receptor_num_identif'=>  self::$transaccion->datosReceptor->identificacion,
                 //'receptor_email'=> self::$transaccion->datosReceptor->correoElectronico,
@@ -755,7 +754,22 @@ class FacturacionElectronica{
             }
             // codigo ubicacion
             $ubicacionEntidadCod= self::getUbicacionCod(self::$transaccion->datosEntidad->idProvincia, self::$transaccion->datosEntidad->idCanton, self::$transaccion->datosEntidad->idDistrito, self::$transaccion->datosEntidad->idBarrio);
-            $ubicacionReceptorCod= self::getUbicacionCod(self::$transaccion->datosReceptor->idProvincia, self::$transaccion->datosReceptor->idCanton, self::$transaccion->datosReceptor->idDistrito, self::$transaccion->datosReceptor->idBarrio);
+            //$ubicacionReceptorCod= self::getUbicacionCod(self::$transaccion->datosReceptor->idProvincia, self::$transaccion->datosReceptor->idCanton, self::$transaccion->datosReceptor->idDistrito, self::$transaccion->datosReceptor->idBarrio);
+            // tiene receptor.
+            $receptor_nombre = '';
+            $receptor_tipo_identif = '';
+            $receptor_num_identif = '';
+            $receptor_email = '';
+            if(self::$transaccion->datosReceptor->nombre == 'default'){
+                $omitir_receptor = 'true';                
+            }
+            else {
+                $omitir_receptor = 'false'; 
+                $receptor_nombre = self::$transaccion->datosReceptor->nombre;
+                //$receptor_tipo_identif =
+                //$receptor_num_identif =
+                //$receptor_email =
+            }
             //
             $post = [
                 'w' => 'genXML',
@@ -779,13 +793,14 @@ class FacturacionElectronica{
                 // 'emisor_fax'=> '00000000',
                 'emisor_email'=> self::$transaccion->datosEntidad->correoElectronico,
                 /** Receptor **/  
-                'receptor_nombre'=>  self::$transaccion->datosReceptor->nombre,
+                'omitir_receptor'=> $omitir_receptor,
+                'receptor_nombre'=>  $receptor_nombre,
                 'receptor_tipo_identif'=> self::getIdentificacionCod(self::$transaccion->datosReceptor->idTipoIdentificacion),
                 'receptor_num_identif'=>  self::$transaccion->datosReceptor->identificacion,
-                'receptor_provincia'=> $ubicacionReceptorCod[0]->provincia,
-                'receptor_canton'=> $ubicacionReceptorCod[0]->canton,
-                'receptor_distrito'=> $ubicacionReceptorCod[0]->distrito,
-                'receptor_barrio'=> $ubicacionReceptorCod[0]->barrio,
+                // 'receptor_provincia'=> $ubicacionReceptorCod[0]->provincia,
+                // 'receptor_canton'=> $ubicacionReceptorCod[0]->canton,
+                // 'receptor_distrito'=> $ubicacionReceptorCod[0]->distrito,
+                // 'receptor_barrio'=> $ubicacionReceptorCod[0]->barrio,
                 //'receptor_cod_pais_tel'=> '506',
                 //'receptor_tel'=> self::$transaccion->datosReceptor->numTelefono,
                 // 'receptor_cod_pais_fax'=> '506',
@@ -812,12 +827,20 @@ class FacturacionElectronica{
                 /** Detalle **/
                 'detalles'=>  json_encode($detalles, JSON_FORCE_OBJECT),
                 /** Referencia **/
-                'infoRefeTipoDoc'=>  self::getDocumentoReferenciaCod(self::$transaccion->idDocumento),
-                'infoRefeNumero'=>  self::$transaccion->clave,
-                'infoRefeFechaEmision'=>  self::$transaccion->fechaEmision,
-                'infoRefeCodigo'=>  self::getReferenciaCod(self::$transaccion->idReferencia),
-                'infoRefeRazon'=>  self::$transaccion->razon
+                // 'infoRefeTipoDoc'=>  self::getDocumentoReferenciaCod(self::$transaccion->idDocumento),
+                // 'infoRefeNumero'=>  self::$transaccion->clave,
+                // 'infoRefeFechaEmision'=>  self::$transaccion->fechaEmision,
+                // 'infoRefeCodigo'=>  self::getReferenciaCod(self::$transaccion->idReferencia),
+                // 'infoRefeRazon'=>  self::$transaccion->razon                
             ];
+            foreach(self::$transaccion->informacionReferencia as $ref){
+                array_push(
+                    $post['infoRefeTipoDoc']=  self::getDocumentoReferenciaCod($ref->tipodoc),
+                    $post['infoRefeNumero']=  $ref->numero,
+                    $post['infoRefeFechaEmision']=  $ref->fechaEmision,
+                    $post['infoRefeCodigo']=  self::getReferenciaCod($ref->codigo),
+                    $post['infoRefeRazon']=  $ref->razon);
+            }
             curl_setopt_array($ch, array(
                 CURLOPT_URL => self::$apiUrl,
                 CURLOPT_RETURNTRANSFER => true,   
