@@ -884,11 +884,11 @@ let inventarioFacturas = new InventarioFacturas();
 // }; 
 
 $('#tb_facturas tbody').on('click', 'td', function () {
-    if (localStorage.getItem("lsFacturaCancelada")!="BTN") {
+    if (localStorage.getItem("lsPrintFacturaOpcion")!="BTN") {
         if($(this).parents('tr').find('td:eq(6) i').html()=="&nbsp; Factura Cancelada!")
-            localStorage.setItem("lsFacturaCancelada","CANCEL");
+            localStorage.setItem("lsPrintFacturaOpcion","CANCEL");
         else
-            localStorage.setItem("lsFacturaCancelada","LIST");
+            localStorage.setItem("lsPrintFacturaOpcion","LIST");
     }
     if ($.trim(this.textContent) == ("Enviar")
     // ||$.trim(this.textContent) == ("Enviada")

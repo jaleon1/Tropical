@@ -82,17 +82,17 @@
       $("#vuelto").text(localStorage.getItem("lsVuelto"));
       $("#dif").text(localStorage.getItem("lsDif"));
 
-      if (localStorage.getItem("lsFacturaCancelada")=="BTN"){
+      if (localStorage.getItem("lsPrintFacturaOpcion")=="BTN"){
           $("#facturaCancelada").text("Factura Electrónica Cancelada: ");
           $("#clave1").text((localStorage.getItem("lsClave")).substr(0,25));
           $("#clave2").text((localStorage.getItem("lsClave")).substr(25,25));
       }
-      if (localStorage.getItem("lsFacturaCancelada")=="LIST"){
+      if (localStorage.getItem("lsPrintFacturaOpcion")=="LIST"){
           $("#facturaCancelada").text("Factura Electrónica: ");
           $("#clave1").text((listaProducto[0].claveFactura).substr(0,25));
           $("#clave2").text((listaProducto[0].claveFactura).substr(25,25));  
       }
-      if (localStorage.getItem("lsFacturaCancelada")=="CANCEL"){
+      if (localStorage.getItem("lsPrintFacturaOpcion")=="CANCEL"){
           $("#facturaCancelada").text("Factura Electrónica Cancelada: ");
           $("#clave1").text((listaProducto[0].claveFactura).substr(0,25));
           $("#clave2").text((listaProducto[0].claveFactura).substr(25,25));  
@@ -132,7 +132,7 @@
         localStorage.setItem("lsPrintOK","OK");
         location.href ="/FacturaCli.html";
       }
-      localStorage.setItem("lsFacturaCancelada","OFF");
+      localStorage.setItem("lsPrintFacturaOpcion","OFF");
       // location.href ="/Tropical/FacturaCli.html";
   });  
 </script>
