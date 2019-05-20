@@ -155,7 +155,8 @@ class ProductoXFactura{
 
     public static function ReadByIdFactura($idFactura){
         try{
-            $sql="SELECT id, idFactura, idPrecio, numeroLinea, idTipoCodigo, codigo, cantidad, idUnidadMedida, unidadMedidaComercial, detalle, precioUnitario, montoTotal, montoDescuento, naturalezaDescuento, subTotal, codigoImpuesto, tarifaImpuesto, montoImpuesto, idExoneracionImpuesto, montoTotalLinea
+            $sql="SELECT id, idFactura, idPrecio, numeroLinea, idTipoCodigo, codigo, cantidad, idUnidadMedida, unidadMedidaComercial, detalle, precioUnitario, montoTotal, montoDescuento, naturalezaDescuento, subTotal, codigoImpuesto, tarifaImpuesto, montoImpuesto, idExoneracionImpuesto, montoTotalLinea,
+                (SELECT clave FROM factura WHERE id=idFactura) AS clave
                 from productosXFactura
                 where idFactura = :id";
             $param= array(':id'=>$idFactura);
@@ -183,6 +184,7 @@ class ProductoXFactura{
                 $producto->montoImpuesto = $value['montoImpuesto'];
                 $producto->idExoneracionImpuesto = $value['idExoneracionImpuesto'];
                 $producto->montoTotalLinea = $value['montoTotalLinea'];
+                $producto->claveFactura = $value['clave'];
                 //
                 array_push ($lista, $producto);
             }

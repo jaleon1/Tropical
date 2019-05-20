@@ -354,6 +354,9 @@ $(document).ready(function () {
 
         $('#tb_facturas tbody').on( 'click', 'button', function () {   
             var data = inventarioFacturas.tb_facturas.row( $(this).parents('tr') ).data();
+            localStorage.setItem("lsFacturaCancelada","BTN");  
+            localStorage.setItem("lsBtnPrint", "OK");
+            inventarioFacturas.ticketPrintCancelada(data);
             swal({
                 title: 'Desea cancelar la factura ? Escriba una razón:',
                 input: 'text',
@@ -441,6 +444,7 @@ $(document).ready(function () {
                                     showConfirmButton: false,
                                     timer: 2000
                                 });
+
                             })
                             .fail(function (e) {
                                 

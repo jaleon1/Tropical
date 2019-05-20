@@ -27,8 +27,10 @@
         <tr style="line-height:10px;font-family:Uroob; text-align: center;"><td>FACTURA # <label id=factura></label></td></tr>
         <tr style="line-height:10px;font-family:Uroob; text-align: center;"><td>Fecha: <label id="fecha"></label></td></tr>
         <tr style="line-height:10px;font-family:Uroob; text-align: center;"><td>Usuario: <label id="usuario"></label></td></tr>
-        <tr style="line-height:10px;font-family:Uroob; text-align: center;"><td>Factura Electrónica<label id=factura></label></td></tr>
+        <!-- <tr style="line-height:10px;font-family:Uroob; text-align: center;"><td>Factura Electrónica<label id=factura></label></td></tr> -->
         <tr style="line-height:10px;font-family:Uroob; text-align: center;"><td><label id=facturaCancelada></label></td></tr>
+        <tr style="line-height:10px;font-family:Uroob; text-align: center;"><td><label id=clave1></label></td></tr>
+        <tr style="line-height:10px;font-family:Uroob; text-align: center;"><td><label id=clave2></label></td></tr>
       </tbody>
     </table>
     <table style="width:91%;">
@@ -67,6 +69,9 @@
 
 <script>
     $(document).ready(function () {
+      var listaProducto = localStorage.getItem("lsListaProducto");
+      listaProducto = JSON.parse(listaProducto);
+
       $("#facturaCancelada").text("");
       $("#factura").text(localStorage.getItem("lsFactura"));
       $("#fecha").text(localStorage.getItem("lsFecha"));  
@@ -77,11 +82,22 @@
       $("#vuelto").text(localStorage.getItem("lsVuelto"));
       $("#dif").text(localStorage.getItem("lsDif"));
 
-      if (localStorage.getItem("lsFacturaCancelada")=="OK") 
-        $("#facturaCancelada").text("Factura Cancelada");
-      
-      var listaProducto = localStorage.getItem("lsListaProducto");
-      listaProducto = JSON.parse(listaProducto);
+      if (localStorage.getItem("lsFacturaCancelada")=="BTN"){
+          $("#facturaCancelada").text("Factura Electrónica Cancelada: ");
+          $("#clave1").text((localStorage.getItem("lsClave")).substr(0,25));
+          $("#clave2").text((localStorage.getItem("lsClave")).substr(25,25));
+      }
+      if (localStorage.getItem("lsFacturaCancelada")=="LIST"){
+          $("#facturaCancelada").text("Factura Electrónica: ");
+          $("#clave1").text((listaProducto[0].claveFactura).substr(0,25));
+          $("#clave2").text((listaProducto[0].claveFactura).substr(25,25));  
+      }
+      if (localStorage.getItem("lsFacturaCancelada")=="CANCEL"){
+          $("#facturaCancelada").text("Factura Electrónica Cancelada: ");
+          $("#clave1").text((listaProducto[0].claveFactura).substr(0,25));
+          $("#clave2").text((listaProducto[0].claveFactura).substr(25,25));  
+      }
+        
       var totalSinI=0;
       $.each(listaProducto, function (i, item) {
         $('#tableBody-TicketFactura').append(`
@@ -110,7 +126,7 @@
       localStorage.setItem("lsTarjetaCredito","0");
       if(localStorage.getItem("lsReimpresion")=="OK"){
         localStorage.setItem("lsPrintOK","NOT");
-        location.href ="/misFacturas.html";
+        location.href ="/Tropical/misFacturas.html";
       }
       else{
         localStorage.setItem("lsPrintOK","OK");

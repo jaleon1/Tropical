@@ -451,7 +451,7 @@ class DistribucionCancelada {
         localStorage.setItem("lsUsuario",$('#cajero').text());
         localStorage.setItem("lsListaProducto",JSON.stringify(this.factDetalle));
         // location.href ="/Tropical/TicketFacturacion.html";
-        location.href = "/TicketFacturacion.html";
+        location.href = "/Tropical/TicketFacturacion.html";
     };
 }
 //Class Instance
