@@ -726,10 +726,16 @@ class ClienteFE {
             validator.reset();
         }
         //NProgress
-        $(function()
-        {$(document)
-                .ajaxStart(NProgress.start)
-                .ajaxStop(NProgress.done);
+        $(function () {
+            $(document)
+                .ajaxStart(function(){
+                    NProgress.start();
+                    $("button").prop("disabled", true);
+                })
+                .ajaxStop(function(){
+                    NProgress.done();
+                    $("button").prop("disabled", false);
+                });
         });
         // validaciones segun el tipo de ident.
         $('#idTipoIdentificacion').on('change', function(e){

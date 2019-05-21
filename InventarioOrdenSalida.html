@@ -541,8 +541,19 @@
     $(document).ready(function () {
         ordenSalida.id = null;
         ordenSalida.setTableOrdenSalida();
-        // ordenSalida.Read;
         ordenSalida.Init();
+
+        $(function () {
+            $(document)
+                .ajaxStart(function(){
+                    NProgress.start();
+                    $("button").prop("disabled", true);
+                })
+                .ajaxStop(function(){
+                    NProgress.done();
+                    $("button").prop("disabled", false);
+                });
+        });
 
         $(function () {
             var start = moment().subtract(29, 'days');

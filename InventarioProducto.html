@@ -391,13 +391,22 @@
 
 <script>
     $(document).ready(function () {
-        // if(!Session.state)
-        //     return;
         producto.id=null;
         producto.setTableInventarioProducto();
         producto.Read;
         producto.Init();
         $(".btncolorpicker").colorpicker();
         //
+        $(function () {
+            $(document)
+                .ajaxStart(function(){
+                    NProgress.start();
+                    $("button").prop("disabled", true);
+                })
+                .ajaxStop(function(){
+                    NProgress.done();
+                    $("button").prop("disabled", false);
+                });
+        });
     });
 </script>
