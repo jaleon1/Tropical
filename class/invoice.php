@@ -111,10 +111,10 @@ class Invoice{
             $doc= "FACTURA ELECTRÓNICA";
             switch($transaccion->idDocumento){
                 case 2:
-                    $doc = ' NOTA DE CREDITO';
+                    $doc = ' NOTA DE DEBITO';
                 break;
                 case 3:
-                    $doc = ' NOTA DE DEBITO';
+                    $doc = ' NOTA DE CREDITO';
                 break;
                 case 4:
                     $doc = ' TIQUETE ELECTRONICO';
@@ -227,6 +227,18 @@ class Invoice{
                     '<a href="https://somosfactura.com">por storylabsCR.com</a>';
                 $mail->email_body = $email_body;
             }
+            switch($transaccion->idDocumento){
+                case 2:
+                    $email_body = ' Notificación de Nota de Credito.';
+                break;
+                case 3:
+                    $email_body = ' Notificación de Nota de Debito.';
+                break;
+                case 4:
+                    $email_body = ' Notificación de Tiquete Electronico.';
+                break;
+            }
+            
             $mail->email_addAttachment = $archivosAdjunto;
             $mail->send();
         }     
