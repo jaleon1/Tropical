@@ -304,7 +304,18 @@
 
 <script>
     $(document).ready(function () {
-        //ordenCompra.Init();
+        $(function () {
+            $(document)
+                .ajaxStart(function(){
+                    NProgress.start();
+                    $("button").prop("disabled", true);
+                })
+                .ajaxStop(function(){
+                    NProgress.done();
+                    $("button").prop("disabled", false);
+                });
+        });
+        
         $('#btnOrdenCompra').click(function () {
             ordenCompra.Save;
         });

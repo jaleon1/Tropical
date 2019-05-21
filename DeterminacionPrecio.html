@@ -301,6 +301,17 @@
 <script>
     var t= null; // tabla
     $(document).ready(function () {
+        $(function () {
+            $(document)
+                .ajaxStart(function(){
+                    NProgress.start();
+                    $("button").prop("disabled", true);
+                })
+                .ajaxStop(function(){
+                    NProgress.done();
+                    $("button").prop("disabled", false);
+                });
+        });
         //ordenCompra.Init();
         $('#btnProducto').click(function () {
             producto.ActualizarPrecios();
