@@ -292,12 +292,21 @@
 
 <script>
     $(document).ready(function () {
-        // if(!Session.state)
-        //     return;
         ordenCompra.id=null;
         ordenCompra.setTableOrdenCompra();
-        // ordenCompra.Read;
         ordenCompra.Init();
+        //
+        $(function () {
+            $(document)
+                .ajaxStart(function(){
+                    NProgress.start();
+                    $("button").prop("disabled", true);
+                })
+                .ajaxStop(function(){
+                    NProgress.done();
+                    $("button").prop("disabled", false);
+                });
+        });
         //
         $(function () {
             var start = moment().subtract(29, 'days');

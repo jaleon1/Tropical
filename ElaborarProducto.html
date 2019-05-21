@@ -501,6 +501,17 @@
         elaborarProducto.Init();
         ordenSalida.id = null;
         ordenSalida.Read;
+        $(function () {
+            $(document)
+                .ajaxStart(function(){
+                    NProgress.start();
+                    $("button").prop("disabled", true);
+                })
+                .ajaxStop(function(){
+                    NProgress.done();
+                    $("button").prop("disabled", false);
+                });
+        });
     });
 
     $(document).on('click', '#btnAddInsumo', function (event) {

@@ -122,24 +122,23 @@ class ProductoXFactura{
                         $porcion = 1;
                     // Entrada a inventario agencia.
                     InventarioInsumoXBodega::entrada($idProducto, $factura[0]["idBodega"], 'Nota Credito Fac#: ' . $factura[0]["consecutivo"], $porcion, $insumoXBodega[0]["costoPromedio"], false);
-                    
-                    switch($producto_x_linea[0]){
-                        case "12oz":
-                            $tamano = 1;                       
-                            break;
-                        case "08oz":
-                            $tamano = 0;  
-                            break;
-                    }     
-
-                    Consumible::entrada($tamano, $factura[0]["idBodega"], $factura[0]["consecutivo"]);
                 }
+                // ENTRADA DE CONSUMIBLES
+                switch($producto_x_linea[0]){
+                    case "12oz":
+                        $tamano = 1;                       
+                        break;
+                    case "08oz":
+                        $tamano = 0;  
+                        break;
+                }
+                Consumible::entrada($tamano, $factura[0]["idBodega"], $factura[0]["consecutivo"]);
             }
 
             $objFactura = new Factura();
             $objFactura->id = $idFactura;
             $objFactura->idDocumentoNC = 3;
-            $objFactura->idReferencia = 1;
+            $objFactura->idReferencia = $factura[0]["consecutivo"];
             $objFactura->razon = $razon;
             $objFactura->notaCredito();
         }     

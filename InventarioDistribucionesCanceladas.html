@@ -290,7 +290,18 @@
 
 <script>
     $(document).ready(function () {
-        // distribucionCancelada.CargaFacturas();
+        $(function () {
+            $(document)
+                .ajaxStart(function(){
+                    NProgress.start();
+                    $("button").prop("disabled", true);
+                })
+                .ajaxStop(function(){
+                    NProgress.done();
+                    $("button").prop("disabled", false);
+                });
+        });
+        
         CargaListaFacturaCancelada();
 
         $('#dp_rangoListaFacturas').on('apply.daterangepicker', function (ev, picker) {
