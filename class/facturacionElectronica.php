@@ -50,6 +50,7 @@ class FacturacionElectronica{
             self::$fechaEmision= date_create();
             // fe o nc
             self::$transaccion->idDocumento = 3; // NC
+            Invoice::create(self::$transaccion);
             if(self::getApiUrl()){
                 if(self::APICrearClave()){
                     if(self::APICrearNCXML()){

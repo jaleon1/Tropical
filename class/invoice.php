@@ -212,7 +212,20 @@ class Invoice{
             // set mail.
             $mail = new Send_Mail();            
             $mail->email_array_address_to = self::$email_array_address_to;
-            $mail->email_subject = $email_subject;
+            $mail->email_subject = $email_subject; //"TropicalSNO Factura Electrónica"
+            
+            switch($transaccion->idDocumento){
+                case 2:
+                    $mail->email_subject = "TropicalSNO Nota de Debito";
+                break;
+                case 3:
+                    $mail->email_subject = "TropicalSNO Nota Credito"; 
+                break;
+                case 4:
+                    $mail->email_subject = "TropicalSNO Tiquete Electronico"; 
+                break;
+            }
+            
             $mail->email_user = $email_user;
             $mail->email_password = $email_password;
             $mail->email_from_name = $nameCompany;
@@ -229,13 +242,16 @@ class Invoice{
             }
             switch($transaccion->idDocumento){
                 case 2:
-                    $mail->$email_body = ' Notificación de Nota de Credito.';
+                    $mail->email_body = "<h1 style='color:#3498db;'>Notificación de Nota de Debito.</h1><br><br><br>" .                 
+                    '<a href="https://somosfactura.com">por storylabsCR.com</a>';
                 break;
                 case 3:
-                    $mail->$email_body = ' Notificación de Nota de Debito.';
+                    $mail->email_body = "<h1 style='color:#3498db;'>Notificación de Nota de Credito.</h1><br><br><br>" .                 
+                '<a href="https://somosfactura.com">por storylabsCR.com</a>';
                 break;
                 case 4:
-                    $mail->$email_body = ' Notificación de Tiquete Electronico.';
+                    $mail->email_body = "<h1 style='color:#3498db;'>Notificación de Tiquete Electronico.</h1><br><br><br>" .                 
+                '<a href="https://somosfactura.com">por storylabsCR.com</a>';
                 break;
             }
             
