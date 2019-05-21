@@ -244,7 +244,7 @@ class InventarioFacturas {
 
     drawFacExternas(e) {
         var facturas = JSON.parse(e);
-        this.tb_facturas = $('#tb_facturasExternas').DataTable({
+        this.tb_facturasExternas = $('#tb_facturasExternas').DataTable({
             responsive: true,
             destroy: true,
             dom: 'Bfrtip',

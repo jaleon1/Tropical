@@ -72,7 +72,7 @@ if(isset($_POST["action"])){
             $distribucion->sendContingenciaMasiva();
             break;
         case "sendContingencia":
-        $distribucion->sendContingencia();
+            $distribucion->sendContingencia();
         break;
     }
 }
