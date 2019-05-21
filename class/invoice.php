@@ -229,13 +229,13 @@ class Invoice{
             }
             switch($transaccion->idDocumento){
                 case 2:
-                    $email_body = ' Notificación de Nota de Credito.';
+                    $mail->$email_body = ' Notificación de Nota de Credito.';
                 break;
                 case 3:
-                    $email_body = ' Notificación de Nota de Debito.';
+                    $mail->$email_body = ' Notificación de Nota de Debito.';
                 break;
                 case 4:
-                    $email_body = ' Notificación de Tiquete Electronico.';
+                    $mail->$email_body = ' Notificación de Tiquete Electronico.';
                 break;
             }
             
