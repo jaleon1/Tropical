@@ -24,7 +24,9 @@
           <tr style="line-height:10px;font-family:Uroob; text-align: center;"><td>DISTRIBUCION # <label id=orden></label></label></td></tr>
           <tr style="line-height:10px;font-family:Uroob; text-align: center;"><td>Fecha: <label id="fechaDistribucion"></label></td></tr>
           <tr style="line-height:10px;font-family:Uroob; text-align: center;"><td>Usuario: <label id="usuario"></label></td></tr>
-          <tr style="line-height:10px;font-family:Uroob; text-align: center;"><td>Usuario: <label id="factura"></label></td></tr>
+          <tr style="line-height:10px;font-family:Uroob; text-align: center;"><td><label id="clave"></label></td></tr>
+          <tr style="line-height:10px;font-family:Uroob; text-align: center;"><td><label id="clave1"></label></td></tr>
+          <tr style="line-height:10px;font-family:Uroob; text-align: center;"><td><label id="clave2"></label></td></tr>
         </tbody>
       </table>
     <table style="width:91%;">
@@ -76,6 +78,11 @@
         <tr style="line-height:10px;"><td colspan="2"><label>-------------------------------------------------------</label></td></tr>`);
       }
       else{
+        if (localStorage.getItem("lsPrintDistribucionOpcion")=="DIS"){
+            $("#clave").text("Traslado: ");
+            $("#clave1").text((localStorage.getItem("lsClaveDis")).substr(0,25));
+            $("#clave2").text((localStorage.getItem("lsClaveDis")).substr(25,25));
+        }
         $('#tableBody-TicketDistribucion').append(`  
           <tr style="line-height:10px;"><td colspan="3"><label>-------------------------------------------------------</label></td></tr>
           <tr>

@@ -97,7 +97,6 @@ class MermaAgencia {
         t= $('#tMerma').DataTable({
             responsive: true,
             destroy: true,
-            order: [[ 2, "asc" ]],
             dom: 'Bfrtip',
             buttons: [
                 {
@@ -184,7 +183,7 @@ class MermaAgencia {
         t.clear();
         t.rows.add(JSON.parse(e));
         $('td:eq(5)').attr({ align: "right" });   
-        t.order([1, 'desc']).draw();
+        t.order([8, 'desc']).draw();
         //$('.delete').click(merma.DeleteEventHandler);
         //$( "#tMerma tbody tr" ).live("click", merma.viewType==undefined || merma.viewType==merma.tUpdate ? merma.UpdateEventHandler : merma.SelectEventHandler);
         //

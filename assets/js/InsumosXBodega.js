@@ -246,7 +246,7 @@ class InsumoBodega {
         $('#tInsumo').DataTable({
             responsive: true,
             destroy: true,
-            order: [[ 1, "asc" ]],
+            order: [[ 5, "desc" ]],
             dom: 'Bfrtip',
             buttons: [
                 {

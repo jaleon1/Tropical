@@ -611,6 +611,7 @@ class Distribucion{
                         $objFactura->consecutivo= $this->orden;
                         FacturacionElectronica::$distr= true;
                         FacturacionElectronica::iniciar($objFactura);
+                        $this->getClave();
                         // retorna orden autogenerada.
                         return $this;
                     }
@@ -625,6 +626,24 @@ class Distribucion{
                 'code' => $e->getCode() ,
                 'msg' => $e->getMessage()))
             );
+        }
+    }
+
+    public function getClave(){
+        try {
+            $sql="SELECT clave
+                from distribucion
+                WHERE id=:id";
+            $param= array(':id'=>$this->id);
+            //
+            $data = DATA::Ejecutar($sql,$param, true);
+            if($data)
+                $this->clave = $data[0]['clave'];
+            else $this->clave = null;
+        }     
+        catch(Exception $e) {
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            // debe notificar que no se esta actualizando el historico de comprobantes.
         }
     }
 

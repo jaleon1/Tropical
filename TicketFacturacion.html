@@ -82,8 +82,13 @@
       $("#vuelto").text(localStorage.getItem("lsVuelto"));
       $("#dif").text(localStorage.getItem("lsDif"));
 
+      if (localStorage.getItem("lsPrintFacturaOpcion")=="FACT"){
+          $("#facturaCancelada").text("Factura Electrónica: ");
+          $("#clave1").text((localStorage.getItem("lsClave")).substr(0,25));
+          $("#clave2").text((localStorage.getItem("lsClave")).substr(25,25));
+      }
       if (localStorage.getItem("lsPrintFacturaOpcion")=="BTN"){
-          $("#facturaCancelada").text("Factura Electrónica Cancelada: ");
+          $("#facturaCancelada").text("Nota de Crédito: ");
           $("#clave1").text((localStorage.getItem("lsClave")).substr(0,25));
           $("#clave2").text((localStorage.getItem("lsClave")).substr(25,25));
       }
@@ -93,7 +98,7 @@
           $("#clave2").text((listaProducto[0].claveFactura).substr(25,25));  
       }
       if (localStorage.getItem("lsPrintFacturaOpcion")=="CANCEL"){
-          $("#facturaCancelada").text("Factura Electrónica Cancelada: ");
+          $("#facturaCancelada").text("Nota de Crédito: ");
           $("#clave1").text((listaProducto[0].claveFactura).substr(0,25));
           $("#clave2").text((listaProducto[0].claveFactura).substr(25,25));  
       }

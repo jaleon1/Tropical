@@ -118,7 +118,7 @@ class MermaAgencia{
                 inner join insumosXBodega x on x.id = m.idInsumo
                 inner join producto p on p.id = x.idProducto
                 inner join bodega b on b.id = m.idBodega
-                WHERE m.idBodega =:idBodega AND m.fecha Between :fechaInicial and :fechaFinal';
+                WHERE m.idBodega =:idBodega AND m.fecha Between :fechaInicial and :fechaFinal ORDER BY m.fecha DESC;';
             $param= array(':idBodega'=> $this->idBodega,':fechaInicial'=>$this->fechaInicial, ':fechaFinal'=>$this->fechaFinal);
             $data = DATA::Ejecutar($sql,$param);
             return $data;

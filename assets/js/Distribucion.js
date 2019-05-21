@@ -169,8 +169,10 @@ class Distribucion {
     ticketPrint(e) {
         if (bodega.tipo == "Interna")
             localStorage.setItem("lsTipoBodega", "interna");
-        else
+        else{
             localStorage.setItem("lsTipoBodega", "externa");
+            localStorage.setItem("lsPrintDistribucionOpcion", "DIS");
+        }
 
         var data = JSON.parse(e);
         localStorage.setItem("lsRePrint", false);
@@ -184,6 +186,7 @@ class Distribucion {
         localStorage.setItem("lsIV", $("#iv_val").text());
         localStorage.setItem("lsListaProducto", JSON.stringify(data.detalleFactura));
         localStorage.setItem("lsUsuarioDistribucion", $("#call_username").text());
+        localStorage.setItem("lsClaveDis", data.clave);
         // location.href ="/Tropical/TicketDistribucion.html";
         location.href = "/Tropical/TicketDistribucion.html";
     }
