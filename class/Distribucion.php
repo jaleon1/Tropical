@@ -247,7 +247,7 @@ class Distribucion{
     public function notaCredito(){
         try {
             // check si ya existe la NC.
-            $sql="SELECT id
+            $sql="SELECT id, orden
                 FROM distribucion
                 WHERE id=:id and (idEstadoNC IS NULL OR idEstadoNC = 5 OR idEstadoNC = 1)";
             $param= array(':id'=>$this->id);
@@ -261,7 +261,7 @@ class Distribucion{
                 $param= array(
                     ':id'=>$this->id,
                     ':idDocumentoNC'=>$this->idDocumentoNC ?? 3,
-                    ':idReferencia'=>$this->idReferencia ?? 1,
+                    ':idReferencia'=>$this->idReferencia ?? $data[0]["orden"],
                     ':razon'=>$this->razon,
                     ':idEstadoNC'=>1);
                 $data = DATA::Ejecutar($sql,$param, false);

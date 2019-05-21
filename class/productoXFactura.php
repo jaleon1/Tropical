@@ -138,7 +138,7 @@ class ProductoXFactura{
             $objFactura = new Factura();
             $objFactura->id = $idFactura;
             $objFactura->idDocumentoNC = 3;
-            $objFactura->idReferencia = 1;
+            $objFactura->idReferencia = $factura[0]["consecutivo"];
             $objFactura->razon = $razon;
             $objFactura->notaCredito();
         }     
