@@ -171,13 +171,9 @@ class Consumible{
             // );
         }
     }
-
-    ////////////////////////////////////////////////////////////////////////////////
+    
     public static function entrada($tamano, $idBodega, $consecutivo){
-        try {                  
-            /*
-            servilletas - 2
-            */
+        try {
             $sql='SELECT idProducto, cantidad 
                 FROM consumible
                 WHERE  tamano=:tamano';
