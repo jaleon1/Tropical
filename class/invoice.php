@@ -180,6 +180,18 @@ class Invoice{
             $InvoicePrinter->addTotal("Total+IV",($transaccion->totalComprobante),true);           
             /* Set badge */ 
             $InvoicePrinter->addBadge("Factura Aprobada");
+            switch($transaccion->idDocumento){
+                case 2:
+                    $InvoicePrinter->addBadge("");
+                break;
+                case 3:
+                    $InvoicePrinter->addBadge("");
+                break;
+                case 4:
+                    $InvoicePrinter->addBadge("");
+                break;
+            }
+
             if(self::$reimpresion)
                 $InvoicePrinter->addBadge("Reimpresion");
             /* Add title */

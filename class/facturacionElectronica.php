@@ -55,6 +55,7 @@ class FacturacionElectronica{
                     if(self::APICrearNCXML()){
                         if(self::APICifrarXml()){
                             if(self::APIEnviar()){
+                                Invoice::create(self::$transaccion);
                                 //self::APIConsultaComprobante();
                                 //include_once('feCallback.php');
                                 return true;

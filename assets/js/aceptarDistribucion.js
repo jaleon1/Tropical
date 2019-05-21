@@ -428,6 +428,7 @@ class Distribucion {
                 max: producto.saldoCantidad,
                 min: "1",
                 step: "1",
+                disabled: 'disabled',
                 value: producto.cantidad,
                 align: "right"
             })[0]
