@@ -366,6 +366,7 @@ class ClienteFE{
             $data= DATA::Ejecutar($sql, $param);
             if($data){
                 $this->id= $data[0]['id'];
+                $this->idBodega= $data[0]['idBodega'];
                 $this->codigoSeguridad= $data[0]['codigoSeguridad'];
                 $this->idCodigoPais= $data[0]['idCodigoPais'];
                 $this->idDocumento= $data[0]['idDocumento'];

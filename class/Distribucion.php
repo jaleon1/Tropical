@@ -280,13 +280,13 @@ class Distribucion{
                     // datos entidad bodega central.
                     $central = new Bodega();
                     $central->readCentral();
-                    $this->idEmisor =  $this->id;
+                    // $this->idEmisor =  $this->id; //Jason: Esta poniendo el id de la distribucion en el id del Emisor
                     $entidad = new ClienteFE();
                     $entidad->idBodega = $central->id;
                     $this->datosEntidad = $entidad->read();
                     // datos receptor bodega externa.
                     $externa = new ClienteFE();
-                    $externa->id = $this->idBodega; // bodega receptor.
+                    $externa->idBodega = $this->idBodega; // bodega receptor.
                     $this->datosReceptor = $externa->read();                    
                     //
                     $this->terminal = '00001';
@@ -480,7 +480,7 @@ class Distribucion{
 
     function Read(){
         try {
-            $sql='SELECT d.id, d.fecha, d.orden, clave, d.consecutivoFE, d.fechaEmision, d.idUsuario, d.idBodega, b.nombre as bodega, 
+            $sql='SELECT d.id, d.fecha, d.idEmisor, d.idReceptor, d.orden, clave, d.consecutivoFE, d.fechaEmision, d.idUsuario, d.idBodega, b.nombre as bodega, 
                 d.porcentajeDescuento, d.porcentajeIva,  d.totalImpuesto, d.totalComprobante, d.idSituacionComprobante, d.idDocumento, d.idEstadoComprobante,
                 totalServGravados, totalServExentos, totalMercanciasGravadas, totalMercanciasExentas, totalGravado, totalExento,
                 totalVenta, totalDescuentos, totalVentaneta
@@ -499,6 +499,8 @@ class Distribucion{
                 $this->idUsuario = $data[0]['idUsuario'];
                 $this->idBodega = $data[0]['idBodega'];
                 $this->bodega = $data[0]['bodega'];
+                $this->idReceptor = $data[0]['idReceptor'] ?? null;
+                $this->idEmisor = $data[0]['idEmisor'] ?? null;
                 $this->porcentajeDescuento = $data[0]['porcentajeDescuento'];
                 $this->porcentajeIva = $data[0]['porcentajeIva'];
                 $this->totalComprobante = $data[0]['totalComprobante'];
@@ -563,13 +565,15 @@ class Distribucion{
 
     function Create(){
         try {
-            $sql="INSERT INTO distribucion  (id, idBodega, idUsuario, porcentajeDescuento, porcentajeIva, totalImpuesto, totalComprobante, idDocumento, idSituacionComprobante, idEstadoComprobante,
+            $sql="INSERT INTO distribucion  (id, idBodega, idUsuario, idReceptor, idEmisor, porcentajeDescuento, porcentajeIva, totalImpuesto, totalComprobante, idDocumento, idSituacionComprobante, idEstadoComprobante,
                     totalServGravados, totalServExentos, totalMercanciasGravadas, totalMercanciasExentas, totalGravado, totalExento, totalVenta, totalDescuentos, totalVentaneta) 
-                VALUES (:id, :idBodega, :idUsuario, :porcentajeDescuento, :porcentajeIva, :totalImpuesto, :totalComprobante , :idDocumento, :idSituacionComprobante, :idEstadoComprobante,
+                VALUES (:id, :idBodega, :idUsuario, :idReceptor, :idEmisor, :porcentajeDescuento, :porcentajeIva, :totalImpuesto, :totalComprobante , :idDocumento, :idSituacionComprobante, :idEstadoComprobante,
                     :totalServGravados, :totalServExentos, :totalMercanciasGravadas, :totalMercanciasExentas, :totalGravado, :totalExento, :totalVenta, :totalDescuentos, :totalVentaneta);";
             $param= array(':id'=>$this->id ,
-                ':idBodega'=>$this->idBodega, 
+                ':idBodega'=>$this->idBodega,
                 ':idUsuario'=>$_SESSION['userSession']->id,
+                ':idReceptor'=>$this->idBodega,
+                ':idEmisor'=>$this->datosEntidad->idBodega,     
                 ':porcentajeDescuento'=>$this->porcentajeDescuento,
                 ':porcentajeIva'=>$this->porcentajeIva,
                 ':totalImpuesto'=>$this->totalImpuesto,
