@@ -696,7 +696,7 @@ class Factura{
                 WHERE id=:id";
             $param= array(':id'=>$this->id);
             //
-            $data = DATA::Ejecutar($sql,$param, false);
+            $data = DATA::Ejecutar($sql,$param);
             if($data)
                 $this->clave = $data[0]['clave'];
             else $this->clave = null;

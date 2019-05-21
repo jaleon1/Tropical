@@ -135,7 +135,7 @@ class FacturacionElectronica{
                 return true;
             }         
             else {
-                throw new Exception('Acceso denegado al Archivo de configuración.', ERROR_LECTURA_CONFIG); 
+                throw new Exception('Acceso denegado al Archivo de configuracion.', ERROR_LECTURA_CONFIG); 
             }
         }
         catch(Exception $e) {
@@ -143,7 +143,7 @@ class FacturacionElectronica{
                 Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
             else Distribucion::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
             historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 5, 'ERROR_LECTURA_CONFIG: '. $e->getMessage());
-            error_log("[ERROR]  Acceso denegado al Archivo de configuración. (".$e->getCode()."): ". $e->getMessage());
+            error_log("[ERROR]  Acceso denegado al Archivo de configuracion. (".$e->getCode()."): ". $e->getMessage());
         }        
     }
 
@@ -204,7 +204,7 @@ class FacturacionElectronica{
         try{
             switch($id){
                 case '1':
-                case '8': // El API  no tiene opción para enviar documento por contingencia. RETORNA FE.
+                case '8': // El API  no tiene opcion para enviar documento por contingencia. RETORNA FE.
                     return 'FE';
                     break;
                 case '2':
@@ -1178,11 +1178,11 @@ class FacturacionElectronica{
                     throw new Exception('Error CRITICO al consultar el comprobante. DEBE COMUNICARSE CON SOPORTE TECNICO: '.$server_output, ERROR_CONSULTA_NO_VALID);                    
                 }
                 else {
-                    // clave inválida, no existe en ATV.
+                    // clave invalida, no existe en ATV.
                     if(!self::$distr)
                         Factura::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 5);
                     else Distribucion::updateIdEstadoComprobante(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
-                    historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 5, 'La transacción no fue enviada a los sistemas de ATV.');
+                    historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 5, 'La transaccion no fue enviada a los sistemas de ATV.');
                     throw new Exception('Documento no registrado en ATV: '.$server_output, ERROR_CONSULTA_NO_VALID);                    
                 }                
             }
@@ -1217,7 +1217,7 @@ class FacturacionElectronica{
                 $xml= base64_decode($respuestaXml);
                 $fxml = simplexml_load_string($xml);
                 $resp400 = strpos($fxml->DetalleMensaje, 'ya existe en nuestras bases de datos');
-                $respFirma = strpos($fxml->DetalleMensaje, 'La firma del comprobante electrónico no es válida');
+                $respFirma = strpos($fxml->DetalleMensaje, 'La firma del comprobante electronico no es válida');
                 if ($resp400){
                     // ya existe en base de datos de MH. estado 7
                     error_log("[WARNING] El documento (". self::$transaccion->clave .") Ya fue recibido anteriormente" );
@@ -1235,7 +1235,7 @@ class FacturacionElectronica{
                         $errorFirma=10;
                     if(self::$transaccion->idEstadoComprobante==10)
                         $errorFirma=4; // Rechazo
-                    error_log("[ERROR] El documento (". self::$transaccion->clave .")  La firma del comprobante electrónico no es válida (".$errorFirma.")." );
+                    error_log("[ERROR] El documento (". self::$transaccion->clave .")  La firma del comprobante electronico no es válida (".$errorFirma.")." );
                     historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, $errorFirma, '['.$estadoTransaccion.'] '.$fxml->DetalleMensaje, $xml);
                     if(!self::$distr)
                         Factura::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, $errorFirma);
