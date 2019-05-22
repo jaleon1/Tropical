@@ -299,7 +299,7 @@ class MensajeReceptor {
                                     return '<i class="fa fa-check-square-o">&nbsp Enviada</i>'; // Enviado //Quitar Boton y que diga enviado
                                     break;
                                 case "3":
-                                    return '<button class=btnCancelaFactura>&nbsp Cancelar Factura</button>'; // Aceptado  //Solo cancelar // NC 
+                                    return '<i class="fa fa-check-square-o" aria-hidden="true" style="color:green"> Aceptado!</i>'; // Aceptado  //Solo cancelar // NC 
                                     break;
                                 case "4":
                                     return '<button class=btnNC_CreateFact_Ref>&nbsp Cancelar & Reenviar</button>'; // Rechazado //NC //Nueva con referencia Confeccion de Factura  // BTNCancelar y enviar

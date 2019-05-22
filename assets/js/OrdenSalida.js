@@ -259,9 +259,7 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
         localStorage.setItem("lsFechaOrdensalida",ordenSalida.fecha);
         localStorage.setItem("lsUsuarioRecibe",$("#nombre").val());
         localStorage.setItem("lsListaInsumo",JSON.stringify(this.listaInsumo));
-
         location.href ="/TicketOrdenSalida.html";
-        // location.href ="/Tropical/TicketOrdenSalida.html";
     }
 
     ticketRePrint(){
@@ -270,9 +268,7 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
         localStorage.setItem("lsFechaOrdensalida",$('#dt_fecha').val());
         localStorage.setItem("lsUsuarioRecibe",$("#nombre").val());
         localStorage.setItem("lsListaInsumo",JSON.stringify(ordenSalida.listaInsumo));
-
         location.href ="/TicketOrdenSalida.html";
-        // location.href ="/Tropical/TicketOrdenSalida.html";
     }
 
     // Muestra errores en ventana

@@ -691,8 +691,8 @@ class InventarioFacturas {
     CargaListaFacturasRangoExternas(){
         var referenciaCircular = inventarioFacturas.tb_facturasExternas;
         inventarioFacturas.tb_facturasExternas = [];
-        var referenciaCircular2 = inventarioFacturas.tb_facturas;
-        inventarioFacturas.tb_facturas = [];
+        // var referenciaCircular2 = inventarioFacturas.tb_facturas;
+        // inventarioFacturas.tb_facturas = [];
         $.ajax({
             type: "POST",
             url: "class/Factura.php",
@@ -704,7 +704,7 @@ class InventarioFacturas {
             .done(function (e) {
                 if (e != " "){
                     inventarioFacturas.tb_facturasExternas = referenciaCircular; 
-                    inventarioFacturas.tb_facturas = referenciaCircular2;        
+                    // inventarioFacturas.tb_facturas = referenciaCircular2;        
                     inventarioFacturas.drawFacExternas(e);
                 }else{
                     swal({
@@ -833,8 +833,7 @@ class InventarioFacturas {
         localStorage.setItem("lsBodega",$('#bodega').text());
         localStorage.setItem("lsUsuario",$("#call_username").text());
         localStorage.setItem("lsListaProducto",JSON.stringify(this.factDetalle));
-        // location.href ="/Tropical/TicketFacturacion.html";
-        location.href = "/Tropical/TicketFacturacion.html";
+        location.href = "/TicketFacturacion.html";
     };
 
     ticketPrintCancelada(data){
@@ -857,8 +856,7 @@ class InventarioFacturas {
             .done(function (e) {
                 inventarioFacturas.factDetalle = JSON.parse(e);
                 localStorage.setItem("lsListaProducto",JSON.stringify(inventarioFacturas.factDetalle));
-                // location.href ="/Tropical/TicketFacturacion.html";
-                location.href = "/Tropical/TicketFacturacion.html";
+                location.href = "/TicketFacturacion.html";
             });
     }
 }
