@@ -36,12 +36,17 @@ var precioGrande = new Object();
 precioGrande.precio = 0;
 precioMediano.precio = 0
 
-// $(function()
-// {
-//     $(document)
-//         .ajaxStart(NProgress.start)
-//         .ajaxStop(NProgress.done);
-// });
+$(function () {
+    $(document)
+        .ajaxStart(function(){
+            NProgress.start();
+            $("button").prop("disabled", true);
+        })
+        .ajaxStop(function(){
+            NProgress.done();
+            $("button").prop("disabled", false);
+        });
+});
 
 $(document).ready(function () {
     window.onbeforeunload = function () {

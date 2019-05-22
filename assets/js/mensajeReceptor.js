@@ -484,8 +484,14 @@ class MensajeReceptor {
         //NProgress
         $(function () {
             $(document)
-                .ajaxStart(NProgress.start)
-                .ajaxStop(NProgress.done);
+                .ajaxStart(function(){
+                    NProgress.start();
+                    $("button").prop("disabled", true);
+                })
+                .ajaxStop(function(){
+                    NProgress.done();
+                    $("button").prop("disabled", false);
+                });
         });
         // submit
         $('#btnSubmit').click(function () {

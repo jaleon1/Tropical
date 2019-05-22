@@ -289,6 +289,18 @@
 
 <script>
     $(document).ready(function () {
+        $(function () {
+            $(document)
+                .ajaxStart(function(){
+                    NProgress.start();
+                    $("button").prop("disabled", true);
+                })
+                .ajaxStop(function(){
+                    NProgress.done();
+                    $("button").prop("disabled", false);
+                });
+        });
+        
         mr.Init();
     });
     // Recarga la página para limpiar todo

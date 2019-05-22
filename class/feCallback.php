@@ -18,7 +18,7 @@
         // Documentos 1-4-8.
         error_log("**************************************************************************");
         error_log("**************************************************************************");
-        error_log("     [INFO] Iniciando Ejecución AUTOMATICA DE CONTINGENCIA Y CONSULTA     ");
+        error_log("     [INFO] Iniciando Ejecuci0n AUTOMATICA DE CONTINGENCIA Y CONSULTA     ");
         error_log("**************************************************************************");
         error_log("**************************************************************************");
         $sql="SELECT f.id, b.nombre as bodega, consecutivo
@@ -94,7 +94,7 @@
             FacturacionElectronica::APIConsultaComprobante($factura);
             error_log("[INFO] Finaliza Consulta de Comprobantes");
         }
-        // nota de credito. reenvío.
+        // nota de credito. reenvio.
         error_log("**************************************************************************");
         error_log("**************************************************************************");
         error_log("                        [INFO] Iniciando Reenvio NC                       ");
@@ -106,7 +106,7 @@
             order by idBodega';
         $data= DATA::Ejecutar($sql);
         foreach ($data as $key => $transaccion){
-            error_log("[INFO] Iniciando Reenvío NC");
+            error_log("[INFO] Iniciando Reenvio NC");
             $factura = new Factura();
             $factura->id = $transaccion['id'];
             $factura = $factura->Read();
@@ -137,7 +137,7 @@
             FacturacionElectronica::APIConsultaComprobante($factura);            
         }
         error_log("[INFO] Finaliza Consulta de NC - TimedOut | Duplicadas");
-        // Notas de crédito. Documento 3
+        // Notas de credito. Documento 3
         error_log("**************************************************************************");
         error_log("**************************************************************************");
         error_log("                        [INFO] Iniciando Consulta NC                      ");
@@ -173,7 +173,7 @@
         $data = DATA::Ejecutar($sql);
         error_log("[INFO] Total de MR a Reenviar: ". count($data));
         foreach ($data as $key => $transaccion){
-            error_log("[INFO] Reenvío MR (". $transaccion['bodega'] .") Transaccion (".$transaccion['consecutivo'].")");
+            error_log("[INFO] Reenvio MR (". $transaccion['bodega'] .") Transaccion (".$transaccion['consecutivo'].")");
             $mr = new mensajeReceptor();
             $mr->id = $transaccion['id'];
             $mr->entidad = new ClienteFE();
@@ -223,7 +223,7 @@
         //
         error_log("**************************************************************************");
         error_log("**************************************************************************");
-        error_log("           [INFO] Iniciando Ejecución AUTOMATICA DE DISTRIBUCION          ");
+        error_log("           [INFO] Iniciando Ejecuci0n AUTOMATICA DE DISTRIBUCION          ");
         error_log("**************************************************************************");
         error_log("**************************************************************************");
         $sql="SELECT d.id, b.nombre as bodega, orden
@@ -297,7 +297,7 @@
             // idDocumento.
             // $distr->idDocumento = 1;
             FacturacionElectronica::$distr= true;
-            FacturacionElectronica::APIConsultaComprobante($distr, true); // debe envíar email.
+            FacturacionElectronica::APIConsultaComprobante($distr, true); // debe enviar email.
         }
         error_log("[INFO] Finaliza Consulta de Distribucion - Comprobantes - Firma Invalida");
         error_log("**************************************************************************");
@@ -326,13 +326,13 @@
             $distr->idDocumento = 1;
             $distr->consecutivo = $distr->orden;
             FacturacionElectronica::$distr= true;
-            facturacionElectronica::APIConsultaComprobante($distr, true); // debe envíar email.
+            facturacionElectronica::APIConsultaComprobante($distr, true); // debe enviar email.
             error_log("[INFO] Finaliza Consulta de Distribucion");
         }
-        // nota de credito. reenvío. DISTR.
+        // nota de credito. reenvio. DISTR.
         error_log("**************************************************************************");
         error_log("**************************************************************************");
-        error_log("                   [INFO] Iniciando Reenvío NC  - DISTRIBUCION            ");
+        error_log("                   [INFO] Iniciando Reenvio NC  - DISTRIBUCION            ");
         error_log("**************************************************************************");
         error_log("**************************************************************************");
         $sql="SELECT d.id, b.nombre as bodega, orden
@@ -381,7 +381,7 @@
             error_log("[INFO] Finaliza Consulta de Disctribucion - Comprobantes - TimedOut | Duplicadas");
         }
         error_log("[INFO] Finaliza Consulta de NC - TimedOut | Duplicadas");
-        // Notas de crédito. Documento 3
+        // Notas de credito. Documento 3
         error_log("**************************************************************************");
         error_log("**************************************************************************");
         error_log("           [INFO] Iniciando Consulta NC - DISTRIBUCION                    ");
@@ -408,7 +408,7 @@
             $distr->idDocumento = 3;
             $distr->consecutivo = $distr->orden;
             FacturacionElectronica::$distr= true;
-            facturacionElectronica::APIConsultaComprobante($distr); // debe envíar email.
+            facturacionElectronica::APIConsultaComprobante($distr); // debe enviar email.
             error_log("[INFO] Finaliza Consulta de Distribucion");
         }
         error_log("[INFO] Finaliza Consulta NC - DISTR");

@@ -360,6 +360,7 @@ class Factura{
             $idNC = DATA::Ejecutar($sql,$param);
 
             $this->id = UUID::v4();
+            //$this->idReferencia = 'ref original= ';
             $this->idDocumentoNC = NULL;
 
             foreach ($this->detalleFactura as $key=>$item) {
@@ -975,7 +976,7 @@ class Factura{
     public function notaCredito(){
         try {
             // check si ya existe la NC.
-            $sql="SELECT id
+            $sql="SELECT id, consecutivo
                 FROM factura
                 WHERE id=:id and (idEstadoNC IS NULL OR idEstadoNC = 5 OR idEstadoNC = 1)";
             $param= array(':id'=>$this->id);
@@ -989,7 +990,7 @@ class Factura{
                 $param= array(
                     ':id'=>$this->id,
                     ':idDocumentoNC'=>$this->idDocumentoNC,
-                    ':idReferencia'=>$this->idReferencia,
+                    ':idReferencia'=>$this->idReferencia ?? $data[0]["consecutivo"],
                     ':razon'=>$this->razon,
                     ':idEstadoNC'=>1);
                 $data = DATA::Ejecutar($sql,$param, false);

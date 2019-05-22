@@ -792,6 +792,19 @@ class Distribucion {
         });
     };
 
+    sendContingenciaMasiva(){
+        $.ajax({
+            type: "POST",
+            url: "class/Distribucion.php",
+            data: {
+                action: "sendContingenciaMasiva"
+            }
+        })
+            .done(function (e) {
+                distr.CargaTrasladosRango();
+            });
+    };
+
     drawDistribucion(e) {
         var distribuciones = JSON.parse(e);
         $('#tDistribucion').DataTable({
