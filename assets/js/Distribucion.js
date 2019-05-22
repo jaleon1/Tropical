@@ -184,7 +184,7 @@ class Distribucion {
         localStorage.setItem("lsIV", $("#iv_val").text());
         localStorage.setItem("lsListaProducto", JSON.stringify(data.detalleFactura));
         localStorage.setItem("lsUsuarioDistribucion", $("#call_username").text());
-        // location.href ="/Tropical/TicketDistribucion.html";
+        localStorage.setItem("lsClaveDis", data.clave);
         location.href = "/TicketDistribucion.html";
     }
 
@@ -201,8 +201,8 @@ class Distribucion {
             var lsListaProducto = new Object();
             lsListaProducto.cantidad = $(this).find('td:eq(2)').html();
             lsListaProducto.codigo = $(this).find('td:eq(0)').html();
-            lsListaProducto.precioVenta = parseFloat((($(this).find('td:eq(3)').html()).replace("¢","")).replace(",",""))*lsListaProducto.cantidad;
-            lsListaProducto.precioVenta = '¢' + parseFloat(lsListaProducto.precioVenta).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            lsListaProducto.montoTotal = parseFloat((($(this).find('td:eq(3)').html()).replace("¢","")).replace(",",""))*lsListaProducto.cantidad;
+            lsListaProducto.montoTotal = '¢' + parseFloat(lsListaProducto.montoTotal).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
             subtotal = subtotal + parseFloat((($(this).find('td:eq(3)').html()).replace("¢","")).replace(",",""))*lsListaProducto.cantidad;
             listaProducto.push(lsListaProducto);
         });
@@ -215,8 +215,10 @@ class Distribucion {
         localStorage.setItem("lsBodega", $("#bodega").text());
         localStorage.setItem("lsOrden", $("#consecutivo").text());
         localStorage.setItem("lsUsuarioDistribucion", $("#call_username").text());
+
         
-        // location.href ="/Tropical/TicketDistribucion.html";
+        
+        // location.href ="/TicketDistribucion.html";
         location.href = "/TicketDistribucion.html";
     }
 
@@ -328,6 +330,7 @@ class Distribucion {
     ShowItemData(e) {
         $("#mensajeRechazo").text("");
         var data = JSON.parse(e);
+        localStorage.setItem("lsClaveDis", data.clave);
         distr = new Distribucion(data.id, data.orden, data.fecha, data.idUsuario, data.idBodega, data.porcentajeDescuento, data.porcentajeIva, data.detalleFactura, data.bodega);
         distr.totalComprobante= data.totalComprobante;
         distr.totalImpuesto= data.totalImpuesto;

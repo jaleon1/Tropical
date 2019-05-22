@@ -81,6 +81,7 @@ class Producto{
     public $lista= [];
     public $fechaInicial='';
     public $fechaFinal='';
+    public $claveFactura='';
 
     function __construct(){
         // identificador único

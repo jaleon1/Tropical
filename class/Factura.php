@@ -406,7 +406,7 @@ class Factura{
 
     function ReadAllbyRangeUser(){
         try {
-            $sql='SELECT fac.id, fac.idBodega, bod.nombre bodega, fac.fechaCreacion, fac.consecutivo, fac.totalComprobante, fac.idUsuario, usr.nombre vendedor, fac.montoEfectivo, fac.montoTarjeta, fac.idEstadoComprobante, fac.totalComprobante, fac.claveNC
+            $sql='SELECT fac.id, fac.idBodega, bod.nombre bodega, fac.fechaCreacion, fac.consecutivo, fac.totalComprobante, fac.idUsuario, usr.nombre vendedor, fac.montoEfectivo, fac.montoTarjeta, fac.idEstadoComprobante, fac.totalComprobante, fac.claveNC, fac.clave
                 FROM factura fac
                 INNER JOIN bodega bod on bod.id = fac.idBodega
                 INNER JOIN usuario usr on usr.id = fac.idUsuario
@@ -446,7 +446,7 @@ class Factura{
                 AND
                 fac.fechaCreacion Between :fechaInicial and :fechaFinal
                 AND fac.claveNC IS NOT NULL
-                ORDER BY fac.consecutivo DESC';
+                ORDER BY fac.fechaCreacion DESC';
                 
             $param= array(':idUsuario'=>$_SESSION["userSession"]->id, ':fechaInicial'=>$this->fechaInicial, ':fechaFinal'=>$this->fechaFinal);
             $data = DATA::Ejecutar($sql,$param);
@@ -697,7 +697,7 @@ class Factura{
                 WHERE id=:id";
             $param= array(':id'=>$this->id);
             //
-            $data = DATA::Ejecutar($sql,$param);
+            $data = DATA::Ejecutar($sql,$param, true);
             if($data)
                 $this->clave = $data[0]['clave'];
             else $this->clave = null;

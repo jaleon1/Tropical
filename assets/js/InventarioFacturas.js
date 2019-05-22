@@ -691,8 +691,8 @@ class InventarioFacturas {
     CargaListaFacturasRangoExternas(){
         var referenciaCircular = inventarioFacturas.tb_facturasExternas;
         inventarioFacturas.tb_facturasExternas = [];
-        var referenciaCircular2 = inventarioFacturas.tb_facturas;
-        inventarioFacturas.tb_facturas = [];
+        // var referenciaCircular2 = inventarioFacturas.tb_facturas;
+        // inventarioFacturas.tb_facturas = [];
         $.ajax({
             type: "POST",
             url: "class/Factura.php",
@@ -704,7 +704,7 @@ class InventarioFacturas {
             .done(function (e) {
                 if (e != " "){
                     inventarioFacturas.tb_facturasExternas = referenciaCircular; 
-                    inventarioFacturas.tb_facturas = referenciaCircular2;        
+                    // inventarioFacturas.tb_facturas = referenciaCircular2;        
                     inventarioFacturas.drawFacExternas(e);
                 }else{
                     swal({
@@ -823,19 +823,42 @@ class InventarioFacturas {
         });
 
         $('#modalFac').modal('toggle');
+        //Activar el boton para imprimir facturas canceladas
 
     };
 
     ticketPrint() {
-        localStorage.setItem("lsFacturaCancelada","OFF");
         localStorage.setItem("lsFactura",$('#consecutivo').text());
         // localStorage.setItem("lsFecha",moment().format("YYYY-MM-DD HH:mm"));
         localStorage.setItem("lsBodega",$('#bodega').text());
         localStorage.setItem("lsUsuario",$("#call_username").text());
         localStorage.setItem("lsListaProducto",JSON.stringify(this.factDetalle));
-        // location.href ="/Tropical/TicketFacturacion.html";
         location.href = "/TicketFacturacion.html";
     };
+
+    ticketPrintCancelada(data){
+        localStorage.setItem("lsFactura",data.consecutivo);
+        localStorage.setItem("lsBodega",data.bodega);
+        localStorage.setItem("lsUsuario",$("#call_username").text());
+        localStorage.setItem("lsEfectivo",data.montoEfectivo);
+        localStorage.setItem("lsVuelto",parseFloat(data.montoEfectivo) - parseFloat(data.totalComprobante));
+        localStorage.setItem("lsTotal",data.totalComprobante);
+        localStorage.setItem("lsClave",data.clave);
+
+        $.ajax({
+            type: "POST",
+            url: "class/productoXFactura.php",
+            data: {
+                action: "ReadByIdFactura",
+                id: data.id
+            }
+        })
+            .done(function (e) {
+                inventarioFacturas.factDetalle = JSON.parse(e);
+                localStorage.setItem("lsListaProducto",JSON.stringify(inventarioFacturas.factDetalle));
+                location.href = "/TicketFacturacion.html";
+            });
+    }
 }
 //Class Instance
 let inventarioFacturas = new InventarioFacturas();
@@ -859,6 +882,12 @@ let inventarioFacturas = new InventarioFacturas();
 // }; 
 
 $('#tb_facturas tbody').on('click', 'td', function () {
+    if (localStorage.getItem("lsPrintFacturaOpcion")!="BTN") {
+        if($(this).parents('tr').find('td:eq(6) i').html()=="&nbsp; Factura Cancelada!")
+            localStorage.setItem("lsPrintFacturaOpcion","CANCEL");
+        else
+            localStorage.setItem("lsPrintFacturaOpcion","LIST");
+    }
     if ($.trim(this.textContent) == ("Enviar")
     // ||$.trim(this.textContent) == ("Enviada")
     ||$.trim(this.textContent) == ("Cancelar Factura")

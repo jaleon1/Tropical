@@ -250,7 +250,7 @@
     <!-- Input mask -->
     <script src="assets/js/jquery.inputmask/jquery.inputmask.bundle.min.js"></script>
     <!-- JS Scripts -->
-    <script src="assets/js/InventarioFacturas.js"></script>
+    <script src="assets/js/InventarioFacturas.min.js"></script>
     <!-- Sweet Alert -->
     <script src="assets/js/sweetalert2.min.js"></script>
     <!-- JS dataTables -->
@@ -365,6 +365,9 @@ $(document).ready(function () {
 
         $('#tb_facturas tbody').on( 'click', 'button', function () {   
             var data = inventarioFacturas.tb_facturas.row( $(this).parents('tr') ).data();
+            localStorage.setItem("lsPrintFacturaOpcion","BTN");  
+            localStorage.setItem("lsBtnPrint", "OK");
+            inventarioFacturas.ticketPrintCancelada(data);
             swal({
                 title: 'Desea cancelar la factura ? Escriba una razón:',
                 input: 'text',
@@ -452,6 +455,7 @@ $(document).ready(function () {
                                     showConfirmButton: false,
                                     timer: 2000
                                 });
+
                             })
                             .fail(function (e) {
                                 

@@ -1031,7 +1031,7 @@ class Producto {
         this.tablainsumo = $('#dsProductoReporte').DataTable( {
             responsive: true,
             destroy: true,
-            order: [1, "desc"],
+            order: [[1, 'desc'], [7, 'asc']],
             dom: 'Bfrtip',
             buttons: [
                 {

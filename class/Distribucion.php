@@ -97,6 +97,7 @@ class Distribucion{
     public $totalServGravados = null;
     public $razon = null;
     public $consecutivo = null;
+    public $clave='';
 
     function __construct(){
         // identificador único
@@ -483,7 +484,7 @@ class Distribucion{
             $sql='SELECT d.id, d.fecha, d.idEmisor, d.idReceptor, d.orden, clave, d.consecutivoFE, d.fechaEmision, d.idUsuario, d.idBodega, b.nombre as bodega, 
                 d.porcentajeDescuento, d.porcentajeIva,  d.totalImpuesto, d.totalComprobante, d.idSituacionComprobante, d.idDocumento, d.idEstadoComprobante,
                 totalServGravados, totalServExentos, totalMercanciasGravadas, totalMercanciasExentas, totalGravado, totalExento,
-                totalVenta, totalDescuentos, totalVentaneta
+                totalVenta, totalDescuentos, totalVentaneta, d.clave
                 FROM distribucion d
                 INNER JOIN bodega b on b.id=d.idBodega
                 where d.id=:id';
@@ -517,6 +518,7 @@ class Distribucion{
                 $this->totalVenta = $data[0]['totalVenta'];
                 $this->totalDescuentos = $data[0]['totalDescuentos'];
                 $this->totalVentaneta = $data[0]['totalVentaneta'];
+                $this->clave = $data[0]['clave'];
                 // productos x distribucion.
                 $this->detalleFactura= ProductosXDistribucion::Read($this->id);
                 //
@@ -615,6 +617,7 @@ class Distribucion{
                         $objFactura->consecutivo= $this->orden;
                         FacturacionElectronica::$distr= true;
                         FacturacionElectronica::iniciar($objFactura);
+                        $this->getClave();
                         // retorna orden autogenerada.
                         return $this;
                     }
@@ -629,6 +632,24 @@ class Distribucion{
                 'code' => $e->getCode() ,
                 'msg' => $e->getMessage()))
             );
+        }
+    }
+
+    public function getClave(){
+        try {
+            $sql="SELECT clave
+                from distribucion
+                WHERE id=:id";
+            $param= array(':id'=>$this->id);
+            //
+            $data = DATA::Ejecutar($sql,$param, true);
+            if($data)
+                $this->clave = $data[0]['clave'];
+            else $this->clave = null;
+        }     
+        catch(Exception $e) {
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            // debe notificar que no se esta actualizando el historico de comprobantes.
         }
     }
 

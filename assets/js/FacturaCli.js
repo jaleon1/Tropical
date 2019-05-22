@@ -872,6 +872,7 @@ function alertFact() {
 
 function ticketPrint(e) {
     var data = JSON.parse(e);
+    localStorage.setItem("lsPrintFacturaOpcion","FACT");
     localStorage.setItem("lsReimpresion", "NOT");
     localStorage.setItem("lsFactura", data.consecutivo);
     localStorage.setItem("lsFecha", data.fechaCreacion);
@@ -879,7 +880,7 @@ function ticketPrint(e) {
     localStorage.setItem("lsUsuario", $("#call_username").text());
     localStorage.setItem("lsSubTotal", data.totalComprobante);
     localStorage.setItem("lsTotal", data.totalComprobante);
-
+    localStorage.setItem("lsClave",data.clave);
     // var groupedProducts = data.detalleFactura.reduce((curr, next) => {
     //     if (curr[next.detalle]) {
     //     curr[next.detalle] += +next.precioUnitario 
@@ -898,7 +899,6 @@ function ticketPrint(e) {
 
     localStorage.setItem("lsListaProducto", JSON.stringify(data.detalleFactura));
 
-    // location.href ="/Tropical/TicketFacturacion.html";
     location.href = "/TicketFacturacion.html";
 
 

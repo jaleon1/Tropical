@@ -84,7 +84,7 @@ class InventarioFacturaCancelada {
                 }
             },
             data: facturas,                               
-            order: [[1, "desc"]],
+            order: [[2, "desc"]],
             columns: [
                 {
                     title: "ID FACTURA",
@@ -348,13 +348,12 @@ class InventarioFacturaCancelada {
     };
 
     ticketPrint() {
-        localStorage.setItem("lsFacturaCancelada","OK");
+        localStorage.setItem("lsPrintFacturaOpcion","CANCEL");
         localStorage.setItem("lsFactura",$('#consecutivo').text());
         localStorage.setItem("lsFecha",moment().format("YYYY-MM-DD HH:mm"));
         localStorage.setItem("lsBodega",$('#bodega').text());
         localStorage.setItem("lsUsuario",$('#cajero').text());
         localStorage.setItem("lsListaProducto",JSON.stringify(this.factDetalle));
-        // location.href ="/Tropical/TicketFacturacion.html";
         location.href = "/TicketFacturacion.html";
     };
 }
