@@ -58,7 +58,7 @@ class InventarioFacturaCancelada {
                 {
                     extend: 'excelHtml5',
                     footer: true,
-                    exportOptions: {columns: [ 1, 2, 3, 4, 5, 6]},
+                    exportOptions: {columns: [ 1, 2, 3, 4, 5, 6, 7]},
                     messageTop:'Lista de facturas Canceladas'
                 },
                 {
@@ -66,7 +66,7 @@ class InventarioFacturaCancelada {
                     footer: true,
                     messageTop:'Lista de facturas Canceladas',
                     exportOptions: {
-                        columns: [ 1, 2, 3, 4, 5, 6]
+                        columns: [ 1, 2, 3, 4, 5, 6, 7]
                     }
                 }
             ],
