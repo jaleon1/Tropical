@@ -834,7 +834,7 @@ class InventarioFacturas {
         localStorage.setItem("lsBodega",$('#bodega').text());
         localStorage.setItem("lsUsuario",$("#call_username").text());
         localStorage.setItem("lsListaProducto",JSON.stringify(this.factDetalle));
-        location.href = "/Tropical/TicketFacturacion.html";
+        location.href = "/TicketFacturacion.html";
     };
 
     ticketPrintCancelada(data){
@@ -857,7 +857,7 @@ class InventarioFacturas {
             .done(function (e) {
                 inventarioFacturas.factDetalle = JSON.parse(e);
                 localStorage.setItem("lsListaProducto",JSON.stringify(inventarioFacturas.factDetalle));
-                location.href = "/Tropical/TicketFacturacion.html";
+                location.href = "/TicketFacturacion.html";
             });
     }
 }
