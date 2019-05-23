@@ -1,6 +1,6 @@
 class InventarioFacturas {
     // Constructor
-    constructor(facturas, tb_facturas, tb_facturasExternas, factDetalle, tb_prdXFact, fechaInicial, fechaFinal, respuesta) {
+    constructor(facturas, tb_facturas, tb_facturasExternas, factDetalle, tb_prdXFact, fechaInicial, fechaFinal, respuesta, dataFactura) {
         this.facturas = facturas || new Array();
         this.factDetalle = factDetalle || new Array();
         this.tb_facturas = tb_facturas || null;
@@ -8,6 +8,7 @@ class InventarioFacturas {
         this.fechaInicial = fechaInicial || "";
         this.fechaFinal = fechaFinal || "";
         this.respuesta = respuesta || "";
+        this.dataFactura = dataFactura || new Array();
     };
 
     CargaFacturas() {
@@ -833,7 +834,7 @@ class InventarioFacturas {
         localStorage.setItem("lsBodega",$('#bodega').text());
         localStorage.setItem("lsUsuario",$("#call_username").text());
         localStorage.setItem("lsListaProducto",JSON.stringify(this.factDetalle));
-        location.href = "/TicketFacturacion.html";
+        location.href = "/Tropical/TicketFacturacion.html";
     };
 
     ticketPrintCancelada(data){
@@ -856,7 +857,7 @@ class InventarioFacturas {
             .done(function (e) {
                 inventarioFacturas.factDetalle = JSON.parse(e);
                 localStorage.setItem("lsListaProducto",JSON.stringify(inventarioFacturas.factDetalle));
-                location.href = "/TicketFacturacion.html";
+                location.href = "/Tropical/TicketFacturacion.html";
             });
     }
 }
