@@ -615,6 +615,12 @@ class InventarioFacturas {
                     <label>Bodega:</label>
                     <label id='bodega'>${id.bodega}</label>
                 </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 col-sm-6 col-xs-6">
+                    <label>Clave:</label>
+                    <label id='cajero'>${id.clave}</label>
+                </div>
             </div>`;
         $("#detalleFac").append(detalleFac);
 
@@ -863,24 +869,6 @@ class InventarioFacturas {
 }
 //Class Instance
 let inventarioFacturas = new InventarioFacturas();
-// function ReadRespuestaRachazo(idFactura){
-//     var respuesta="";
-//     var referenciaCircular = inventarioFacturas.tb_facturas;
-//     inventarioFacturas.tb_facturas = [];
-//     $.ajax({
-//         type: "POST",
-//         url: "class/Factura.php",
-//         data: {
-//             action: "ReadRespuestaRachazo",
-//             id: idFactura
-//         }
-//     })
-//         .done(function (e) {
-//             inventarioFacturas.tb_facturas = referenciaCircular;  
-//             respuesta = JSON.parse(e);;                 
-//         });
-//     return respuesta;
-// }; 
 
 $('#tb_facturas tbody').on('click', 'td', function () {
     if (localStorage.getItem("lsPrintFacturaOpcion")!="BTN") {
@@ -924,105 +912,4 @@ $('#tb_facturas tbody').on('click', 'td', function () {
     localStorage.setItem("lsDif","0");
     localStorage.setItem("lsReimpresion","OK");
 });
-
-// $('#tb_facturas tbody').on( 'click', 'button', function () {
-//     var data = inventarioFacturas.tb_facturas.row( $(this).parents('tr') ).data();
-//     var id = data['id'];
-//     var numeroFactura = data['consecutivo'];
-//     var fecha = data['fechaCreacion'];
-//     var almacen = data['bodega'];
-//     var vendedor = data['vendedor'];
-//     var total = '¢'+ parseFloat(data['totalComprobante']).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-//     var est = data['idEstadoComprobante'];
-    
-//     var estado ='';
-//     switch (est) {
-//         case "1": estado="Sin Enviar"; 
-//         break;
-//         case "4": estado="Rechazada";
-//         break;
-//         case "5": estado="Otro";
-//         break; 
-//     }
-//     var object = [id, numeroFactura, fecha, almacen, vendedor, total, estado];
-//     $.ajax({
-//         type: "POST",
-//         url: "class/Factura.php",
-//         data: {
-//             action: "mailSoporte",
-//             facturaMailSoporte: object
-//         }
-//     })
-//     .done(function (e) {
-//         var start = moment().subtract(29, 'days');
-//         var end = moment();
-
-//         function cb(start, end) {
-//             $('#dp_rangoListaFacturas span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
-//         }
-
-//         $('#dp_rangoListaFacturas').daterangepicker({
-//             "opens": "left",
-//             "locale": {
-//                 "format": "DD/MM/YYYY",
-//                 "separator": " - ",
-//                 "applyLabel": "Aplicar",
-//                 "cancelLabel": "Cancelar",
-//                 "fromLabel": "From",
-//                 "toLabel": "To",
-//                 "customRangeLabel": "Manual",
-//                 "daysOfWeek": [
-//                     "DO",
-//                     "Lu",
-//                     "Ma",
-//                     "Mi",
-//                     "Ju",
-//                     "Vi",
-//                     "Sa"
-//                 ],
-//                 "monthNames": [
-//                     "Enero",
-//                     "Febrero",
-//                     "Marzo",
-//                     "Abril",
-//                     "Mayo",
-//                     "Junio",
-//                     "Julio",
-//                     "Agosto",
-//                     "Setiembre",
-//                     "Octubre",
-//                     "Noviembre",
-//                     "Diciembre"
-//                 ],
-//                 "firstDay": 1
-//             },
-//             startDate: start,
-//             endDate: end,
-//             ranges: {
-//                 'Hoy': [moment(), moment()],
-//                 'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-//                 'Ultimos 7 Días': [moment().subtract(6, 'days'), moment()],
-//                 'Ultimos 30 Días': [moment().subtract(29, 'days'), moment()],
-//                 'Este Mes': [moment().startOf('month'), moment().endOf('month')],
-//                 'Ultimo Mes': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-//             }
-//         }, cb);
-
-//         cb(start, end);
-
-//         inventarioFacturas.fechaInicial = start.format('YYYY-MM-DD') + ' 00:00';
-//         inventarioFacturas.fechaFinal = end.format('YYYY-MM-DD') + ' 23:59:59';
-//         inventarioFacturas.CargaListaFacturasRango();
-
-//         swal({
-//             type: 'success',
-//             title: 'La factura con problemas fue notificada a SOPORTE!',
-//             showConfirmButton: false,
-//             timer: 2000
-//         });
-//     })
-//     .always(function () {
-        
-//     });
-// });
 

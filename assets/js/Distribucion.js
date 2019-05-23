@@ -356,6 +356,16 @@ class Distribucion {
                 <div class="col-md-6 col-sm-6 col-xs-6">
                     <p>TOTAL: <label id=total>${'¢' + parseFloat(distr.totalComprobante).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ".")}</label></p>
                 </div>
+            </div>
+            <div class="row">                
+                <div class="col-md-6 col-sm-6 col-xs-6">
+                    <p>Clave Factura: <label id=clave>${data.clave}</label></p>
+                </div>
+            </div>
+            <div class="row">                
+                <div class="col-md-6 col-sm-6 col-xs-6">
+                    <p>Clave Nota de Credito: <label id=claveNC>${data.claveNC}</label></p>
+                </div>
             </div>`;
         $("#detalleDistribucion").append(detalleDistribucion);
 

@@ -273,14 +273,15 @@ class Factura{
 
     function ReadAllbyRange(){
         try {
-            $sql='SELECT fac.id, fac.idBodega, bod.nombre bodega, fac.fechaCreacion, fac.consecutivo, fac.totalComprobante, fac.idUsuario, usr.nombre vendedor, fac.montoEfectivo, fac.montoTarjeta, fac.idEstadoComprobante, fac.totalComprobante, fac.claveNC
+            $sql='SELECT fac.id, fac.idBodega, bod.nombre bodega, fac.fechaCreacion, fac.consecutivo, fac.totalComprobante, 
+            fac.idUsuario, usr.nombre vendedor, fac.montoEfectivo, fac.montoTarjeta, fac.idEstadoComprobante, fac.totalComprobante, fac.claveNC, fac.clave
                 FROM tropical.factura fac
                 INNER JOIN tropical.bodega bod ON bod.id = fac.idBodega
                 INNER JOIN tropical.usuario usr ON usr.id = fac.idUsuario
                 INNER JOIN (SELECT idBodega FROM tropical.usuariosXBodega
                 WHERE idUsuario = :idUsuario) bodegas ON bodegas.idBodega = fac.idBodega
                 AND fac.fechaCreacion Between :fechaInicial AND :fechaFinal
-                WHERE claveNC IS NULL
+                WHERE claveNC IS NULL AND bod.idTipoBodega <> "22a80c9e-5639-11e8-8242-54ee75873a12"
                 ORDER BY fac.fechaCreacion DESC'; 
                 
             $param= array(':idUsuario'=>$_SESSION["userSession"]->id, ':fechaInicial'=>$this->fechaInicial, ':fechaFinal'=>$this->fechaFinal);
@@ -406,7 +407,8 @@ class Factura{
 
     function ReadAllbyRangeUser(){
         try {
-            $sql='SELECT fac.id, fac.idBodega, bod.nombre bodega, fac.fechaCreacion, fac.consecutivo, fac.totalComprobante, fac.idUsuario, usr.nombre vendedor, fac.montoEfectivo, fac.montoTarjeta, fac.idEstadoComprobante, fac.totalComprobante, fac.claveNC, fac.clave
+            $sql='SELECT fac.id, fac.idBodega, bod.nombre bodega, fac.fechaCreacion, fac.consecutivo, fac.totalComprobante, 
+                fac.idUsuario, usr.nombre vendedor, fac.montoEfectivo, fac.montoTarjeta, fac.idEstadoComprobante, fac.totalComprobante, fac.claveNC, fac.clave
                 FROM factura fac
                 INNER JOIN bodega bod on bod.id = fac.idBodega
                 INNER JOIN usuario usr on usr.id = fac.idUsuario
@@ -434,22 +436,52 @@ class Factura{
 
     function ReadCancelada(){
         try {
-            $sql='SELECT fac.id, fac.idBodega, bod.nombre bodega, fac.fechaCreacion, fac.consecutivo, 
-            fac.totalComprobante, fac.idUsuario, usr.nombre vendedor, fac.montoEfectivo, fac.montoTarjeta, 
-            fac.idEstadoComprobante, fac.totalComprobante, fac.claveNC, fac.idEstadoNC
-                FROM factura fac
-                INNER JOIN bodega bod on bod.id = fac.idBodega
-                INNER JOIN usuario usr on usr.id = fac.idUsuario
-                INNER JOIN (SELECT idBodega
-                            FROM usuariosXBodega
-                            WHERE idUsuario = :idUsuario) bodegas on bodegas.idBodega = fac.idBodega
-                AND
-                fac.fechaCreacion Between :fechaInicial and :fechaFinal
-                AND fac.claveNC IS NOT NULL
-                ORDER BY fac.fechaCreacion DESC';
-                
-            $param= array(':idUsuario'=>$_SESSION["userSession"]->id, ':fechaInicial'=>$this->fechaInicial, ':fechaFinal'=>$this->fechaFinal);
-            $data = DATA::Ejecutar($sql,$param);
+            //
+            $sql='SELECT tb.nombre FROM tropical.tipoBodega tb 
+            INNER JOIN bodega b ON b.idTipoBodega = tb.id
+            WHERE b.id=:idBodega';
+            $param= array(':idBodega'=>$_SESSION['userSession']->idBodega);
+            $tipoBodega = DATA::Ejecutar($sql,$param);
+            
+            if ($tipoBodega[0]['nombre'] == "Interna") {
+                $sql='SELECT fac.id, fac.idBodega, bod.nombre bodega, fac.fechaCreacion, fac.consecutivo, 
+                fac.totalComprobante, fac.idUsuario, usr.nombre vendedor, fac.montoEfectivo, fac.montoTarjeta, 
+                fac.idEstadoComprobante, fac.totalComprobante, fac.claveNC, fac.idEstadoNC, fac.clave
+                    FROM factura fac
+                    INNER JOIN bodega bod ON bod.id = fac.idBodega
+                    INNER JOIN usuario usr ON usr.id = fac.idUsuario
+                    INNER JOIN tipoBodega tp ON tp.id = bod.idTipoBodega 
+                    INNER JOIN (SELECT idBodega
+                                FROM usuariosXBodega
+                                WHERE idUsuario = :idUsuario) bodegas ON bodegas.idBodega = fac.idBodega
+                    AND fac.fechaCreacion Between :fechaInicial AND :fechaFinal
+                    AND fac.claveNC IS NOT NULL
+                    WHERE tp.nombre = "Interna"
+                    ORDER BY fac.fechaCreacion DESC';
+                    
+                $param= array(':idUsuario'=>$_SESSION["userSession"]->id, ':fechaInicial'=>$this->fechaInicial, ':fechaFinal'=>$this->fechaFinal);
+                $data = DATA::Ejecutar($sql,$param);                
+            }
+            else{
+                $sql='SELECT fac.id, fac.idBodega, bod.nombre bodega, fac.fechaCreacion, fac.consecutivo, 
+                fac.totalComprobante, fac.idUsuario, usr.nombre vendedor, fac.montoEfectivo, fac.montoTarjeta, 
+                fac.idEstadoComprobante, fac.totalComprobante, fac.claveNC, fac.idEstadoNC, fac.clave
+                    FROM factura fac
+                    INNER JOIN bodega bod ON bod.id = fac.idBodega
+                    INNER JOIN usuario usr ON usr.id = fac.idUsuario
+                    INNER JOIN tipoBodega tp ON tp.id = bod.idTipoBodega 
+                    INNER JOIN (SELECT idBodega
+                                FROM usuariosXBodega
+                                WHERE idUsuario = :idUsuario) bodegas ON bodegas.idBodega = fac.idBodega
+                    AND fac.fechaCreacion Between :fechaInicial AND :fechaFinal
+                    AND fac.claveNC IS NOT NULL
+                    WHERE tp.nombre = "Externa" AND fac.idBodega = :idBodega
+                    ORDER BY fac.fechaCreacion DESC';
+                    
+                $param= array(':idUsuario'=>$_SESSION["userSession"]->id, ':fechaInicial'=>$this->fechaInicial, 
+                ':idBodega'=>$_SESSION['userSession']->idBodega, ':fechaFinal'=>$this->fechaFinal);
+                $data = DATA::Ejecutar($sql,$param); 
+            }
             return $data;
         }     
         catch(Exception $e) { 
