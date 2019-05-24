@@ -750,6 +750,19 @@ class InventarioFacturas {
             });
     };
 
+    sendContingenciaMasivaExterna(){
+        $.ajax({
+            type: "POST",
+            url: "class/Distribucion.php",
+            data: {
+                action: "sendContingenciaMasiva"
+            }
+        })
+            .done(function (e) {
+                inventarioFacturas.CargaListaFacturasRangoExternas();
+            });
+    };
+
     sendMasiva(){
         $.ajax({
             type: "POST",
