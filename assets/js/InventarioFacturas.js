@@ -759,7 +759,7 @@ class InventarioFacturas {
             }
         })
             .done(function (e) {
-                inventarioFacturas.CargaListaFacturasRango();
+                inventarioFacturas.CargaListaFacturasRangoExternas();
             });
     };
 
