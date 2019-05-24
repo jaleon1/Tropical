@@ -429,7 +429,7 @@ class Producto{
                 CONCAT("Orden: ", s.numeroOrden),
                 CONCAT("Revierte Traslado: ",dE.orden)
                 ),
-                , i.idOrdenEntrada) as idOrdenEntrada,
+                i.idOrdenEntrada) as idOrdenEntrada,
             COALESCE(CONCAT("Traslado: ", d.orden), CONCAT("Merma:", m.consecutivo), CONCAT("Ord Cancel:", os.numeroOrden)) as idOrdenSalida,            
             p.codigo AS producto,
             entrada,
