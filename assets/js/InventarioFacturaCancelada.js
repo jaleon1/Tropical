@@ -84,7 +84,7 @@ class InventarioFacturaCancelada {
                 }
             },
             data: facturas,                               
-            order: [[2, "desc"]],
+            order: [[1, "desc"]],
             columns: [
                 {
                     title: "ID FACTURA",
@@ -228,57 +228,82 @@ class InventarioFacturaCancelada {
         });
     };
 
-    ReadbyID(id) {
+    ReadbyID(data) {
         $("#detalleFac").empty();
-        var detalleFac =
+        var detalleFac=null;
+        if (data.idReferencia != '1') {
+            detalleFac =
             `<button type="button" class="close" data-dismiss="modal">
                 <span aria-hidden="true">x</span>
             </button>
-            <h4 class="modal-title">Factura #</h4>
-            <h4 class="modal-title" id="consecutivo">${id.consecutivo}.</h4>
+            <h4 class="modal-title">Factura Cancelada #</h4>
+            <h4 class="modal-title" id="consecutivo">${data.consecutivo}.</h4>
             <div class="row">
                 <div class="col-md-6 col-sm-6 col-xs-6">
                     <label>Fecha:</label>
-                    <label id='fecha'>${id.fechaCreacion}</label>
+                    <label id='fecha'>${data.fechaCreacion}</label>
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-6 col-sm-6 col-xs-6">
                     <label>Cajero:</label>
-                    <label id='cajero'>${id.vendedor}</label>
+                    <label id='cajero'>${data.vendedor}</label>
                 </div>
                 <div class="col-md-6 col-sm-6 col-xs-6">
                     <label>Bodega:</label>
-                    <label id='bodega'>${id.bodega}</label>
+                    <label id='bodega'>${data.bodega}</label>
                 </div>
             </div>
             <div class="row">
-            <div class="col-md-6 col-sm-6 col-xs-6">
-                <label>Nota de Credito:</label>
-                <label id='cajero'>${id.claveNC}</label>
+                <div class="col-md-6 col-sm-6 col-xs-6">
+                    <label>Clave Factura NC:</label>
+                    <label id='claveNC'>${data.claveNC}</label>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-6">
+                    <label>Referencia Factura:</label>
+                    </br><label id='idReferencia'>${data.idReferencia}</label>
+                </div>
+            </div>`; 
+        }
+        else{
+            detalleFac =
+            `<button type="button" class="close" data-dismiss="modal">
+                <span aria-hidden="true">x</span>
+            </button>
+            <h4 class="modal-title">Factura Cancelada #</h4>
+            <h4 class="modal-title" id="consecutivo">${data.consecutivo}.</h4>
+            <div class="row">
+                <div class="col-md-6 col-sm-6 col-xs-6">
+                    <label>Fecha:</label>
+                    <label id='fecha'>${data.fechaCreacion}</label>
+                </div>
             </div>
             <div class="row">
-            <div class="col-md-6 col-sm-6 col-xs-6">
-                <label>Factura:</label>
-                <label id='cajero'>${id.clave}</label>
+                <div class="col-md-6 col-sm-6 col-xs-6">
+                    <label>Cajero:</label>
+                    <label id='cajero'>${data.vendedor}</label>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-6">
+                    <label>Bodega:</label>
+                    <label id='bodega'>${data.bodega}</label>
+                </div>
             </div>
-        </div>`;
+            <div class="row">
+                <div class="col-md-6 col-sm-6 col-xs-6">
+                    <label>Clave Factura NC:</label>
+                    <label id='claveNC'>${data.claveNC}</label>
+                </div>
+            </div>`;             
+        }
         $("#detalleFac").append(detalleFac);
-
-
         $("#totalFact").empty();
-
-        // var totalFact =
-        //     `<h4>Total: ¢${Math.round(id.totalVenta)}</h4>`;
-        // $("#totalFact").append(totalFact);
-
 
         $.ajax({
             type: "POST",
             url: "class/productoXFactura.php",
             data: {
                 action: "ReadByIdFactura",
-                id: id.id
+                id: data.id
             }
         })
             .done(function (e) {

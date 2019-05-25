@@ -274,14 +274,16 @@ class Factura{
     function ReadAllbyRange(){
         try {
             $sql='SELECT fac.id, fac.idBodega, bod.nombre bodega, fac.fechaCreacion, fac.consecutivo, fac.totalComprobante, 
-            fac.idUsuario, usr.nombre vendedor, fac.montoEfectivo, fac.montoTarjeta, fac.idEstadoComprobante, fac.totalComprobante, fac.claveNC, fac.clave
+            fac.idUsuario, usr.nombre vendedor, fac.montoEfectivo, fac.montoTarjeta, fac.idEstadoComprobante, fac.totalComprobante, 
+            fac.claveNC, fac.clave, fac.idReferencia
                 FROM tropical.factura fac
                 INNER JOIN tropical.bodega bod ON bod.id = fac.idBodega
                 INNER JOIN tropical.usuario usr ON usr.id = fac.idUsuario
+                INNER JOIN tropical.tipoBodega tp ON tp.id = bod.idTipoBodega
                 INNER JOIN (SELECT idBodega FROM tropical.usuariosXBodega
                 WHERE idUsuario = :idUsuario) bodegas ON bodegas.idBodega = fac.idBodega
                 AND fac.fechaCreacion Between :fechaInicial AND :fechaFinal
-                WHERE claveNC IS NULL AND bod.idTipoBodega <> "22a80c9e-5639-11e8-8242-54ee75873a12"
+                WHERE claveNC IS NULL AND tp.nombre = "Interna"
                 ORDER BY fac.fechaCreacion DESC'; 
                 
             $param= array(':idUsuario'=>$_SESSION["userSession"]->id, ':fechaInicial'=>$this->fechaInicial, ':fechaFinal'=>$this->fechaFinal);
@@ -408,7 +410,8 @@ class Factura{
     function ReadAllbyRangeUser(){
         try {
             $sql='SELECT fac.id, fac.idBodega, bod.nombre bodega, fac.fechaCreacion, fac.consecutivo, fac.totalComprobante, 
-                fac.idUsuario, usr.nombre vendedor, fac.montoEfectivo, fac.montoTarjeta, fac.idEstadoComprobante, fac.totalComprobante, fac.claveNC, fac.clave
+                fac.idUsuario, usr.nombre vendedor, fac.montoEfectivo, fac.montoTarjeta, fac.idEstadoComprobante, fac.totalComprobante, 
+                fac.claveNC, fac.clave, fac.idReferencia
                 FROM factura fac
                 INNER JOIN bodega bod on bod.id = fac.idBodega
                 INNER JOIN usuario usr on usr.id = fac.idUsuario
@@ -446,7 +449,7 @@ class Factura{
             if ($tipoBodega[0]['nombre'] == "Interna") {
                 $sql='SELECT fac.id, fac.idBodega, bod.nombre bodega, fac.fechaCreacion, fac.consecutivo, 
                 fac.totalComprobante, fac.idUsuario, usr.nombre vendedor, fac.montoEfectivo, fac.montoTarjeta, 
-                fac.idEstadoComprobante, fac.totalComprobante, fac.claveNC, fac.idEstadoNC, fac.clave
+                fac.idEstadoComprobante, fac.totalComprobante, fac.claveNC, fac.idEstadoNC, fac.clave, fac.idReferencia
                     FROM factura fac
                     INNER JOIN bodega bod ON bod.id = fac.idBodega
                     INNER JOIN usuario usr ON usr.id = fac.idUsuario
@@ -465,7 +468,7 @@ class Factura{
             else{
                 $sql='SELECT fac.id, fac.idBodega, bod.nombre bodega, fac.fechaCreacion, fac.consecutivo, 
                 fac.totalComprobante, fac.idUsuario, usr.nombre vendedor, fac.montoEfectivo, fac.montoTarjeta, 
-                fac.idEstadoComprobante, fac.totalComprobante, fac.claveNC, fac.idEstadoNC, fac.clave
+                fac.idEstadoComprobante, fac.totalComprobante, fac.claveNC, fac.idEstadoNC, fac.clave, fac.idReferencia
                     FROM factura fac
                     INNER JOIN bodega bod ON bod.id = fac.idBodega
                     INNER JOIN usuario usr ON usr.id = fac.idUsuario

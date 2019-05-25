@@ -591,59 +591,161 @@ class InventarioFacturas {
         });
     };
 
-    ReadbyID(id) {
+    ReadbyID(data) {
         $("#mensajeRechazo").text("");
         $("#detalleFac").empty();
-        var detalleFac =
+        var detalleFac = null;
+        //FACTURA NORMAL
+        if (data.idReferencia == null) {
+            detalleFac =
             `<button type="button" class="close" data-dismiss="modal">
                 <span aria-hidden="true">x</span>
             </button>
             <h4 class="modal-title">Factura #</h4>
-            <h4 class="modal-title" id="consecutivo">${id.consecutivo}.</h4>
+            <h4 class="modal-title" id="consecutivo">${data.consecutivo}.</h4>
             <div class="row">
                 <div class="col-md-6 col-sm-6 col-xs-6">
                     <label>Fecha:</label>
-                    <label id='fecha'>${id.fechaCreacion}</label>
+                    <label id='fecha'>${data.fechaCreacion}</label>
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-6 col-sm-6 col-xs-6">
                     <label>Cajero:</label>
-                    <label id='cajero'>${id.vendedor}</label>
+                    <label id='cajero'>${data.vendedor}</label>
                 </div>
                 <div class="col-md-6 col-sm-6 col-xs-6">
                     <label>Bodega:</label>
-                    <label id='bodega'>${id.bodega}</label>
+                    <label id='bodega'>${data.bodega}</label>
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-6 col-sm-6 col-xs-6">
-                    <label>Clave:</label>
-                    <label id='cajero'>${id.clave}</label>
+                    <label>Clave Factura:</label>
+                    <label id='clave'>${data.clave}</label>
                 </div>
-            </div>`;
+            </div>`;                        
+        }
+        else{
+            //NOTA DE CREDITO
+            if (data.consecutivo == data.idReferencia) {
+                detalleFac =
+                `<button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">x</span>
+                </button>
+                <h4 class="modal-title">Factura Cancelada #</h4>
+                <h4 class="modal-title" id="consecutivo">${data.consecutivo}.</h4>
+                <div class="row">
+                    <div class="col-md-6 col-sm-6 col-xs-6">
+                        <label>Fecha:</label>
+                        <label id='fecha'>${data.fechaCreacion}</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 col-sm-6 col-xs-6">
+                        <label>Cajero:</label>
+                        <label id='cajero'>${data.vendedor}</label>
+                    </div>
+                    <div class="col-md-6 col-sm-6 col-xs-6">
+                        <label>Bodega:</label>
+                        <label id='bodega'>${data.bodega}</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 col-sm-6 col-xs-6">
+                        <label>Clave Factura NC:</label>
+                        <label id='clave'>${data.claveNC}</label>
+                    </div>
+                    <div class="col-md-6 col-sm-6 col-xs-6">
+                        <label>Referencia Factura:</label>
+                        </br><label id='claveNC'>${data.idReferencia}</label>
+                    </div>
+                </div>`;                        
+            }
+            //REENVIO DE FACTURA
+            else{
+                if (data.idReferencia == '1') {
+                    detalleFac =
+                    `<button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true">x</span>
+                    </button>
+                    <h4 class="modal-title">Factura #</h4>
+                    <h4 class="modal-title" id="consecutivo">${data.consecutivo}.</h4>
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6 col-xs-6">
+                            <label>Fecha:</label>
+                            <label id='fecha'>${data.fechaCreacion}</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6 col-xs-6">
+                            <label>Cajero:</label>
+                            <label id='cajero'>${data.vendedor}</label>
+                        </div>
+                        <div class="col-md-6 col-sm-6 col-xs-6">
+                            <label>Bodega:</label>
+                            <label id='bodega'>${data.bodega}</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6 col-xs-6">
+                            <label>Clave Factura NC:</label>
+                            <label id='claveNC'>${data.claveNC}</label>
+                        </div>
+                    </div>`;                        
+                }
+                else{
+                    detalleFac =
+                    `<button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true">x</span>
+                    </button>
+                    <h4 class="modal-title">Factura #</h4>
+                    <h4 class="modal-title" id="consecutivo">${data.consecutivo}.</h4>
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6 col-xs-6">
+                            <label>Fecha:</label>
+                            <label id='fecha'>${data.fechaCreacion}</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6 col-xs-6">
+                            <label>Cajero:</label>
+                            <label id='cajero'>${data.vendedor}</label>
+                        </div>
+                        <div class="col-md-6 col-sm-6 col-xs-6">
+                            <label>Bodega:</label>
+                            <label id='bodega'>${data.bodega}</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6 col-xs-6">
+                            <label>Clave Factura:</label>
+                            <label id='clave'>${data.clave}</label>
+                        </div>
+                    <div class="col-md-6 col-sm-6 col-xs-6">
+                        <label>Referencia Factura:</label>
+                        <label id='idReferencia'>${data.idReferencia}</label>
+                    </div>
+                    </div>`;
+                }                 
+            }
+        }
         $("#detalleFac").append(detalleFac);
-
         $("#totalFact").empty();
-
-        // var totalFact =
-        //     `<h4>Total: ¢${Math.round(id.totalVenta)}</h4>`;
-        // $("#totalFact").append(totalFact);
-        // 
 
         $.ajax({
             type: "POST",
             url: "class/productoXFactura.php",
             data: {
                 action: "ReadByIdFactura",
-                id: id.id
+                id: data.id
             }
         })
             .done(function (e) {
                 inventarioFacturas.drawFactDetail(e);  
             });
-        if (id.idEstadoComprobante=="4")
-            inventarioFacturas.ReadRespuestaRachazo(id.id);  
+        if (data.idEstadoComprobante=="4")
+            inventarioFacturas.ReadRespuestaRachazo(data.id);  
     };
 
     ReadRespuestaRachazo(idFactura){

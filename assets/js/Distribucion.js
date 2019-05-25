@@ -335,14 +335,15 @@ class Distribucion {
         distr.totalComprobante= data.totalComprobante;
         distr.totalImpuesto= data.totalImpuesto;
         //
+        var detalleDistribucion=null;
         $("#detalleDistribucion").empty();
-        var detalleDistribucion =
+        if (data.orden == data.idReferencia){
+            detalleDistribucion =
             `<button type="button" class="close" data-dismiss="modal">
                 <span aria-hidden="true">X</span>
             </button>
             <h4 class="modal-title" id="myModalLabel">Traslado #<label id=consecutivo>${distr.orden}</label></h4>
             <div class="row">
-                
                 <div class="col-md-6 col-sm-6 col-xs-6">
                     <p>Fecha: <label id=fechaDistribucion>${distr.fecha}</label></p>
                 </div>
@@ -366,14 +367,38 @@ class Distribucion {
                 <div class="col-md-6 col-sm-6 col-xs-6">
                     <p>Clave Nota de Credito: <label id=claveNC>${data.claveNC}</label></p>
                 </div>
-            </div>`;
+            </div>`;             
+        }
+        else{
+            detalleDistribucion =
+            `<button type="button" class="close" data-dismiss="modal">
+                <span aria-hidden="true">X</span>
+            </button>
+            <h4 class="modal-title" id="myModalLabel">Traslado #<label id=consecutivo>${distr.orden}</label></h4>
+            <div class="row">
+                <div class="col-md-6 col-sm-6 col-xs-6">
+                    <p>Fecha: <label id=fechaDistribucion>${distr.fecha}</label></p>
+                </div>
+            </div>
+            <div class="row">                
+                <div class="col-md-6 col-sm-6 col-xs-6">
+                    <p>Destino: <label id=bodega>${distr.bodega}</label></p>
+                </div>
+            </div>
+            <div class="row">                
+                <div class="col-md-6 col-sm-6 col-xs-6">
+                    <p>TOTAL: <label id=total>${'¢' + parseFloat(distr.totalComprobante).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ".")}</label></p>
+                </div>
+            </div>
+            <div class="row">                
+                <div class="col-md-6 col-sm-6 col-xs-6">
+                    <p>Clave Factura: <label id=clave>${data.clave}</label></p>
+                </div>
+            </div>`;            
+        }
         $("#detalleDistribucion").append(detalleDistribucion);
-
         $("#totalDistribucion").empty();
 
-        // var totalDistribucion =
-        //     `<h4>Total: ¢${Math.round(0)}</h4>`;
-        // $("#totalDistribucion").append(totalDistribucion);
         // detalle
         this.tb_prdXFact = $('#tb_detalle_distribucion').DataTable({
             data: distr.detalleFactura,
@@ -901,6 +926,8 @@ class Distribucion {
                     title: "ESTADO",
                     data: "idEstadoComprobante",
                     render: function ( data, type, row, meta ) {
+                        if(row['claveNC']!=null)
+                            data = row['idEstadoNC'];
                         if(row['tipoBodega']!='Interna')
                             switch (data) {
                                 case "1":
@@ -942,31 +969,36 @@ class Distribucion {
                     render: function ( data, type, row, meta ) {
                         if(row['tipoBodega']!='Interna')
                             if(data==null)
-                                switch (row['idEstadoComprobante']) {
-                                    case "1":
-                                        return '<button class=btnEnviarFactura>&nbsp Enviar</button>'; // Sin enviar // No se envio en el momento, no salio del sistema local No llego a MH //Envio en Contingencia
-                                        break;
-                                    case "2":
-                                        return '<i class="fa fa-check-square-o">&nbsp Enviada</i>'; // Enviado //Quitar Boton y que diga enviado
-                                        break;
-                                    case "3":
-                                        return '<button class=btnCancelaFactura>&nbsp Cancelar Factura</button>'; // Aceptado  //Solo cancelar // NC 
-                                        break;
-                                    case "4":
-                                        return '<button class=btnNC_CreateFact_Ref>&nbsp Cancelar & Reenviar</button>'; // Rechazado //NC //Nueva con referencia Confeccion de Factura  // BTNCancelar y enviar
-                                        break;
-                                    case "5":
-                                        return '<i class="fa fa-cloud-upload" aria-hidden="true">&nbsp Enviar Contingencia</i>'; // Error (Otros) //Envio en Contingencia
-                                        break;
-                                    default:
-                                        return '<button>Soporte</button>';
-                                        break;
-                                }     
-                                else
-                                    return '<i class="fa fa-check-square-o" aria-hidden="true" style="color:green">Factura Cancelada!</i>';
+                                    switch (row['idEstadoComprobante']) {
+                                        case "1":
+                                            return '<button class=btnEnviarFactura>&nbsp Enviar</button>'; // Sin enviar // No se envio en el momento, no salio del sistema local No llego a MH //Envio en Contingencia
+                                            break;
+                                        case "2":
+                                            return '<i class="fa fa-check-square-o">&nbsp Enviada</i>'; // Enviado //Quitar Boton y que diga enviado
+                                            break;idEstadoNC
+                                        case "3":
+                                            return '<button class=btnCancelaFactura>&nbsp Cancelar Factura</button>'; // Aceptado  //Solo cancelar // NC 
+                                            break;
+                                        case "4":
+                                            return '<button class=btnNC_CreateFact_Ref>&nbsp Cancelar & Reenviar</button>'; // Rechazado //NC //Nueva con referencia Confeccion de Factura  // BTNCancelar y enviar
+                                            break;
+                                        case "5":
+                                            return '<i class="fa fa-cloud-upload" aria-hidden="true">&nbsp Enviar Contingencia</i>'; // Error (Otros) //Envio en Contingencia
+                                            break;
+                                        default:
+                                            return '<button>Soporte</button>';
+                                            break;
+                                    }                                                              
+                            else
+                                return '<i class="fa fa-check-square-o" aria-hidden="true" style="color:green">Factura Cancelada por NC!</i>';
                         else
                             return '<i class="fa fa-check-square-o" aria-hidden="true" style="color:green"> Interna</i>'
                     }
+                },
+                {
+                    title: "ESTADO NC",
+                    data: "idEstadoNC",
+                    visible: false
                 }
             ]
         });
