@@ -449,7 +449,7 @@ class Distribucion {
                 }
             ]
         });
-        distr.ReadRespuestaRachazo(data.id, data.idEstadoComprobante);
+        distr.ReadRespuestaRachazo(data.id, data.idEstadoComprobante, data.idEstadoNC);
         $('#modalDistribucion').modal('toggle');
 
     }
@@ -1019,11 +1019,14 @@ class Distribucion {
             });
     };
 
-    ReadRespuestaRachazo(idFactura, idEstadoComprobante){
+    ReadRespuestaRachazo(idFactura, idEstadoComprobante, idEstadoNC){
         var resultado="";
         // var referenciaCircular = inventarioFacturas.tb_facturas;
         // inventarioFacturas.tb_facturas = [];
-        if(idEstadoComprobante == 3)
+        var estadoComprobante = parseInt(idEstadoComprobante);
+        var estadoNC = parseInt(idEstadoNC);
+
+        if(estadoComprobante <= 3 || estadoNC <=3)
             return false;
         else
             $.ajax({
