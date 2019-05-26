@@ -480,9 +480,9 @@
 
     <!-- JS Scripts -->
     <script src="assets/js/OrdenSalida.min.js"></script>
-    <script src="assets/js/ElaborarProducto.min.js"></script>
+    <script src="assets/js/ElaborarProducto.js"></script>
     <script src="assets/js/Insumo.min.js"></script>
-    <script src="assets/js/Producto.min.js"></script>
+    <script src="assets/js/Producto.js"></script>
     <script src="assets/js/Usuario.min.js"></script>
     <!-- Sweet Alert -->
     <script src="assets/js/sweetalert2.min.js"></script>
@@ -526,9 +526,9 @@
         producto.Init();
     });
     $(document).on('click', '#btnSaveProductoGenerado', function (event) {
-        producto.id = null;
-        producto.Read;
-        producto.Init();
+        // producto.id = null;
+        // producto.Read;
+        elaborarProducto.Init();
     });
     $(document).on('click', '#btnAddUsuarioRecibe', function (event) {
         usuario.id = null;
