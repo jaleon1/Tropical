@@ -303,7 +303,7 @@ class Factura{
     function ReadRespuestaRachazo(){
         try {
             $sql='SELECT respuesta FROM historicoComprobante hc
-            WHERE idFactura= :idFactura AND idEstadoComprobante>=4'; 
+            WHERE idFactura= :idFactura AND idEstadoComprobante>=4 order by fecha desc limit 1'; 
             $param= array(':idFactura'=>$this->id);
             $data = DATA::Ejecutar($sql,$param);
             return $data;

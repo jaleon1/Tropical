@@ -447,14 +447,9 @@ class Distribucion {
                         return '¢' + parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                     }
                 }
-                // ,
-                // {
-                //     title: "SUBTOTAL",
-                //     data: "subtotal"
-                // }
             ]
         });
-        distr.ReadRespuestaRachazo(data.id);
+        distr.ReadRespuestaRachazo(data.id, data.idEstadoComprobante);
         $('#modalDistribucion').modal('toggle');
 
     }
@@ -1024,24 +1019,27 @@ class Distribucion {
             });
     };
 
-    ReadRespuestaRachazo(idFactura){
+    ReadRespuestaRachazo(idFactura, idEstadoComprobante){
         var resultado="";
         // var referenciaCircular = inventarioFacturas.tb_facturas;
         // inventarioFacturas.tb_facturas = [];
-        $.ajax({
-            type: "POST",
-            url: "class/Factura.php",
-            data: {
-                action: "ReadRespuestaRachazo",
-                id: idFactura
-            }
-        })
+        if(idEstadoComprobante == 3)
+            return false;
+        else
+            $.ajax({
+                type: "POST",
+                url: "class/Factura.php",
+                data: {
+                    action: "ReadRespuestaRachazo",
+                    id: idFactura
+                }
+            })
             .done(function (e) {
                 // inventarioFacturas.tb_facturas = referenciaCircular; 
                 if (e!=" []") {
                     resultado = JSON.parse(e);             
                     $("#mensajeRechazo").text("");
-                    $("#mensajeRechazo").append('</br><label class="control-label">FACTURA RECHAZADA - Respuesta Ministerio de Hacienda</label></br>');
+                    // $("#mensajeRechazo").append('</br><label class="control-label">FACTURA RECHAZADA - Respuesta Ministerio de Hacienda</label></br>');
                     $("#mensajeRechazo").append(resultado[0].respuesta);     
                 } 
             });
