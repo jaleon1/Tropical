@@ -219,9 +219,11 @@ class Consumible {
             confirmButtonClass: 'btn btn-success',
             cancelButtonClass: 'btn btn-danger'
         }).then((result) => {
-            t8.row( $(e).parents('tr') )
-                .remove()
-                .draw();
+            if (result.value) {
+                t8.row( $(e).parents('tr') )
+                    .remove()
+                    .draw();
+            }
         })
     };
 
@@ -240,9 +242,11 @@ class Consumible {
             confirmButtonClass: 'btn btn-success',
             cancelButtonClass: 'btn btn-danger'
         }).then((result) => {
-            t12.row( $(e).parents('tr') )
-                .remove()
-                .draw();
+            if (result.value) {
+                t12.row( $(e).parents('tr') )
+                    .remove()
+                    .draw();
+            }
         })
     };
 
