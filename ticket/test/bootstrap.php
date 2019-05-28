@@ -1,6 +1,6 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 0);
+//error_reporting(E_ALL);
+//ini_set('display_errors', 0);
 
 $composer_autoload = __DIR__ . "/../vendor/autoload.php";
 $standalone_autoload = __DIR__ . "/../autoload.php";
