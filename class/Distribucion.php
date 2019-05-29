@@ -98,6 +98,8 @@ class Distribucion{
     public $razon = null;
     public $consecutivo = null;
     public $clave='';
+    public $claveNC='';
+    public $idReferencia='';
 
     function __construct(){
         // identificador único
@@ -395,12 +397,11 @@ class Distribucion{
             //     FROM     distribucion       
             //     ORDER BY fecha asc';
             $sql= 'SELECT d.id, fecha, orden, u.userName, b.nombre as bodega, e.nombre as estado, 
-                    totalImpuesto, TotalComprobante, idEstadoComprobante
+                    totalImpuesto, TotalComprobante, idEstadoComprobante, d.clave, d.claveNC, d.idReferencia
                 FROM tropical.distribucion d
                     INNER JOIN usuario u on u.id=d.idUsuario
                     INNER JOIN bodega b on b.id=d.idBodega
                     INNER JOIN estado e on e.id=d.idEstado
-                    
                 GROUP BY orden
                 ORDER BY fecha desc';
             $data= DATA::Ejecutar($sql);
@@ -422,7 +423,7 @@ class Distribucion{
             //     FROM     distribucion       
             //     ORDER BY fecha asc';
             $sql= 'SELECT d.id, fecha, orden, u.userName, b.nombre as bodega, e.nombre as estado, d.idEstadocomprobante, d.claveNC,
-                    totalImpuesto, totalComprobante, idEstadoComprobante, t.nombre as tipoBodega
+                    totalImpuesto, totalComprobante, idEstadoComprobante, t.nombre as tipoBodega, d.idEstadoNC
                 FROM tropical.distribucion d
                     INNER JOIN usuario u on u.id=d.idUsuario
                     INNER JOIN bodega b on b.id=d.idBodega
@@ -481,10 +482,10 @@ class Distribucion{
 
     function Read(){
         try {
-            $sql='SELECT d.id, d.fecha, d.idEmisor, d.idReceptor, d.orden, clave, d.consecutivoFE, d.fechaEmision, d.idUsuario, d.idBodega, b.nombre as bodega, 
+            $sql='SELECT d.id, d.fecha, d.idEmisor, d.idReceptor, d.orden, d.clave, d.consecutivoFE, d.fechaEmision, d.idUsuario, d.idBodega, b.nombre as bodega, 
                 d.porcentajeDescuento, d.porcentajeIva,  d.totalImpuesto, d.totalComprobante, d.idSituacionComprobante, d.idDocumento, d.idEstadoComprobante,
                 totalServGravados, totalServExentos, totalMercanciasGravadas, totalMercanciasExentas, totalGravado, totalExento,
-                totalVenta, totalDescuentos, totalVentaneta, d.clave
+                totalVenta, totalDescuentos, totalVentaneta, d.claveNC, d.idReferencia, d.idEstadoNC
                 FROM distribucion d
                 INNER JOIN bodega b on b.id=d.idBodega
                 where d.id=:id';
@@ -494,7 +495,6 @@ class Distribucion{
                 $this->id = $data[0]['id'];
                 $this->fecha = $data[0]['fecha'];
                 $this->orden = $data[0]['orden'];
-                $this->clave = $data[0]['clave'];
                 $this->consecutivoFE = $data[0]['consecutivoFE'] ?? null;
                 $this->fechaEmision = $data[0]['fechaEmision'] ?? null;
                 $this->idUsuario = $data[0]['idUsuario'];
@@ -519,6 +519,8 @@ class Distribucion{
                 $this->totalDescuentos = $data[0]['totalDescuentos'];
                 $this->totalVentaneta = $data[0]['totalVentaneta'];
                 $this->clave = $data[0]['clave'];
+                $this->claveNC = $data[0]['claveNC'];
+                $this->idReferencia = $data[0]['idReferencia'];
                 // productos x distribucion.
                 $this->detalleFactura= ProductosXDistribucion::Read($this->id);
                 //

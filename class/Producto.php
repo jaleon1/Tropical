@@ -422,12 +422,14 @@ class Producto{
 
     function ReadAllbyRange(){
         try {
-            $sql='SELECT i.id,            
-            COALESCE(
-              o.orden, 
-              CONCAT("Orden: ", s.numeroOrden),
-              CONCAT("Revierte Traslado: ",dE.orden)
-            ) as idOrdenEntrada,
+            $sql='SELECT i.id,
+            IFNULL(
+                COALESCE(
+                o.orden, 
+                CONCAT("Orden: ", s.numeroOrden),
+                CONCAT("Revierte Traslado: ",dE.orden)
+                ),
+                i.idOrdenEntrada) as idOrdenEntrada,
             COALESCE(CONCAT("Traslado: ", d.orden), CONCAT("Merma:", m.consecutivo), CONCAT("Ord Cancel:", os.numeroOrden)) as idOrdenSalida,            
             p.codigo AS producto,
             entrada,

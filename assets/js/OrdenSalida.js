@@ -145,8 +145,8 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
                     // ordenSalida.showError(e);
                 })
                 .always(function () {
-                    ordenSalida = new OrdenSalida();
-                    ordenSalida.Read;
+                    // ordenSalida = new OrdenSalida();
+                    ordenSalida.CargaOrdenProduccionRango();
                 });    
         }
         else{
@@ -187,8 +187,8 @@ constructor(id, fecha, numeroOrden, idUsuarioEntrega, idUsuarioRecibe, fechaLiqu
                     ordenSalida.showError(e);
                 })
                 .always(function () {
-                    ordenSalida = new OrdenSalida();
-                    ordenSalida.Read;
+                    // ordenSalida = new OrdenSalida();
+                    ordenSalida.CargaOrdenProduccionRango();
                 });
         }
     }

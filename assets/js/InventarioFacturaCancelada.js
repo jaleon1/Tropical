@@ -84,7 +84,7 @@ class InventarioFacturaCancelada {
                 }
             },
             data: facturas,                               
-            order: [[2, "desc"]],
+            order: [[1, "desc"]],
             columns: [
                 {
                     title: "ID FACTURA",
@@ -228,46 +228,82 @@ class InventarioFacturaCancelada {
         });
     };
 
-    ReadbyID(id) {
+    ReadbyID(data) {
         $("#detalleFac").empty();
-        var detalleFac =
+        var detalleFac=null;
+        if (data.idReferencia != '1') {
+            detalleFac =
             `<button type="button" class="close" data-dismiss="modal">
                 <span aria-hidden="true">x</span>
             </button>
-            <h4 class="modal-title">Factura #</h4>
-            <h4 class="modal-title" id="consecutivo">${id.consecutivo}.</h4>
+            <h4 class="modal-title">Factura Cancelada #</h4>
+            <h4 class="modal-title" id="consecutivo">${data.consecutivo}.</h4>
             <div class="row">
                 <div class="col-md-6 col-sm-6 col-xs-6">
                     <label>Fecha:</label>
-                    <label id='fecha'>${id.fechaCreacion}</label>
+                    <label id='fecha'>${data.fechaCreacion}</label>
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-6 col-sm-6 col-xs-6">
                     <label>Cajero:</label>
-                    <label id='cajero'>${id.vendedor}</label>
+                    <label id='cajero'>${data.vendedor}</label>
                 </div>
                 <div class="col-md-6 col-sm-6 col-xs-6">
                     <label>Bodega:</label>
-                    <label id='bodega'>${id.bodega}</label>
+                    <label id='bodega'>${data.bodega}</label>
                 </div>
-            </div>`;
+            </div>
+            <div class="row">
+                <div class="col-md-6 col-sm-6 col-xs-6">
+                    <label>Clave Factura NC:</label>
+                    <label id='claveNC'>${data.claveNC}</label>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-6">
+                    <label>Referencia Factura:</label>
+                    </br><label id='idReferencia'>${data.idReferencia}</label>
+                </div>
+            </div>`; 
+        }
+        else{
+            detalleFac =
+            `<button type="button" class="close" data-dismiss="modal">
+                <span aria-hidden="true">x</span>
+            </button>
+            <h4 class="modal-title">Factura Cancelada #</h4>
+            <h4 class="modal-title" id="consecutivo">${data.consecutivo}.</h4>
+            <div class="row">
+                <div class="col-md-6 col-sm-6 col-xs-6">
+                    <label>Fecha:</label>
+                    <label id='fecha'>${data.fechaCreacion}</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 col-sm-6 col-xs-6">
+                    <label>Cajero:</label>
+                    <label id='cajero'>${data.vendedor}</label>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-6">
+                    <label>Bodega:</label>
+                    <label id='bodega'>${data.bodega}</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 col-sm-6 col-xs-6">
+                    <label>Clave Factura NC:</label>
+                    <label id='claveNC'>${data.claveNC}</label>
+                </div>
+            </div>`;             
+        }
         $("#detalleFac").append(detalleFac);
-
-
         $("#totalFact").empty();
-
-        // var totalFact =
-        //     `<h4>Total: ¢${Math.round(id.totalVenta)}</h4>`;
-        // $("#totalFact").append(totalFact);
-
 
         $.ajax({
             type: "POST",
             url: "class/productoXFactura.php",
             data: {
                 action: "ReadByIdFactura",
-                id: id.id
+                id: data.id
             }
         })
             .done(function (e) {
@@ -388,105 +424,4 @@ $('#tb_facturasCanceladas tbody').on('click', 'td', function () {
     localStorage.setItem("lsDif","0");
     localStorage.setItem("lsReimpresion","OK");
 });
-
-// $('#tb_facturasCanceladas tbody').on( 'click', 'button', function () {
-//     var data = inventarioFacturaCancelada.tb_facturasCanceladas.row( $(this).parents('tr') ).data();
-//     var id = data['id'];
-//     var numeroFactura = data['consecutivo'];
-//     var fecha = data['fechaCreacion'];
-//     var almacen = data['bodega'];
-//     var vendedor = data['vendedor'];
-//     var total = '¢'+ parseFloat(data['totalComprobante']).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-//     var est = data['idEstadoComprobante'];
-    
-//     var estado ='';
-//     switch (est) {
-//         case "1": estado="Sin Enviar"; 
-//         break;
-//         case "4": estado="Rechazada";
-//         break;
-//         case "5": estado="Otro";
-//         break; 
-//     }
-//     var object = [id, numeroFactura, fecha, almacen, vendedor, total, estado];
-//     $.ajax({
-//         type: "POST",
-//         url: "class/Factura.php",
-//         data: {
-//             action: "mailSoporte",
-//             facturaMailSoporte: object
-//         }
-//     })
-//     .done(function (e) {
-//         var start = moment().subtract(29, 'days');
-//         var end = moment();
-
-//         function cb(start, end) {
-//             $('#dp_rangoListaFacturas span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
-//         }
-
-//         $('#dp_rangoListaFacturas').daterangepicker({
-//             "opens": "left",
-//             "locale": {
-//                 "format": "DD/MM/YYYY",
-//                 "separator": " - ",
-//                 "applyLabel": "Aplicar",
-//                 "cancelLabel": "Cancelar",
-//                 "fromLabel": "From",
-//                 "toLabel": "To",
-//                 "customRangeLabel": "Manual",
-//                 "daysOfWeek": [
-//                     "DO",
-//                     "Lu",
-//                     "Ma",
-//                     "Mi",
-//                     "Ju",
-//                     "Vi",
-//                     "Sa"
-//                 ],
-//                 "monthNames": [
-//                     "Enero",
-//                     "Febrero",
-//                     "Marzo",
-//                     "Abril",
-//                     "Mayo",
-//                     "Junio",
-//                     "Julio",
-//                     "Agosto",
-//                     "Setiembre",
-//                     "Octubre",
-//                     "Noviembre",
-//                     "Diciembre"
-//                 ],
-//                 "firstDay": 1
-//             },
-//             startDate: start,
-//             endDate: end,
-//             ranges: {
-//                 'Hoy': [moment(), moment()],
-//                 'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-//                 'Ultimos 7 Días': [moment().subtract(6, 'days'), moment()],
-//                 'Ultimos 30 Días': [moment().subtract(29, 'days'), moment()],
-//                 'Este Mes': [moment().startOf('month'), moment().endOf('month')],
-//                 'Ultimo Mes': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-//             }
-//         }, cb);
-
-//         cb(start, end);
-
-//         inventarioFacturaCancelada.fechaInicial = start.format('YYYY-MM-DD') + ' 00:00';
-//         inventarioFacturaCancelada.fechaFinal = end.format('YYYY-MM-DD') + ' 23:59:59:59';
-//         inventarioFacturaCancelada.CargaListaFacturasRango();
-
-//         swal({
-//             type: 'success',
-//             title: 'La factura con problemas fue notificada a SOPORTE!',
-//             showConfirmButton: false,
-//             timer: 2000
-//         });
-//     })
-//     .always(function () {
-        
-//     });
-// });
 
