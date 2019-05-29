@@ -210,7 +210,8 @@ class Invoice{
             // $InvoicePrinter->Output($path_pdf, 'I'); //Con esta funcion imprime el archivo en otra ubicacion
             $InvoicePrinter->render($path_pdf,'F'); /* I => Display on browser, D => Force Download, F => local path save, S => return document path */            
             // set mail.
-            $mail = new Send_Mail();            
+            $mail = new Send_Mail();                        
+            $mail->email_array_address_to = [];
             $mail->email_array_address_to = self::$email_array_address_to;
             $mail->email_subject = $email_subject; //"TropicalSNO Factura Electrónica"
             

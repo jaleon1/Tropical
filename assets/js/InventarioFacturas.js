@@ -13,28 +13,28 @@ class InventarioFacturas {
 
     CargaFacturas() {
         $.ajax({
-            beforeSend: function() {  $("body").addClass("loading"); },
+            beforeSend: function () { $("body").addClass("loading"); },
             type: "POST",
             url: "class/Factura.php",
             data: {
                 action: "ReadAllbyRange",
                 obj: JSON.stringify(inventarioFacturas)
             },
-            complete: function() {  $("body").removeClass("loading"); }
+            complete: function () { $("body").removeClass("loading"); }
         })
             .done(function (e) {
-//                 if(JSON.parse(e).msg=='NOCONTRIB'){
-//                 swal({
-//                     type: 'warning',
-//                     title: 'Contribuyente',
-//                     text: 'Contribuyente no registrado para Facturación Electrónica',
-//                     footer: '<a href="clienteFE.html">Agregar Contribuyente</a>',
-//                     }).then((result) => {
-//                         if (result.value) 
-//                             location.href = "Dashboard.html";
-//                     })                
-//                 }
-//                 else 
+                //                 if(JSON.parse(e).msg=='NOCONTRIB'){
+                //                 swal({
+                //                     type: 'warning',
+                //                     title: 'Contribuyente',
+                //                     text: 'Contribuyente no registrado para Facturación Electrónica',
+                //                     footer: '<a href="clienteFE.html">Agregar Contribuyente</a>',
+                //                     }).then((result) => {
+                //                         if (result.value) 
+                //                             location.href = "Dashboard.html";
+                //                     })                
+                //                 }
+                //                 else 
                 inventarioFacturas.drawFac(e)
             });
     };
@@ -48,16 +48,16 @@ class InventarioFacturas {
             }
         })
             .done(function (e) {
-                if(JSON.parse(e).msg=='NOCONTRIB'){
-                swal({
-                    type: 'warning',
-                    title: 'Contribuyente',
-                    text: 'Contribuyente no registrado para Facturación Electrónica',
-                    footer: '<a href="clienteFE.html">Agregar Contribuyente</a>',
+                if (JSON.parse(e).msg == 'NOCONTRIB') {
+                    swal({
+                        type: 'warning',
+                        title: 'Contribuyente',
+                        text: 'Contribuyente no registrado para Facturación Electrónica',
+                        footer: '<a href="clienteFE.html">Agregar Contribuyente</a>',
                     }).then((result) => {
-                        if (result.value) 
+                        if (result.value)
                             location.href = "Dashboard.html";
-                    })                
+                    })
                 }
                 else inventarioFacturas.drawFacUser(e)
             });
@@ -73,15 +73,15 @@ class InventarioFacturas {
                 {
                     extend: 'excelHtml5',
                     footer: true,
-                    exportOptions: {columns: [ 1, 2, 3, 4, 5, 6]},
-                    messageTop:'Lista de facturas'
+                    exportOptions: { columns: [1, 2, 3, 4, 5, 6] },
+                    messageTop: 'Lista de facturas'
                 },
                 {
                     extend: 'pdfHtml5',
                     footer: true,
-                    messageTop:'Lista de facturas',
+                    messageTop: 'Lista de facturas',
                     exportOptions: {
-                        columns: [ 1, 2, 3, 4, 5, 6]
+                        columns: [1, 2, 3, 4, 5, 6]
                     }
                 }
             ],
@@ -98,7 +98,7 @@ class InventarioFacturas {
                     "previous": "Anterior"
                 }
             },
-            data: facturas,                               
+            data: facturas,
             order: [[2, "desc"]],
             columns: [
                 {
@@ -125,36 +125,36 @@ class InventarioFacturas {
                 {
                     title: "TOTAL",
                     data: "totalComprobante",
-                    mRender: function ( e ) {
-                        return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                    mRender: function (e) {
+                        return '¢' + parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                     }
                 },
                 {
                     title: "MONTO EFECTIVO",
                     data: "montoEfectivo",
                     visible: false,
-                    mRender: function ( e ) {
-                        if (e==null) 
-                            return '¢0'; 
+                    mRender: function (e) {
+                        if (e == null)
+                            return '¢0';
                         else
-                            return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                            return '¢' + parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                     }
                 },
                 {
                     title: "MONTO TARJETA",
                     data: "montoTarjeta",
                     visible: false,
-                    mRender: function ( e ) {
-                        if (e==null) 
-                            return '¢0'; 
+                    mRender: function (e) {
+                        if (e == null)
+                            return '¢0';
                         else
-                            return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                            return '¢' + parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                     }
                 },
                 {
                     title: "ESTADO",
                     data: "idEstadoComprobante",
-                    mRender: function ( e ) {
+                    mRender: function (e) {
                         switch (e) {
                             case "1":
                                 return '<i class="fa fa-paper-plane" aria-hidden="true" style="color:red"> Sin Enviar</i>';
@@ -197,8 +197,8 @@ class InventarioFacturas {
                     title: "ACCION",
                     className: "buttons",
                     data: "claveNC",
-                    render: function ( data, type, row, meta ) {
-                        if(data==null)
+                    render: function (data, type, row, meta) {
+                        if (data == null)
                             switch (row['idEstadoComprobante']) {
                                 case "1":
                                     return '<button class=btnEnviarFactura>&nbsp Enviar</button>'; // Sin enviar // No se envio en el momento, no salio del sistema local No llego a MH //Envio en Contingencia
@@ -218,27 +218,27 @@ class InventarioFacturas {
                                 default:
                                     return '<button>Soporte</button>';
                                     break;
-                            }    
-                            else
-                                return '<i class="fa fa-check-square-o" aria-hidden="true" style="color:green">&nbsp Factura Cancelada!</i>';
+                            }
+                        else
+                            return '<i class="fa fa-check-square-o" aria-hidden="true" style="color:green">&nbsp Factura Cancelada!</i>';
                     }
                 }
             ],
-            footerCallback: function ( row, data, start, end, display ) {
+            footerCallback: function (row, data, start, end, display) {
                 var api = this.api();
                 // Remueve el formato de la columna
-                var intVal = function ( i ) {
+                var intVal = function (i) {
                     return typeof i === 'string' ?
                         parseFloat(i.replace(/[\¢,]/g, '')) :
                         typeof i === 'number' ?
-                        i : 0;
+                            i : 0;
                 };
                 // Total de todas las paginas filtradas
-                var subTotal = display.map(el => data[el]['totalComprobante']).reduce((a, b) => intVal(a) + intVal(b), 0 );
-                
+                var subTotal = display.map(el => data[el]['totalComprobante']).reduce((a, b) => intVal(a) + intVal(b), 0);
+
                 // Actualiza el footer
-                $( api.column( 1 ).footer() ).html("TOTALES");
-                $( api.column( 5 ).footer() ).html('¢' + parseFloat(Number(subTotal)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+                $(api.column(1).footer()).html("TOTALES");
+                $(api.column(5).footer()).html('¢' + parseFloat(Number(subTotal)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
             }
         });
     };
@@ -253,15 +253,15 @@ class InventarioFacturas {
                 {
                     extend: 'excelHtml5',
                     footer: true,
-                    exportOptions: {columns: [ 1, 2, 3, 4, 5, 6]},
-                    messageTop:'Lista de facturas'
+                    exportOptions: { columns: [1, 2, 3, 4, 5, 6] },
+                    messageTop: 'Lista de facturas'
                 },
                 {
                     extend: 'pdfHtml5',
                     footer: true,
-                    messageTop:'Lista de facturas',
+                    messageTop: 'Lista de facturas',
                     exportOptions: {
-                        columns: [ 1, 2, 3, 4, 5, 6]
+                        columns: [1, 2, 3, 4, 5, 6]
                     }
                 }
             ],
@@ -278,7 +278,7 @@ class InventarioFacturas {
                     "previous": "Anterior"
                 }
             },
-            data: facturas,                               
+            data: facturas,
             order: [[1, "desc"]],
             columns: [
                 {
@@ -305,36 +305,36 @@ class InventarioFacturas {
                 {
                     title: "TOTAL",
                     data: "totalComprobante",
-                    mRender: function ( e ) {
-                        return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                    mRender: function (e) {
+                        return '¢' + parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                     }
                 },
                 {
                     title: "MONTO EFECTIVO",
                     data: "montoEfectivo",
                     visible: false,
-                    mRender: function ( e ) {
-                        if (e==null) 
-                            return '¢0'; 
+                    mRender: function (e) {
+                        if (e == null)
+                            return '¢0';
                         else
-                            return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                            return '¢' + parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                     }
                 },
                 {
                     title: "MONTO TARJETA",
                     data: "montoTarjeta",
                     visible: false,
-                    mRender: function ( e ) {
-                        if (e==null) 
-                            return '¢0'; 
+                    mRender: function (e) {
+                        if (e == null)
+                            return '¢0';
                         else
-                            return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                            return '¢' + parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                     }
                 },
                 {
                     title: "ESTADO",
                     data: "idEstadoComprobante",
-                    mRender: function ( e ) {
+                    mRender: function (e) {
                         switch (e) {
                             case "1":
                                 return '<i class="fa fa-paper-plane" aria-hidden="true" style="color:red"> Sin Enviar</i>';
@@ -377,8 +377,8 @@ class InventarioFacturas {
                     title: "ACCION",
                     className: "buttons",
                     data: "claveNC",
-                    render: function ( data, type, row, meta ) {
-                        if(data==null)
+                    render: function (data, type, row, meta) {
+                        if (data == null)
                             switch (row['idEstadoComprobante']) {
                                 case "1":
                                     return '<button class=btnEnviarFactura>&nbsp Enviar</button>'; // Sin enviar // No se envio en el momento, no salio del sistema local No llego a MH //Envio en Contingencia
@@ -398,27 +398,27 @@ class InventarioFacturas {
                                 default:
                                     return '<button>Soporte</button>';
                                     break;
-                            }    
-                            else
-                                return '<i class="fa fa-check-square-o" aria-hidden="true" style="color:green">&nbsp Factura Cancelada!</i>';
+                            }
+                        else
+                            return '<i class="fa fa-check-square-o" aria-hidden="true" style="color:green">&nbsp Factura Cancelada!</i>';
                     }
                 }
             ],
-            footerCallback: function ( row, data, start, end, display ) {
+            footerCallback: function (row, data, start, end, display) {
                 var api = this.api();
                 // Remueve el formato de la columna
-                var intVal = function ( i ) {
+                var intVal = function (i) {
                     return typeof i === 'string' ?
                         parseFloat(i.replace(/[\¢,]/g, '')) :
                         typeof i === 'number' ?
-                        i : 0;
+                            i : 0;
                 };
                 // Total de todas las paginas filtradas
-                var subTotal = display.map(el => data[el]['totalComprobante']).reduce((a, b) => intVal(a) + intVal(b), 0 );
-                
+                var subTotal = display.map(el => data[el]['totalComprobante']).reduce((a, b) => intVal(a) + intVal(b), 0);
+
                 // Actualiza el footer
-                $( api.column( 1 ).footer() ).html("TOTALES");
-                $( api.column( 5 ).footer() ).html('¢' + parseFloat(Number(subTotal)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+                $(api.column(1).footer()).html("TOTALES");
+                $(api.column(5).footer()).html('¢' + parseFloat(Number(subTotal)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
             }
         });
     };
@@ -433,15 +433,15 @@ class InventarioFacturas {
                 {
                     extend: 'excelHtml5',
                     footer: true,
-                    exportOptions: {columns: [ 1, 2, 3, 4, 5, 6]},
-                    messageTop:'Lista de facturas'
+                    exportOptions: { columns: [1, 2, 3, 4, 5, 6] },
+                    messageTop: 'Lista de facturas'
                 },
                 {
                     extend: 'pdfHtml5',
                     footer: true,
-                    messageTop:'Lista de facturas',
+                    messageTop: 'Lista de facturas',
                     exportOptions: {
-                        columns: [ 1, 2, 3, 4, 5, 6]
+                        columns: [1, 2, 3, 4, 5, 6]
                     }
                 }
             ],
@@ -458,7 +458,7 @@ class InventarioFacturas {
                     "previous": "Anterior"
                 }
             },
-            data: facturas,                               
+            data: facturas,
             order: [[1, "desc"]],
             columns: [
                 {
@@ -485,36 +485,36 @@ class InventarioFacturas {
                 {
                     title: "TOTAL",
                     data: "totalComprobante",
-                    mRender: function ( e ) {
-                        return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                    mRender: function (e) {
+                        return '¢' + parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                     }
                 },
                 {
                     title: "MONTO EFECTIVO",
                     data: "montoEfectivo",
                     visible: false,
-                    mRender: function ( e ) {
-                        if (e==null) 
-                            return '¢0'; 
+                    mRender: function (e) {
+                        if (e == null)
+                            return '¢0';
                         else
-                            return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                            return '¢' + parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                     }
                 },
                 {
                     title: "MONTO TARJETA",
                     data: "montoTarjeta",
                     visible: false,
-                    mRender: function ( e ) {
-                        if (e==null) 
-                            return '¢0'; 
+                    mRender: function (e) {
+                        if (e == null)
+                            return '¢0';
                         else
-                            return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                            return '¢' + parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                     }
                 },
                 {
                     title: "ESTADO",
                     data: "idEstadoComprobante",
-                    mRender: function ( e ) {
+                    mRender: function (e) {
                         switch (e) {
                             case "1":
                                 return '<i class="fa fa-paper-plane" aria-hidden="true" style="color:red"> Sin Enviar</i>';
@@ -545,8 +545,8 @@ class InventarioFacturas {
                     title: "ACCION",
                     className: "buttons",
                     data: "claveNC",
-                    render: function ( data, type, row, meta ) {
-                        if(data==null)
+                    render: function (data, type, row, meta) {
+                        if (data == null)
                             switch (row['idEstadoComprobante']) {
                                 case "1":
                                     return '<button class=btnEnviarFactura>&nbsp Enviar</button>'; // Sin enviar // No se envio en el momento, no salio del sistema local No llego a MH //Envio en Contingencia
@@ -566,27 +566,27 @@ class InventarioFacturas {
                                 default:
                                     return '<button>Soporte</button>';
                                     break;
-                            }    
-                            else
-                                return '<i class="fa fa-check-square-o" aria-hidden="true" style="color:green">&nbsp Factura Cancelada!</i>';
+                            }
+                        else
+                            return '<i class="fa fa-check-square-o" aria-hidden="true" style="color:green">&nbsp Factura Cancelada!</i>';
                     }
                 }
             ],
-            footerCallback: function ( row, data, start, end, display ) {
+            footerCallback: function (row, data, start, end, display) {
                 var api = this.api();
                 // Remueve el formato de la columna
-                var intVal = function ( i ) {
+                var intVal = function (i) {
                     return typeof i === 'string' ?
                         parseFloat(i.replace(/[\¢,]/g, '')) :
                         typeof i === 'number' ?
-                        i : 0;
+                            i : 0;
                 };
                 // Total de todas las paginas filtradas
-                var subTotal = display.map(el => data[el]['totalComprobante']).reduce((a, b) => intVal(a) + intVal(b), 0 );
-                
+                var subTotal = display.map(el => data[el]['totalComprobante']).reduce((a, b) => intVal(a) + intVal(b), 0);
+
                 // Actualiza el footer
-                $( api.column( 1 ).footer() ).html("TOTALES");
-                $( api.column( 5 ).footer() ).html('¢' + parseFloat(Number(subTotal)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+                $(api.column(1).footer()).html("TOTALES");
+                $(api.column(5).footer()).html('¢' + parseFloat(Number(subTotal)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
             }
         });
     };
@@ -634,14 +634,14 @@ class InventarioFacturas {
             }
         })
             .done(function (e) {
-                inventarioFacturas.drawFactDetail(e);  
+                inventarioFacturas.drawFactDetail(e);
             });
-        if (id.idEstadoComprobante=="4")
-            inventarioFacturas.ReadRespuestaRachazo(id.id);  
+        if (id.idEstadoComprobante == "4")
+            inventarioFacturas.ReadRespuestaRachazo(id.id);
     };
 
-    ReadRespuestaRachazo(idFactura){
-        var resultado="";
+    ReadRespuestaRachazo(idFactura) {
+        var resultado = "";
         var referenciaCircular = inventarioFacturas.tb_facturas;
         inventarioFacturas.tb_facturas = [];
         $.ajax({
@@ -653,15 +653,15 @@ class InventarioFacturas {
             }
         })
             .done(function (e) {
-                inventarioFacturas.tb_facturas = referenciaCircular;  
-                resultado = JSON.parse(e);             
+                inventarioFacturas.tb_facturas = referenciaCircular;
+                resultado = JSON.parse(e);
                 $("#mensajeRechazo").text("");
                 $("#mensajeRechazo").append('</br><label class="control-label">FACTURA RECHAZADA - Respuesta Ministerio de Hacienda</label></br>');
-                $("#mensajeRechazo").append(resultado[0].respuesta); 
+                $("#mensajeRechazo").append(resultado[0].respuesta);
             });
-    };     
+    };
 
-    CargaListaFacturasRango(){
+    CargaListaFacturasRango() {
         var referenciaCircular = inventarioFacturas.tb_facturas;
         inventarioFacturas.tb_facturas = [];
         $.ajax({
@@ -673,10 +673,10 @@ class InventarioFacturas {
             }
         })
             .done(function (e) {
-                if (e != " "){
+                if (e != " ") {
                     inventarioFacturas.tb_facturas = referenciaCircular;
                     inventarioFacturas.drawFac(e);
-                }else{
+                } else {
                     swal({
                         type: 'success',
                         title: 'Listo, no hay facturas que cargar!',
@@ -685,11 +685,11 @@ class InventarioFacturas {
                     });
                 }
 
-                 
+
             });
     };
 
-    CargaListaFacturasRangoExternas(){
+    CargaListaFacturasRangoExternas() {
         var referenciaCircular = inventarioFacturas.tb_facturasExternas;
         inventarioFacturas.tb_facturasExternas = [];
         // var referenciaCircular2 = inventarioFacturas.tb_facturas;
@@ -703,11 +703,11 @@ class InventarioFacturas {
             }
         })
             .done(function (e) {
-                if (e != " "){
-                    inventarioFacturas.tb_facturasExternas = referenciaCircular; 
+                if (e != " ") {
+                    inventarioFacturas.tb_facturasExternas = referenciaCircular;
                     // inventarioFacturas.tb_facturas = referenciaCircular2;        
                     inventarioFacturas.drawFacExternas(e);
-                }else{
+                } else {
                     swal({
                         type: 'success',
                         title: 'Listo, no hay facturas que cargar!',
@@ -716,11 +716,11 @@ class InventarioFacturas {
                     });
                 }
 
-                 
+
             });
     };
 
-    CargaListaFacturasRangoUser(){
+    CargaListaFacturasRangoUser() {
         var referenciaCircular = inventarioFacturas.tb_facturas;
         inventarioFacturas.tb_facturas = [];
         $.ajax({
@@ -732,12 +732,12 @@ class InventarioFacturas {
             }
         })
             .done(function (e) {
-                inventarioFacturas.tb_facturas = referenciaCircular;        
-                inventarioFacturas.drawFac(e); 
+                inventarioFacturas.tb_facturas = referenciaCircular;
+                inventarioFacturas.drawFac(e);
             });
     };
 
-    sendContingenciaMasiva(){
+    sendContingenciaMasiva() {
         $.ajax({
             type: "POST",
             url: "class/Factura.php",
@@ -750,7 +750,7 @@ class InventarioFacturas {
             });
     };
 
-    sendContingenciaMasivaExterna(){
+    sendContingenciaMasivaExterna() {
         $.ajax({
             type: "POST",
             url: "class/Distribucion.php",
@@ -763,7 +763,7 @@ class InventarioFacturas {
             });
     };
 
-    sendMasiva(){
+    sendMasiva() {
         $.ajax({
             type: "POST",
             url: "class/Factura.php",
@@ -776,7 +776,7 @@ class InventarioFacturas {
             });
     };
 
-    CargaMisFacturasRango(){
+    CargaMisFacturasRango() {
         var referenciaCircular = inventarioFacturas.tb_facturas;
         inventarioFacturas.tb_facturas = [];
         $.ajax({
@@ -788,10 +788,10 @@ class InventarioFacturas {
             }
         })
             .done(function (e) {
-                if (e != " "){
-                    inventarioFacturas.tb_facturas = referenciaCircular;        
-                    inventarioFacturas.drawFacUser(e); 
-                }else{
+                if (e != " ") {
+                    inventarioFacturas.tb_facturas = referenciaCircular;
+                    inventarioFacturas.drawFacUser(e);
+                } else {
                     swal({
                         type: 'success',
                         title: 'Listo, no hay facturas que cargar!',
@@ -823,15 +823,17 @@ class InventarioFacturas {
                     title: "CANTIDAD",
                     data: "cantidad",
                     type: 'formatted-num',
-                    mRender: function ( e ) {
-                        return parseFloat(e).toFixed(2)}
+                    mRender: function (e) {
+                        return parseFloat(e).toFixed(2)
+                    }
                 },
                 {
                     title: "PRECIO",
                     data: "montoTotalLinea",
                     type: 'formatted-num',
-                    mRender: function ( e ) {
-                        return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                    mRender: function (e) {
+                        return '¢' + parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                    }
                 }
             ]
         });
@@ -842,22 +844,22 @@ class InventarioFacturas {
     };
 
     ticketPrint() {
-        localStorage.setItem("lsFactura",$('#consecutivo').text());
+        localStorage.setItem("lsFactura", $('#consecutivo').text());
         // localStorage.setItem("lsFecha",moment().format("YYYY-MM-DD HH:mm"));
-        localStorage.setItem("lsBodega",$('#bodega').text());
-        localStorage.setItem("lsUsuario",$("#call_username").text());
-        localStorage.setItem("lsListaProducto",JSON.stringify(this.factDetalle));
+        localStorage.setItem("lsBodega", $('#bodega').text());
+        localStorage.setItem("lsUsuario", $("#call_username").text());
+        localStorage.setItem("lsListaProducto", JSON.stringify(this.factDetalle));
         location.href = "/TicketFacturacion.html";
     };
 
-    ticketPrintCancelada(data){
-        localStorage.setItem("lsFactura",data.consecutivo);
-        localStorage.setItem("lsBodega",data.bodega);
-        localStorage.setItem("lsUsuario",$("#call_username").text());
-        localStorage.setItem("lsEfectivo",data.montoEfectivo);
-        localStorage.setItem("lsVuelto",parseFloat(data.montoEfectivo) - parseFloat(data.totalComprobante));
-        localStorage.setItem("lsTotal",data.totalComprobante);
-        localStorage.setItem("lsClave",data.clave);
+    ticketPrintCancelada(data) {
+        localStorage.setItem("lsFactura", data.consecutivo);
+        localStorage.setItem("lsBodega", data.bodega);
+        localStorage.setItem("lsUsuario", $("#call_username").text());
+        localStorage.setItem("lsEfectivo", data.montoEfectivo);
+        localStorage.setItem("lsVuelto", parseFloat(data.montoEfectivo) - parseFloat(data.totalComprobante));
+        localStorage.setItem("lsTotal", data.totalComprobante);
+        localStorage.setItem("lsClave", data.clave);
 
         $.ajax({
             type: "POST",
@@ -869,10 +871,60 @@ class InventarioFacturas {
         })
             .done(function (e) {
                 inventarioFacturas.factDetalle = JSON.parse(e);
-                localStorage.setItem("lsListaProducto",JSON.stringify(inventarioFacturas.factDetalle));
+                localStorage.setItem("lsListaProducto", JSON.stringify(inventarioFacturas.factDetalle));
                 location.href = "/TicketFacturacion.html";
             });
     }
+
+
+    ReadbyID(id) {
+        $("#mensajeRechazo").text("");
+        $("#detalleFac").empty();
+        var detalleFac =
+            `<button type="button" class="close" data-dismiss="modal">
+                <span aria-hidden="true">x</span>
+            </button>
+            <h4 class="modal-title">Factura #</h4>
+            <h4 class="modal-title" id="consecutivo">${id.consecutivo}.</h4>
+            <div class="row">
+                <div class="col-md-6 col-sm-6 col-xs-6">
+                    <label>Fecha:</label>
+                    <label id='fecha'>${id.fechaCreacion}</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 col-sm-6 col-xs-6">
+                    <label>Cajero:</label>
+                    <label id='cajero'>${id.vendedor}</label>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-6">
+                    <label>Bodega:</label>
+                    <label id='bodega'>${id.bodega}</label>
+                </div>
+            </div>`;
+        $("#detalleFac").append(detalleFac);
+
+        $("#totalFact").empty();
+
+        // var totalFact =
+        //     `<h4>Total: ¢${Math.round(id.totalVenta)}</h4>`;
+        // $("#totalFact").append(totalFact);
+        // 
+
+        $.ajax({
+            type: "POST",
+            url: "class/productoXFactura.php",
+            data: {
+                action: "ReadByIdFactura",
+                id: id.id
+            }
+        })
+            .done(function (e) {
+                inventarioFacturas.drawFactDetail(e);
+            });
+        if (id.idEstadoComprobante == "4")
+            inventarioFacturas.ReadRespuestaRachazo(id.id);
+    };
 }
 //Class Instance
 let inventarioFacturas = new InventarioFacturas();
@@ -895,47 +947,61 @@ let inventarioFacturas = new InventarioFacturas();
 //     return respuesta;
 // }; 
 
+
+
+
+
+
+
+
+
+
+
+$('#tb_facturasExternas tbody').on('click', 'td', function () {
+    inventarioFacturas.ReadbyID(inventarioFacturas.tb_facturasExternas.row(this).data());
+});
+
 $('#tb_facturas tbody').on('click', 'td', function () {
-    if (localStorage.getItem("lsPrintFacturaOpcion")!="BTN") {
-        if($(this).parents('tr').find('td:eq(6) i').html()=="&nbsp; Factura Cancelada!")
-            localStorage.setItem("lsPrintFacturaOpcion","CANCEL");
+    if (localStorage.getItem("lsPrintFacturaOpcion") != "BTN") {
+        if ($(this).parents('tr').find('td:eq(6) i').html() == "&nbsp; Factura Cancelada!")
+            localStorage.setItem("lsPrintFacturaOpcion", "CANCEL");
         else
-            localStorage.setItem("lsPrintFacturaOpcion","LIST");
+            localStorage.setItem("lsPrintFacturaOpcion", "LIST");
     }
     if ($.trim(this.textContent) == ("Enviar")
-    // ||$.trim(this.textContent) == ("Enviada")
-    ||$.trim(this.textContent) == ("Cancelar Factura")
-    ||$.trim(this.textContent) == ("Cancelar & Reenviar")
-    // ||$.trim(this.textContent) == ("Enviar Contingencia")
+        // ||$.trim(this.textContent) == ("Enviada")
+        || $.trim(this.textContent) == ("Cancelar Factura")
+        || $.trim(this.textContent) == ("Cancelar & Reenviar")
+        // ||$.trim(this.textContent) == ("Enviar Contingencia")
     )
         return false;
-    
+
     inventarioFacturas.ReadbyID(inventarioFacturas.tb_facturas.row(this).data());
     var dtTable = $('#tb_facturas').DataTable();
-    var efectivo=0;
-    var total=0;
+    var efectivo = 0;
+    var total = 0;
     var fecha;
     efectivo = parseFloat(dtTable.row(this).data()[8]);
     total = parseFloat(dtTable.row(this).data()[11]);
     fecha = dtTable.row(this).data()[3];
-    if (dtTable.cells().data()[5]==null) 
+    if (dtTable.cells().data()[5] == null)
         efectivo = 0;
-    if (dtTable.cells().data()[6]==null) 
+    if (dtTable.cells().data()[6] == null)
         tarjeta = 0;
 
-    if (efectivo=="0"){
-        localStorage.setItem("lsVuelto","0");
-        localStorage.setItem("lsTarjetaCredito",String(total));
+    if (efectivo == "0") {
+        localStorage.setItem("lsVuelto", "0");
+        localStorage.setItem("lsTarjetaCredito", String(total));
     }
-    else{
-        localStorage.setItem("lsVuelto",String(efectivo-total));
-        localStorage.setItem("lsTarjetaCredito","0");
+    else {
+        localStorage.setItem("lsVuelto", String(efectivo - total));
+        localStorage.setItem("lsTarjetaCredito", "0");
     }
-    localStorage.setItem("lsFecha",fecha);
-    localStorage.setItem("lsEfectivo",String(efectivo));
-    localStorage.setItem("lsTotal",String(total));
-    localStorage.setItem("lsDif","0");
-    localStorage.setItem("lsReimpresion","OK");
+    localStorage.setItem("lsFecha", fecha);
+    localStorage.setItem("lsEfectivo", String(efectivo));
+    localStorage.setItem("lsTotal", String(total));
+    localStorage.setItem("lsDif", "0");
+    localStorage.setItem("lsReimpresion", "OK");
 });
 
 // $('#tb_facturas tbody').on( 'click', 'button', function () {
@@ -947,7 +1013,7 @@ $('#tb_facturas tbody').on('click', 'td', function () {
 //     var vendedor = data['vendedor'];
 //     var total = '¢'+ parseFloat(data['totalComprobante']).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 //     var est = data['idEstadoComprobante'];
-    
+
 //     var estado ='';
 //     switch (est) {
 //         case "1": estado="Sin Enviar"; 
@@ -1035,7 +1101,7 @@ $('#tb_facturas tbody').on('click', 'td', function () {
 //         });
 //     })
 //     .always(function () {
-        
+
 //     });
 // });
 

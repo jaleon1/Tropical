@@ -1008,3 +1008,8 @@ class Distribucion {
 
 
 let distr = new Distribucion();
+
+
+$('#tb_facturasExternas tbody').on('click', 'td', function () {
+    inventarioFacturas.ReadbyID(inventarioFacturas.tb_facturas.row(this).data());
+});
