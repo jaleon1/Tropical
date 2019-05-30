@@ -469,6 +469,51 @@
             })
         });
 
+        $('#tDistribucion tbody').on('click', '.btn_ReversarDistribucionInterna', function () {
+            var tDistribucion = $('#tDistribucion').DataTable();
+            var data = tDistribucion.row($(this).parents('tr')).data();
+            swal({
+                title: 'Desea cancelar la distribución? Escriba una razón:',
+                input: 'text',
+                inputAttributes: {
+                    autocapitalize: 'off'
+                },
+                showCancelButton: true,
+                confirmButtonText: 'Si, Cancelar!',
+                showLoaderOnConfirm: true,
+                allowOutsideClick: () => !swal.isLoading()
+            }).then((result) => {
+                if (result.value) {
+                    $.ajax({
+                        type: "POST",
+                        url: "class/Distribucion.php",
+                        data: {
+                            action: "cancelaDistribucionInterna",
+                            id: data['id'],
+                            razon: result.value,
+                        }
+                    })
+                        .done(function (e) {
+                            // CargaListaFactura();
+                            distr.CargaTrasladosRango();
+                            swal({
+                                type: 'success',
+                                title: 'Factura Cancelada!',
+                                showConfirmButton: false,
+                                timer: 2000
+                            });
+                        })
+                        .fail(function (e) { });
+                }
+                else
+                    swal({
+                        type: 'error',
+                        title: 'Error al cancelar',
+                        text: 'Debe de digitar una razón'
+                    })
+            })
+        });
+
         $('#tDistribucion tbody').on('click', '.btnNC_CreateFact_Ref', function () {
             var tDistribucion = $('#tDistribucion').DataTable();
             var data = tDistribucion.row($(this).parents('tr')).data();

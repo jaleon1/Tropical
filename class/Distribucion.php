@@ -66,6 +66,9 @@ if(isset($_POST["action"])){
         case "cancelaDistribucion":
             $distribucion->cancelaDistribucion($_POST['id'], $_POST['razon']);
             break;
+        case "cancelaDistribucionInterna":
+            $distribucion->cancelaDistribucionInterna($_POST['id'], $_POST['razon']);
+            break;
         case "sendContingenciaMasiva":
             $distribucion->sendContingenciaMasiva();
             break;
@@ -96,6 +99,8 @@ class Distribucion{
     public $razon = null;
     public $consecutivo = null;
     public $clave='';
+    public $claveNC='';
+    public $idReferencia='';
 
     function __construct(){
         // identificador único
@@ -319,6 +324,39 @@ class Distribucion{
         }
     }
 
+    public function cancelaDistribucionInterna($idDistribucion, $razon){
+        try {  
+            //Master
+            $sql="SELECT orden, idEstado, idBodega
+                FROM distribucion
+                WHERE id =:id;";
+            $param= array(':id'=>$idDistribucion);
+            $data = DATA::Ejecutar($sql,$param);  
+            
+            $this->razon = $razon;
+            $this->id = $idDistribucion; 
+            $this->orden = $data[0]["orden"];
+            $this->idBodega = $data[0]["idBodega"];
+
+            if($data[0]["idEstado"] == 1){
+                if ($this->rollbackDistribucion() ){
+                    $sql="UPDATE distribucion
+                        SET idEstado=4
+                        WHERE id=:id";
+                    $param= array(':id'=> $this->id);
+                    $data = DATA::Ejecutar($sql,$param,false);
+                }
+            }
+        }     
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }
+    }
+    
     function rollbackDistribucion(){
         $sql="SELECT pd.idProducto, pd.cantidad, p.costoPromedio, i.id as idInsumo
             FROM productosXDistribucion pd 
@@ -393,12 +431,11 @@ class Distribucion{
             //     FROM     distribucion       
             //     ORDER BY fecha asc';
             $sql= 'SELECT d.id, fecha, orden, u.userName, b.nombre as bodega, e.nombre as estado, 
-                    totalImpuesto, TotalComprobante, idEstadoComprobante
+                    totalImpuesto, TotalComprobante, idEstadoComprobante, d.clave, d.claveNC, d.idReferencia
                 FROM tropical.distribucion d
                     INNER JOIN usuario u on u.id=d.idUsuario
                     INNER JOIN bodega b on b.id=d.idBodega
                     INNER JOIN estado e on e.id=d.idEstado
-                    
                 GROUP BY orden
                 ORDER BY fecha desc';
             $data= DATA::Ejecutar($sql);
@@ -420,7 +457,7 @@ class Distribucion{
             //     FROM     distribucion       
             //     ORDER BY fecha asc';
             $sql= 'SELECT d.id, fecha, orden, u.userName, b.nombre as bodega, e.nombre as estado, d.idEstadocomprobante, d.claveNC,
-                    totalImpuesto, totalComprobante, idEstadoComprobante, t.nombre as tipoBodega
+                    totalImpuesto, totalComprobante, idEstadoComprobante, t.nombre as tipoBodega, d.idEstadoNC
                 FROM tropical.distribucion d
                     INNER JOIN usuario u on u.id=d.idUsuario
                     INNER JOIN bodega b on b.id=d.idBodega
@@ -479,10 +516,10 @@ class Distribucion{
 
     function Read(){
         try {
-            $sql='SELECT d.id, d.fecha, d.idEmisor, d.idReceptor, d.orden, clave, d.consecutivoFE, d.fechaEmision, d.idUsuario, d.idBodega, b.nombre as bodega, 
+            $sql='SELECT d.id, d.fecha, d.idEmisor, d.idReceptor, d.orden, d.clave, d.consecutivoFE, d.fechaEmision, d.idUsuario, d.idBodega, b.nombre as bodega, 
                 d.porcentajeDescuento, d.porcentajeIva,  d.totalImpuesto, d.totalComprobante, d.idSituacionComprobante, d.idDocumento, d.idEstadoComprobante,
                 totalServGravados, totalServExentos, totalMercanciasGravadas, totalMercanciasExentas, totalGravado, totalExento,
-                totalVenta, totalDescuentos, totalVentaneta, d.clave
+                totalVenta, totalDescuentos, totalVentaneta, d.claveNC, d.idReferencia, d.idEstadoNC
                 FROM distribucion d
                 INNER JOIN bodega b on b.id=d.idBodega
                 where d.id=:id';
@@ -492,7 +529,6 @@ class Distribucion{
                 $this->id = $data[0]['id'];
                 $this->fecha = $data[0]['fecha'];
                 $this->orden = $data[0]['orden'];
-                $this->clave = $data[0]['clave'];
                 $this->consecutivoFE = $data[0]['consecutivoFE'] ?? null;
                 $this->fechaEmision = $data[0]['fechaEmision'] ?? null;
                 $this->idUsuario = $data[0]['idUsuario'];
@@ -517,6 +553,8 @@ class Distribucion{
                 $this->totalDescuentos = $data[0]['totalDescuentos'];
                 $this->totalVentaneta = $data[0]['totalVentaneta'];
                 $this->clave = $data[0]['clave'];
+                $this->claveNC = $data[0]['claveNC'];
+                $this->idReferencia = $data[0]['idReferencia'];
                 // productos x distribucion.
                 $this->detalleFactura= ProductosXDistribucion::Read($this->id);
                 //
