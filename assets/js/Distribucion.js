@@ -987,7 +987,8 @@ class Distribucion {
                             else
                                 return '<i class="fa fa-check-square-o" aria-hidden="true" style="color:green">Factura Cancelada por NC!</i>';
                         else
-                            return '<i class="fa fa-check-square-o" aria-hidden="true" style="color:green"> Interna</i>'
+                            // return '<i class="fa fa-check-square-o" aria-hidden="true" style="color:green"> Interna</i>'
+                            return '<button class=btn_ReversarDistribucionInterna>&nbsp Cancelar Interna</button>'; 
                     }
                 },
                 {
