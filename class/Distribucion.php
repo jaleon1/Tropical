@@ -1,6 +1,4 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
 
 if(isset($_POST["action"])){
     $opt= $_POST["action"];
@@ -67,6 +65,9 @@ if(isset($_POST["action"])){
             break;
         case "cancelaDistribucion":
             $distribucion->cancelaDistribucion($_POST['id'], $_POST['razon']);
+            break;
+        case "cancelaDistribucionInterna":
+            $distribucion->cancelaDistribucionInterna($_POST['id'], $_POST['razon']);
             break;
         case "sendContingenciaMasiva":
             $distribucion->sendContingenciaMasiva();
@@ -323,6 +324,39 @@ class Distribucion{
         }
     }
 
+    public function cancelaDistribucionInterna($idDistribucion, $razon){
+        try {  
+            //Master
+            $sql="SELECT orden, idEstado, idBodega
+                FROM distribucion
+                WHERE id =:id;";
+            $param= array(':id'=>$idDistribucion);
+            $data = DATA::Ejecutar($sql,$param);  
+            
+            $this->razon = $razon;
+            $this->id = $idDistribucion; 
+            $this->orden = $data[0]["orden"];
+            $this->idBodega = $data[0]["idBodega"];
+
+            if($data[0]["idEstado"] == 1){
+                if ($this->rollbackDistribucion() ){
+                    $sql="UPDATE distribucion
+                        SET idEstado=4
+                        WHERE id=:id";
+                    $param= array(':id'=> $this->id);
+                    $data = DATA::Ejecutar($sql,$param,false);
+                }
+            }
+        }     
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }
+    }
+    
     function rollbackDistribucion(){
         $sql="SELECT pd.idProducto, pd.cantidad, p.costoPromedio, i.id as idInsumo
             FROM productosXDistribucion pd 

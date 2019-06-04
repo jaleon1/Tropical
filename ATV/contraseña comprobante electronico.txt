@@ -30,7 +30,7 @@ SCOPE = [VACIO]
 PINP12 0011
 
 
-
+httpd: Syntax error on line 357 of /etc/httpd/conf/httpd.conf: Could not open configuration file /etc/httpd/sites-enabled/ti.tareas.conf: Too many levels of symbolic links
 
 
 /*********************** produccion *************************/

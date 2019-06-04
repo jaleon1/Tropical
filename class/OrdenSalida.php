@@ -1,6 +1,6 @@
 <?php
 date_default_timezone_set('America/Costa_Rica');
-error_reporting(0);
+//error_reporting(0);
 if(isset($_POST["action"])){
     $opt= $_POST["action"];
     unset($_POST['action']);

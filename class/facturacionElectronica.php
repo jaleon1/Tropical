@@ -54,7 +54,8 @@ class FacturacionElectronica{
                 if(self::APICrearClave()){
                     if(self::APICrearNCXML()){
                         if(self::APICifrarXml()){
-                            if(self::APIEnviar()){
+                            if(self::APIEnviar()){                                
+                                Invoice::$email_array_address_to = [];
                                 Invoice::create(self::$transaccion);
                                 //self::APIConsultaComprobante();
                                 //include_once('feCallback.php');
@@ -1211,6 +1212,7 @@ class FacturacionElectronica{
                 else Distribucion::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 3);
                 //AQUI VA ENVIAR EMAIL
                 if($invoice)
+                    Invoice::$email_array_address_to = [];
                     Invoice::create(self::$transaccion);
             }
             else if($estadoTransaccion=='rechazado'){
