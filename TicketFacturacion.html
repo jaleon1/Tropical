@@ -133,12 +133,28 @@
       localStorage.setItem("lsTarjetaCredito","0");
       if(localStorage.getItem("lsReimpresion")=="OK"){
         localStorage.setItem("lsPrintOK","NOT");
-        location.href ="/misFacturas.html";
       }
       else{
         localStorage.setItem("lsPrintOK","OK");
-        location.href ="/FacturaCli.html";
       }
+
       localStorage.setItem("lsPrintFacturaOpcion","OFF");
+      
+      if(localStorage.getItem("lsTipoPrint")=="MISFACTURAS")
+        location.href ="/misFacturas.html";
+      else{
+        if(localStorage.getItem("lsTipoPrint")=="LISTAFACTURAS")
+          location.href ="/InventarioFactura.html";
+        else{
+          if(localStorage.getItem("lsTipoPrint")=="FACTURACLI")
+            location.href ="/FacturaCli.html";
+          else{                                      
+            if(localStorage.getItem("lsTipoPrint")=="LISTAFACTURACANCELADA")
+              location.href ="/InventarioFacturaCancelada.html";
+            else
+            location.href ="/misFacturas.html";                      
+          }
+        }  
+      }
   });  
 </script>

@@ -384,6 +384,7 @@ class InventarioFacturaCancelada {
     };
 
     ticketPrint() {
+        localStorage.setItem("lsTipoPrint", "LISTAFACTURACANCELADA");
         localStorage.setItem("lsPrintFacturaOpcion","CANCEL");
         localStorage.setItem("lsFactura",$('#consecutivo').text());
         localStorage.setItem("lsFecha",moment().format("YYYY-MM-DD HH:mm"));
