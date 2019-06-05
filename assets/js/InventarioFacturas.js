@@ -73,16 +73,14 @@ class InventarioFacturas {
                 {
                     extend: 'excelHtml5',
                     footer: true,
-                    exportOptions: { columns: [1, 2, 3, 4, 5, 6] },
-                    messageTop: 'Lista de facturas'
+                    exportOptions: {columns: [ 1, 2, 3, 4, 5, 6, 7]},
+                    messageTop:'Lista de facturas'
                 },
                 {
                     extend: 'pdfHtml5',
                     footer: true,
-                    messageTop: 'Lista de facturas',
-                    exportOptions: {
-                        columns: [1, 2, 3, 4, 5, 6]
-                    }
+                    messageTop:'Lista de facturas',
+                    exportOptions: {columns: [ 1, 2, 3, 4, 5, 6, 7]}
                 }
             ],
             language: {
@@ -433,16 +431,14 @@ class InventarioFacturas {
                 {
                     extend: 'excelHtml5',
                     footer: true,
-                    exportOptions: { columns: [1, 2, 3, 4, 5, 6] },
-                    messageTop: 'Lista de facturas'
+                    exportOptions: {columns: [ 1, 2, 3, 4, 5, 6, 7]},
+                    messageTop:'Lista de facturas'
                 },
                 {
                     extend: 'pdfHtml5',
                     footer: true,
-                    messageTop: 'Lista de facturas',
-                    exportOptions: {
-                        columns: [1, 2, 3, 4, 5, 6]
-                    }
+                    messageTop:'Lista de facturas',
+                    exportOptions: { columns: [ 1, 2, 3, 4, 5, 6, 7] }
                 }
             ],
             language: {
