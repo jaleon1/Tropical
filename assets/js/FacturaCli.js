@@ -898,7 +898,7 @@ function ticketPrint(e) {
     // alert(jQuery.makeArray(results));
 
     localStorage.setItem("lsListaProducto", JSON.stringify(data.detalleFactura));
-
+    localStorage.setItem("lsTipoPrint", "FACTURACLI");
     location.href = "/TicketFacturacion.html";
 
 

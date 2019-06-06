@@ -73,16 +73,14 @@ class InventarioFacturas {
                 {
                     extend: 'excelHtml5',
                     footer: true,
-                    exportOptions: { columns: [1, 2, 3, 4, 5, 6] },
-                    messageTop: 'Lista de facturas'
+                    exportOptions: {columns: [ 1, 2, 3, 4, 5, 6, 7]},
+                    messageTop:'Lista de facturas'
                 },
                 {
                     extend: 'pdfHtml5',
                     footer: true,
-                    messageTop: 'Lista de facturas',
-                    exportOptions: {
-                        columns: [1, 2, 3, 4, 5, 6]
-                    }
+                    messageTop:'Lista de facturas',
+                    exportOptions: {columns: [ 1, 2, 3, 4, 5, 6, 7]}
                 }
             ],
             language: {
@@ -433,16 +431,14 @@ class InventarioFacturas {
                 {
                     extend: 'excelHtml5',
                     footer: true,
-                    exportOptions: { columns: [1, 2, 3, 4, 5, 6] },
-                    messageTop: 'Lista de facturas'
+                    exportOptions: {columns: [ 1, 2, 3, 4, 5, 6, 7]},
+                    messageTop:'Lista de facturas'
                 },
                 {
                     extend: 'pdfHtml5',
                     footer: true,
-                    messageTop: 'Lista de facturas',
-                    exportOptions: {
-                        columns: [1, 2, 3, 4, 5, 6]
-                    }
+                    messageTop:'Lista de facturas',
+                    exportOptions: { columns: [ 1, 2, 3, 4, 5, 6, 7] }
                 }
             ],
             language: {
@@ -761,11 +757,15 @@ class InventarioFacturas {
             }
         })
             .done(function (e) {
-                inventarioFacturas.tb_facturas = referenciaCircular;
-                resultado = JSON.parse(e);
-                $("#mensajeRechazo").text("");
-                $("#mensajeRechazo").append('</br><label class="control-label">FACTURA RECHAZADA - Respuesta Ministerio de Hacienda</label></br>');
-                $("#mensajeRechazo").append(resultado[0].respuesta);
+                if (e != " []") {
+                    inventarioFacturas.tb_facturas = referenciaCircular;
+                    resultado = JSON.parse(e);
+                    $("#mensajeRechazo").text("");
+                    $("#mensajeRechazo").append('</br><label class="control-label">FACTURA RECHAZADA - Respuesta Ministerio de Hacienda</label></br>');
+                    $("#mensajeRechazo").append(resultado[0].respuesta);
+                }
+                else
+                    return false;
             });
     };
 
@@ -952,6 +952,7 @@ class InventarioFacturas {
     };
 
     ticketPrint() {
+        localStorage.setItem("lsTipoPrint", "LISTAFACTURAS");
         localStorage.setItem("lsFactura", $('#consecutivo').text());
         // localStorage.setItem("lsFecha",moment().format("YYYY-MM-DD HH:mm"));
         localStorage.setItem("lsBodega", $('#bodega').text());
@@ -961,6 +962,7 @@ class InventarioFacturas {
     };
 
     ticketPrintCancelada(data) {
+        localStorage.setItem("lsTipoPrint", "LISTAFACTURAS");
         localStorage.setItem("lsFactura", data.consecutivo);
         localStorage.setItem("lsBodega", data.bodega);
         localStorage.setItem("lsUsuario", $("#call_username").text());

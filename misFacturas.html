@@ -219,9 +219,9 @@
                             <div class="col-md-6 col-md-offset-3">
                                 <button id="btnReimprimeFactura" type="submit" class="btn btn-success">Reimprimir</button>
                             </div>                            
-                            <!-- <div class="col-md-2">
-                                <button id="btnReenviaFactura" type="submit" class="btn btn-success">Enviar Correo</button>
-                            </div> -->
+                        </br>
+                    </br>
+                    <div id="mensajeRechazo" class="control-label col-md-12 col-sm-3 col-xs-12" style="color:red;text-align: justify;"></div>                            
                         </div>
                         <div id="totalFact">
                         </div>
@@ -363,12 +363,125 @@ $(document).ready(function () {
 
         $("#tb_facturas").append("<tfoot><tr><th style='visibility:hidden'></th><th></th><th></th><th></th><th></th><th></th><th style='visibility:hidden'></th><th style='visibility:hidden'></th><th></th></tr></tfoot>");
 
-        $('#tb_facturas tbody').on( 'click', 'button', function () {   
-            var data = inventarioFacturas.tb_facturas.row( $(this).parents('tr') ).data();
-            inventarioFacturas.dataFactura = data;
+        // $('#tb_facturas tbody').on( 'click', 'button', function () {   
+        //     var data = inventarioFacturas.tb_facturas.row( $(this).parents('tr') ).data();
+        //     inventarioFacturas.dataFactura = data;
+        //     swal({
+        //         title: 'Desea cancelar la factura ? Escriba una razón:',
+        //         input: 'text',
+        //         inputValue: 'Comprobante Cancelado',
+        //         inputAttributes: {
+        //             autocapitalize: 'off'
+        //         },
+        //         showCancelButton: true,
+        //         confirmButtonText: 'Si, Cancelar!',
+        //         showLoaderOnConfirm: true,
+        //         allowOutsideClick: () => !swal.isLoading()
+        //         }).then((result) => {
+        //             if (result.value) {
+        //                 $.ajax({
+        //                     type: "POST",
+        //                     url: "class/Factura.php",
+        //                     data: {
+        //                         action: "sendNotaCredito",
+        //                         id: data['id'],
+        //                         razon: result.value,
+        //                     }
+        //                 })
+        //                     .done(function (e) {
+        //                         var start = moment().subtract(29, 'days');
+        //                         var end = moment();
+
+        //                         function cb(start, end) {
+        //                             $('#dp_rangoListaFacturas span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+        //                         }
+
+        //                         $('#dp_rangoListaFacturas').daterangepicker({
+        //                             "opens": "left",
+        //                             "locale": {
+        //                                 "format": "DD/MM/YYYY",
+        //                                 "separator": " - ",
+        //                                 "applyLabel": "Aplicar",
+        //                                 "cancelLabel": "Cancelar",
+        //                                 "fromLabel": "From",
+        //                                 "toLabel": "To",
+        //                                 "customRangeLabel": "Manual",
+        //                                 "daysOfWeek": [
+        //                                     "DO",
+        //                                     "Lu",
+        //                                     "Ma",
+        //                                     "Mi",
+        //                                     "Ju",
+        //                                     "Vi",
+        //                                     "Sa"
+        //                                 ],
+        //                                 "monthNames": [
+        //                                     "Enero",
+        //                                     "Febrero",
+        //                                     "Marzo",
+        //                                     "Abril",
+        //                                     "Mayo",
+        //                                     "Junio",
+        //                                     "Julio",
+        //                                     "Agosto",
+        //                                     "Setiembre",
+        //                                     "Octubre",
+        //                                     "Noviembre",
+        //                                     "Diciembre"
+        //                                 ],
+        //                                 "firstDay": 1
+        //                             },
+        //                             startDate: start,
+        //                             endDate: end,
+        //                             ranges: {
+        //                                 'Hoy': [moment(), moment()],
+        //                                 'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+        //                                 'Ultimos 7 Días': [moment().subtract(6, 'days'), moment()],
+        //                                 'Ultimos 30 Días': [moment().subtract(29, 'days'), moment()],
+        //                                 'Este Mes': [moment().startOf('month'), moment().endOf('month')],
+        //                                 'Ultimo Mes': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+        //                             }
+        //                         }, cb);
+
+        //                         cb(start, end);
+
+        //                         inventarioFacturas.fechaInicial = start.format('YYYY-MM-DD') + ' 00:00';
+        //                         inventarioFacturas.fechaFinal = end.format('YYYY-MM-DD') + ' 23:59:59';
+        //                         inventarioFacturas.CargaListaFacturasRango();
+
+        //                         localStorage.setItem("lsPrintFacturaOpcion","BTN");  
+        //                         localStorage.setItem("lsBtnPrint", "OK");
+        //                         inventarioFacturas.ticketPrintCancelada(inventarioFacturas.dataFactura);
+        //                         swal({
+        //                             type: 'success',
+        //                             title: 'Factura Cancelada!',
+        //                             showConfirmButton: false,
+        //                             timer: 2000
+        //                         });
+
+        //                     })
+        //                     .fail(function (e) {
+                                
+        //                     });
+        //             }
+        //             else
+        //                 swal({
+        //                     type: 'error',
+        //                     title: 'Error al cancelar',
+        //                     text: 'Debe de digitar una razón'
+        //                 })
+        //     })
+        // });
+
+        /////////////////////////////////////////////////////////
+
+        $('#tb_facturas tbody').on('click', '.btnCancelaFactura', function () {
+            // inventarioFacturas.ticketPrint();
+            var data = inventarioFacturas.tb_facturas.row($(this).parents('tr')).data();
             swal({
                 title: 'Desea cancelar la factura ? Escriba una razón:',
                 input: 'text',
+                inputValue: 'Comprobante Cancelado',
                 inputAttributes: {
                     autocapitalize: 'off'
                 },
@@ -376,18 +489,70 @@ $(document).ready(function () {
                 confirmButtonText: 'Si, Cancelar!',
                 showLoaderOnConfirm: true,
                 allowOutsideClick: () => !swal.isLoading()
-                }).then((result) => {
-                    if (result.value) {
-                        $.ajax({
-                            type: "POST",
-                            url: "class/Factura.php",
-                            data: {
-                                action: "sendNotaCredito",
-                                id: data['id'],
-                                razon: result.value,
-                            }
+            }).then((result) => {
+                if (result.value) {
+                    $.ajax({
+                        type: "POST",
+                        url: "class/productoXFactura.php",
+                        data: {
+                            action: "reintegrarProductoByIdFactura",
+                            id: data['id'],
+                            razon: result.value,
+                        }
+                    })
+                        .done(function (e) {
+                            CargaMisFacturasRango();
+                            swal({
+                                type: 'success',
+                                title: 'Factura Cancelada!',
+                                showConfirmButton: false,
+                                timer: 2000
+                            });
                         })
-                            .done(function (e) {
+                        .fail(function (e) { });
+                }
+                else
+                    swal({
+                        type: 'error',
+                        title: 'Error al cancelar',
+                        text: 'Debe de digitar una razón'
+                    })
+            })
+        });
+
+        $('#tb_facturas tbody').on('click', '.btnNC_CreateFact_Ref', function () {
+            var data = inventarioFacturas.tb_facturas.row($(this).parents('tr')).data();
+            swal({
+                title: 'Desea cancelar la factura ? Escriba una razón:',
+                input: 'text',
+                inputValue: 'Comprobante Cancelado',
+                inputAttributes: {
+                    autocapitalize: 'off'
+                },
+                showCancelButton: true,
+                confirmButtonText: 'Si, Cancelar!',
+                showLoaderOnConfirm: true,
+                allowOutsideClick: () => !swal.isLoading()
+            }).then((result) => {
+                if (result.value) {
+                    $.ajax({
+                        type: "POST",
+                        url: "class/productoXFactura.php",
+                        data: {
+                            id: data['id'],
+                            facturaRelacionada: true,
+                            action: "reintegrarProductoByIdFactura",
+                            razon: result.value,
+                        }
+                    })
+                        .done(function (e) {
+                            swal({
+                                type: 'success',
+                                title: 'Factura Cancelada!',
+                                showConfirmButton: false,
+                                timer: 2000
+                            });
+///////////////////////////////////////////////////////////////////////////////////////
                                 var start = moment().subtract(29, 'days');
                                 var end = moment();
 
@@ -446,7 +611,7 @@ $(document).ready(function () {
 
                                 inventarioFacturas.fechaInicial = start.format('YYYY-MM-DD') + ' 00:00';
                                 inventarioFacturas.fechaFinal = end.format('YYYY-MM-DD') + ' 23:59:59';
-                                inventarioFacturas.CargaListaFacturasRango();
+                                inventarioFacturas.CargaMisFacturasRango();
 
                                 localStorage.setItem("lsPrintFacturaOpcion","BTN");  
                                 localStorage.setItem("lsBtnPrint", "OK");
@@ -458,18 +623,96 @@ $(document).ready(function () {
                                     timer: 2000
                                 });
 
-                            })
-                            .fail(function (e) {
-                                
-                            });
-                    }
-                    else
-                        swal({
-                            type: 'error',
-                            title: 'Error al cancelar',
-                            text: 'Debe de digitar una razón'
+////////////////////////////////////////////////////////////////////////////////////////
                         })
+                        .fail(function (e) { });
+                }
+                else
+                    swal({
+                        type: 'error',
+                        title: 'Factura no Cancelada',
+                        text: 'Operación abortada por el Usuario'
+                    })
             })
+        });
+
+        $('#tb_facturas tbody').on('click', '.btnEnviarFactura', function () {
+            var data = inventarioFacturas.tb_facturas.row($(this).parents('tr')).data();
+
+            swal({
+                title: 'Envío de factura',
+                text: "Desea enviar la factura?",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Si, enviar!'
+            }).then((result) => {
+                if (result.value) {
+                    $.ajax({
+                        type: "POST",
+                        url: "class/Factura.php",
+                        data: {
+                            action: "sendContingencia",
+                            id: data['id']
+                        }
+                    })
+                        .done(function (e) {
+                            CargaMisFacturasRango();
+                            swal({
+                                type: 'success',
+                                title: 'Factura Enviada!',
+                                showConfirmButton: false,
+                                timer: 2000
+                            });
+                        })
+                        .fail(function (e) {
+                            swal({
+                                type: 'error',
+                                title: 'Error al reenviar Factura!',
+                                showConfirmButton: false,
+                                timer: 2000
+                            });
+                        });
+                }
+            });
+
+        });
+
+        $('#tb_facturas tbody').on('click', '.btnReenviarFactura', function () {
+            var data = inventarioFacturas.tb_facturas.row($(this).parents('tr')).data();
+
+            swal({
+                title: 'Reenvío de factura',
+                text: "Desea reenviar la factura?",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Si, reenviar!'
+            }).then((result) => {
+                if (result.value) {
+                    $.ajax({
+                        type: "POST",
+                        url: "class/Factura.php",
+                        data: {
+                            action: "sendContingencia",
+                            id: data['id']
+                        }
+                    })
+                        .done(function (e) {
+                            CargaMisFacturasRango();
+                            swal({
+                                type: 'success',
+                                title: 'Factura Reenviada!',
+                                showConfirmButton: false,
+                                timer: 2000
+                            });
+                        })
+                        .fail(function (e) { });
+                }
+            });
+
         });
 
         // $( "#btnReenviaFactura" ).click(function() {

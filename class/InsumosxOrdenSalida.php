@@ -101,7 +101,7 @@ class InsumosxOrdenSalida{
             $created = true;
             foreach($insumo as $ins) { 
                 //Selecciona la cantidad de Insumos
-                $sql_insumo="SELECT saldoCantidad FROM insumo WHERE id=:idInsumo";
+                $sql_insumo="SELECT saldoCantidad, costoPromedio FROM insumo WHERE id=:idInsumo";
                 $param_insumo= array(':idInsumo'=>$ins['idInsumo']);
                 $cantidadinsumo = DATA::Ejecutar($sql_insumo,$param_insumo);
                 
@@ -111,10 +111,11 @@ class InsumosxOrdenSalida{
                 $cantidadorden = DATA::Ejecutar($sql_insumo,$param_orden);
                 
                 $saldoCantidad = $cantidadinsumo[0][0] + $cantidadorden[0][0];
+                $saldoCosto = $saldoCantidad * $cantidadinsumo[0][1];
 
                 //Actualiza la cantidad de Insumos
-                $sql_insumo="UPDATE insumo SET saldoCantidad=:saldoCantidad WHERE id=:idInsumo";
-                $param= array(':saldoCantidad'=>$saldoCantidad, ':idInsumo'=>$ins['idInsumo']);
+                $sql_insumo="UPDATE insumo SET saldoCantidad=:saldoCantidad,saldoCosto=:saldoCosto  WHERE id=:idInsumo";
+                $param= array(':saldoCantidad'=>$saldoCantidad, ':idInsumo'=>$ins['idInsumo'], ':saldoCosto'=>$saldoCosto);
                 $data_insumo = DATA::Ejecutar($sql_insumo,$param,false);
 
                 if(!$data_insumo)
