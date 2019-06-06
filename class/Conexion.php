@@ -1,5 +1,5 @@
 <?php 
-error_reporting(E_ALL); // (E_ERROR | E_WARNING | E_PARSE);
+error_reporting(E_ERROR); // (E_ERROR | E_WARNING | E_PARSE);
 ini_set('display_errors', 0);  // 1 = display errores output to browser, CLI, etc...
 date_default_timezone_set('America/Costa_Rica');
 

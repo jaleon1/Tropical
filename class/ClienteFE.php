@@ -228,6 +228,7 @@ class ClienteFE{
         if(isset($_POST["idBodega"]))
             $this->idBodega= $obj["idBodega"];
         else $this->idBodega= $_SESSION['userSession']->idBodega;
+        //
         if(isset($_POST["objC"])){
             $obj= json_decode($_POST["objC"],true);
             require_once("UUID.php");
