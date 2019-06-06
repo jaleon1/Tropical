@@ -29,13 +29,14 @@ var Session=  {
                     Session.setUsername(data.username, data.nombre);      
                     Session.setMenu(data.eventos);    
                     Session.state=false;
-                    swal({
+                    alert('El usuario no tiene credenciales para ver esta página.');
+                    /*swal({
                         //
                         type: 'error',
                         title: 'El usuario no tiene credenciales para ver esta página.',
                         showConfirmButton: false,
                         timer: 3000
-                    });
+                    });*/
                     break;
                 case 'invalido':
                     Session.state=false;
