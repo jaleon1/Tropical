@@ -952,7 +952,6 @@ class InventarioFacturas {
     };
 
     ticketPrint() {
-        localStorage.setItem("lsTipoPrint", "LISTAFACTURAS");
         localStorage.setItem("lsFactura", $('#consecutivo').text());
         // localStorage.setItem("lsFecha",moment().format("YYYY-MM-DD HH:mm"));
         localStorage.setItem("lsBodega", $('#bodega').text());
