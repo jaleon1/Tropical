@@ -40,11 +40,11 @@ $(function () {
     $(document)
         .ajaxStart(function(){
             NProgress.start();
-            $("button").prop("disabled", true);
+            // $("button").prop("disabled", true);
         })
         .ajaxStop(function(){
             NProgress.done();
-            $("button").prop("disabled", false);
+            // $("button").prop("disabled", false);
         });
 });
 
