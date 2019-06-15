@@ -1040,14 +1040,6 @@ let inventarioFacturas = new InventarioFacturas();
 
 
 
-
-
-
-
-
-
-
-
 $('#tb_facturasExternas tbody').on('click', 'td', function () {
     inventarioFacturas.ReadbyID(inventarioFacturas.tb_facturasExternas.row(this).data());
 });
