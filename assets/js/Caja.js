@@ -175,7 +175,10 @@ class MovimientosCaja {
                 },
                 {
                     title: "ESTADO",
-                    data: "estado"
+                    data: "estado",
+                    mRender: function (e) {
+                        return e==0?"Cerrada":"Abierta"
+                    }
                 },
                 {
                     title: "MONTO APERTURA",
