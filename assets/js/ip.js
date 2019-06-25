@@ -36,7 +36,7 @@ if (RTCPeerConnection) (function () {
                 var parts = line.split(' '),        // http://tools.ietf.org/html/rfc5245#section-15.1
                     addr = parts[4],
                     type = parts[7];
-                if (type === 'host') updateDisplay(addr);
+                if (type === 'host' && parts[7].lengt < 35) updateDisplay(addr);
             } else if (~line.indexOf("c=")) {       // http://tools.ietf.org/html/rfc4566#section-5.7
                 var parts = line.split(' '),
                     addr = parts[2];
