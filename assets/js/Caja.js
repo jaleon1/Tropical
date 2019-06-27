@@ -450,6 +450,8 @@ class MovimientosCaja {
     }
 
     ticketPrintRePrint(lsRowCierre){
+        localStorage.setItem("lsTituloPrintCierre","CIERRE DE CAJA");
+        localStorage.setItem("lsCierreDiario","NOT");
         var row = JSON.parse(lsRowCierre);
         var apertura = row.montoApertura;
         var efectivo = row.totalVentasEfectivo;
