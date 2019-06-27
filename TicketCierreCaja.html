@@ -75,9 +75,9 @@
         window.print();
         localStorage.setItem("lsPrintOK","OK");
         if (localStorage.getItem("lsCierreDiario")=="YES") 
-            location.href ="/Tropical/ReporteCajaDiario.html";    
+            location.href ="/ReporteCajaDiario.html";    
         else{
-            location.href ="/Tropical/misCajas.html";
+            location.href ="/misCajas.html";
             $("#usuario").text("Usuario: "+localStorage.getItem("lsUsuario"));
         }
   });  

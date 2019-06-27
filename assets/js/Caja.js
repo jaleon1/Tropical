@@ -468,7 +468,7 @@ class MovimientosCaja {
         localStorage.setItem("lsTarjeta",'¢' + parseFloat(Number(tarjeta)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
         localStorage.setItem("lsTotalVentas",'¢' + parseFloat(Number(totalventas)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
         localStorage.setItem("lsTotalNeto",'¢' + parseFloat(Number(totalneto)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
-        location.href ="/Tropical/TicketCierreCaja.html";
+        location.href ="/TicketCierreCaja.html";
     }
 }
 //Class Instance
