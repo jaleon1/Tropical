@@ -18,9 +18,9 @@
               <td>TROPICAL SNO. <label id="bodega"></label></td>
           </tr>
           <tr style="line-height:10px;"><td><label>-------------------------------------------------------</label></td></tr>
-          <tr style="line-height:10px;font-family:Uroob,Bahnschrift Light Condensed; text-align: center;"><td>CIERRE DE CAJA</td></tr>
+          <tr style="line-height:10px;font-family:Uroob,Bahnschrift Light Condensed; text-align: center;"><td><label id="tituloPrintCierre"></label></td></tr>
           <tr style="line-height:10px;font-family:Uroob,Bahnschrift Light Condensed; text-align: center;"><td>Fecha: <label id="fecha"></label></td></tr>
-          <tr style="line-height:10px;font-family:Uroob,Bahnschrift Light Condensed; text-align: center;"><td>Usuario: <label id="usuario"></label></td></tr>
+          <tr style="line-height:10px;font-family:Uroob,Bahnschrift Light Condensed; text-align: center;"><td><label id="usuario"></label></td></tr>
         </tbody>
       </table>
 
@@ -63,7 +63,8 @@
 </html>
 <script>
     $(document).ready(function () {
-        $("#usuario").text(localStorage.getItem("lsUsuario"));
+        $("#usuario").text(null);
+        $("#tituloPrintCierre").text(localStorage.getItem("lsTituloPrintCierre"));
         $("#bodega").text(localStorage.getItem("lsBodega"));
         $("#fecha").text(localStorage.getItem("lsFecha"));
         $("#apertura").text(localStorage.getItem("lsApertura"));
@@ -73,6 +74,11 @@
         $("#totalneto").text(localStorage.getItem("lsTotalNeto"));
         window.print();
         localStorage.setItem("lsPrintOK","OK");
-        location.href ="/misCajas.html";
+        if (localStorage.getItem("lsCierreDiario")=="YES") 
+            location.href ="/Tropical/ReporteCajaDiario.html";    
+        else{
+            location.href ="/Tropical/misCajas.html";
+            $("#usuario").text("Usuario: "+localStorage.getItem("lsUsuario"));
+        }
   });  
 </script>

@@ -157,6 +157,28 @@ class ReporteCaja {
             ]
         });
     }
+
+    ticketPrintRePrint(lsRowCierre){
+        localStorage.setItem("lsTituloPrintCierre","CIERRE DE CAJA DIARIO");
+        localStorage.setItem("lsCierreDiario","YES");
+        var row = JSON.parse(lsRowCierre);
+        var apertura = row.montoApertura;
+        var efectivo = row.ventasEfectivo;
+        if(efectivo==null)efectivo=0;
+        var tarjeta = row.ventasTarjeta;
+        if(tarjeta==null)tarjeta=0;
+        var totalventas = parseFloat(efectivo) + parseFloat(tarjeta);
+        var totalneto = parseFloat(efectivo) + parseFloat(tarjeta) + parseFloat(apertura);
+        localStorage.setItem("lsUsuario","");
+        localStorage.setItem("lsBodega", bodega.nombre);
+        localStorage.setItem("lsFecha",row.fechaApertura);
+        localStorage.setItem("lsApertura",'¢' + parseFloat(Number(apertura)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+        localStorage.setItem("lsEfectivo",'¢' + parseFloat(Number(efectivo)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+        localStorage.setItem("lsTarjeta",'¢' + parseFloat(Number(tarjeta)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+        localStorage.setItem("lsTotalVentas",'¢' + parseFloat(Number(totalventas)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+        localStorage.setItem("lsTotalNeto",'¢' + parseFloat(Number(totalneto)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+        location.href ="/Tropical/TicketCierreCaja.html";
+    }
 }
 //Class Instance
 let reporteCaja = new ReporteCaja();
