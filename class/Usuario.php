@@ -172,7 +172,8 @@ class Usuario{
             FROM usuario u inner join rolesXUsuario ru on ru.idUsuario = u.id
                 inner join eventosXRol er on er.idRol = ru.idRol
                 inner join evento e on e.id = er.idEvento
-                where username=:username';
+                where username=:username
+                order by e.menuPadre';
             $param= array(':username'=>$this->username);
             $data= DATA::Ejecutar($sql, $param);
             if($data){

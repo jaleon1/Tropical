@@ -29,7 +29,7 @@ class Evento{
         try {
             $sql='SELECT id, nombre, url, icono, menuPadre
                 FROM     evento       
-                ORDER BY nombre asc';
+                ORDER BY menuPadre asc';
             $data= DATA::Ejecutar($sql);
             return $data;
         }     

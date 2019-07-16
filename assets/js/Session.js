@@ -83,6 +83,12 @@ var Session=  {
                 </a>
                 <ul class="nav child_menu"></ul>
             </li>
+            <li id="Hacienda" style="display:none;">
+                <a> <i class="fa fa-cog"></i> Hacienda
+                    <span class="fa fa-chevron-down"></span>
+                </a>
+                <ul class="nav child_menu"> </ul>
+            </li>
             <li id="Sistema" style="display:none;">
                 <a> <i class="fa fa-cog"></i> Sistema
                     <span class="fa fa-chevron-down"></span>
