@@ -531,11 +531,11 @@
                 if (result.value) {
                     $.ajax({
                         type: "POST",
-                        url: "class/productoXFactura.php",
+                        url: "class/Distribucion.php",
                         data: {
                             id: data['id'],
                             facturaRelacionada: true,
-                            action: "reintegrarProductoByIdFactura",
+                            action: "cancelaDistribucionExternaRegeneraDistribucion",
                             razon: result.value,
                         }
                     })

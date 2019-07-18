@@ -52,7 +52,7 @@ class ProductoXFactura{
     
 
     public static function reintegrarProductoByIdFactura($idFactura, $razon){
-        
+
         try {   
             //Master
             $sql="SELECT consecutivo, idMedioPago, totalComprobante, fechaCreacion, idBodega 
