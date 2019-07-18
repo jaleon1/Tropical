@@ -69,9 +69,6 @@ if(isset($_POST["action"])){
         case "cancelaDistribucionInterna":
             $distribucion->cancelaDistribucionInterna($_POST['id'], $_POST['razon']);            
             break;
-        case "cancelaDistribucionExternaRegeneraDistribucion":
-            $distribucion->cancelaDistribucionExternaRegeneraDistribucion($_POST['id'], $_POST['razon']);
-            break;
         case "sendContingenciaMasiva":
             $distribucion->sendContingenciaMasiva();
             break;
@@ -251,84 +248,6 @@ class Distribucion{
         }
     }
 
-    public function cancelaDistribucionExternaRegeneraDistribucion($idDistribucion, $razon){
-        try {  
-            //Master
-            $sql="SELECT orden, idEstado, idBodega
-                FROM distribucion
-                WHERE id =:id;";
-            $param= array(':id'=>$idDistribucion);
-            $data = DATA::Ejecutar($sql,$param);  
-            
-            $this->razon = $razon;
-            $this->id = $idDistribucion; 
-            $this->orden = $data[0]["orden"];
-            $this->idBodega = $data[0]["idBodega"];
-
-            if($data[0]["idEstado"] == 1){
-                if ($this->rollbackDistribucion() ){
-                    $sql="UPDATE distribucion
-                        SET idEstado=4
-                        WHERE id=:id";
-                    $param= array(':id'=> $this->id);
-                    $data = DATA::Ejecutar($sql,$param,false);
-                }
-            }
-            if($data[0]["idEstado"] == 0){
-                if ($this->rollbackDistribucionExterna() ){
-                    $sql="UPDATE distribucion
-                        SET idEstado=4
-                        WHERE id=:id";
-                    $param= array(':id'=> $this->id);
-                    $data = DATA::Ejecutar($sql,$param,false);
-                }
-            }
-            $this->notaCredito();
-            $this->reGenerarFactura();
-        }     
-        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
-            header('HTTP/1.0 400 Bad error');
-            die(json_encode(array(
-                'code' => $e->getCode() ,
-                'msg' => $e->getMessage()))
-            );
-        }
-    }
-
-    function rollbackDistribucionExterna(){
-        $sql="SELECT pd.idProducto, pd.cantidad, p.costoPromedio, i.id as idInsumo
-            FROM productosXDistribucion pd 
-                inner join insumosXBodega i on pd.idProducto = i.idProducto
-                inner join producto p on p.id = pd.idProducto
-            WHERE idDistribucion =:idDistribucion and i.idBodega =:idBodega;";
-            $param= array(':idDistribucion'=>$this->id, ':idBodega'=>$this->idBodega);
-            $productosXDistribucion = DATA::Ejecutar($sql,$param);
-
-            if($productosXDistribucion){
-                foreach ($productosXDistribucion as $key => $value){
-                    // porcion del insumo de la agencia.
-                    // busca si es artículo o producto (TOPPING - SABOR).
-                    $sql='SELECT esVenta
-                        FROM insumosXBodega x INNER JOIN producto p 
-                        WHERE p.id= :idProducto';
-                    $param= array(':idProducto'=>$value['idProducto']);
-                    $porcion= DATA::Ejecutar($sql, $param);
-                    //
-                    if ($porcion[0]['esVenta']==0){        // artículo.
-                        $porcion= 1;
-                    }
-                    else if ($porcion[0]['esVenta']==1){   // botella de sabor.
-                        $porcion= 20;
-                    }
-                    else if ($porcion[0]['esVenta']==2){   // topping.
-                        $porcion= 40;
-                    }
-                    // InventarioInsumoXBodega::salida($value['idInsumo'], $this->idBodega, 'Cancela Distribucion#'.$this->orden, $value['cantidad']*$porcion);
-                    InventarioProducto::entrada( $value['idProducto'],  'Cancela Distribucion#'.$this->orden, $value['cantidad'], $value['costoPromedio']);
-                }
-            }
-    }
-
     public function notaCredito(){
         try {
             // check si ya existe la NC.
@@ -438,7 +357,7 @@ class Distribucion{
         }
     }
 
-    function rollbackDistribucion(){
+    function rollbackDistribucion($estado = 1){
         $sql="SELECT pd.idProducto, pd.cantidad, p.costoPromedio, i.id as idInsumo
             FROM productosXDistribucion pd 
                 inner join insumosXBodega i on pd.idProducto = i.idProducto
@@ -466,7 +385,8 @@ class Distribucion{
                     else if ($porcion[0]['esVenta']==2){   // topping.
                         $porcion= 40;
                     }
-                    InventarioInsumoXBodega::salida($value['idInsumo'], $this->idBodega, 'Cancela Distribucion#'.$this->orden, $value['cantidad']*$porcion);
+                    if ($estado == 1)
+                        InventarioInsumoXBodega::salida($value['idInsumo'], $this->idBodega, 'Cancela Distribucion#'.$this->orden, $value['cantidad']*$porcion);
                     InventarioProducto::entrada( $value['idProducto'],  'Cancela Distribucion#'.$this->orden, $value['cantidad'], $value['costoPromedio']);
                 }
             }
@@ -487,14 +407,22 @@ class Distribucion{
             $this->idBodega = $data[0]["idBodega"];
 
             if($data[0]["idEstado"] == 1){
+                $sql="UPDATE distribucion
+                    SET idEstado=4  -- 4 para que no pueda ser aceptada
+                    WHERE id=:id";
+                $param= array(':id'=> $this->id);
                 $this->rollbackDistribucion();
             }
+            if($data[0]["idEstado"] == 0){
+                if ($this->rollbackDistribucion(0) ){
+                    $sql="UPDATE distribucion
+                        SET idEstado=4  -- 4 para que no pueda ser aceptada
+                        WHERE id=:id";
+                    $param= array(':id'=> $this->id);
+                    $data = DATA::Ejecutar($sql,$param,false);
+                }
+            }
             
-            // $objDistribucion = new Factura();
-            // $objDistribucion->id = $idDistribucion;
-            // $objDistribucion->idDocumentoNC = 3;
-            // $objDistribucion->idReferencia = 1;
-            // $objDistribucion->razon = $razon;
             $this->notaCredito();
         }     
         catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
