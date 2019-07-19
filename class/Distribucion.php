@@ -101,11 +101,16 @@ class Distribucion{
     public $clave='';
     public $claveNC='';
     public $idReferencia='';
+    //
+    public $facturaRelacionada=false;
 
     function __construct(){
         // identificador único
         if(isset($_POST["id"])){
             $this->id= $_POST["id"];
+        }
+        if(isset($_POST["facturaRelacionada"])){
+            $this->facturaRelacionada= $_POST["facturaRelacionada"];
         }
         if(isset($_POST["obj"])){
             $obj= json_decode($_POST["obj"],true);
@@ -358,21 +363,20 @@ class Distribucion{
     }
 
     function rollbackDistribucion($estado = 1){
-        $sql="SELECT pd.idProducto, pd.cantidad, p.costoPromedio, i.id as idInsumo
-            FROM productosXDistribucion pd 
-                inner join insumosXBodega i on pd.idProducto = i.idProducto
+            $sql="SELECT pd.id, pd.idProducto, pd.cantidad, p.costoPromedio
+                FROM productosXDistribucion pd 
                 inner join producto p on p.id = pd.idProducto
-            WHERE idDistribucion =:idDistribucion and i.idBodega =:idBodega;";
-            $param= array(':idDistribucion'=>$this->id, ':idBodega'=>$this->idBodega);
+                WHERE idDistribucion =:idDistribucion;";
+            $param= array(':idDistribucion'=>$this->id);
             $productosXDistribucion = DATA::Ejecutar($sql,$param);
 
             if($productosXDistribucion){
                 foreach ($productosXDistribucion as $key => $value){
                     // porcion del insumo de la agencia.
                     // busca si es artículo o producto (TOPPING - SABOR).
-                    $sql='SELECT esVenta
-                        FROM insumosXBodega x INNER JOIN producto p 
-                        WHERE p.id= :idProducto';
+                    $sql="SELECT esVenta
+                        FROM producto
+                        WHERE id=:idProducto;";
                     $param= array(':idProducto'=>$value['idProducto']);
                     $porcion= DATA::Ejecutar($sql, $param);
                     //
@@ -385,8 +389,17 @@ class Distribucion{
                     else if ($porcion[0]['esVenta']==2){   // topping.
                         $porcion= 40;
                     }
-                    if ($estado == 1)
-                        InventarioInsumoXBodega::salida($value['idInsumo'], $this->idBodega, 'Cancela Distribucion#'.$this->orden, $value['cantidad']*$porcion);
+                    if ($estado == 1){
+                        //busca los insumos relacionados con la distribucion.
+                        $sql="SELECT i.id as idInsumo
+                            from  insumosXBodega i
+                            WHERE idProducto = :idProducto  and i.idBodega = :idBodega;";
+                        $param= array(':idProducto'=>$value['idProducto'], ':idBodega'=>$this->idBodega);
+                        $insumo = DATA::Ejecutar($sql,$param);
+                        //
+                        if($insumo)
+                            InventarioInsumoXBodega::salida($insumo['idInsumo'], $this->idBodega, 'Cancela Distribucion#'.$this->orden, $value['cantidad']*$porcion);
+                    }                        
                     InventarioProducto::entrada( $value['idProducto'],  'Cancela Distribucion#'.$this->orden, $value['cantidad'], $value['costoPromedio']);
                 }
             }
@@ -406,14 +419,14 @@ class Distribucion{
             $this->orden = $data[0]["orden"];
             $this->idBodega = $data[0]["idBodega"];
 
-            if($data[0]["idEstado"] == 1){
+            if($data[0]["idEstado"] == "1"){
                 $sql="UPDATE distribucion
                     SET idEstado=4  -- 4 para que no pueda ser aceptada
                     WHERE id=:id";
                 $param= array(':id'=> $this->id);
                 $this->rollbackDistribucion();
             }
-            if($data[0]["idEstado"] == 0){
+            if($data[0]["idEstado"] == "0"){
                 if ($this->rollbackDistribucion(0) ){
                     $sql="UPDATE distribucion
                         SET idEstado=4  -- 4 para que no pueda ser aceptada
