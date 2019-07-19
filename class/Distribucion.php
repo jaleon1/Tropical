@@ -398,7 +398,7 @@ class Distribucion{
                         $insumo = DATA::Ejecutar($sql,$param);
                         //
                         if($insumo)
-                            InventarioInsumoXBodega::salida($insumo['idInsumo'], $this->idBodega, 'Cancela Distribucion#'.$this->orden, $value['cantidad']*$porcion);
+                            InventarioInsumoXBodega::salida($insumo[0]['idInsumo'], $this->idBodega, 'Cancela Distribucion#'.$this->orden, $value['cantidad']*$porcion);
                     }                        
                     InventarioProducto::entrada( $value['idProducto'],  'Cancela Distribucion#'.$this->orden, $value['cantidad'], $value['costoPromedio']);
                 }
