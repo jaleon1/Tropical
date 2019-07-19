@@ -224,22 +224,12 @@ class Distribucion{
             $item->codigo= '04';  // Referencia a otro documento. Al documento que se rechazó.
             array_push ($this->informacionReferencia, $item);
             //
-            $sql="SELECT claveNC
-                FROM distribucion
-                WHERE id=:id";
-            $param= array(':id'=>$this->id);
-            $idNC = DATA::Ejecutar($sql,$param);
-
             $this->id = UUID::v4();
             $this->idDocumentoNC = NULL;
-
+            //
             foreach ($this->detalleFactura as $key=>$item) {
-                $this->detalleFactura[$key]->idFactura = $this->id;
+                $this->detalleFactura[$key]->idDistribucion = $this->id;
             }
-
-            // $this->idDocumentoNC= $idNC[0]["claveNC"]; //Falta jalar este dato// documento al que se hace referencia.
-            // $this->idReferencia= 4; // código de referencia: 4 : Referencia a otro documento.
-            // $this->razon= "Cancelacion documento electronico"; // Referencia a otro documento.
             $this->reenvio = true;
             $this->Create();
         }     
