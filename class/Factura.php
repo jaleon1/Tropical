@@ -201,7 +201,7 @@ class Factura
             //
             $this->totalVenta = $obj["totalVenta"] ?? null;
             $this->totalDescuentos = $obj["totalDescuentos"] ?? null;
-            $this->totalVentaNeta = $obj["totalVentaNeta"] ?? null;
+            $this->totalVentaneta = $obj["totalVentaneta"] ?? null;
             $this->totalImpuesto = $obj["totalImpuesto"] ?? null;
             $this->totalComprobante = $obj["totalComprobante"] ?? null;
 
@@ -214,7 +214,7 @@ class Factura
             $this->idDocumento = $obj["idDocumento"] ?? 4; //$_SESSION["userSession"]->idDocumento; // Documento de Referencia.
             if ($this->idDocumento != "4")
                 $this->idReceptor = $obj['idReceptor'] ?? Receptor::
-                default()->id; // si es null, utiliza el Receptor por defecto. En 4.3 ya NO default!!!!!!
+                    default()->id; // si es null, utiliza el Receptor por defecto. En 4.3 ya NO default!!!!!!
 
             $this->fechaEmision = $obj["fechaEmision"] ?? null; // emision del comprobante electronico.
             //
@@ -266,29 +266,14 @@ class Factura
                         include_once('impuestos.php');
                         foreach ($itemDetalle["impuestos"] as $itemImpuesto) {
                             $imp = new Impuestos();
-                            $imp->idCodigoImpuesto = $itemImpuesto['idCodigoImpuesto']; // Impuesto al Valor Agregado = 1
+                            $imp->idCodigoImpuesto = $itemImpuesto['idCodigoImpuesto'];  // Impuesto al Valor Agregado = 1
                             $imp->codigoTarifa = $itemImpuesto['codigoTarifa']; // Tarifa general 13% = 8
                             $imp->tarifa = $itemImpuesto['tarifa']; //  13%
                             //$item->factorIVA= $itemImpuesto['factorIVA'];
                             $imp->monto = $itemImpuesto['monto'];
                             array_push($item->impuestos, $imp);
                         }
-                    }
-
-                    /*Impuestos*/
-                    $item->impuestos = [];
-                    if (isset($itemDetalle["impuestos"])) {
-                        include_once('impuestos.php');
-                        foreach ($itemDetalle["impuestos"] as $itemImpuesto) {
-                            $imp = new Impuestos();
-                            $imp->idCodigoImpuesto = $itemImpuesto['idCodigoImpuesto']; // Impuesto al Valor Agregado = 1
-                            $imp->codigoTarifa = $itemImpuesto['codigoTarifa']; // Tarifa general 13% = 8
-                            $imp->tarifa = $itemImpuesto['tarifa']; //  13%
-                            //$item->factorIVA= $itemImpuesto['factorIVA'];
-                            $imp->monto = $itemImpuesto['monto'];
-                            array_push($item->impuestos, $imp);
-                        }
-                    }
+                    } 
 
                     /*Exoneraciones*/
                     $item->exoneraciones = [];
@@ -736,7 +721,7 @@ class Factura
                 ':totalVentaneta' => $this->totalVentaneta,
                 ':totalImpuesto' => $this->totalImpuesto,
                 ':totalComprobante' => $this->totalComprobante,
-                ':idReceptor' => $this->idReceptor,
+                ':idReceptor' => $this->idReceptor ?? null,
                 ':idEmisor' => $this->idEmisor,
                 ':idUsuario' => $this->idUsuario,
                 ':idReferencia' => $this->idReferencia,
