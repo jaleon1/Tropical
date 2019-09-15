@@ -489,9 +489,6 @@ class ClienteFE{
                 else
                     $this->estadoCertificado=0;   
                 $this->certificado= encdes::decifrar($data[0]['certificado']);
-                // variables para loguear al api server
-                $_SESSION['APISERVER-username']= $this->username;
-                $_SESSION['APISERVER-password']= $this->password;
                 return $this;
             } else return null;
         }
@@ -594,8 +591,6 @@ class ClienteFE{
 
     function Create(){
         try {
-            $this->createAPIProfile();
-            //
             $sql="INSERT INTO clienteFE  (id, codigoSeguridad, idCodigoPais, idDocumento, nombre, idTipoIdentificacion, identificacion, nombreComercial, idProvincia,idCanton, idDistrito, idBarrio, otrasSenas, 
                 idCodigoPaisTel, numTelefono, correoElectronico, username, password, certificado, idBodega, pinp12)
                 VALUES (:id, :codigoSeguridad, :idCodigoPais, :idDocumento, :nombre, :idTipoIdentificacion, :identificacion, :nombreComercial, :idProvincia, :idCanton, :idDistrito, :idBarrio, :otrasSenas, 
@@ -707,7 +702,6 @@ class ClienteFE{
 
     function Update(){
         try {
-            $this->updateAPIProfile();
             $sql="UPDATE clienteFE 
                 SET nombre=:nombre, codigoSeguridad=:codigoSeguridad, idCodigoPais=:idCodigoPais, idTipoIdentificacion=:idTipoIdentificacion, 
                     identificacion=:identificacion, nombreComercial=:nombreComercial, idProvincia=:idProvincia, idCanton=:idCanton, idDistrito=:idDistrito, 
@@ -748,7 +742,6 @@ class ClienteFE{
 
     public function APILogin(){
         try{
-            error_log("[INFO] API LOGIN ... ");
             //
             $this->getApiUrl();
             $ch = curl_init();
@@ -803,71 +796,6 @@ class ClienteFE{
             $this->sessionKey= $sArray->resp->sessionKey;
             $_SESSION['APISERVER-sessionKey']=  $this->sessionKey;
             error_log("sessionKey: ". $sArray->resp->sessionKey);
-            return true;
-        } 
-        catch(Exception $e) {
-            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
-            header('HTTP/1.0 400 Bad error');
-            die(json_encode(array(
-                'code' => $e->getCode() ,
-                'msg' => $e->getMessage()))
-            );
-        }
-    }
-
-    public function APIUploadCert(){
-        try{
-            error_log("[INFO] Subiendo certificado API CRL: ". $this->certificado);
-            if (!file_exists($this->certificado)){
-                throw new Exception('Error al guardar el certificado. El certificado no existe' , 002256);
-            }
-            $this->getApiUrl();
-            $this->APILogin();
-            $ch = curl_init();
-            $post = [
-                'w' => 'fileUploader',
-                'r' => 'subir_certif',
-                'sessionKey'=> $_SESSION['APISERVER-sessionKey'],
-                'fileToUpload' => new CurlFile($this->certificado, 'application/x-pkcs12'),
-                'iam'=> $_SESSION['APISERVER-username']
-            ];
-            curl_setopt_array($ch, array(
-                CURLOPT_URL => $this->apiUrl,
-                CURLOPT_RETURNTRANSFER => true,   
-                CURLOPT_VERBOSE => true,                      
-                CURLOPT_MAXREDIRS => 10,
-                CURLOPT_TIMEOUT => 30,
-                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                CURLOPT_CUSTOMREQUEST => "POST",
-                CURLOPT_POSTFIELDS => $post
-            ));
-            $server_output = curl_exec($ch);
-            $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-            $header = substr($server_output, 0, $header_size);
-            $body = substr($server_output, $header_size);
-            $error_msg = "";
-            if (curl_error($ch)) {
-                $error_msg = curl_error($ch);
-                throw new Exception('Error al guardar el certificado. '. $error_msg , 033);
-            }
-            error_log("[INFO]: ". $server_output);
-            $sArray= json_decode($server_output);
-            if(!isset($sArray->resp->downloadCode)){
-                // ERROR CRITICO:
-                // debe notificar al contibuyente. 
-                throw new Exception('Error CRITICO al leer downloadCode: '.$server_output, 0344);
-            }
-            // almacena dowloadCode en clienteFE
-            $sql="UPDATE clienteFE
-                SET downloadCode=:downloadCode
-                WHERE idBodega=:idBodega";
-            $param= array(':idBodega'=>$_SESSION['userSession']->idBodega, ':downloadCode'=>$sArray->resp->downloadCode);
-            $data = DATA::Ejecutar($sql,$param, false);
-            if($data)
-                return true;
-            else throw new Exception('Error al guardar el downloadCode.', 0345);
-            //
-            curl_close($ch);
             return true;
         } 
         catch(Exception $e) {
