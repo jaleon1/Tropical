@@ -267,10 +267,9 @@ class Factura
                         foreach ($itemDetalle["impuestos"] as $itemImpuesto) {
                             $imp = new Impuestos();
                             $imp->idCodigoImpuesto = $itemImpuesto['idCodigoImpuesto'];  // Impuesto al Valor Agregado = 1
-                            $imp->codigoTarifa = $itemImpuesto['codigoTarifa']; // Tarifa general 13% = 8
-                            $imp->tarifa = $itemImpuesto['tarifa']; //  13%
-                            //$item->factorIVA= $itemImpuesto['factorIVA'];
-                            $imp->monto = $itemImpuesto['monto'];
+                            $imp->idCodigoTarifa = $itemImpuesto['codigoTarifa']; // Tarifa general 13% = 8
+                            $imp->tarifaImpuesto = $itemImpuesto['tarifa']; //  13%
+                            $imp->montoImpuesto = $itemImpuesto['monto'];
                             array_push($item->impuestos, $imp);
                         }
                     } 

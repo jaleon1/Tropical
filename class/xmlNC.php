@@ -229,7 +229,7 @@ class xmlNC{
         //
         $xmlString .= '<TotalVenta>' . $transaccion->totalVenta . '</TotalVenta>
             <TotalDescuentos>' . $transaccion->totalDescuentos . '</TotalDescuentos>
-            <TotalVentaNeta>' . $transaccion->totalVentaNeta . '</TotalVentaNeta>
+            <TotalVentaNeta>' . $transaccion->totalVentaneta . '</TotalVentaNeta>
             <TotalImpuesto>' . $transaccion->totalImpuesto . '</TotalImpuesto>
             <TotalComprobante>' . $transaccion->totalComprobante . '</TotalComprobante>
             </ResumenFactura>';
@@ -506,10 +506,10 @@ class xmlNC{
             );
             return false;
         }
-        if(empty($transaccion->totalVentaNeta)){
+        if(empty($transaccion->totalVentaneta)){
             self::$arrayResp = array(
                 "error" => 'Error al construir XML de FE',
-                "mensaje" => 'El valor (totalVentaNeta) no debe ser nulo o vacio'
+                "mensaje" => 'El valor (totalVentaneta) no debe ser nulo o vacio'
             );
             return false;
         }

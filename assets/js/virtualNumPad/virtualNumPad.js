@@ -337,13 +337,13 @@ function facturar() {
 
         objetoDetalleFactura.montoTotalLinea = parseFloat((objetoDetalleFactura.subTotal + montoTotalImpuestosLinea).toFixed(5));
         objetoDetalleFactura.impuestos.push(impuesto);
-        
+
         facturaCli.detalleFactura.push(objetoDetalleFactura);
 
         // actualiza totales de factura.
         facturaCli.totalVenta = parseFloat((facturaCli.totalVenta + objetoDetalleFactura.montoTotal).toFixed(5));
         facturaCli.totalDescuentos = parseFloat((facturaCli.totalDescuentos + objetoDetalleFactura.montoDescuento).toFixed(5));
-        facturaCli.totalImpuesto = parseFloat((facturaCli.totalImpuesto + objetoDetalleFactura.montoImpuesto).toFixed(5));
+        facturaCli.totalImpuesto = parseFloat((facturaCli.totalImpuesto + montoTotalImpuestosLinea).toFixed(5));
         //
         var objetoDetalleOrden = new Object();
         objetoDetalleOrden.idTamano = item[0];

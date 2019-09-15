@@ -159,7 +159,7 @@ class ProductoXFactura
         try {
             $sql = "SELECT id, idFactura, idPrecio, numeroLinea, idTipoCodigo, codigo, cantidad, idUnidadMedida,
              unidadMedidaComercial, detalle, precioUnitario, montoTotal, montoDescuento, naturalezaDescuento, 
-             subTotal, codigoImpuesto, tarifaImpuesto, montoImpuesto, idExoneracionImpuesto, montoTotalLinea,
+             subTotal, idCodigoImpuesto, idCodigoTarifa, tipoDocumento, tarifaImpuesto, montoImpuesto, montoTotalLinea,
                 (SELECT clave FROM factura WHERE id=idFactura) AS clave
                 from productosXFactura
                 where idFactura = :id";
@@ -232,9 +232,9 @@ class ProductoXFactura
             //$idUnidadMedida= 78;  // Unid.
             foreach ($obj as $item) {
                 $sql = "INSERT INTO productosXFactura (id, idFactura, idPrecio, numeroLinea, idTipoCodigo, codigo, cantidad, idUnidadMedida, detalle, precioUnitario, montoTotal, montoDescuento, naturalezaDescuento,
-                        subTotal, codigoImpuesto, tarifaImpuesto, montoImpuesto, idExoneracionImpuesto, montoTotalLinea)
+                        subTotal, idCodigoImpuesto, idCodigoTarifa, tarifaImpuesto, montoImpuesto, montoTotalLinea, impuestoNeto)
                     VALUES (uuid(), :idFactura, :idPrecio, :numeroLinea, :idTipoCodigo, :codigo, :cantidad, :idUnidadMedida, :detalle, :precioUnitario, :montoTotal, :montoDescuento, :naturalezaDescuento,                
-                        :subTotal, :codigoImpuesto, :tarifaImpuesto, :montoImpuesto, :idExoneracionImpuesto, :montoTotalLinea)";
+                        :subTotal, :idCodigoImpuesto, :idCodigoTarifa, :tarifaImpuesto, :montoImpuesto, :montoTotalLinea, :impuestoNeto)";
                 $param = array(
                     ':idFactura' => $item->idFactura,
                     ':idPrecio' => $item->idPrecio,
@@ -252,16 +252,16 @@ class ProductoXFactura
                     ':subTotal' => $item->subTotal,
                     /* IVA */
                     ':idCodigoImpuesto' => $item->impuestos[0]->idCodigoImpuesto ?? null,
-                    ':idCodigoTarifa' => $item->impuestos[0]->codigoTarifa ?? null,
-                    ':tarifaImpuesto' => $item->impuestos[0]->tarifa ?? null,
-                    ':montoImpuesto' => $item->impuestos[0]->monto ?? null,
+                    ':idCodigoTarifa' => $item->impuestos[0]->idCodigoTarifa ?? null,
+                    ':tarifaImpuesto' => $item->impuestos[0]->tarifaImpuesto ?? null,
+                    ':montoImpuesto' => $item->impuestos[0]->montoImpuesto ?? null,
                     /* EXONERACION */
-                    ':tipoDocumento' => $item->exoneraciones[0]->tipoDocumento ?? null,
-                    ':numeroDocumento' => $item->exoneraciones[0]->numeroDocumento ?? null,
-                    ':nombreInstitucion' => $item->exoneraciones[0]->nombreInstitucion ?? null,
-                    ':fechaEmision' => $item->exoneraciones[0]->fechaEmision ?? null,
-                    ':porcentajeExoneracion' => $item->exoneraciones[0]->porcentaje ?? null,
-                    ':montoExoneracion' => $item->exoneraciones[0]->monto ?? null,
+                    // ':tipoDocumento' => $item->exoneraciones[0]->tipoDocumento ?? null,
+                    // ':numeroDocumento' => $item->exoneraciones[0]->numeroDocumento ?? null,
+                    // ':nombreInstitucion' => $item->exoneraciones[0]->nombreInstitucion ?? null,
+                    // ':fechaEmision' => $item->exoneraciones[0]->fechaEmision ?? null,
+                    // ':porcentajeExoneracion' => $item->exoneraciones[0]->porcentaje ?? null,
+                    // ':montoExoneracion' => $item->exoneraciones[0]->monto ?? null,
                     ':impuestoNeto' => $item->impuestoNeto ?? null,
                     //
                     ':montoTotalLinea' => $item->montoTotalLinea
