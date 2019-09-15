@@ -359,7 +359,7 @@ class ClienteFE{
     
     public function read(){
         try {
-            $sql='SELECT id, idBodega, codigoSeguridad, idCodigoPais, idDocumento, nombre, idTipoIdentificacion, identificacion, nombreComercial, idProvincia, idCanton, idDistrito,
+            $sql='SELECT id, idBodega, codigoSeguridad, idCodigoPais, idDocumento, idCodigoActividad, nombre, idTipoIdentificacion, identificacion, nombreComercial, idProvincia, idCanton, idDistrito,
                     idBarrio, otrasSenas, numTelefono, correoElectronico, username, password, pinp12, downloadCode, certificado, cpath
                 FROM clienteFE
                 where idBodega=:idBodega';
@@ -371,6 +371,7 @@ class ClienteFE{
                 $this->codigoSeguridad= $data[0]['codigoSeguridad'];
                 $this->idCodigoPais= $data[0]['idCodigoPais'];
                 $this->idDocumento= $data[0]['idDocumento'];
+                $this->idCodigoActividad= $data[0]['idCodigoActividad'];
                 $this->nombre= $data[0]['nombre'];
                 $this->idTipoIdentificacion= $data[0]['idTipoIdentificacion'];
                 $this->identificacion= $data[0]['identificacion'];
