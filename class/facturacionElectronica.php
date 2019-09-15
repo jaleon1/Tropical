@@ -1,5 +1,9 @@
 <?php
 include_once('historico.php');
+require(dirname(__FILE__) . '/firmador/hacienda/firmador.php');
+
+use Hacienda\Firmador;
+
 require_once("invoice.php");
 //
 define('ERROR_USERS_NO_VALID', '-500');
@@ -28,1010 +32,783 @@ define('ERROR_NCXML_NO_VALID', '-522');
 define('ERROR_REFERENCIA_NO_VALID', '-523');
 define('SSL_API', '0');
 
-class FacturacionElectronica{
+class FacturacionElectronica
+{
     static $distr = false;
-    static $transaccion;
-    static $fechaEmision;
-    static $apiUrl;
-    static $accessToken;
-    static $expiresIn;
-    static $refreshExpiresIn;
-    static $refreshToken;
-    static $clave;
-    static $consecutivoFE;
-    static $xml;
-    static $xmlFirmado;
+    // static $transaccion;
+    // static $fechaEmision;
+    // static $apiUrl;
+    // static $accessToken;
+    // static $expiresIn;
+    // static $refreshExpiresIn;
+    // static $refreshToken;
+    // static $clave;
+    // static $consecutivoFE;
+    // static $xml;
+    // static $xmlFirmado;
     static $apiMode;
+    static $arrayResp;
+    static $grant_type = 'password'; // 'refresh_token';
 
-    public static function iniciarNC($t){
-        try{
+    public static function iniciarNC($t)
+    {
+        try {
             //date_default_timezone_set('America/Costa_Rica');
-            self::$transaccion= $t;
-            self::$fechaEmision= date_create();
+            self::$transaccion = $t;
+            self::$fechaEmision = date_create();
             // fe o nc
             self::$transaccion->idDocumento = 3; // NC
-            if(self::getApiUrl()){
-                if(self::APICrearClave()){
-                    if(self::APICrearNCXML()){
-                        if(self::APICifrarXml()){
-                            if(self::APIEnviar()){                                
-                                Invoice::$email_array_address_to = [];
-                                Invoice::create(self::$transaccion);
-                                //self::APIConsultaComprobante();
-                                //include_once('feCallback.php');
+
+        } catch (Exception $e) {
+            if (!self::$distr)
+                Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
+            else Distribucion::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
+            historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 5, 'ERROR_INICIAL: ' . $e->getMessage());
+            error_log("[ERROR]  (" . $e->getCode() . "): " . $e->getMessage());
+        }
+    }
+
+    public static function iniciar($t)
+    {
+        try {
+            self::$transaccion = $t;
+            self::$transaccion->fechaEmision = date_create();
+            if (self::getClave(
+                self::$transaccion->idDocumento,
+                self::$transaccion->datosEntidad->idTipoIdentificacion,
+                self::$transaccion->datosEntidad->identificacion,
+                self::$transaccion->idSituacionComprobante,
+                '506',
+                self::$transaccion->consecutivo,
+                self::$transaccion->datosEntidad->codigoSeguridad,
+                self::$transaccion->local,
+                self::$transaccion->terminal
+            )) {
+                // si el documento es MR, no actualiza la clave, utiliza al de la factura emitida.
+                //if(self::$transaccion->idDocumento!=5 && self::$transaccion->idDocumento!=6 && self::$transaccion->idDocumento!=7){
+                self::$transaccion->clave = self::$arrayResp['clave'];
+                self::$transaccion->consecutivoFE = self::$arrayResp['consecutivoFE'];
+                //}                
+                //
+                switch (self::$transaccion->idDocumento) {
+                    case 1:
+                        include_once('xmlFE.php');
+                        self::$arrayResp = xmlFE::create(self::$transaccion);
+                        break;
+                    case 4:
+                        include_once('xmlTE.php');
+                        self::$arrayResp = xmlTE::create(self::$transaccion);
+                        break;
+                    case 2: //self::$arrayResp = self::APICrearNDXML();
+                        break;
+                    case 3:
+                        // include_once('xmlNC.php');
+                        // self::$arrayResp = xmlNC::create(self::$transaccion);
+                        break;
+                    case 5: // CCE
+                    case 6: // CPCE
+                    case 7: // RCE
+                        include_once('xmlMR.php');
+                        self::$arrayResp = xmlMR::create(self::$transaccion);
+                        break;
+                }
+                //
+                if (self::$arrayResp) {
+                    // valida respuesta.
+                    if (isset(self::$arrayResp['error'])) {
+                        throw new Exception(self::$arrayResp['error'] . '(' . self::$arrayResp['mensaje'] . ')', ERROR_FEXML_NO_VALID);
+                    }
+                    // Cifrar
+                    if (self::cifrarXml()) {
+                        // token.
+                        if (self::checkToken()) {
+                            // envia documento.
+                            if (self::send(self::$transaccion->clave, self::$transaccion->fechaEmision))
                                 return true;
-                            }
                         }
                     }
-                }
-            }
-        }
-        catch(Exception $e){
-            if(!self::$distr)
+                } else throw new Exception(self::$arrayResp['error'] . '(' . self::$arrayResp['mensaje'] . ')', ERROR_FEXML_NO_VALID);
+            } else throw new Exception(self::$arrayResp['error'] . '(' . self::$arrayResp['mensaje'] . ')', ERROR_CLAVE_NO_VALID);
+        } catch (Exception $e) {
+            if (!self::$distr)
                 Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
             else Distribucion::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
-            historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 5, 'ERROR_INICIAL: '. $e->getMessage());
-            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 5, 'ERROR_INICIAL: ' . $e->getMessage());
+            error_log("[ERROR]  (" . $e->getCode() . "): " . $e->getMessage());
+            return false;
         }
     }
 
-    public static function iniciar($t){
-        try{
-            //date_default_timezone_set('America/Costa_Rica');
-            error_log("[INFO]: iniciando FE...");
-            self::$transaccion= $t;
-            self::$fechaEmision= date_create();
-            // fe o nc
-            // if(self::$transaccion->idDocumentoNC!=null)
-            //     self::$transaccion->idDocumento = self::$transaccion->idDocumentoNC;
-            if(self::getApiUrl()){
-                $resCreaXml = false;
-                if(self::APICrearClave()){
-                    switch(self::$transaccion->idDocumento){
-                        case 1: // FE
-                        case 4: // TE
-                        case 8: // Contingencia.
-                            $resCreaXml = self::APICrearXML();
-                        break;
-                        case 2: // ND
-                            //$resCreaXml = self::APICrearNDXML();
-                            break;
-                        case 3: // NC 
-                            $resCreaXml = self::APICrearNCXML();
-                            break;
-                        case 5: // CCE
-                        case 6: // CPCE
-                        case 7: // RCE
-                            $resCreaXml = self::APICrearMRXML();
-                        break;
+    public static function getClave($tipoDocumento = "", $tipoCedula = "", $cedula = "", $situacion = "", $codigoPais = "", $consecutivo = "", $codigoSeguridad = "00000000", $sucursal = "001", $terminal = "00001")
+    {
+        $dia = date('d');
+        $mes = date('m');
+        $ano = date('y');
+        //Validamos el parametro de cedula    
+        if ($cedula == "" && strlen($cedula) == 0) {
+            self::$arrayResp = array(
+                "error" => "Error al crear clave",
+                "mensaje" => "El valor cedula no debe ser vacio"
+            );
+            return false;
+        } else if (!ctype_digit($cedula)) {
+            self::$arrayResp = array(
+                "error" => "Error al crear clave",
+                "mensaje" => "El valor cedula no es numeral"
+            );
+            return false;
+        }
+        //Validamos el parametro de cedula    
+        if ($codigoPais == "" && strlen($codigoPais) == 0) {
+            self::$arrayResp = array(
+                "error" => "Error al crear clave",
+                "mensaje" => "El valor codigoPais no debe ser vacio"
+            );
+            return false;
+        } else if (!ctype_digit($codigoPais)) {
+            self::$arrayResp = array(
+                "error" => "Error al crear clave",
+                "mensaje" => "El valor codigoPais no es numeral"
+            );
+            return false;
+        }
+        //Validamos que venga el parametro de sucursal
+        if ($sucursal == "" && strlen($sucursal) == 0) {
+            $sucursal = "001";
+        } else if (ctype_digit($sucursal)) {
+
+            if (strlen($sucursal) < 3) {
+                $sucursal = str_pad($sucursal, 3, "0", STR_PAD_LEFT);
+            } else if (strlen($sucursal) != 3 && $sucursal != 0) {
+                self::$arrayResp = array(
+                    "error" => "Error al crear clave",
+                    "mensaje" => "el tamaño de sucursal es diferente de 3 digitos"
+                );
+                return false;
+            }
+        } else {
+            self::$arrayResp = array(
+                "error" => "Error al crear clave",
+                "mensaje" => "El valor sucursal no es numeral"
+            );
+            return false;
+        }
+        //Validamos que venga el parametro de terminal
+        if ($terminal == "" && strlen($terminal) == 0) {
+            $terminal = "00001";
+        } else if (ctype_digit($terminal)) {
+
+            if (strlen($terminal) < 5) {
+                $terminal = str_pad($terminal, 5, "0", STR_PAD_LEFT);
+            } else if (strlen($terminal) != 5 && $terminal != 0) {
+                self::$arrayResp = array(
+                    "error" => "Error al crear clave",
+                    "mensaje" => "el tamaño de terminal es diferente de 5 digitos"
+                );
+                return false;
+            }
+        } else {
+            self::$arrayResp = array(
+                "error" => "Error al crear clave",
+                "mensaje" => "El valor terminal no es numeral"
+            );
+            return false;
+        }
+        //Validamos el consecutivo
+        if ($consecutivo == "" && strlen($consecutivo) == 0) {
+            return "El consecutivo no puede ser vacio";
+        } else if (strlen($consecutivo) < 10) {
+            $consecutivo = str_pad($consecutivo, 10, "0", STR_PAD_LEFT);
+        } else if (strlen($consecutivo) != 10 && $consecutivo != 0) {
+            self::$arrayResp = array(
+                "error" => "Error en consecutivo",
+                "mensaje" => "el tamaño consecutivo es diferente de 10 digitos"
+            );
+            return false;
+        }
+        //Validamos el codigoSeguridad
+        if ($codigoSeguridad == "" && strlen($codigoSeguridad) == 0) {
+            return "El consecutivo no puede ser vacio";
+        } else if (strlen($codigoSeguridad) < 8) {
+            $codigoSeguridad = str_pad($codigoSeguridad, 8, "0", STR_PAD_LEFT);
+        } else if (strlen($codigoSeguridad) != 8 && $codigoSeguridad != 0) {
+            self::$arrayResp = array(
+                "error" => "Error en codigo Seguridad",
+                "mensaje" => "el tamaño codigo Seguridad es diferente de 8 digitos"
+            );
+            return false;
+        }
+        // valida tipo de documento.
+        $tipos = array("FE", "ND", "NC", "TE", "CCE", "CPCE", "RCE", "FEC", "FEE", 1, 2, 3, 4, 5, 6, 7, 8);
+        if (in_array($tipoDocumento, $tipos)) {
+            switch ($tipoDocumento) {
+                case 'FE': //Factura Electronica
+                case 1:
+                    $tipoDocumento = "01";
+                    break;
+                case 'ND': // Nota de Debito
+                case 2:
+                    $tipoDocumento = "02";
+                    break;
+                case 'NC': // Nota de Credito
+                case 3:
+                    $tipoDocumento = "03";
+                    break;
+                case 'TE': // Tiquete Electronico
+                case 4:
+                    $tipoDocumento = "04";
+                    break;
+                case 'CCE': // Confirmacion Comprabante Electronico
+                case 5:
+                    $tipoDocumento = "05";
+                    break;
+                case 'CPCE': // Confirmacion Parcial Comprbante Electronico
+                case 6:
+                    $tipoDocumento = "06";
+                    break;
+                case 'RCE': // Rechazo Comprobante Electronico
+                case 7:
+                    $tipoDocumento = "07";
+                    break;
+                case 'FEC': // Rechazo Comprobante Electronico
+                case 8:
+                    $tipoDocumento = "08";
+                    break;
+                case 'FEE': // Rechazo Comprobante Electronico
+                case 9:
+                    $tipoDocumento = "09";
+                    break;
+            }
+        } else {
+            self::$arrayResp = array(
+                "error" => "Error al crear clave",
+                "mensaje" => "No se encuentra tipo de documento"
+            );
+            return false;
+        }
+        $consecutivoFE = $sucursal . $terminal . $tipoDocumento . $consecutivo;
+        //-----------------------------------------------//
+        //Numero de Cedula + el indice identificador
+        $identificacion;
+        $cedulas = array("fisico", "juridico", "dimex", "nite", 1, 2, 3, 4);
+        if (in_array($tipoCedula, $cedulas)) {
+            switch ($tipoCedula) {
+                case 'fisico': //fisico se agregan 3 ceros para completar los 12 caracteres
+                case 1:
+                    $identificacion = "000" . $cedula;
+                    break;
+                case 'juridico': // juridico se agregan 2 ceros para completar los 12 caracteres
+                case 2:
+                    $identificacion = "00" . $cedula;
+                    break;
+                case 'dimex': // dimex puede ser de 11 0 12 caracteres
+                case 3:
+                    if (strlen($cedula) == 11) {
+                        //En caso de ser 11 caracteres se le agrega un 0
+                        $identificacion = "0" . $cedula;
+                    } else if (strlen($cedula) == 12) {
+                        $identificacion = $cedula;
+                    } else {
+                        self::$arrayResp = array(
+                            "error" => "Error al crear clave",
+                            "mensaje" => "dimex incorrecto"
+                        );
+                        return false;
+                    }
+                    break;
+                case 'nite': // nite se agregan 2 ceros para completar los 12 caracteres
+                case 4:
+                    $identificacion = "00" . $cedula;
+                    break;
+            }
+        } else {
+            self::$arrayResp = array(
+                "error" => "Error al crear clave",
+                "mensaje" => "No se encuentra tipo de cedula"
+            );
+            return false;
+        }
+        //-----------------------------------------------//
+        //1	Normal	Comprobantes electronicos que son generados y transmitidos en el mismo acto de compra-venta y prestacion del servicio al sistema de validacion de comprobantes electronicos de la Direccion General de Tributacion de Costa Rica.
+        //2	Contingencia	Comprobantes electronicos que sustituyen al comprobante fisico emitido por contingencia.
+        //3	Sin internet	Comprobantes que han sido generados y expresados en formato electronico, pero no se cuenta con el respectivo acceso a internet para el envio inmediato de los mismos a la Direccion General de Tributacion de Costa Rica.
+        $situaciones = array("normal", "contingencia", "sininternet", 1, 2, 3);
+        if (in_array($situacion, $situaciones)) {
+            switch ($situacion) {
+                case 'normal': //normal
+                    $situacion = 1;
+                    break;
+                case 'contingencia': // Situacion de contingencia
+                    $situacion = 2;
+                    break;
+                case 'sininternet': //Situacion sin internet
+                    $situacion = 3;
+                    break;
+            }
+        } else {
+            self::$arrayResp = array(
+                "error" => "Error al crear clave",
+                "mensaje" => "No se encuentra el tipo de situacion"
+            );
+            return false;
+        }
+        //-----------------------------------------------//     
+        //Crea la clave 
+        $clave = $codigoPais . $dia . $mes . $ano . $identificacion . $consecutivoFE . $situacion . $codigoSeguridad;
+        self::$arrayResp = array(
+            "clave" => $clave,
+            "consecutivoFE" => $consecutivoFE
+        );
+        error_log("[INFO] API CLAVE: " .  $clave);
+        if (!self::$distr)
+            Factura::setClave(self::$transaccion->idDocumento, self::$transaccion->id, self::$clave, self::$consecutivoFE);
+        else Distribucion::setClave(self::$transaccion->idDocumento, self::$transaccion->id, self::$clave, self::$consecutivoFE);
+    }
+
+    public static function cifrarXml()
+    {
+        try {
+            if (isset(self::$arrayResp['xml'])) {
+                $pfx = Globals::certDir . self::$transaccion->datosEntidad->id . DIRECTORY_SEPARATOR . self::$transaccion->datosEntidad->cpath;
+                if (!file_exists($pfx))
+                    throw new Exception('El certificado del emisor(' . self::$transaccion->datosEntidad->nombre . ') No existe.', ERROR_CERTIFICADOURL_NO_VALID);
+                if (empty(self::$transaccion->datosEntidad->pinp12))
+                    throw new Exception('El PIN del emisor(' . self::$transaccion->datosEntidad->nombre . ') No existe.', ERROR_CERTIFICADOURL_NO_VALID);
+                $firmador = new Firmador();
+                //$pfx    =  self::$transaccion->datosEntidad->certificado; // dirname(__FILE__) . DIRECTORY_SEPARATOR . '011187076308(prueba).p12'; // Ruta del archivo de la llave criptografica (*.p12)
+                $pin    = self::$transaccion->datosEntidad->pinp12;
+                $base64 = $firmador->firmarXml($pfx, $pin, self::$arrayResp['xml'], $firmador::TO_BASE64_STRING);
+                //print_r($base64);
+                self::$arrayResp = array(
+                    "clave" => self::$transaccion->clave,
+                    "xmlCifrado" => $base64
+                );
+                historico::create(self::$transaccion->id, self::$transaccion->idEntidad, self::$transaccion->idDocumento, 1, 'XML Firmado a Enviar', base64_decode($base64));
+                error_log("[INFO] API CIFRADO XML EXITOSO!");
+                return true;
+            } else throw new Exception('No existe el xml para cifrar', ERROR_CIFRAR_NO_VALID);
+        } catch (Exception $e) {
+            error_log("[ERROR]  (" . $e->getCode() . "): " . $e->getMessage());
+            historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 5, 'ERROR_TOKEN_NO_VALID: ' . $e->getMessage());
+            if (!self::$distr)
+                Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
+            else Distribucion::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
+            self::$arrayResp = array(
+                "error" => $e->getCode(),
+                "mensaje" => $e->getMessage()
+            );
+            return false;
+        }
+    }
+
+    public static function checkToken()
+    {
+        //Revisa si tiene un TOKEN abierto.
+        include_once('entidad.php');
+        $username = '';
+        $password = '';
+        switch (self::$transaccion->idDocumento) {
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+            case 8:
+            case 9:
+                $username = self::$transaccion->datosEntidad->username;
+                $password = self::$transaccion->datosEntidad->password;
+                break;
+            case 5:
+            case 6:
+            case 7:
+                $username = self::$transaccion->datosReceptor->username;
+                $password = self::$transaccion->datosReceptor->password;
+                break;
+        }
+        self::$apiMode = strpos($username, 'prod');
+        if (self::$apiMode === false)
+            self::$apiMode = 'api-stag';
+        else self::$apiMode = 'api-prod';
+        if (isset(self::$transaccion->datosEntidad->accessToken) && !empty(self::$transaccion->datosEntidad->accessToken)) {
+            //
+            $tokenDatetime = date_create(self::$transaccion->datosEntidad->tokenDatetime);
+            $currentDatetime = date_create();
+            $tokenDiff = $currentDatetime->getTimestamp() - $tokenDatetime->getTimestamp(); // $tokenDatetime->diff($currentDatetime);
+            // token: 300 segundos. Si es menor lo utiliza. Sino usa refresh-token 1200 segundos. Sino abre uno nuevo.
+            if ($tokenDiff < (self::$transaccion->datosEntidad->expiresIn - 15)) {
+                // utiliza acces token.
+                error_log('[INFO] UTILIZA ACCESS TOKEN');
+                return true;
+            } else if ($tokenDiff < (self::$transaccion->datosEntidad->refreshExpiresIn - 15)) {
+                // refresca token.
+                static::$grant_type = "refresh_token";
+                error_log('[INFO] SOLICITA REFRESH TOKEN');
+                return static::openToken($username, $password);
+            } else {
+                // abre nuevo token.
+                static::$grant_type = "password";
+                error_log('[INFO] SOLICITA ACCESS TOKEN');
+                return static::openToken($username, $password);
+            }
+        } else {
+            // abre nuevo token.
+            static::$grant_type = "password";
+            return static::openToken($username, $password);
+        }
+    }
+
+    public static function openToken($username = null, $password = null)
+    {
+        try {
+            // URL: prod - stag
+            $url;
+            if (self::$apiMode == 'api-stag') {
+                $url = "https://idp.comprobanteselectronicos.go.cr/auth/realms/rut-stag/protocol/openid-connect/token";
+            } else if (self::$apiMode == 'api-prod') {
+                $url = "https://idp.comprobanteselectronicos.go.cr/auth/realms/rut/protocol/openid-connect/token";
+            }
+            //
+            $ch = curl_init();
+            $post = '';
+            if (static::$grant_type == "password") {
+                $post = [
+                    'client_id' =>  self::$apiMode,
+                    'client_secret' => '',
+                    'grant_type' => static::$grant_type,
+                    'username' =>  $username,
+                    'password' =>  $password
+                ];
+            }
+            if (static::$grant_type == "refresh_token") {
+                $post = [
+                    'client_id' =>  self::$apiMode,
+                    'client_secret' => '',
+                    'grant_type' => static::$grant_type,
+                    'refresh_token' => self::$transaccion->datosEntidad->refreshToken
+                ];
+            }
+            /*$options = array(
+                'http' => array(
+                    'header' => "Content-type: application/x-www-form-urlencoded\r\n",
+                    'method' => 'POST',
+                    'content' => http_build_query($post)
+                )
+            );
+            $context = stream_context_create($options);
+            $result = file_get_contents($url, false, $context);*/
+            curl_setopt_array($ch, array(
+                //CURLOPT_HEADER, 0,
+                CURLOPT_URL => $url,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_VERBOSE => 0,
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 30,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => "POST",
+                CURLOPT_POSTFIELDS => http_build_query($post),
+                CURLOPT_SSL_VERIFYHOST => SSL_API,
+                CURLOPT_SSL_VERIFYPEER => SSL_API
+            ));
+            $server_output = curl_exec($ch);
+            $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+            $header = substr($server_output, 0, $header_size);
+            $body = substr($server_output, $header_size);
+            $error_msg = "";
+            if (curl_error($ch)) {
+                $error_msg = curl_error($ch);
+                throw new Exception('Error al abrir TOKEN. ' . $error_msg, ERROR_TOKEN_NO_VALID);
+            }
+            $information = curl_getinfo($ch);
+            if ($information['http_code'] != 200) {
+                if (strpos($server_output, 'Refresh token expired') || strpos($server_output, 'Session not active') !== false) {
+                    static::$grant_type = "password";
+                    return static::openToken($username, $password);
+                } else throw new Exception('Error CRITICO al Solicitar TOKEN MH. ' . $server_output, ERROR_TOKEN_NO_VALID);
+            }
+            //
+            $sArray = json_decode($server_output);
+            //
+            if (!isset($sArray->access_token)) {
+                // ERROR CRITICO:
+                // debe notificar al contibuyente. 
+                throw new Exception('Error CRITICO al Solicitar TOKEN MH.', ERROR_TOKEN_NO_VALID);
+            }
+            //
+            self::$transaccion->datosEntidad->accessToken      = $sArray->access_token;
+            self::$transaccion->datosEntidad->expiresIn        = $sArray->expires_in;
+            self::$transaccion->datosEntidad->refreshExpiresIn = $sArray->refresh_expires_in;
+            self::$transaccion->datosEntidad->refreshToken     = $sArray->refresh_token;
+            $tokenDatetime = date_create();
+            // abre token.
+            error_log('[INFO] OPEN TOKEN !!!');
+            // error_log("[INFO] GET ACCESS TOKEN API MH = " . self::$transaccion->datosEntidad->accessToken);
+            Entidad::setToken(
+                self::$transaccion->datosEntidad->id,
+                self::$transaccion->datosEntidad->accessToken,
+                self::$transaccion->datosEntidad->expiresIn,
+                self::$transaccion->datosEntidad->refreshExpiresIn,
+                self::$transaccion->datosEntidad->refreshToken,
+                $tokenDatetime->format("c")
+            );
+            return true;
+        } catch (Exception $e) {
+            error_log("[ERROR]  (" . $e->getCode() . "): " . $e->getMessage());
+            historico::create(self::$transaccion->id, self::$transaccion->idEntidad, self::$transaccion->idDocumento, 5, 'ERROR_TOKEN_NO_VALID: ' . $e->getMessage());
+            if (!self::$distr)
+                Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
+            else Distribucion::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
+            //
+            self::$arrayResp = array(
+                "error" => $e->getCode(),
+                "mensaje" => $e->getMessage()
+            );
+            return false;
+        }
+    }
+
+    public static function send($clave = null, $fechaEmision = null)
+    {
+        try {
+            $post = [
+                'clave' => $clave,
+                'fecha' => $fechaEmision->format("c"),
+                'emisor' => array(
+                    'tipoIdentificacion' => self::$transaccion->datosEntidad->idTipoIdentificacion,
+                    'numeroIdentificacion' => self::$transaccion->datosEntidad->identificacion
+                ),
+                'comprobanteXml' => self::$arrayResp['xmlCifrado']
+            ];
+            $mensaje = json_encode($post);
+            $header = array(
+                'Authorization: bearer ' . self::$transaccion->datosEntidad->accessToken,
+                'Content-Type: application/json'
+            );
+            $url    = (self::$apiMode == 'api-stag' ? "https://api.comprobanteselectronicos.go.cr/recepcion-sandbox/v1/recepcion/" : (self::$apiMode  == 'api-prod' ? "https://api.comprobanteselectronicos.go.cr/recepcion/v1/recepcion/" : null));
+            //
+            $ch = curl_init();
+            curl_setopt_array($ch, array(
+                CURLOPT_URL => $url,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_VERBOSE => 0,
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 30,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_HEADER => true,
+                CURLOPT_HTTPHEADER => $header,
+                CURLOPT_CUSTOMREQUEST => "POST",
+                CURLOPT_POSTFIELDS => $mensaje,
+                CURLOPT_SSL_VERIFYHOST => SSL_API,
+                CURLOPT_SSL_VERIFYPEER => SSL_API
+            ));
+            $server_output = curl_exec($ch);
+            $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+            $header = substr($server_output, 0, $header_size);
+            $body = substr($server_output, $header_size);
+            $error_msg = "";
+            //
+            if (curl_error($ch)) {
+                $error_msg = curl_error($ch);
+                $timedOut = strpos($error_msg, 'Operation timed out');
+                if ($timedOut === false)
+                    throw new Exception('Error CRITICO al ENVIAR el comprobante. DEBE COMUNICARSE CON SOPORTE TECNICO: ' . $error_msg, ERROR_ENVIO_NO_VALID);
+                else {
+                    //timed out.
+                    error_log("[ERROR]  (-600): " . $error_msg);
+                    historico::create(self::$transaccion->id, self::$transaccion->idEntidad, self::$transaccion->idDocumento, 6, $error_msg);
+                    if (!self::$distr)
+                        Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 6, $fechaEmision->format("c"));
+                    else
+                        Distribucion::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 6, $fechaEmision->format("c"));
+                    return false;
+                }
+            }
+            $information = curl_getinfo($ch);
+            if ($information['http_code'] != 202) {
+                $xError = strpos($server_output, 'X-Error-Cause');
+                $responseT = 'Error General';
+                if ($xError) {
+                    //preg_match('/Clave: (.*?)\n/', $header, $clave);
+                    preg_match('/X-Error-Cause: (.*?).(.*?)\n/', $server_output, $xE);
+                    $responseT = $xE[0];
+                }
+                error_log("[WARNING] El documento (" . $clave . "): " . $responseT);
+                $recibidoAnteriormente = $xError = strpos($server_output, 'ya fue recibido anteriormente.');
+                if ($recibidoAnteriormente) {
+                    historico::create(self::$transaccion->id, self::$transaccion->idEntidad, self::$transaccion->idDocumento, 7, '[ERROR] ' . $responseT . ', STATUS(' . $information['http_code'] . ')');
+                    if (!self::$distr)
+                        Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 7, $fechaEmision->format("c"));
+                    else Distribucion::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 6, $fechaEmision->format("c"));
+                    return false;
+                } else throw new Exception('Error CRITICO al ENVIAR el comprobante. DEBE COMUNICARSE CON SOPORTE TECNICO, STATUS(' . $information['http_code'] . '):  ' . $server_output, ERROR_ENVIO_NO_VALID);
+            }
+            //
+            //$sArray= json_decode($server_output);   
+            if ($information['http_code'] == 202) {
+                // ERROR CRITICO: almacena estado= 5 (otros) - error al enviar comprobante.
+                //throw new Exception('Error CRITICO al ENVIAR el comprobante. DEBE COMUNICARSE CON SOPORTE TECNICO: '. $server_output, ERROR_ENVIO_NO_VALID);
+                historico::create(self::$transaccion->id, self::$transaccion->idEntidad, self::$transaccion->idDocumento, 2, 'Comprobante ENVIADO EXITOSAMENTE, STATUS(' . $information['http_code'] . ')');
+                if (!self::$distr) Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 2, $fechaEmision->format("c"));
+                else Distribucion::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 2, $fechaEmision->format("c"));
+            }
+            //
+            error_log("[INFO] API ENVIO EXITOSO!");
+            curl_close($ch);
+            return true;
+        } catch (Exception $e) {
+            error_log("[ERROR]  (" . $e->getCode() . "): " . $e->getMessage());
+            historico::create(self::$transaccion->id, self::$transaccion->idEntidad, self::$transaccion->idDocumento, 5, 'ERROR_ENVIO_NO_VALID: ' . $e->getMessage());
+            if (!self::$distr)  Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, $fechaEmision->format("c"));
+            else Distribucion::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, $fechaEmision->format("c"));
+            //
+            self::$arrayResp = array(
+                "error" => $e->getCode(),
+                "mensaje" => $e->getMessage()
+            );
+            return false;
+        }
+    }
+
+    public static function consulta($t, $invoice = false)
+    {
+        try {
+            self::$transaccion = $t;
+            error_log("[INFO] API CONSULTA CLAVE: " . self::$transaccion->clave);
+            if (!self::checkToken())
+                return false;
+            $url;
+            if (self::$apiMode == 'api-stag') {
+                $url = "https://api.comprobanteselectronicos.go.cr/recepcion-sandbox/v1/recepcion/";
+            } else if (self::$apiMode == 'api-prod') {
+                $url = "https://api.comprobanteselectronicos.go.cr/recepcion/v1/recepcion/";
+            }
+            $ch = curl_init();
+            $header = array(
+                'Authorization: bearer ' . self::$transaccion->datosEntidad->accessToken,
+                'Content-Type: application/json'
+            );
+            curl_setopt_array($ch, array(
+                CURLOPT_URL => $url . self::$transaccion->clave,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_VERBOSE => 0,
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 30,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_HEADER => true,
+                CURLOPT_HTTPHEADER => $header,
+                CURLOPT_CUSTOMREQUEST => "GET",
+                CURLOPT_SSL_VERIFYHOST => SSL_API,
+                CURLOPT_SSL_VERIFYPEER => SSL_API
+            ));
+            $server_output = curl_exec($ch);
+            $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+            $header = substr($server_output, 0, $header_size);
+            $body = substr($server_output, $header_size);
+            $error_msg = "";
+            if (curl_error($ch)) {
+                $error_msg = curl_error($ch);
+                throw new Exception('Error CRITICO al CONSULTAR el comprobante. ' . $error_msg, ERROR_CONSULTA_NO_VALID);
+            }
+            $information = curl_getinfo($ch);
+            if ($information['http_code'] != 200) {
+                // busca x-error-cause.
+                $xError = strpos($header, 'X-Error-Cause');
+                if ($xError) {
+                    //preg_match('/Clave: (.*?)\n/', $header, $clave);
+                    preg_match('/X-Error-Cause: (.*?).(.*?)\n/', $header, $xE);
+                    $responseT = $xE[0];
+                    // **** PENDIENTE VALIDAR REPETIDOS ****
+                    $null = strpos($responseT, ' no ha sido recibido.');
+                    if ($null === false) {
+                        throw new Exception('Error CRITICO al consultar el comprobante. DEBE COMUNICARSE CON SOPORTE TECNICO: ' . $responseT, ERROR_CONSULTA_NO_VALID);
+                    } else {
+                        // clave invalida, no existe en ATV.
+                        if (!self::$distr) Factura::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 1);
+                        else Distribucion::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 1);
+                        historico::create(self::$transaccion->id, self::$transaccion->idEntidad, self::$transaccion->idDocumento, 1, 'La transaccion no fue enviada a los sistemas de ATV.');
+                        throw new Exception('Documento no registrado en ATV: ' . $responseT, ERROR_CONSULTA_NO_VALID);
+                    }
+                    // throw new Exception('Error CRITICO al consultar el comprobante STATUS( '. $information['http_code'] .' ). '.$responseT, ERROR_CONSULTA_NO_VALID);
+                } else throw new Exception('Error CRITICO al consultar el comprobante STATUS( ' . $information['http_code'] . ' ). ' . $server_output, ERROR_CONSULTA_NO_VALID);
+            } else {
+                $responseT = str_replace("-", "_", $body);
+                $responseT = json_decode($responseT);
+                error_log("[INFO] Estado del DOCUMENTO (" . self::$transaccion->clave . "): $responseT->ind_estado");
+                // si el estado es procesando debe consultar de nuevo.
+                if ($responseT->ind_estado == 'procesando') {
+                    historico::create(self::$transaccion->id, self::$transaccion->idEntidad, self::$transaccion->idDocumento, 2, $responseT->ind_estado);
+                    if (!self::$distr) Factura::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 2);
+                    else Distribucion::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 2);
+                    //self::APIConsultaComprobante();
+                } else if ($responseT->ind_estado == 'aceptado') {
+                    $xml = base64_decode($responseT->respuesta_xml);
+                    $fxml = simplexml_load_string($xml);
+                    //
+                    if (strpos((string) $fxml->NombreEmisor, 'DESCONOCIDO')  || (string) strpos($fxml->NumeroCedulaEmisor, '00000')) {
+                        error_log("[WARNING] El documento (" . self::$transaccion->clave . ") TIENE VALORES NULOS (DESCONOCIDO-00000000)");
+                        historico::create(self::$transaccion->id, self::$transaccion->idEntidad, self::$transaccion->idDocumento, 4, "[WARNING] HAY VALORES NULOS (DESCONOCIDO-00000000)");
+                    }
+                    //                    
+                    historico::create(self::$transaccion->id, self::$transaccion->idEntidad, self::$transaccion->idDocumento, 3, '[' . $responseT->ind_estado . '] ' . (string) $fxml->DetalleMensaje, $xml);
+                    if (!self::$distr) Factura::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 3);
+                    else Distribucion::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 3);
+                    //EMAIL
+                    require_once("invoice.php");
+                    if ($invoice && self::$transaccion->idDocumento == '1') {
+                        Invoice::$email_array_address_to = [];
+                        Invoice::create(self::$transaccion);
+                    }
+                } else if ($responseT->ind_estado == 'rechazado') {
+                    // genera informe con los datos del rechazo. y pone estado de la transaccion pendiente para ser enviada cuando sea corregida.
+                    $xml = base64_decode($responseT->respuesta_xml);
+                    $fxml = simplexml_load_string($xml);
+                    //
+                    if (strpos((string) $fxml->NombreEmisor, 'DESCONOCIDO') || strpos((string) $fxml->NumeroCedulaEmisor, '000000000')  !== false) {
+                        error_log("[WARNING] El documento (" . self::$transaccion->clave . ") TIENE VALORES NULOS (DESCONOCIDO-00000000)");
+                        historico::create(self::$transaccion->id, self::$transaccion->idEntidad, self::$transaccion->idDocumento, 4, "[WARNING] HAY VALORES NULOS (DESCONOCIDO-00000000)");
                     }
                     //
-                    if($resCreaXml){
-                        if(self::APICifrarXml()){
-                            if(self::APIEnviar()){
-                                //self::APIConsultaComprobante();
-                                //include_once('feCallback.php');
-                                return true;
-                            } else return false;
-                        } else return false;
-                    } else return false;
-                } else return false;
-            } else return false;
-        }
-        catch(Exception $e){
-            if(!self::$distr)
-                Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
-            else Distribucion::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));            
-            historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 5, 'ERROR_INICIAL: '. $e->getMessage());
-            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
-            return false;
-        }
-    }
-
-    public static function getApiUrl(){
-        try{
-            require_once('Globals.php');
-            if (file_exists(Globals::configFile)) {
-                $set = parse_ini_file(Globals::configFile,true); 
-                self::$apiUrl= $set[Globals::app]['apiurl'];
-                return true;
-            }         
-            else {
-                throw new Exception('Acceso denegado al Archivo de configuración.', ERROR_LECTURA_CONFIG); 
-            }
-        }
-        catch(Exception $e) {
-            if(!self::$distr)
-                Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
-            else Distribucion::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
-            historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 5, 'ERROR_LECTURA_CONFIG: '. $e->getMessage());
-            error_log("[ERROR]  Acceso denegado al Archivo de configuración. (".$e->getCode()."): ". $e->getMessage());
-        }        
-    }
-
-    private static function getIdentificacionCod($id){
-        try{
-            $sql='SELECT codigo
-            FROM tipoIdentificacion
-            WHERE id=:id';
-            $param= array(':id'=>$id);
-            $data= DATA::Ejecutar($sql,$param);     
-            if($data)
-                return $data[0]['codigo'];
-            else throw new Exception('Error al consultar el codigo de tipo de identificacion' , ERROR_TIPO_IDENTIFICACION_NO_VALID);
-        }
-        catch(Exception $e) {
-            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
-            historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 5, 'ERROR_TIPO_IDENTIFICACION_NO_VALID: '. $e->getMessage());
-            if(!self::$distr)
-                Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
-            else Distribucion::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
-        }
-    }
-
-    private static function getSituacionComprobanteCod($id){
-        try{
-            $sql='SELECT codigo
-            FROM situacionComprobante
-            WHERE id=:id';
-            $param= array(':id'=>$id);
-            $data= DATA::Ejecutar($sql,$param);     
-            if($data)
-            {
-                switch($data[0]['codigo']){
-                    case '1':
-                        return 'normal';
-                    break;
-                        case '2':
-                        return 'contingencia';
-                    break;
-                        case '3':
-                        return 'sinInternet';
-                    break;
-                    
+                    $resp400 = strpos((string) $fxml->DetalleMensaje, 'ya existe en nuestras bases de datos');
+                    $respFirma = strpos((string) $fxml->DetalleMensaje, 'La firma del comprobante electronico no es valida');
+                    if ($resp400) {
+                        error_log("[WARNING] El documento (" . self::$transaccion->clave . ") Ya fue recibido anteriormente");
+                        if (!self::$distr) Factura::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 4);
+                        else Distribucion::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 4);
+                        historico::create(self::$transaccion->id, self::$transaccion->idEntidad, self::$transaccion->idDocumento, 4, "[WARNING]" . (string) $fxml->DetalleMensaje, $xml);
+                        return true;
+                    }
+                    if ($respFirma) {
+                        $errorFirma = 8;
+                        if (self::$transaccion->idEstadoComprobante == 8)
+                            $errorFirma = 9;
+                        if (self::$transaccion->idEstadoComprobante == 9)
+                            $errorFirma = 10;
+                        if (self::$transaccion->idEstadoComprobante == 10)
+                            $errorFirma = 4;
+                        error_log("[ERROR] El documento (" . self::$transaccion->clave . ")  La firma del comprobante electronico no es valida (" . $errorFirma . ").");
+                        historico::create(self::$transaccion->id, self::$transaccion->idEntidad, self::$transaccion->idDocumento, $errorFirma, '[' . $responseT->ind_estado . '] ' . (string) $fxml->DetalleMensaje, $xml);
+                        if (!self::$distr) Factura::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, $errorFirma);
+                        else Distribucion::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, $errorFirma);
+                    } else {
+                        error_log("[ERROR] El documento (" . self::$transaccion->clave . ") Fue rechazado, ver historico. " .  (string) $fxml->DetalleMensaje);
+                        historico::create(self::$transaccion->id, self::$transaccion->idEntidad, self::$transaccion->idDocumento, 4, '[' . $responseT->ind_estado . '] ' . (string) $fxml->DetalleMensaje, $xml);
+                        if (!self::$distr) Factura::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 4);
+                        else Distribucion::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 4);
+                    }
                 }
             }
-            else throw new Exception('Error al consultar el codigo de situacion comprobante' , ERROR_SITUACION_COMPROBANTE_NO_VALID);
-        }
-        catch(Exception $e) {
-            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
-            historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 5, 'ERROR_SITUACION_COMPROBANTE_NO_VALID: '. $e->getMessage());
-            if(!self::$distr)
-                Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
-            else Distribucion::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
-        }
-    }
-
-    private static function getDocumentoReferencia($id){
-        try{
-            switch($id){
-                case '1':
-                case '8': // El API  no tiene opción para enviar documento por contingencia. RETORNA FE.
-                    return 'FE';
-                    break;
-                case '2':
-                    return 'ND';
-                    break;
-                case '3':
-                    return 'NC';
-                    break;
-                case '4':
-                    return 'TE';
-                    break;
-                case '5':
-                    return 'CCE';
-                    break;
-                case '6':
-                    return 'CPCE';
-                    break;
-                case '7':
-                    return 'RCE';
-                    break;
-                default: 
-                    throw new Exception('Error al consultar el codigo de referencia' , ERROR_CODIGO_REFERENCIA_NO_VALID);
-                    break;
-            }            
-        }
-        catch(Exception $e) {
-            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
-            historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 5, 'ERROR_CODIGO_REFERENCIA_NO_VALID: '. $e->getMessage());
-            if(!self::$distr)
-                Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
-            else Distribucion::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
-        }
-    }
-
-    private static function getDocumentoReferenciaCod($id){
-        try{
-            $sql='SELECT codigo
-                FROM documentoReferencia
-                WHERE id=:id';
-            $param= array(':id'=>$id);
-            $data= DATA::Ejecutar($sql,$param);     
-            if($data)
-                return $data[0]['codigo'];
-            else throw new Exception('Error al consultar el codigo de tipod de identificacion' , ERROR_CODIGO_REFERENCIA_NO_VALID);
-        }
-        catch(Exception $e) {
-            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
-            historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 5, 'ERROR_CODIGO_REFERENCIA_NO_VALID: '. $e->getMessage());
-            if(!self::$distr)
-                Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
-            else Distribucion::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
-        }
-    }
-
-    private static function getReferenciaCod($id){
-        try{
-            $sql='SELECT codigo
-                FROM referencia
-                WHERE id=:id';
-            $param= array(':id'=>$id);
-            $data= DATA::Ejecutar($sql,$param);     
-            if($data)
-                return $data[0]['codigo'];
-            else throw new Exception('Error al consultar el codigo de tipod de identificacion' , ERROR_REFERENCIA_NO_VALID);
-        }
-        catch(Exception $e) {
-            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
-            historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 5, 'ERROR_REFERENCIA_NO_VALID: '. $e->getMessage());
-            if(!self::$distr)
-                Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
-            else Distribucion::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
-            
-        }
-    }
-
-    private static function getImpuestoCod($id){
-        try{
-            $sql='SELECT codigo
-            FROM impuesto
-            WHERE id=:id';
-            $param= array(':id'=>$id);
-            $data= DATA::Ejecutar($sql,$param);     
-            if($data)
-                return $data[0]['codigo'];
-            else throw new Exception('Error al consultar el codigo del impuesto' , ERROR_IMPUESTO_NO_VALID);
-        }
-        catch(Exception $e) {
-            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
-            historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 5, 'ERROR_IMPUESTO_NO_VALID: '. $e->getMessage());
-            if(!self::$distr)
-                Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
-            else Distribucion::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
-        }
-    }
-
-    private static function getUnidadMedidaCod($id){
-        try{
-            $sql='SELECT simbolo
-                FROM unidadMedida
-                WHERE id=:id';
-            $param= array(':id'=>$id);
-            $data= DATA::Ejecutar($sql,$param);     
-            if($data)
-                return $data[0]['simbolo'];
-            else throw new Exception('Error al consultar el codigo de unidad medida' , ERROR_UNIDAD_MEDIDA_NO_VALID);
-        }
-        catch(Exception $e) {
-            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
-            historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 5, 'ERROR_UNIDAD_MEDIDA_NO_VALID '. $e->getMessage());
-            if(!self::$distr)
-                Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
-            else Distribucion::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
-        }
-    }
-
-    private static function getUbicacionCod($idProvincia, $idCanton, $idDistrito, $idBarrio){
-        try{
-            $sql='SELECT p.codigo as provincia, c.codigo as canton, d.codigo as distrito, b.codigo as barrio
-                FROM provincia p, canton c , distrito d, barrio b        
-                where p.id=:provincia and c.id=:canton and d.id=:distrito and b.id=:barrio';
-            $param= array(':provincia'=>$idProvincia, 
-                ':canton'=>$idCanton,
-                ':distrito'=>$idDistrito,
-                ':barrio'=>$idBarrio,
-            );
-            $data= DATA::Ejecutar($sql,$param);
-            $ubicacion= [];
-            if($data){
-                $item= new UbicacionCod();
-                $item->provincia= $data[0]['provincia'];
-                $item->canton= $data[0]['canton'];
-                $item->distrito= $data[0]['distrito'];
-                $item->barrio= $data[0]['barrio'];
-                array_push($ubicacion, $item);
-            }
-            else throw new Exception('Error al consultar el codigo de la ubicacion' , ERROR_UBICACION_NO_VALID);
-            return $ubicacion;            
-        } 
-        catch(Exception $e) {
-            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
-            historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 5, 'ERROR_UBICACION_NO_VALID: '. $e->getMessage());
-            if(!self::$distr)
-                Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
-            else Distribucion::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
-        }
-    }
-
-    private static function getMedioPagoCod($id){
-        try{
-            $sql='SELECT codigo
-            FROM medioPago
-            WHERE id=:id';
-            $param= array(':id'=>$id);
-            $data= DATA::Ejecutar($sql,$param);     
-            if($data)
-                return $data[0]['codigo'];
-            else throw new Exception('Error al consultar el codigo del medio de pago' , ERROR_MEDIOPAGO_NO_VALID);
-        } 
-        catch(Exception $e) {
-            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
-            historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 5, 'ERROR_MEDIOPAGO_NO_VALID: '. $e->getMessage());
-            if(!self::$distr)
-                Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
-            else Distribucion::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
-            
-        }
-    }
-
-    private static function getCodigoMonedaCod($id){
-        try{
-            $sql='SELECT codigo
-            FROM moneda
-            WHERE id=:id';
-            $param= array(':id'=>$id);
-            $data= DATA::Ejecutar($sql,$param);     
-            if($data)
-                return $data[0]['codigo'];
-            else throw new Exception('Error al consultar el codigo de moneda' , ERROR_MONEDA_NO_VALID);
-        } 
-        catch(Exception $e) {
-            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
-            historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 5, 'ERROR_MONEDA_NO_VALID: '. $e->getMessage());
-            if(!self::$distr)
-                Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
-            else Distribucion::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
-        }
-    }
-
-    private static function getEstadoComprobanteCod($id){
-        try{
-            $sql='SELECT codigo
-            FROM estadoComprobante
-            WHERE id=:id';
-            $param= array(':id'=>$id);
-            $data= DATA::Ejecutar($sql,$param);     
-            if($data)
-                return $data[0]['codigo'];
-            else throw new Exception('Error al consultar el codigo de estado del comprobante' , ERROR_ESTADO_COMPROBANTE_NO_VALID);
-        } 
-        catch(Exception $e) {
-            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
-            historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 5, 'ERROR_ESTADO_COMPROBANTE_NO_VALID: '. $e->getMessage());
-            if(!self::$distr)
-                Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
-            else Distribucion::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
-        }
-    }
-
-    private static function getCondicionVentaCod($id){
-        try{
-            $sql='SELECT codigo
-            FROM impuesto
-            WHERE id=:id';
-            $param= array(':id'=>$id);
-            $data= DATA::Ejecutar($sql,$param);     
-            if($data)
-                return $data[0]['codigo'];
-            else throw new Exception('Error al consultar el codigo de Condicion venta' , ERROR_CONDICIONVENTA_NO_VALID);
-        } 
-        catch(Exception $e) {
-            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
-            historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 5, 'ERROR_CONDICIONVENTA_NO_VALID: '. $e->getMessage());
-            if(!self::$distr)            
-                Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
-            else Distribucion::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
-        }
-    }
-
-    public static function APIGetToken(){
-        try{
-            $username = '';
-            $password = '';
-            switch (self::$transaccion->idDocumento){
-                case 1:
-                case 2:
-                case 3:
-                case 4:
-                case 8:
-                    $username = self::$transaccion->datosEntidad->username;
-                    $password = self::$transaccion->datosEntidad->password;
-                    break;
-                case 5:
-                case 6:
-                case 7:
-                    $username = self::$transaccion->datosReceptor->username;
-                    $password = self::$transaccion->datosReceptor->password;
-                    break;
-            }
-            self::$apiMode = strpos($username, 'prod');
-            if (self::$apiMode === false) 
-                self::$apiMode = 'api-stag';
-            else self::$apiMode = 'api-prod';
-            $ch = curl_init();
-            $post = [
-                'w' => 'token',
-                'r' => 'gettoken',
-                'grant_type'=>'password', 
-                'client_id'=>  self::$apiMode,
-                'username' => $username,
-                'password'=>  $password
-            ];
-            curl_setopt_array($ch, array(
-                CURLOPT_URL => self::$apiUrl,
-                CURLOPT_RETURNTRANSFER => true,   
-                CURLOPT_VERBOSE => true,                      
-                CURLOPT_MAXREDIRS => 10,
-                CURLOPT_TIMEOUT => 30,
-                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                CURLOPT_CUSTOMREQUEST => "POST",
-                CURLOPT_POSTFIELDS => $post,
-                CURLOPT_SSL_VERIFYHOST => SSL_API, 
-                CURLOPT_SSL_VERIFYPEER => SSL_API
-            ));
-            $server_output = curl_exec($ch);
-            $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-            $header = substr($server_output, 0, $header_size);
-            $body = substr($server_output, $header_size);
-            $error_msg = "";
-            if (curl_error($ch)) {
-                $error_msg = curl_error($ch);
-                throw new Exception('Error al adquirir token. '. $error_msg , ERROR_TOKEN_NO_VALID);
-            }
-            $sArray= json_decode($server_output);
-            if(!isset($sArray->resp->access_token)){
-                // ERROR CRITICO:
-                // debe notificar al contibuyente. 
-                throw new Exception('Error CRITICO al Solicitar token MH. DEBE COMUNICARSE CON SOPORTE TECNICO: '. $server_output , ERROR_TOKEN_NO_VALID);
-            }
-            self::$accessToken=$sArray->resp->access_token;
-            self::$expiresIn=$sArray->resp->expires_in;
-            self::$refreshExpiresIn=$sArray->resp->refresh_expires_in;
-            self::$refreshToken=$sArray->resp->refresh_token;
-            // error_log("[INFO] GET ACCESS TOKEN API MH = " . $server_output);
-            curl_close($ch);
-            return true;
-        } 
-        catch(Exception $e) {
-            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
-            historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 5, 'ERROR_TOKEN_NO_VALID: '. $e->getMessage());
-            if(!self::$distr)
-                Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
-            else Distribucion::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
+        } catch (Exception $e) {
+            error_log("[ERROR]  (" . $e->getCode() . "): " . $e->getMessage());
             return false;
         }
     }
 
-    public static function APICrearClave(){
-        try{
-            error_log("[INFO] INICIO API CLAVE");
-            $ch = curl_init();
-            $post = [
-                'w' => 'clave',
-                'r' => 'clave',
-                'tipoCedula'=> self::getIdentificacionCod(self::$transaccion->datosEntidad->idTipoIdentificacion) == '01'?'fisico':'juridico',
-                'cedula'=> self::$transaccion->datosEntidad->identificacion,
-                'situacion' => self::getSituacionComprobanteCod(self::$transaccion->idSituacionComprobante),
-                'codigoPais'=> '506',
-                'consecutivo'=> self::$transaccion->consecutivo,
-                'codigoSeguridad'=> self::$transaccion->datosEntidad->codigoSeguridad,
-                'tipoDocumento'=> self::getDocumentoReferencia(self::$transaccion->idDocumento),
-                'terminal'=> self::$transaccion->terminal,
-                'sucursal'=> self::$transaccion->local
-            ];
-            curl_setopt_array($ch, array(
-                CURLOPT_URL => self::$apiUrl,
-                CURLOPT_RETURNTRANSFER => true,   
-                CURLOPT_VERBOSE => true,                      
-                CURLOPT_MAXREDIRS => 10,
-                CURLOPT_TIMEOUT => 30,
-                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                CURLOPT_CUSTOMREQUEST => "POST",
-                CURLOPT_POSTFIELDS => $post,
-                CURLOPT_SSL_VERIFYHOST => SSL_API, 
-                CURLOPT_SSL_VERIFYPEER => SSL_API
-            ));
-            $server_output = curl_exec($ch);
-            $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-            $header = substr($server_output, 0, $header_size);
-            $body = substr($server_output, $header_size);
-            $error_msg = "";
-            if (curl_error($ch)) {
-                $error_msg = curl_error($ch);
-                throw new Exception('Error al crear clave. '. $error_msg , ERROR_CLAVE_NO_VALID);
-            }
-            $sArray= json_decode($server_output);
-            if(!isset($sArray->resp->clave)){
-                // ERROR CRITICO:
-                // debe notificar al contibuyente. 
-                throw new Exception('Error CRITICO al crear clave MH. DEBE COMUNICARSE CON SOPORTE TECNICO: '.$server_output, ERROR_CLAVE_NO_VALID);
-            }
-            self::$clave= $sArray->resp->clave;
-            self::$consecutivoFE= $sArray->resp->consecutivo;
-            curl_close($ch);
-            error_log("[INFO] API CLAVE: ".  self::$clave);
-            if(!self::$distr)
-                Factura::setClave(self::$transaccion->idDocumento, self::$transaccion->id, self::$clave, self::$consecutivoFE);
-            else Distribucion::setClave(self::$transaccion->idDocumento, self::$transaccion->id, self::$clave, self::$consecutivoFE);
-            return true;
-        } 
-        catch(Exception $e) {
-            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
-            historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 5, 'ERROR_CLAVE_NO_VALID: '.$e->getMessage());
-            if(!self::$distr)
-                Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
-            else Distribucion::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
-            return false;
-        }
-    }
-    
-    public static function APICrearXML(){
-        try{
-            error_log("[INFO] INICIO API CREAR XML");
-            $ch = curl_init();
-            // detalle de la factura
-            $detalles=[];
-            foreach(self::$transaccion->detalleFactura as $d){
-                array_push($detalles, array('cantidad'=> $d->cantidad,
-                    'unidadMedida'=> self::getUnidadMedidaCod($d->idUnidadMedida),
-                    'detalle'=> $d->detalle,
-                    'precioUnitario'=> $d->precioUnitario,
-                    'montoTotal'=> $d->montoTotal,
-                    'subtotal'=> $d->subTotal,
-                    'montoTotalLinea'=> $d->montoTotalLinea,
-                    'impuesto'=> array(array(
-                        'codigo'=> self::getImpuestoCod($d->codigoImpuesto),
-                        'tarifa'=> $d->tarifaImpuesto,
-                        'monto'=> $d->montoImpuesto)
-                        )
-                    )
-                );
-            }
-            // codigo ubicacion
-            $ubicacionEntidadCod= self::getUbicacionCod(self::$transaccion->datosEntidad->idProvincia, self::$transaccion->datosEntidad->idCanton, self::$transaccion->datosEntidad->idDistrito, self::$transaccion->datosEntidad->idBarrio);
-            //$ubicacionReceptorCod= self::getUbicacionCod(self::$transaccion->datosReceptor->idProvincia, self::$transaccion->datosReceptor->idCanton, self::$transaccion->datosReceptor->idDistrito, self::$transaccion->datosReceptor->idBarrio);
-            // tiene receptor.
-            $receptor_nombre = '';
-            $receptor_tipo_identif = '';
-            $receptor_num_identif = '';
-            $receptor_email = '';
-            if(self::$transaccion->datosReceptor->nombre == 'default'){
-                $omitir_receptor = 'true';                
-            }
-            else {
-                $omitir_receptor = 'false'; 
-                $receptor_nombre = self::$transaccion->datosReceptor->nombre;
-                //$receptor_tipo_identif =
-                //$receptor_num_identif =
-                //$receptor_email =
-            }
-            // tipo de documento a crear siempre gen_xml_fe
-            $post = [
-                'w' => 'genXML',
-                'r' => 'gen_xml_fe',  // self::$transaccion->idDocumento == 1 ? 'gen_xml_fe' : 'gen_xml_te', // define si es FE - TE.
-                'clave'=> self::$clave,
-                'consecutivo'=> self::$consecutivoFE,
-                'fecha_emision' => self::$fechaEmision->format("c"), // ej: '2018-09-09T13:41:00-06:00',
-                /** Emisor **/
-                'emisor_nombre'=> self::$transaccion->datosEntidad->nombre,
-                'emisor_tipo_indetif'=> self::getIdentificacionCod(self::$transaccion->datosEntidad->idTipoIdentificacion),
-                'emisor_num_identif'=> self::$transaccion->datosEntidad->identificacion,
-                'nombre_comercial'=> self::$transaccion->datosEntidad->nombreComercial,
-                'emisor_provincia'=> $ubicacionEntidadCod[0]->provincia,
-                'emisor_canton'=> $ubicacionEntidadCod[0]->canton,
-                'emisor_distrito'=> $ubicacionEntidadCod[0]->distrito,
-                'emisor_barrio'=> $ubicacionEntidadCod[0]->barrio,
-                'emisor_otras_senas'=> self::$transaccion->datosEntidad->otrasSenas,
-                'emisor_email'=> self::$transaccion->datosEntidad->correoElectronico,
-                // 'emisor_cod_pais_tel'=> '506',
-                // 'emisor_tel'=> self::$transaccion->datosEntidad->numTelefono,
-                // 'emisor_cod_pais_fax'=> '506',
-                // 'emisor_fax'=> '00000000',
-                /** Receptor **/  
-                'omitir_receptor'=> $omitir_receptor,
-                'receptor_nombre'=>  $receptor_nombre,
-                'receptor_tipo_identif'=> self::getIdentificacionCod(self::$transaccion->datosReceptor->idTipoIdentificacion),
-                'receptor_num_identif'=>  self::$transaccion->datosReceptor->identificacion,
-                //'receptor_email'=> self::$transaccion->datosReceptor->correoElectronico,
-                // 'receptor_provincia'=> $ubicacionReceptorCod[0]->provincia,
-                // 'receptor_canton'=> $ubicacionReceptorCod[0]->canton,
-                // 'receptor_distrito'=> $ubicacionReceptorCod[0]->distrito,
-                // 'receptor_barrio'=> $ubicacionReceptorCod[0]->barrio,
-                //'receptor_cod_pais_tel'=> '506',
-                //'receptor_tel'=> self::$transaccion->datosReceptor->numTelefono,
-                // 'receptor_cod_pais_fax'=> '506',
-                // 'receptor_fax'=> '00000000',                
-                /** Datos de la venta **/
-                'condicion_venta'=> self::getCondicionVentaCod(self::$transaccion->idCondicionVenta),
-                // 'plazo_credito'=> self::$transaccion->plazoCredito, 
-                'medio_pago'=> self::getMedioPagoCod(self::$transaccion->idMedioPago),
-                'cod_moneda'=> self::getCodigoMonedaCod(self::$transaccion->idCodigoMoneda),
-                'tipo_cambio'=> self::$transaccion->tipoCambio,
-                'total_serv_gravados'=> self::$transaccion->totalServGravados,
-                'total_serv_exentos'=> self::$transaccion->totalServExentos,
-                'total_merc_gravada'=> self::$transaccion->totalMercanciasGravadas,
-                'total_merc_exenta'=> self::$transaccion->totalMercanciasExentas,
-                'total_gravados'=> self::$transaccion->totalGravado,
-                'total_exentos'=> self::$transaccion->totalExento,
-                'total_ventas'=> self::$transaccion->totalVenta,
-                'total_descuentos'=>  self::$transaccion->totalDescuentos,
-                'total_ventas_neta'=>  self::$transaccion->totalVentaneta,
-                'total_impuestos'=>  self::$transaccion->totalImpuesto,
-                'total_comprobante'=>  self::$transaccion->totalComprobante,
-                'otros'=> 'Factura Electronica',
-                /** Detalle **/
-                'detalles'=>  json_encode($detalles, JSON_FORCE_OBJECT)
-            ];
-            /** Referencia PROBAR CUANDO ES UN COMPROBANTE EMITIDO DESPUES DE UNA NC **/
-            /*if(isset(self::$transaccion->idDocumentoReferencia)){
-                array_push($post['infoRefeTipoDoc']=  self::getDocumentoReferenciaCod(self::$transaccion->idDocumentoReferencia),
-                    $post['infoRefeNumero']=  self::$transaccion->claveReferencia,
-                    $post['infoRefeFechaEmision']=  self::$transaccion->fechaEmisionReferencia->format("c"),
-                    $post['infoRefeCodigo']=  self::getReferenciaCod(self::$transaccion->idReferencia),
-                    $post['infoRefeRazon']=  self::$transaccion->razon);
-            }*/
-            foreach(self::$transaccion->informacionReferencia as $ref){
-                array_push(
-                    $post['infoRefeTipoDoc']=  self::getDocumentoReferenciaCod($ref->tipodoc),
-                    $post['infoRefeNumero']=  $ref->numero,
-                    $post['infoRefeFechaEmision']=  $ref->fechaEmision,
-                    $post['infoRefeCodigo']=  self::getReferenciaCod($ref->codigo),
-                    $post['infoRefeRazon']=  $ref->razon);
-            }
-            //            
-            curl_setopt_array($ch, array(
-                CURLOPT_URL => self::$apiUrl,
-                CURLOPT_RETURNTRANSFER => true,   
-                CURLOPT_VERBOSE => true,                      
-                CURLOPT_MAXREDIRS => 10,
-                CURLOPT_TIMEOUT => 30,
-                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                CURLOPT_CUSTOMREQUEST => "POST",
-                CURLOPT_POSTFIELDS => $post,
-                CURLOPT_SSL_VERIFYHOST => SSL_API, 
-                CURLOPT_SSL_VERIFYPEER => SSL_API
-            ));
-            $server_output = curl_exec($ch);
-            $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-            $header = substr($server_output, 0, $header_size);
-            $body = substr($server_output, $header_size);
-            $error_msg = "";
-            if (curl_error($ch)) {
-                $error_msg = curl_error($ch);
-                throw new Exception('Error al crear xml. '. $error_msg , ERROR_FEXML_NO_VALID);
-            }
-            $sArray= json_decode($server_output);
-            if(!isset($sArray->resp->xml)){
-                // ERROR CRITICO:
-                // debe notificar al contibuyente. 
-                throw new Exception('Error CRITICO al crear xml de comprobante. DEBE COMUNICARSE CON SOPORTE TECNICO: '. $server_output, ERROR_FEXML_NO_VALID);
-            }
-            self::$xml= $sArray->resp->xml;                    
-            curl_close($ch);
-            error_log("[INFO] API CREAR XML EXITOSO!" );
-            return true;
-        } 
-        catch(Exception $e) {
-            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
-            historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 5, 'ERROR_FEXML_NO_VALID: '. $e->getMessage());
-            if(!self::$distr)
-                Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
-            else Distribucion::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
-            return false;
-        }
-    }
-
-    public static function APICrearNCXML(){
-        try{
-            error_log("[INFO] INICIO API CREAR NC XML");
-            $ch = curl_init();
-            // detalle de la factura
-            $detalles=[];
-            foreach(self::$transaccion->detalleFactura as $d){
-                array_push($detalles, array('cantidad'=> $d->cantidad,
-                    'unidadMedida'=> self::getUnidadMedidaCod($d->idUnidadMedida),
-                    'detalle'=> $d->detalle,
-                    'precioUnitario'=> $d->precioUnitario,
-                    'montoTotal'=> $d->montoTotal,
-                    'subtotal'=> $d->subTotal,
-                    'montoTotalLinea'=> $d->montoTotalLinea,
-                    'impuesto'=> array(array(
-                        'codigo'=> self::getImpuestoCod($d->codigoImpuesto),
-                        'tarifa'=> $d->tarifaImpuesto,
-                        'monto'=> $d->montoImpuesto)
-                        )
-                    )
-                );
-            }
-            // codigo ubicacion
-            $ubicacionEntidadCod= self::getUbicacionCod(self::$transaccion->datosEntidad->idProvincia, self::$transaccion->datosEntidad->idCanton, self::$transaccion->datosEntidad->idDistrito, self::$transaccion->datosEntidad->idBarrio);
-            //$ubicacionReceptorCod= self::getUbicacionCod(self::$transaccion->datosReceptor->idProvincia, self::$transaccion->datosReceptor->idCanton, self::$transaccion->datosReceptor->idDistrito, self::$transaccion->datosReceptor->idBarrio);
-            // tiene receptor.
-            $receptor_nombre = '';
-            $receptor_tipo_identif = '';
-            $receptor_num_identif = '';
-            $receptor_email = '';
-            if(self::$transaccion->datosReceptor->nombre == 'default'){
-                $omitir_receptor = 'true';                
-            }
-            else {
-                $omitir_receptor = 'false'; 
-                $receptor_nombre = self::$transaccion->datosReceptor->nombre;
-                //$receptor_tipo_identif =
-                //$receptor_num_identif =
-                //$receptor_email =
-            }
-            //
-            $post = [
-                'w' => 'genXML',
-                'r' => 'gen_xml_nc',
-                'clave'=> self::$clave,
-                'consecutivo'=> self::$consecutivoFE,
-                'fecha_emision' => self::$fechaEmision->format("c"), // ej: '2018-09-09T13:41:00-06:00',
-                /** Emisor **/
-                'emisor_nombre'=> self::$transaccion->datosEntidad->nombre,
-                'emisor_tipo_indetif'=> self::getIdentificacionCod(self::$transaccion->datosEntidad->idTipoIdentificacion),
-                'emisor_num_identif'=> self::$transaccion->datosEntidad->identificacion,
-                'nombre_comercial'=> self::$transaccion->datosEntidad->nombreComercial,
-                'emisor_provincia'=> $ubicacionEntidadCod[0]->provincia,
-                'emisor_canton'=> $ubicacionEntidadCod[0]->canton,
-                'emisor_distrito'=> $ubicacionEntidadCod[0]->distrito,
-                'emisor_barrio'=> $ubicacionEntidadCod[0]->barrio,
-                'emisor_otras_senas'=> self::$transaccion->datosEntidad->otrasSenas,
-                // 'emisor_cod_pais_tel'=> '506',
-                // 'emisor_tel'=> self::$transaccion->datosEntidad->numTelefono,
-                // 'emisor_cod_pais_fax'=> '506',
-                // 'emisor_fax'=> '00000000',
-                'emisor_email'=> self::$transaccion->datosEntidad->correoElectronico,
-                /** Receptor **/  
-                'omitir_receptor'=> $omitir_receptor,
-                'receptor_nombre'=>  $receptor_nombre,
-                'receptor_tipo_identif'=> self::getIdentificacionCod(self::$transaccion->datosReceptor->idTipoIdentificacion),
-                'receptor_num_identif'=>  self::$transaccion->datosReceptor->identificacion,
-                // 'receptor_provincia'=> $ubicacionReceptorCod[0]->provincia,
-                // 'receptor_canton'=> $ubicacionReceptorCod[0]->canton,
-                // 'receptor_distrito'=> $ubicacionReceptorCod[0]->distrito,
-                // 'receptor_barrio'=> $ubicacionReceptorCod[0]->barrio,
-                //'receptor_cod_pais_tel'=> '506',
-                //'receptor_tel'=> self::$transaccion->datosReceptor->numTelefono,
-                // 'receptor_cod_pais_fax'=> '506',
-                // 'receptor_fax'=> '00000000',
-                'receptor_email'=> self::$transaccion->datosReceptor->correoElectronico,
-                /** Datos de la venta **/
-                'condicion_venta'=> self::getCondicionVentaCod(self::$transaccion->idCondicionVenta),
-                // 'plazo_credito'=> self::$transaccion->plazoCredito, 
-                'medio_pago'=> self::getMedioPagoCod(self::$transaccion->idMedioPago),
-                'cod_moneda'=> self::getCodigoMonedaCod(self::$transaccion->idCodigoMoneda),
-                'tipo_cambio'=> self::$transaccion->tipoCambio,
-                'total_serv_gravados'=> self::$transaccion->totalServGravados,
-                'total_serv_exentos'=> self::$transaccion->totalServExentos,
-                'total_merc_gravada'=> self::$transaccion->totalMercanciasGravadas,
-                'total_merc_exenta'=> self::$transaccion->totalMercanciasExentas,
-                'total_gravados'=> self::$transaccion->totalGravado,
-                'total_exentos'=> self::$transaccion->totalExento,
-                'total_ventas'=> self::$transaccion->totalVenta,
-                'total_descuentos'=>  self::$transaccion->totalDescuentos,
-                'total_ventas_neta'=>  self::$transaccion->totalVentaneta,
-                'total_impuestos'=>  self::$transaccion->totalImpuesto,
-                'total_comprobante'=>  self::$transaccion->totalComprobante,
-                'otros'=> 'Nota de Credito',
-                /** Detalle **/
-                'detalles'=>  json_encode($detalles, JSON_FORCE_OBJECT),
-                /** Referencia **/
-                // 'infoRefeTipoDoc'=>  self::getDocumentoReferenciaCod(self::$transaccion->idDocumento),
-                // 'infoRefeNumero'=>  self::$transaccion->clave,
-                // 'infoRefeFechaEmision'=>  self::$transaccion->fechaEmision,
-                // 'infoRefeCodigo'=>  self::getReferenciaCod(self::$transaccion->idReferencia),
-                // 'infoRefeRazon'=>  self::$transaccion->razon                
-            ];
-            foreach(self::$transaccion->informacionReferencia as $ref){
-                array_push(
-                    $post['infoRefeTipoDoc']=  self::getDocumentoReferenciaCod($ref->tipodoc),
-                    $post['infoRefeNumero']=  $ref->numero,
-                    $post['infoRefeFechaEmision']=  $ref->fechaEmision,
-                    $post['infoRefeCodigo']=  self::getReferenciaCod($ref->codigo),
-                    $post['infoRefeRazon']=  $ref->razon);
-            }
-            curl_setopt_array($ch, array(
-                CURLOPT_URL => self::$apiUrl,
-                CURLOPT_RETURNTRANSFER => true,   
-                CURLOPT_VERBOSE => true,                      
-                CURLOPT_MAXREDIRS => 10,
-                CURLOPT_TIMEOUT => 30,
-                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                CURLOPT_CUSTOMREQUEST => "POST",
-                CURLOPT_POSTFIELDS => $post,
-                CURLOPT_SSL_VERIFYHOST => SSL_API, 
-                CURLOPT_SSL_VERIFYPEER => SSL_API
-            ));
-            $server_output = curl_exec($ch);
-            $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-            $header = substr($server_output, 0, $header_size);
-            $body = substr($server_output, $header_size);
-            $error_msg = "";
-            if (curl_error($ch)) {
-                $error_msg = curl_error($ch);
-                throw new Exception('Error al crear NC xml. '. $error_msg , ERROR_NCXML_NO_VALID);
-            }
-            $sArray= json_decode($server_output);
-            if(!isset($sArray->resp->xml)){
-                // ERROR CRITICO:
-                // debe notificar al contibuyente. 
-                throw new Exception('Error CRITICO al crear xml de Nota de Credito. DEBE COMUNICARSE CON SOPORTE TECNICO: '. $server_output, ERROR_NCXML_NO_VALID);
-            }
-            self::$xml= $sArray->resp->xml;
-            // ESTA LINEA ES DE PRUEBAS PARA VALIDAR EL XML A ENVIAR.
-            historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 1, 'NC xml a enviar', base64_decode($sArray->resp->xml));
-            //*******************************************************/
-            curl_close($ch);
-            error_log("[INFO] API CREAR NC XML EXITOSO!" );
-            return true;
-        } 
-        catch(Exception $e) {
-            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
-            historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 5, 'ERROR_NCXML_NO_VALID: '. $e->getMessage());
-            if(!self::$distr)
-                Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
-            else Distribucion::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
-            return false;
-        }
-    }
-
-    public static function APICrearMRXML(){
-        try{
-            error_log("[INFO] INICIO API CREAR MR XML");
-            $ch = curl_init();
-            //
-            self::$clave = self::$transaccion->clave; // para MR se utiliza la clave original del documento.
-            $post = [
-                'w' => 'genXML',
-                'r' => 'gen_xml_mr',
-                'clave'=>self::$transaccion->clave, // clave original del documento.
-                'numero_cedula_emisor'=> self::$transaccion->identificacionEmisor, // entidad emisora. En caso MR, la entidad es el vendedor que nos emite la FE.
-                'fecha_emision_doc'=> self::$fechaEmision->format("c"),
-                'mensaje'=> self::$transaccion->mensaje, // 1= acepta. 2= parcial. 3= rechazo.
-                'detalle_mensaje'=> self::$transaccion->detalleMensaje ?? 'Sin detalle', 
-                'monto_total_impuesto' => self::$transaccion->totalImpuesto,
-                'total_factura' => self::$transaccion->totalComprobante,
-                'numero_cedula_receptor' => self::$transaccion->identificacionReceptor,
-                'numero_consecutivo_receptor'=> self::$consecutivoFE
-            ];            
-            //            
-            curl_setopt_array($ch, array(
-                CURLOPT_URL => self::$apiUrl,
-                CURLOPT_RETURNTRANSFER => true,   
-                CURLOPT_VERBOSE => true,                      
-                CURLOPT_MAXREDIRS => 10,
-                CURLOPT_TIMEOUT => 30,
-                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                CURLOPT_CUSTOMREQUEST => "POST",
-                CURLOPT_POSTFIELDS => $post,
-                CURLOPT_SSL_VERIFYHOST => SSL_API, 
-                CURLOPT_SSL_VERIFYPEER => SSL_API
-            ));
-            $server_output = curl_exec($ch);
-            $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-            $header = substr($server_output, 0, $header_size);
-            $body = substr($server_output, $header_size);
-            $error_msg = "";
-            if (curl_error($ch)) {
-                $error_msg = curl_error($ch);
-                throw new Exception('Error al crear xml. '. $error_msg , ERROR_FEXML_NO_VALID);
-            }
-            $sArray= json_decode($server_output);
-            if(!isset($sArray->resp->xml)){
-                // ERROR CRITICO:
-                // debe notificar al contibuyente. 
-                throw new Exception('Error CRITICO al crear xml de comprobante. DEBE COMUNICARSE CON SOPORTE TECNICO: '. $server_output, ERROR_FEXML_NO_VALID);
-            }
-            self::$xml= $sArray->resp->xml;
-            // ESTA LINEA ES DE PRUEBAS PARA VALIDAR EL XML A ENVIAR.
-            historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 1, 'MR XML a enviar', base64_decode($sArray->resp->xml));
-            //*******************************************************/
-            curl_close($ch);
-            error_log("[INFO] API CREAR XML MR EXITOSO!" );
-            return true;
-        } 
-        catch(Exception $e) {
-            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
-            historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 5, 'ERROR_FEXML_NO_VALID: '. $e->getMessage());
-            if(!self::$distr)
-                Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
-            else Distribucion::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
-            return false;
-        }
-    }
-
-    public static function APICifrarXml(){
-        try{
-            error_log("[INFO] INICIO API CIFRAR XML: ");            
-            $ch = curl_init();
-            $downloadCode='';
-            $pinp12='';
-            switch (self::$transaccion->idDocumento){
-                case 1:
-                case 2:
-                case 3:
-                case 4:
-                case 8:
-                    $downloadCode= self::$transaccion->datosEntidad->downloadCode;
-                    $pinp12= self::$transaccion->datosEntidad->pinp12;
-                    break;
-                case 5:
-                case 6:
-                case 7:
-                    $downloadCode= self::$transaccion->datosReceptor->downloadCode;
-                    $pinp12= self::$transaccion->datosReceptor->pinp12;
-                    break;
-            }
-            $post = [
-                'w' => 'signXML',
-                'r' => 'signFE',
-                'p12Url'=> $downloadCode,
-                'inXml'=> self::$xml,
-                'pinP12' => $pinp12,
-                'tipodoc'=> self::getDocumentoReferencia(self::$transaccion->idDocumento)
-            ];
-            curl_setopt_array($ch, array(
-                CURLOPT_URL => self::$apiUrl,
-                CURLOPT_RETURNTRANSFER => true,   
-                CURLOPT_VERBOSE => true,                      
-                CURLOPT_MAXREDIRS => 10,
-                CURLOPT_TIMEOUT => 30,
-                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                CURLOPT_CUSTOMREQUEST => "POST",
-                CURLOPT_POSTFIELDS => $post,
-                CURLOPT_SSL_VERIFYHOST => SSL_API, 
-                CURLOPT_SSL_VERIFYPEER => SSL_API
-            ));
-            $server_output = curl_exec($ch);
-            $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-            $header = substr($server_output, 0, $header_size);
-            $body = substr($server_output, $header_size);
-            $error_msg = "";
-            if (curl_error($ch)) {
-                $error_msg = curl_error($ch);
-                throw new Exception('Error al cifrar xml. '. $error_msg , ERROR_CIFRAR_NO_VALID);
-            }
-            $sArray= json_decode($server_output);            
-            if(!isset($sArray->resp->xmlFirmado)){
-                // ERROR CRITICO:
-                // debe notificar al contibuyente. 
-                throw new Exception('Error CRITICO al Cifrar xml de comprobante. DEBE COMUNICARSE CON SOPORTE TECNICO: '.$server_output, ERROR_CIFRAR_NO_VALID);
-            }
-            self::$xmlFirmado= $sArray->resp->xmlFirmado;
-            error_log("[INFO] API CIFRADO XML EXITOSO!" );
-            curl_close($ch);
-            return true;
-        } 
-        catch(Exception $e) {
-            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
-            historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 5, 'ERROR_CIFRAR_NO_VALID:'. $e->getMessage());
-            if(!self::$distr)    
-                Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
-            else Distribucion::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
-            return false;
-        }
-    }
-
-    public static function APIEnviar(){
-        try{
-            error_log("[INFO] INICIO API ENVIO" );
+    public static function APIEnviar()
+    {
+        try {
+            error_log("[INFO] INICIO API ENVIO");
             self::APIGetToken();
             $ch = curl_init();
             $r = '';
-            switch (self::$transaccion->idDocumento){
+            switch (self::$transaccion->idDocumento) {
                 case 1:
                 case 2:
                 case 3:
@@ -1050,27 +827,27 @@ class FacturacionElectronica{
             $post = [
                 'w' => 'send',
                 'r' => $r,
-                'token'=>self::$accessToken,
-                'clave'=> self::$clave,
+                'token' => self::$accessToken,
+                'clave' => self::$clave,
                 'fecha' => self::$fechaEmision->format("c"),
-                'emi_tipoIdentificacion'=> self::getIdentificacionCod(self::$transaccion->datosEntidad->idTipoIdentificacion),
-                'emi_numeroIdentificacion'=> self::$transaccion->datosEntidad->identificacion,
-                'recp_tipoIdentificacion'=>  self::getIdentificacionCod(self::$transaccion->datosReceptor->idTipoIdentificacion),
-                'recp_numeroIdentificacion'=> self::$transaccion->datosReceptor->identificacion,
-                'comprobanteXml'=>	self::$xmlFirmado,
-                'client_id'=> self::$apiMode,
-                'consecutivoReceptor'=> self::$consecutivoFE ?? null
+                'emi_tipoIdentificacion' => self::getIdentificacionCod(self::$transaccion->datosEntidad->idTipoIdentificacion),
+                'emi_numeroIdentificacion' => self::$transaccion->datosEntidad->identificacion,
+                'recp_tipoIdentificacion' =>  self::getIdentificacionCod(self::$transaccion->datosReceptor->idTipoIdentificacion),
+                'recp_numeroIdentificacion' => self::$transaccion->datosReceptor->identificacion,
+                'comprobanteXml' =>    self::$xmlFirmado,
+                'client_id' => self::$apiMode,
+                'consecutivoReceptor' => self::$consecutivoFE ?? null
             ];
             curl_setopt_array($ch, array(
                 CURLOPT_URL => self::$apiUrl,
-                CURLOPT_RETURNTRANSFER => true,   
-                CURLOPT_VERBOSE => true,                      
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_VERBOSE => true,
                 CURLOPT_MAXREDIRS => 10,
                 CURLOPT_TIMEOUT => 60,
                 CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
                 CURLOPT_CUSTOMREQUEST => "POST",
                 CURLOPT_POSTFIELDS => $post,
-                CURLOPT_SSL_VERIFYHOST => SSL_API, 
+                CURLOPT_SSL_VERIFYHOST => SSL_API,
                 CURLOPT_SSL_VERIFYPEER => SSL_API
             ));
             $server_output = curl_exec($ch);
@@ -1081,87 +858,87 @@ class FacturacionElectronica{
             if (curl_error($ch)) {
                 $error_msg = curl_error($ch);
                 $timedOut = strpos($error_msg, 'Operation timed out');
-                if($timedOut===false)
-                    throw new Exception('Error CRITICO al ENVIAR el comprobante. DEBE COMUNICARSE CON SOPORTE TECNICO: '.$error_msg, ERROR_ENVIO_NO_VALID);
+                if ($timedOut === false)
+                    throw new Exception('Error CRITICO al ENVIAR el comprobante. DEBE COMUNICARSE CON SOPORTE TECNICO: ' . $error_msg, ERROR_ENVIO_NO_VALID);
                 else {
                     //timed out.
-                    error_log("[ERROR]  (-600): ". $error_msg);
+                    error_log("[ERROR]  (-600): " . $error_msg);
                     historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 6, $error_msg);
-                    Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 6, self::$fechaEmision->format("c"));
+                    if (!self::$distr) Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 6, self::$fechaEmision->format("c"));
+                    else Distribucion::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 6, self::$fechaEmision->format("c"));
                     return false;
                 }
             }
-            $sArray= json_decode($server_output);       
-            if(!isset($sArray->resp->Status)){
+            $sArray = json_decode($server_output);
+            if (!isset($sArray->resp->Status)) {
                 // ERROR CRITICO: almacena estado= 5 (otros) - error al enviar comprobante.
-                throw new Exception('Error CRITICO al ENVIAR el comprobante. DEBE COMUNICARSE CON SOPORTE TECNICO: '. $server_output, ERROR_ENVIO_NO_VALID);
+                throw new Exception('Error CRITICO al ENVIAR el comprobante. DEBE COMUNICARSE CON SOPORTE TECNICO: ' . $server_output, ERROR_ENVIO_NO_VALID);
             }
             //
-            if($sArray->resp->Status==400){
+            if ($sArray->resp->Status == 400) {
                 $resp400 = strpos($sArray->resp->text[17], 'ya fue recibido anteriormente');
                 $resp401 = strpos($sArray->resp->text[18], 'ya fue recibido anteriormente');
-                if($resp400 | $resp401){
-                    error_log("[WARNING] El documento (". self::$clave .") Ya fue recibido anteriormente" );
-                    historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 7, 'El documento ya fue recibido anteriormente, STATUS('.$sArray->resp->Status.')');
-                    Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 7, self::$fechaEmision->format("c"));                    
+                if ($resp400 | $resp401) {
+                    error_log("[WARNING] El documento (" . self::$clave . ") Ya fue recibido anteriormente");
+                    historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 7, 'El documento ya fue recibido anteriormente, STATUS(' . $sArray->resp->Status . ')');
+                    if (!self::$distr) Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 7, self::$fechaEmision->format("c"));
+                    else Distribucion::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 7, self::$fechaEmision->format("c"));
                     // curl_close($ch);
                     return true;
-                }
-                else {
-                    throw new Exception('Error CRITICO al ENVIAR el comprobante. DEBE COMUNICARSE CON SOPORTE TECNICO, STATUS('.$sArray->resp->Status.'):  '.$sArray->resp->text[17], ERROR_ENVIO_NO_VALID);                    
+                } else {
+                    throw new Exception('Error CRITICO al ENVIAR el comprobante. DEBE COMUNICARSE CON SOPORTE TECNICO, STATUS(' . $sArray->resp->Status . '):  ' . $sArray->resp->text[17], ERROR_ENVIO_NO_VALID);
                 }
             }
-            if($sArray->resp->Status!=202){
-                throw new Exception('Error CRITICO al ENVIAR el comprobante. DEBE COMUNICARSE CON SOPORTE TECNICO, STATUS('.$sArray->resp->Status.'):  '.$server_output, ERROR_ENVIO_NO_VALID);                
-            }
-            else {
+            if ($sArray->resp->Status != 202) {
+                throw new Exception('Error CRITICO al ENVIAR el comprobante. DEBE COMUNICARSE CON SOPORTE TECNICO, STATUS(' . $sArray->resp->Status . '):  ' . $server_output, ERROR_ENVIO_NO_VALID);
+            } else {
                 // almacena estado: enviado (202).
-                historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 2, 'Comprobante ENVIADO EXITOSAMENTE, STATUS('.$sArray->resp->Status.')');
-                if(!self::$distr)
+                historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 2, 'Comprobante ENVIADO EXITOSAMENTE, STATUS(' . $sArray->resp->Status . ')');
+                if (!self::$distr)
                     Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 2, self::$fechaEmision->format("c"));
                 else Distribucion::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 2, self::$fechaEmision->format("c"));
             }
             //
             historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 1, 'XML a enviar', base64_decode(self::$xmlFirmado));
-            error_log("[INFO] API ENVIO EXITOSO!" );
+            error_log("[INFO] API ENVIO EXITOSO!");
             curl_close($ch);
             return true;
-        } 
-        catch(Exception $e) {
-            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
-            historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 5, 'ERROR_ENVIO_NO_VALID: '. $e->getMessage());
-            if(!self::$distr)
+        } catch (Exception $e) {
+            error_log("[ERROR]  (" . $e->getCode() . "): " . $e->getMessage());
+            historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 5, 'ERROR_ENVIO_NO_VALID: ' . $e->getMessage());
+            if (!self::$distr)
                 Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
             else Distribucion::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
             return false;
         }
     }
 
-    public static function APIConsultaComprobante($t , $invoice=false){
-        try{
-            self::$transaccion= $t;
-            error_log("[INFO] API CONSULTA CLAVE: ". self::$transaccion->clave . " Consecutivo: " . self::$transaccion->consecutivo);
+    public static function APIConsultaComprobante($t, $invoice = false)
+    {
+        try {
+            self::$transaccion = $t;
+            error_log("[INFO] API CONSULTA CLAVE: " . self::$transaccion->clave . " Consecutivo: " . self::$transaccion->consecutivo);
             self::getApiUrl();
             self::APIGetToken();
             $ch = curl_init();
             $post = [
                 'w' => 'consultar',
                 'r' => 'consultarCom',
-                'token'=> self::$accessToken,
-                'clave'=> self::$transaccion->clave,
-                'client_id'=> self::$apiMode
-            ];  
+                'token' => self::$accessToken,
+                'clave' => self::$transaccion->clave,
+                'client_id' => self::$apiMode
+            ];
             curl_setopt_array($ch, array(
                 CURLOPT_URL => self::$apiUrl,
-                CURLOPT_RETURNTRANSFER => true,   
-                CURLOPT_VERBOSE => true,      
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_VERBOSE => true,
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_MAXREDIRS => 10,
                 CURLOPT_TIMEOUT => 30,
                 CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
                 CURLOPT_CUSTOMREQUEST => "POST",
                 CURLOPT_POSTFIELDS => $post,
-                CURLOPT_SSL_VERIFYHOST => SSL_API, 
+                CURLOPT_SSL_VERIFYHOST => SSL_API,
                 CURLOPT_SSL_VERIFYPEER => SSL_API
             ));
             $server_output = curl_exec($ch);
@@ -1171,109 +948,101 @@ class FacturacionElectronica{
             $error_msg = "";
             if (curl_error($ch)) {
                 $error_msg = curl_error($ch);
-                throw new Exception('Error al consultar API MH: '. $error_msg , ERROR_CONSULTA_NO_VALID);
-            }            
-            $sArray=json_decode($server_output);
-            if(!isset($sArray->resp->clave)){
+                throw new Exception('Error al consultar API MH: ' . $error_msg, ERROR_CONSULTA_NO_VALID);
+            }
+            $sArray = json_decode($server_output);
+            if (!isset($sArray->resp->clave)) {
                 $null = strpos($server_output, 'null');
-                if($null===false){
-                    throw new Exception('Error CRITICO al consultar el comprobante. DEBE COMUNICARSE CON SOPORTE TECNICO: '.$server_output, ERROR_CONSULTA_NO_VALID);                    
-                }
-                else {
+                if ($null === false) {
+                    throw new Exception('Error CRITICO al consultar el comprobante. DEBE COMUNICARSE CON SOPORTE TECNICO: ' . $server_output, ERROR_CONSULTA_NO_VALID);
+                } else {
                     // clave inválida, no existe en ATV.
-                    if(!self::$distr)
+                    if (!self::$distr)
                         Factura::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 5);
                     else Distribucion::updateIdEstadoComprobante(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
                     historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 5, 'La transacción no fue enviada a los sistemas de ATV.');
-                    throw new Exception('Documento no registrado en ATV: '.$server_output, ERROR_CONSULTA_NO_VALID);                    
-                }                
+                    throw new Exception('Documento no registrado en ATV: ' . $server_output, ERROR_CONSULTA_NO_VALID);
+                }
             }
-            $respuestaXml='';
-            foreach($sArray->resp as $key=> $r){
-                if($key=='ind-estado')
-                    $estadoTransaccion= $r;
-                if($key=='respuesta-xml')
-                    $respuestaXml= $r;
-            }           
+            $respuestaXml = '';
+            foreach ($sArray->resp as $key => $r) {
+                if ($key == 'ind-estado')
+                    $estadoTransaccion = $r;
+                if ($key == 'respuesta-xml')
+                    $respuestaXml = $r;
+            }
             // si el estado es procesando debe consultar de nuevo.
-            if($estadoTransaccion=='procesando'){
-                historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 2, $estadoTransaccion );
-                if(!self::$distr)
+            if ($estadoTransaccion == 'procesando') {
+                historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 2, $estadoTransaccion);
+                if (!self::$distr)
                     Factura::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 2);
                 else Distribucion::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 2);
                 //self::APIConsultaComprobante();
-            }
-            else if($estadoTransaccion=='aceptado'){
-                $xml= base64_decode($respuestaXml);
+            } else if ($estadoTransaccion == 'aceptado') {
+                $xml = base64_decode($respuestaXml);
                 $fxml = simplexml_load_string($xml);
-                historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 3, '['.$estadoTransaccion.'] '.$fxml->DetalleMensaje, $xml);
-                if(!self::$distr)
+                historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 3, '[' . $estadoTransaccion . '] ' . $fxml->DetalleMensaje, $xml);
+                if (!self::$distr)
                     Factura::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 3);
                 else Distribucion::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 3);
                 //AQUI VA ENVIAR EMAIL
-                if($invoice)
+                if ($invoice)
                     Invoice::$email_array_address_to = [];
-                    Invoice::create(self::$transaccion);
-            }
-            else if($estadoTransaccion=='rechazado'){
+                Invoice::create(self::$transaccion);
+            } else if ($estadoTransaccion == 'rechazado') {
                 // genera informe con los datos del rechazo. y pone estado de la transaccion pendiente para ser enviada cuando sea corregida.
-                $xml= base64_decode($respuestaXml);
+                $xml = base64_decode($respuestaXml);
                 $fxml = simplexml_load_string($xml);
                 $resp400 = strpos($fxml->DetalleMensaje, 'ya existe en nuestras bases de datos');
                 $respFirma = strpos($fxml->DetalleMensaje, 'La firma del comprobante electrónico no es válida');
-                if ($resp400){
+                if ($resp400) {
                     // ya existe en base de datos de MH. estado 7
-                    error_log("[WARNING] El documento (". self::$transaccion->clave .") Ya fue recibido anteriormente" );
-                    if(!self::$distr)
+                    error_log("[WARNING] El documento (" . self::$transaccion->clave . ") Ya fue recibido anteriormente");
+                    if (!self::$distr)
                         Factura::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 4);
                     else Distribucion::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 4);
-                    historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 4, "[WARNING]". $fxml->DetalleMensaje, $xml);
+                    historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 4, "[WARNING]" . $fxml->DetalleMensaje, $xml);
                     return true;
                 }
-                if ($respFirma){
+                if ($respFirma) {
                     $errorFirma = 8;
-                    if(self::$transaccion->idEstadoComprobante==8)
-                        $errorFirma=9;
-                    if(self::$transaccion->idEstadoComprobante==9)
-                        $errorFirma=10;
-                    if(self::$transaccion->idEstadoComprobante==10)
-                        $errorFirma=4; // Rechazo
-                    error_log("[ERROR] El documento (". self::$transaccion->clave .")  La firma del comprobante electrónico no es válida (".$errorFirma.")." );
-                    historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, $errorFirma, '['.$estadoTransaccion.'] '.$fxml->DetalleMensaje, $xml);
-                    if(!self::$distr)
+                    if (self::$transaccion->idEstadoComprobante == 8)
+                        $errorFirma = 9;
+                    if (self::$transaccion->idEstadoComprobante == 9)
+                        $errorFirma = 10;
+                    if (self::$transaccion->idEstadoComprobante == 10)
+                        $errorFirma = 4; // Rechazo
+                    error_log("[ERROR] El documento (" . self::$transaccion->clave . ")  La firma del comprobante electrónico no es válida (" . $errorFirma . ").");
+                    historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, $errorFirma, '[' . $estadoTransaccion . '] ' . $fxml->DetalleMensaje, $xml);
+                    if (!self::$distr)
                         Factura::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, $errorFirma);
                     else Distribucion::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, $errorFirma);
-                }
-                else {
-                    error_log("[ERROR] El documento (". self::$transaccion->clave .") Fue rechazado, ver historico. " .  $fxml->DetalleMensaje );
-                    historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 4, '['.$estadoTransaccion.'] '.$fxml->DetalleMensaje, $xml);
-                    if(!self::$distr)
+                } else {
+                    error_log("[ERROR] El documento (" . self::$transaccion->clave . ") Fue rechazado, ver historico. " .  $fxml->DetalleMensaje);
+                    historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 4, '[' . $estadoTransaccion . '] ' . $fxml->DetalleMensaje, $xml);
+                    if (!self::$distr)
                         Factura::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 4);
                     else Distribucion::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 4);
                 }
-            }
-            else if($estadoTransaccion==" no ha sido recibido.\r"){
-                error_log("[ERROR] El documento (". self::$transaccion->clave .") No ha sido Recibido en ATV. ");
-                historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 1, '['.$estadoTransaccion.'] '. $estadoTransaccion);
-                if(!self::$distr)
+            } else if ($estadoTransaccion == " no ha sido recibido.\r") {
+                error_log("[ERROR] El documento (" . self::$transaccion->clave . ") No ha sido Recibido en ATV. ");
+                historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 1, '[' . $estadoTransaccion . '] ' . $estadoTransaccion);
+                if (!self::$distr)
                     Factura::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 1);
                 else Distribucion::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 1);
-            }
-            else {
+            } else {
                 // OTROS 5. hay un error en la respuesta de consulta.
-                error_log("[ERROR] El documento (". self::$transaccion->clave .") ". $estadoTransaccion);
-                historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 5, '['.$estadoTransaccion.'] '. $estadoTransaccion);
-                if(!self::$distr)
+                error_log("[ERROR] El documento (" . self::$transaccion->clave . ") " . $estadoTransaccion);
+                historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 5, '[' . $estadoTransaccion . '] ' . $estadoTransaccion);
+                if (!self::$distr)
                     Factura::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 5);
                 else Distribucion::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 5);
             }
-            error_log("[INFO] API CONSULTA, estado de la transaccion(".self::$transaccion->id."): ". $estadoTransaccion);
+            error_log("[INFO] API CONSULTA, estado de la transaccion(" . self::$transaccion->id . "): " . $estadoTransaccion);
             curl_close($ch);
-        } 
-        catch(Exception $e) {
-            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+        } catch (Exception $e) {
+            error_log("[ERROR]  (" . $e->getCode() . "): " . $e->getMessage());
             return false;
         }
     }
 }
-?>
