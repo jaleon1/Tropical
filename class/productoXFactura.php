@@ -30,6 +30,125 @@ if(isset($_POST["action"])){
 
 class ProductoXFactura{
 
+    public static function Read($idFactura){
+        try{
+            $sql="SELECT id, idFactura, /*idProducto,*/ numeroLinea, idTipoCodigo, codigo, cantidad, idUnidadMedida, unidadMedidaComercial, detalle, precioUnitario, montoTotal, 
+                montoDescuento, naturalezaDescuento, subTotal, idCodigoImpuesto, idCodigoTarifa, tarifaImpuesto, montoImpuesto, tipoDocumento, numeroDocumento, nombreInstitucion, fechaEmision, porcentajeExoneracion,
+                montoExoneracion, impuestoNeto, montoTotalLinea
+                from productosXFactura
+                where idFactura = :id";
+            $param= array(':id'=>$idFactura);
+            $data = DATA::Ejecutar($sql,$param);            
+            $lista = [];
+            foreach ($data as $key => $value){
+                $producto = new ProductosXFactura();
+                $producto->id = $value['id'];
+                $producto->idFactura = $value['idFactura'];                
+                //$producto->idProducto = $value['idProducto'];
+                $producto->numeroLinea = $value['numeroLinea'];
+                $producto->idTipoCodigo = $value['idTipoCodigo'];
+                $producto->codigo = $value['codigo'];
+                $producto->cantidad = $value['cantidad'];
+                $producto->idUnidadMedida = $value['idUnidadMedida'];
+                $producto->unidadMedidaComercial = $value['unidadMedidaComercial'];
+                $producto->detalle = $value['detalle'];
+                $producto->precioUnitario = $value['precioUnitario'];
+                // descuentos
+                $producto->montoTotal = $value['montoTotal'];
+                $producto->montoDescuento = $value['montoDescuento'];
+                $producto->naturalezaDescuento = $value['naturalezaDescuento'];
+                //
+                $producto->subTotal = $value['subTotal'];
+                // impuestos
+                if(isset($value['idCodigoImpuesto'])){
+                    include_once('impuestos.php');
+                    $producto->impuestos = [];
+                    $imp= new Impuestos();
+                    $imp->idCodigoImpuesto= $value['idCodigoImpuesto']; // Impuesto al Valor Agregado = 1
+                    $imp->codigoTarifa= $value['idCodigoTarifa']; // Tarifa general 13% = 8
+                    $imp->tarifa= $value['tarifaImpuesto']; //  13%
+                    $imp->monto= $value['montoImpuesto'];
+                    //$item->factorIVA= $itemImpuesto->factorIVA;
+                    array_push ($producto->impuestos, $imp);
+                }
+                // exoneraciones
+                if(isset($value['tipoDocumento'])){
+                    include_once('exoneraciones.php');
+                    $producto->exoneracion = [];
+                    $exo= new Exoneraciones();                
+                    $exo->tipoDocumento= $value['tipoDocumento'] ?? null;
+                    $exo->numeroDocumento= $value['numeroDocumento'] ?? null;
+                    $exo->nombreInstitucion= $value['nombreInstitucion'] ?? null;
+                    $exo->fechaEmision= $value['fechaEmision'] ?? null;
+                    $exo->porcentaje= $value['porcentajeExoneracion'] ?? null;
+                    $exo->monto= $value['montoExoneracion'] ?? null;
+                    //$item->factorIVA= $itemImpuesto->factorIVA;
+                    array_push ($producto->exoneracion, $exo);
+                }
+                $producto->impuestoNeto = $value['impuestoNeto'] ?? null;
+                //
+                $producto->montoTotalLinea = $value['montoTotalLinea'];
+                //$producto->baseImponible = $value['baseImponible'] ?? null;
+                //
+                array_push ($lista, $producto);
+            }
+            return $lista;
+        }
+        catch(Exception $e) {
+            return false;
+        }
+    }
+
+    public static function Create($obj){
+        try {
+            $created = true;
+            foreach ($obj as $item) {
+                $sql="INSERT INTO productosXFactura (id, idFactura, /*idProducto,*/ numeroLinea, idTipoCodigo, codigo, cantidad, idUnidadMedida, detalle, precioUnitario, montoTotal, montoDescuento, naturalezaDescuento,
+                    subTotal, idCodigoImpuesto, idCodigoTarifa, tarifaImpuesto, montoImpuesto, tipoDocumento, numeroDocumento, nombreInstitucion, fechaEmision, porcentajeExoneracion,
+                    montoExoneracion, impuestoNeto, montoTotalLinea)
+                VALUES (uuid(), :idFactura, :numeroLinea, :idTipoCodigo, :codigo, :cantidad, :idUnidadMedida, :detalle, :precioUnitario, :montoTotal, :montoDescuento, :naturalezaDescuento,                
+                    :subTotal, :idCodigoImpuesto, :idCodigoTarifa, :tarifaImpuesto, :montoImpuesto, :tipoDocumento, :numeroDocumento, :nombreInstitucion, :fechaEmision, :porcentajeExoneracion,
+                    :montoExoneracion, :impuestoNeto, :montoTotalLinea)";              
+                $param= array(
+                    ':idFactura'=>$item->idFactura,
+                    // ':idProducto'=>$item->idProducto,
+                    ':numeroLinea'=>$item->numeroLinea,
+                    ':idTipoCodigo'=> $item->idTipoCodigo,
+                    ':codigo'=> $item->codigo,                    
+                    ':cantidad'=>$item->cantidad,
+                    ':idUnidadMedida'=>$item->idUnidadMedida,
+                    ':detalle'=>$item->detalle,
+                    ':precioUnitario'=>$item->precioUnitario,
+                    ':montoTotal'=>$item->montoTotal,
+                    /* DESCUENTO */
+                    ':montoDescuento'=>$item->descuentos[0]->monto ?? null,
+                    ':naturalezaDescuento'=>$item->descuentos[0]->naturaleza ?? null,
+                    ':subTotal'=>$item->subTotal,
+                    /* IVA */               
+                    ':idCodigoImpuesto'=>$item->impuestos[0]->idCodigoImpuesto ?? null,
+                    ':idCodigoTarifa'=>$item->impuestos[0]->codigoTarifa ?? null,
+                    ':tarifaImpuesto'=>$item->impuestos[0]->tarifa ?? null,
+                    ':montoImpuesto'=>$item->impuestos[0]->monto ?? null,
+                    /* EXONERACION */
+                    ':tipoDocumento'=>$item->exoneraciones[0]->tipoDocumento ?? null,
+                    ':numeroDocumento'=>$item->exoneraciones[0]->numeroDocumento ?? null,
+                    ':nombreInstitucion'=>$item->exoneraciones[0]->nombreInstitucion ?? null,
+                    ':fechaEmision'=>$item->exoneraciones[0]->fechaEmision ?? null,
+                    ':porcentajeExoneracion'=>$item->exoneraciones[0]->porcentaje ?? null,
+                    ':montoExoneracion'=>$item->exoneraciones[0]->monto ?? null,
+                    ':impuestoNeto'=>$item->impuestoNeto ?? null,
+                    //
+                    ':montoTotalLinea'=>$item->montoTotalLinea);
+                $data = DATA::Ejecutar($sql, $param, false);
+            }
+            return $created;
+        }     
+        catch(Exception $e) {
+            return false;
+        }
+    }
+
+    /*
     public static function Read(){
         try{
             $sql="SELECT detalle from productosXFactura
@@ -48,7 +167,7 @@ class ProductoXFactura{
             error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             return false;
         }
-    }
+    }*/
     
 
     public static function reintegrarProductoByIdFactura($idFactura, $razon){
@@ -196,6 +315,7 @@ class ProductoXFactura{
         }
     }
 
+    /*
     public static function Create($obj){
         try {
             $created = true;
@@ -232,6 +352,6 @@ class ProductoXFactura{
             error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             return false;
         }
-    }
+    }*/
 }
 ?> 
