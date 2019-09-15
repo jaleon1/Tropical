@@ -35,7 +35,7 @@ define('SSL_API', '0');
 class FacturacionElectronica
 {
     static $distr = false;
-    // static $transaccion;
+    static $transaccion;
     // static $fechaEmision;
     // static $apiUrl;
     // static $accessToken;
