@@ -55,14 +55,14 @@ class FacturacionElectronica
         try {
             //date_default_timezone_set('America/Costa_Rica');
             self::$transaccion = $t;
-            self::$fechaEmision = date_create();
+            self::$transaccion->fechaEmision = date_create();
             // fe o nc
             self::$transaccion->idDocumento = 3; // NC
 
         } catch (Exception $e) {
             if (!self::$distr)
-                Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
-            else Distribucion::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
+                Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$transaccion->fechaEmision->format("c"));
+            else Distribucion::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$transaccion->fechaEmision->format("c"));
             historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 5, 'ERROR_INICIAL: ' . $e->getMessage());
             error_log("[ERROR]  (" . $e->getCode() . "): " . $e->getMessage());
         }
@@ -131,8 +131,8 @@ class FacturacionElectronica
             } else throw new Exception(self::$arrayResp['error'] . '(' . self::$arrayResp['mensaje'] . ')', ERROR_CLAVE_NO_VALID);
         } catch (Exception $e) {
             if (!self::$distr)
-                Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
-            else Distribucion::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
+                Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$transaccion->fechaEmision->format("c"));
+            else Distribucion::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$transaccion->fechaEmision->format("c"));
             historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 5, 'ERROR_INICIAL: ' . $e->getMessage());
             error_log("[ERROR]  (" . $e->getCode() . "): " . $e->getMessage());
             return false;
@@ -392,8 +392,8 @@ class FacturacionElectronica
             error_log("[ERROR]  (" . $e->getCode() . "): " . $e->getMessage());
             historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 5, 'ERROR_TOKEN_NO_VALID: ' . $e->getMessage());
             if (!self::$distr)
-                Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
-            else Distribucion::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
+                Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$transaccion->fechaEmision->format("c"));
+            else Distribucion::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$transaccion->fechaEmision->format("c"));
             self::$arrayResp = array(
                 "error" => $e->getCode(),
                 "mensaje" => $e->getMessage()
@@ -555,8 +555,8 @@ class FacturacionElectronica
             error_log("[ERROR]  (" . $e->getCode() . "): " . $e->getMessage());
             historico::create(self::$transaccion->id, self::$transaccion->idEntidad, self::$transaccion->idDocumento, 5, 'ERROR_TOKEN_NO_VALID: ' . $e->getMessage());
             if (!self::$distr)
-                Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
-            else Distribucion::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
+                Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$transaccion->fechaEmision->format("c"));
+            else Distribucion::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$transaccion->fechaEmision->format("c"));
             //
             self::$arrayResp = array(
                 "error" => $e->getCode(),
@@ -830,7 +830,7 @@ class FacturacionElectronica
                 'r' => $r,
                 'token' => self::$accessToken,
                 'clave' => self::$clave,
-                'fecha' => self::$fechaEmision->format("c"),
+                'fecha' => self::$transaccion->fechaEmision->format("c"),
                 'emi_tipoIdentificacion' => self::getIdentificacionCod(self::$transaccion->datosEntidad->idTipoIdentificacion),
                 'emi_numeroIdentificacion' => self::$transaccion->datosEntidad->identificacion,
                 'recp_tipoIdentificacion' =>  self::getIdentificacionCod(self::$transaccion->datosReceptor->idTipoIdentificacion),
@@ -865,8 +865,8 @@ class FacturacionElectronica
                     //timed out.
                     error_log("[ERROR]  (-600): " . $error_msg);
                     historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 6, $error_msg);
-                    if (!self::$distr) Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 6, self::$fechaEmision->format("c"));
-                    else Distribucion::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 6, self::$fechaEmision->format("c"));
+                    if (!self::$distr) Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 6, self::$transaccion->fechaEmision->format("c"));
+                    else Distribucion::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 6, self::$transaccion->fechaEmision->format("c"));
                     return false;
                 }
             }
@@ -882,8 +882,8 @@ class FacturacionElectronica
                 if ($resp400 | $resp401) {
                     error_log("[WARNING] El documento (" . self::$clave . ") Ya fue recibido anteriormente");
                     historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 7, 'El documento ya fue recibido anteriormente, STATUS(' . $sArray->resp->Status . ')');
-                    if (!self::$distr) Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 7, self::$fechaEmision->format("c"));
-                    else Distribucion::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 7, self::$fechaEmision->format("c"));
+                    if (!self::$distr) Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 7, self::$transaccion->fechaEmision->format("c"));
+                    else Distribucion::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 7, self::$transaccion->fechaEmision->format("c"));
                     // curl_close($ch);
                     return true;
                 } else {
@@ -896,8 +896,8 @@ class FacturacionElectronica
                 // almacena estado: enviado (202).
                 historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 2, 'Comprobante ENVIADO EXITOSAMENTE, STATUS(' . $sArray->resp->Status . ')');
                 if (!self::$distr)
-                    Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 2, self::$fechaEmision->format("c"));
-                else Distribucion::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 2, self::$fechaEmision->format("c"));
+                    Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 2, self::$transaccion->fechaEmision->format("c"));
+                else Distribucion::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 2, self::$transaccion->fechaEmision->format("c"));
             }
             //
             historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 1, 'XML a enviar', base64_decode(self::$xmlFirmado));
@@ -908,8 +908,8 @@ class FacturacionElectronica
             error_log("[ERROR]  (" . $e->getCode() . "): " . $e->getMessage());
             historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 5, 'ERROR_ENVIO_NO_VALID: ' . $e->getMessage());
             if (!self::$distr)
-                Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
-            else Distribucion::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
+                Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$transaccion->fechaEmision->format("c"));
+            else Distribucion::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$transaccion->fechaEmision->format("c"));
             return false;
         }
     }
@@ -960,7 +960,7 @@ class FacturacionElectronica
                     // clave inválida, no existe en ATV.
                     if (!self::$distr)
                         Factura::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 5);
-                    else Distribucion::updateIdEstadoComprobante(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
+                    else Distribucion::updateIdEstadoComprobante(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$transaccion->fechaEmision->format("c"));
                     historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 5, 'La transacción no fue enviada a los sistemas de ATV.');
                     throw new Exception('Documento no registrado en ATV: ' . $server_output, ERROR_CONSULTA_NO_VALID);
                 }
