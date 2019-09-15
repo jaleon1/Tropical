@@ -108,10 +108,10 @@ function validarRef() {
 
 
 function enter() {
-    $("#modalFormaPago").attr("disabled","disabled");
-    $(".input_pago").attr("disabled","disabled");
-    $(".close").attr("disabled","disabled");
-    
+    $("#modalFormaPago").attr("disabled", "disabled");
+    $(".input_pago").attr("disabled", "disabled");
+    $(".close").attr("disabled", "disabled");
+
     $('.factura-modal-lg').modal({
         backdrop: 'static',
         keyboard: false
@@ -138,13 +138,13 @@ function crearFactura() {
         };
 
         $.ajax({
-                type: "POST",
-                url: "class/Factura.php",
-                data: {
-                    action: miAccion,
-                    obj: JSON.stringify(facVenta)
-                }
-            })
+            type: "POST",
+            url: "class/Factura.php",
+            data: {
+                action: miAccion,
+                obj: JSON.stringify(facVenta)
+            }
+        })
             .done(function (e) {
                 // muestra el numero de orden: IMPRIMIR.
                 //var facUUID = JSON.parse(e)[0];    
@@ -197,13 +197,13 @@ function crearDetalle(facUUID) {
         prdVenta.detalle = `${item[1]}, ${item[3]}, ${item[5]}, ${item[7]}`;
 
         $.ajax({
-                type: "POST",
-                url: "class/productoXFactura.php",
-                data: {
-                    action: miAccion,
-                    obj: JSON.stringify(prdVenta)
-                }
-            })
+            type: "POST",
+            url: "class/productoXFactura.php",
+            data: {
+                action: miAccion,
+                obj: JSON.stringify(prdVenta)
+            }
+        })
             .done(function (e) {
                 // muestra el numero de orden: IMPRIMIR.
                 // var facUUID = JSON.parse(e)[0];
@@ -241,13 +241,13 @@ function crearOrden(facUUID) {
         newOrden.idTopping = item[6];
 
         $.ajax({
-                type: "POST",
-                url: "class/OrdenXFactura.php",
-                data: {
-                    action: miAccion,
-                    obj: JSON.stringify(newOrden)
-                }
-            })
+            type: "POST",
+            url: "class/OrdenXFactura.php",
+            data: {
+                action: miAccion,
+                obj: JSON.stringify(newOrden)
+            }
+        })
             .done(function (e) {
                 swal({
                     type: 'success',
@@ -316,11 +316,30 @@ function facturar() {
         // exoneracion
         //objetoDetalleFactura.idExoneracionImpuesto = null;
         // iv
-        objetoDetalleFactura.codigoImpuesto = 1; // 1 = Impuesto General sobre las Ventas.
-        objetoDetalleFactura.tarifaImpuesto = 13;
-        objetoDetalleFactura.montoImpuesto = parseFloat((objetoDetalleFactura.subTotal * (objetoDetalleFactura.tarifaImpuesto / 100)).toFixed(5)); // debe tomar el impuesto como parametro de un tabla.
-        objetoDetalleFactura.montoTotalLinea = parseFloat((objetoDetalleFactura.subTotal + objetoDetalleFactura.montoImpuesto).toFixed(5));
+        // objetoDetalleFactura.codigoImpuesto = 1; // 1 = Impuesto General sobre las Ventas.
+        // objetoDetalleFactura.tarifaImpuesto = 13;
+        // objetoDetalleFactura.montoImpuesto = parseFloat((objetoDetalleFactura.subTotal * (objetoDetalleFactura.tarifaImpuesto / 100)).toFixed(5)); // debe tomar el impuesto como parametro de un tabla.
+        // objetoDetalleFactura.montoTotalLinea = parseFloat((objetoDetalleFactura.subTotal + objetoDetalleFactura.montoImpuesto).toFixed(5));
+        // facturaCli.detalleFactura.push(objetoDetalleFactura);
+
+        //
+        // iva
+        //
+        objetoDetalleFactura.impuestos = [];
+        var montoTotalImpuestosLinea = 0; // sumatoria de iva de la linea.      
+        //if(/* TIENE IMPUESTOS */){
+        impuesto = new Object();
+        impuesto.idCodigoImpuesto = 1; // 1 = Impuesto Valor Agregado.
+        impuesto.codigoTarifa = 8;
+        impuesto.tarifa = 13;
+        impuesto.monto = parseFloat((objetoDetalleFactura.subTotal * (impuesto.tarifa / 100)).toFixed(5));
+        montoTotalImpuestosLinea += impuesto.monto;
+
+        objetoDetalleFactura.montoTotalLinea = parseFloat((objetoDetalleFactura.subTotal + montoTotalImpuestosLinea).toFixed(5));
+        objetoDetalleFactura.impuestos.push(impuesto);
+        
         facturaCli.detalleFactura.push(objetoDetalleFactura);
+
         // actualiza totales de factura.
         facturaCli.totalVenta = parseFloat((facturaCli.totalVenta + objetoDetalleFactura.montoTotal).toFixed(5));
         facturaCli.totalDescuentos = parseFloat((facturaCli.totalDescuentos + objetoDetalleFactura.montoDescuento).toFixed(5));
@@ -360,13 +379,13 @@ function facturar() {
     $('#send').attr("disabled", "disabled");
     //
     $.ajax({
-            type: "POST",
-            url: "class/Factura.php",
-            data: {
-                action: miAccion,
-                obj: JSON.stringify(facturaCli)
-            }
-        })
+        type: "POST",
+        url: "class/Factura.php",
+        data: {
+            action: miAccion,
+            obj: JSON.stringify(facturaCli)
+        }
+    })
         .done(function (e) {
             ticketPrint(e);
         })

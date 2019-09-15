@@ -201,7 +201,7 @@ class Factura
             //
             $this->totalVenta = $obj["totalVenta"] ?? null;
             $this->totalDescuentos = $obj["totalDescuentos"] ?? null;
-            $this->totalVentaNeta = $obj["totalVentaNeta"] ?? null;
+            $this->totalVentaneta = $obj["totalVentaneta"] ?? null;
             $this->totalImpuesto = $obj["totalImpuesto"] ?? null;
             $this->totalComprobante = $obj["totalComprobante"] ?? null;
 
