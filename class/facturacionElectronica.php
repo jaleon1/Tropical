@@ -42,7 +42,7 @@ class FacturacionElectronica
     // static $expiresIn;
     // static $refreshExpiresIn;
     // static $refreshToken;
-    // static $clave;
+    static $clave;
     // static $consecutivoFE;
     // static $xml;
     // static $xmlFirmado;
@@ -361,8 +361,9 @@ class FacturacionElectronica
         );
         error_log("[INFO] API CLAVE: " .  $clave);
         if (!self::$distr)
-            Factura::setClave(self::$transaccion->idDocumento, self::$transaccion->id, self::$clave, self::$consecutivoFE);
-        else Distribucion::setClave(self::$transaccion->idDocumento, self::$transaccion->id, self::$clave, self::$consecutivoFE);
+            Factura::setClave(self::$transaccion->idDocumento, self::$transaccion->id, $clave, $consecutivoFE);
+        else Distribucion::setClave(self::$transaccion->idDocumento, self::$transaccion->id, $clave, $consecutivoFE);
+        return true;
     }
 
     public static function cifrarXml()

@@ -189,7 +189,7 @@ class Factura{
             $this->fechaFinal= $obj["fechaFinal"] ?? null;
 
             // d. Informacion de referencia
-            $this->idDocumento = $obj["idDocumento"] ?? 1;//$_SESSION["userSession"]->idDocumento; // Documento de Referencia.
+            $this->idDocumento = $obj["idDocumento"] ?? 4;//$_SESSION["userSession"]->idDocumento; // Documento de Referencia.
             $this->fechaEmision= $obj["fechaEmision"] ?? null; // emision del comprobante electronico.
             //
             $this->idReceptor = $obj['idReceptor'] ?? Receptor::default()->id; // si es null, utiliza el Receptor por defecto.
