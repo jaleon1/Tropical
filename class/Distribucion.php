@@ -235,7 +235,7 @@ class Distribucion{
                         foreach ($itemlist["impuestos"] as $itemImpuesto) {
                             $imp = new Impuestos();
                             $imp->idCodigoImpuesto = $itemImpuesto['idCodigoImpuesto'];  // Impuesto al Valor Agregado = 1
-                            $imp->idCodigoTarifa = $itemImpuesto['codigoTarifa']; // Tarifa general 13% = 8
+                            $imp->idCodigoTarifa = $itemImpuesto['idCodigoTarifa']; // Tarifa general 13% = 8
                             $imp->tarifaImpuesto = $itemImpuesto['tarifa']; //  13%
                             $imp->montoImpuesto = $itemImpuesto['monto'];
                             array_push($item->impuestos, $imp);
@@ -572,7 +572,7 @@ class Distribucion{
 
     function Read(){
         try {
-            $sql='SELECT d.id, d.fecha, d.idEmisor, d.idReceptor, d.orden, d.clave, d.consecutivoFE, d.fechaEmision, d.idUsuario, d.idBodega, b.nombre as bodega, 
+            $sql='SELECT d.id, d.fechaCreacion, d.idEmisor, d.idReceptor, d.orden, d.clave, d.consecutivoFE, d.fechaEmision, d.idUsuario, d.idBodega, b.nombre as bodega, 
                 d.porcentajeDescuento, d.porcentajeIva,  d.totalImpuesto, d.totalComprobante, d.idSituacionComprobante, d.idDocumento, d.idEstadoComprobante,
                 totalServGravados, totalServExentos, totalMercanciasGravadas, totalMercanciasExentas, totalGravado, totalExento,
                 totalVenta, totalDescuentos, totalVentaneta, d.claveNC, d.idReferencia, d.idEstadoNC
@@ -583,7 +583,7 @@ class Distribucion{
             $data= DATA::Ejecutar($sql,$param);     
             if(count($data)){
                 $this->id = $data[0]['id'];
-                $this->fecha = $data[0]['fecha'];
+                $this->fecha = $data[0]['fechaCreacion'];
                 $this->orden = $data[0]['orden'];
                 $this->consecutivoFE = $data[0]['consecutivoFE'] ?? null;
                 $this->fechaEmision = $data[0]['fechaEmision'] ?? null;

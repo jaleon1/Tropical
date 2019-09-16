@@ -131,7 +131,7 @@ class Distribucion {
       //if(/* TIENE IMPUESTOS */){
       var impuesto = new Object();
       impuesto.idCodigoImpuesto = 1; // 1 = Impuesto Valor Agregado.
-      impuesto.codigoTarifa = 8;
+      impuesto.idCodigoTarifa = 8;
       impuesto.tarifa = 13;
       impuesto.monto = parseFloat(
         (objlista.subTotal * (impuesto.tarifa / 100)).toFixed(5)
