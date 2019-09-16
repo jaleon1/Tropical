@@ -1054,7 +1054,7 @@ $('#tb_facturas tbody').on('click', 'td', function () {
     if ($.trim(this.textContent) == ("Enviar")
         // ||$.trim(this.textContent) == ("Enviada")
         || $.trim(this.textContent) == ("Cancelar Factura")
-        || $.trim(this.textContent) == ("Cancelar & Reenviar")
+        || $.trim(this.textContent) == ("Reenviar")
         // ||$.trim(this.textContent) == ("Enviar Contingencia")
     )
         return false;
