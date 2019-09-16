@@ -126,22 +126,22 @@ class Distribucion {
       //
       // iva
       //
-      objetoDetalleFactura.impuestos = [];
+      objlista.impuestos = [];
       var montoTotalImpuestosLinea = 0; // sumatoria de iva de la linea.
       //if(/* TIENE IMPUESTOS */){
-      impuesto = new Object();
+      var impuesto = new Object();
       impuesto.idCodigoImpuesto = 1; // 1 = Impuesto Valor Agregado.
       impuesto.codigoTarifa = 8;
       impuesto.tarifa = 13;
       impuesto.monto = parseFloat(
-        (objetoDetalleFactura.subTotal * (impuesto.tarifa / 100)).toFixed(5)
+        (objlista.subTotal * (impuesto.tarifa / 100)).toFixed(5)
       );
       montoTotalImpuestosLinea += impuesto.monto;
 
-      objetoDetalleFactura.montoTotalLinea = parseFloat(
-        (objetoDetalleFactura.subTotal + montoTotalImpuestosLinea).toFixed(5)
+      objlista.montoTotalLinea = parseFloat(
+        (objlista.subTotal + montoTotalImpuestosLinea).toFixed(5)
       );
-      objetoDetalleFactura.impuestos.push(impuesto);
+      objlista.impuestos.push(impuesto);
       // actualiza totales de distr.
       distr.totalVenta = parseFloat(
         (distr.totalVenta + objlista.montoTotal).toFixed(5)
@@ -150,16 +150,16 @@ class Distribucion {
         (distr.totalDescuentos + objlista.montoDescuento).toFixed(5)
       );
       distr.totalImpuesto = parseFloat(
-        (distr.totalImpuesto + objlista.montoImpuesto).toFixed(5)
+        (distr.totalImpuesto + montoTotalImpuestosLinea).toFixed(5)
       );
       //
       distr.detalleFactura.push(objlista);
     });
     //
-    //distr.totalServGravados = 0;
-    //distr.totalServExentos = 0;
-    //distr.totalMercanciasGravadas = distr.totalVenta;
-    //distr.totalMercanciasExentas = 0;
+    distr.totalServGravados = 0;
+    distr.totalServExentos = 0;
+    distr.totalMercanciasGravadas = distr.totalVenta;
+    distr.totalMercanciasExentas = 0;
     distr.totalGravado = parseFloat(
       (distr.totalServGravados + distr.totalMercanciasGravadas).toFixed(5)
     );
