@@ -413,7 +413,8 @@ class Factura
     {
         try {
             $nueva_factura = $this->Read();
-            // referencia a la fatura cancelada.
+            // referencia a la fatura cancelada.            
+            $this->informacionReferencia = [];
             $item = new Referencia();
             $item->tipodoc = '01';  // factura electronica.
             $item->numero = $this->clave;
