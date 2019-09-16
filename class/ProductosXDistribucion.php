@@ -37,13 +37,37 @@ class ProductosXDistribucion
                 $producto->detalle = $value['detalle'];
                 $producto->precioUnitario = $value['precioUnitario'];
                 $producto->montoTotal = $value['montoTotal'];
+                // descuentos                 
                 $producto->montoDescuento = $value['montoDescuento'];
                 $producto->naturalezaDescuento = $value['naturalezaDescuento'];
+                //
                 $producto->subTotal = $value['subTotal'];
-                $producto->idCodigoImpuesto = $value['idCodigoImpuesto'];
-                $producto->idCodigoTarifa = $value['idCodigoTarifa'];
-                $producto->tarifaImpuesto = $value['tarifaImpuesto'];
-                $producto->montoImpuesto = $value['montoImpuesto'];
+                // impuestos
+                if (isset($value['idCodigoImpuesto'])) {
+                    include_once('impuestos.php');
+                    $producto->impuestos = [];
+                    $imp = new Impuestos();
+                    $imp->idCodigoImpuesto = $value['idCodigoImpuesto']; // Impuesto al Valor Agregado = 1
+                    $imp->idCodigoTarifa = $value['idCodigoTarifa']; // Tarifa general 13% = 8
+                    $imp->tarifaImpuesto = $value['tarifaImpuesto']; //  13%
+                    $imp->montoImpuesto = $value['montoImpuesto'];
+                    //$item->factorIVA= $itemImpuesto->factorIVA;
+                    array_push($producto->impuestos, $imp);
+                }
+                // exoneraciones
+                if (isset($value['tipoDocumento'])) {
+                    include_once('exoneraciones.php');
+                    $producto->exoneracion = [];
+                    $exo = new Exoneraciones();
+                    $exo->tipoDocumento = $value['tipoDocumento'] ?? null;
+                    $exo->numeroDocumento = $value['numeroDocumento'] ?? null;
+                    $exo->nombreInstitucion = $value['nombreInstitucion'] ?? null;
+                    $exo->fechaEmision = $value['fechaEmision'] ?? null;
+                    $exo->porcentaje = $value['porcentajeExoneracion'] ?? null;
+                    $exo->monto = $value['montoExoneracion'] ?? null;
+                    //$item->factorIVA= $itemImpuesto->factorIVA;
+                    array_push($producto->exoneracion, $exo);
+                }
                 $producto->montoTotalLinea = $value['montoTotalLinea'];
                 $producto->impuestoNeto = $value['impuestoNeto'];
                 //

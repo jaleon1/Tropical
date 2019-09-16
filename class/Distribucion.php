@@ -1104,9 +1104,9 @@ class Distribucion{
             // SituacionComprobante 02 = Envío en Contingencia
             // Estado de Comprobante 01 = Sin enviar.
             $sql="UPDATE distribucion
-                SET idSituacionComprobante=:idSituacionComprobante , idDocumento=:idDocumento, idEstadoComprobante=:idEstadoComprobante
+                SET idSituacionComprobante=:idSituacionComprobante, idEstadoComprobante=:idEstadoComprobante
                 WHERE id=:id";
-            $param= array(':id'=>$this->id, ':idSituacionComprobante'=>2 , ':idDocumento'=>8, ':idEstadoComprobante'=>1);
+            $param= array(':id'=>$this->id, ':idSituacionComprobante'=>2 , ':idEstadoComprobante'=>1);
             $data = DATA::Ejecutar($sql,$param, false);
             if($data){
                 // lee la transaccion completa y re envia

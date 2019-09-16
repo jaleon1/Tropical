@@ -1,22 +1,24 @@
 <?php
 include_once('mhHeader.php');
-class xmlFE{
+class xmlFE
+{
     static $arrayResp;
 
-    public static function create($t){
+    public static function create($t)
+    {
         error_log('Iniciando creacion de FE XML');
-        $transaccion= $t;
+        $transaccion = $t;
         $esExonerado = false;
         $esExento = false;
         // valida datos.
-        if(!self::validar($transaccion))
+        if (!self::validar($transaccion))
             return self::$arrayResp;
         else {
             // busca valores de los ID.
             $transaccion->datosEntidad->idTipoIdentificacion = self::getIdentificacionCod($transaccion->datosEntidad->idTipoIdentificacion);
             $transaccion->datosReceptor->idTipoIdentificacion = self::getIdentificacionCod($transaccion->datosReceptor->idTipoIdentificacion);
             $transaccion->idSituacionComprobante =  self::getSituacionComprobanteCod($transaccion->idSituacionComprobante);
-            $ubicacionEntidadCod= self::getUbicacionCod($transaccion->datosEntidad->idProvincia, $transaccion->datosEntidad->idCanton, $transaccion->datosEntidad->idDistrito, $transaccion->datosEntidad->idBarrio);
+            $ubicacionEntidadCod = self::getUbicacionCod($transaccion->datosEntidad->idProvincia, $transaccion->datosEntidad->idCanton, $transaccion->datosEntidad->idDistrito, $transaccion->datosEntidad->idBarrio);
             $transaccion->idCondicionVenta = self::getCondicionVentaCod($transaccion->idCondicionVenta);
             //$transaccion->idEstadoComprobante = self::getEstadoComprobanteCod($transaccion->idEstadoComprobante);
             $transaccion->idCodigoMoneda = self::getCodigoMonedaCod($transaccion->idCodigoMoneda);
@@ -25,7 +27,7 @@ class xmlFE{
         // crea XML
         // Detalles Generales.        
         $xmlString = '<?xml version="1.0" encoding="utf-8"?>'
-            .mhHeader::fe43.            
+            . mhHeader::fe43 .
             '<Clave>' . $transaccion->clave . '</Clave>
             <CodigoActividad>'  . $transaccion->datosEntidad->idCodigoActividad .  '</CodigoActividad>
             <NumeroConsecutivo>' . $transaccion->consecutivoFE . '</NumeroConsecutivo>
@@ -36,7 +38,7 @@ class xmlFE{
                     <Tipo>' . $transaccion->datosEntidad->idTipoIdentificacion . '</Tipo>
                     <Numero>' . $transaccion->datosEntidad->identificacion . '</Numero>
                 </Identificacion>';
-        if(!empty($transaccion->datosEntidad->nombreComercial))
+        if (!empty($transaccion->datosEntidad->nombreComercial))
             $xmlString .= '<NombreComercial>' . $transaccion->datosEntidad->nombreComercial . '</NombreComercial>';
         // UBICACION
         $xmlString .= '
@@ -44,17 +46,17 @@ class xmlFE{
                     <Provincia>' . $ubicacionEntidadCod[0]->provincia . '</Provincia>
                     <Canton>' . $ubicacionEntidadCod[0]->canton . '</Canton>
                     <Distrito>' . $ubicacionEntidadCod[0]->distrito . '</Distrito>';
-            if (!empty($ubicacionEntidadCod[0]->barrio))
-                $xmlString .= '<Barrio>' . $ubicacionEntidadCod[0]->barrio . '</Barrio>';
-            $xmlString .= '
+        if (!empty($ubicacionEntidadCod[0]->barrio))
+            $xmlString .= '<Barrio>' . $ubicacionEntidadCod[0]->barrio . '</Barrio>';
+        $xmlString .= '
                     <OtrasSenas>' . $transaccion->datosEntidad->otrasSenas . '</OtrasSenas>
                 </Ubicacion>';
         // TELEFONO    
-        if (!empty($transaccion->datosEntidad->numTelefono)){
+        if (!empty($transaccion->datosEntidad->numTelefono)) {
             $xmlString .= '
                 <Telefono>
                     <CodigoPais>' . 506 . '</CodigoPais>
-                    <NumTelefono>' . $transaccion->datosEntidad->numTelefono. '</NumTelefono>
+                    <NumTelefono>' . $transaccion->datosEntidad->numTelefono . '</NumTelefono>
                 </Telefono>';
         }
         // FAX
@@ -71,16 +73,13 @@ class xmlFE{
         //RECEPTOR
         $xmlString .= '<Receptor>
             <Nombre>' . $transaccion->datosReceptor->nombre . '</Nombre>';
-        if ($transaccion->datosReceptor->idTipoIdentificacion == '5')
-        {
-            if (!empty($transaccion->datosReceptor->identificacion)){
+        if ($transaccion->datosReceptor->idTipoIdentificacion == '5') {
+            if (!empty($transaccion->datosReceptor->identificacion)) {
                 $xmlString .= '<IdentificacionExtranjero>'
-                        . $transaccion->datosReceptor->identificacion 
-                        . ' </IdentificacionExtranjero>';
+                    . $transaccion->datosReceptor->identificacion
+                    . ' </IdentificacionExtranjero>';
             }
-        }
-        else
-        {
+        } else {
             $xmlString .= '<Identificacion>
                 <Tipo>' . $transaccion->datosReceptor->idTipoIdentificacion . '</Tipo>
                 <Numero>' . $transaccion->datosReceptor->identificacion . '</Numero>
@@ -127,7 +126,7 @@ class xmlFE{
             <DetalleServicio>';
         // Linea detalle de la factura.
         $l = 1;
-        foreach($transaccion->detalleFactura as $d){
+        foreach ($transaccion->detalleFactura as $d) {
             $xmlString .= '<LineaDetalle>
                       <NumeroLinea>' . $l . '</NumeroLinea>
                       <Cantidad>' . $d->cantidad . '</Cantidad>
@@ -137,7 +136,7 @@ class xmlFE{
             $xmlString .= '<PrecioUnitario>' . $d->precioUnitario . '</PrecioUnitario>
                 <MontoTotal>' . $d->montoTotal . '</MontoTotal>';
             // DESCUENTOS.
-            if (isset($d->montoDescuento) && !empty($d->montoDescuento)){
+            if (isset($d->montoDescuento) && !empty($d->montoDescuento)) {
                 $xmlString .= '<Descuento><MontoDescuento>' . $d->montoDescuento . '</MontoDescuento>';
                 //    
                 if (isset($d->naturalezaDescuento) && !empty($d->naturalezaDescuento))
@@ -153,50 +152,49 @@ class xmlFE{
             // IMPUESTOS. **** PENDIENTE   Factor IVA  ****  
             //En esta linea de abajo -> ya se valido idCodigoImpuesto al inicio en la funcion de validar para que volver a validarlo????
             // if (isset($d->idCodigoImpuesto) && !empty($d->idCodigoImpuesto)){ 
-            if (isset($d->impuestos[0]->idCodigoImpuesto) && !empty($d->impuestos[0]->idCodigoImpuesto)){ 
+            if (isset($d->impuestos[0]->idCodigoImpuesto) && !empty($d->impuestos[0]->idCodigoImpuesto)) {
                 //if($d->idCodigoTarifa != "1") // 1 = exento de impuesto. Se elimina el tag o se envia en CERO??
-                foreach ($d->impuestos as $key => $imp){
-                    if($imp->idCodigoImpuesto == '7'){
+                foreach ($d->impuestos as $key => $imp) {
+                    if ($imp->idCodigoImpuesto == '7') {
                         $xmlString .= '<BaseImponible>' . $imp->baseImponible . '</BaseImponible>';
                     }
                     $xmlString .= '<Impuesto>
                     <Codigo>' . self::getImpuestoCod($imp->idCodigoImpuesto) . '</Codigo> 
-                    <CodigoTarifa>'. self::getTarifaCod($imp->codigoTarifa) .'</CodigoTarifa>
-                    <Tarifa>' . $imp->tarifa . '</Tarifa>
-                    <Monto>' . $imp->monto . '</Monto>'; 
-                }                               
+                    <CodigoTarifa>' . self::getTarifaCod($imp->idCodigoTarifa) . '</CodigoTarifa>
+                    <Tarifa>' . $imp->tarifaImpuesto . '</Tarifa>
+                    <Monto>' . $imp->montoImpuesto . '</Monto>';
+                }
             }
             // EXONERACION. 
-            if (isset($d->exoneracion) && !empty($d->exoneracion)){
-                foreach ($d->exoneracion as $key => $exo){
-                    if (isset($d->exoneracion[$key]) && !empty($d->exoneracion[$key])){
+            if (isset($d->exoneracion) && !empty($d->exoneracion)) {
+                foreach ($d->exoneracion as $key => $exo) {
+                    if (isset($d->exoneracion[$key]) && !empty($d->exoneracion[$key])) {
                         $fechaDocumento = date_create($exo->fechaEmision);
                         $esExonerado = true;
                         $xmlString .= '
                             <Exoneracion> 
-                                <TipoDocumento>'. self::getDocumentoExoneracionAutorizacionCod($exo->tipoDocumento) .'</TipoDocumento>
+                                <TipoDocumento>' . self::getDocumentoExoneracionAutorizacionCod($exo->tipoDocumento) . '</TipoDocumento>
                                 <NumeroDocumento>' . $exo->numeroDocumento . '</NumeroDocumento>
                                 <NombreInstitucion>' . $exo->nombreInstitucion . '</NombreInstitucion>
                                 <FechaEmision>' . $fechaDocumento->format("c") . '</FechaEmision>
                                 <PorcentajeExoneracion>' . $exo->porcentaje . '</PorcentajeExoneracion>
                                 <MontoExoneracion>' . $exo->monto . '</MontoExoneracion>                        
                             </Exoneracion>';
-                    }
-                    else{
+                    } else {
                         self::$arrayResp = array(
                             "error" => 'Error al construir XML de FE',
                             "mensaje" => 'El valor (d->exoneracion) no debe ser nulo o vacio'
                         );
                         return false;
                     }
-                }                     
-            }    
+                }
+            }
             $xmlString .= '</Impuesto>';
 
-            
+
             if ($esExonerado)
                 $xmlString .= '<ImpuestoNeto>' . $d->impuestoNeto . '</ImpuestoNeto>';
-            
+
             $xmlString .= '<MontoTotalLinea>' . $d->montoTotalLinea . '</MontoTotalLinea>';
             // **** PENDIENTE OtrosCargos  ****
             $xmlString .= '</LineaDetalle>';
@@ -204,10 +202,10 @@ class xmlFE{
         }
         // RESUMEN DE FACTURA
         $xmlString .= '</DetalleServicio> <ResumenFactura>';
-        if(!empty($transaccion->idCodigoMoneda) && $transaccion->idCodigoMoneda != 55){
+        if (!empty($transaccion->idCodigoMoneda) && $transaccion->idCodigoMoneda != 55) {
             $xmlString .= '<CodigoTipoMoneda>
-                <CodigoMoneda>'  .$transaccion->idCodigoMoneda.  '</CodigoMoneda>
-                <TipoCambio>'  .$transaccion->tipoCambio.  '</TipoCambio>
+                <CodigoMoneda>'  . $transaccion->idCodigoMoneda .  '</CodigoMoneda>
+                <TipoCambio>'  . $transaccion->tipoCambio .  '</TipoCambio>
             </CodigoTipoMoneda>';
         }
         //
@@ -221,7 +219,7 @@ class xmlFE{
         $xmlString .= '<TotalGravado>' . $transaccion->totalGravado . '</TotalGravado>';
         if ($esExonerado)
             $xmlString .= '<TotalExonerado>' . $transaccion->totalExonerado . '</TotalExonerado>';
-        
+
         // EXENTOS. *** PENDIENTE ***
         // if ($esExento){
         // <TotalServExentos>' . $transaccion->totalServExentos . '</TotalServExentos>
@@ -235,17 +233,17 @@ class xmlFE{
             <TotalComprobante>' . $transaccion->totalComprobante . '</TotalComprobante>
             </ResumenFactura>';
         // referencias /**** PENDIENTE ****/
-        foreach($transaccion->informacionReferencia as $ref){
+        foreach ($transaccion->informacionReferencia as $ref) {
             //self::getDocumentoReferenciaCod();
             //self::getReferenciaCod()
-            $xmlString.= '
+            $xmlString .= '
                 <InformacionReferencia>
                     <TipoDoc>' . self::getDocumentoReferenciaCod($ref->tipodoc) . '</TipoDoc> 
                     <Numero>' . $ref->numero . '</Numero>
-                    <FechaEmision>' .$ref->fechaEmision->format("c") . '</FechaEmision>
+                    <FechaEmision>' . $ref->fechaEmision->format("c") . '</FechaEmision>
                     <Codigo>' . self::getReferenciaCod($ref->codigo) . '</Codigo>
                     <Razon>' . $ref->razon . '</Razon>
-                </InformacionReferencia>';            
+                </InformacionReferencia>';
         }
         // **** PENDITENTE OTROS ****
         if (!empty($transaccion->otros) && $otrosType != '') {
@@ -270,36 +268,36 @@ class xmlFE{
         return $arrayResp;
     }
 
-    private static function getIdValues($transaccion){
+    private static function getIdValues($transaccion)
+    { }
 
-    }
-
-    private static function validar($transaccion){
+    private static function validar($transaccion)
+    {
         // busca valores de datos relacionados con otras tablas.
         //self::getIdValues($transaccion);
         //
-        if(empty($transaccion->clave)){
+        if (empty($transaccion->clave)) {
             self::$arrayResp = array(
                 "error" => 'Error al construir XML de FE',
                 "mensaje" => 'El valor (clave) no debe ser nulo o vacio'
             );
             return false;
         }
-        if(empty($transaccion->datosEntidad->idCodigoActividad)){
+        if (empty($transaccion->datosEntidad->idCodigoActividad)) {
             self::$arrayResp = array(
                 "error" => 'Error al construir XML de FE',
                 "mensaje" => 'El valor (idCodigoActividad) no debe ser nulo o vacio'
             );
             return false;
         }
-        if(empty($transaccion->consecutivoFE)){
+        if (empty($transaccion->consecutivoFE)) {
             self::$arrayResp = array(
                 "error" => 'Error al construir XML de FE',
                 "mensaje" => 'El consecutivoFE no debe ser nulo o vacia'
             );
             return false;
         }
-        if(empty($transaccion->fechaEmision)){
+        if (empty($transaccion->fechaEmision)) {
             self::$arrayResp = array(
                 "error" => 'Error al construir XML de FE',
                 "mensaje" => 'El valor (fechaEmision) no debe ser nulo o vacio'
@@ -307,21 +305,21 @@ class xmlFE{
             return false;
         }
         // EMISOR
-        if(empty($transaccion->datosEntidad->nombre)){
+        if (empty($transaccion->datosEntidad->nombre)) {
             self::$arrayResp = array(
                 "error" => 'Error al construir XML de FE',
                 "mensaje" => 'El valor (datosEntidad->nombre) no debe ser nulo o vacio'
             );
             return false;
         }
-        if(empty($transaccion->datosEntidad->idTipoIdentificacion)){
+        if (empty($transaccion->datosEntidad->idTipoIdentificacion)) {
             self::$arrayResp = array(
                 "error" => 'Error al construir XML de FE',
                 "mensaje" => 'El valor (datosEntidad->idTipoIdentificacion) no debe ser nulo o vacio'
             );
             return false;
         }
-        if(empty($transaccion->datosEntidad->identificacion)){
+        if (empty($transaccion->datosEntidad->identificacion)) {
             self::$arrayResp = array(
                 "error" => 'Error al construir XML de FE',
                 "mensaje" => 'El valor (datosEntidad->identificacion) no debe ser nulo o vacio'
@@ -329,28 +327,28 @@ class xmlFE{
             return false;
         }
         // EMISOR:UBICACION
-        if(empty($transaccion->datosEntidad->idProvincia)){
+        if (empty($transaccion->datosEntidad->idProvincia)) {
             self::$arrayResp = array(
                 "error" => 'Error al construir XML de FE',
                 "mensaje" => 'El valor (datosEntidad->idProvincia) no debe ser nulo o vacio'
             );
             return false;
         }
-        if(empty($transaccion->datosEntidad->idCanton)){
+        if (empty($transaccion->datosEntidad->idCanton)) {
             self::$arrayResp = array(
                 "error" => 'Error al construir XML de FE',
                 "mensaje" => 'El valor (datosEntidad->idCanton) no debe ser nulo o vacio'
             );
             return false;
         }
-        if(empty($transaccion->datosEntidad->idDistrito)){
+        if (empty($transaccion->datosEntidad->idDistrito)) {
             self::$arrayResp = array(
                 "error" => 'Error al construir XML de FE',
                 "mensaje" => 'El valor (datosEntidad->idDistrito) no debe ser nulo o vacio'
             );
             return false;
         }
-        if(empty($transaccion->datosEntidad->otrasSenas)){
+        if (empty($transaccion->datosEntidad->otrasSenas)) {
             self::$arrayResp = array(
                 "error" => 'Error al construir XML de FE',
                 "mensaje" => 'El valor (datosEntidad->otrasSenas) no debe ser nulo o vacio'
@@ -358,7 +356,7 @@ class xmlFE{
             return false;
         }
         //
-        if(empty($transaccion->datosEntidad->correoElectronico)){
+        if (empty($transaccion->datosEntidad->correoElectronico)) {
             self::$arrayResp = array(
                 "error" => 'Error al construir XML de FE',
                 "mensaje" => 'El valor (datosEntidad->correoElectronico) no debe ser nulo o vacio'
@@ -366,21 +364,21 @@ class xmlFE{
             return false;
         }
         // RECEPTOR.
-        if(empty($transaccion->datosReceptor->nombre)){
+        if (empty($transaccion->datosReceptor->nombre)) {
             self::$arrayResp = array(
                 "error" => 'Error al construir XML de FE',
                 "mensaje" => 'El valor (datosReceptor->nombre) no debe ser nulo o vacio'
             );
             return false;
         }
-        if(empty($transaccion->datosReceptor->identificacion)){
+        if (empty($transaccion->datosReceptor->identificacion)) {
             self::$arrayResp = array(
                 "error" => 'Error al construir XML de FE',
                 "mensaje" => 'El valor (datosReceptor->identificacion) no debe ser nulo o vacio'
             );
             return false;
         }
-        if(empty($transaccion->datosReceptor->idTipoIdentificacion)){
+        if (empty($transaccion->datosReceptor->idTipoIdentificacion)) {
             self::$arrayResp = array(
                 "error" => 'Error al construir XML de FE',
                 "mensaje" => 'El valor (datosReceptor->idTipoIdentificacion) no debe ser nulo o vacio'
@@ -388,14 +386,14 @@ class xmlFE{
             return false;
         }
         // DETALLES DE LA VENTA.
-        if(empty($transaccion->idCondicionVenta)){
+        if (empty($transaccion->idCondicionVenta)) {
             self::$arrayResp = array(
                 "error" => 'Error al construir XML de FE',
                 "mensaje" => 'El valor (idCondicionVenta) no debe ser nulo o vacio'
             );
             return false;
         }
-        if(empty($transaccion->idMedioPago)){
+        if (empty($transaccion->idMedioPago)) {
             self::$arrayResp = array(
                 "error" => 'Error al construir XML de FE',
                 "mensaje" => 'El valor (idMedioPago) no debe ser nulo o vacio'
@@ -403,46 +401,46 @@ class xmlFE{
             return false;
         }
         // LINEA DETALLE
-        foreach($transaccion->detalleFactura as $d){
-            if(empty($d->cantidad)){
+        foreach ($transaccion->detalleFactura as $d) {
+            if (empty($d->cantidad)) {
                 self::$arrayResp = array(
                     "error" => 'Error al construir XML de FE',
                     "mensaje" => 'El valor (cantidad) no debe ser nulo o vacio'
                 );
                 return false;
             }
-            if(empty($d->idUnidadMedida)){
+            if (empty($d->idUnidadMedida)) {
                 self::$arrayResp = array(
                     "error" => 'Error al construir XML de FE',
                     "mensaje" => 'El valor (idUnidadMedida) no debe ser nulo o vacio'
                 );
                 return false;
             }
-            if(empty($d->precioUnitario)){
+            if (empty($d->precioUnitario)) {
                 self::$arrayResp = array(
                     "error" => 'Error al construir XML de FE',
                     "mensaje" => 'El valor (precioUnitario) no debe ser nulo o vacio'
                 );
                 return false;
             }
-            if(empty($d->montoTotal)){
+            if (empty($d->montoTotal)) {
                 self::$arrayResp = array(
                     "error" => 'Error al construir XML de FE',
                     "mensaje" => 'El valor (montoTotal) no debe ser nulo o vacio'
                 );
                 return false;
             }
-            if(empty($d->subTotal)){
+            if (empty($d->subTotal)) {
                 self::$arrayResp = array(
                     "error" => 'Error al construir XML de FE',
                     "mensaje" => 'El valor (subTotal) no debe ser nulo o vacio'
                 );
                 return false;
             }
-            if(!empty($d->impuestos)){
-                foreach ($d->impuestos as $key => $imp){
-                    
-                    if(empty($imp->idCodigoImpuesto)){
+            if (!empty($d->impuestos)) {
+                foreach ($d->impuestos as $key => $imp) {
+
+                    if (empty($imp->idCodigoImpuesto)) {
                         self::$arrayResp = array(
                             "error" => 'Error al construir XML de FE',
                             "mensaje" => 'El valor (idCodigoImpuesto) no debe ser nulo o vacio'
@@ -450,23 +448,23 @@ class xmlFE{
                         return false;
                     }
 
-                    if(empty($imp->codigoTarifa)){
+                    if (empty($imp->tarifaImpuesto)) {
                         self::$arrayResp = array(
                             "error" => 'Error al construir XML de FE',
-                            "mensaje" => 'El valor (codigoTarifa) no debe ser nulo o vacio'
+                            "mensaje" => 'El valor (tarifaImpuesto) no debe ser nulo o vacio'
                         );
                         return false;
                     }
 
-                    if(empty($imp->tarifa)){
+                    if (empty($imp->idCodigoTarifa)) {
                         self::$arrayResp = array(
                             "error" => 'Error al construir XML de FE',
-                            "mensaje" => 'El valor (tarifa) no debe ser nulo o vacio'
+                            "mensaje" => 'El valor (idCodigoTarifa) no debe ser nulo o vacio'
                         );
                         return false;
                     }
 
-                    if(empty($imp->monto)){
+                    if (empty($imp->montoImpuesto)) {
                         self::$arrayResp = array(
                             "error" => 'Error al construir XML de FE',
                             "mensaje" => 'El valor (monto) no debe ser nulo o vacio'
@@ -474,8 +472,7 @@ class xmlFE{
                         return false;
                     }
                 }
-
-            }else{
+            } else {
                 self::$arrayResp = array(
                     "error" => 'Error al construir XML de FE',
                     "mensaje" => 'El valor (impuestos) no debe ser nulo o vacio'
@@ -483,7 +480,7 @@ class xmlFE{
                 return false;
             }
 
-            if(empty($d->montoTotalLinea)){
+            if (empty($d->montoTotalLinea)) {
                 self::$arrayResp = array(
                     "error" => 'Error al construir XML de FE',
                     "mensaje" => 'El valor (montoTotalLinea) no debe ser nulo o vacio'
@@ -492,35 +489,35 @@ class xmlFE{
             }
         }
         // RESUMEN
-        if(empty($transaccion->totalVenta)){
+        if (empty($transaccion->totalVenta)) {
             self::$arrayResp = array(
                 "error" => 'Error al construir XML de FE',
                 "mensaje" => 'El valor (totalVenta) no debe ser nulo o vacio'
             );
             return false;
         }
-        if(empty($transaccion->totalDescuentos)){
+        if (empty($transaccion->totalDescuentos)) {
             self::$arrayResp = array(
                 "error" => 'Error al construir XML de FE',
                 "mensaje" => 'El valor (totalDescuentos) no debe ser nulo o vacio'
             );
             return false;
         }
-        if(empty($transaccion->totalVentaneta)){
+        if (empty($transaccion->totalVentaneta)) {
             self::$arrayResp = array(
                 "error" => 'Error al construir XML de FE',
                 "mensaje" => 'El valor (totalVentaneta) no debe ser nulo o vacio'
             );
             return false;
         }
-        if(empty($transaccion->totalImpuesto)){
+        if (empty($transaccion->totalImpuesto)) {
             self::$arrayResp = array(
                 "error" => 'Error al construir XML de FE',
                 "mensaje" => 'El valor (totalImpuesto) no debe ser nulo o vacio'
             );
             return false;
         }
-        if(empty($transaccion->totalComprobante)){
+        if (empty($transaccion->totalComprobante)) {
             self::$arrayResp = array(
                 "error" => 'Error al construir XML de FE',
                 "mensaje" => 'El valor (totalComprobante) no debe ser nulo o vacio'
@@ -530,60 +527,58 @@ class xmlFE{
         return true;
     }
 
-    private static function getIdentificacionCod($id){
-        try{
-            $sql='SELECT codigo
+    private static function getIdentificacionCod($id)
+    {
+        try {
+            $sql = 'SELECT codigo
                 FROM tipoIdentificacion
                 WHERE id=:id';
-            $param= array(':id'=>$id);
-            $data= DATA::Ejecutar($sql,$param);     
-            if($data)
+            $param = array(':id' => $id);
+            $data = DATA::Ejecutar($sql, $param);
+            if ($data)
                 return $data[0]['codigo'];
-            else throw new Exception('Error al consultar el codigo de tipo de identificacion' , ERROR_TIPO_IDENTIFICACION_NO_VALID);
-        }
-        catch(Exception $e) {
-            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
-            historico::create(self::$transaccion->id, self::$transaccion->idEntidad, self::$transaccion->idDocumento, 5, 'ERROR_TIPO_IDENTIFICACION_NO_VALID: '. $e->getMessage());
+            else throw new Exception('Error al consultar el codigo de tipo de identificacion', ERROR_TIPO_IDENTIFICACION_NO_VALID);
+        } catch (Exception $e) {
+            error_log("[ERROR]  (" . $e->getCode() . "): " . $e->getMessage());
+            historico::create(self::$transaccion->id, self::$transaccion->idEntidad, self::$transaccion->idDocumento, 5, 'ERROR_TIPO_IDENTIFICACION_NO_VALID: ' . $e->getMessage());
             Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
         }
     }
 
-    private static function getSituacionComprobanteCod($id){
-        try{
-            $sql='SELECT codigo
+    private static function getSituacionComprobanteCod($id)
+    {
+        try {
+            $sql = 'SELECT codigo
             FROM situacionComprobante
             WHERE id=:id';
-            $param= array(':id'=>$id);
-            $data= DATA::Ejecutar($sql,$param);     
-            if($data)
-            {
-                switch($data[0]['codigo']){
+            $param = array(':id' => $id);
+            $data = DATA::Ejecutar($sql, $param);
+            if ($data) {
+                switch ($data[0]['codigo']) {
                     case '1':
                         return 'normal';
-                    break;
-                        case '2':
+                        break;
+                    case '2':
                         return 'contingencia';
-                    break;
-                        case '3':
+                        break;
+                    case '3':
                         return 'sinInternet';
-                    break;
-                    
+                        break;
                 }
-            }
-            else throw new Exception('Error al consultar el codigo de situacion comprobante' , ERROR_SITUACION_COMPROBANTE_NO_VALID);
-        }
-        catch(Exception $e) {
-            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
-            historico::create(self::$transaccion->id, self::$transaccion->idEntidad, self::$transaccion->idDocumento, 5, 'ERROR_SITUACION_COMPROBANTE_NO_VALID: '. $e->getMessage());
+            } else throw new Exception('Error al consultar el codigo de situacion comprobante', ERROR_SITUACION_COMPROBANTE_NO_VALID);
+        } catch (Exception $e) {
+            error_log("[ERROR]  (" . $e->getCode() . "): " . $e->getMessage());
+            historico::create(self::$transaccion->id, self::$transaccion->idEntidad, self::$transaccion->idDocumento, 5, 'ERROR_SITUACION_COMPROBANTE_NO_VALID: ' . $e->getMessage());
             Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
         }
     }
 
-    private static function getDocumentoReferencia($id){
-        try{
-            switch($id){
+    private static function getDocumentoReferencia($id)
+    {
+        try {
+            switch ($id) {
                 case '1':
-                case '8': 
+                case '8':
                     return 'FE';
                     break;
                 case '2':
@@ -595,236 +590,233 @@ class xmlFE{
                 case '4':
                     return 'TE';
                     break;
-                    case '5':
-                return 'CCE';
+                case '5':
+                    return 'CCE';
                     break;
-                    case '6':
-                return 'CPCE';
+                case '6':
+                    return 'CPCE';
                     break;
                 case '7':
                     return 'RCE';
                     break;
-                default: 
-                    throw new Exception('Error al consultar el codigo de referencia' , ERROR_CODIGO_REFERENCIA_NO_VALID);
+                default:
+                    throw new Exception('Error al consultar el codigo de referencia', ERROR_CODIGO_REFERENCIA_NO_VALID);
                     break;
-            }            
-        }
-        catch(Exception $e) {
-            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
-            historico::create(self::$transaccion->id, self::$transaccion->idEntidad, self::$transaccion->idDocumento, 5, 'ERROR_CODIGO_REFERENCIA_NO_VALID: '. $e->getMessage());
+            }
+        } catch (Exception $e) {
+            error_log("[ERROR]  (" . $e->getCode() . "): " . $e->getMessage());
+            historico::create(self::$transaccion->id, self::$transaccion->idEntidad, self::$transaccion->idDocumento, 5, 'ERROR_CODIGO_REFERENCIA_NO_VALID: ' . $e->getMessage());
             Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
         }
     }
 
-    private static function getDocumentoReferenciaCod($id){
-        try{
-            $sql='SELECT codigo
+    private static function getDocumentoReferenciaCod($id)
+    {
+        try {
+            $sql = 'SELECT codigo
                 FROM documentoReferencia
                 WHERE id=:id';
-            $param= array(':id'=>$id);
-            $data= DATA::Ejecutar($sql,$param);     
-            if($data)
+            $param = array(':id' => $id);
+            $data = DATA::Ejecutar($sql, $param);
+            if ($data)
                 return $data[0]['codigo'];
-            else throw new Exception('Error al consultar el codigo de tipod de identificacion' , ERROR_CODIGO_REFERENCIA_NO_VALID);
-        }
-        catch(Exception $e) {
-            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
-            historico::create(self::$transaccion->id, self::$transaccion->idEntidad, self::$transaccion->idDocumento, 5, 'ERROR_CODIGO_REFERENCIA_NO_VALID: '. $e->getMessage());
+            else throw new Exception('Error al consultar el codigo de tipod de identificacion', ERROR_CODIGO_REFERENCIA_NO_VALID);
+        } catch (Exception $e) {
+            error_log("[ERROR]  (" . $e->getCode() . "): " . $e->getMessage());
+            historico::create(self::$transaccion->id, self::$transaccion->idEntidad, self::$transaccion->idDocumento, 5, 'ERROR_CODIGO_REFERENCIA_NO_VALID: ' . $e->getMessage());
             Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
         }
     }
 
-    private static function getReferenciaCod($id){
-        try{
-            $sql='SELECT codigo
+    private static function getReferenciaCod($id)
+    {
+        try {
+            $sql = 'SELECT codigo
                 FROM referencia
                 WHERE id=:id';
-            $param= array(':id'=>$id);
-            $data= DATA::Ejecutar($sql,$param);     
-            if($data)
+            $param = array(':id' => $id);
+            $data = DATA::Ejecutar($sql, $param);
+            if ($data)
                 return $data[0]['codigo'];
-            else throw new Exception('Error al consultar el codigo de tipod de identificacion' , ERROR_REFERENCIA_NO_VALID);
-        }
-        catch(Exception $e) {
-            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
-            historico::create(self::$transaccion->id, self::$transaccion->idEntidad, self::$transaccion->idDocumento, 5, 'ERROR_REFERENCIA_NO_VALID: '. $e->getMessage());
+            else throw new Exception('Error al consultar el codigo de tipod de identificacion', ERROR_REFERENCIA_NO_VALID);
+        } catch (Exception $e) {
+            error_log("[ERROR]  (" . $e->getCode() . "): " . $e->getMessage());
+            historico::create(self::$transaccion->id, self::$transaccion->idEntidad, self::$transaccion->idDocumento, 5, 'ERROR_REFERENCIA_NO_VALID: ' . $e->getMessage());
             Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
         }
     }
 
-    private static function getImpuestoCod($id){
-        try{
-            $sql='SELECT codigo
+    private static function getImpuestoCod($id)
+    {
+        try {
+            $sql = 'SELECT codigo
             FROM impuesto
             WHERE id=:id';
-            $param= array(':id'=>$id);
-            $data= DATA::Ejecutar($sql,$param);     
-            if($data)
+            $param = array(':id' => $id);
+            $data = DATA::Ejecutar($sql, $param);
+            if ($data)
                 return $data[0]['codigo'];
-            else throw new Exception('Error al consultar el codigo del impuesto' , ERROR_IMPUESTO_NO_VALID);
-        }
-        catch(Exception $e) {
-            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
-            historico::create(self::$transaccion->id, self::$transaccion->idEntidad, self::$transaccion->idDocumento, 5, 'ERROR_IMPUESTO_NO_VALID: '. $e->getMessage());
+            else throw new Exception('Error al consultar el codigo del impuesto', ERROR_IMPUESTO_NO_VALID);
+        } catch (Exception $e) {
+            error_log("[ERROR]  (" . $e->getCode() . "): " . $e->getMessage());
+            historico::create(self::$transaccion->id, self::$transaccion->idEntidad, self::$transaccion->idDocumento, 5, 'ERROR_IMPUESTO_NO_VALID: ' . $e->getMessage());
             Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
         }
     }
 
-    private static function getTarifaCod($id){
-        try{
-            $sql='SELECT codigo
+    private static function getTarifaCod($id)
+    {
+        try {
+            $sql = 'SELECT codigo
             FROM tarifa
             WHERE id=:id';
-            $param= array(':id'=>$id);
-            $data= DATA::Ejecutar($sql,$param);     
-            if($data)
+            $param = array(':id' => $id);
+            $data = DATA::Ejecutar($sql, $param);
+            if ($data)
                 return $data[0]['codigo'];
-            else throw new Exception('Error al consultar el codigo del impuesto' , ERROR_IMPUESTO_NO_VALID);
-        }
-        catch(Exception $e) {
-            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
-            historico::create(self::$transaccion->id, self::$transaccion->idEntidad, self::$transaccion->idDocumento, 5, 'ERROR_IMPUESTO_NO_VALID: '. $e->getMessage());
+            else throw new Exception('Error al consultar el codigo del impuesto', ERROR_IMPUESTO_NO_VALID);
+        } catch (Exception $e) {
+            error_log("[ERROR]  (" . $e->getCode() . "): " . $e->getMessage());
+            historico::create(self::$transaccion->id, self::$transaccion->idEntidad, self::$transaccion->idDocumento, 5, 'ERROR_IMPUESTO_NO_VALID: ' . $e->getMessage());
             Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
         }
     }
 
-    private static function getDocumentoExoneracionAutorizacionCod($id){
-        try{
-            $sql='SELECT codigo
+    private static function getDocumentoExoneracionAutorizacionCod($id)
+    {
+        try {
+            $sql = 'SELECT codigo
                 FROM documentoExoneracionAutorizacion
                 WHERE id=:id';
-            $param= array(':id'=>$id);
-            $data= DATA::Ejecutar($sql,$param);     
-            if($data)
+            $param = array(':id' => $id);
+            $data = DATA::Ejecutar($sql, $param);
+            if ($data)
                 return $data[0]['codigo'];
-            else throw new Exception('Error al consultar el codigo del impuesto' , ERROR_IMPUESTO_NO_VALID);
-        }
-        catch(Exception $e) {
-            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
-            historico::create(self::$transaccion->id, self::$transaccion->idEntidad, self::$transaccion->idDocumento, 5, 'ERROR_IMPUESTO_NO_VALID: '. $e->getMessage());
+            else throw new Exception('Error al consultar el codigo del impuesto', ERROR_IMPUESTO_NO_VALID);
+        } catch (Exception $e) {
+            error_log("[ERROR]  (" . $e->getCode() . "): " . $e->getMessage());
+            historico::create(self::$transaccion->id, self::$transaccion->idEntidad, self::$transaccion->idDocumento, 5, 'ERROR_IMPUESTO_NO_VALID: ' . $e->getMessage());
             Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
         }
     }
 
-    private static function getUnidadMedidaCod($id){
-        try{
-            $sql='SELECT simbolo
+    private static function getUnidadMedidaCod($id)
+    {
+        try {
+            $sql = 'SELECT simbolo
                 FROM unidadMedida
                 WHERE id=:id';
-            $param= array(':id'=>$id);
-            $data= DATA::Ejecutar($sql,$param);     
-            if($data)
+            $param = array(':id' => $id);
+            $data = DATA::Ejecutar($sql, $param);
+            if ($data)
                 return $data[0]['simbolo'];
-            else throw new Exception('Error al consultar el codigo de unidad medida' , ERROR_UNIDAD_MEDIDA_NO_VALID);
-        }
-        catch(Exception $e) {
-            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
-            historico::create(self::$transaccion->id, self::$transaccion->idEntidad, self::$transaccion->idDocumento, 5, 'ERROR_UNIDAD_MEDIDA_NO_VALID '. $e->getMessage());
+            else throw new Exception('Error al consultar el codigo de unidad medida', ERROR_UNIDAD_MEDIDA_NO_VALID);
+        } catch (Exception $e) {
+            error_log("[ERROR]  (" . $e->getCode() . "): " . $e->getMessage());
+            historico::create(self::$transaccion->id, self::$transaccion->idEntidad, self::$transaccion->idDocumento, 5, 'ERROR_UNIDAD_MEDIDA_NO_VALID ' . $e->getMessage());
             Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
         }
     }
 
-    private static function getUbicacionCod($idProvincia, $idCanton, $idDistrito, $idBarrio=1){
-        try{
-            $sql='SELECT p.codigo as provincia, c.codigo as canton, d.codigo as distrito, b.codigo as barrio
+    private static function getUbicacionCod($idProvincia, $idCanton, $idDistrito, $idBarrio = 1)
+    {
+        try {
+            $sql = 'SELECT p.codigo as provincia, c.codigo as canton, d.codigo as distrito, b.codigo as barrio
                 FROM provincia p, canton c , distrito d, barrio b        
                 where p.id=:provincia and c.id=:canton and d.id=:distrito and b.id=:barrio';
-            $param= array(':provincia'=>$idProvincia, 
-                ':canton'=>$idCanton,
-                ':distrito'=>$idDistrito,
-                ':barrio'=>$idBarrio??1,
+            $param = array(
+                ':provincia' => $idProvincia,
+                ':canton' => $idCanton,
+                ':distrito' => $idDistrito,
+                ':barrio' => $idBarrio ?? 1,
             );
-            $data= DATA::Ejecutar($sql,$param);
-            $ubicacion= [];
-            if($data){
-                $item= new UbicacionCod();
-                $item->provincia= $data[0]['provincia'];
-                $item->canton= $data[0]['canton'];
-                $item->distrito= $data[0]['distrito'];
-                $item->barrio= $data[0]['barrio'];
+            $data = DATA::Ejecutar($sql, $param);
+            $ubicacion = [];
+            if ($data) {
+                $item = new UbicacionCod();
+                $item->provincia = $data[0]['provincia'];
+                $item->canton = $data[0]['canton'];
+                $item->distrito = $data[0]['distrito'];
+                $item->barrio = $data[0]['barrio'];
                 array_push($ubicacion, $item);
-            }
-            else throw new Exception('Error al consultar el codigo de la ubicacion' , ERROR_UBICACION_NO_VALID);
-            return $ubicacion;            
-        } 
-        catch(Exception $e) {
-            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
-            historico::create(self::$transaccion->id, self::$transaccion->idEntidad, self::$transaccion->idDocumento, 5, 'ERROR_UBICACION_NO_VALID: '. $e->getMessage());
+            } else throw new Exception('Error al consultar el codigo de la ubicacion', ERROR_UBICACION_NO_VALID);
+            return $ubicacion;
+        } catch (Exception $e) {
+            error_log("[ERROR]  (" . $e->getCode() . "): " . $e->getMessage());
+            historico::create(self::$transaccion->id, self::$transaccion->idEntidad, self::$transaccion->idDocumento, 5, 'ERROR_UBICACION_NO_VALID: ' . $e->getMessage());
             Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
         }
     }
 
-    private static function getMedioPagoCod($id){
-        try{
-            $sql='SELECT codigo
+    private static function getMedioPagoCod($id)
+    {
+        try {
+            $sql = 'SELECT codigo
             FROM medioPago
             WHERE id=:id';
-            $param= array(':id'=>$id);
-            $data= DATA::Ejecutar($sql,$param);     
-            if($data)
+            $param = array(':id' => $id);
+            $data = DATA::Ejecutar($sql, $param);
+            if ($data)
                 return $data[0]['codigo'];
-            else throw new Exception('Error al consultar el codigo del medio de pago' , ERROR_MEDIOPAGO_NO_VALID);
-        } 
-        catch(Exception $e) {
-            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
-            historico::create(self::$transaccion->id, self::$transaccion->idEntidad, self::$transaccion->idDocumento, 5, 'ERROR_MEDIOPAGO_NO_VALID: '. $e->getMessage());
+            else throw new Exception('Error al consultar el codigo del medio de pago', ERROR_MEDIOPAGO_NO_VALID);
+        } catch (Exception $e) {
+            error_log("[ERROR]  (" . $e->getCode() . "): " . $e->getMessage());
+            historico::create(self::$transaccion->id, self::$transaccion->idEntidad, self::$transaccion->idDocumento, 5, 'ERROR_MEDIOPAGO_NO_VALID: ' . $e->getMessage());
             Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
         }
     }
 
-    private static function getCodigoMonedaCod($id){
-        try{
-            $sql='SELECT codigo
+    private static function getCodigoMonedaCod($id)
+    {
+        try {
+            $sql = 'SELECT codigo
             FROM moneda
             WHERE id=:id';
-            $param= array(':id'=>$id);
-            $data= DATA::Ejecutar($sql,$param);     
-            if($data)
+            $param = array(':id' => $id);
+            $data = DATA::Ejecutar($sql, $param);
+            if ($data)
                 return $data[0]['codigo'];
-            else throw new Exception('Error al consultar el codigo de moneda' , ERROR_MONEDA_NO_VALID);
-        } 
-        catch(Exception $e) {
-            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
-            historico::create(self::$transaccion->id, self::$transaccion->idEntidad, self::$transaccion->idDocumento, 5, 'ERROR_MONEDA_NO_VALID: '. $e->getMessage());
+            else throw new Exception('Error al consultar el codigo de moneda', ERROR_MONEDA_NO_VALID);
+        } catch (Exception $e) {
+            error_log("[ERROR]  (" . $e->getCode() . "): " . $e->getMessage());
+            historico::create(self::$transaccion->id, self::$transaccion->idEntidad, self::$transaccion->idDocumento, 5, 'ERROR_MONEDA_NO_VALID: ' . $e->getMessage());
             Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
         }
     }
 
-    private static function getEstadoComprobanteCod($id){
-        try{
-            $sql='SELECT codigo
+    private static function getEstadoComprobanteCod($id)
+    {
+        try {
+            $sql = 'SELECT codigo
             FROM estadoComprobante
             WHERE id=:id';
-            $param= array(':id'=>$id);
-            $data= DATA::Ejecutar($sql,$param);     
-            if($data)
+            $param = array(':id' => $id);
+            $data = DATA::Ejecutar($sql, $param);
+            if ($data)
                 return $data[0]['codigo'];
-            else throw new Exception('Error al consultar el codigo de estado del comprobante' , ERROR_ESTADO_COMPROBANTE_NO_VALID);
-        } 
-        catch(Exception $e) {
-            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
-            historico::create(self::$transaccion->id, self::$transaccion->idEntidad, self::$transaccion->idDocumento, 5, 'ERROR_ESTADO_COMPROBANTE_NO_VALID: '. $e->getMessage());
+            else throw new Exception('Error al consultar el codigo de estado del comprobante', ERROR_ESTADO_COMPROBANTE_NO_VALID);
+        } catch (Exception $e) {
+            error_log("[ERROR]  (" . $e->getCode() . "): " . $e->getMessage());
+            historico::create(self::$transaccion->id, self::$transaccion->idEntidad, self::$transaccion->idDocumento, 5, 'ERROR_ESTADO_COMPROBANTE_NO_VALID: ' . $e->getMessage());
             Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
         }
     }
 
-    private static function getCondicionVentaCod($id){
-        try{
-            $sql='SELECT codigo
+    private static function getCondicionVentaCod($id)
+    {
+        try {
+            $sql = 'SELECT codigo
             FROM impuesto
             WHERE id=:id';
-            $param= array(':id'=>$id);
-            $data= DATA::Ejecutar($sql,$param);     
-            if($data)
+            $param = array(':id' => $id);
+            $data = DATA::Ejecutar($sql, $param);
+            if ($data)
                 return $data[0]['codigo'];
-            else throw new Exception('Error al consultar el codigo de Condicion venta' , ERROR_CONDICIONVENTA_NO_VALID);
-        } 
-        catch(Exception $e) {
-            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
-            historico::create(self::$transaccion->id, self::$transaccion->idEntidad, self::$transaccion->idDocumento, 5, 'ERROR_CONDICIONVENTA_NO_VALID: '. $e->getMessage());
+            else throw new Exception('Error al consultar el codigo de Condicion venta', ERROR_CONDICIONVENTA_NO_VALID);
+        } catch (Exception $e) {
+            error_log("[ERROR]  (" . $e->getCode() . "): " . $e->getMessage());
+            historico::create(self::$transaccion->id, self::$transaccion->idEntidad, self::$transaccion->idDocumento, 5, 'ERROR_CONDICIONVENTA_NO_VALID: ' . $e->getMessage());
             Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$fechaEmision->format("c"));
         }
     }
 }
-
-?>
