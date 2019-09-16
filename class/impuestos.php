@@ -1,10 +1,10 @@
 <?php
 class Impuestos{
     public $id = null;
-    public $codigo = null;
-    public $codigoTarifa = null;
-    public $tarifa = null;
-    public $monto = null;
+    public $idCodigoImpuesto = null;
+    public $idCodigoTarifa = null;
+    public $tarifaImpuesto = null;
+    public $montoImpuesto = null;
 }
 
 

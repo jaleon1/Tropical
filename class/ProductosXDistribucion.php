@@ -68,7 +68,7 @@ class ProductosXDistribucion
                 $sql = "INSERT INTO productosXDistribucion   (id, idDistribucion, idProducto, numeroLinea, idTipoCodigo, codigo, cantidad, idUnidadMedida, detalle, precioUnitario, montoTotal, montoDescuento, naturalezaDescuento,
                 subTotal, idCodigoImpuesto, idCodigoTarifa, tarifaImpuesto, montoImpuesto, montoTotalLinea, impuestoNeto)
             VALUES (uuid(), :idDistribucion, :idProducto, :numeroLinea, :idTipoCodigo, :codigo, :cantidad, :idUnidadMedida, :detalle, :precioUnitario, :montoTotal, :montoDescuento, :naturalezaDescuento,                
-                :subTotal, :idCodigoImpuesto, >idCodigoTarifa, :tarifaImpuesto, :montoImpuesto, :montoTotalLinea, :impuestoNeto)";
+                :subTotal, :idCodigoImpuesto, :idCodigoTarifa, :tarifaImpuesto, :montoImpuesto, :montoTotalLinea, :impuestoNeto)";
                 //
                 $param = array(
                     ':idDistribucion' => $item->idDistribucion,
@@ -85,7 +85,7 @@ class ProductosXDistribucion
                     ':naturalezaDescuento' => $item->naturalezaDescuento,
                     ':subTotal' => $item->subTotal,
                     /* IVA */
-                    ':ididCodigoImpuesto' => $item->impuestos[0]->ididCodigoImpuesto ?? null,
+                    ':idCodigoImpuesto' => $item->impuestos[0]->idCodigoImpuesto ?? null,
                     ':idCodigoTarifa' => $item->impuestos[0]->idCodigoTarifa ?? null,
                     ':tarifaImpuesto' => $item->impuestos[0]->tarifaImpuesto ?? null,
                     ':montoImpuesto' => $item->impuestos[0]->montoImpuesto ?? null,

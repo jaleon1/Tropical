@@ -3,7 +3,7 @@ class Distribucion {
   constructor(
     id,
     orden,
-    fecha,
+    fechaCreacion,
     idUsuario,
     idBodega,
     porcentajeDescuento,
@@ -18,7 +18,7 @@ class Distribucion {
   ) {
     this.id = id || null;
     this.orden = orden || '';
-    this.fecha = fecha || '';
+    this.fechaCreacion = fechaCreacion || '';
     this.idUsuario = idUsuario || null;
     this.idBodega = idBodega || null;
     this.bodega = bodega || null;
@@ -131,7 +131,7 @@ class Distribucion {
       //if(/* TIENE IMPUESTOS */){
       var impuesto = new Object();
       impuesto.idCodigoImpuesto = 1; // 1 = Impuesto Valor Agregado.
-      impuesto.codigoTarifa = 8;
+      impuesto.idCodigoTarifa = 8;
       impuesto.tarifa = 13;
       impuesto.monto = parseFloat(
         (objlista.subTotal * (impuesto.tarifa / 100)).toFixed(5)
@@ -240,7 +240,7 @@ class Distribucion {
     localStorage.setItem('lsDescripcion', $('#descripcion').val());
     localStorage.setItem('lsSubTotal', $('#subtotal').text());
     localStorage.setItem('lsTotal', $('#total').text());
-    localStorage.setItem('lsFechaDistribucion', data.fecha);
+    localStorage.setItem('lsFechaDistribucion', data.fechaCreacion);
     localStorage.setItem('lsPorcentajeDescuento', $('#desc_val').text());
     localStorage.setItem('lsIV', $('#iv_val').text());
     localStorage.setItem(
@@ -418,7 +418,7 @@ class Distribucion {
     distr = new Distribucion(
       data.id,
       data.orden,
-      data.fecha,
+      data.fechaCreacion,
       data.idUsuario,
       data.idBodega,
       data.porcentajeDescuento,
@@ -427,7 +427,7 @@ class Distribucion {
     );
     // datos
     $('#orden').val(distr.orden);
-    $('#fecha').val(distr.fecha);
+    $('#fechaCreacion').val(distr.fechaCreacion);
     bodega.id = distr.idBodega;
     bodega.Read;
     // carga lista.
@@ -444,7 +444,7 @@ class Distribucion {
     distr = new Distribucion(
       data.id,
       data.orden,
-      data.fecha,
+      data.fechaCreacion,
       data.idUsuario,
       data.idBodega,
       data.porcentajeDescuento,
@@ -467,7 +467,7 @@ class Distribucion {
             <div class="row">
                 <div class="col-md-6 col-sm-6 col-xs-6">
                     <p>Fecha: <label id=fechaDistribucion>${
-                      distr.fecha
+                      distr.fechaCreacion
                     }</label></p>
                 </div>
             </div>
@@ -506,7 +506,7 @@ class Distribucion {
             <div class="row">
                 <div class="col-md-6 col-sm-6 col-xs-6">
                     <p>Fecha: <label id=fechaDistribucion>${
-                      distr.fecha
+                      distr.fechaCreacion
                     }</label></p>
                 </div>
             </div>
@@ -1123,7 +1123,7 @@ class Distribucion {
         },
         {
           title: 'FECHA',
-          data: 'fecha'
+          data: 'fechaCreacion'
         },
         {
           title: 'ORDEN',
