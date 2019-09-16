@@ -356,9 +356,8 @@
                         url: "class/productoXFactura.php",
                         data: {
                             action: "reintegrarProductoByIdFactura",
-                            
                             id: data['id'],
-
+                            notaCredito: true,
                             razon: result.value,
                         }
                     })
