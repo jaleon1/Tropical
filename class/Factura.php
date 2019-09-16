@@ -1054,30 +1054,44 @@ class Factura
         error_log("[INFO] Finaliza Contingencia Masiva de Comprobantes");
     }
 
-    public function contingencia()
-    {
+    public function contingencia(){
         try {
             // idDocumento 08 = Comprobante emitido en contingencia.
-            // SituacionComprobante 02 = Envío en Contingencia
+            // SituacionComprobante 02 = Contingencia
             // Estado de Comprobante 01 = Sin enviar.
-            $sql = "UPDATE factura
-                SET idSituacionComprobante=:idSituacionComprobante , idDocumento=:idDocumento, idEstadoComprobante=:idEstadoComprobante
+            $this->read();
+            // si la diferencia de minutos entre la creacion de la factura y el envio del documento es superior a 60 minutos, debe hacer el envio en CONTINGENCIA | SIN INTERNET.
+            $fechaEmision= date_create();
+            $fechaCreacion= date_create($this->fechaCreacion);
+            // $diferenciaContingencia = $fechaCreacion->diff($fechaEmision);            
+            $diferenciaContingencia = $fechaEmision->getTimestamp()   -  $fechaCreacion->getTimestamp();
+            if($diferenciaContingencia > 3600 ){
+                $this->idSituacionComprobante = 3;
+            } else {
+                $this->idSituacionComprobante = 1;
+            }
+            //
+            $sql="UPDATE factura
+                SET idSituacionComprobante=:idSituacionComprobante ,   idEstadoComprobante=:idEstadoComprobante
                 WHERE id=:id";
-            $param = array(':id' => $this->id, ':idSituacionComprobante' => 2, ':idDocumento' => 8, ':idEstadoComprobante' => 1);
-            $data = DATA::Ejecutar($sql, $param, false);
-            if ($data) {
+            $param= array(':id'=>$this->id, ':idSituacionComprobante'=>$this->idSituacionComprobante, ':idEstadoComprobante'=>1);
+            $data = DATA::Ejecutar($sql,$param, false);
+            if($data){
                 // lee la transaccion completa y re envia
-                //error_log("[INFO] Contingencia Entidad (". $this->idEntidad .") Transaccion (".$this->consecutivo.")");
-                $this->enviarDocumentoElectronico();
-                return true;
-            } else throw new Exception('Error al actualizar la situación del comprobante en Contingencia.', 45656);
-        } catch (Exception $e) {
-            error_log("[ERROR]  (" . $e->getCode() . "): " . $e->getMessage());
-            header('HTTP/1.0 400 Bad error');
+                FacturacionElectronica::iniciar($this);
+                // return true;
+            }
+            else throw new Exception('Error al actualizar la situación del comprobante en Contingencia.', 45656);            
+        }     
+        catch(Exception $e) {
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            if (!headers_sent()) {
+                    header('HTTP/1.0 400 Error al leer');
+                }
             die(json_encode(array(
-                'code' => $e->getCode(),
-                'msg' => $e->getMessage()
-            )));
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
         }
     }
 
