@@ -135,6 +135,7 @@ class Distribucion{
             $this->idMedioPago= 1;
             // c. Resumen de la factura/Total de la Factura 
             // definir si es servicio o mercancia (producto).
+            $this->idCodigoMoneda = $obj["idCodigoMoneda"] ?? 55;
             $this->tipoCambio = $obj["tipoCambio"] ?? 1;  // 1 en colones.
             if ($this->idCodigoMoneda == 72) { // tipo dolar.
                 $wsBCCR = new TipoCambio();
@@ -1104,9 +1105,9 @@ class Distribucion{
             // SituacionComprobante 02 = Envío en Contingencia
             // Estado de Comprobante 01 = Sin enviar.
             $sql="UPDATE distribucion
-                SET idSituacionComprobante=:idSituacionComprobante , idDocumento=:idDocumento, idEstadoComprobante=:idEstadoComprobante
+                SET idSituacionComprobante=:idSituacionComprobante, idEstadoComprobante=:idEstadoComprobante
                 WHERE id=:id";
-            $param= array(':id'=>$this->id, ':idSituacionComprobante'=>2 , ':idDocumento'=>8, ':idEstadoComprobante'=>1);
+            $param= array(':id'=>$this->id, ':idSituacionComprobante'=>2 , ':idEstadoComprobante'=>1);
             $data = DATA::Ejecutar($sql,$param, false);
             if($data){
                 // lee la transaccion completa y re envia
