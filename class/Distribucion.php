@@ -135,6 +135,7 @@ class Distribucion{
             $this->idMedioPago= 1;
             // c. Resumen de la factura/Total de la Factura 
             // definir si es servicio o mercancia (producto).
+            $this->idCodigoMoneda = $obj["idCodigoMoneda"] ?? 55;
             $this->tipoCambio = $obj["tipoCambio"] ?? 1;  // 1 en colones.
             if ($this->idCodigoMoneda == 72) { // tipo dolar.
                 $wsBCCR = new TipoCambio();

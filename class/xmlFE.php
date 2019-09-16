@@ -136,13 +136,13 @@ class xmlFE
             $xmlString .= '<PrecioUnitario>' . $d->precioUnitario . '</PrecioUnitario>
                 <MontoTotal>' . $d->montoTotal . '</MontoTotal>';
             // DESCUENTOS.
-            if (isset($d->montoDescuento) && !empty($d->montoDescuento)) {
+            /*if (isset($d->montoDescuento) && !empty($d->montoDescuento)) {
                 $xmlString .= '<Descuento><MontoDescuento>' . $d->montoDescuento . '</MontoDescuento>';
                 //    
                 if (isset($d->naturalezaDescuento) && !empty($d->naturalezaDescuento))
                     $xmlString .= '<NaturalezaDescuento>' . $d->naturalezaDescuento . '</NaturalezaDescuento>';
                 $xmlString .= '</Descuento>';
-            }
+            }*/
             //    
             $xmlString .= '<SubTotal>' . $d->subTotal . '</SubTotal>';
             // BASE IMPONIBLE, codigo impuesto = 07  **** PENDIENTE ****
