@@ -930,6 +930,52 @@ class ClienteFE{
         }
     }
 
+    
+    public function getToken(){
+        try {
+            $sql='SELECT accessToken, expiresIn, refreshExpiresIn, refreshToken 
+                FROM clienteFE  
+                WHERE id= :id';
+            $param= array(':id'=>$this->id);
+            $data= DATA::Ejecutar($sql, $param);
+            if($data){
+                $this->accessToken = $data[0]['accessToken'];
+                $this->expiresIn = $data[0]['expiresIn'];
+                $this->refreshExpiresIn = $data[0]['refreshExpiresIn'];
+                $this->refreshToken = $data[0]['refreshToken'];
+            }
+            else return null;
+        }
+        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            if (!headers_sent()) {
+                    header('HTTP/1.0 400 Error al generar al enviar el email');
+                }  
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => $e->getMessage()))
+            );
+        }
+    }
+
+    public static function setToken($id, $accessToken, $expiresIn, $refreshExpiresIn, $refreshToken, $tokenDatetime){
+        try {
+            $sql='UPDATE clienteFE  
+                SET accessToken=:accessToken, expiresIn=:expiresIn, refreshExpiresIn=:refreshExpiresIn, refreshToken=:refreshToken, tokenDatetime=:tokenDatetime       
+                WHERE id= :id';
+            $param= array(':id'=>$id, ':accessToken'=>$accessToken, ':expiresIn'=>$expiresIn, ':refreshExpiresIn'=>$refreshExpiresIn, ':refreshToken'=>$refreshToken, ':tokenDatetime'=>$tokenDatetime);
+            $data= DATA::Ejecutar($sql, $param, false);
+            if($data){
+                return true;
+            }
+            else throw new Exception('Error al guardar el token.', -125);   
+        }
+        catch(Exception $e) { 
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            return false;
+        }
+    }
+
+
 }
 
 ?>

@@ -302,7 +302,7 @@ class MensajeReceptor {
                                     return '<i class="fa fa-check-square-o" aria-hidden="true" style="color:green"> Aceptado!</i>'; // Aceptado  //Solo cancelar // NC 
                                     break;
                                 case "4":
-                                    return '<button class=btnNC_CreateFact_Ref>&nbsp Cancelar & Reenviar</button>'; // Rechazado //NC //Nueva con referencia Confeccion de Factura  // BTNCancelar y enviar
+                                    return '<button class=btnNC_CreateFact_Ref>&nbsp Reenviar</button>'; // Rechazado //NC //Nueva con referencia Confeccion de Factura  // BTNCancelar y enviar
                                     break;
                                 case "5":
                                     return '<i class="fa fa-cloud-upload" aria-hidden="true">&nbsp Enviar Contingencia</i>'; // Error (Otros) //Envio en Contingencia

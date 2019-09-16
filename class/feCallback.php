@@ -23,7 +23,7 @@
         error_log("**************************************************************************");
         $sql="SELECT f.id, b.nombre as bodega, consecutivo
             from factura f inner join bodega b on b.id = f.idBodega
-            WHERE  f.idEstadoComprobante = 5  and  (f.idDocumento = 1 or  f.idDocumento = 4 or  f.idDocumento = 8) 
+            WHERE  f.idEstadoComprobante = 5  OR f.idEstadoComprobante = 5  and  (f.idDocumento = 1 or  f.idDocumento = 4 or  f.idDocumento = 8) 
             ORDER BY consecutivo asc";
         $data = DATA::Ejecutar($sql);
         error_log("[INFO] Total de transacciones en Contingencia: ". count($data));
@@ -51,7 +51,7 @@
             $factura = new Factura();
             $factura->id = $transaccion['id'];
             $factura = $factura->Read();
-            FacturacionElectronica::APIConsultaComprobante($factura);
+            FacturacionElectronica::consulta($factura);
             error_log("[INFO] Finaliza Consulta de Comprobantes - TimedOut | Duplicadas");
         }
         // firma invalida
@@ -72,7 +72,7 @@
             $factura = new Factura();
             $factura->id = $transaccion['id'];
             $factura = $factura->Read();
-            FacturacionElectronica::APIConsultaComprobante($factura, true);
+            FacturacionElectronica::consulta($factura, true);
         }
         error_log("[INFO] Finaliza Consulta de Comprobantes - Firma Invalida");
         // Consulta Documentos 1-4-8.
@@ -91,7 +91,7 @@
             $factura = new Factura();
             $factura->id = $transaccion['id'];
             $factura = $factura->Read();
-            FacturacionElectronica::APIConsultaComprobante($factura);
+            FacturacionElectronica::consulta($factura);
             error_log("[INFO] Finaliza Consulta de Comprobantes");
         }
         // nota de credito. reenvio.
@@ -134,7 +134,7 @@
             // clave  & idDocumento de NC
             $factura->clave = $factura->claveNC;
             $factura->idDocumento = $factura->idDocumentoNC;
-            FacturacionElectronica::APIConsultaComprobante($factura);            
+            FacturacionElectronica::consulta($factura);            
         }
         error_log("[INFO] Finaliza Consulta de NC - TimedOut | Duplicadas");
         // Notas de credito. Documento 3
@@ -156,7 +156,7 @@
             // clave  & idDocumento de NC
             $factura->clave = $factura->claveNC;
             $factura->idDocumento = $factura->idDocumentoNC;
-            FacturacionElectronica::APIConsultaComprobante($factura);            
+            FacturacionElectronica::consulta($factura);            
         }
         error_log("[INFO] Finaliza Consulta NC");
         // Reenvio de MR en estado 5
@@ -202,7 +202,7 @@
             $entidad->idBodega = $factura->idReceptor;
             $factura->datosReceptor = $entidad->read();
             $factura->clave = $factura->clave.'-'.$factura->consecutivoFE;
-            FacturacionElectronica::APIConsultaComprobante($factura);
+            FacturacionElectronica::consulta($factura);
             error_log("[INFO] Finaliza Consulta MR");
         }
         // ******************************************************************************************* /
@@ -266,7 +266,7 @@
             // idDocumento.
             // $distr->idDocumento = 1;
             FacturacionElectronica::$distr= true;
-            FacturacionElectronica::APIConsultaComprobante($distr, true);
+            FacturacionElectronica::consulta($distr, true);
             error_log("[INFO] Finaliza Consulta de Disctribucion - Comprobantes - TimedOut | Duplicadas");
         }
         // Distribucion firma invalida
@@ -297,7 +297,7 @@
             // idDocumento.
             // $distr->idDocumento = 1;
             FacturacionElectronica::$distr= true;
-            FacturacionElectronica::APIConsultaComprobante($distr, true); // debe enviar email.
+            FacturacionElectronica::consulta($distr, true); // debe enviar email.
         }
         error_log("[INFO] Finaliza Consulta de Distribucion - Comprobantes - Firma Invalida");
         error_log("**************************************************************************");
@@ -326,7 +326,7 @@
             $distr->idDocumento = 1;
             $distr->consecutivo = $distr->orden;
             FacturacionElectronica::$distr= true;
-            facturacionElectronica::APIConsultaComprobante($distr, true); // debe enviar email.
+            facturacionElectronica::consulta($distr, true); // debe enviar email.
             error_log("[INFO] Finaliza Consulta de Distribucion");
         }
         // nota de credito. reenvio. DISTR.
@@ -377,7 +377,7 @@
             // idDocumento.
             $distr->idDocumento = 3;
             FacturacionElectronica::$distr= true;
-            FacturacionElectronica::APIConsultaComprobante($distr);
+            FacturacionElectronica::consulta($distr);
             error_log("[INFO] Finaliza Consulta de Disctribucion - Comprobantes - TimedOut | Duplicadas");
         }
         error_log("[INFO] Finaliza Consulta de NC - TimedOut | Duplicadas");
@@ -408,7 +408,7 @@
             $distr->idDocumento = 3;
             $distr->consecutivo = $distr->orden;
             FacturacionElectronica::$distr= true;
-            facturacionElectronica::APIConsultaComprobante($distr); // debe enviar email.
+            facturacionElectronica::consulta($distr); // debe enviar email.
             error_log("[INFO] Finaliza Consulta de Distribucion");
         }
         error_log("[INFO] Finaliza Consulta NC - DISTR");

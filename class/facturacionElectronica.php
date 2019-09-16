@@ -370,7 +370,7 @@ class FacturacionElectronica
     {
         try {
             if (isset(self::$arrayResp['xml'])) {
-                $pfx = Globals::certDir . self::$transaccion->datosEntidad->id . DIRECTORY_SEPARATOR . self::$transaccion->datosEntidad->cpath;
+                $pfx = Globals::certDir . self::$transaccion->datosEntidad->idBodega . DIRECTORY_SEPARATOR . self::$transaccion->datosEntidad->cpath;
                 if (!file_exists($pfx))
                     throw new Exception('El certificado del emisor(' . self::$transaccion->datosEntidad->nombre . ') No existe.', ERROR_CERTIFICADOURL_NO_VALID);
                 if (empty(self::$transaccion->datosEntidad->pinp12))
@@ -384,7 +384,7 @@ class FacturacionElectronica
                     "clave" => self::$transaccion->clave,
                     "xmlCifrado" => $base64
                 );
-                historico::create(self::$transaccion->id, self::$transaccion->idEntidad, self::$transaccion->idDocumento, 1, 'XML Firmado a Enviar', base64_decode($base64));
+                historico::create(self::$transaccion->id,  self::$transaccion->datosEntidad->idBodega, self::$transaccion->idDocumento, 1, 'XML Firmado a Enviar', base64_decode($base64));
                 error_log("[INFO] API CIFRADO XML EXITOSO!");
                 return true;
             } else throw new Exception('No existe el xml para cifrar', ERROR_CIFRAR_NO_VALID);
@@ -405,7 +405,7 @@ class FacturacionElectronica
     public static function checkToken()
     {
         //Revisa si tiene un TOKEN abierto.
-        include_once('entidad.php');
+        include_once('Bodega.php');
         $username = '';
         $password = '';
         switch (self::$transaccion->idDocumento) {
@@ -542,7 +542,7 @@ class FacturacionElectronica
             // abre token.
             error_log('[INFO] OPEN TOKEN !!!');
             // error_log("[INFO] GET ACCESS TOKEN API MH = " . self::$transaccion->datosEntidad->accessToken);
-            Entidad::setToken(
+            ClienteFE::setToken(
                 self::$transaccion->datosEntidad->id,
                 self::$transaccion->datosEntidad->accessToken,
                 self::$transaccion->datosEntidad->expiresIn,
@@ -553,7 +553,7 @@ class FacturacionElectronica
             return true;
         } catch (Exception $e) {
             error_log("[ERROR]  (" . $e->getCode() . "): " . $e->getMessage());
-            historico::create(self::$transaccion->id, self::$transaccion->idEntidad, self::$transaccion->idDocumento, 5, 'ERROR_TOKEN_NO_VALID: ' . $e->getMessage());
+            historico::create(self::$transaccion->id,  self::$transaccion->datosEntidad->idBodega, self::$transaccion->idDocumento, 5, 'ERROR_TOKEN_NO_VALID: ' . $e->getMessage());
             if (!self::$distr)
                 Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$transaccion->fechaEmision->format("c"));
             else Distribucion::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$transaccion->fechaEmision->format("c"));
@@ -614,7 +614,7 @@ class FacturacionElectronica
                 else {
                     //timed out.
                     error_log("[ERROR]  (-600): " . $error_msg);
-                    historico::create(self::$transaccion->id, self::$transaccion->idEntidad, self::$transaccion->idDocumento, 6, $error_msg);
+                    historico::create(self::$transaccion->id,  self::$transaccion->datosEntidad->idBodega, self::$transaccion->idDocumento, 6, $error_msg);
                     if (!self::$distr)
                         Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 6, $fechaEmision->format("c"));
                     else
@@ -634,7 +634,7 @@ class FacturacionElectronica
                 error_log("[WARNING] El documento (" . $clave . "): " . $responseT);
                 $recibidoAnteriormente = $xError = strpos($server_output, 'ya fue recibido anteriormente.');
                 if ($recibidoAnteriormente) {
-                    historico::create(self::$transaccion->id, self::$transaccion->idEntidad, self::$transaccion->idDocumento, 7, '[ERROR] ' . $responseT . ', STATUS(' . $information['http_code'] . ')');
+                    historico::create(self::$transaccion->id,  self::$transaccion->datosEntidad->idBodega, self::$transaccion->idDocumento, 7, '[ERROR] ' . $responseT . ', STATUS(' . $information['http_code'] . ')');
                     if (!self::$distr)
                         Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 7, $fechaEmision->format("c"));
                     else Distribucion::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 6, $fechaEmision->format("c"));
@@ -646,7 +646,7 @@ class FacturacionElectronica
             if ($information['http_code'] == 202) {
                 // ERROR CRITICO: almacena estado= 5 (otros) - error al enviar comprobante.
                 //throw new Exception('Error CRITICO al ENVIAR el comprobante. DEBE COMUNICARSE CON SOPORTE TECNICO: '. $server_output, ERROR_ENVIO_NO_VALID);
-                historico::create(self::$transaccion->id, self::$transaccion->idEntidad, self::$transaccion->idDocumento, 2, 'Comprobante ENVIADO EXITOSAMENTE, STATUS(' . $information['http_code'] . ')');
+                historico::create(self::$transaccion->id,  self::$transaccion->datosEntidad->idBodega, self::$transaccion->idDocumento, 2, 'Comprobante ENVIADO EXITOSAMENTE, STATUS(' . $information['http_code'] . ')');
                 if (!self::$distr) Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 2, $fechaEmision->format("c"));
                 else Distribucion::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 2, $fechaEmision->format("c"));
             }
@@ -656,7 +656,7 @@ class FacturacionElectronica
             return true;
         } catch (Exception $e) {
             error_log("[ERROR]  (" . $e->getCode() . "): " . $e->getMessage());
-            historico::create(self::$transaccion->id, self::$transaccion->idEntidad, self::$transaccion->idDocumento, 5, 'ERROR_ENVIO_NO_VALID: ' . $e->getMessage());
+            historico::create(self::$transaccion->id,  self::$transaccion->datosEntidad->idBodega, self::$transaccion->idDocumento, 5, 'ERROR_ENVIO_NO_VALID: ' . $e->getMessage());
             if (!self::$distr)  Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, $fechaEmision->format("c"));
             else Distribucion::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, $fechaEmision->format("c"));
             //
@@ -724,7 +724,7 @@ class FacturacionElectronica
                         // clave invalida, no existe en ATV.
                         if (!self::$distr) Factura::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 1);
                         else Distribucion::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 1);
-                        historico::create(self::$transaccion->id, self::$transaccion->idEntidad, self::$transaccion->idDocumento, 1, 'La transaccion no fue enviada a los sistemas de ATV.');
+                        historico::create(self::$transaccion->id,  self::$transaccion->datosEntidad->idBodega, self::$transaccion->idDocumento, 1, 'La transaccion no fue enviada a los sistemas de ATV.');
                         throw new Exception('Documento no registrado en ATV: ' . $responseT, ERROR_CONSULTA_NO_VALID);
                     }
                     // throw new Exception('Error CRITICO al consultar el comprobante STATUS( '. $information['http_code'] .' ). '.$responseT, ERROR_CONSULTA_NO_VALID);
@@ -735,7 +735,7 @@ class FacturacionElectronica
                 error_log("[INFO] Estado del DOCUMENTO (" . self::$transaccion->clave . "): $responseT->ind_estado");
                 // si el estado es procesando debe consultar de nuevo.
                 if ($responseT->ind_estado == 'procesando') {
-                    historico::create(self::$transaccion->id, self::$transaccion->idEntidad, self::$transaccion->idDocumento, 2, $responseT->ind_estado);
+                    historico::create(self::$transaccion->id,  self::$transaccion->datosEntidad->idBodega, self::$transaccion->idDocumento, 2, $responseT->ind_estado);
                     if (!self::$distr) Factura::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 2);
                     else Distribucion::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 2);
                     //self::APIConsultaComprobante();
@@ -745,10 +745,10 @@ class FacturacionElectronica
                     //
                     if (strpos((string) $fxml->NombreEmisor, 'DESCONOCIDO')  || (string) strpos($fxml->NumeroCedulaEmisor, '00000')) {
                         error_log("[WARNING] El documento (" . self::$transaccion->clave . ") TIENE VALORES NULOS (DESCONOCIDO-00000000)");
-                        historico::create(self::$transaccion->id, self::$transaccion->idEntidad, self::$transaccion->idDocumento, 4, "[WARNING] HAY VALORES NULOS (DESCONOCIDO-00000000)");
+                        historico::create(self::$transaccion->id,  self::$transaccion->datosEntidad->idBodega, self::$transaccion->idDocumento, 4, "[WARNING] HAY VALORES NULOS (DESCONOCIDO-00000000)");
                     }
                     //                    
-                    historico::create(self::$transaccion->id, self::$transaccion->idEntidad, self::$transaccion->idDocumento, 3, '[' . $responseT->ind_estado . '] ' . (string) $fxml->DetalleMensaje, $xml);
+                    historico::create(self::$transaccion->id,  self::$transaccion->datosEntidad->idBodega, self::$transaccion->idDocumento, 3, '[' . $responseT->ind_estado . '] ' . (string) $fxml->DetalleMensaje, $xml);
                     if (!self::$distr) Factura::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 3);
                     else Distribucion::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 3);
                     //EMAIL
@@ -764,7 +764,7 @@ class FacturacionElectronica
                     //
                     if (strpos((string) $fxml->NombreEmisor, 'DESCONOCIDO') || strpos((string) $fxml->NumeroCedulaEmisor, '000000000')  !== false) {
                         error_log("[WARNING] El documento (" . self::$transaccion->clave . ") TIENE VALORES NULOS (DESCONOCIDO-00000000)");
-                        historico::create(self::$transaccion->id, self::$transaccion->idEntidad, self::$transaccion->idDocumento, 4, "[WARNING] HAY VALORES NULOS (DESCONOCIDO-00000000)");
+                        historico::create(self::$transaccion->id,  self::$transaccion->datosEntidad->idBodega, self::$transaccion->idDocumento, 4, "[WARNING] HAY VALORES NULOS (DESCONOCIDO-00000000)");
                     }
                     //
                     $resp400 = strpos((string) $fxml->DetalleMensaje, 'ya existe en nuestras bases de datos');
@@ -773,7 +773,7 @@ class FacturacionElectronica
                         error_log("[WARNING] El documento (" . self::$transaccion->clave . ") Ya fue recibido anteriormente");
                         if (!self::$distr) Factura::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 4);
                         else Distribucion::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 4);
-                        historico::create(self::$transaccion->id, self::$transaccion->idEntidad, self::$transaccion->idDocumento, 4, "[WARNING]" . (string) $fxml->DetalleMensaje, $xml);
+                        historico::create(self::$transaccion->id,  self::$transaccion->datosEntidad->idBodega, self::$transaccion->idDocumento, 4, "[WARNING]" . (string) $fxml->DetalleMensaje, $xml);
                         return true;
                     }
                     if ($respFirma) {
@@ -785,12 +785,12 @@ class FacturacionElectronica
                         if (self::$transaccion->idEstadoComprobante == 10)
                             $errorFirma = 4;
                         error_log("[ERROR] El documento (" . self::$transaccion->clave . ")  La firma del comprobante electronico no es valida (" . $errorFirma . ").");
-                        historico::create(self::$transaccion->id, self::$transaccion->idEntidad, self::$transaccion->idDocumento, $errorFirma, '[' . $responseT->ind_estado . '] ' . (string) $fxml->DetalleMensaje, $xml);
+                        historico::create(self::$transaccion->id,  self::$transaccion->datosEntidad->idBodega, self::$transaccion->idDocumento, $errorFirma, '[' . $responseT->ind_estado . '] ' . (string) $fxml->DetalleMensaje, $xml);
                         if (!self::$distr) Factura::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, $errorFirma);
                         else Distribucion::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, $errorFirma);
                     } else {
                         error_log("[ERROR] El documento (" . self::$transaccion->clave . ") Fue rechazado, ver historico. " .  (string) $fxml->DetalleMensaje);
-                        historico::create(self::$transaccion->id, self::$transaccion->idEntidad, self::$transaccion->idDocumento, 4, '[' . $responseT->ind_estado . '] ' . (string) $fxml->DetalleMensaje, $xml);
+                        historico::create(self::$transaccion->id,  self::$transaccion->datosEntidad->idBodega, self::$transaccion->idDocumento, 4, '[' . $responseT->ind_estado . '] ' . (string) $fxml->DetalleMensaje, $xml);
                         if (!self::$distr) Factura::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 4);
                         else Distribucion::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 4);
                     }
@@ -802,248 +802,248 @@ class FacturacionElectronica
         }
     }
 
-    public static function APIEnviar()
-    {
-        try {
-            error_log("[INFO] INICIO API ENVIO");
-            self::APIGetToken();
-            $ch = curl_init();
-            $r = '';
-            switch (self::$transaccion->idDocumento) {
-                case 1:
-                case 2:
-                case 3:
-                case 8: // Contingencia..
-                    $r = 'json';
-                    break;
-                case 4:
-                    $r = 'sendTE';
-                    break;
-                case 5:
-                case 6:
-                case 7:
-                    $r = 'sendMensaje';
-                    break;
-            }
-            $post = [
-                'w' => 'send',
-                'r' => $r,
-                'token' => self::$accessToken,
-                'clave' => self::$clave,
-                'fecha' => self::$transaccion->fechaEmision->format("c"),
-                'emi_tipoIdentificacion' => self::getIdentificacionCod(self::$transaccion->datosEntidad->idTipoIdentificacion),
-                'emi_numeroIdentificacion' => self::$transaccion->datosEntidad->identificacion,
-                'recp_tipoIdentificacion' =>  self::getIdentificacionCod(self::$transaccion->datosReceptor->idTipoIdentificacion),
-                'recp_numeroIdentificacion' => self::$transaccion->datosReceptor->identificacion,
-                'comprobanteXml' =>    self::$xmlFirmado,
-                'client_id' => self::$apiMode,
-                'consecutivoReceptor' => self::$consecutivoFE ?? null
-            ];
-            curl_setopt_array($ch, array(
-                CURLOPT_URL => self::$apiUrl,
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_VERBOSE => true,
-                CURLOPT_MAXREDIRS => 10,
-                CURLOPT_TIMEOUT => 60,
-                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                CURLOPT_CUSTOMREQUEST => "POST",
-                CURLOPT_POSTFIELDS => $post,
-                CURLOPT_SSL_VERIFYHOST => SSL_API,
-                CURLOPT_SSL_VERIFYPEER => SSL_API
-            ));
-            $server_output = curl_exec($ch);
-            $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-            $header = substr($server_output, 0, $header_size);
-            $body = substr($server_output, $header_size);
-            $error_msg = "";
-            if (curl_error($ch)) {
-                $error_msg = curl_error($ch);
-                $timedOut = strpos($error_msg, 'Operation timed out');
-                if ($timedOut === false)
-                    throw new Exception('Error CRITICO al ENVIAR el comprobante. DEBE COMUNICARSE CON SOPORTE TECNICO: ' . $error_msg, ERROR_ENVIO_NO_VALID);
-                else {
-                    //timed out.
-                    error_log("[ERROR]  (-600): " . $error_msg);
-                    historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 6, $error_msg);
-                    if (!self::$distr) Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 6, self::$transaccion->fechaEmision->format("c"));
-                    else Distribucion::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 6, self::$transaccion->fechaEmision->format("c"));
-                    return false;
-                }
-            }
-            $sArray = json_decode($server_output);
-            if (!isset($sArray->resp->Status)) {
-                // ERROR CRITICO: almacena estado= 5 (otros) - error al enviar comprobante.
-                throw new Exception('Error CRITICO al ENVIAR el comprobante. DEBE COMUNICARSE CON SOPORTE TECNICO: ' . $server_output, ERROR_ENVIO_NO_VALID);
-            }
-            //
-            if ($sArray->resp->Status == 400) {
-                $resp400 = strpos($sArray->resp->text[17], 'ya fue recibido anteriormente');
-                $resp401 = strpos($sArray->resp->text[18], 'ya fue recibido anteriormente');
-                if ($resp400 | $resp401) {
-                    error_log("[WARNING] El documento (" . self::$clave . ") Ya fue recibido anteriormente");
-                    historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 7, 'El documento ya fue recibido anteriormente, STATUS(' . $sArray->resp->Status . ')');
-                    if (!self::$distr) Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 7, self::$transaccion->fechaEmision->format("c"));
-                    else Distribucion::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 7, self::$transaccion->fechaEmision->format("c"));
-                    // curl_close($ch);
-                    return true;
-                } else {
-                    throw new Exception('Error CRITICO al ENVIAR el comprobante. DEBE COMUNICARSE CON SOPORTE TECNICO, STATUS(' . $sArray->resp->Status . '):  ' . $sArray->resp->text[17], ERROR_ENVIO_NO_VALID);
-                }
-            }
-            if ($sArray->resp->Status != 202) {
-                throw new Exception('Error CRITICO al ENVIAR el comprobante. DEBE COMUNICARSE CON SOPORTE TECNICO, STATUS(' . $sArray->resp->Status . '):  ' . $server_output, ERROR_ENVIO_NO_VALID);
-            } else {
-                // almacena estado: enviado (202).
-                historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 2, 'Comprobante ENVIADO EXITOSAMENTE, STATUS(' . $sArray->resp->Status . ')');
-                if (!self::$distr)
-                    Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 2, self::$transaccion->fechaEmision->format("c"));
-                else Distribucion::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 2, self::$transaccion->fechaEmision->format("c"));
-            }
-            //
-            historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 1, 'XML a enviar', base64_decode(self::$xmlFirmado));
-            error_log("[INFO] API ENVIO EXITOSO!");
-            curl_close($ch);
-            return true;
-        } catch (Exception $e) {
-            error_log("[ERROR]  (" . $e->getCode() . "): " . $e->getMessage());
-            historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 5, 'ERROR_ENVIO_NO_VALID: ' . $e->getMessage());
-            if (!self::$distr)
-                Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$transaccion->fechaEmision->format("c"));
-            else Distribucion::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$transaccion->fechaEmision->format("c"));
-            return false;
-        }
-    }
+    // public static function APIEnviar()
+    // {
+    //     try {
+    //         error_log("[INFO] INICIO API ENVIO");
+    //         self::APIGetToken();
+    //         $ch = curl_init();
+    //         $r = '';
+    //         switch (self::$transaccion->idDocumento) {
+    //             case 1:
+    //             case 2:
+    //             case 3:
+    //             case 8: // Contingencia..
+    //                 $r = 'json';
+    //                 break;
+    //             case 4:
+    //                 $r = 'sendTE';
+    //                 break;
+    //             case 5:
+    //             case 6:
+    //             case 7:
+    //                 $r = 'sendMensaje';
+    //                 break;
+    //         }
+    //         $post = [
+    //             'w' => 'send',
+    //             'r' => $r,
+    //             'token' => self::$accessToken,
+    //             'clave' => self::$clave,
+    //             'fecha' => self::$transaccion->fechaEmision->format("c"),
+    //             'emi_tipoIdentificacion' => self::getIdentificacionCod(self::$transaccion->datosEntidad->idTipoIdentificacion),
+    //             'emi_numeroIdentificacion' => self::$transaccion->datosEntidad->identificacion,
+    //             'recp_tipoIdentificacion' =>  self::getIdentificacionCod(self::$transaccion->datosReceptor->idTipoIdentificacion),
+    //             'recp_numeroIdentificacion' => self::$transaccion->datosReceptor->identificacion,
+    //             'comprobanteXml' =>    self::$xmlFirmado,
+    //             'client_id' => self::$apiMode,
+    //             'consecutivoReceptor' => self::$consecutivoFE ?? null
+    //         ];
+    //         curl_setopt_array($ch, array(
+    //             CURLOPT_URL => self::$apiUrl,
+    //             CURLOPT_RETURNTRANSFER => true,
+    //             CURLOPT_VERBOSE => true,
+    //             CURLOPT_MAXREDIRS => 10,
+    //             CURLOPT_TIMEOUT => 60,
+    //             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+    //             CURLOPT_CUSTOMREQUEST => "POST",
+    //             CURLOPT_POSTFIELDS => $post,
+    //             CURLOPT_SSL_VERIFYHOST => SSL_API,
+    //             CURLOPT_SSL_VERIFYPEER => SSL_API
+    //         ));
+    //         $server_output = curl_exec($ch);
+    //         $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+    //         $header = substr($server_output, 0, $header_size);
+    //         $body = substr($server_output, $header_size);
+    //         $error_msg = "";
+    //         if (curl_error($ch)) {
+    //             $error_msg = curl_error($ch);
+    //             $timedOut = strpos($error_msg, 'Operation timed out');
+    //             if ($timedOut === false)
+    //                 throw new Exception('Error CRITICO al ENVIAR el comprobante. DEBE COMUNICARSE CON SOPORTE TECNICO: ' . $error_msg, ERROR_ENVIO_NO_VALID);
+    //             else {
+    //                 //timed out.
+    //                 error_log("[ERROR]  (-600): " . $error_msg);
+    //                 historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 6, $error_msg);
+    //                 if (!self::$distr) Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 6, self::$transaccion->fechaEmision->format("c"));
+    //                 else Distribucion::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 6, self::$transaccion->fechaEmision->format("c"));
+    //                 return false;
+    //             }
+    //         }
+    //         $sArray = json_decode($server_output);
+    //         if (!isset($sArray->resp->Status)) {
+    //             // ERROR CRITICO: almacena estado= 5 (otros) - error al enviar comprobante.
+    //             throw new Exception('Error CRITICO al ENVIAR el comprobante. DEBE COMUNICARSE CON SOPORTE TECNICO: ' . $server_output, ERROR_ENVIO_NO_VALID);
+    //         }
+    //         //
+    //         if ($sArray->resp->Status == 400) {
+    //             $resp400 = strpos($sArray->resp->text[17], 'ya fue recibido anteriormente');
+    //             $resp401 = strpos($sArray->resp->text[18], 'ya fue recibido anteriormente');
+    //             if ($resp400 | $resp401) {
+    //                 error_log("[WARNING] El documento (" . self::$clave . ") Ya fue recibido anteriormente");
+    //                 historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 7, 'El documento ya fue recibido anteriormente, STATUS(' . $sArray->resp->Status . ')');
+    //                 if (!self::$distr) Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 7, self::$transaccion->fechaEmision->format("c"));
+    //                 else Distribucion::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 7, self::$transaccion->fechaEmision->format("c"));
+    //                 // curl_close($ch);
+    //                 return true;
+    //             } else {
+    //                 throw new Exception('Error CRITICO al ENVIAR el comprobante. DEBE COMUNICARSE CON SOPORTE TECNICO, STATUS(' . $sArray->resp->Status . '):  ' . $sArray->resp->text[17], ERROR_ENVIO_NO_VALID);
+    //             }
+    //         }
+    //         if ($sArray->resp->Status != 202) {
+    //             throw new Exception('Error CRITICO al ENVIAR el comprobante. DEBE COMUNICARSE CON SOPORTE TECNICO, STATUS(' . $sArray->resp->Status . '):  ' . $server_output, ERROR_ENVIO_NO_VALID);
+    //         } else {
+    //             // almacena estado: enviado (202).
+    //             historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 2, 'Comprobante ENVIADO EXITOSAMENTE, STATUS(' . $sArray->resp->Status . ')');
+    //             if (!self::$distr)
+    //                 Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 2, self::$transaccion->fechaEmision->format("c"));
+    //             else Distribucion::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 2, self::$transaccion->fechaEmision->format("c"));
+    //         }
+    //         //
+    //         historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 1, 'XML a enviar', base64_decode(self::$xmlFirmado));
+    //         error_log("[INFO] API ENVIO EXITOSO!");
+    //         curl_close($ch);
+    //         return true;
+    //     } catch (Exception $e) {
+    //         error_log("[ERROR]  (" . $e->getCode() . "): " . $e->getMessage());
+    //         historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 5, 'ERROR_ENVIO_NO_VALID: ' . $e->getMessage());
+    //         if (!self::$distr)
+    //             Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$transaccion->fechaEmision->format("c"));
+    //         else Distribucion::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$transaccion->fechaEmision->format("c"));
+    //         return false;
+    //     }
+    // }
 
-    public static function APIConsultaComprobante($t, $invoice = false)
-    {
-        try {
-            self::$transaccion = $t;
-            error_log("[INFO] API CONSULTA CLAVE: " . self::$transaccion->clave . " Consecutivo: " . self::$transaccion->consecutivo);
-            self::getApiUrl();
-            self::APIGetToken();
-            $ch = curl_init();
-            $post = [
-                'w' => 'consultar',
-                'r' => 'consultarCom',
-                'token' => self::$accessToken,
-                'clave' => self::$transaccion->clave,
-                'client_id' => self::$apiMode
-            ];
-            curl_setopt_array($ch, array(
-                CURLOPT_URL => self::$apiUrl,
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_VERBOSE => true,
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_MAXREDIRS => 10,
-                CURLOPT_TIMEOUT => 30,
-                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                CURLOPT_CUSTOMREQUEST => "POST",
-                CURLOPT_POSTFIELDS => $post,
-                CURLOPT_SSL_VERIFYHOST => SSL_API,
-                CURLOPT_SSL_VERIFYPEER => SSL_API
-            ));
-            $server_output = curl_exec($ch);
-            $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-            $header = substr($server_output, 0, $header_size);
-            $body = substr($server_output, $header_size);
-            $error_msg = "";
-            if (curl_error($ch)) {
-                $error_msg = curl_error($ch);
-                throw new Exception('Error al consultar API MH: ' . $error_msg, ERROR_CONSULTA_NO_VALID);
-            }
-            $sArray = json_decode($server_output);
-            if (!isset($sArray->resp->clave)) {
-                $null = strpos($server_output, 'null');
-                if ($null === false) {
-                    throw new Exception('Error CRITICO al consultar el comprobante. DEBE COMUNICARSE CON SOPORTE TECNICO: ' . $server_output, ERROR_CONSULTA_NO_VALID);
-                } else {
-                    // clave inválida, no existe en ATV.
-                    if (!self::$distr)
-                        Factura::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 5);
-                    else Distribucion::updateIdEstadoComprobante(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$transaccion->fechaEmision->format("c"));
-                    historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 5, 'La transacción no fue enviada a los sistemas de ATV.');
-                    throw new Exception('Documento no registrado en ATV: ' . $server_output, ERROR_CONSULTA_NO_VALID);
-                }
-            }
-            $respuestaXml = '';
-            foreach ($sArray->resp as $key => $r) {
-                if ($key == 'ind-estado')
-                    $estadoTransaccion = $r;
-                if ($key == 'respuesta-xml')
-                    $respuestaXml = $r;
-            }
-            // si el estado es procesando debe consultar de nuevo.
-            if ($estadoTransaccion == 'procesando') {
-                historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 2, $estadoTransaccion);
-                if (!self::$distr)
-                    Factura::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 2);
-                else Distribucion::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 2);
-                //self::APIConsultaComprobante();
-            } else if ($estadoTransaccion == 'aceptado') {
-                $xml = base64_decode($respuestaXml);
-                $fxml = simplexml_load_string($xml);
-                historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 3, '[' . $estadoTransaccion . '] ' . $fxml->DetalleMensaje, $xml);
-                if (!self::$distr)
-                    Factura::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 3);
-                else Distribucion::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 3);
-                //AQUI VA ENVIAR EMAIL
-                if ($invoice)
-                    Invoice::$email_array_address_to = [];
-                Invoice::create(self::$transaccion);
-            } else if ($estadoTransaccion == 'rechazado') {
-                // genera informe con los datos del rechazo. y pone estado de la transaccion pendiente para ser enviada cuando sea corregida.
-                $xml = base64_decode($respuestaXml);
-                $fxml = simplexml_load_string($xml);
-                $resp400 = strpos($fxml->DetalleMensaje, 'ya existe en nuestras bases de datos');
-                $respFirma = strpos($fxml->DetalleMensaje, 'La firma del comprobante electrónico no es válida');
-                if ($resp400) {
-                    // ya existe en base de datos de MH. estado 7
-                    error_log("[WARNING] El documento (" . self::$transaccion->clave . ") Ya fue recibido anteriormente");
-                    if (!self::$distr)
-                        Factura::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 4);
-                    else Distribucion::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 4);
-                    historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 4, "[WARNING]" . $fxml->DetalleMensaje, $xml);
-                    return true;
-                }
-                if ($respFirma) {
-                    $errorFirma = 8;
-                    if (self::$transaccion->idEstadoComprobante == 8)
-                        $errorFirma = 9;
-                    if (self::$transaccion->idEstadoComprobante == 9)
-                        $errorFirma = 10;
-                    if (self::$transaccion->idEstadoComprobante == 10)
-                        $errorFirma = 4; // Rechazo
-                    error_log("[ERROR] El documento (" . self::$transaccion->clave . ")  La firma del comprobante electrónico no es válida (" . $errorFirma . ").");
-                    historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, $errorFirma, '[' . $estadoTransaccion . '] ' . $fxml->DetalleMensaje, $xml);
-                    if (!self::$distr)
-                        Factura::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, $errorFirma);
-                    else Distribucion::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, $errorFirma);
-                } else {
-                    error_log("[ERROR] El documento (" . self::$transaccion->clave . ") Fue rechazado, ver historico. " .  $fxml->DetalleMensaje);
-                    historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 4, '[' . $estadoTransaccion . '] ' . $fxml->DetalleMensaje, $xml);
-                    if (!self::$distr)
-                        Factura::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 4);
-                    else Distribucion::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 4);
-                }
-            } else if ($estadoTransaccion == " no ha sido recibido.\r") {
-                error_log("[ERROR] El documento (" . self::$transaccion->clave . ") No ha sido Recibido en ATV. ");
-                historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 1, '[' . $estadoTransaccion . '] ' . $estadoTransaccion);
-                if (!self::$distr)
-                    Factura::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 1);
-                else Distribucion::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 1);
-            } else {
-                // OTROS 5. hay un error en la respuesta de consulta.
-                error_log("[ERROR] El documento (" . self::$transaccion->clave . ") " . $estadoTransaccion);
-                historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 5, '[' . $estadoTransaccion . '] ' . $estadoTransaccion);
-                if (!self::$distr)
-                    Factura::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 5);
-                else Distribucion::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 5);
-            }
-            error_log("[INFO] API CONSULTA, estado de la transaccion(" . self::$transaccion->id . "): " . $estadoTransaccion);
-            curl_close($ch);
-        } catch (Exception $e) {
-            error_log("[ERROR]  (" . $e->getCode() . "): " . $e->getMessage());
-            return false;
-        }
-    }
+    // public static function APIConsultaComprobante($t, $invoice = false)
+    // {
+    //     try {
+    //         self::$transaccion = $t;
+    //         error_log("[INFO] API CONSULTA CLAVE: " . self::$transaccion->clave . " Consecutivo: " . self::$transaccion->consecutivo);
+    //         // self::getApiUrl();
+    //         // self::APIGetToken();
+    //         $ch = curl_init();
+    //         $post = [
+    //             'w' => 'consultar',
+    //             'r' => 'consultarCom',
+    //             'token' => self::$accessToken,
+    //             'clave' => self::$transaccion->clave,
+    //             'client_id' => self::$apiMode
+    //         ];
+    //         curl_setopt_array($ch, array(
+    //             CURLOPT_URL => self::$apiUrl,
+    //             CURLOPT_RETURNTRANSFER => true,
+    //             CURLOPT_VERBOSE => true,
+    //             CURLOPT_RETURNTRANSFER => true,
+    //             CURLOPT_MAXREDIRS => 10,
+    //             CURLOPT_TIMEOUT => 30,
+    //             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+    //             CURLOPT_CUSTOMREQUEST => "POST",
+    //             CURLOPT_POSTFIELDS => $post,
+    //             CURLOPT_SSL_VERIFYHOST => SSL_API,
+    //             CURLOPT_SSL_VERIFYPEER => SSL_API
+    //         ));
+    //         $server_output = curl_exec($ch);
+    //         $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+    //         $header = substr($server_output, 0, $header_size);
+    //         $body = substr($server_output, $header_size);
+    //         $error_msg = "";
+    //         if (curl_error($ch)) {
+    //             $error_msg = curl_error($ch);
+    //             throw new Exception('Error al consultar API MH: ' . $error_msg, ERROR_CONSULTA_NO_VALID);
+    //         }
+    //         $sArray = json_decode($server_output);
+    //         if (!isset($sArray->resp->clave)) {
+    //             $null = strpos($server_output, 'null');
+    //             if ($null === false) {
+    //                 throw new Exception('Error CRITICO al consultar el comprobante. DEBE COMUNICARSE CON SOPORTE TECNICO: ' . $server_output, ERROR_CONSULTA_NO_VALID);
+    //             } else {
+    //                 // clave inválida, no existe en ATV.
+    //                 if (!self::$distr)
+    //                     Factura::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 5);
+    //                 else Distribucion::updateIdEstadoComprobante(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$transaccion->fechaEmision->format("c"));
+    //                 historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 5, 'La transacción no fue enviada a los sistemas de ATV.');
+    //                 throw new Exception('Documento no registrado en ATV: ' . $server_output, ERROR_CONSULTA_NO_VALID);
+    //             }
+    //         }
+    //         $respuestaXml = '';
+    //         foreach ($sArray->resp as $key => $r) {
+    //             if ($key == 'ind-estado')
+    //                 $estadoTransaccion = $r;
+    //             if ($key == 'respuesta-xml')
+    //                 $respuestaXml = $r;
+    //         }
+    //         // si el estado es procesando debe consultar de nuevo.
+    //         if ($estadoTransaccion == 'procesando') {
+    //             historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 2, $estadoTransaccion);
+    //             if (!self::$distr)
+    //                 Factura::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 2);
+    //             else Distribucion::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 2);
+    //             //self::APIConsultaComprobante();
+    //         } else if ($estadoTransaccion == 'aceptado') {
+    //             $xml = base64_decode($respuestaXml);
+    //             $fxml = simplexml_load_string($xml);
+    //             historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 3, '[' . $estadoTransaccion . '] ' . $fxml->DetalleMensaje, $xml);
+    //             if (!self::$distr)
+    //                 Factura::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 3);
+    //             else Distribucion::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 3);
+    //             //AQUI VA ENVIAR EMAIL
+    //             if ($invoice)
+    //                 Invoice::$email_array_address_to = [];
+    //             Invoice::create(self::$transaccion);
+    //         } else if ($estadoTransaccion == 'rechazado') {
+    //             // genera informe con los datos del rechazo. y pone estado de la transaccion pendiente para ser enviada cuando sea corregida.
+    //             $xml = base64_decode($respuestaXml);
+    //             $fxml = simplexml_load_string($xml);
+    //             $resp400 = strpos($fxml->DetalleMensaje, 'ya existe en nuestras bases de datos');
+    //             $respFirma = strpos($fxml->DetalleMensaje, 'La firma del comprobante electrónico no es válida');
+    //             if ($resp400) {
+    //                 // ya existe en base de datos de MH. estado 7
+    //                 error_log("[WARNING] El documento (" . self::$transaccion->clave . ") Ya fue recibido anteriormente");
+    //                 if (!self::$distr)
+    //                     Factura::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 4);
+    //                 else Distribucion::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 4);
+    //                 historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 4, "[WARNING]" . $fxml->DetalleMensaje, $xml);
+    //                 return true;
+    //             }
+    //             if ($respFirma) {
+    //                 $errorFirma = 8;
+    //                 if (self::$transaccion->idEstadoComprobante == 8)
+    //                     $errorFirma = 9;
+    //                 if (self::$transaccion->idEstadoComprobante == 9)
+    //                     $errorFirma = 10;
+    //                 if (self::$transaccion->idEstadoComprobante == 10)
+    //                     $errorFirma = 4; // Rechazo
+    //                 error_log("[ERROR] El documento (" . self::$transaccion->clave . ")  La firma del comprobante electrónico no es válida (" . $errorFirma . ").");
+    //                 historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, $errorFirma, '[' . $estadoTransaccion . '] ' . $fxml->DetalleMensaje, $xml);
+    //                 if (!self::$distr)
+    //                     Factura::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, $errorFirma);
+    //                 else Distribucion::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, $errorFirma);
+    //             } else {
+    //                 error_log("[ERROR] El documento (" . self::$transaccion->clave . ") Fue rechazado, ver historico. " .  $fxml->DetalleMensaje);
+    //                 historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 4, '[' . $estadoTransaccion . '] ' . $fxml->DetalleMensaje, $xml);
+    //                 if (!self::$distr)
+    //                     Factura::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 4);
+    //                 else Distribucion::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 4);
+    //             }
+    //         } else if ($estadoTransaccion == " no ha sido recibido.\r") {
+    //             error_log("[ERROR] El documento (" . self::$transaccion->clave . ") No ha sido Recibido en ATV. ");
+    //             historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 1, '[' . $estadoTransaccion . '] ' . $estadoTransaccion);
+    //             if (!self::$distr)
+    //                 Factura::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 1);
+    //             else Distribucion::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 1);
+    //         } else {
+    //             // OTROS 5. hay un error en la respuesta de consulta.
+    //             error_log("[ERROR] El documento (" . self::$transaccion->clave . ") " . $estadoTransaccion);
+    //             historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 5, '[' . $estadoTransaccion . '] ' . $estadoTransaccion);
+    //             if (!self::$distr)
+    //                 Factura::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 5);
+    //             else Distribucion::updateIdEstadoComprobante(self::$transaccion->id, self::$transaccion->idDocumento, 5);
+    //         }
+    //         error_log("[INFO] API CONSULTA, estado de la transaccion(" . self::$transaccion->id . "): " . $estadoTransaccion);
+    //         curl_close($ch);
+    //     } catch (Exception $e) {
+    //         error_log("[ERROR]  (" . $e->getCode() . "): " . $e->getMessage());
+    //         return false;
+    //     }
+    // }
 }
