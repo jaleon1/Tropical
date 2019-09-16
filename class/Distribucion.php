@@ -80,7 +80,7 @@ if(isset($_POST["action"])){
 
 class Distribucion{
     public $id=null;
-    public $fecha='';
+    public $fechaCreacion='';
     public $idBodega=null;
     public $bodega=null;
     public $orden='';
@@ -123,7 +123,7 @@ class Distribucion{
             $this->porcentajeIva= $obj["porcentajeIva"] ?? '13';
             //$this->idUsuario= $obj["idUsuario"] ?? null;
             // comprobante electronico para bodega externa.
-            $this->fechaCreacion= $obj["fechaCreacion"] ?? null;  //  fecha de creacion en base de datos.
+            $this->fechaCreacion= $obj["fechaCreacion"] ?? null;  //  fechaCreacion de creacion en base de datos.
             //$this->idEntidad= $obj["idEntidad"] ?? $_SESSION["userSession"]->idEntidad;            
             $this->consecutivo= $this->orden;
             $this->local= '001';//$obj["local"] ?? $_SESSION["userSession"]->local;
@@ -135,21 +135,46 @@ class Distribucion{
             $this->idMedioPago= 1;
             // c. Resumen de la factura/Total de la Factura 
             // definir si es servicio o mercancia (producto).
-            $this->idCodigoMoneda= 55; // CRC
-            $this->tipoCambio= 595.00; // tipo de cambio dinamico con BCCR
-            $this->totalServGravados= number_format((float)$obj['totalServGravados'],5,'.','' ) ?? null;
-            $this->totalServExentos= number_format((float)$obj['totalServExentos'],5,'.','' )  ?? null;
-            $this->totalMercanciasGravadas= number_format((float)$obj['totalMercanciasGravadas'],5,'.','' )  ?? null;
-            $this->totalMercanciasExentas= number_format((float)$obj['totalMercanciasExentas'],5,'.','' )  ?? null;
-            $this->totalGravado= number_format((float)$obj['totalGravado'],5,'.','' )  ?? null;
-            $this->totalExento= number_format((float)$obj['totalExento'],5,'.','' )  ?? null;
-            $this->totalVenta= number_format((float)$obj['totalVenta'],5,'.','' )  ?? null;
-            $this->totalDescuentos= number_format((float)$obj['totalDescuentos'],5,'.','' )   ?? null;;
-            $this->totalVentaneta= number_format((float)$obj['totalVentaneta'],5,'.','' )   ?? null;
-            $this->totalImpuesto= number_format((float)$obj['totalImpuesto'],5,'.','' )   ?? null;
-            $this->totalComprobante= number_format((float)$obj['totalComprobante'],5,'.','' )   ?? null;
+            $this->tipoCambio = $obj["tipoCambio"] ?? 1;  // 1 en colones.
+            if ($this->idCodigoMoneda == 72) { // tipo dolar.
+                $wsBCCR = new TipoCambio();
+                $this->tipoCambio = $obj['tipoCambio'] ?? $wsBCCR->tipo_cambio()["venta"]; // tipo de cambio dinamico con BCCR
+            }
+            // $this->totalServGravados= number_format((float)$obj['totalServGravados'],5,'.','' ) ?? null;
+            // $this->totalServExentos= number_format((float)$obj['totalServExentos'],5,'.','' )  ?? null;
+            // $this->totalMercanciasGravadas= number_format((float)$obj['totalMercanciasGravadas'],5,'.','' )  ?? null;
+            // $this->totalMercanciasExentas= number_format((float)$obj['totalMercanciasExentas'],5,'.','' )  ?? null;
+            // $this->totalGravado= number_format((float)$obj['totalGravado'],5,'.','' )  ?? null;
+            // $this->totalExento= number_format((float)$obj['totalExento'],5,'.','' )  ?? null;
+            // $this->totalVenta= number_format((float)$obj['totalVenta'],5,'.','' )  ?? null;
+            // $this->totalDescuentos= number_format((float)$obj['totalDescuentos'],5,'.','' )   ?? null;;
+            // $this->totalVentaneta= number_format((float)$obj['totalVentaneta'],5,'.','' )   ?? null;
+            // $this->totalImpuesto= number_format((float)$obj['totalImpuesto'],5,'.','' )   ?? null;
+            // $this->totalComprobante= number_format((float)$obj['totalComprobante'],5,'.','' )   ?? null;
             // $this->montoEfectivo= $obj["montoEfectivo"]; //Jason: Lo comente temporalmente
             // $this->montoTarjeta= $obj["montoTarjeta"];   //Jason: Lo comente temporalmente
+
+            // exonerados
+            $this->totalServGravados = $obj['totalServGravados'] ?? null;
+            $this->totalServExonerado = $obj['totalServExonerado'] ?? null;
+            $this->totalMercanciasGravadas = $obj['totalMercanciasGravadas'] ?? null;
+            $this->totalMercanciasExonerada = $obj['totalMercanciasExonerada'] ?? null;
+            $this->totalGravado = $obj['totalGravado'] ?? null;
+            $this->totalExonerado = $obj['totalExonerado'] ?? null;
+            // exentos
+            $this->totalServExentos = $obj['totalServExentos'] ?? null;
+            $this->totalMercanciasExentas = $obj['totalMercanciasExentas'] ?? null;
+            $this->totalExento = $obj['totalExento'] ?? null;
+            //
+            $this->totalVenta = $obj["totalVenta"] ?? null;
+            $this->totalDescuentos = $obj["totalDescuentos"] ?? null;
+            $this->totalVentaneta = $obj["totalVentaneta"] ?? null;
+            $this->totalImpuesto = $obj["totalImpuesto"] ?? null;
+            $this->totalComprobante = $obj["totalComprobante"] ?? null;
+
+            $this->montoEfectivo = $obj["montoEfectivo"] ?? null;
+            $this->montoTarjeta = $obj["montoTarjeta"] ?? null;
+
             // d. Informacion de referencia
             $this->idDocumento = 1; // Documento de Referencia.            
             $this->fechaEmision= $obj["fechaEmision"] ?? null; // emision del comprobante electronico.
@@ -198,16 +223,35 @@ class Distribucion{
                     $item->detalle= $itemlist['detalle'];
                     $item->precioUnitario= $itemlist['precioUnitario'];
                     $item->montoTotal= $itemlist['montoTotal'];
-                    $item->montoDescuento= $itemlist['montoDescuento'];
-                    $item->naturalezaDescuento= $itemlist['naturalezaDescuento']??'No aplican descuentos'; // en Tropical no se manejan descuentos
+                    /*Descuentos*/
+                    $item->descuentos = [];
+
                     $item->subTotal= $itemlist['subTotal'];
-                    $item->idExoneracionImpuesto= $itemlist['idExoneracionImpuesto'] ?? null;
-                    $item->codigoImpuesto= $itemlist['codigoImpuesto'] ?? 1; // impuesto ventas = 1
-                    $item->tarifaImpuesto= $itemlist['tarifaImpuesto'];
-                    $item->montoImpuesto= $itemlist['montoImpuesto'];                    
+                    $item->baseImponible = $itemlist['baseImponible'] ?? null;
+                    /*Impuestos*/
+                    $item->impuestos = [];
+                    if (isset($itemlist["impuestos"])) {
+                        include_once('impuestos.php');
+                        foreach ($itemlist["impuestos"] as $itemImpuesto) {
+                            $imp = new Impuestos();
+                            $imp->idCodigoImpuesto = $itemImpuesto['idCodigoImpuesto'];  // Impuesto al Valor Agregado = 1
+                            $imp->idCodigoTarifa = $itemImpuesto['idCodigoTarifa']; // Tarifa general 13% = 8
+                            $imp->tarifaImpuesto = $itemImpuesto['tarifa']; //  13%
+                            $imp->montoImpuesto = $itemImpuesto['monto'];
+                            array_push($item->impuestos, $imp);
+                        }
+                    } 
+                    /*Exoneraciones*/
+                    $item->exoneraciones = [];
+                    //
                     $item->montoTotalLinea= $itemlist['montoTotalLinea']; // subtotal + impuesto.
                     array_push ($this->detalleFactura, $item);
                 }
+            }
+            //
+            if (isset($_POST["dataReceptor"])) {
+                $this->datosReceptor = new Receptor();
+                $this->datosReceptor = json_decode($_POST["dataReceptor"], true);
             }
         }
     }
@@ -273,7 +317,7 @@ class Distribucion{
                     $item->tipodoc= '01'; // factura electronica
                     $item->numero= $this->clave;  // clave del documento en referencia.
                     $item->razon=  $this->razon ?? 'Aplica Nota de credito';  // nc por rechazo? | cual es la razon de hacer la referencia.
-                    $item->fechaEmision= $this->fechaEmision ?? date_create()->format('c'); // fecha de la emisión del documento al que hace referencia.
+                    $item->fechaEmision= $this->fechaEmision ?? date_create()->format('c'); // fechaCreacion de la emisión del documento al que hace referencia.
                     $item->codigo= '01';  // Anula Documento de Referencia. ;
                     array_push ($this->informacionReferencia, $item);
                     // datos entidad bodega central.
@@ -439,17 +483,17 @@ class Distribucion{
 
     function ReadAll(){
         try {
-            // $sql='SELECT id, fecha, idBodega, orden, idUsuario
+            // $sql='SELECT id, fechaCreacion, idBodega, orden, idUsuario
             //     FROM     distribucion       
-            //     ORDER BY fecha asc';
-            $sql= 'SELECT d.id, fecha, orden, u.userName, b.nombre as bodega, e.nombre as estado, 
+            //     ORDER BY fechaCreacion asc';
+            $sql= 'SELECT d.id, fechaCreacion, orden, u.userName, b.nombre as bodega, e.nombre as estado, 
                     totalImpuesto, TotalComprobante, idEstadoComprobante, d.clave, d.claveNC, d.idReferencia
                 FROM tropical.distribucion d
                     INNER JOIN usuario u on u.id=d.idUsuario
                     INNER JOIN bodega b on b.id=d.idBodega
                     INNER JOIN estado e on e.id=d.idEstado
                 GROUP BY orden
-                ORDER BY fecha desc';
+                ORDER BY fechaCreacion desc';
             $data= DATA::Ejecutar($sql);
             return $data;
         }     
@@ -465,10 +509,10 @@ class Distribucion{
 
     function ReadAllbyRange(){
         try {
-            // $sql='SELECT id, fecha, idBodega, orden, idUsuario
+            // $sql='SELECT id, fechaCreacion, idBodega, orden, idUsuario
             //     FROM     distribucion       
-            //     ORDER BY fecha asc';
-            $sql= 'SELECT d.id, fecha, orden, u.userName, b.nombre as bodega, e.nombre as estado, d.idEstadocomprobante, d.claveNC,
+            //     ORDER BY fechaCreacion asc';
+            $sql= 'SELECT d.id, fechaCreacion, orden, u.userName, b.nombre as bodega, e.nombre as estado, d.idEstadocomprobante, d.claveNC,
                     totalImpuesto, totalComprobante, idEstadoComprobante, t.nombre as tipoBodega, d.idEstadoNC
                 FROM tropical.distribucion d
                     INNER JOIN usuario u on u.id=d.idUsuario
@@ -476,9 +520,9 @@ class Distribucion{
                     INNER JOIN tipoBodega t on t.id=b.idTipoBodega 
                     INNER JOIN estado e on e.id=d.idEstado
                     
-                WHERE fecha Between :fechaInicial and :fechaFinal
+                WHERE fechaCreacion Between :fechaInicial and :fechaFinal
                 GROUP BY orden
-                ORDER BY fecha desc';
+                ORDER BY fechaCreacion desc';
             $param= array(':fechaInicial'=>$this->fechaInicial, ':fechaFinal'=>$this->fechaFinal);            
             $data= DATA::Ejecutar($sql, $param);
             return $data;
@@ -495,14 +539,14 @@ class Distribucion{
 
     function ReadbyOrden(){
         try {
-            $sql='SELECT id, fecha, orden, idUsuario, idBodega, porcentajeDescuento, porcentajeIva, totalImpuesto, totalComprobante
+            $sql='SELECT id, fechaCreacion, orden, idUsuario, idBodega, porcentajeDescuento, porcentajeIva, totalImpuesto, totalComprobante
                 FROM distribucion
                 WHERE orden=:orden AND idBodega=:idBodega AND idEstado=0 AND idEstadoComprobante = 3';
             $param= array(':orden'=>$this->orden, ':idBodega'=>$this->idBodega);
             $data= DATA::Ejecutar($sql,$param);     
             if(count($data)){
                 $this->id = $data[0]['id'];
-                $this->fecha = $data[0]['fecha'];
+                $this->fechaCreacion = $data[0]['fechaCreacion'];
                 $this->idUsuario = $data[0]['idUsuario'];
                 $this->idBodega = $data[0]['idBodega'];
                 $this->porcentajeDescuento = $data[0]['porcentajeDescuento'];
@@ -528,7 +572,7 @@ class Distribucion{
 
     function Read(){
         try {
-            $sql='SELECT d.id, d.fecha, d.idEmisor, d.idReceptor, d.orden, d.clave, d.consecutivoFE, d.fechaEmision, d.idUsuario, d.idBodega, b.nombre as bodega, 
+            $sql='SELECT d.id, d.fechaCreacion, d.idEmisor, d.idReceptor, d.orden, d.clave, d.consecutivoFE, d.fechaEmision, d.idUsuario, d.idBodega, b.nombre as bodega, 
                 d.porcentajeDescuento, d.porcentajeIva,  d.totalImpuesto, d.totalComprobante, d.idSituacionComprobante, d.idDocumento, d.idEstadoComprobante,
                 totalServGravados, totalServExentos, totalMercanciasGravadas, totalMercanciasExentas, totalGravado, totalExento,
                 totalVenta, totalDescuentos, totalVentaneta, d.claveNC, d.idReferencia, d.idEstadoNC
@@ -539,7 +583,7 @@ class Distribucion{
             $data= DATA::Ejecutar($sql,$param);     
             if(count($data)){
                 $this->id = $data[0]['id'];
-                $this->fecha = $data[0]['fecha'];
+                $this->fechaCreacion = $data[0]['fechaCreacion'];
                 $this->orden = $data[0]['orden'];
                 $this->consecutivoFE = $data[0]['consecutivoFE'] ?? null;
                 $this->fechaEmision = $data[0]['fechaEmision'] ?? null;
@@ -585,19 +629,19 @@ class Distribucion{
 
     function ReadCancelada(){
         try {
-            $sql='SELECT d.id, fecha, orden, u.userName, b.nombre as bodega, e.nombre as estado, d.idEstadocomprobante, d.claveNC,
+            $sql='SELECT d.id, fechaCreacion, orden, u.userName, b.nombre as bodega, e.nombre as estado, d.idEstadocomprobante, d.claveNC,
                 totalImpuesto, totalComprobante, idEstadoComprobante, t.nombre as tipoBodega
             FROM tropical.distribucion d
                 INNER JOIN usuario u on u.id=d.idUsuario
                 INNER JOIN bodega b on b.id=d.idBodega
                 INNER JOIN tipoBodega t on t.id=b.idTipoBodega 
                 INNER JOIN estado e on e.id=d.idEstado                
-            WHERE fecha Between :fechaInicial 
+            WHERE fechaCreacion Between :fechaInicial 
             AND :fechaFinal
             AND d.claveNC IS NULL
             AND t.nombre="Externa"
             GROUP BY orden
-            ORDER BY fecha desc';
+            ORDER BY fechaCreacion desc';
 
             $param= array(':fechaInicial'=>$this->fechaInicial, ':fechaFinal'=>$this->fechaFinal);
             $data = DATA::Ejecutar($sql,$param);
@@ -785,9 +829,9 @@ class Distribucion{
     function Update(){
         try {
             $sql="UPDATE distribucion 
-                SET fecha=:fecha, idBodega=:idBodega, orden=:orden, idUsuario=:idUsuario
+                SET fechaCreacion=:fechaCreacion, idBodega=:idBodega, orden=:orden, idUsuario=:idUsuario
                 WHERE id=:id";
-            $param= array(':id'=>$this->id, ':fecha'=>$this->fecha, ':idBodega'=>$this->idBodega, ':orden'=>$this->orden, ':idUsuario'=>$this->idUsuario);
+            $param= array(':id'=>$this->id, ':fechaCreacion'=>$this->fechaCreacion, ':idBodega'=>$this->idBodega, ':orden'=>$this->orden, ':idUsuario'=>$this->idUsuario);
             $data = DATA::Ejecutar($sql,$param,false);
             if($data)
                 return true;
@@ -883,7 +927,7 @@ class Distribucion{
 
     function ReadByCode(){
         try{ 
-            $sql="SELECT id, fecha, idBodega, descripcion
+            $sql="SELECT id, fechaCreacion, idBodega, descripcion
                 FROM distribucion
                 WHERE idBodega= :idBodega";
             $param= array(':idBodega'=>$this->idBodega);

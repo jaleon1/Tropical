@@ -418,7 +418,7 @@ class Factura
             $item->tipodoc = '01';  // factura electronica.
             $item->numero = $this->clave;
             $item->razon = 'Sustituye comprobante rechazado.';
-            $item->fechaEmision = $this->fechaEmision ?? date_create();
+            $item->fechaEmision = date_create();
             $item->codigo = '04';  // Referencia a otro documento. Al documento que se rechazó.
             array_push($this->informacionReferencia, $item);
             //

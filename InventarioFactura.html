@@ -383,15 +383,16 @@
         });
 
         $('#tb_facturas tbody').on('click', '.btnNC_CreateFact_Ref', function () {
-            var data = inventarioFacturas.tb_facturas.row($(this).parents('tr')).data();
+            var dataFactura = inventarioFacturas.tb_facturas.row($(this).parents('tr')).data();
                     $.ajax({
                         type: "POST",
                         url: "class/productoXFactura.php",
                         data: {
-                            id: data['id'],
-                            facturaRelacionada: true,
                             action: "reintegrarProductoByIdFactura",
-                            razon: 'Factura con Error'
+                            id: dataFactura['id'],
+                            facturaRelacionada: true,
+                            notaCredito: false,
+                            razon: "Factura con Error"
                         }
                     })
                         .done(function (e) {
