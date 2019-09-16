@@ -160,9 +160,9 @@ class xmlNC{
                     }
                     $xmlString .= '<Impuesto>
                     <Codigo>' . self::getImpuestoCod($imp->idCodigoImpuesto) . '</Codigo> 
-                    <CodigoTarifa>'. self::getTarifaCod($imp->codigoTarifa) .'</CodigoTarifa>
-                    <Tarifa>' . $imp->tarifa . '</Tarifa>
-                    <Monto>' . $imp->monto . '</Monto>'; 
+                    <CodigoTarifa>'. self::getTarifaCod($imp->idCodigoTarifa) .'</CodigoTarifa>
+                    <Tarifa>' . $imp->tarifaImpuesto . '</Tarifa>
+                    <Monto>' . $imp->montoImpuesto . '</Monto>'; 
                 }                               
             }
 
@@ -451,7 +451,7 @@ class xmlNC{
                         return false;
                     }
 
-                    if(empty($imp->codigoTarifa)){
+                    if(empty($imp->idCodigoTarifa)){
                         self::$arrayResp = array(
                             "error" => 'Error al construir XML de FE',
                             "mensaje" => 'El valor (codigoTarifa) no debe ser nulo o vacio'
@@ -459,7 +459,7 @@ class xmlNC{
                         return false;
                     }
 
-                    if(empty($imp->tarifa)){
+                    if(empty($imp->tarifaImpuesto)){
                         self::$arrayResp = array(
                             "error" => 'Error al construir XML de FE',
                             "mensaje" => 'El valor (tarifa) no debe ser nulo o vacio'
@@ -467,7 +467,7 @@ class xmlNC{
                         return false;
                     }
 
-                    if(empty($imp->monto)){
+                    if(empty($imp->montoImpuesto)){
                         self::$arrayResp = array(
                             "error" => 'Error al construir XML de FE',
                             "mensaje" => 'El valor (monto) no debe ser nulo o vacio'
