@@ -23,7 +23,7 @@ if (isset($_POST["action"])) {
             echo json_encode($productoXFactura->ReadByIdFactura($_POST['id']));
             break;
         case "reintegrarProductoByIdFactura":
-            $productoXFactura->reintegrarProductoByIdFactura($_POST['id'], $_POST['razon']);
+            $productoXFactura->reintegrarProductoByIdFactura($_POST['id'], $_POST['razon'], $_POST['notaCredito']);
             break;
     }
 }
@@ -53,7 +53,7 @@ class ProductoXFactura
     }*/
 
 
-    public static function reintegrarProductoByIdFactura($idFactura, $razon)
+    public static function reintegrarProductoByIdFactura($idFactura, $razon, $nc=false)
     {
 
         try {
@@ -143,7 +143,11 @@ class ProductoXFactura
             $objFactura->idDocumentoNC = 3;
             $objFactura->idReferencia = $factura[0]["consecutivo"];
             $objFactura->razon = $razon;
-            $objFactura->reenviarFactura();
+            if($nc){
+                $objFactura->notaCredito();
+            }
+            else
+                $objFactura->reenviarFactura();
 
         } catch (Exception $e) {
             error_log("[ERROR]  (" . $e->getCode() . "): " . $e->getMessage());
@@ -192,9 +196,9 @@ class ProductoXFactura
                     $producto->impuestos = [];
                     $imp = new Impuestos();
                     $imp->idCodigoImpuesto = $value['idCodigoImpuesto']; // Impuesto al Valor Agregado = 1
-                    $imp->codigoTarifa = $value['idCodigoTarifa']; // Tarifa general 13% = 8
-                    $imp->tarifa = $value['tarifaImpuesto']; //  13%
-                    $imp->monto = $value['montoImpuesto'];
+                    $imp->idCodigoTarifa = $value['idCodigoTarifa']; // Tarifa general 13% = 8
+                    $imp->tarifaImpuesto = $value['tarifaImpuesto']; //  13%
+                    $imp->montoImpuesto = $value['montoImpuesto'];
                     //$item->factorIVA= $itemImpuesto->factorIVA;
                     array_push($producto->impuestos, $imp);
                 }
