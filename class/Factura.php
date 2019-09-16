@@ -1134,6 +1134,59 @@ class Factura
         }
     }
 
+    public function reenviarFactura()
+    {
+        try {
+            // check si ya existe la NC.
+            $sql = "SELECT id, consecutivo
+                FROM factura
+                WHERE id=:id and (idEstadoNC IS NULL OR idEstadoNC = 5 OR idEstadoNC = 1)";
+            $param = array(':id' => $this->id);
+            $data = DATA::Ejecutar($sql, $param);
+            // si hay comprobante sin NC, continua:
+            if ($data) {
+                // actualiza estado de comprobante con NC.
+                $sql = "UPDATE factura
+                    SET idDocumentoNC=:idDocumentoNC, idReferencia=:idReferencia, razon=:razon, idEstadoNC=:idEstadoNC
+                    WHERE id=:id";
+                $param = array(
+                    ':id' => $this->id,
+                    ':idDocumentoNC' => $this->idDocumentoNC,
+                    ':idReferencia' => $this->idReferencia ?? $data[0]["consecutivo"],
+                    ':razon' => $this->razon,
+                    ':idEstadoNC' => 1
+                );
+                $data = DATA::Ejecutar($sql, $param, false);
+                if ($data) {
+                    $this->read();
+                    // referencia a la fatura cancelada.
+                    require_once("referencia.php");
+                    $item = new Referencia();
+                    $item->tipodoc = '01'; // factura electronica
+                    $item->numero = $this->clave;  // clave del documento en referencia.
+                    $item->razon = 'Aplica Nota de credito';  // nc por rechazo? | cual es la razon de hacer la referencia.
+                    $item->fechaEmision = $this->fechaEmision ?? date_create()->format('c'); // fecha de la emisión del documento al que hace referencia.
+                    $item->codigo = '01';  // Anula Documento de Referencia. ;
+                    array_push($this->informacionReferencia, $item);
+                    // envía la factura
+                    // FacturacionElectronica::iniciarNC($this);
+
+                    if ($this->facturaRelacionada == true) {
+                        $this->reGenerarFactura();
+                    }
+                    return true;
+                } else throw new Exception('Error al guardar.', 02);
+            } else throw new Exception('Warning, el comprobante (' . $this->id . ') ya tiene una Nota de Credito asignada.', 0763);
+        } catch (Exception $e) {
+            error_log("[ERROR]  (" . $e->getCode() . "): " . $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode(),
+                'msg' => $e->getMessage()
+            )));
+        }
+    }
+
     private function CheckRelatedItems()
     {
         try {

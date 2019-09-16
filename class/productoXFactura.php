@@ -143,7 +143,8 @@ class ProductoXFactura
             $objFactura->idDocumentoNC = 3;
             $objFactura->idReferencia = $factura[0]["consecutivo"];
             $objFactura->razon = $razon;
-            $objFactura->notaCredito();
+            $objFactura->reenviarFactura();
+
         } catch (Exception $e) {
             error_log("[ERROR]  (" . $e->getCode() . "): " . $e->getMessage());
             header('HTTP/1.0 400 Bad error');
