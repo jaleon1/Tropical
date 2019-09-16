@@ -135,21 +135,46 @@ class Distribucion{
             $this->idMedioPago= 1;
             // c. Resumen de la factura/Total de la Factura 
             // definir si es servicio o mercancia (producto).
-            $this->idCodigoMoneda= 55; // CRC
-            $this->tipoCambio= 595.00; // tipo de cambio dinamico con BCCR
-            $this->totalServGravados= number_format((float)$obj['totalServGravados'],5,'.','' ) ?? null;
-            $this->totalServExentos= number_format((float)$obj['totalServExentos'],5,'.','' )  ?? null;
-            $this->totalMercanciasGravadas= number_format((float)$obj['totalMercanciasGravadas'],5,'.','' )  ?? null;
-            $this->totalMercanciasExentas= number_format((float)$obj['totalMercanciasExentas'],5,'.','' )  ?? null;
-            $this->totalGravado= number_format((float)$obj['totalGravado'],5,'.','' )  ?? null;
-            $this->totalExento= number_format((float)$obj['totalExento'],5,'.','' )  ?? null;
-            $this->totalVenta= number_format((float)$obj['totalVenta'],5,'.','' )  ?? null;
-            $this->totalDescuentos= number_format((float)$obj['totalDescuentos'],5,'.','' )   ?? null;;
-            $this->totalVentaneta= number_format((float)$obj['totalVentaneta'],5,'.','' )   ?? null;
-            $this->totalImpuesto= number_format((float)$obj['totalImpuesto'],5,'.','' )   ?? null;
-            $this->totalComprobante= number_format((float)$obj['totalComprobante'],5,'.','' )   ?? null;
+            $this->tipoCambio = $obj["tipoCambio"] ?? 1;  // 1 en colones.
+            if ($this->idCodigoMoneda == 72) { // tipo dolar.
+                $wsBCCR = new TipoCambio();
+                $this->tipoCambio = $obj['tipoCambio'] ?? $wsBCCR->tipo_cambio()["venta"]; // tipo de cambio dinamico con BCCR
+            }
+            // $this->totalServGravados= number_format((float)$obj['totalServGravados'],5,'.','' ) ?? null;
+            // $this->totalServExentos= number_format((float)$obj['totalServExentos'],5,'.','' )  ?? null;
+            // $this->totalMercanciasGravadas= number_format((float)$obj['totalMercanciasGravadas'],5,'.','' )  ?? null;
+            // $this->totalMercanciasExentas= number_format((float)$obj['totalMercanciasExentas'],5,'.','' )  ?? null;
+            // $this->totalGravado= number_format((float)$obj['totalGravado'],5,'.','' )  ?? null;
+            // $this->totalExento= number_format((float)$obj['totalExento'],5,'.','' )  ?? null;
+            // $this->totalVenta= number_format((float)$obj['totalVenta'],5,'.','' )  ?? null;
+            // $this->totalDescuentos= number_format((float)$obj['totalDescuentos'],5,'.','' )   ?? null;;
+            // $this->totalVentaneta= number_format((float)$obj['totalVentaneta'],5,'.','' )   ?? null;
+            // $this->totalImpuesto= number_format((float)$obj['totalImpuesto'],5,'.','' )   ?? null;
+            // $this->totalComprobante= number_format((float)$obj['totalComprobante'],5,'.','' )   ?? null;
             // $this->montoEfectivo= $obj["montoEfectivo"]; //Jason: Lo comente temporalmente
             // $this->montoTarjeta= $obj["montoTarjeta"];   //Jason: Lo comente temporalmente
+
+            // exonerados
+            $this->totalServGravados = $obj['totalServGravados'] ?? null;
+            $this->totalServExonerado = $obj['totalServExonerado'] ?? null;
+            $this->totalMercanciasGravadas = $obj['totalMercanciasGravadas'] ?? null;
+            $this->totalMercanciasExonerada = $obj['totalMercanciasExonerada'] ?? null;
+            $this->totalGravado = $obj['totalGravado'] ?? null;
+            $this->totalExonerado = $obj['totalExonerado'] ?? null;
+            // exentos
+            $this->totalServExentos = $obj['totalServExentos'] ?? null;
+            $this->totalMercanciasExentas = $obj['totalMercanciasExentas'] ?? null;
+            $this->totalExento = $obj['totalExento'] ?? null;
+            //
+            $this->totalVenta = $obj["totalVenta"] ?? null;
+            $this->totalDescuentos = $obj["totalDescuentos"] ?? null;
+            $this->totalVentaneta = $obj["totalVentaneta"] ?? null;
+            $this->totalImpuesto = $obj["totalImpuesto"] ?? null;
+            $this->totalComprobante = $obj["totalComprobante"] ?? null;
+
+            $this->montoEfectivo = $obj["montoEfectivo"] ?? null;
+            $this->montoTarjeta = $obj["montoTarjeta"] ?? null;
+
             // d. Informacion de referencia
             $this->idDocumento = 1; // Documento de Referencia.            
             $this->fechaEmision= $obj["fechaEmision"] ?? null; // emision del comprobante electronico.
@@ -198,16 +223,35 @@ class Distribucion{
                     $item->detalle= $itemlist['detalle'];
                     $item->precioUnitario= $itemlist['precioUnitario'];
                     $item->montoTotal= $itemlist['montoTotal'];
-                    $item->montoDescuento= $itemlist['montoDescuento'];
-                    $item->naturalezaDescuento= $itemlist['naturalezaDescuento']??'No aplican descuentos'; // en Tropical no se manejan descuentos
+                    /*Descuentos*/
+                    $item->descuentos = [];
+
                     $item->subTotal= $itemlist['subTotal'];
-                    $item->idExoneracionImpuesto= $itemlist['idExoneracionImpuesto'] ?? null;
-                    $item->codigoImpuesto= $itemlist['codigoImpuesto'] ?? 1; // impuesto ventas = 1
-                    $item->tarifaImpuesto= $itemlist['tarifaImpuesto'];
-                    $item->montoImpuesto= $itemlist['montoImpuesto'];                    
+                    $item->baseImponible = $itemlist['baseImponible'] ?? null;
+                    /*Impuestos*/
+                    $item->impuestos = [];
+                    if (isset($itemlist["impuestos"])) {
+                        include_once('impuestos.php');
+                        foreach ($itemlist["impuestos"] as $itemImpuesto) {
+                            $imp = new Impuestos();
+                            $imp->idCodigoImpuesto = $itemImpuesto['idCodigoImpuesto'];  // Impuesto al Valor Agregado = 1
+                            $imp->idCodigoTarifa = $itemImpuesto['codigoTarifa']; // Tarifa general 13% = 8
+                            $imp->tarifaImpuesto = $itemImpuesto['tarifa']; //  13%
+                            $imp->montoImpuesto = $itemImpuesto['monto'];
+                            array_push($item->impuestos, $imp);
+                        }
+                    } 
+                    /*Exoneraciones*/
+                    $item->exoneraciones = [];
+                    //
                     $item->montoTotalLinea= $itemlist['montoTotalLinea']; // subtotal + impuesto.
                     array_push ($this->detalleFactura, $item);
                 }
+            }
+            //
+            if (isset($_POST["dataReceptor"])) {
+                $this->datosReceptor = new Receptor();
+                $this->datosReceptor = json_decode($_POST["dataReceptor"], true);
             }
         }
     }

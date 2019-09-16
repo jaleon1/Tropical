@@ -1,26 +1,28 @@
-<?php 
+<?php
 require_once("Conexion.php");
 require_once("InventarioProducto.php");
 
-class ProductosXDistribucion{
+class ProductosXDistribucion
+{
     public $id;
     public $idDistribucion;
     public $idProducto;
-    public $cantidad;    
+    public $cantidad;
     //
-    public static function Read($id){
-        try{
-            $sql="SELECT pd.id, pd.idDistribucion, pd.idProducto, pd.numeroLinea, pd.idTipoCodigo, pd.codigo, pd.cantidad, 
+    public static function Read($id)
+    {
+        try {
+            $sql = "SELECT pd.id, pd.idDistribucion, pd.idProducto, pd.numeroLinea, pd.idTipoCodigo, pd.codigo, pd.cantidad, 
                     pd.idUnidadMedida, pd.unidadMedidaComercial, pd.detalle, pd.precioUnitario, pd.montoTotal, pd.montoDescuento, pd.naturalezaDescuento, 
-                    pd.subTotal, pd.codigoImpuesto, pd.tarifaImpuesto, pd.montoImpuesto, pd.idExoneracionImpuesto, pd.montoTotalLinea,
-                    p.nombre, p.descripcion
+                    pd.subTotal, pd.idCodigoImpuesto, pd.idCodigoTarifa, pd.tarifaImpuesto, pd.montoImpuesto, pd.montoTotalLinea,
+                    p.nombre, p.descripcion, pd.impuestoNeto
                 FROM productosXDistribucion pd inner join producto p on p.id = pd.idProducto
                 WHERE pd.idDistribucion= :idDistribucion";
-            $param= array(':idDistribucion'=>$id);
-            $data = DATA::Ejecutar($sql,$param);            
+            $param = array(':idDistribucion' => $id);
+            $data = DATA::Ejecutar($sql, $param);
             $detalleFactura = [];
             //$i=1;
-            foreach ($data as $key => $value){
+            foreach ($data as $key => $value) {
                 $producto = new ProductosXDistribucion();
                 $producto->id = $value['id'];
                 $producto->idDistribucion = $value['idDistribucion'];
@@ -38,95 +40,106 @@ class ProductosXDistribucion{
                 $producto->montoDescuento = $value['montoDescuento'];
                 $producto->naturalezaDescuento = $value['naturalezaDescuento'];
                 $producto->subTotal = $value['subTotal'];
-                $producto->codigoImpuesto = $value['codigoImpuesto'];
+                $producto->idCodigoImpuesto = $value['idCodigoImpuesto'];
+                $producto->idCodigoTarifa = $value['idCodigoTarifa'];
                 $producto->tarifaImpuesto = $value['tarifaImpuesto'];
                 $producto->montoImpuesto = $value['montoImpuesto'];
-                $producto->idExoneracionImpuesto = $value['idExoneracionImpuesto'];
                 $producto->montoTotalLinea = $value['montoTotalLinea'];
+                $producto->impuestoNeto = $value['impuestoNeto'];
                 //
                 $producto->nombre = $value['nombre'];
                 $producto->descripcion = $value['descripcion'];
-                array_push ($detalleFactura, $producto);
+                array_push($detalleFactura, $producto);
                 //$i++;
             }
             return $detalleFactura;
-        }
-        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+        } catch (Exception $e) {
+            error_log("[ERROR]  (" . $e->getCode() . "): " . $e->getMessage());
             return false;
         }
     }
 
-    public static function Create($obj){
+    public static function Create($obj)
+    {
         try {
             $created = true;
             require_once("Producto.php");
-            foreach ($obj as $item) {             
-                $sql="INSERT INTO productosXDistribucion   (id, idDistribucion, idProducto, numeroLinea, idTipoCodigo, codigo, cantidad, idUnidadMedida, detalle, precioUnitario, montoTotal, montoDescuento, naturalezaDescuento,
-                subTotal, codigoImpuesto, tarifaImpuesto, montoImpuesto, idExoneracionImpuesto, montoTotalLinea)
+            foreach ($obj as $item) {
+                $sql = "INSERT INTO productosXDistribucion   (id, idDistribucion, idProducto, numeroLinea, idTipoCodigo, codigo, cantidad, idUnidadMedida, detalle, precioUnitario, montoTotal, montoDescuento, naturalezaDescuento,
+                subTotal, idCodigoImpuesto, idCodigoTarifa, tarifaImpuesto, montoImpuesto, montoTotalLinea, impuestoNeto)
             VALUES (uuid(), :idDistribucion, :idProducto, :numeroLinea, :idTipoCodigo, :codigo, :cantidad, :idUnidadMedida, :detalle, :precioUnitario, :montoTotal, :montoDescuento, :naturalezaDescuento,                
-                :subTotal, :codigoImpuesto, :tarifaImpuesto, :montoImpuesto, :idExoneracionImpuesto, :montoTotalLinea)";
+                :subTotal, :idCodigoImpuesto, >idCodigoTarifa, :tarifaImpuesto, :montoImpuesto, :montoTotalLinea, :impuestoNeto)";
                 //
-                $param= array(
-                    ':idDistribucion'=>$item->idDistribucion,
-                    ':idProducto'=>$item->idProducto,
-                    ':numeroLinea'=>$item->numeroLinea,
-                    ':idTipoCodigo'=> $item->idTipoCodigo,
-                    ':codigo'=> $item->codigo,                    
-                    ':cantidad'=>$item->cantidad,
-                    ':idUnidadMedida'=>$item->idUnidadMedida,
-                    ':detalle'=>$item->detalle,
-                    ':precioUnitario'=>$item->precioUnitario,
-                    ':montoTotal'=>$item->montoTotal,
-                    ':montoDescuento'=>$item->montoDescuento,
-                    ':naturalezaDescuento'=>$item->naturalezaDescuento,                    
-                    ':subTotal'=>$item->subTotal,                    
-                    ':codigoImpuesto'=>$item->codigoImpuesto,
-                    ':tarifaImpuesto'=>$item->tarifaImpuesto,
-                    ':montoImpuesto'=>$item->montoImpuesto,
-                    ':idExoneracionImpuesto'=>$item->idExoneracionImpuesto,
-                    ':montoTotalLinea'=>$item->montoTotalLinea
+                $param = array(
+                    ':idDistribucion' => $item->idDistribucion,
+                    ':idProducto' => $item->idProducto,
+                    ':numeroLinea' => $item->numeroLinea,
+                    ':idTipoCodigo' => $item->idTipoCodigo,
+                    ':codigo' => $item->codigo,
+                    ':cantidad' => $item->cantidad,
+                    ':idUnidadMedida' => $item->idUnidadMedida,
+                    ':detalle' => $item->detalle,
+                    ':precioUnitario' => $item->precioUnitario,
+                    ':montoTotal' => $item->montoTotal,
+                    ':montoDescuento' => $item->montoDescuento ?? 0,
+                    ':naturalezaDescuento' => $item->naturalezaDescuento,
+                    ':subTotal' => $item->subTotal,
+                    /* IVA */
+                    ':ididCodigoImpuesto' => $item->impuestos[0]->ididCodigoImpuesto ?? null,
+                    ':idCodigoTarifa' => $item->impuestos[0]->idCodigoTarifa ?? null,
+                    ':tarifaImpuesto' => $item->impuestos[0]->tarifaImpuesto ?? null,
+                    ':montoImpuesto' => $item->impuestos[0]->montoImpuesto ?? null,
+                    /* EXONERACION */
+                    // ':tipoDocumento' => $item->exoneraciones[0]->tipoDocumento ?? null,
+                    // ':numeroDocumento' => $item->exoneraciones[0]->numeroDocumento ?? null,
+                    // ':nombreInstitucion' => $item->exoneraciones[0]->nombreInstitucion ?? null,
+                    // ':fechaEmision' => $item->exoneraciones[0]->fechaEmision ?? null,
+                    // ':porcentajeExoneracion' => $item->exoneraciones[0]->porcentaje ?? null,
+                    // ':montoExoneracion' => $item->exoneraciones[0]->monto ?? null,
+                    ':impuestoNeto' => $item->impuestoNeto ?? null,
+                    ':montoTotalLinea' => $item->montoTotalLinea
                 );
-                $data = DATA::Ejecutar($sql,$param,false);                
-                if($data){                    
+                $data = DATA::Ejecutar($sql, $param, false);
+                if ($data) {
                     // Actualiza los saldos y calcula promedio
-                    InventarioProducto::salida($item->idProducto, $item->idDistribucion ,$item->cantidad);
-                }
-                else $created= false;
+                    InventarioProducto::salida($item->idProducto, $item->idDistribucion, $item->cantidad);
+                } else $created = false;
             }
             return $created;
-        }     
-        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+        } catch (Exception $e) {
+            error_log("[ERROR]  (" . $e->getCode() . "): " . $e->getMessage());
             return false;
         }
     }
 
-    public static function Update($obj){
+    public static function Update($obj)
+    {
         try {
             $updated = true;
             // elimina todos los objetos relacionados
-            $updated= self::Delete($obj[0]->cantidad);
+            $updated = self::Delete($obj[0]->cantidad);
             // crea los nuevos objetos
-            $updated= self::Create($obj);
+            $updated = self::Create($obj);
             return $updated;
-        }     
-        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+        } catch (Exception $e) {
+            error_log("[ERROR]  (" . $e->getCode() . "): " . $e->getMessage());
             return false;
         }
     }
 
-    public static function Delete($_idproductotemporal){
-        try {                 
-            $sql='DELETE FROM insumosXOrdenCompra  
+    public static function Delete($_idproductotemporal)
+    {
+        try {
+            $sql = 'DELETE FROM insumosXOrdenCompra  
                 WHERE cantidad= :cantidad';
-            $param= array(':cantidad'=> $_idproductotemporal);
-            $data= DATA::Ejecutar($sql, $param, false);
-            if($data)
+            $param = array(':cantidad' => $_idproductotemporal);
+            $data = DATA::Ejecutar($sql, $param, false);
+            if ($data)
                 return true;
             else false;
-        }
-        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+        } catch (Exception $e) {
+            error_log("[ERROR]  (" . $e->getCode() . "): " . $e->getMessage());
             return false;
         }
     }
 }
-?>
