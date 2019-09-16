@@ -184,6 +184,9 @@ class InventarioFacturas {
                             case "10":
                                 return '<i class="fa fa-minus-circle" aria-hidden="true" style="color:#FF6F00"> Firma Invalida(3)</i>';
                                 break;
+                            case "11":
+                                return '<i class="fa fa-times-circle" aria-hidden="true" style="color:red"> Rechazado</i>';
+                                break;
                             default:
                                 return 'Desconocido';
                                 break;
@@ -212,6 +215,9 @@ class InventarioFacturas {
                                     break;
                                 case "5":
                                     return '<i class="fa fa-cloud-upload" aria-hidden="true">&nbsp Enviar Contingencia</i>'; // Error (Otros) //Envio en Contingencia
+                                    break;
+                                case "11":
+                                    return '<i class="fa fa-forward" aria-hidden="true">&nbsp Reenviada</i>'; // 11 Reenviada
                                     break;
                                 default:
                                     return '<button>Soporte</button>';

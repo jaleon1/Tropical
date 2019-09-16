@@ -1162,14 +1162,15 @@ class Factura
             if ($data) {
                 // actualiza estado de comprobante con NC.
                 $sql = "UPDATE factura
-                    SET idDocumentoNC=:idDocumentoNC, idReferencia=:idReferencia, razon=:razon, idEstadoNC=:idEstadoNC
+                    SET idDocumentoNC=:idDocumentoNC, idEstadoComprobante=:idEstadoComprobante, idReferencia=:idReferencia, razon=:razon, idEstadoNC=:idEstadoNC
                     WHERE id=:id";
                 $param = array(
                     ':id' => $this->id,
                     ':idDocumentoNC' => $this->idDocumentoNC,
                     ':idReferencia' => $this->idReferencia ?? $data[0]["consecutivo"],
                     ':razon' => $this->razon,
-                    ':idEstadoNC' => 1
+                    ':idEstadoNC' => 1,
+                    ':idEstadoComprobante' => 11
                 );
                 $data = DATA::Ejecutar($sql, $param, false);
                 if ($data) {

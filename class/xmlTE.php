@@ -105,8 +105,8 @@ class xmlTE{
                     $xmlString .= '<Impuesto>
                     <Codigo>' . self::getImpuestoCod($imp->idCodigoImpuesto) . '</Codigo> 
                     <CodigoTarifa>'. self::getTarifaCod($imp->idCodigoTarifa) .'</CodigoTarifa>
-                    <Tarifa>' . $imp->tarifa . '</Tarifa>
-                    <Monto>' . $imp->monto . '</Monto>'; 
+                    <Tarifa>' . $imp->tarifaImpuesto . '</Tarifa>
+                    <Monto>' . $imp->montoImpuesto . '</Monto>'; 
                 }                               
             }
             // EXONERACION. NO APLICA PARA TE. UNA EXONERACION SIEMPRE TIENE RECEPTOR.

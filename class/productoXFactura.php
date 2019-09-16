@@ -54,7 +54,6 @@ class ProductoXFactura
 
     public static function reintegrarProductoByIdFactura($idFactura, $razon, $nc=false)
     {
-
         try {
             //Master
             $sql = "SELECT consecutivo, idMedioPago, totalComprobante, fechaCreacion, idBodega 
@@ -142,11 +141,11 @@ class ProductoXFactura
             $objFactura->idDocumentoNC = 3;
             $objFactura->idReferencia = $factura[0]["consecutivo"];
             $objFactura->razon = $razon;
-            if($nc){
-                $objFactura->notaCredito();
+            if($nc == "false"){
+                $objFactura->reenviarFactura();
             }
             else
-                $objFactura->reenviarFactura();
+                $objFactura->notaCredito();
 
         } catch (Exception $e) {
             error_log("[ERROR]  (" . $e->getCode() . "): " . $e->getMessage());
