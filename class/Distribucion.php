@@ -17,6 +17,7 @@ if(isset($_POST["action"])){
     require_once("InventarioProducto.php");
     require_once("mensajeReceptor.php");
     require_once("Bodega.php");
+    require_once("referencia.php");
     // Session
     if (!isset($_SESSION))
         session_start();
@@ -64,7 +65,7 @@ if(isset($_POST["action"])){
             echo json_encode($distribucion->ReadCancelada());
             break;
         case "cancelaDistribucion":
-            $distribucion->cancelaDistribucion($_POST['id'], $_POST['razon']);
+            $distribucion->cancelaDistribucion($_POST['id'], $_POST['razon'], $_POST['notaCredito']);
             break;
         case "cancelaDistribucionInterna":
             $distribucion->cancelaDistribucionInterna($_POST['id'], $_POST['razon']);            
@@ -260,12 +261,13 @@ class Distribucion{
     function reGenerarFactura(){
         try {
             $nueva_factura = $this->Read();
+            $this->informacionReferencia = [];
             // referencia a la fatura cancelada.
             $item = new Referencia();
             $item->tipodoc= '01';  // factura electronica.
             $item->numero= $this->clave;
             $item->razon= 'Sustituye comprobante rechazado.'; 
-            $item->fechaEmision= $this->fechaEmision ?? date_create(); 
+            $item->fechaEmision= date_create(); 
             $item->codigo= '04';  // Referencia a otro documento. Al documento que se rechazó.
             array_push ($this->informacionReferencia, $item);
             //
@@ -275,6 +277,31 @@ class Distribucion{
             foreach ($this->detalleFactura as $key=>$item) {
                 $this->detalleFactura[$key]->idDistribucion = $this->id;
             }
+
+            $central = new Bodega();
+            $central->readCentral();
+            $entidad = new ClienteFE();
+            $entidad->idBodega = $central->id;
+            $emisorCentral = $entidad->read();
+            // emisor Central
+            $this->datosEntidad = $emisorCentral;
+            $this->idEmisor = $central->id;
+            // receptor bodega externa
+            $receptor = new ClienteFE();
+            $receptor->idBodega = $this->idBodega; // idBodega = bodega externa.
+            $this->datosReceptor = $receptor->read();
+
+            $this->terminal = '00001';
+            $this->local = '001';
+            $this->consecutivo = $this->orden;
+            $this->idCondicionVenta= 1;
+            $this->idSituacionComprobante= 2;                
+            $this->plazoCredito= 0;
+            $this->idMedioPago= 1;
+            $this->idCodigoMoneda = 55; // CRC
+            $this->tipoCambio= 1.00; // tipo de cambio dinamico con BCCR  
+
+
             $this->reenvio = true;
             $this->Create();
         }     
@@ -440,7 +467,7 @@ class Distribucion{
             }
     }
     
-    public function cancelaDistribucion($idDistribucion, $razon){
+    public function cancelaDistribucion($idDistribucion, $razon, $nc){
         try {  
             //Master
             $sql="SELECT orden, idEstado, idBodega
@@ -470,8 +497,11 @@ class Distribucion{
                     $data = DATA::Ejecutar($sql,$param,false);
                 }
             }
-            
-            $this->notaCredito();
+            if ($nc=="false"){
+                $this->reGenerarFactura();
+            }
+            else
+                $this->notaCredito();
         }     
         catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
             header('HTTP/1.0 400 Bad error');
@@ -573,7 +603,7 @@ class Distribucion{
 
     function Read(){
         try {
-            $sql='SELECT d.id, d.fechaCreacion, d.idEmisor, d.idReceptor, d.orden, d.clave, d.consecutivoFE, d.fechaEmision, d.idUsuario, d.idBodega, b.nombre as bodega, 
+            $sql='SELECT d.id, d.fechaCreacion, d.idEmisor, d.idReceptor, d.idCondicionVenta, d.orden, d.clave, d.consecutivoFE, d.fechaEmision, d.idUsuario, d.idBodega, b.nombre as bodega, 
                 d.porcentajeDescuento, d.porcentajeIva,  d.totalImpuesto, d.totalComprobante, d.idSituacionComprobante, d.idDocumento, d.idEstadoComprobante,
                 totalServGravados, totalServExentos, totalMercanciasGravadas, totalMercanciasExentas, totalGravado, totalExento,
                 totalVenta, totalDescuentos, totalVentaneta, d.claveNC, d.idReferencia, d.idEstadoNC
@@ -593,6 +623,7 @@ class Distribucion{
                 $this->bodega = $data[0]['bodega'];
                 $this->idReceptor = $data[0]['idReceptor'] ?? null;
                 $this->idEmisor = $data[0]['idEmisor'] ?? null;
+                $this->idCondicionVenta = $data[0]['idCondicionVenta'] ?? 1;                
                 $this->porcentajeDescuento = $data[0]['porcentajeDescuento'];
                 $this->porcentajeIva = $data[0]['porcentajeIva'];
                 $this->totalComprobante = $data[0]['totalComprobante'];
@@ -660,15 +691,16 @@ class Distribucion{
 
     function Create(){
         try {
-            $sql="INSERT INTO distribucion  (id, idBodega, idUsuario, idReceptor, idEmisor, porcentajeDescuento, porcentajeIva, totalImpuesto, totalComprobante, idDocumento, idSituacionComprobante, idEstadoComprobante,
+            $sql="INSERT INTO distribucion  (id, idBodega, idUsuario, idReceptor, idEmisor, idCondicionVenta,porcentajeDescuento, porcentajeIva, totalImpuesto, totalComprobante, idDocumento, idSituacionComprobante, idEstadoComprobante,
                     totalServGravados, totalServExentos, totalMercanciasGravadas, totalMercanciasExentas, totalGravado, totalExento, totalVenta, totalDescuentos, totalVentaneta) 
-                VALUES (:id, :idBodega, :idUsuario, :idReceptor, :idEmisor, :porcentajeDescuento, :porcentajeIva, :totalImpuesto, :totalComprobante , :idDocumento, :idSituacionComprobante, :idEstadoComprobante,
+                VALUES (:id, :idBodega, :idUsuario, :idReceptor, :idEmisor, :idCondicionVenta, :porcentajeDescuento, :porcentajeIva, :totalImpuesto, :totalComprobante , :idDocumento, :idSituacionComprobante, :idEstadoComprobante,
                     :totalServGravados, :totalServExentos, :totalMercanciasGravadas, :totalMercanciasExentas, :totalGravado, :totalExento, :totalVenta, :totalDescuentos, :totalVentaneta);";
             $param= array(':id'=>$this->id ,
                 ':idBodega'=>$this->idBodega,
                 ':idUsuario'=>$_SESSION['userSession']->id,
                 ':idReceptor'=>$this->idBodega,
-                ':idEmisor'=>$this->datosEntidad->idBodega,     
+                ':idEmisor'=>$this->datosEntidad->idBodega,  
+                ':idCondicionVenta'=>1,     
                 ':porcentajeDescuento'=>$this->porcentajeDescuento,
                 ':porcentajeIva'=>$this->porcentajeIva,
                 ':totalImpuesto'=>$this->totalImpuesto,

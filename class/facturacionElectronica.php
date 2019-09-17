@@ -50,21 +50,62 @@ class FacturacionElectronica
     static $arrayResp;
     static $grant_type = 'password'; // 'refresh_token';
 
-    public static function iniciarNC($t)
-    {
-        try {
+    public static function iniciarNC($t){
+        try{
             //date_default_timezone_set('America/Costa_Rica');
-            self::$transaccion = $t;
-            self::$transaccion->fechaEmision = date_create();
-            // fe o nc
+            self::$transaccion= $t;
+            self::$transaccion->fechaEmisionNC= date_create();
             self::$transaccion->idDocumento = 3; // NC
-
-        } catch (Exception $e) {
-            if (!self::$distr)
-                Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$transaccion->fechaEmision->format("c"));
-            else Distribucion::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$transaccion->fechaEmision->format("c"));
-            historico::create(self::$transaccion->id, self::$transaccion->idEmisor, self::$transaccion->idDocumento, 5, 'ERROR_INICIAL: ' . $e->getMessage());
-            error_log("[ERROR]  (" . $e->getCode() . "): " . $e->getMessage());
+            if(self::getClave(self::$transaccion->idDocumento, self::$transaccion->datosEntidad->idTipoIdentificacion, self::$transaccion->datosEntidad->identificacion,
+                self::$transaccion->idSituacionComprobante,  '506',  self::$transaccion->consecutivo,  self::$transaccion->datosEntidad->codigoSeguridad, 
+                self::$transaccion->local,  self::$transaccion->terminal)){
+                self::$transaccion->claveNC = self::$arrayResp['clave'];
+                self::$transaccion->consecutivoFE = self::$arrayResp['consecutivoFE'];
+                //
+                if (!Factura::setClave(self::$transaccion->idDocumento, self::$transaccion->id, self::$transaccion->claveNC, self::$transaccion->consecutivoFE))
+                    return self::$arrayResp = array(
+                        "error" => 'error al crear clave',
+                        "mensaje" => 'Ha ocurrido un error al almacenar la clave NC ('.self::$clave.')'
+                    );
+            }else throw new Exception(self::$arrayResp['error'] .'(' .self::$arrayResp['mensaje']. ')', ERROR_CLAVE_NO_VALID);
+            //crear xml                
+            if(!empty(self::$transaccion->claveNC)){
+                //crear xml
+                switch(self::$transaccion->idDocumento){
+                    case 2: //self::$arrayResp = self::APICrearNDXML();
+                        break;
+                    case 3: 
+                        include_once('xmlNC.php');
+                        self::$arrayResp = xmlNC::create(self::$transaccion);
+                        break;
+                }
+                //
+                if(self::$arrayResp){
+                    // valida respuesta.
+                    if(isset(self::$arrayResp['error'])){
+                        throw new Exception(self::$arrayResp['error'] .'(' .self::$arrayResp['mensaje']. ')', ERROR_FEXML_NO_VALID);
+                    }
+                    // Cifrar
+                    if(self::cifrarXml()){
+                        // token.
+                        if(self::checkToken()){
+                            // envia documento.
+                            if(self::send(self::$transaccion->claveNC, self::$transaccion->fechaEmisionNC))
+                                return true;
+                        }
+                    }
+                } else throw new Exception(self::$arrayResp['error'] .'(' .self::$arrayResp['mensaje']. ')', ERROR_FEXML_NO_VALID);
+            } else throw new Exception(self::$arrayResp['error'] .'(' .self::$arrayResp['mensaje']. ')', ERROR_CLAVE_NO_VALID);            
+        }
+        catch(Exception $e) {
+            Factura::updateEstado(self::$transaccion->idDocumento, self::$transaccion->id, 5, self::$transaccion->fechaEmisionNC->format("c"));
+            historico::create(self::$transaccion->id, self::$transaccion->idEntidad, self::$transaccion->idDocumento, 5, 'ERROR_INICIAL: '. $e->getMessage());
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            self::$arrayResp = array(
+                "error" => $e->getCode(),
+                "mensaje" => $e->getMessage()
+            );
+            return self::$arrayResp;
         }
     }
 
