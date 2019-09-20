@@ -193,18 +193,18 @@
             where idEstadoComprobante = 2
             order by idReceptor';
         $data= DATA::Ejecutar($sql);
+        error_log("[INFO] Total de MR a Consultar: ". count($data));
         foreach ($data as $key => $transaccion){
-            error_log("[INFO] Iniciando Consulta MR");
-            $factura = new mensajeReceptor();
-            $factura->id = $transaccion['id'];
-            $factura = $factura->Read();
-            $entidad = new ClienteFE();
-            $entidad->idBodega = $factura->idReceptor;
-            $factura->datosReceptor = $entidad->read();
-            $factura->clave = $factura->clave.'-'.$factura->consecutivoFE;
-            FacturacionElectronica::consulta($factura);
-            error_log("[INFO] Finaliza Consulta MR");
-        }
+            error_log("[INFO] Consulta MR. Entidad (". $transaccion['entidad'] .") Transaccion (".$transaccion['consecutivo'].")");
+            $mr = new mensajeReceptor();
+            $mr->id = $transaccion['id'];
+            $mr = $mr->Read();
+            $datosReceptor = new ClienteFE();
+            $datosReceptor->idBodega = $mr->idReceptor;
+            $mr->datosReceptor = $datosReceptor->read();
+            facturacionElectronica::consulta($mr);
+        }        
+        error_log("[INFO] Finaliza Consulta MR");
         // ******************************************************************************************* /
         // ******************************************************************************************* /
         // ******************************************************************************************* /

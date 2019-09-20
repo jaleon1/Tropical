@@ -1042,9 +1042,6 @@ class Factura
             from factura f inner join bodega b on b.id = f.idBodega
             WHERE  f.idEstadoComprobante = 5 and (f.idDocumento = 1 or  f.idDocumento = 4 or  f.idDocumento = 8) 
             ORDER BY consecutivo asc";
-        //idBodega=:idBodega and
-        // $param= array(':idBodega'=>'0cf4f234-9479-4dcb-a8c0-faa4efe82db0');
-        // $param= array(':idBodega'=>'f787b579-8306-4d68-a7ba-9ae328975270'); // carlos.echc11.
         $data = DATA::Ejecutar($sql);
         error_log("[INFO] Total de transacciones en Contingencia: " . count($data));
         foreach ($data as $key => $transaccion) {

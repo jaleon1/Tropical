@@ -67,6 +67,7 @@ class mensajeReceptor{
     public $xml;
     public $respuesta = array();
     public $entidad = null;
+    public $fechaEmisionDocumento;
 
     function __construct(){
         // identificador único
@@ -119,6 +120,7 @@ class mensajeReceptor{
                             // receptor del comprobante = entidad registrada en el sistema.                            
                             $this->identificacionReceptor = (string)$this->xml->Receptor->Identificacion->Numero ?? null;
                             $this->idTipoIdentificacionReceptor = (string)$this->xml->Receptor->Identificacion->Tipo;
+                            $this->fechaEmisionDocumento = (string)$this->xml->FechaEmision;
                             
                         } else{
                             // es un xml de acuse.
@@ -131,6 +133,7 @@ class mensajeReceptor{
                             // receptor del comprobante = entidad registrada en el sistema.
                             $this->identificacionReceptor = (string)$this->xml->NumeroCedulaReceptor ?? null;
                             $this->idTipoIdentificacionReceptor = (string)$this->xml->TipoIdentificacionReceptor;
+                            $this->fechaEmisionDocumento = date_create()->format("c");
                         }
                         // guarda datos en bd. y envía MR.
                         $this->id= UUID::v4();
@@ -244,7 +247,7 @@ class mensajeReceptor{
 
     function Read(){
         try {
-            $sql='SELECT id, idDocumento, fechaCreacion, fechaEmision, consecutivo, clave, consecutivoFE, mensaje, detalle, totalImpuesto, totalComprobante, idEmisor, idTipoIdentificacionEmisor, identificacionEmisor, idReceptor, idTipoIdentificacionReceptor, identificacionReceptor, idEstadoComprobante, idSituacionComprobante
+            $sql='SELECT id, idDocumento, fechaCreacion, fechaEmision, fechaEmisionDocumento,consecutivo, clave, consecutivoFE, mensaje, detalle, totalImpuesto, totalComprobante, idEmisor, idTipoIdentificacionEmisor, identificacionEmisor, idReceptor, idTipoIdentificacionReceptor, identificacionReceptor, idEstadoComprobante, idSituacionComprobante
                 FROM mensajeReceptor
                 WHERE id=:id';
             $param= array(':id'=>$this->id);
@@ -253,6 +256,7 @@ class mensajeReceptor{
                 $this->idDocumento = $value['idDocumento'];
                 $this->fechaCreacion = $value['fechaCreacion'];
                 $this->fechaEmision = $value['fechaEmision'];
+                $this->fechaEmisionDocumento = $value['fechaEmisionDocumento'];
                 $this->consecutivo = $value['consecutivo'];
                 $this->clave = $value['clave'] ?? null;
                 $this->consecutivoFE = $value['consecutivoFE'] ?? null;
@@ -364,6 +368,7 @@ class mensajeReceptor{
         try {
             if(gettype($this->xml)=="string")
                 $this->xml = new SimpleXMLElement($this->xml);
+
             // id Documento.
             switch($this->mensaje){
                 case 1:
@@ -376,9 +381,10 @@ class mensajeReceptor{
                     $this->idDocumento = 7; // RCE.
                     break;
             }
-            $sql="INSERT INTO mensajeReceptor  (id, idDocumento, clave, consecutivoFE, mensaje, detalle, totalImpuesto, totalComprobante, idEmisor, idTipoIdentificacionEmisor, identificacionEmisor, idReceptor, idTipoIdentificacionReceptor, identificacionReceptor, xml)
-                VALUES  (:id, :idDocumento, :clave, :consecutivoFE, :mensaje, :detalle, :totalImpuesto, :totalComprobante, :idEmisor, :idTipoIdentificacionEmisor,:identificacionEmisor, :idReceptor, :idTipoIdentificacionReceptor, :identificacionReceptor, :xml)";
+            $sql="INSERT INTO mensajeReceptor  (id, fechaEmisionDocumento,idDocumento, clave, consecutivoFE, mensaje, detalle, totalImpuesto, totalComprobante, idEmisor, idTipoIdentificacionEmisor, identificacionEmisor, idReceptor, idTipoIdentificacionReceptor, identificacionReceptor, xml)
+                VALUES  (:id, :fechaEmisionDocumento, :idDocumento, :clave, :consecutivoFE, :mensaje, :detalle, :totalImpuesto, :totalComprobante, :idEmisor, :idTipoIdentificacionEmisor,:identificacionEmisor, :idReceptor, :idTipoIdentificacionReceptor, :identificacionReceptor, :xml)";
             $param= array(':id'=>$this->id,
+                ':fechaEmisionDocumento'=> $this->fechaEmisionDocumento,
                 ':idDocumento'=>$this->idDocumento,
                 ':clave'=>$this->clave,
                 ':consecutivoFE'=>$this->consecutivoFE,
@@ -410,12 +416,19 @@ class mensajeReceptor{
             $this->Read();
             $this->idSituacionComprobante = 1; // normal.
             $this->terminal = '00001'; // normal.
-            $this->local = '001'; // normal.            
+            $this->local = '001'; // normal.  
+            $datosReceptor = new ClienteFE();
+            $datosReceptor->id = $this->idReceptor;
+            $this->datosReceptor = $datosReceptor->read(); // receptor es la entidad que compra.          
             //
             $this->datosEntidad =   new ClienteFE();         // vendedor
             $this->datosEntidad->idTipoIdentificacion = $this->idTipoIdentificacionEmisor;
             $this->datosEntidad->identificacion = $this->identificacionEmisor;
             $this->datosEntidad->codigoSeguridad = $this->datosReceptor->codigoSeguridad;
+            $this->datosEntidad->pinp12 = $this->datosReceptor->pinp12;
+            $this->datosEntidad->id = $this->datosReceptor->id;
+            $this->datosEntidad->cpath = $this->datosReceptor->cpath;
+            $this->datosEntidad->nombre = $this->datosReceptor->nombre;
             //
             $this->idBodega = $this->entidad->id;
             return FacturacionElectronica::iniciar($this);
