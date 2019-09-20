@@ -452,7 +452,8 @@
                         url: "class/Distribucion.php",
                         data: {
                             action: "cancelaDistribucion",
-                            id: data['id'],
+                            id: data['id'],                            
+                            notaCredito: true,
                             razon: result.value,
                         }
                     })

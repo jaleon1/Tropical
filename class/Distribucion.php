@@ -345,7 +345,7 @@ class Distribucion{
                     $item->tipodoc= '01'; // factura electronica
                     $item->numero= $this->clave;  // clave del documento en referencia.
                     $item->razon=  $this->razon ?? 'Aplica Nota de credito';  // nc por rechazo? | cual es la razon de hacer la referencia.
-                    $item->fechaEmision= $this->fechaEmision ?? date_create()->format('c'); // fechaCreacion de la emisión del documento al que hace referencia.
+                    $item->fechaEmision= date_create(); // fechaCreacion de la emisión del documento al que hace referencia.
                     $item->codigo= '01';  // Anula Documento de Referencia. ;
                     array_push ($this->informacionReferencia, $item);
                     // datos entidad bodega central.
@@ -369,13 +369,15 @@ class Distribucion{
                     $this->idMedioPago= 1;
                     $this->idCodigoMoneda = 55; // CRC
                     $this->tipoCambio= 1.00; // tipo de cambio dinamico con BCCR  
+
+                    $this->fechaEmision= date_create();
                     // envía la factura
                     FacturacionElectronica::$distr = true;
                     FacturacionElectronica::iniciarNC($this);
 
-                    if ($this->facturaRelacionada == true){
-                        $this->reGenerarFactura();
-                    }
+                    // if ($this->facturaRelacionada == true){
+                        // $this->reGenerarFactura();
+                    // }
                     return true;
                 }
                 else throw new Exception('Error al guardar.', 02);
