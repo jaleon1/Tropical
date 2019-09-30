@@ -57,7 +57,7 @@ class ProductoXFactura
         try {
             //Master
             $sql = "SELECT consecutivo, idMedioPago, totalComprobante, fechaCreacion, idBodega 
-                FROM tropical.factura
+                FROM factura
                 WHERE id =:id;";
             $param = array(':id' => $idFactura);
             $factura = DATA::Ejecutar($sql, $param);

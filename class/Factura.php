@@ -1124,7 +1124,7 @@ class Factura
                     $item->tipodoc = '01'; // factura electronica
                     $item->numero = $this->clave;  // clave del documento en referencia.
                     $item->razon = 'Aplica Nota de credito';  // nc por rechazo? | cual es la razon de hacer la referencia.
-                    $item->fechaEmision = $this->fechaEmision ?? date_create()->format('c'); // fecha de la emisión del documento al que hace referencia.
+                    $item->fechaEmision = date_create($this->fechaEmision) ?? date_create()->format('c'); // fecha de la emisión del documento al que hace referencia.
                     $item->codigo = '01';  // Anula Documento de Referencia. ;
                     array_push($this->informacionReferencia, $item);
                     // envía la factura
