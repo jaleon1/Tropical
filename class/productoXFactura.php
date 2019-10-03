@@ -217,7 +217,7 @@ class ProductoXFactura
                 $producto->impuestoNeto = $value['impuestoNeto'] ?? null;
                 //
                 $producto->montoTotalLinea = $value['montoTotalLinea'];
-                //$producto->claveFactura = $value['clave'];
+                $producto->claveFactura = $value['clave'];
                 //
                 array_push($lista, $producto);
             }
