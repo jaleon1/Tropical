@@ -154,7 +154,8 @@ class Factura
             //Necesarias para la factura (Segun M Hacienda)
             require_once("UUID.php");
             // a. Datos de encabezado
-            $this->id = $obj["id"] ?? UUID::v4();
+            $this->id = $obj["id"] ?? UUID::v4();            
+            $this->idCodigoActividad= $obj["idCodigoActividad"] ?? "154303";
             $this->fechaCreacion = $obj["fechaCreacion"] ?? null;  //  fecha de creacion en base de datos             
             $this->idBodega = $obj["idBodega"] ?? $_SESSION["userSession"]->idBodega;
             $this->consecutivo = $obj["consecutivo"] ?? null;
@@ -568,7 +569,7 @@ class Factura
     function Read()
     {
         try {
-            $sql = 'SELECT idBodega, fechaCreacion, consecutivo, clave, consecutivoFE, local, terminal, idCondicionVenta, idSituacionComprobante, idEstadoComprobante, plazoCredito, 
+            $sql = 'SELECT idBodega, fechaCreacion, consecutivo, clave, idCodigoActividad, consecutivoFE, local, terminal, idCondicionVenta, idSituacionComprobante, idEstadoComprobante, plazoCredito, 
                 idMedioPago, idCodigoMoneda, tipoCambio, totalServGravados, totalServExentos, totalMercanciasGravadas, totalMercanciasExentas, totalGravado, totalExento, fechaEmision, idDocumento, 
                 totalVenta, totalDescuentos, totalVentaneta, totalImpuesto, totalComprobante, idReceptor, idEmisor, idUsuario, idDocumentoNC, claveNC, fechaEmisionNC,
                 idReferencia, razon, idEstadoNC
@@ -582,6 +583,7 @@ class Factura
                 $this->fechaCreacion = $value['fechaCreacion'];
                 $this->consecutivo = $value['consecutivo'];
                 $this->clave = $value['clave'] ?? null;
+                $this->idCodigoActividad = $data[0]['idCodigoActividad'] ?? null;
                 $this->consecutivoFE = $value['consecutivoFE'] ?? null;
                 $this->local = $value['local'];
                 $this->terminal = $value['terminal'];
@@ -693,10 +695,10 @@ class Factura
     function Create()
     {
         try {
-            $sql = "INSERT INTO factura   (id, idBodega, local, terminal, idCondicionVenta, idSituacionComprobante, idEstadoComprobante, plazoCredito, 
+            $sql = "INSERT INTO factura   (id, idBodega, local, terminal, idCodigoActividad, idCondicionVenta, idSituacionComprobante, idEstadoComprobante, plazoCredito, 
                 idMedioPago, idCodigoMoneda, tipoCambio, totalServGravados, totalServExentos, totalMercanciasGravadas, totalMercanciasExentas, totalGravado, totalExento, idDocumento, 
                 totalVenta, totalDescuentos, totalVentaneta, totalImpuesto, totalComprobante, idReceptor, idEmisor, idUsuario, montoEfectivo, idReferencia, idDocumentoNC, razon)
-            VALUES  (:uuid, :idBodega, :local, :terminal, :idCondicionVenta, :idSituacionComprobante, :idEstadoComprobante, :plazoCredito,
+            VALUES  (:uuid, :idBodega, :local, :terminal, :idCodigoActividad,:idCondicionVenta, :idSituacionComprobante, :idEstadoComprobante, :plazoCredito,
                 :idMedioPago, :idCodigoMoneda, :tipoCambio, :totalServGravados, :totalServExentos, :totalMercanciasGravadas, :totalMercanciasExentas, :totalGravado, :totalExento, :idDocumento, 
                 :totalVenta, :totalDescuentos, :totalVentaneta, :totalImpuesto, :totalComprobante, :idReceptor, :idEmisor, :idUsuario, :montoEfectivo, :idReferencia, :idDocumentoNC, :razon)";
             $param = array(
@@ -704,6 +706,7 @@ class Factura
                 ':idBodega' => $this->idBodega,
                 ':local' => $this->local,
                 ':terminal' => $this->terminal,
+                ':idCodigoActividad'=>$this->idCodigoActividad,
                 ':idCondicionVenta' => $this->idCondicionVenta,
                 ':idSituacionComprobante' => $this->idSituacionComprobante,
                 ':idEstadoComprobante' => $this->idEstadoComprobante,
@@ -1126,7 +1129,7 @@ class Factura
                     $item->tipodoc = '01'; // factura electronica
                     $item->numero = $this->clave;  // clave del documento en referencia.
                     $item->razon = 'Aplica Nota de credito';  // nc por rechazo? | cual es la razon de hacer la referencia.
-                    $item->fechaEmision = $this->fechaEmision ?? date_create()->format('c'); // fecha de la emisión del documento al que hace referencia.
+                    $item->fechaEmision = date_create($this->fechaEmision) ?? date_create()->format('c'); // fecha de la emisión del documento al que hace referencia.
                     $item->codigo = '01';  // Anula Documento de Referencia. ;
                     array_push($this->informacionReferencia, $item);
                     // envía la factura

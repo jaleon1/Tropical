@@ -57,7 +57,7 @@ class ProductoXFactura
         try {
             //Master
             $sql = "SELECT consecutivo, idMedioPago, totalComprobante, fechaCreacion, idBodega 
-                FROM tropical.factura
+                FROM factura
                 WHERE id =:id;";
             $param = array(':id' => $idFactura);
             $factura = DATA::Ejecutar($sql, $param);
@@ -217,7 +217,7 @@ class ProductoXFactura
                 $producto->impuestoNeto = $value['impuestoNeto'] ?? null;
                 //
                 $producto->montoTotalLinea = $value['montoTotalLinea'];
-                //$producto->claveFactura = $value['clave'];
+                $producto->claveFactura = $value['clave'];
                 //
                 array_push($lista, $producto);
             }

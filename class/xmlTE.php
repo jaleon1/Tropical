@@ -197,28 +197,28 @@ class xmlTE{
         //
         if(empty($transaccion->clave)){
             self::$arrayResp = array(
-                "error" => 'Error al construir XML de FE',
+                "error" => 'Error al construir XML de TE',
                 "mensaje" => 'El valor (clave) no debe ser nulo o vacio'
             );
             return false;
         }
         if(empty($transaccion->datosEntidad->idCodigoActividad)){
             self::$arrayResp = array(
-                "error" => 'Error al construir XML de FE',
+                "error" => 'Error al construir XML de TE',
                 "mensaje" => 'El valor (idCodigoActividad) no debe ser nulo o vacio'
             );
             return false;
         }
         if(empty($transaccion->consecutivoFE)){
             self::$arrayResp = array(
-                "error" => 'Error al construir XML de FE',
+                "error" => 'Error al construir XML de TE',
                 "mensaje" => 'El consecutivoFE no debe ser nulo o vacia'
             );
             return false;
         }
         if(empty($transaccion->fechaEmision)){
             self::$arrayResp = array(
-                "error" => 'Error al construir XML de FE',
+                "error" => 'Error al construir XML de TE',
                 "mensaje" => 'El valor (fechaEmision) no debe ser nulo o vacio'
             );
             return false;
@@ -226,21 +226,21 @@ class xmlTE{
         // EMISOR
         if(empty($transaccion->datosEntidad->nombre)){
             self::$arrayResp = array(
-                "error" => 'Error al construir XML de FE',
+                "error" => 'Error al construir XML de TE',
                 "mensaje" => 'El valor (datosEntidad->nombre) no debe ser nulo o vacio'
             );
             return false;
         }
         if(empty($transaccion->datosEntidad->idTipoIdentificacion)){
             self::$arrayResp = array(
-                "error" => 'Error al construir XML de FE',
+                "error" => 'Error al construir XML de TE',
                 "mensaje" => 'El valor (datosEntidad->idTipoIdentificacion) no debe ser nulo o vacio'
             );
             return false;
         }
         if(empty($transaccion->datosEntidad->identificacion)){
             self::$arrayResp = array(
-                "error" => 'Error al construir XML de FE',
+                "error" => 'Error al construir XML de TE',
                 "mensaje" => 'El valor (datosEntidad->identificacion) no debe ser nulo o vacio'
             );
             return false;
@@ -248,28 +248,28 @@ class xmlTE{
         // EMISOR:UBICACION
         if(empty($transaccion->datosEntidad->idProvincia)){
             self::$arrayResp = array(
-                "error" => 'Error al construir XML de FE',
+                "error" => 'Error al construir XML de TE',
                 "mensaje" => 'El valor (datosEntidad->idProvincia) no debe ser nulo o vacio'
             );
             return false;
         }
         if(empty($transaccion->datosEntidad->idCanton)){
             self::$arrayResp = array(
-                "error" => 'Error al construir XML de FE',
+                "error" => 'Error al construir XML de TE',
                 "mensaje" => 'El valor (datosEntidad->idCanton) no debe ser nulo o vacio'
             );
             return false;
         }
         if(empty($transaccion->datosEntidad->idDistrito)){
             self::$arrayResp = array(
-                "error" => 'Error al construir XML de FE',
+                "error" => 'Error al construir XML de TE',
                 "mensaje" => 'El valor (datosEntidad->idDistrito) no debe ser nulo o vacio'
             );
             return false;
         }
         if(empty($transaccion->datosEntidad->otrasSenas)){
             self::$arrayResp = array(
-                "error" => 'Error al construir XML de FE',
+                "error" => 'Error al construir XML de TE',
                 "mensaje" => 'El valor (datosEntidad->otrasSenas) no debe ser nulo o vacio'
             );
             return false;
@@ -277,7 +277,7 @@ class xmlTE{
         //
         if(empty($transaccion->datosEntidad->correoElectronico)){
             self::$arrayResp = array(
-                "error" => 'Error al construir XML de FE',
+                "error" => 'Error al construir XML de TE',
                 "mensaje" => 'El valor (datosEntidad->correoElectronico) no debe ser nulo o vacio'
             );
             return false;
@@ -285,14 +285,14 @@ class xmlTE{
         // DETALLES DE LA VENTA.
         if(empty($transaccion->idCondicionVenta)){
             self::$arrayResp = array(
-                "error" => 'Error al construir XML de FE',
+                "error" => 'Error al construir XML de TE',
                 "mensaje" => 'El valor (idCondicionVenta) no debe ser nulo o vacio'
             );
             return false;
         }
         if(empty($transaccion->idMedioPago)){
             self::$arrayResp = array(
-                "error" => 'Error al construir XML de FE',
+                "error" => 'Error al construir XML de TE',
                 "mensaje" => 'El valor (idMedioPago) no debe ser nulo o vacio'
             );
             return false;
@@ -301,35 +301,35 @@ class xmlTE{
         foreach($transaccion->detalleFactura as $d){
             if(empty($d->cantidad)){
                 self::$arrayResp = array(
-                    "error" => 'Error al construir XML de FE',
+                    "error" => 'Error al construir XML de TE',
                     "mensaje" => 'El valor (cantidad) no debe ser nulo o vacio'
                 );
                 return false;
             }
             if(empty($d->idUnidadMedida)){
                 self::$arrayResp = array(
-                    "error" => 'Error al construir XML de FE',
+                    "error" => 'Error al construir XML de TE',
                     "mensaje" => 'El valor (idUnidadMedida) no debe ser nulo o vacio'
                 );
                 return false;
             }
             if(empty($d->precioUnitario)){
                 self::$arrayResp = array(
-                    "error" => 'Error al construir XML de FE',
+                    "error" => 'Error al construir XML de TE',
                     "mensaje" => 'El valor (precioUnitario) no debe ser nulo o vacio'
                 );
                 return false;
             }
             if(empty($d->montoTotal)){
                 self::$arrayResp = array(
-                    "error" => 'Error al construir XML de FE',
+                    "error" => 'Error al construir XML de TE',
                     "mensaje" => 'El valor (montoTotal) no debe ser nulo o vacio'
                 );
                 return false;
             }
             if(empty($d->subTotal)){
                 self::$arrayResp = array(
-                    "error" => 'Error al construir XML de FE',
+                    "error" => 'Error al construir XML de TE',
                     "mensaje" => 'El valor (subTotal) no debe ser nulo o vacio'
                 );
                 return false;
@@ -339,7 +339,7 @@ class xmlTE{
                     
                     if(empty($imp->idCodigoImpuesto)){
                         self::$arrayResp = array(
-                            "error" => 'Error al construir XML de FE',
+                            "error" => 'Error al construir XML de TE',
                             "mensaje" => 'El valor (idCodigoImpuesto) no debe ser nulo o vacio'
                         );
                         return false;
@@ -347,7 +347,7 @@ class xmlTE{
 
                     if(empty($imp->idCodigoTarifa)){
                         self::$arrayResp = array(
-                            "error" => 'Error al construir XML de FE',
+                            "error" => 'Error al construir XML de TE',
                             "mensaje" => 'El valor (codigoTarifa) no debe ser nulo o vacio'
                         );
                         return false;
@@ -355,7 +355,7 @@ class xmlTE{
 
                     if(empty($imp->tarifaImpuesto)){
                         self::$arrayResp = array(
-                            "error" => 'Error al construir XML de FE',
+                            "error" => 'Error al construir XML de TE',
                             "mensaje" => 'El valor (tarifa) no debe ser nulo o vacio'
                         );
                         return false;
@@ -363,7 +363,7 @@ class xmlTE{
 
                     if(empty($imp->montoImpuesto)){
                         self::$arrayResp = array(
-                            "error" => 'Error al construir XML de FE',
+                            "error" => 'Error al construir XML de TE',
                             "mensaje" => 'El valor (monto) no debe ser nulo o vacio'
                         );
                         return false;
@@ -372,14 +372,14 @@ class xmlTE{
 
             }else{
                 self::$arrayResp = array(
-                    "error" => 'Error al construir XML de FE',
+                    "error" => 'Error al construir XML de TE',
                     "mensaje" => 'El valor (impuestos) no debe ser nulo o vacio'
                 );
                 return false;
             }
             if(empty($d->montoTotalLinea)){
                 self::$arrayResp = array(
-                    "error" => 'Error al construir XML de FE',
+                    "error" => 'Error al construir XML de TE',
                     "mensaje" => 'El valor (montoTotalLinea) no debe ser nulo o vacio'
                 );
                 return false;
@@ -388,35 +388,35 @@ class xmlTE{
         // RESUMEN
         if(empty($transaccion->totalVenta)){
             self::$arrayResp = array(
-                "error" => 'Error al construir XML de FE',
+                "error" => 'Error al construir XML de TE',
                 "mensaje" => 'El valor (totalVenta) no debe ser nulo o vacio'
             );
             return false;
         }
         if(empty($transaccion->totalDescuentos)){
             self::$arrayResp = array(
-                "error" => 'Error al construir XML de FE',
+                "error" => 'Error al construir XML de TE',
                 "mensaje" => 'El valor (totalDescuentos) no debe ser nulo o vacio'
             );
             return false;
         }
         if(empty($transaccion->totalVentaneta)){
             self::$arrayResp = array(
-                "error" => 'Error al construir XML de FE',
+                "error" => 'Error al construir XML de TE',
                 "mensaje" => 'El valor (totalVentaneta) no debe ser nulo o vacio'
             );
             return false;
         }
         if(empty($transaccion->totalImpuesto)){
             self::$arrayResp = array(
-                "error" => 'Error al construir XML de FE',
+                "error" => 'Error al construir XML de TE',
                 "mensaje" => 'El valor (totalImpuesto) no debe ser nulo o vacio'
             );
             return false;
         }
         if(empty($transaccion->totalComprobante)){
             self::$arrayResp = array(
-                "error" => 'Error al construir XML de FE',
+                "error" => 'Error al construir XML de TE',
                 "mensaje" => 'El valor (totalComprobante) no debe ser nulo o vacio'
             );
             return false;
