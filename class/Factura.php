@@ -661,7 +661,9 @@ class Factura
                 (SELECT count(pxf.codigo) FROM tropical.productosXFactura pxf WHERE pxf.codigo="08oz" AND pxf.idFactura=f.id) AS _08oz 
             FROM tropical.factura f 
             -- WHERE f.idEstadoNC<3 AND f.idEstadoNC>3 OR f.idEstadoNC IS NULL  
-            WHERE (f.idEstadoNC!=3 OR f.idEstadoNC IS NULL)  and f.fechaCreacion between :fechaInicial and :fechaFinal
+            WHERE (f.idEstadoNC!=3 OR f.idEstadoNC IS NULL)  
+            AND f.idEstadoComprobante = 3             
+            and f.fechaCreacion between :fechaInicial and :fechaFinal
             ORDER BY f.consecutivo desc';
             $param = array(':fechaInicial' => $this->fechaInicial, ':fechaFinal' => $this->fechaFinal);
             $data = DATA::Ejecutar($sql, $param);
