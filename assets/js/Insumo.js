@@ -155,6 +155,23 @@ class Insumo {
             });
     };
 
+    ReadCierreInventario(){
+        var referenciaCircular = insumo.tablainsumo;
+        insumo.tablainsumo = [];
+        $.ajax({
+            type: "POST",
+            url: "class/Insumo.php",
+            data: {
+                action: "ReadCierreInventario",
+                obj: JSON.stringify(insumo)
+            }
+        })
+            .done(function (e) {
+                insumo.tablainsumo = referenciaCircular;        
+                insumo.ShowAllInventario(e); 
+            });
+    };
+
     // Methods    
     Reload(e) {
         if (this.id == null)

@@ -43,6 +43,9 @@ if(isset($_POST["action"])){
         case "ReadAllbyRange":
             echo json_encode($insumo->ReadAllbyRange());
             break;
+        case "ReadCierreInventario":
+                echo json_encode($insumo->ReadCierreInventario());
+                break;
     }
 }
 
@@ -156,12 +159,56 @@ class Insumo{
             `inventarioInsumo`.`valorEntrada`,
             `inventarioInsumo`.`valorSalida`,
             `inventarioInsumo`.`valorSaldo`,
-            `inventarioInsumo`.`costoPromedio`,
+            `inventarioInsumo`.`costoPromedio`,            
             `inventarioInsumo`.`fecha`
                 FROM  inventarioInsumo
-                WHERE `inventarioInsumo`.`fecha` Between :fechaInicial and :fechaFinal       
+                WHERE `inventarioInsumo`.`fecha` Between :fechaInicial and :fechaFinal
                 ORDER BY fecha desc';
-            $param= array(':fechaInicial'=>$this->fechaInicial, ':fechaFinal'=>$this->fechaFinal);            
+            $param= array(':fechaInicial'=>$this->fechaInicial, ':fechaFinal'=>$this->fechaFinal);
+            $data= DATA::Ejecutar($sql, $param);
+            return $data;
+        }     
+        catch(Exception $e) { 
+            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode() ,
+                'msg' => 'Error al cargar la lista'))
+            );
+        }    
+    }
+
+    function ReadCierreInventario(){
+        try {
+            $sql='SELECT 		`inventarioInsumo`.`id`,
+            `inventarioInsumo`.`idOrdenCompra`,
+            `inventarioInsumo`.`idOrdenSalida`,
+            COALESCE(
+                CONCAT("Ord Compra: ",(SELECT orden FROM ordenCompra WHERE id=inventarioInsumo.idOrdenCompra)),
+                CONCAT("Ord Prod ",ordenEliminada),
+                CONCAT("Ord Prod cancel: ",ordenCancelada)
+            ) AS ordenEntrada,
+            COALESCE(
+                CONCAT("Ord Prod: ",ordenGuardada),
+                CONCAT("Merma: ",(SELECT consecutivo FROM mermaInsumo WHERE id=inventarioInsumo.idOrdenSalida)),
+                (SELECT orden FROM ordenCompra WHERE id=inventarioInsumo.idOrdenSalida) /*REVERSA ORDEN COMPRA - SALIDA*/
+            ) AS ordenSalida,
+            `inventarioInsumo`.`idInsumo`,
+            (SELECT codigo FROM insumo WHERE id=inventarioInsumo.idInsumo) AS insumo,
+            `inventarioInsumo`.`entrada`,
+            `inventarioInsumo`.`salida`,
+            `inventarioInsumo`.`saldo`,
+            `inventarioInsumo`.`costoAdquisicion`,
+            `inventarioInsumo`.`valorEntrada`,
+            `inventarioInsumo`.`valorSalida`,
+            `inventarioInsumo`.`valorSaldo`,
+            `inventarioInsumo`.`costoPromedio`,            
+            max(`inventarioInsumo`.`fecha`)as fecha
+                FROM  inventarioInsumo
+                WHERE `inventarioInsumo`.`fecha` <=  :fechaFinal       
+                ORDER BY fecha desc';
+            //$param= array(':fechaInicial'=>$this->fechaInicial, ':fechaFinal'=>$this->fechaFinal);            
+            $param= array(':fechaFinal'=>$this->fechaFinal);            
             $data= DATA::Ejecutar($sql, $param);
             return $data;
         }     
