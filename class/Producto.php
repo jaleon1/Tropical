@@ -35,9 +35,9 @@ if(isset($_POST["action"])){
         case "Update":
             $producto->Update();
             break;
-        case "UpdateCantidad":
-            $producto->UpdateCantidad();
-            break;
+        // case "UpdateCantidad":
+        //     $producto->UpdateCantidad();
+        //     break;
         case "Delete":
             echo json_encode($producto->Delete());
             break;   
@@ -467,5 +467,3 @@ class Producto{
 
 
 }
-
-?>

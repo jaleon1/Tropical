@@ -1,6 +1,6 @@
 <?php
-if(isset($_POST["action"])){
-    $opt= $_POST["action"];
+if (isset($_POST["action"])) {
+    $opt = $_POST["action"];
     unset($_POST['action']);
     // Classes
     require_once("Conexion.php");
@@ -8,8 +8,8 @@ if(isset($_POST["action"])){
     if (!isset($_SESSION))
         session_start();
     // Instance
-    $insumo= new Insumo();
-    switch($opt){
+    $insumo = new Insumo();
+    switch ($opt) {
         case "ReadAll":
             echo json_encode($insumo->ReadAll());
             break;
@@ -26,79 +26,83 @@ if(isset($_POST["action"])){
             $insumo->Create();
             break;
         case "saldoCorrecto":
-            echo json_encode($insumo->saldoCorrecto($_POST["cantidad"],$_POST["id"]));
+            echo json_encode($insumo->saldoCorrecto($_POST["cantidad"], $_POST["id"]));
             break;
         case "saldoCorrectoMod":
-            echo json_encode($insumo->saldoCorrectoMod($_POST["cantidad"],$_POST["id"],$_POST["scant"]));
+            echo json_encode($insumo->saldoCorrectoMod($_POST["cantidad"], $_POST["id"], $_POST["scant"]));
             break;
         case "Update":
             $insumo->Update();
             break;
         case "Delete":
             echo json_encode($insumo->Delete());
-            break;   
-        case "ReadByCode":  
+            break;
+        case "ReadByCode":
             echo json_encode($insumo->ReadByCode());
             break;
         case "ReadAllbyRange":
             echo json_encode($insumo->ReadAllbyRange());
             break;
         case "ReadCierreInventario":
-                echo json_encode($insumo->ReadCierreInventario());
-                break;
+            echo json_encode($insumo->ReadCierreInventario());
+            break;
     }
 }
 
-class Insumo{
-    public $id=null;
-    public $codigo='';
-    public $nombre='';
-    public $descripcion='';
-    public $saldoCantidad=0;
-    public $saldoCosto=0;
-    public $costoPromedio=0;
-    public $fechaInicial='';
-    public $fechaFinal='';
+class Insumo
+{
+    public $id = null;
+    public $codigo = '';
+    public $nombre = '';
+    public $descripcion = '';
+    public $saldoCantidad = 0;
+    public $saldoCosto = 0;
+    public $costoPromedio = 0;
+    public $fechaInicial = '';
+    public $fechaFinal = '';
 
-    function __construct(){
+    function __construct()
+    {
         // identificador único
-        if(isset($_POST["id"])){
-            $this->id= $_POST["id"];
+        if (isset($_POST["id"])) {
+            $this->id = $_POST["id"];
         }
-        if(isset($_POST["obj"])){
-            $obj= json_decode($_POST["obj"],true);
-            $this->id= $obj["id"] ?? null;
-            $this->codigo= $obj["codigo"] ?? '';
-            $this->nombre= $obj["nombre"] ?? '';
-            $this->descripcion= $obj["descripcion"] ?? '';
-            $this->saldoCantidad= $obj["saldoCantidad"] ?? 0;            
-            $this->saldoCosto= $obj["saldoCosto"] ?? 0;
-            $this->costoPromedio= $obj["costoPromedio"] ?? 0;
-            $this->fechaInicial= $obj["fechaInicial"] ?? '';
-            $this->fechaFinal= $obj["fechaFinal"] ?? '';
+        if (isset($_POST["obj"])) {
+            $obj = json_decode($_POST["obj"], true);
+            $this->id = $obj["id"] ?? null;
+            $this->codigo = $obj["codigo"] ?? '';
+            $this->nombre = $obj["nombre"] ?? '';
+            $this->descripcion = $obj["descripcion"] ?? '';
+            $this->saldoCantidad = $obj["saldoCantidad"] ?? 0;
+            $this->saldoCosto = $obj["saldoCosto"] ?? 0;
+            $this->costoPromedio = $obj["costoPromedio"] ?? 0;
+            $this->fechaInicial = $obj["fechaInicial"] ?? '';
+            $this->fechaFinal = $obj["fechaFinal"] ?? '';
         }
     }
 
-    function ReadAll(){
+    function ReadAll()
+    {
         try {
-            $sql='SELECT id, codigo, nombre, descripcion, saldoCantidad, saldoCosto, costoPromedio
+            $sql = 'SELECT id, codigo, nombre, descripcion, saldoCantidad, saldoCosto, costoPromedio
                 FROM  insumo       
                 ORDER BY nombre asc';
-            $data= DATA::Ejecutar($sql);
+            $data = DATA::Ejecutar($sql);
             return $data;
-        }     
-        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+        } catch (Exception $e) {
+            error_log("[ERROR]  (" . $e->getCode() . "): " . $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
-                'code' => $e->getCode() ,
-                'msg' => 'Error al cargar la lista'))
-            );
+                'code' => $e->getCode(),
+                'msg' => 'Error al cargar la lista'
+            )));
         }
     }
 
-    function ReadAllInventario(){
+    function ReadAllInventario()
+    {
         try {
-            $sql='SELECT 		`inventarioInsumo`.`id`,
+            $sql = 'SELECT 		`inventarioInsumo`.`id`,
             `inventarioInsumo`.`idOrdenCompra`,
             `inventarioInsumo`.`idOrdenSalida`,
             COALESCE(
@@ -123,21 +127,22 @@ class Insumo{
             `inventarioInsumo`.`fecha`
                 FROM  inventarioInsumo       
                 ORDER BY fecha desc';
-            $data= DATA::Ejecutar($sql);
+            $data = DATA::Ejecutar($sql);
             return $data;
-        }     
-        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+        } catch (Exception $e) {
+            error_log("[ERROR]  (" . $e->getCode() . "): " . $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
-                'code' => $e->getCode() ,
-                'msg' => 'Error al cargar la lista'))
-            );
-        }    
+                'code' => $e->getCode(),
+                'msg' => 'Error al cargar la lista'
+            )));
+        }
     }
 
-    function ReadAllbyRange(){
+    function ReadAllbyRange()
+    {
         try {
-            $sql='SELECT 		`inventarioInsumo`.`id`,
+            $sql = 'SELECT 		`inventarioInsumo`.`id`,
             `inventarioInsumo`.`idOrdenCompra`,
             `inventarioInsumo`.`idOrdenSalida`,
             COALESCE(
@@ -164,263 +169,260 @@ class Insumo{
                 FROM  inventarioInsumo
                 WHERE `inventarioInsumo`.`fecha` Between :fechaInicial and :fechaFinal
                 ORDER BY fecha desc';
-            $param= array(':fechaInicial'=>$this->fechaInicial, ':fechaFinal'=>$this->fechaFinal);
-            $data= DATA::Ejecutar($sql, $param);
+            $param = array(':fechaInicial' => $this->fechaInicial, ':fechaFinal' => $this->fechaFinal);
+            $data = DATA::Ejecutar($sql, $param);
             return $data;
-        }     
-        catch(Exception $e) { 
-            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+        } catch (Exception $e) {
+            error_log("[ERROR]  (" . $e->getCode() . "): " . $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
-                'code' => $e->getCode() ,
-                'msg' => 'Error al cargar la lista'))
-            );
-        }    
+                'code' => $e->getCode(),
+                'msg' => 'Error al cargar la lista'
+            )));
+        }
     }
 
-    function ReadCierreInventario(){
+    function ReadCierreInventario()
+    {
         try {
-            $sql='SELECT 		`inventarioInsumo`.`id`,
-            `inventarioInsumo`.`idOrdenCompra`,
-            `inventarioInsumo`.`idOrdenSalida`,
-            COALESCE(
-                CONCAT("Ord Compra: ",(SELECT orden FROM ordenCompra WHERE id=inventarioInsumo.idOrdenCompra)),
-                CONCAT("Ord Prod ",ordenEliminada),
-                CONCAT("Ord Prod cancel: ",ordenCancelada)
-            ) AS ordenEntrada,
-            COALESCE(
-                CONCAT("Ord Prod: ",ordenGuardada),
-                CONCAT("Merma: ",(SELECT consecutivo FROM mermaInsumo WHERE id=inventarioInsumo.idOrdenSalida)),
-                (SELECT orden FROM ordenCompra WHERE id=inventarioInsumo.idOrdenSalida) /*REVERSA ORDEN COMPRA - SALIDA*/
-            ) AS ordenSalida,
-            `inventarioInsumo`.`idInsumo`,
-            (SELECT codigo FROM insumo WHERE id=inventarioInsumo.idInsumo) AS insumo,
-            `inventarioInsumo`.`entrada`,
-            `inventarioInsumo`.`salida`,
-            `inventarioInsumo`.`saldo`,
-            `inventarioInsumo`.`costoAdquisicion`,
-            `inventarioInsumo`.`valorEntrada`,
-            `inventarioInsumo`.`valorSalida`,
-            `inventarioInsumo`.`valorSaldo`,
-            `inventarioInsumo`.`costoPromedio`,            
-            max(`inventarioInsumo`.`fecha`)as fecha
-                FROM  inventarioInsumo
-                WHERE `inventarioInsumo`.`fecha` <=  :fechaFinal       
-                ORDER BY fecha desc';
-            //$param= array(':fechaInicial'=>$this->fechaInicial, ':fechaFinal'=>$this->fechaFinal);            
+            $sql = 'SELECT id, ( SELECT codigo FROM insumo WHERE id=inventarioInsumo.idInsumo ) AS insumo,
+                        ifnull( sum( entrada ), 0) as entrada,
+                        ifnull( sum( salida ), 0) as salida,
+                        ifnull( sum( entrada ), 0) - ifnull( sum( salida ), 0) as saldo,
+                        max( fecha ) as fecha
+                    FROM  inventarioInsumo
+                    WHERE fecha <=  :fechaFinal               
+                    GROUP BY insumo
+               
+                    UNION
+        
+                    SELECT i.id,                    
+                        p.codigo AS insumo,
+                        ifnull( sum( entrada ), 0)as entrada,
+                        ifnull( sum( salida ), 0) as salida,
+                        ifnull( sum( entrada ), 0) - ifnull( sum( salida ), 0) AS saldo,
+                        max( i.fecha ) as fecha
+                    FROM  inventarioProducto i inner join producto p on p.id = i.idProducto                
+                    WHERE i.fecha <=  :fechaFinal
+                    group by insumo
+                    order by fecha desc';
             $param= array(':fechaFinal'=>$this->fechaFinal);            
-            $data= DATA::Ejecutar($sql, $param);
+            $data = DATA::Ejecutar($sql, $param);
             return $data;
-        }     
-        catch(Exception $e) { 
-            error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+        } catch (Exception $e) {
+            error_log("[ERROR]  (" . $e->getCode() . "): " . $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
-                'code' => $e->getCode() ,
-                'msg' => 'Error al cargar la lista'))
-            );
-        }    
+                'code' => $e->getCode(),
+                'msg' => 'Error al cargar la lista'
+            )));
+        }
     }
 
-    function ReadSaldoPositivo(){
+    function ReadSaldoPositivo()
+    {
         try {
-            $sql='SELECT id, codigo, nombre, descripcion, saldoCantidad, saldoCosto, costoPromedio
+            $sql = 'SELECT id, codigo, nombre, descripcion, saldoCantidad, saldoCosto, costoPromedio
                 FROM insumo WHERE saldoCantidad>0;       
                 ORDER BY nombre asc';
-            $data= DATA::Ejecutar($sql);
+            $data = DATA::Ejecutar($sql);
             return $data;
-        }     
-        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+        } catch (Exception $e) {
+            error_log("[ERROR]  (" . $e->getCode() . "): " . $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
-                'code' => $e->getCode() ,
-                'msg' => 'Error al cargar la lista'))
-            );
+                'code' => $e->getCode(),
+                'msg' => 'Error al cargar la lista'
+            )));
         }
     }
 
-    function saldoCorrecto($cantidad,$id){
+    function saldoCorrecto($cantidad, $id)
+    {
         try {
-            $sql='SELECT saldoCantidad FROM insumo WHERE id=:id';
-            $param= array(':id'=>$id);
-            $data= DATA::Ejecutar($sql,$param);
-            if ($data[0][0]>=$cantidad) 
+            $sql = 'SELECT saldoCantidad FROM insumo WHERE id=:id';
+            $param = array(':id' => $id);
+            $data = DATA::Ejecutar($sql, $param);
+            if ($data[0][0] >= $cantidad)
                 return true;
             else
                 return floatval($data[0][0]);
-        }     
-        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+        } catch (Exception $e) {
+            error_log("[ERROR]  (" . $e->getCode() . "): " . $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
-                'code' => $e->getCode() ,
-                'msg' => 'Error al cargar la lista'))
-            );
+                'code' => $e->getCode(),
+                'msg' => 'Error al cargar la lista'
+            )));
         }
     }
 
-    function saldoCorrectoMod($cantidad,$id,$scant){
+    function saldoCorrectoMod($cantidad, $id, $scant)
+    {
         try {
-            $sql='SELECT saldoCantidad FROM insumo WHERE id=:id';
-            $param= array(':id'=>$id);
-            $data= DATA::Ejecutar($sql,$param);
-            if ($data[0][0] + $scant >=$cantidad) 
+            $sql = 'SELECT saldoCantidad FROM insumo WHERE id=:id';
+            $param = array(':id' => $id);
+            $data = DATA::Ejecutar($sql, $param);
+            if ($data[0][0] + $scant >= $cantidad)
                 return true;
             else
                 return floatval($data[0][0]);
-        }     
-        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+        } catch (Exception $e) {
+            error_log("[ERROR]  (" . $e->getCode() . "): " . $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
-                'code' => $e->getCode() ,
-                'msg' => 'Error al cargar la lista'))
-            );
+                'code' => $e->getCode(),
+                'msg' => 'Error al cargar la lista'
+            )));
         }
     }
 
-    function Read(){
+    function Read()
+    {
         try {
-            $sql='SELECT id, codigo, nombre, descripcion, saldoCantidad, saldoCosto, costoPromedio
+            $sql = 'SELECT id, codigo, nombre, descripcion, saldoCantidad, saldoCosto, costoPromedio
                 FROM insumo  
                 where id=:id';
-            $param= array(':id'=>$this->id);
-            $data= DATA::Ejecutar($sql,$param);
+            $param = array(':id' => $this->id);
+            $data = DATA::Ejecutar($sql, $param);
             return $data;
-        }     
-        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+        } catch (Exception $e) {
+            error_log("[ERROR]  (" . $e->getCode() . "): " . $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
-                'code' => $e->getCode() ,
-                'msg' => 'Error al cargar el insumo'))
-            );
+                'code' => $e->getCode(),
+                'msg' => 'Error al cargar el insumo'
+            )));
         }
     }
 
-    function Create(){
+    function Create()
+    {
         try {
-            $sql="INSERT INTO insumo (id, codigo, nombre, descripcion, saldoCantidad, saldoCosto, costoPromedio) VALUES (uuid(), :codigo, :nombre, :descripcion, :saldoCantidad, :saldoCosto, :costoPromedio);";
+            $sql = "INSERT INTO insumo (id, codigo, nombre, descripcion, saldoCantidad, saldoCosto, costoPromedio) VALUES (uuid(), :codigo, :nombre, :descripcion, :saldoCantidad, :saldoCosto, :costoPromedio);";
             //
-            $param= array(':codigo'=>$this->codigo,':nombre'=>$this->nombre, ':descripcion'=>$this->descripcion, ':saldoCantidad'=>$this->saldoCantidad, ':saldoCosto'=>$this->saldoCosto, ':costoPromedio'=>$this->costoPromedio);
-            $data = DATA::Ejecutar($sql,$param,false);
-            if($data)
-            {
+            $param = array(':codigo' => $this->codigo, ':nombre' => $this->nombre, ':descripcion' => $this->descripcion, ':saldoCantidad' => $this->saldoCantidad, ':saldoCosto' => $this->saldoCosto, ':costoPromedio' => $this->costoPromedio);
+            $data = DATA::Ejecutar($sql, $param, false);
+            if ($data) {
                 //get id.
                 //save array obj
                 return true;
-            }
-            else throw new Exception('Error al guardar.', 02);
-        }     
-        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+            } else throw new Exception('Error al guardar.', 02);
+        } catch (Exception $e) {
+            error_log("[ERROR]  (" . $e->getCode() . "): " . $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
-                'code' => $e->getCode() ,
-                'msg' => $e->getMessage()))
-            );
+                'code' => $e->getCode(),
+                'msg' => $e->getMessage()
+            )));
         }
     }
 
-    function Update(){
+    function Update()
+    {
         try {
-            $sql="UPDATE insumo 
+            $sql = "UPDATE insumo 
                 SET  codigo=:codigo, nombre=:nombre, descripcion=:descripcion, saldoCantidad=:saldoCantidad, saldoCosto=:saldoCosto, costoPromedio=:costoPromedio
                 WHERE id=:id";
-            $param= array(':id'=>$this->id, ':codigo'=>$this->codigo,':nombre'=>$this->nombre, ':descripcion'=>$this->descripcion, ':saldoCantidad'=>$this->saldoCantidad, ':saldoCosto'=>$this->saldoCosto, ':costoPromedio'=>$this->costoPromedio);
-            $data = DATA::Ejecutar($sql,$param,false);
-            if($data)
+            $param = array(':id' => $this->id, ':codigo' => $this->codigo, ':nombre' => $this->nombre, ':descripcion' => $this->descripcion, ':saldoCantidad' => $this->saldoCantidad, ':saldoCosto' => $this->saldoCosto, ':costoPromedio' => $this->costoPromedio);
+            $data = DATA::Ejecutar($sql, $param, false);
+            if ($data)
                 return true;
             else throw new Exception('Error al guardar.', 123);
-        }     
-        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+        } catch (Exception $e) {
+            error_log("[ERROR]  (" . $e->getCode() . "): " . $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
-                'code' => $e->getCode() ,
-                'msg' => $e->getMessage()))
-            );
+                'code' => $e->getCode(),
+                'msg' => $e->getMessage()
+            )));
         }
     }
 
-    private function CheckRelatedItems(){
-        try{
-            $sql="SELECT id
+    private function CheckRelatedItems()
+    {
+        try {
+            $sql = "SELECT id
                 FROM insumosXOrdenSalida
-                WHERE idInsumo= :id";                
-            $param= array(':id'=>$this->id);
-            $data= DATA::Ejecutar($sql, $param);
-            if(count($data))
+                WHERE idInsumo= :id";
+            $param = array(':id' => $this->id);
+            $data = DATA::Ejecutar($sql, $param);
+            if (count($data))
                 return true;
             else return false;
-        }
-        catch(Exception $e){
+        } catch (Exception $e) {
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
-                'code' => $e->getCode() ,
-                'msg' => $e->getMessage()))
-            );
+                'code' => $e->getCode(),
+                'msg' => $e->getMessage()
+            )));
         }
     }
 
-    function Delete(){
+    function Delete()
+    {
         try {
-            if($this->CheckRelatedItems()){
+            if ($this->CheckRelatedItems()) {
                 //$sessiondata array que devuelve si hay relaciones del objeto con otras tablas.
-                $sessiondata['status']=1; 
-                $sessiondata['msg']='Registro en uso'; 
-                return $sessiondata;           
-            }                    
-            $sql='DELETE FROM insumo  
+                $sessiondata['status'] = 1;
+                $sessiondata['msg'] = 'Registro en uso';
+                return $sessiondata;
+            }
+            $sql = 'DELETE FROM insumo  
             WHERE id= :id';
-            $param= array(':id'=>$this->id);
-            $data= DATA::Ejecutar($sql, $param, false);
-            if($data)
-                return $sessiondata['status']=0; 
+            $param = array(':id' => $this->id);
+            $data = DATA::Ejecutar($sql, $param, false);
+            if ($data)
+                return $sessiondata['status'] = 0;
             else throw new Exception('Error al eliminar.', 978);
-        }
-        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+        } catch (Exception $e) {
+            error_log("[ERROR]  (" . $e->getCode() . "): " . $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
-                'code' => $e->getCode() ,
-                'msg' => $e->getMessage()))
-            );
+                'code' => $e->getCode(),
+                'msg' => $e->getMessage()
+            )));
         }
     }
 
-    function ReadByCode(){
-        try{
-            $sql="SELECT id, nombre, codigo, descripcion, saldoCantidad, costoPromedio
+    function ReadByCode()
+    {
+        try {
+            $sql = "SELECT id, nombre, codigo, descripcion, saldoCantidad, costoPromedio
                 FROM insumo
                 WHERE codigo like :codigo ";
-            $param= array(':codigo'=>'%'.$this->codigo.'%');
-            $data= DATA::Ejecutar($sql,$param);
-            
-            if(count($data))
+            $param = array(':codigo' => '%' . $this->codigo . '%');
+            $data = DATA::Ejecutar($sql, $param);
+
+            if (count($data))
                 return $data;
             else return false;
-        }
-        catch(Exception $e){
+        } catch (Exception $e) {
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
-                'code' => $e->getCode() ,
-                'msg' => $e->getMessage()))
-            );
+                'code' => $e->getCode(),
+                'msg' => $e->getMessage()
+            )));
         }
     }
 
-    public static function UpdateSaldoPromedioEntrada($id, $ncantidad, $ncosto){
+    public static function UpdateSaldoPromedioEntrada($id, $ncantidad, $ncosto)
+    {
         try {
 
-            $sql="CALL spUpdateSaldosPromedioInsumoEntrada(:mid, :ncantidad, :ncosto);";
-            $param= array(':mid'=>$id, ':ncantidad'=>$ncantidad, ':ncosto'=>$ncosto);
-            $data = DATA::Ejecutar($sql,$param,false);
-            if($data)
+            $sql = "CALL spUpdateSaldosPromedioInsumoEntrada(:mid, :ncantidad, :ncosto);";
+            $param = array(':mid' => $id, ':ncantidad' => $ncantidad, ':ncosto' => $ncosto);
+            $data = DATA::Ejecutar($sql, $param, false);
+            if ($data)
                 return true;
             else throw new Exception('Error al calcular SALDOS Y PROMEDIOS de insumos, debe realizar el cálculo manualmente.', 666);
-        }     
-        catch(Exception $e) { error_log("[ERROR]  (".$e->getCode()."): ". $e->getMessage());
+        } catch (Exception $e) {
+            error_log("[ERROR]  (" . $e->getCode() . "): " . $e->getMessage());
             header('HTTP/1.0 400 Bad error');
             die(json_encode(array(
-                'code' => $e->getCode() ,
-                'msg' => $e->getMessage()))
-            );
+                'code' => $e->getCode(),
+                'msg' => $e->getMessage()
+            )));
         }
     }
 }
-?>

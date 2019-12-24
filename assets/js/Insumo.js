@@ -172,6 +172,23 @@ class Insumo {
             });
     };
 
+    ReadCierreInventarioAgencia(){
+        var referenciaCircular = insumo.tablainsumo;
+        insumo.tablainsumo = [];
+        $.ajax({
+            type: "POST",
+            url: "class/InsumosXBodega.php",
+            data: {
+                action: "ReadCierreInventario",
+                obj: JSON.stringify(insumo)
+            }
+        })
+            .done(function (e) {
+                insumo.tablainsumo = referenciaCircular;        
+                insumo.ShowAllInventario(e); 
+            });
+    };
+
     // Methods    
     Reload(e) {
         if (this.id == null)
@@ -806,6 +823,97 @@ class Insumo {
                             return '¢0'
                         else
                         return '¢'+ parseFloat(e).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                }
+            ]
+        });
+    };
+
+    setTableInventarioInsumoCierre(){
+        jQuery.extend( jQuery.fn.dataTableExt.oSort, {
+            "formatted-num-pre": function ( a ) {
+                a = (a === "-" || a === "") ? 0 : a.replace( /[^\d\-\.]/g, "" );
+                return parseFloat( a );
+            }, 
+            "formatted-num-asc": function ( a, b ) {
+                return a - b;
+            },
+            "formatted-num-desc": function ( a, b ) {
+                return b - a;
+            }
+        } );
+        
+        this.tablainsumo = $('#dsInsumoReporte').DataTable( {
+            responsive: true,
+            destroy: true,
+            order: [1, "desc"],
+            dom: 'Bfrtip',
+            buttons: [
+                {
+                    extend: 'excelHtml5',
+                    exportOptions: {columns: [ 1, 3, 5, 7, 9, 10, 11, 12, 13, 14, 15 ]},
+                    messageTop:'Movimientos de Materia Prima'
+                },
+                {
+                    extend: 'pdfHtml5',
+                    orientation : 'landscape',
+                    exportOptions: {columns: [ 1, 3, 5, 7, 9, 10, 11, 12, 13, 14, 15 ]}
+                }
+            ],
+            language: {
+                "infoEmpty": "Sin movimientos de Materia Prima",
+                "emptyTable": "Sin movimientos de Materia Prima",
+                "search": "Buscar",
+                "zeroRecords": "No hay resultados",
+                "lengthMenu": "Mostrar _MENU_ registros",
+                "paginate": {
+                    "first": "Primera",
+                    "last": "Ultima",
+                    "next": "Siguiente",
+                    "previous": "Anterior"
+                }
+            },
+            columns: [
+                {
+                    title: "ID",
+                    data: "id",
+                    className: "itemId",
+                    width: "auto",
+                    searchable: false
+                },
+                {
+                    title: "FECHA",
+                    data: "fecha",
+                    width: "auto"
+                },               
+                {
+                    title: "INSUMO",
+                    data: "insumo",
+                    width: "auto"
+                },
+                {
+                    title: "ENTRADA",
+                    data: "entrada",
+                    width: "auto",
+                    mRender: function ( e ) {
+                        if (e==null) 
+                            return '0'
+                        else
+                            return e}
+                },
+                {
+                    title: "SALIDA",
+                    data: "salida",
+                    width: "auto",
+                    mRender: function ( e ) {
+                        if (e==null) 
+                            return '0'
+                        else
+                            return e}
+                },
+                {
+                    title: "SALDO",
+                    data: "saldo",
+                    width: "auto"
                 }
             ]
         });

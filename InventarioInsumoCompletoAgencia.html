@@ -139,7 +139,7 @@
                 <div class="">
                     <div class="page-title">
                         <div class="title_left">
-                            <h3>CIERRE INVENTARIO REPORTE</h3>
+                            <h3>CIERRE INVENTARIO REPORTE | AGENCIA </h3>
                         </div>
 
                         <div class="title_right">
@@ -408,13 +408,13 @@
 
             insumo.fechaInicial = start.format('YYYY-MM-DD') + ' 00:00';
             insumo.fechaFinal = end.format('YYYY-MM-DD') + ' 23:59:59';
-            insumo.ReadCierreInventario();
+            insumo.ReadCierreInventarioAgencia();
         });
 
         $('#dp_rangoInsumoReporte').on('apply.daterangepicker', function (ev, picker) {
             insumo.fechaInicial = picker.startDate.format('YYYY-MM-DD') + ' 00:00';
             insumo.fechaFinal = picker.endDate.format('YYYY-MM-DD') + ' 23:59:59';
-            insumo.ReadCierreInventario();
+            insumo.ReadCierreInventarioAgencia();
         });
     });
 

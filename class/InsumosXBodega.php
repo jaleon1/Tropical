@@ -26,9 +26,9 @@ if(isset($_POST["action"])){
         case "Read":
             echo json_encode($productosxbodega->Read());
             break;
-        case "Create":
-            $productosxbodega->Create();
-            break;
+        // case "Create":
+        //     $productosxbodega->Create();
+        //     break;
         // case "Add":
         //     $productosxbodega->Add();
         //     break;
@@ -41,6 +41,9 @@ if(isset($_POST["action"])){
         case "ReadByCode":
             $productosxbodega->codigo = $_POST['codigo'];
             echo json_encode($productosxbodega->ReadByCode());
+            break;
+        case "ReadCierreInventario":
+            echo json_encode($productosxbodega->ReadCierreInventario());
             break;
     }
 }
@@ -154,6 +157,35 @@ class InsumosXBodega{
                 'msg' => 'Error al cargar la lista'))
             );
         }    
+    }
+
+    function ReadCierreInventario()
+    {
+        try {
+            $sql = 'SELECT i.id,  ( SELECT codigo 
+                            FROM producto p 
+                            INNER JOIN insumosXBodega x on x.idProducto = p.id
+                            WHERE x.id = i.idInsumo
+                        ) AS insumo,
+                        ifnull( sum( entrada ), 0) as entrada,
+                        ifnull( sum( salida ), 0) as salida,
+                        ifnull( sum( entrada ), 0) - ifnull( sum( salida ), 0) as saldo,
+                        max( fecha ) as fecha
+                    FROM  inventarioBodega i 
+                    WHERE fecha <=  :fechaFinal and idBodega = :idbodega
+                    group by insumo
+                    ORDER BY  fecha desc';
+            $param= array(':fechaFinal'=>$this->fechaFinal, ':idbodega'=>  $_SESSION["userSession"]->idBodega);            
+            $data = DATA::Ejecutar($sql, $param);
+            return $data;
+        } catch (Exception $e) {
+            error_log("[ERROR]  (" . $e->getCode() . "): " . $e->getMessage());
+            header('HTTP/1.0 400 Bad error');
+            die(json_encode(array(
+                'code' => $e->getCode(),
+                'msg' => 'Error al cargar la lista'
+            )));
+        }
     }
 
     function ReadCompleto(){
@@ -402,5 +434,3 @@ class InsumosXBodega{
     }
 
 }
-
-?>
