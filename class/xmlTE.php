@@ -78,6 +78,7 @@ class xmlTE{
         foreach($transaccion->detalleFactura as $d){
             $xmlString .= '<LineaDetalle>
                       <NumeroLinea>' . $l . '</NumeroLinea>
+                      <Codigo>2227000000200</Codigo>
                       <Cantidad>' . $d->cantidad . '</Cantidad>
                       <UnidadMedida>' . self::getUnidadMedidaCod($d->idUnidadMedida) . '</UnidadMedida>';
             if (!empty($d->detalle))
